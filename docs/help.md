@@ -16,6 +16,10 @@ Open the app and pick one of the entry cards:
   leveling companion that walks every pick and slot from 1 to 50.
 - **Import from Mids Reborn** — paste a Mids build (or load a .mbd file) and the tool
   evaluates it, then can optimize from there.
+- **Import a character you play** — type `/build_save_file` in game, then click
+  "Find my characters for me": the tool locates your Homecoming saves itself and
+  imports the one you pick. (Unusual install location? Tell it your game folder
+  once and it remembers.)
 
 Everything is reversible. Nothing you click is permanent, and in-game a /respec
 rewrites any character anyway.

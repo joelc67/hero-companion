@@ -41,17 +41,14 @@
           <p>Already have a <code>.mbd</code>? Load it for a critique, then optimize the slotting toward a goal — keeping the sets you've already invested in.</p>
           <span class="entry-go">Choose a .mbd file →</span>
         </button>
-        <button class="entry-card" id="entry-ingame">
+        <div class="entry-card entry-card-static" id="entry-ingame">
           <div class="entry-ico">🎮</div>
           <h3>Import a character you play</h3>
-          <p>Bring in a live character from the game:</p>
-          <ol class="entry-steps">
-            <li>In game, type <code>/build_save_file</code> in chat.</li>
-            <li>It writes a <code>.txt</code> into your Homecoming install's account folder — <code>…\accounts\&lt;account&gt;\</code> (e.g. <code>C:\Games\HC2\accounts\&lt;account&gt;\</code>).</li>
-            <li>Load that <code>.txt</code> here.</li>
-          </ol>
-          <span class="entry-go">Choose a .txt file →</span>
-        </button>
+          <p>In game, type <code>/build_save_file</code> in chat — then come back here:</p>
+          <span class="entry-go" id="ingame-scan-go">🔍 Find my characters for me →</span>
+          <div id="ingame-found" class="ingame-found hidden"></div>
+          <span class="entry-go entry-go-quiet" id="ingame-pick-go">…or choose the .txt file yourself →</span>
+        </div>
       </div>
       <!-- saved characters list (shown when "Continue" is chosen) -->
       <div id="saves-panel" class="hidden">

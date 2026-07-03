@@ -1103,7 +1103,9 @@ async function init() {
   $("import-file").addEventListener("change", importMids);
   // Entry router — the front door: how do you want to start?
   $("entry-mids").addEventListener("click", () => { hideEntry(); $("import-file").click(); });
-  $("entry-ingame").addEventListener("click", () => { hideEntry(); $("import-file").click(); });
+  // in-game card: scan-first (the app finds the saves), file picker as fallback
+  $("ingame-scan-go").addEventListener("click", () => ingameScan());
+  $("ingame-pick-go").addEventListener("click", () => { hideEntry(); $("import-file").click(); });
   $("entry-scratch").addEventListener("click", () => { hideEntry(); startFromScratch(); });
   $("entry-respec").addEventListener("click", () => { hideEntry(); startNew50(); });
   $("entry-continue").addEventListener("click", openSavesList);
@@ -2131,9 +2133,17 @@ async function importMids(e) {
   if (!file) return;
   const report = $("import-report");
   report.classList.remove("hidden");
-  report.innerHTML = `<p class="muted small">Reading <strong>${file.name}</strong>…</p>`;
+  report.innerHTML = `<p class="muted small">Reading <strong>${escHtml(file.name)}</strong>…</p>`;
   let text;
   try { text = await file.text(); } catch (err) { report.innerHTML = `<p class="v-err">Couldn't read the file: ${err}</p>`; return; }
+  importBuildText(text);
+}
+
+// Shared tail of every import route (file picker, auto-found in-game save):
+// parse server-side, load into the builder, snapshot for diff/reset, critique.
+async function importBuildText(text) {
+  const report = $("import-report");
+  report.classList.remove("hidden");
   let res;
   try {
     res = await api("/build/import", postJson({ mbd: text, pvp: build.pvp }));
@@ -2148,6 +2158,56 @@ async function importMids(e) {
   IMPORTED_POWERS = JSON.parse(JSON.stringify(build.powers));
   renderImportReport(res);
   recompute();   // reveal the Reset button now that an imported build exists
+}
+
+// ── In-game build discovery: scan the Homecoming accounts folders ────────────
+function _ageOf(epoch) {
+  const s = Math.max(0, (Date.now() / 1000) - epoch);
+  if (s < 3600) return `${Math.max(1, Math.round(s / 60))} min ago`;
+  if (s < 86400) return `${Math.round(s / 3600)} h ago`;
+  return `${Math.round(s / 86400)} d ago`;
+}
+
+async function ingameScan(root) {
+  const box = $("ingame-found");
+  box.classList.remove("hidden");
+  box.innerHTML = `<p class="muted small">🔍 Looking for your Homecoming characters…</p>`;
+  const url = root ? `/ingame/scan?root=${encodeURIComponent(root)}` : "/ingame/scan";
+  const r = await api(url).catch(() => null);
+  renderIngameFound(r);
+}
+
+function renderIngameFound(r) {
+  const box = $("ingame-found");
+  if (!r || !r.ok || !(r.files || []).length) {
+    box.innerHTML =
+      `<p class="muted small">Couldn't find a Homecoming <code>accounts</code> folder with build saves in the
+       usual places. If you've run <code>/build_save_file</code> in game, paste your game folder here
+       (e.g. <code>C:\\Games\\Homecoming</code>):</p>`
+      + `<div class="ingame-root-row"><input id="ingame-root" placeholder="C:\\Games\\Homecoming">`
+      + `<button class="linkbtn" id="ingame-root-go">Search there</button></div>`;
+    $("ingame-root-go").addEventListener("click", () => {
+      const root = $("ingame-root").value.trim();
+      if (root) ingameScan(root);
+    });
+    $("ingame-root").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { const root = e.target.value.trim(); if (root) ingameScan(root); }
+    });
+    return;
+  }
+  box.innerHTML =
+    `<p class="muted small">Found ${r.files.length} character save${r.files.length > 1 ? "s" : ""} — click one to import:</p>`
+    + r.files.slice(0, 12).map((f, i) =>
+        `<button class="ingame-file" data-i="${i}">🎭 <b>${escHtml(f.character)}</b>`
+        + ` <span class="muted small">${escHtml(f.account || "")} · saved ${_ageOf(f.modified)}</span></button>`).join("")
+    + (r.files.length > 12 ? `<p class="muted small">…and ${r.files.length - 12} more (newest shown).</p>` : "");
+  box.querySelectorAll(".ingame-file").forEach(btn => btn.addEventListener("click", async () => {
+    const f = r.files[+btn.dataset.i];
+    hideEntry();
+    const rr = await api("/ingame/read", postJson({ path: f.path })).catch(() => null);
+    if (!rr || !rr.ok) { alert((rr && rr.response) || "Couldn't read that file — try the file picker."); return; }
+    importBuildText(rr.text);
+  }));
 }
 
 // Restore the imported build exactly as it came in, so the user can try a

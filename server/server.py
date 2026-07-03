@@ -2104,6 +2104,122 @@ def _build_warnings(powers, archetype, totals, content, role, exposure=None):
     return out
 
 
+# ---------------------------------------------------------------------------
+# In-game build discovery. /build_save_file writes <Homecoming>\accounts\
+# <account>\<character>.txt — instead of making the player hike there with a
+# file picker, scan the usual install locations (plus any folder the user
+# taught us, remembered in settings.json next to the saves) and offer what's
+# found. The file picker remains as the fallback for exotic installs.
+# ---------------------------------------------------------------------------
+def _settings_path():
+    return os.path.join(os.path.dirname(_saves_dir()), "settings.json")
+
+
+def _load_settings():
+    try:
+        with open(_settings_path(), encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def _save_settings(s):
+    try:
+        with open(_settings_path(), "w", encoding="utf-8") as f:
+            json.dump(s, f, indent=1)
+    except OSError:
+        pass
+
+
+def _find_accounts_dirs(extra_root=None):
+    """Existing 'accounts' directories from remembered/user-given roots plus the
+    usual install parents. Fixed shallow candidates only — never walks a drive."""
+    import glob as g
+    roots = []
+    remembered = _load_settings().get("game_root")
+    if remembered:
+        roots.append(remembered)
+    if extra_root:
+        roots.append(extra_root)
+    found = []
+    for r in roots:
+        r = r.strip().strip('"')
+        if os.path.basename(r).lower() == "accounts" and os.path.isdir(r):
+            found.append(r)
+        elif os.path.isdir(os.path.join(r, "accounts")):
+            found.append(os.path.join(r, "accounts"))
+    candidates = []
+    for drive in ("C:", "D:", "E:"):
+        candidates += [rf"{drive}\Games", rf"{drive}\Homecoming", rf"{drive}\City of Heroes"]
+    for env in ("ProgramFiles(x86)", "ProgramFiles", "LOCALAPPDATA"):
+        if os.environ.get(env):
+            candidates.append(os.environ[env])
+    for c in candidates:
+        found += [p for p in g.glob(os.path.join(c, "accounts")) if os.path.isdir(p)]
+        found += [p for p in g.glob(os.path.join(c, "*", "accounts")) if os.path.isdir(p)]
+    seen, out = set(), []
+    for p in found:
+        k = os.path.normcase(os.path.abspath(p))
+        if k not in seen:
+            seen.add(k)
+            out.append(os.path.abspath(p))
+    return out
+
+
+@app.route("/ingame/scan")
+def ingame_scan():
+    import glob as g
+    extra = (request.args.get("root") or "").strip() or None
+    accs = _find_accounts_dirs(extra)
+    files = []
+    for acc in accs:
+        for path in g.glob(os.path.join(acc, "*", "*.txt")) + g.glob(os.path.join(acc, "*.txt")):
+            try:
+                if os.path.getsize(path) > 512 * 1024:
+                    continue                      # build saves are a few KB
+                with open(path, encoding="utf-8", errors="ignore") as f:
+                    head = f.read(4096)
+                if not ingame_import.looks_like_ingame(head):
+                    continue
+                parent = os.path.dirname(path)
+                files.append({"path": path,
+                              "character": os.path.splitext(os.path.basename(path))[0],
+                              "account": os.path.basename(parent) if os.path.normcase(parent) != os.path.normcase(acc) else "",
+                              "modified": os.path.getmtime(path)})
+            except OSError:
+                continue
+    files.sort(key=lambda x: -x["modified"])
+    if files:
+        # remember the game root that worked, so the next scan is instant
+        acc_dir = os.path.dirname(files[0]["path"])
+        while acc_dir and os.path.basename(acc_dir).lower() != "accounts":
+            acc_dir = os.path.dirname(acc_dir)
+        if acc_dir:
+            s = _load_settings()
+            s["game_root"] = os.path.dirname(acc_dir)
+            _save_settings(s)
+    return jsonify({"ok": True, "files": files[:40], "searched": accs})
+
+
+@app.route("/ingame/read", methods=["POST"])
+def ingame_read():
+    """Read a build save the scan offered. The path must live under a known
+    accounts directory — this endpoint is not a general file reader."""
+    body = request.get_json(force=True) or {}
+    path = os.path.abspath(body.get("path") or "")
+    allowed = [os.path.normcase(a) for a in _find_accounts_dirs()]
+    inside = any(os.path.normcase(path).startswith(a + os.sep) for a in allowed)
+    if not (inside and path.lower().endswith(".txt") and os.path.isfile(path)):
+        return jsonify({"ok": False, "response": "That file isn't in a known accounts folder — "
+                        "use the file picker instead."}), 400
+    try:
+        with open(path, encoding="utf-8", errors="ignore") as f:
+            return jsonify({"ok": True, "text": f.read(),
+                            "name": os.path.splitext(os.path.basename(path))[0]})
+    except OSError as e:
+        return jsonify({"ok": False, "response": f"Couldn't read the file: {e}"}), 500
+
+
 @app.route("/build/import", methods=["POST"])
 def build_import():
     """Import a Mids Reborn .mbd: parse -> resolve -> totals -> quick critique.

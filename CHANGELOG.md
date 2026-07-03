@@ -1,5 +1,13 @@
 # Hero Companion — What's New
 
+## 0.10.1 — unreleased
+
+- **The app finds your in-game saves for you.** After `/build_save_file` in game,
+  click "Find my characters for me" — Hero Companion scans the usual Homecoming
+  install locations, lists every character save it finds (newest first), and
+  imports on click. Unusual install? Paste your game folder once and it's
+  remembered. The manual file picker remains as a fallback.
+
 ## 0.10.0 — July 3, 2026
 
 **The installer release** — Hero Companion now behaves like a proper Windows app.
