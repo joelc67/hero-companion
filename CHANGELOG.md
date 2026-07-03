@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## 0.9.1 — unreleased
+## 0.9.1 — July 3, 2026
 
 - **Update prompts (opt-in)**: on first run the app asks once whether to check for
   updates at startup. Say yes and new releases show an "Update now / Remind me
@@ -9,8 +9,12 @@
   Claude" box that could never work without a paid key. The panel is now the
   Build Assistant — presets, goals, and instant Solve, all fully offline.
   (Advanced: set HC_AI=1 with your own Claude key to re-enable the assistant.)
+- **The app has its own icon** — the lime pulse badge, in the taskbar where it
+  belongs, instead of the generic packaging icon.
 - **Fixed**: the build wizard could clip its lower content on short windows with
   no way to scroll; it now scrolls within the dialog.
+- **Fixed**: launching a second copy (or anything else holding port 5000) no longer
+  kills the app — it moves to the next free port and says so.
 
 ## 0.9.0 — July 3, 2026
 

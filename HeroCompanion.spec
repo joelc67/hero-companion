@@ -45,6 +45,7 @@ exe = EXE(
     strip=False,
     upx=False,                 # UPX-packed exes trip antivirus heuristics — never pack
     console=True,              # the console window IS the app's off switch
+    icon="assets/HeroCompanion.ico",
 )
 coll = COLLECT(
     exe,
