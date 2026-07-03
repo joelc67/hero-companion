@@ -32,6 +32,32 @@ LicenseFile=..\LICENSE
 ; close it for them (force: a tray app has no window to ask politely).
 CloseApplications=force
 RestartApplications=no
+; Reinstalling over an existing folder is normal (upgrades, repairs) — don't interrogate.
+DirExistsWarning=no
+
+[Code]
+// A tray app is invisible; users can't be expected to quit it first. End it outright
+// before installing over it or uninstalling it (nothing is lost — saves are server-side
+// in %APPDATA% and write on change).
+procedure TaskKillApp();
+var
+  R: Integer;
+begin
+  Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /IM HeroCompanion.exe', '',
+       SW_HIDE, ewWaitUntilTerminated, R);
+end;
+
+function PrepareToInstall(var NeedsRestart: Boolean): String;
+begin
+  TaskKillApp();
+  Result := '';
+end;
+
+function InitializeUninstall(): Boolean;
+begin
+  TaskKillApp();
+  Result := True;
+end;
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional shortcuts:"
