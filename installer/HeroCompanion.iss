@@ -59,6 +59,11 @@ begin
   Result := True;
 end;
 
+function WantRelaunch(): Boolean;
+begin
+  Result := ExpandConstant('{param:RELAUNCH|0}') = '1';
+end;
+
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional shortcuts:"
 
@@ -71,6 +76,9 @@ Name: "{userdesktop}\{#AppName}"; Filename: "{app}\HeroCompanion.exe"; Tasks: de
 
 [Run]
 Filename: "{app}\HeroCompanion.exe"; Description: "Launch {#AppName} now"; Flags: nowait postinstall skipifsilent
+; One-click self-update path: the app runs this installer silently with /RELAUNCH=1
+; and expects to be brought back to life afterward.
+Filename: "{app}\HeroCompanion.exe"; Flags: nowait; Check: WantRelaunch
 
 [UninstallDelete]
 ; the app folder only — saves in %APPDATA%\HeroCompanion are the player's, not ours to delete

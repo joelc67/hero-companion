@@ -941,10 +941,37 @@ window.setUpdatePref = function (v) {
   if (v === "on") runStartupUpdateCheck();
 };
 function _showUpdatePrompt(r) {
+  // Installed app: Update now downloads + installs + restarts, no browser trip.
+  // Running from source (or if auto-install fails): the download page is the path.
+  const updateAct = (META && META.packaged)
+    ? `<button class="linkbtn" onclick="oneClickUpdate('${escHtml(r.latest)}','${escHtml(r.url)}')">Update now</button>`
+    : `<button class="linkbtn" onclick="window.open('${escHtml(r.url)}','_blank');_ubHide()">Update now</button>`;
   _ubShow(`⬆ <b>Hero Companion v${escHtml(r.latest)}</b> is available — you have v${escHtml(r.current)}.`
-    + `<button class="linkbtn" onclick="window.open('${escHtml(r.url)}','_blank');_ubHide()">Update now</button>`
+    + updateAct
     + `<button class="linkbtn quiet" onclick="_ubHide()">Remind me later</button>`);
 }
+
+// Download the installer from the project's releases and hand over to it — the
+// installer ends this app, installs, and relaunches it; we poll until the new
+// version answers, then reload into it.
+window.oneClickUpdate = async function (latest, pageUrl) {
+  _ubShow(`⬇ Downloading v${escHtml(latest)}… (~40 MB — hang tight)`);
+  const res = await api("/update/install", postJson({})).catch(() => null);
+  if (!res || !res.ok) {
+    _ubShow(`⚠ ${escHtml((res && res.response) || "Auto-update couldn't start.")} `
+      + `<button class="linkbtn" onclick="window.open('${escHtml(pageUrl)}','_blank');_ubHide()">Open the download page</button>`
+      + `<button class="linkbtn quiet" onclick="_ubHide()">Dismiss</button>`);
+    return;
+  }
+  _ubShow(`🔧 Installing v${escHtml(latest)}… the app will restart itself; this page reconnects automatically.`);
+  const before = META ? META.app_version : "";
+  const timer = setInterval(async () => {
+    try {
+      const m = await fetch("/meta").then(x => x.json());
+      if (m.app_version && m.app_version !== before) { clearInterval(timer); location.reload(); }
+    } catch { /* app is mid-restart — keep waiting */ }
+  }, 2000);
+};
 async function runStartupUpdateCheck() {
   const r = await api("/meta/update-check").catch(() => null);
   if (!r || !r.ok || !r.update_available) return;    // up to date / offline → stay silent

@@ -1,5 +1,12 @@
 # Hero Companion — What's New
 
+## 0.10.2 — unreleased
+
+- **One-click updates.** "Update now" in the installed app now downloads the new
+  version and installs it for you — no trip to the download page. The app closes,
+  updates, and (from this version's installer onward) restarts itself. The download
+  page remains the fallback if anything goes sideways.
+
 ## 0.10.1 — July 3, 2026
 
 - **Fixed: power tray icons missing in the installed app.** Three data files (power

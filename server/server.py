@@ -410,6 +410,7 @@ def meta():
     import first_principles as fp
     return jsonify({"ok": True, "app_version": APP_VERSION, "model_version": fp.MODEL_VERSION,
                     "db_name": DB_NAME, "db_version": DB_VERSION,
+                    "packaged": bool(getattr(sys, "frozen", False)),
                     "urls": CLIENT_CONFIG.get("urls", {})})
 
 
@@ -436,6 +437,54 @@ def update_check():
                         "url": rel.get("html_url") or (CLIENT_CONFIG.get("urls") or {}).get("releases")})
     except Exception as e:  # noqa: BLE001 — offline is a normal state, not an error page
         return jsonify({"ok": False, "reason": "offline", "error": str(e)[:200]})
+
+
+@app.route("/update/install", methods=["POST"])
+def update_install():
+    """One-click self-update, packaged builds only: download the latest release's
+    Setup exe from the project's GitHub (the only source this will touch), verify
+    its size against the API's answer, and launch it silently with /RELAUNCH=1 —
+    the installer ends this process itself, installs, and restarts the app."""
+    import re as _re
+    if not getattr(sys, "frozen", False):
+        return jsonify({"ok": False, "response": "Self-update only applies to the installed app — "
+                        "you're running from source (use git pull)."}), 400
+    api_url = (CLIENT_CONFIG.get("urls") or {}).get("releases_api") or ""
+    if not api_url or "REPLACE-ME" in api_url:
+        return jsonify({"ok": False, "response": "No update source configured."}), 400
+    try:
+        import subprocess
+        import tempfile
+        import requests
+        rel = requests.get(api_url, timeout=10,
+                           headers={"Accept": "application/vnd.github+json"}).json()
+        latest = (rel.get("tag_name") or "").lstrip("vV")
+
+        def _t(v):
+            return tuple(int(x) for x in (_re.findall(r"\d+", v)[:3] or ["0"]))
+
+        if _t(latest) <= _t(APP_VERSION):
+            return jsonify({"ok": False, "response": f"Already up to date (v{APP_VERSION})."})
+        asset = next((a for a in rel.get("assets", [])
+                      if a.get("name", "").lower().endswith(".exe")
+                      and "setup" in a.get("name", "").lower()), None)
+        if not asset:
+            return jsonify({"ok": False, "response": "The latest release has no installer — "
+                            "grab it from the download page instead."})
+        dest = os.path.join(tempfile.gettempdir(), asset["name"])
+        with requests.get(asset["browser_download_url"], stream=True, timeout=60) as r:
+            r.raise_for_status()
+            with open(dest, "wb") as f:
+                for chunk in r.iter_content(256 * 1024):
+                    f.write(chunk)
+        if os.path.getsize(dest) != asset.get("size"):
+            return jsonify({"ok": False, "response": "Download came out the wrong size — "
+                            "try again, or use the download page."})
+        subprocess.Popen([dest, "/SILENT", "/RELAUNCH=1"], close_fds=True)
+        return jsonify({"ok": True, "version": latest})
+    except Exception as e:  # noqa: BLE001 — fall back to the manual download page
+        return jsonify({"ok": False, "response": f"Auto-update failed ({str(e)[:160]}) — "
+                        "use the download page instead."})
 
 
 @app.route("/champion/bundle", methods=["POST"])
