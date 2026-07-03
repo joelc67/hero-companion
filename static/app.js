@@ -940,12 +940,33 @@ window.setUpdatePref = function (v) {
   _ubHide();
   if (v === "on") runStartupUpdateCheck();
 };
-async function runStartupUpdateCheck() {
-  const r = await api("/meta/update-check").catch(() => null);
-  if (!r || !r.ok || !r.update_available) return;    // up to date / offline → stay silent
+function _showUpdatePrompt(r) {
   _ubShow(`⬆ <b>Hero Companion v${escHtml(r.latest)}</b> is available — you have v${escHtml(r.current)}.`
     + `<button class="linkbtn" onclick="window.open('${escHtml(r.url)}','_blank');_ubHide()">Update now</button>`
     + `<button class="linkbtn quiet" onclick="_ubHide()">Remind me later</button>`);
+}
+async function runStartupUpdateCheck() {
+  const r = await api("/meta/update-check").catch(() => null);
+  if (!r || !r.ok || !r.update_available) return;    // up to date / offline → stay silent
+  _showUpdatePrompt(r);
+}
+// The header ⟳ chip — the always-available override, independent of the startup pref.
+async function manualUpdateCheck() {
+  _ubShow("⏳ Checking for updates…");
+  const r = await api("/meta/update-check").catch(() => null);
+  if (!r || !r.ok) {
+    _ubShow(r && r.reason === "not_configured"
+      ? "The project's online home isn't configured in this copy."
+      : "Couldn't reach github.com — are you offline?");
+    setTimeout(_ubHide, 5000);
+    return;
+  }
+  if (!r.update_available) {
+    _ubShow(`✓ You're up to date (v${escHtml(r.current)}).`);
+    setTimeout(_ubHide, 4000);
+    return;
+  }
+  _showUpdatePrompt(r);
 }
 window._ubHide = _ubHide;
 
@@ -1092,6 +1113,7 @@ async function init() {
   if ($("bug-btn")) $("bug-btn").addEventListener("click", reportBug);
   if ($("champ-btn")) $("champ-btn").addEventListener("click", submitChampion);
   if ($("update-check")) $("update-check").addEventListener("click", checkUpdates);
+  if ($("update-btn")) $("update-btn").addEventListener("click", manualUpdateCheck);
   $("wiz-close").addEventListener("click", closeRespecWizard);
   $("wiz-at").addEventListener("change", wizLoadPowersets);
   $("wiz-build").addEventListener("click", buildRespec);
