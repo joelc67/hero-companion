@@ -523,8 +523,9 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .autopick-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 6px 0 12px; }
 .autopick-row .autopick-exp { color: var(--muted); font-size: 12px; display: flex; gap: 6px; align-items: center; }
 .autopick-row .autopick-exp select { width: auto; }
-/* Respec wizard */
-.wizard-box { width: min(720px, 94vw); }
+/* Respec wizard — unlike the entry cards (which must never scroll), the wizard's
+   content grows after "Build my kit", so it scrolls within its 94vh cap. */
+.wizard-box { width: min(720px, 94vw); overflow-y: auto; }
 .wizard-head { display: flex; justify-content: space-between; align-items: center; }
 .wizard-head h2 { margin: 0; }
 .wiz-step { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
