@@ -497,6 +497,14 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
 .linkchip { background: transparent; border: 1px solid var(--border); color: var(--muted); cursor: pointer; width: auto; padding: 2px 10px; }
 .linkchip:hover { border-color: var(--accent); color: var(--ink); }
 a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
+
+/* Startup update banner — sits above everything, including the entry overlay */
+.update-banner { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 100;
+  background: var(--panel); border: 1px solid var(--accent); border-radius: 8px;
+  padding: 9px 14px; font-size: 12.5px; line-height: 1.5; box-shadow: 0 4px 18px #000a;
+  max-width: min(92vw, 660px); }
+.update-banner.hidden { display: none; }
+.update-banner .linkbtn { margin-left: 10px; }
 @media (max-width: 560px) { .entry-cards { grid-template-columns: 1fr; } }
 /* The start window must NEVER scroll: on short windows the cards compress instead */
 @media (max-height: 840px) {

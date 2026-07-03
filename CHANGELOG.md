@@ -1,5 +1,17 @@
 # Hero Companion — What's New
 
+## 0.9.1 — unreleased
+
+- **Update prompts (opt-in)**: on first run the app asks once whether to check for
+  updates at startup. Say yes and new releases show an "Update now / Remind me
+  later" banner; say no and only the manual footer button ever checks.
+- **Standalone builds are truly AI-free**: no more "AI: checking…" chip or "Ask
+  Claude" box that could never work without a paid key. The panel is now the
+  Build Assistant — presets, goals, and instant Solve, all fully offline.
+  (Advanced: set HC_AI=1 with your own Claude key to re-enable the assistant.)
+- **Fixed**: the build wizard could clip its lower content on short windows with
+  no way to scroll; it now scrolls within the dialog.
+
 ## 0.9.0 — July 3, 2026
 
 **The "Hero Companion" release** — the app has a name, a face, its papers in order,

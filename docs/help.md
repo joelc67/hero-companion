@@ -123,7 +123,11 @@ all strictly opt-in — the app never sends anything on its own:
   math — if your build genuinely wins, it becomes the new shipped champion in a future
   update, with credit to you.
 - **check for updates** (bottom of the page) — compares your version against the
-  latest release on GitHub. Updates are never forced or automatic.
+  latest release on GitHub. On first run the app asks once whether to do this
+  check automatically at startup (it contacts github.com to compare version
+  numbers and sends nothing else); say yes and new releases greet you with an
+  "Update now / Remind me later" banner. Say no and the footer button is the
+  only check that ever runs. Updates are never downloaded or installed for you.
 
 A few words the tool uses precisely: a **champion** is the best certified build for an
 archetype + powersets + role combination — champions ship with the app and give the

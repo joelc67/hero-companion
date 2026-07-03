@@ -911,7 +911,43 @@ async function loadMeta() {
   try { META = await api("/meta"); } catch { META = null; }
   const f = $("app-version-foot");
   if (f && META) f.textContent = `v${META.app_version} · model v${META.model_version}`;
+  initUpdateFlow();
 }
+
+// ── Startup update flow (Mids-style, but opt-in) ────────────────────────────
+// First run asks ONCE whether to auto-check at startup — plainly worded, because
+// the tool promises to never contact anything without the user's say-so. The
+// answer persists; "on" checks GitHub Releases each launch and prompts with
+// Update now / Remind me later. The manual footer button always works regardless.
+function _ubShow(html) { const b = $("update-banner"); if (b) { b.innerHTML = html; b.classList.remove("hidden"); } }
+function _ubHide() { const b = $("update-banner"); if (b) b.classList.add("hidden"); }
+
+function initUpdateFlow() {
+  if (!META || !_urlReady((META.urls || {}).releases_api)) return;   // no online home configured
+  const pref = localStorage.getItem("hc_update_check");
+  if (pref === "off") return;
+  if (pref === null) {
+    _ubShow(`🔔 <b>Check for updates automatically when the app starts?</b> `
+      + `It contacts github.com to compare version numbers — nothing else is ever sent.`
+      + `<button class="linkbtn" onclick="setUpdatePref('on')">Yes, check at startup</button>`
+      + `<button class="linkbtn quiet" onclick="setUpdatePref('off')">No thanks</button>`);
+    return;
+  }
+  runStartupUpdateCheck();
+}
+window.setUpdatePref = function (v) {
+  localStorage.setItem("hc_update_check", v);
+  _ubHide();
+  if (v === "on") runStartupUpdateCheck();
+};
+async function runStartupUpdateCheck() {
+  const r = await api("/meta/update-check").catch(() => null);
+  if (!r || !r.ok || !r.update_available) return;    // up to date / offline → stay silent
+  _ubShow(`⬆ <b>Hero Companion v${escHtml(r.latest)}</b> is available — you have v${escHtml(r.current)}.`
+    + `<button class="linkbtn" onclick="window.open('${escHtml(r.url)}','_blank');_ubHide()">Update now</button>`
+    + `<button class="linkbtn quiet" onclick="_ubHide()">Remind me later</button>`);
+}
+window._ubHide = _ubHide;
 
 function reportBug() {
   if (!META) return;
