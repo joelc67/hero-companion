@@ -1,0 +1,2377 @@
+{
+ "common_ios": [
+  {
+   "uid": "Crafted_Accuracy",
+   "name": "Accuracy",
+   "enhances": [
+    "Accuracy"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "Acc.png"
+  },
+  {
+   "uid": "Crafted_Interrupt",
+   "name": "Interrupt Reduction",
+   "enhances": [
+    "Interrupt"
+   ],
+   "boosts": [
+    {
+     "aspect": "Interrupt",
+     "value": 0.509,
+     "schedule": 2
+    }
+   ],
+   "image": "Interrupt.png"
+  },
+  {
+   "uid": "Crafted_Confuse",
+   "name": "Confuse Duration",
+   "enhances": [
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Mez",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "Confuse.png"
+  },
+  {
+   "uid": "Crafted_Damage",
+   "name": "Damage Increase",
+   "enhances": [
+    "Damage"
+   ],
+   "boosts": [
+    {
+     "aspect": "Damage",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "Damage.png"
+  },
+  {
+   "uid": "Crafted_Defense_Buff",
+   "name": "Defense Buff",
+   "enhances": [
+    "Defense"
+   ],
+   "boosts": [
+    {
+     "aspect": "Defense",
+     "value": 0.255,
+     "schedule": 1
+    }
+   ],
+   "image": "Defbuff.png"
+  },
+  {
+   "uid": "Crafted_Defense_DeBuff",
+   "name": "Defense Debuff",
+   "enhances": [
+    "Defense"
+   ],
+   "boosts": [
+    {
+     "aspect": "Defense",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "DefDebuff.png"
+  },
+  {
+   "uid": "Crafted_Recovery",
+   "name": "Endurance Modification",
+   "enhances": [
+    "Endurance",
+    "Recovery"
+   ],
+   "boosts": [
+    {
+     "aspect": "Endurance",
+     "value": 0.424,
+     "schedule": 0
+    },
+    {
+     "aspect": "Recovery",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "EndMod.png"
+  },
+  {
+   "uid": "Crafted_Endurance_Discount",
+   "name": "Endurance Reduction",
+   "enhances": [
+    "EnduranceDiscount"
+   ],
+   "boosts": [
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "EndRdx.png"
+  },
+  {
+   "uid": "Crafted_Fear",
+   "name": "Fear Duration",
+   "enhances": [
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Mez",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "Fear.png"
+  },
+  {
+   "uid": "Crafted_Fly",
+   "name": "Flight Speed",
+   "enhances": [
+    "SpeedFlying"
+   ],
+   "boosts": [
+    {
+     "aspect": "SpeedFlying",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "Fly.png"
+  },
+  {
+   "uid": "Crafted_Heal",
+   "name": "Healing",
+   "enhances": [
+    "Absorb",
+    "Heal",
+    "HitPoints",
+    "Regeneration"
+   ],
+   "boosts": [
+    {
+     "aspect": "Heal",
+     "value": 0.424,
+     "schedule": 0
+    },
+    {
+     "aspect": "HitPoints",
+     "value": 0.424,
+     "schedule": 0
+    },
+    {
+     "aspect": "Regeneration",
+     "value": 0.424,
+     "schedule": 0
+    },
+    {
+     "aspect": "Absorb",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "Heal.png"
+  },
+  {
+   "uid": "Crafted_Hold",
+   "name": "Hold Duration",
+   "enhances": [
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Mez",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "Hold.png"
+  },
+  {
+   "uid": "Crafted_Immobilize",
+   "name": "Immobilisation Duration",
+   "enhances": [
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Mez",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "Immob.png"
+  },
+  {
+   "uid": "Crafted_Intangible",
+   "name": "Intangibility Duration",
+   "enhances": [
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Mez",
+     "value": 0.424,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "Intan.png"
+  },
+  {
+   "uid": "Crafted_Jump",
+   "name": "Jumping",
+   "enhances": [
+    "JumpHeight",
+    "SpeedJumping"
+   ],
+   "boosts": [
+    {
+     "aspect": "JumpHeight",
+     "value": 0.424,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedJumping",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "Jump.png"
+  },
+  {
+   "uid": "Crafted_Knockback",
+   "name": "Knockback Distance",
+   "enhances": [
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Mez",
+     "value": 0.764,
+     "schedule": 3
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.764,
+     "schedule": 3
+    }
+   ],
+   "image": "Knock.png"
+  },
+  {
+   "uid": "Crafted_Range",
+   "name": "Range",
+   "enhances": [
+    "Range"
+   ],
+   "boosts": [
+    {
+     "aspect": "Range",
+     "value": 0.255,
+     "schedule": 1
+    }
+   ],
+   "image": "Range.png"
+  },
+  {
+   "uid": "Crafted_Recharge",
+   "name": "Recharge Reduction",
+   "enhances": [
+    "RechargeTime"
+   ],
+   "boosts": [
+    {
+     "aspect": "RechargeTime",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "Recharge.png"
+  },
+  {
+   "uid": "Crafted_Res_Damage",
+   "name": "Resist Damage",
+   "enhances": [
+    "Resistance"
+   ],
+   "boosts": [
+    {
+     "aspect": "Resistance",
+     "value": 0.255,
+     "schedule": 1
+    }
+   ],
+   "image": "DamRes.png"
+  },
+  {
+   "uid": "Crafted_Run",
+   "name": "Run Speed",
+   "enhances": [
+    "SpeedRunning"
+   ],
+   "boosts": [
+    {
+     "aspect": "SpeedRunning",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "Run.png"
+  },
+  {
+   "uid": "Crafted_Sleep",
+   "name": "Sleep Duration",
+   "enhances": [
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Mez",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "Sleep.png"
+  },
+  {
+   "uid": "Crafted_Snare",
+   "name": "Slow",
+   "enhances": [
+    "Slow",
+    "SpeedFlying",
+    "SpeedJumping",
+    "SpeedRunning"
+   ],
+   "boosts": [
+    {
+     "aspect": "SpeedFlying",
+     "value": 0.424,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedJumping",
+     "value": 0.424,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedRunning",
+     "value": 0.424,
+     "schedule": 0
+    },
+    {
+     "aspect": "Slow",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "Slow.png"
+  },
+  {
+   "uid": "Crafted_Stun",
+   "name": "Disorient Duration",
+   "enhances": [
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Mez",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "Stun.png"
+  },
+  {
+   "uid": "Crafted_Taunt",
+   "name": "Threat Duration",
+   "enhances": [
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Mez",
+     "value": 0.424,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.424,
+     "schedule": 0
+    }
+   ],
+   "image": "Taunt.png"
+  },
+  {
+   "uid": "Crafted_ToHit_Buff",
+   "name": "To Hit Buff",
+   "enhances": [
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "ToHit",
+     "value": 0.255,
+     "schedule": 1
+    }
+   ],
+   "image": "ToHitBuff.png"
+  },
+  {
+   "uid": "Crafted_ToHit_DeBuff",
+   "name": "To Hit Debuff",
+   "enhances": [
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "ToHit",
+     "value": 0.255,
+     "schedule": 1
+    }
+   ],
+   "image": "ToHitDebuff.png"
+  }
+ ],
+ "special_ios": [
+  {
+   "uid": "Hamidon_Damage_Range",
+   "name": "Centriole Exposure",
+   "enhances": [
+    "Damage",
+    "Range"
+   ],
+   "boosts": [
+    {
+     "aspect": "Damage",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Range",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "HOCentriole.png"
+  },
+  {
+   "uid": "Hamidon_Buff_Endurance_Discount",
+   "name": "Cytoskeleton Exposure",
+   "enhances": [
+    "Defense",
+    "EnduranceDiscount",
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "ToHit",
+     "value": 0.2,
+     "schedule": 1
+    },
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Defense",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "HOCytoskeleton.png"
+  },
+  {
+   "uid": "Hamidon_Accuracy_Mez",
+   "name": "Endoplasm Exposure",
+   "enhances": [
+    "Accuracy",
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HOEndoplasm.png"
+  },
+  {
+   "uid": "Hamidon_DeBuff_Endurance_Discount",
+   "name": "Enzyme Exposure",
+   "enhances": [
+    "Defense",
+    "EnduranceDiscount",
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Defense",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "ToHit",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "HOEnzyme.png"
+  },
+  {
+   "uid": "Hamidon_Heal_Endurance_Discount",
+   "name": "Golgi Exposure",
+   "enhances": [
+    "Absorb",
+    "EnduranceDiscount",
+    "Heal",
+    "HitPoints",
+    "Regeneration"
+   ],
+   "boosts": [
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Heal",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "HitPoints",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Regeneration",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Absorb",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HOGolgi.png"
+  },
+  {
+   "uid": "Hamidon_DeBuff_Accuracy",
+   "name": "Lysosome Exposure",
+   "enhances": [
+    "Accuracy",
+    "Defense",
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Defense",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "ToHit",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "HOLysosome.png"
+  },
+  {
+   "uid": "Hamidon_Buff_Recharge",
+   "name": "Membrane Exposure",
+   "enhances": [
+    "Defense",
+    "RechargeTime",
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "RechargeTime",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Defense",
+     "value": 0.2,
+     "schedule": 1
+    },
+    {
+     "aspect": "ToHit",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "HOMembrane.png"
+  },
+  {
+   "uid": "Hamidon_Travel_Endurance_Discount",
+   "name": "Microfilament Exposure",
+   "enhances": [
+    "EnduranceDiscount",
+    "JumpHeight",
+    "SpeedFlying",
+    "SpeedJumping",
+    "SpeedRunning"
+   ],
+   "boosts": [
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedFlying",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "JumpHeight",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedJumping",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedRunning",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HOMicrofilament.png"
+  },
+  {
+   "uid": "Hamidon_Damage_Accuracy",
+   "name": "Nucleolus Exposure",
+   "enhances": [
+    "Accuracy",
+    "Damage"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Damage",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HONucleolus.png"
+  },
+  {
+   "uid": "Hamidon_Damage_Mez",
+   "name": "Peroxisome Exposure",
+   "enhances": [
+    "Damage",
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Damage",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HOPeroxisome.png"
+  },
+  {
+   "uid": "Hamidon_Res_Damage_Endurance_Discount",
+   "name": "Ribosome Exposure",
+   "enhances": [
+    "EnduranceDiscount",
+    "Resistance"
+   ],
+   "boosts": [
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Resistance",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "HORibosome.png"
+  },
+  {
+   "uid": "Hydra_DeBuff_Endurance_Discount",
+   "name": "Anti-Protons",
+   "enhances": [
+    "Defense",
+    "EnduranceDiscount",
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "ToHit",
+     "value": 0.2,
+     "schedule": 1
+    },
+    {
+     "aspect": "Defense",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HYAntiProton.png"
+  },
+  {
+   "uid": "Hydra_DeBuff_Accuracy",
+   "name": "Delta Particles",
+   "enhances": [
+    "Accuracy",
+    "Defense",
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Defense",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "ToHit",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "HYDelta.png"
+  },
+  {
+   "uid": "Hydra_Res_Damage_Endurance_Discount",
+   "name": "Electron Particles",
+   "enhances": [
+    "Endurance",
+    "Resistance"
+   ],
+   "boosts": [
+    {
+     "aspect": "Endurance",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Resistance",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "HYElectron.png"
+  },
+  {
+   "uid": "Hydra_Damage_Mez",
+   "name": "Gluon Particles",
+   "enhances": [
+    "Damage",
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Damage",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HYGluon.png"
+  },
+  {
+   "uid": "Hydra_Accuracy_Mez",
+   "name": "Graviton Particles",
+   "enhances": [
+    "Accuracy",
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HYGraviton.png"
+  },
+  {
+   "uid": "Hydra_Damage_Accuracy",
+   "name": "Neutrino Particles",
+   "enhances": [
+    "Accuracy",
+    "Damage"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Damage",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HYNeutrino.png"
+  },
+  {
+   "uid": "Hydra_Damage_Range",
+   "name": "Neutron Particles",
+   "enhances": [
+    "Damage",
+    "Range"
+   ],
+   "boosts": [
+    {
+     "aspect": "Damage",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Range",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "HYNeutron.png"
+  },
+  {
+   "uid": "Hydra_Heal_Endurance_Discount",
+   "name": "Positron Particles",
+   "enhances": [
+    "Absorb",
+    "Endurance",
+    "Heal",
+    "HitPoints",
+    "Regeneration"
+   ],
+   "boosts": [
+    {
+     "aspect": "Heal",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "HitPoints",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Endurance",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Absorb",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Regeneration",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HYPositron.png"
+  },
+  {
+   "uid": "Hydra_Buff_Endurance_Discount",
+   "name": "Proton Particles",
+   "enhances": [
+    "Defense",
+    "EnduranceDiscount",
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "ToHit",
+     "value": 0.2,
+     "schedule": 1
+    },
+    {
+     "aspect": "Defense",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "HYProton.png"
+  },
+  {
+   "uid": "Hydra_Buff_Recharge",
+   "name": "Quark Partciles",
+   "enhances": [
+    "Defense",
+    "RechargeTime",
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "Defense",
+     "value": 0.2,
+     "schedule": 1
+    },
+    {
+     "aspect": "ToHit",
+     "value": 0.2,
+     "schedule": 1
+    },
+    {
+     "aspect": "RechargeTime",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HYQuark.png"
+  },
+  {
+   "uid": "Hydra_Travel_Endurance_Discount",
+   "name": "Theta Particles",
+   "enhances": [
+    "EnduranceDiscount",
+    "JumpHeight",
+    "SpeedFlying",
+    "SpeedJumping",
+    "SpeedRunning"
+   ],
+   "boosts": [
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedJumping",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedFlying",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedRunning",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "JumpHeight",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HYTheta.png"
+  },
+  {
+   "uid": "Titan_Damage_Mez",
+   "name": "Amethyst Shard",
+   "enhances": [
+    "Damage",
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Damage",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "TNAmethyst.png"
+  },
+  {
+   "uid": "Titan_Accuracy_Mez",
+   "name": "Calcite Shard",
+   "enhances": [
+    "Accuracy",
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "TNCalcite.png"
+  },
+  {
+   "uid": "Titan_Buff_Recharge",
+   "name": "Citrine Shard",
+   "enhances": [
+    "Defense",
+    "RechargeTime",
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "Defense",
+     "value": 0.2,
+     "schedule": 1
+    },
+    {
+     "aspect": "ToHit",
+     "value": 0.2,
+     "schedule": 1
+    },
+    {
+     "aspect": "RechargeTime",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "TNCitrine.png"
+  },
+  {
+   "uid": "Titan_Damage_Accuracy",
+   "name": "Diamond Shard",
+   "enhances": [
+    "Accuracy",
+    "Damage"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Damage",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "TNDiamond.png"
+  },
+  {
+   "uid": "Titan_DeBuff_Accuracy",
+   "name": "Gypsum Shard",
+   "enhances": [
+    "Accuracy",
+    "Defense",
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "ToHit",
+     "value": 0.2,
+     "schedule": 1
+    },
+    {
+     "aspect": "Defense",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "TNGypsum.png"
+  },
+  {
+   "uid": "Titan_Heal_Endurance_Discount",
+   "name": "Kyanite SHard",
+   "enhances": [
+    "Absorb",
+    "EnduranceDiscount",
+    "Heal",
+    "HitPoints",
+    "Regeneration"
+   ],
+   "boosts": [
+    {
+     "aspect": "Heal",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Absorb",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "HitPoints",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Regeneration",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "TNKyanite.png"
+  },
+  {
+   "uid": "Titan_Res_Damage_Endurance_Discount",
+   "name": "Peridont Shard",
+   "enhances": [
+    "EnduranceDiscount",
+    "Resistance"
+   ],
+   "boosts": [
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Resistance",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "TNPeridont.png"
+  },
+  {
+   "uid": "Titan_Damage_Range",
+   "name": "Quartz Shard",
+   "enhances": [
+    "Damage",
+    "Range"
+   ],
+   "boosts": [
+    {
+     "aspect": "Damage",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Range",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "TNQuartz.png"
+  },
+  {
+   "uid": "Titan_Travel_Endurance_Discount",
+   "name": "Selenite Shard",
+   "enhances": [
+    "EnduranceDiscount",
+    "JumpHeight",
+    "SpeedFlying",
+    "SpeedJumping",
+    "SpeedRunning"
+   ],
+   "boosts": [
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedFlying",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "JumpHeight",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedJumping",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedRunning",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "TNSelenite.png"
+  },
+  {
+   "uid": "Titan_Buff_Endurance_Discount",
+   "name": "Tanzenite Shard",
+   "enhances": [
+    "Defense",
+    "EnduranceDiscount",
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Defense",
+     "value": 0.2,
+     "schedule": 1
+    },
+    {
+     "aspect": "ToHit",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "TNTanzenite.png"
+  },
+  {
+   "uid": "Titan_DeBuff_Endurance_Discount",
+   "name": "Zeolite Shard",
+   "enhances": [
+    "Defense",
+    "EnduranceDiscount",
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "ToHit",
+     "value": 0.2,
+     "schedule": 1
+    },
+    {
+     "aspect": "Defense",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "TNZeolite.png"
+  },
+  {
+   "uid": "Dsync_Accuracy_Mez",
+   "name": "D-Sync Binding",
+   "enhances": [
+    "Accuracy",
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "Dsync_Buff_Endurance_Discount",
+   "name": "D-Sync Elusivity",
+   "enhances": [
+    "Defense",
+    "EnduranceDiscount",
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "ToHit",
+     "value": 0.2,
+     "schedule": 1
+    },
+    {
+     "aspect": "Defense",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "Dsync_Buff_Recharge",
+   "name": "D-Sync Shifting",
+   "enhances": [
+    "Defense",
+    "RechargeTime",
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "RechargeTime",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "ToHit",
+     "value": 0.2,
+     "schedule": 1
+    },
+    {
+     "aspect": "Defense",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "Dsync_Damage_Accuracy",
+   "name": "D-Sync Empowerment",
+   "enhances": [
+    "Accuracy",
+    "Damage"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Damage",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "Dsync_Damage_Mez",
+   "name": "D-Sync Containment",
+   "enhances": [
+    "Damage",
+    "Mez"
+   ],
+   "boosts": [
+    {
+     "aspect": "Damage",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "Dsync_Damage_Range",
+   "name": "D-Sync Extension",
+   "enhances": [
+    "Damage",
+    "Range"
+   ],
+   "boosts": [
+    {
+     "aspect": "Damage",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Range",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "Dsync_Debuff_Accuracy",
+   "name": "D-Sync Obfuscation",
+   "enhances": [
+    "Accuracy",
+    "Defense",
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Defense",
+     "value": 0.2,
+     "schedule": 1
+    },
+    {
+     "aspect": "ToHit",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "Dsync_Debuff_Endurance_Discount",
+   "name": "D-Sync Marginalization",
+   "enhances": [
+    "Defense",
+    "EnduranceDiscount",
+    "ToHit"
+   ],
+   "boosts": [
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Defense",
+     "value": 0.2,
+     "schedule": 1
+    },
+    {
+     "aspect": "ToHit",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "Dsync_Heal_Endurance_Discount",
+   "name": "D-Sync Reconstitution",
+   "enhances": [
+    "Absorb",
+    "EnduranceDiscount",
+    "Heal",
+    "HitPoints",
+    "Regeneration"
+   ],
+   "boosts": [
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Heal",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Absorb",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "HitPoints",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Regeneration",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "Dsync_Res_Damage_Endurance_Discount",
+   "name": "D-Sync Fortification",
+   "enhances": [
+    "EnduranceDiscount",
+    "Resistance"
+   ],
+   "boosts": [
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Resistance",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "Dsync_Travel_Endurance_Discount",
+   "name": "D-Sync Acceleration",
+   "enhances": [
+    "EnduranceDiscount",
+    "JumpHeight",
+    "SpeedFlying",
+    "SpeedJumping",
+    "SpeedRunning"
+   ],
+   "boosts": [
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedFlying",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "JumpHeight",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedJumping",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedRunning",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "DSync_Accuracy_Range",
+   "name": "D-Sync Guidance",
+   "enhances": [
+    "Accuracy",
+    "Range"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Range",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "DSync_Heal_Recharge",
+   "name": "D-Sync Reconstruction",
+   "enhances": [
+    "Absorb",
+    "Heal",
+    "HitPoints",
+    "RechargeTime",
+    "Regeneration"
+   ],
+   "boosts": [
+    {
+     "aspect": "Heal",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "RechargeTime",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Absorb",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "HitPoints",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Regeneration",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "DSync_Heal_Accuracy",
+   "name": "D-Sync Siphon",
+   "enhances": [
+    "Absorb",
+    "Accuracy",
+    "Heal",
+    "HitPoints",
+    "Regeneration"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Heal",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Absorb",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "HitPoints",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Regeneration",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "DSync_Damage_Recharge",
+   "name": "D-Sync Optimization",
+   "enhances": [
+    "Damage",
+    "RechargeTime"
+   ],
+   "boosts": [
+    {
+     "aspect": "Damage",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "RechargeTime",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "DSync_Damage_Endurance_Discount",
+   "name": "D-Sync Efficiency",
+   "enhances": [
+    "Damage",
+    "EnduranceDiscount"
+   ],
+   "boosts": [
+    {
+     "aspect": "Damage",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "DSync_Endurance_Modification_Recharge",
+   "name": "D-Sync Conduit",
+   "enhances": [
+    "Endurance",
+    "RechargeTime",
+    "Recovery"
+   ],
+   "boosts": [
+    {
+     "aspect": "Endurance",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "RechargeTime",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Recovery",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "DSync_Endurance_Modification_Accuracy",
+   "name": "D-Sync Drain",
+   "enhances": [
+    "Accuracy",
+    "Endurance",
+    "Recovery"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Endurance",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Recovery",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "DSync_Slow_Recharge_Endurance_Discount",
+   "name": "D-Sync Deceleration",
+   "enhances": [
+    "EnduranceDiscount",
+    "RechargeTime",
+    "Slow",
+    "SpeedFlying",
+    "SpeedJumping",
+    "SpeedRunning"
+   ],
+   "boosts": [
+    {
+     "aspect": "Slow",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedFlying",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedRunning",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedJumping",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "RechargeTime",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "DSync_Threat_Accuracy_Recharge",
+   "name": "D-Sync Provocation",
+   "enhances": [
+    "Accuracy",
+    "Mez",
+    "RechargeTime"
+   ],
+   "boosts": [
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "RechargeTime",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "dsync.png"
+  },
+  {
+   "uid": "Hamidon_Accuracy_Range",
+   "name": "Microvillus Exposure",
+   "enhances": [
+    "Accuracy",
+    "Range"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Range",
+     "value": 0.2,
+     "schedule": 1
+    }
+   ],
+   "image": "HO_Accuracy-Range.png"
+  },
+  {
+   "uid": "Hamidon_Heal_Recharge",
+   "name": "Amyloplast Exposure",
+   "enhances": [
+    "Absorb",
+    "Heal",
+    "HitPoints",
+    "RechargeTime",
+    "Regeneration"
+   ],
+   "boosts": [
+    {
+     "aspect": "Heal",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Absorb",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "HitPoints",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Regeneration",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "RechargeTime",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HO_Heal-Rech.png"
+  },
+  {
+   "uid": "Hamidon_Heal_Accuracy",
+   "name": "Chloroplast Exposure",
+   "enhances": [
+    "Absorb",
+    "Accuracy",
+    "Heal",
+    "HitPoints",
+    "Regeneration"
+   ],
+   "boosts": [
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Heal",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "HitPoints",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Regeneration",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Absorb",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HO_Heal-Accuracy.png"
+  },
+  {
+   "uid": "Hamidon_Damage_Recharge",
+   "name": "Chromatin Exposure",
+   "enhances": [
+    "Damage",
+    "RechargeTime"
+   ],
+   "boosts": [
+    {
+     "aspect": "Damage",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "RechargeTime",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HO_Damage-Recharge.png"
+  },
+  {
+   "uid": "Hamidon_Damage_Endurance_Discount",
+   "name": "Karyoplasm Exposure",
+   "enhances": [
+    "Damage",
+    "EnduranceDiscount"
+   ],
+   "boosts": [
+    {
+     "aspect": "Damage",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HO_Damage-Endurance.png"
+  },
+  {
+   "uid": "Hamidon_Endurance_Modification_Recharge",
+   "name": "Vesicle Exposure",
+   "enhances": [
+    "Endurance",
+    "RechargeTime",
+    "Recovery"
+   ],
+   "boosts": [
+    {
+     "aspect": "Endurance",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Recovery",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "RechargeTime",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HO_EndMod-Rech.png"
+  },
+  {
+   "uid": "Hamidon_Endurance_Modification_Accuracy",
+   "name": "Microtubule Exposure",
+   "enhances": [
+    "Accuracy",
+    "Endurance",
+    "Recovery"
+   ],
+   "boosts": [
+    {
+     "aspect": "Endurance",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Recovery",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HO_EndMod-Acc.png"
+  },
+  {
+   "uid": "Hamidon_Slow_Recharge_Endurance_Discount",
+   "name": "Stereocilia Exposure",
+   "enhances": [
+    "EnduranceDiscount",
+    "RechargeTime",
+    "Slow",
+    "SpeedFlying",
+    "SpeedJumping",
+    "SpeedRunning"
+   ],
+   "boosts": [
+    {
+     "aspect": "Slow",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedRunning",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedJumping",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "SpeedFlying",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "EnduranceDiscount",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "RechargeTime",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HO_Slow-Endurance-Recharge.png"
+  },
+  {
+   "uid": "Hamidon_Threat_Accuracy_Recharge",
+   "name": "Ectosome Exposure",
+   "enhances": [
+    "Accuracy",
+    "Mez",
+    "RechargeTime"
+   ],
+   "boosts": [
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Mez",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "Accuracy",
+     "value": 0.333,
+     "schedule": 0
+    },
+    {
+     "aspect": "RechargeTime",
+     "value": 0.333,
+     "schedule": 0
+    }
+   ],
+   "image": "HO_Threat-Accuracy-Recharge.png"
+  }
+ ]
+}

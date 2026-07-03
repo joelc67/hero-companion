@@ -1,0 +1,309 @@
+{
+ "damage_procs": {
+  "Melee Damage": [
+   {
+    "set": "Touch of Death",
+    "uid": "Crafted_Touch_of_Death_F",
+    "type": "Negative",
+    "premium": false
+   },
+   {
+    "set": "Mako's Bite",
+    "uid": "Crafted_Makos_Bite_F",
+    "type": "Lethal",
+    "premium": false
+   },
+   {
+    "set": "Hecatomb",
+    "uid": "Crafted_Hecatomb_F",
+    "type": "Negative",
+    "premium": true
+   },
+   {
+    "set": "Gladiator's Strike",
+    "uid": "Crafted_Gladiators_Strike_F",
+    "type": "Smashing",
+    "premium": false
+   }
+  ],
+  "PBAoE Damage": [
+   {
+    "set": "Eradication",
+    "uid": "Crafted_Eradication_F",
+    "type": "Energy",
+    "premium": false
+   },
+   {
+    "set": "Scirocco's Dervish",
+    "uid": "Crafted_Sciroccos_Dervish_F",
+    "type": "Lethal",
+    "premium": false
+   },
+   {
+    "set": "Obliteration",
+    "uid": "Crafted_Obliteration_F",
+    "type": "Smashing",
+    "premium": false
+   },
+   {
+    "set": "Armageddon",
+    "uid": "Crafted_Armageddon_F",
+    "type": "Fire",
+    "premium": true
+   }
+  ],
+  "Targeted AoE Damage": [
+   {
+    "set": "Positron's Blast",
+    "uid": "Crafted_Positrons_Blast_F",
+    "type": "Energy",
+    "premium": false
+   },
+   {
+    "set": "Javelin Volley",
+    "uid": "Crafted_Javelin_Volley_F",
+    "type": "Lethal",
+    "premium": false
+   },
+   {
+    "set": "Bombardment",
+    "uid": "Crafted_Bombardment_F",
+    "type": "Fire",
+    "premium": false
+   }
+  ],
+  "Sniper Attacks": [
+   {
+    "set": "Sting of the Manticore",
+    "uid": "Crafted_Sting_of_the_Manticore_F",
+    "type": "Toxic",
+    "premium": false
+   }
+  ],
+  "Holds": [
+   {
+    "set": "Neuronic Shutdown",
+    "uid": "Crafted_Neuronic_Shutdown_F",
+    "type": "Psionic",
+    "premium": false
+   },
+   {
+    "set": "Ghost Widow's Embrace",
+    "uid": "Crafted_Ghost_Widows_Embrace_F",
+    "type": "Psionic",
+    "premium": false
+   },
+   {
+    "set": "Unbreakable Constraint",
+    "uid": "Crafted_Unbreakable_Constraint_F",
+    "type": "Smashing",
+    "premium": true
+   },
+   {
+    "set": "Gladiator's Net",
+    "uid": "Crafted_Gladiators_Net_F",
+    "type": "Lethal",
+    "premium": false
+   }
+  ],
+  "Immobilize": [
+   {
+    "set": "Trap of the Hunter",
+    "uid": "Crafted_Trap_of_the_Hunter_F",
+    "type": "Lethal",
+    "premium": false
+   }
+  ],
+  "Slow Movement": [
+   {
+    "set": "Impeded Swiftness",
+    "uid": "Crafted_Impeded_Swiftness_F",
+    "type": "Smashing",
+    "premium": false
+   },
+   {
+    "set": "Ice Mistral's Torment",
+    "uid": "Crafted_Ice_Mistrals_Torment_F",
+    "type": "Cold",
+    "premium": false
+   }
+  ],
+  "Fear": [
+   {
+    "set": "Glimpse of the Abyss",
+    "uid": "Crafted_Glimpse_of_the_Abyss_F",
+    "type": "Psionic",
+    "premium": false
+   }
+  ],
+  "Confuse": [
+   {
+    "set": "Cacophany",
+    "uid": "Crafted_Cacophany_F",
+    "type": "Energy",
+    "premium": false
+   },
+   {
+    "set": "Malaise's Illusions",
+    "uid": "Crafted_Malaises_Illusions_F",
+    "type": "Psionic",
+    "premium": false
+   }
+  ],
+  "Defense Debuff": [
+   {
+    "set": "Touch of Lady Grey",
+    "uid": "Crafted_Touch_of_Lady_Grey_F",
+    "type": "Negative",
+    "premium": false
+   }
+  ],
+  "Knockback": [
+   {
+    "set": "Explosive Strike",
+    "uid": "Crafted_Explosive_Strike_C",
+    "type": "Smashing",
+    "premium": false
+   }
+  ],
+  "Threat Duration": [
+   {
+    "set": "Perfect Zinger",
+    "uid": "Crafted_Perfect_Zinger_F",
+    "type": "Psi",
+    "premium": false
+   }
+  ],
+  "Ranged Damage": [
+   {
+    "set": "Apocalypse",
+    "uid": "Crafted_Apocalypse_F",
+    "type": "Negative",
+    "premium": true
+   },
+   {
+    "set": "Gladiator's Javelin",
+    "uid": "Crafted_Gladiators_Javelin_F",
+    "type": "Toxic",
+    "premium": true
+   }
+  ],
+  "Accurate Healing": [
+   {
+    "set": "Touch of the Nictus",
+    "uid": "Crafted_Touch_of_the_Nictus_F",
+    "type": "?",
+    "premium": false
+   }
+  ],
+  "Accurate Defense Debuff": [
+   {
+    "set": "Shield Breaker",
+    "uid": "Crafted_Shield_Breaker_F",
+    "type": "Lethal",
+    "premium": false
+   }
+  ],
+  "Accurate To-Hit Debuff": [
+   {
+    "set": "Cloud Senses",
+    "uid": "Crafted_Cloud_Senses_F",
+    "type": "?",
+    "premium": false
+   }
+  ],
+  "Blaster Archetype Sets": [
+   {
+    "set": "Blaster's Wrath",
+    "uid": "Attuned_Blasters_Wrath_F",
+    "type": "Fire",
+    "premium": false
+   },
+   {
+    "set": "Superior Blaster's Wrath",
+    "uid": "Superior_Attuned_Superior_Blasters_Wrath_F",
+    "type": "Fire",
+    "premium": true
+   }
+  ],
+  "Controller Archetype Sets": [
+   {
+    "set": "Will of the Controller",
+    "uid": "Attuned_Will_of_the_Controller_F",
+    "type": "Psionic",
+    "premium": true
+   },
+   {
+    "set": "Superior Will of the Controller",
+    "uid": "Superior_Attuned_Superior_Will_of_the_Controller_F",
+    "type": "Psionic",
+    "premium": true
+   }
+  ],
+  "Corruptor Archetype Sets": [
+   {
+    "set": "Malice of the Corruptor",
+    "uid": "Attuned_Malice_of_the_Corruptor_F",
+    "type": "?",
+    "premium": false
+   },
+   {
+    "set": "Superior Malice of the Corruptor",
+    "uid": "Superior_Attuned_Superior_Malice_of_the_Corruptor_F",
+    "type": "?",
+    "premium": true
+   }
+  ],
+  "Dominator Archetype Sets": [
+   {
+    "set": "Ascendency of the Dominator",
+    "uid": "Attuned_Ascendency_of_the_Dominator_F",
+    "type": "?",
+    "premium": false
+   },
+   {
+    "set": "Superior Ascendency of the Dominator",
+    "uid": "Superior_Attuned_Superior_Ascendency_of_the_Dominator_F",
+    "type": "?",
+    "premium": true
+   }
+  ],
+  "Universal Damage": [
+   {
+    "set": "Overwhelming Force",
+    "uid": "Attuned_Overwhelming_Force_F",
+    "type": "?",
+    "premium": false
+   },
+   {
+    "set": "Cupid's Crush",
+    "uid": "Attuned_Cupids_Crush_F",
+    "type": "?",
+    "premium": false
+   }
+  ]
+ },
+ "res_procs": {
+  "Defense Debuff": [
+   {
+    "set": "Achilles' Heel",
+    "uid": "Crafted_Achilles_Heel_C",
+    "premium": false
+   }
+  ],
+  "PBAoE Damage": [
+   {
+    "set": "Fury of the Gladiator",
+    "uid": "Crafted_Fury_of_the_Gladiator_F",
+    "premium": false
+   }
+  ],
+  "Targeted AoE Damage": [
+   {
+    "set": "Annihilation",
+    "uid": "Crafted_Annihilation_F",
+    "premium": false
+   }
+  ]
+ }
+}

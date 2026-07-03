@@ -1,0 +1,4642 @@
+{
+ "entities": {
+  "Pets_ResistAll": {
+   "display_name": "ResistAll",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.ResistAll"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_ResistAll_NoFly": {
+   "display_name": "ResistAll NoFly",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.ResistAll_NoFly"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_TarPatch": {
+   "display_name": "TarPatch",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.TarPatch"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Bonfire": {
+   "display_name": "Bonfire",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Bonfire"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_FireImp": {
+   "display_name": "Fire Imp",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Imp"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_FreezingRain": {
+   "display_name": "Freezing Rain",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.FreezingRain"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_FreezingRain_Controller": {
+   "display_name": "Freezing Rain",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.FreezingRain_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_IceStorm": {
+   "display_name": "Ice Storm",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.IceStorm"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Corruptor_IceStorm": {
+   "display_name": "Ice Storm",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Corruptor_IceStorm"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Epic_IceStorm": {
+   "display_name": "Ice Storm",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Epic_IceStorm"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Blizzard": {
+   "display_name": "Blizzard",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Blizzard"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Corruptor_Blizzard": {
+   "display_name": "Blizzard",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Corruptor_Blizzard"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_RainofFire": {
+   "display_name": "Rain of Fire",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.RainofFire"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Corruptor_RainofFire": {
+   "display_name": "Rain of Fire",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Corruptor_RainofFire"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_IcePatch": {
+   "display_name": "Ice Patch",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.IcePatch"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_IceSlick": {
+   "display_name": "Ice Slick",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.IceSlick"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Hibernate": {
+   "display_name": "Hibernate",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Hibernate"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_VoltaicSentinel": {
+   "display_name": "Voltaic Sentinel",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.VoltaicSentinel"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_VoltaicSentinel_Defender": {
+   "display_name": "Voltaic Sentinel",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.VoltaicSentinel_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_VoltaicSentinel_Critter": {
+   "display_name": "Voltaic Sentinel Critter",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.VoltaicSentinel_Critter"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_VoltaicSentinel_Corruptor": {
+   "display_name": "Voltaic Sentinel Critter",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.VoltaicSentinel_Corruptor"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_JackFrost": {
+   "display_name": "Jack Frost",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Jack"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_FlameThrower": {
+   "display_name": "Flame Thrower",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.FlameThrower"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Corruptor_FlameThrower": {
+   "display_name": "Flame Thrower",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Corruptor_FlameThrower"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_LightningStorm": {
+   "display_name": "Lightning Storm",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.LightningStorm"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_LightningStorm_Controller": {
+   "display_name": "LightningStorm Controller",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.LightningStorm_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_LightningStorm_NPC": {
+   "display_name": "LightningStorm NPC",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.LightningStorm_NPC"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Tornado": {
+   "display_name": "Tornado",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Tornado"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Decoy_Dominator": {
+   "display_name": "Decoy",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Decoy_Dominator"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Decoy": {
+   "display_name": "Decoy",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Decoy"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Terror": {
+   "display_name": "Terror",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Terror"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Phantasm": {
+   "display_name": "Phantasm",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Phantasm"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_DecoyPhantasm": {
+   "display_name": "Decoy Phantasm",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.DecoyPhantasm"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Phoenix": {
+   "display_name": "Phoenix",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Phoenix"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Burn": {
+   "display_name": "Burn",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Burn"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_TestBurn": {
+   "display_name": "Burn",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.TestBurn"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Earthquake": {
+   "display_name": "Earthquake",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Earthquake"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Quicksand": {
+   "display_name": "Quicksand",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Quicksand"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_VolcanicGas": {
+   "display_name": "Volcanic Gasses",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.VolcanicGasses"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_VolcanicGeyser": {
+   "display_name": "Volcanic Geyser",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.VolcanicGeyser"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Stone": {
+   "display_name": "Stone",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Stone"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Transfusion": {
+   "display_name": "Transfusion",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Transfusion"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Transference": {
+   "display_name": "Transference",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Transference"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_SiphonPower": {
+   "display_name": "Siphon Power",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.SiphonPower"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_KineticTransferDebuff": {
+   "display_name": "Kinetic Transfer",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.KineticTransferDebuff"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_KineticTransferBuff": {
+   "display_name": "Kinetic Transfer",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.KineticTransferBuff"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_KineticTransferBuffSelf": {
+   "display_name": "Kinetic Transfer",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.KineticTransferBuffSelf"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Transfusion_Controller": {
+   "display_name": "Transfusion",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Transfusion_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Transference_Controller": {
+   "display_name": "Transference",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Transference_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_SiphonPower_Controller": {
+   "display_name": "Siphon Power",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.SiphonPower_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_KineticTransferDebuff_Controller": {
+   "display_name": "Kinetic Transfer",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.KineticTransferDebuff_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_KineticTransferBuff_Controller": {
+   "display_name": "Kinetic Transfer",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.KineticTransferBuff_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_KineticTransferBuffSelf_Controller": {
+   "display_name": "Kinetic Transfer",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.KineticTransferBuffSelf_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Twilight": {
+   "display_name": "Twilight",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Twilight"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Howling": {
+   "display_name": "Howling",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Howling"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_HowlingVillain": {
+   "display_name": "Howling",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.HowlingVillain"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Target": {
+   "display_name": "Target",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Target"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Vahzilok_Explode": {
+   "display_name": "Vahzilok Explosion",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Vahzilok_Explode"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_NemesisBang": {
+   "display_name": "Nemesis",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.NemesisBang"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Tree": {
+   "display_name": "Tree",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Tree"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Fungi": {
+   "display_name": "Fungi",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Fungi"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Cairn": {
+   "display_name": "Cairn",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Cairn"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Quartz": {
+   "display_name": "Quartz",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Quartz"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Caltrops": {
+   "display_name": "Caltrops",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Caltrops"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Mine": {
+   "display_name": "Mine",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Mine"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Mine": {
+   "display_name": "Mine",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Villain_Mine"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Bomb": {
+   "display_name": "Bomb",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Bomb"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_VillainBomb": {
+   "display_name": "Bomb",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.VillainBomb"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Turret": {
+   "display_name": "Turret",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Turret"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_ThunderStrikePunch": {
+   "display_name": "Thunder Strike",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.ThunderStrikePunch"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_MonkeyGas": {
+   "display_name": "Monkey Gas",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.MonkeyGas"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Transponder": {
+   "display_name": "Transponder",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Transponder"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_RiktiPortal": {
+   "display_name": "Portal",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.RiktiPortal"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Guard": {
+   "display_name": "Guard",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Guard"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_NemesisGas": {
+   "display_name": "Nemesis Gas",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.NemesisGas"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Blind": {
+   "display_name": "Blind",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Blind"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_BounceWorld": {
+   "display_name": "Bounce World",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.BounceWorld"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_DarkServant": {
+   "display_name": "Dark Servant",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.DarkServant"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_TPFoeTaunt": {
+   "display_name": "Teleport Foe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.TPFoeTaunt"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Fallout": {
+   "display_name": "Fallout",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Fallout"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Fallout_Controller": {
+   "display_name": "Fallout",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Fallout_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Singularity": {
+   "display_name": "Singularity",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Singularity"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Tech_Lab_Inherent": {
+   "display_name": "Tech Lab",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Tech_Lab_Inherent"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Tech_Lab_Damage": {
+   "display_name": "Tech Lab",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Tech_Lab_Damage"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Tech_Lab_DeBuff_Dam": {
+   "display_name": "Tech Lab",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Tech_Lab_DeBuff_Dam"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Tech_Lab_Buff_Dam": {
+   "display_name": "Tech Lab",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Tech_Lab_Buff_Dam"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Tech_Lab_DeBuff_Acc": {
+   "display_name": "Tech Lab",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Tech_Lab_DeBuff_Acc"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Tech_Lab_Buff_Acc": {
+   "display_name": "Tech Lab",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Tech_Lab_Buff_Acc"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Tech_Lab_Slow": {
+   "display_name": "Tech Lab",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Tech_Lab_Slow"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Tech_Lab_Haste": {
+   "display_name": "Tech Lab",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Tech_Lab_Haste"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Tech_Lab_DeBuff_Regeneration": {
+   "display_name": "Tech Lab",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Tech_Lab_DeBuff_Regeneration"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Tech_Lab_Buff_Regeneration": {
+   "display_name": "Tech Lab",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Tech_Lab_Buff_Regeneration"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Tech_Lab_DeBuff_Recovery": {
+   "display_name": "Tech Lab",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Tech_Lab_DeBuff_Recovery"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Tech_Lab_Buff_Recovery": {
+   "display_name": "Tech Lab",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Tech_Lab_Buff_Recovery"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_TempPower_Warwolf_Wistel_Pet": {
+   "display_name": "Warwolf",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.TempPower_Warwolf_Wistel_Pet"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_RainofArrows_Visual": {
+   "display_name": "Rain of Arrows",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.RainofArrows_Visual"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_RainofArrows": {
+   "display_name": "Rain of Arrows",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.RainofArrows"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_RainofArrows_Defender": {
+   "display_name": "Rain of Arrows",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.RainofArrows_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Liquefy": {
+   "display_name": "Liquefy",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Liquefy"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_ShockCont": {
+   "display_name": "Liquefy",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.ShockCont"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Liquefy_Defender": {
+   "display_name": "Liquefy",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Liquefy_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_ShockDef": {
+   "display_name": "Liquefy",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.ShockDef"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_StickyArrow": {
+   "display_name": "Sticky Arrow",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.StickyArrow"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_PoisonGasArrow": {
+   "display_name": "Poison Gas Arrow",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.PoisonGasArrow"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_PoisonGasArrow_Controller": {
+   "display_name": "Poison Gas Arrow",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.PoisonGasArrow_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_SonicDebuffArrow": {
+   "display_name": "Disruption Arrow",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.SonicDebuffArrow"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_SonicDebuffArrow_Controller": {
+   "display_name": "Disruption Arrow",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.SonicDebuffArrow_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_OilSlickOil": {
+   "display_name": "Oil Slick",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.OilSlickOil"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_OilSlickTarget": {
+   "display_name": "Oil Slick",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.OilSlickTarget"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_OilSlickBurn": {
+   "display_name": "Oil Slick Fire",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.OilSlickBurn"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_TempPower_Amy_Jonsson_Pet": {
+   "display_name": "Amy Jonsson",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.TempPower_Amy_Jonsson_Pet"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_PoisonGasGrenade": {
+   "display_name": "PoisonGasGrenade",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.PoisonGasGrenade"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Shivan_Summon_FX": {
+   "display_name": "Shivan Summon fx",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Shivan_Summon_FX"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_High_Explosives": {
+   "display_name": "High Explosives",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.High_Explosives"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_High_Explosives_Tech": {
+   "display_name": "High Explosives Tech",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.High_Explosives_Tech"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Raid_Disruptor_Pylon_Nuke": {
+   "display_name": "Raid Disruptor Pylon Nuke",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Raid_Disruptor_Pylon_Nuke"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Raid_Disruptor_Pylon": {
+   "display_name": "Raid Disruptor Pylon",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Raid_Disruptor_Pylon"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Raid_Disruptor_Pylon_Create": {
+   "display_name": "Raid Disruptor Pylon Create",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Raid_Disruptor_Pylon_Create"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Raid_Disruptor_Pylon_Kill": {
+   "display_name": "Raid Disruptor Pylon Kill",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Raid_Disruptor_Pylon_Kill"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Warburg_Nuclear": {
+   "display_name": "Warburg Nuclear",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Warburg_Nuclear"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Warburg_Biological": {
+   "display_name": "Warburg Biological",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Warburg_Biological"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Warburg_Chemical": {
+   "display_name": "Warburg Chemical",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Warburg_Chemical"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Warburg_Afterglow": {
+   "display_name": "Warburg Afterglow",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Warburg_Afterglow"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Infected_Explosion": {
+   "display_name": "Infected Explosion",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Infected_Explosion"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Longbow_Heavy": {
+   "display_name": "Longbow Heavy",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Longbow_Heavy"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Air_Bomb": {
+   "display_name": "Air Bomb",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Air_Bomb"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Snowangel": {
+   "display_name": "Snowangel",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Snowangel"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_LightFaerie": {
+   "display_name": "LightFaerie",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.LightFaerie"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_DarkFaerie": {
+   "display_name": "DarkFaerie",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.DarkFaerie"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_FaerieResists": {
+   "display_name": "FaerieResists",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.FaerieResists"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Lost_Cure_Counter": {
+   "display_name": "Lost Cure Counter",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Lost_Cure_Counter"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Sleet_Defender": {
+   "display_name": "Sleet",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Sleet_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_HeatLossDebuff_Defender": {
+   "display_name": "Heat Loss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.HeatLossDebuff_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_HeatLossBuff_Defender": {
+   "display_name": "Heat Loss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.HeatLossBuff_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_MMTwilight": {
+   "display_name": "Twilight",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.MMTwilight"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_HeatLossDebuff": {
+   "display_name": "Heat Loss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.HeatLossDebuff"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_HeatLossBuff": {
+   "display_name": "Heat Loss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.HeatLossBuff"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Thorntrops": {
+   "display_name": "Thorntrops",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Thorntrops"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Sleet": {
+   "display_name": "Sleet",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Sleet"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Spirit_Tree": {
+   "display_name": "Spirit Tree",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Spirit_Tree"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Fly_Trap": {
+   "display_name": "Fly Trap",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Fly_Trap"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Creeper_Patch": {
+   "display_name": "Creeper Patch",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Creeper_Patch"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Creeper_Entangle": {
+   "display_name": "Creeper Patch",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Creeper_Entangle"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Creeper_Vine": {
+   "display_name": "Creeper Vine",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Creeper_Vine"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Poison_Trap": {
+   "display_name": "Poison Trap",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Poison_Trap"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Poison_Poison_Gas": {
+   "display_name": "Poison Trap",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Poison_Poison_Gas"
+   ],
+   "upgrade_powers": []
+  },
+  "Villain_Pets_Noxious_Gas": {
+   "display_name": "Noxious Gas",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Noxious_Gas"
+   ],
+   "upgrade_powers": []
+  },
+  "Villain_Pets_Kuji_Kiri": {
+   "display_name": "Kuji Kiri",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Kuji_Kiri"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_FF_Generator": {
+   "display_name": "Force Field Generator",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Traps_FF_Generator"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Seeker1": {
+   "display_name": "Seeker 1",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Traps_Seeker1"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Seeker2": {
+   "display_name": "Seeker 2",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Traps_Seeker2"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Seeker3": {
+   "display_name": "Seeker 3",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Traps_Seeker3"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Triage_Beacon": {
+   "display_name": "Triage Beacon",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Traps_Triage_Beacon"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Bomb": {
+   "display_name": "Bomb",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Traps_Bomb"
+   ],
+   "upgrade_powers": []
+  },
+  "Villain_Pets_Traps_Set_TimeBomb": {
+   "display_name": "Time Bomb",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Traps_Set_TimeBomb"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_TimeBomb": {
+   "display_name": "Bomb",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Traps_TimeBomb"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Poison_Trap": {
+   "display_name": "Poison Trap",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Traps_Poison_Trap"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Poison_Gas": {
+   "display_name": "Poison Gas",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Traps_Poison_Gas"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Acid_Mortar": {
+   "display_name": "Acid Mortar",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Traps_Acid_Mortar"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Trip_Mine": {
+   "display_name": "Mine",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Traps_Trip_Mine"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Lightning_Rod": {
+   "display_name": "Electric Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Lightning_Rod"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Power_Surge": {
+   "display_name": "Electric Armor",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Power_Surge"
+   ],
+   "upgrade_powers": []
+  },
+  "Villain_Pets_Chain_Lightning": {
+   "display_name": "Chain Lightning",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Chain_Lightning"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Fortunata_Seer": {
+   "display_name": "Fortunata Seer",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Fortunata_Seer"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Fortunata_Mistress": {
+   "display_name": "Fortunata Mistress",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Fortunata_Mistress"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Blood_Widow": {
+   "display_name": "Blood Widow",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Blood_Widow"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Night_Widow": {
+   "display_name": "Night Widow",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Night_Widow"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Arachnobot_Blaster": {
+   "display_name": "Arachnobot Blaster",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Arachnobot_Blaster"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Arachnobot_Spiderling": {
+   "display_name": "Arachnobot Spiderling",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Arachnobot_Spiderling"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Arachnobot_Disrupter": {
+   "display_name": "Arachnobot Disrupter",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Arachnobot_Disrupter"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Toxic_Tarantula": {
+   "display_name": "Toxic Tarantula",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Toxic_Tarantula"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Water_Spout": {
+   "display_name": "Water Spout",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Water_Spout"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Blue_Corolax": {
+   "display_name": "Coralax Blue Hybrid",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Corolax_Blue_Hybrid"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Red_Corolax": {
+   "display_name": "Coralax Red Hybrid",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Corolax_Red_Hybrid"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Coral_Guardian_Warder": {
+   "display_name": "Coral Guardian Warder",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Coral_Guardian_Warder"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Coral_Guardian_Sentinel": {
+   "display_name": "Coral Guardian Sentinel",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Coral_Guardian_Sentinel"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Mu_Adept": {
+   "display_name": "Mu Adept",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Mu_Adept"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Mu_Guardian": {
+   "display_name": "Mu Guardian",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Mu_Guardian"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Mu_Striker": {
+   "display_name": "Mu Striker",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Mu_Striker"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_LightDrone1": {
+   "display_name": "Photon Seeker",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Kheldian_Pets.Energy_Drone1"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_LightDrone2": {
+   "display_name": "Photon Seeker",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Kheldian_Pets.Energy_Drone2"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_LightDrone3": {
+   "display_name": "Photon Seeker",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Kheldian_Pets.Energy_Drone3"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Warshade_Extraction": {
+   "display_name": "Extracted Essence",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Kheldian_Pets.Warshade_Extraction"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Omega_Bomb": {
+   "display_name": "Omega Bomb",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Kheldian_Pets.Omega_Bomb"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Shield_Charge": {
+   "display_name": "Shield Charge",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Shield_Charge_AoE"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Shield_Charge_Scrapper": {
+   "display_name": "Shield Charge (Scrapper)",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Shield_Charge_AoE2"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Epic_Quicksand": {
+   "display_name": "Quicksand",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Epic_Quicksand"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Patron_Powers_Water_Spout_Stalker": {
+   "display_name": "Water Spout (Stalker)",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Water_Spout_Stalker"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Imp": {
+   "display_name": "Imp",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Imp"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Epic_FreezingRain": {
+   "display_name": "Freezing Rain",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Epic_FreezingRain"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_VoltaicSentinel_Dominator": {
+   "display_name": "Voltaic Sentinel Critter",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.VoltaicSentinel_Dominator"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Jack": {
+   "display_name": "Jack",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Jack"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_VolcanicGasses": {
+   "display_name": "Volcanic Gasses",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.VolcanicGasses"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Villain_Mine": {
+   "display_name": "Mine",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Villain_Mine"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Bomb_Defender": {
+   "display_name": "Bomb",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Bomb_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_ChargeCone": {
+   "display_name": "Charge Cone",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.ChargeCone"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_ChargeImpact": {
+   "display_name": "Charge Impact",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.ChargeImpact"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Dust_Devil": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Dust_Devil"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_FF_Generator_Defender": {
+   "display_name": "Force Field Generator",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Traps_FF_Generator_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Seeker1_Defender": {
+   "display_name": "Seeker 1",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Traps_Seeker1_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Seeker2_Defender": {
+   "display_name": "Seeker 2",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Traps_Seeker2_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Seeker3_Defender": {
+   "display_name": "Seeker 3",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Traps_Seeker3_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Set_TimeBomb_Defender": {
+   "display_name": "Time Bomb",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Traps_Set_TimeBomb_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_TimeBomb_Defender": {
+   "display_name": "Bomb",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Traps_TimeBomb_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Poison_Trap_Defender": {
+   "display_name": "Poison Trap",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Traps_Poison_Trap_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Poison_Gas_Defender": {
+   "display_name": "Poison Gas",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Traps_Poison_Gas_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Acid_Mortar_Defender": {
+   "display_name": "Acid Mortar",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Traps_Acid_Mortar_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Trip_Mine_Defender": {
+   "display_name": "Mine",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Traps_Trip_Mine_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Induction_Jump1_Scrapper": {
+   "display_name": "Chain Induction Jump 1",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Chain_Induction_Jump1_Scrapper"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Induction_Jump2_Scrapper": {
+   "display_name": "Chain Induction Jump 2",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Chain_Induction_Jump2_Scrapper"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Induction_Jump3_Scrapper": {
+   "display_name": "Chain Induction Jump 3",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Chain_Induction_Jump3_Scrapper"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Induction_Jump4_Scrapper": {
+   "display_name": "Chain Induction Jump 4",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Chain_Induction_Jump4_Scrapper"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Lightning_Rod_Scrapper": {
+   "display_name": "Electric Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Lightning_Rod_Scrapper"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Lightning_Rod_Tanker": {
+   "display_name": "Electric Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Lightning_Rod_Tanker"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Noxious_Gas": {
+   "display_name": "Noxious Gas",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Noxious_Gas"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Kuji_Kiri": {
+   "display_name": "Kuji Kiri",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Kuji_Kiri"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Set_TimeBomb": {
+   "display_name": "Time Bomb",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Traps_Set_TimeBomb"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Lightning": {
+   "display_name": "Chain Lightning",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Chain_Lightning"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Induction_Jump1": {
+   "display_name": "Chain Induction Jump 1",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Chain_Induction_Jump1"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Induction_Jump2": {
+   "display_name": "Chain Induction Jump 2",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Chain_Induction_Jump2"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Induction_Jump3": {
+   "display_name": "Chain Induction Jump 3",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Chain_Induction_Jump3"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Induction_Jump4": {
+   "display_name": "Chain Induction Jump 4",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Chain_Induction_Jump4"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Shield_Charge_Brute": {
+   "display_name": "Shield Defense",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Shield_Charge_AoE"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Shield_Charge_Tanker": {
+   "display_name": "Shield Defense",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Shield_Charge_AoE2"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Fortunata_Seer": {
+   "display_name": "Fortunata Seer",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Fortunata_Seer"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Fortunata_Mistress": {
+   "display_name": "Fortunata Mistress",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Fortunata_Mistress"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Blood_Widow": {
+   "display_name": "Blood Widow",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Blood_Widow"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Night_Widow": {
+   "display_name": "Night Widow",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Night_Widow"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Arachnobot_Blaster": {
+   "display_name": "Arachnobot Blaster",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Arachnobot_Blaster"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Arachnobot_Spiderling": {
+   "display_name": "Arachnobot Spiderling",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Arachnobot_Spiderling"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Arachnobot_Disrupter": {
+   "display_name": "Arachnobot Disrupter",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Arachnobot_Disrupter"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Toxic_Tarantula": {
+   "display_name": "Toxic Tarantula",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Toxic_Tarantula"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Water_Spout": {
+   "display_name": "Water Spout",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Water_Spout"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Water_Spout_Stalker": {
+   "display_name": "Water Spout",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Water_Spout_Stalker"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Corolax_Blue_Hybrid": {
+   "display_name": "Coralax Blue Hybrid",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Corolax_Blue_Hybrid"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Corolax_Red_Hybrid": {
+   "display_name": "Coralax Red Hybrid",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Corolax_Red_Hybrid"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Coral_Guardian_Warder": {
+   "display_name": "Coral Guardian Warder",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Coral_Guardian_Warder"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Coral_Guardian_Sentinel": {
+   "display_name": "Coral Guardian Sentinel",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Coral_Guardian_Sentinel"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Mu_Adept": {
+   "display_name": "Mu Adept",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Mu_Adept"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Mu_Guardian": {
+   "display_name": "Mu Guardian",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Mu_Guardian"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Mu_Striker": {
+   "display_name": "Mu Striker",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Mu_Striker"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_RainofArrows_Corruptor": {
+   "display_name": "Rain of Arrows",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.RainofArrows_Corruptor"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_OilSlickOil_Corruptor": {
+   "display_name": "Oil Slick",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.OilSlickOil_Corruptor"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_OilSlickTarget_Corruptor": {
+   "display_name": "Oil Slick",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.OilSlickTarget_Corruptor"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_OilSlickBurn_Corruptor": {
+   "display_name": "Oil Slick Fire",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.OilSlickBurn_Corruptor"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Lightning_Rod_Brute": {
+   "display_name": "Electric Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Lightning_Rod_Brute"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Lightning_Rod_Stalker": {
+   "display_name": "Electric Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Lightning_Rod_Stalker"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Shield_Charge_AoE3": {
+   "display_name": "Shield Defense",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Shield_Charge_AoE3"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_RainofArrows_Critter": {
+   "display_name": "Rain of Arrows",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.RainofArrows_Critter"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_PPD_Hard_Suit": {
+   "display_name": "PPD Hard Suit",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.PPD_Hard_Suit"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Crab_Spider": {
+   "display_name": "Crab Spider",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Crab_Spider"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Embraced_IceStorm": {
+   "display_name": "Ice Storm",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Embraced_IceStorm"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Embraced_Quicksand": {
+   "display_name": "Quicksand",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Embraced_Quicksand"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Embraced_Lightning_Rod_Tanker": {
+   "display_name": "Electric Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Embraced_Lightning_Rod_Tanker"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Embraced_Lightning_Rod_Brute": {
+   "display_name": "Electric Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Embraced_Lightning_Rod_Brute"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Embraced_Lightning_Rod_Scrapper": {
+   "display_name": "Electric Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Embraced_Lightning_Rod_Scrapper"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_PPD_Sergeant": {
+   "display_name": "PPD Sergeant",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.PPD_Sergeant"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Resistance_Rifle": {
+   "display_name": "Resistance Rifle",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Resistance_Rifle"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Jolt_Controller_Jump1": {
+   "display_name": "Chain Jolt Jump 1",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Chain_Jolt_Controller_Jump1"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Jolt_Controller_Jump2": {
+   "display_name": "Chain Jolt Jump 2",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Chain_Jolt_Controller_Jump2"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Jolt_Controller_Jump3": {
+   "display_name": "Chain Jolt Jump 3",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Chain_Jolt_Controller_Jump3"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Stun_Controller_Jump1": {
+   "display_name": "Chain Stun Jump 1",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Chain_Stun_Controller_Jump1"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Confuse_Controller_Jump1": {
+   "display_name": "Chain Confuse Jump 1",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Chain_Confuse_Controller_Jump1"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Confuse_Controller_Jump2": {
+   "display_name": "Chain Confuse Jump 2",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Chain_Confuse_Controller_Jump2"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Confuse_Controller_Jump3": {
+   "display_name": "Chain Confuse Jump 3",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Chain_Confuse_Controller_Jump3"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Static_Field_Controller": {
+   "display_name": "Static Field Controller",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Static_Field_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Static_Field_End_Recovery_Controller": {
+   "display_name": "Static Field Endurance Recovery Controller",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Static_Field_End_Recovery_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Gremlin": {
+   "display_name": "Gremlin",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Gremlin"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Jolt_Gremlin_Jump1": {
+   "display_name": "Chain Jolt Jump 1",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Chain_Jolt_Gremlin_Jump1"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Jolt_Gremlin_Jump2": {
+   "display_name": "Chain Jolt Jump 2",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Chain_Jolt_Gremlin_Jump2"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Jolt_Gremlin_Jump3": {
+   "display_name": "Chain Jolt Jump 3",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Chain_Jolt_Gremlin_Jump3"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Jolt_Dominator_Jump1": {
+   "display_name": "Chain Jolt Jump 1",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Chain_Jolt_Dominator_Jump1"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Jolt_Dominator_Jump2": {
+   "display_name": "Chain Jolt Jump 2",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Chain_Jolt_Dominator_Jump2"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Jolt_Dominator_Jump3": {
+   "display_name": "Chain Jolt Jump 3",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Chain_Jolt_Dominator_Jump3"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Stun_Dominator_Jump1": {
+   "display_name": "Chain Stun Jump 1",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Chain_Stun_Dominator_Jump1"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Confuse_Dominator_Jump1": {
+   "display_name": "Chain Confuse Jump 1",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Chain_Confuse_Dominator_Jump1"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Confuse_Dominator_Jump2": {
+   "display_name": "Chain Confuse Jump 2",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Chain_Confuse_Dominator_Jump2"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Chain_Confuse_Dominator_Jump3": {
+   "display_name": "Chain Confuse Jump 3",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Chain_Confuse_Dominator_Jump3"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Static_Field_Dominator": {
+   "display_name": "Static Field Dominator",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Static_Field_Dominator"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Static_Field_End_Recovery_Dominator": {
+   "display_name": "Static Field Endurance Recovery Dominator",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Static_Field_End_Recovery_Dominator"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Shield_Charge_AoE": {
+   "display_name": "Shield Defense",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Shield_Charge_AoE"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Shield_Charge_AoE2": {
+   "display_name": "Shield Defense",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Shield_Charge_AoE2"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Defender_RainofFire": {
+   "display_name": "Rain of Fire",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Defender_RainofFire"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Liquefy_MM": {
+   "display_name": "Liquefy",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Liquefy_MM"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_ShockMM": {
+   "display_name": "Liquefy",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.ShockMM"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Spring_Attack": {
+   "display_name": "Spring Attack",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Spring_Attack"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_DistortionField_Defender": {
+   "display_name": "Time Manipulation",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.DistortionField_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_DistortionField_Controller": {
+   "display_name": "Time Manipulation",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.DistortionField_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Defenders_Bastion_Proc": {
+   "display_name": "Defender's Bastion",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Defenders_Bastion_Proc"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Superior_Defenders_Bastion_Proc": {
+   "display_name": "Superior Defender's Bastion",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Superior_Defenders_Bastion_Proc"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Venomous_Gas": {
+   "display_name": "Venomous Gas",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Venomous_Gas"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_DisintegrateSpread": {
+   "display_name": "Disintegrate Spread",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.DisintegrateSpread"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_DistortionField_Corruptor": {
+   "display_name": "Time Manipulation",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.DistortionField_Corruptor"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_DistortionField_Mastermind": {
+   "display_name": "Time Manipulation",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.DistortionField_Mastermind"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_ResistAll_NoFly_Fast": {
+   "display_name": "ResistAll NoFly Fast",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.ResistAll_NoFly_Fast"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_DimensionShift": {
+   "display_name": "DimensionShift",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.DimensionShift"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Contaminated_Lightning_Rod_Tanker": {
+   "display_name": "Electric Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Contaminated_Lightning_Rod_Tanker"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Contaminated_Lightning_Rod_Brute": {
+   "display_name": "Electric Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Contaminated_Lightning_Rod_Brute"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Contaminated_Lightning_Rod_Scrapper": {
+   "display_name": "Electric Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Contaminated_Lightning_Rod_Scrapper"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Contaminated_Lightning_Rod_Stalker": {
+   "display_name": "Electric Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Contaminated_Lightning_Rod_Stalker"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Titan_Weapons": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Titan_Weapons"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Titan_Weapons_Tanker": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Titan_Weapons_Tanker"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_SoulAbsorptionBuff": {
+   "display_name": "Soul Absorption",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.SoulAbsorptionBuff"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Team_Transport": {
+   "display_name": "Team Transport",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Team_Transport"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Titan_Weapons_Brute": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Titan_Weapons_Brute"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Shade": {
+   "display_name": "Shade",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Shade"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Shadow_Field": {
+   "display_name": "Shadow Field",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Shadow_Field"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Shadow_Field_Dominator": {
+   "display_name": "Shadow Field",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Shadow_Field_Dominator"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Shadow_Field_Dominator_Domination": {
+   "display_name": "Shadow Field",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Shadow_Field_Dominator_Domination"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Umbra_Beast": {
+   "display_name": "Umbra Beast",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Umbra_Beast"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Broad_Sword_Assassins_Strike": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Broad_Sword_Assassins_Strike"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Claws_Assassins_Strike": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Claws_Assassins_Strike"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Dark_Melee_Assassins_Strike": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Dark_Melee_Assassins_Strike"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Dual_Blades_Assassins_Strike": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Dual_Blades_Assassins_Strike"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Electric_Melee_Assassins_Strike": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Electric_Melee_Assassins_Strike"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Energy_Melee_Assassins_Strike": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Energy_Melee_Assassins_Strike"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Kinetic_Melee_Assassins_Strike": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Kinetic_Melee_Assassins_Strike"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Martial_Arts_Assassins_Strike": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Martial_Arts_Assassins_Strike"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Ninja_Blade_Assassins_Strike": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Ninja_Blade_Assassins_Strike"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Spines_Assassins_Strike": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Spines_Assassins_Strike"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Street_Justice_Assassins_Strike": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Street_Justice_Assassins_Strike"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Staff_Fighting_Assassins_Strike": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Staff_Fighting_Assassins_Strike"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_ResistAllFast": {
+   "display_name": "ResistAll",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.ResistAllFast"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Whirlpool_Defender": {
+   "display_name": "Whirlpool",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Whirlpool_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Whirlpool_Blaster": {
+   "display_name": "Whirlpool",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Whirlpool_Blaster"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Whirlpool_Corruptor": {
+   "display_name": "Whirlpool",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Whirlpool_Corruptor"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Water_Blast_Defender": {
+   "display_name": "Water Blast",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Water_Blast_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Water_Blast_Blaster": {
+   "display_name": "Water Blast",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Water_Blast_Blaster"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Water_Blast_Corruptor": {
+   "display_name": "Water Blast",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Water_Blast_Corruptor"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Lifegiving_Spores_Defender": {
+   "display_name": "Lifegiving Spores",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Lifegiving_Spores_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Lifegiving_Spores_Controller": {
+   "display_name": "Lifegiving Spores",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Lifegiving_Spores_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Lifegiving_Spores_Corruptor": {
+   "display_name": "Lifegiving Spores",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Lifegiving_Spores_Corruptor"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Lifegiving_Spores_Mastermind": {
+   "display_name": "Lifegiving Spores",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Lifegiving_Spores_Mastermind"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Nature_Affinity_Defender": {
+   "display_name": "Nature Affinity",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Nature_Affinity_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Nature_Affinity_Controller": {
+   "display_name": "Nature Affinity",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Nature_Affinity_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Nature_Affinity_Corruptor": {
+   "display_name": "Nature Affinity",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Nature_Affinity_Corruptor"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Nature_Affinity_Mastermind": {
+   "display_name": "Nature Affinity",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Nature_Affinity_Mastermind"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Overpowering_Presence": {
+   "display_name": "Overpowering Presence",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Overpowering_Presence"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Vigilant_Assault_Proc": {
+   "display_name": "Vigilant Assault",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Vigilant_Assault_Proc"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Superior_Vigilant_Assault_Proc": {
+   "display_name": "Superior Vigilant Assault",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Superior_Vigilant_Assault_Proc"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Enflame": {
+   "display_name": "Enflame",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Enflame"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Psionic_Melee_Assassins_Strike": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Psionic_Melee_Assassins_Strike"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Scourging_Blast_Proc": {
+   "display_name": "Scourging Blast",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Scourging_Blast_Proc"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Superior_Scourging_Blast_Proc": {
+   "display_name": "Superior Scourging Blast",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Superior_Scourging_Blast_Proc"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Dominating_Grasp": {
+   "display_name": "Dominating Grasp",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Dominating_Grasp"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_IceStorm_Defender": {
+   "display_name": "Ice Storm",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.IceStorm_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Defender_Blizzard": {
+   "display_name": "Blizzard",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Defender_Blizzard"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Blaster_Archery_Snipe": {
+   "display_name": "Archery",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Blaster_Archery_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Blaster_AR_Snipe": {
+   "display_name": "Assault Rifle",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Blaster_AR_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Blaster_BR_Snipe": {
+   "display_name": "Beam Rifle",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Blaster_BR_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Blaster_Dark_Snipe": {
+   "display_name": "Dark Blast",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Blaster_Dark_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Blaster_Electric_Snipe": {
+   "display_name": "Electric Blast",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Blaster_Electric_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Blaster_Energy_Snipe": {
+   "display_name": "Energy Blast",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Blaster_Energy_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Blaster_Fire_Snipe": {
+   "display_name": "Fire Blast",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Blaster_Fire_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Blaster_Psychic_Snipe": {
+   "display_name": "Psychic Blast",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Blaster_Psychic_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Blaster_Radiation_Snipe": {
+   "display_name": "Radiation Blast",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Blaster_Radiation_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Defender_Archery_Snipe": {
+   "display_name": "Archery",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Defender_Archery_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Defender_AR_Snipe": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Defender_AR_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Defender_BR_Snipe": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Defender_BR_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Defender_Dark_Snipe": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Defender_Dark_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Defender_Electric_Snipe": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Defender_Electric_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Defender_Energy_Snipe": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Defender_Energy_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Defender_Fire_Snipe": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Defender_Fire_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Defender_Psychic_Snipe": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Defender_Psychic_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Defender_Radiation_Snipe": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Defender_Radiation_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Pool_Medicine_AidOther": {
+   "display_name": "Medicine",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Pool_Medicine_AidOther"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Pool_Leadership_VictoryRush": {
+   "display_name": "Leadership",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Pool_Leadership_VictoryRush"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Wind_Control_Vacuum_Controller": {
+   "display_name": "Wind Control",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Wind_Control_Vacuum_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Wind_Control_Vacuum_Dominator": {
+   "display_name": "Wind Control",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Wind_Control_Vacuum_Dominator"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Wind_Control_Vortex": {
+   "display_name": "Wind Control",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Wind_Control_Vortex"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Wind_Control_HailOfDebris": {
+   "display_name": "Wind Control",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Wind_Control_HailOfDebris"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Savage_Melee_Savage_Leap": {
+   "display_name": "Savage Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Savage_Melee_Savage_Leap"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Martial_Manipulation_Burst": {
+   "display_name": "Martial Manipulation",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Martial_Manipulation_Burst"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Experimentation_Corrosive_Vial": {
+   "display_name": "Experimentation",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Experimentation_Corrosive_Vial"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Radiation_Melee": {
+   "display_name": "Radiation Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Radiation_Melee"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Scrapper_Savage_Melee": {
+   "display_name": "Savage Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Scrapper_Savage_Melee"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Brute_Savage_Melee": {
+   "display_name": "Savage Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Brute_Savage_Melee"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Tanker_Savage_Melee": {
+   "display_name": "Savage Melee",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Tanker_Savage_Melee"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Trick_Shot_Jump1": {
+   "display_name": "Trick Shot Jump 1",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Trick_Shot_Jump1"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Trick_Shot_Jump2": {
+   "display_name": "Trick Shot Jump 2",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Trick_Shot_Jump2"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Trick_Shot_Jump3": {
+   "display_name": "Trick Shot Jump 3",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Trick_Shot_Jump3"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Trick_Shot_Jump4": {
+   "display_name": "Trick Shot Jump 4",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Trick_Shot_Jump4"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Savage_Melee_Assassins_Strike": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Savage_Melee_Assassins_Strike"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Radiation_Melee_Assassins_Corruption": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Radiation_Melee_Assassins_Corruption"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Dominator_DarkAssault_Snipe": {
+   "display_name": "Dominator DarkAssault Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Dominator_DarkAssault_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Dominator_ElectricityAssault_Snipe": {
+   "display_name": "Dominator ElectricityAssault Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Dominator_ElectricityAssault_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Dominator_EnergyAssault_Snipe": {
+   "display_name": "Dominator EnergyAssault Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Dominator_EnergyAssault_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Dominator_FieryAssault_Snipe": {
+   "display_name": "Dominator FieryAssault Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Dominator_FieryAssault_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Dominator_KineticAssault_Snipe": {
+   "display_name": "Dominator KineticAssault Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Dominator_KineticAssault_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Dominator_MartialAssault_Snipe": {
+   "display_name": "Dominator MartialAssault Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Dominator_MartialAssault_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Dominator_PsionicAssault_Snipe": {
+   "display_name": "Dominator PsionicAssault Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Dominator_PsionicAssault_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Corruptor_Archery_Snipe": {
+   "display_name": "Corruptor Archery Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Corruptor_Archery_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Corruptor_AssaultRifle_Snipe": {
+   "display_name": "Corruptor AssaultRifle Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Corruptor_AssaultRifle_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Corruptor_BeamRifle_Snipe": {
+   "display_name": "Corruptor BeamRifle Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Corruptor_BeamRifle_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Corruptor_DarkBlast_Snipe": {
+   "display_name": "Corruptor DarkBlast Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Corruptor_DarkBlast_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Corruptor_ElectricalBlast_Snipe": {
+   "display_name": "Corruptor ElectricalBlast Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Corruptor_ElectricalBlast_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Corruptor_EnergyBlast_Snipe": {
+   "display_name": "Corruptor EnergyBlast Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Corruptor_EnergyBlast_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Corruptor_FireBlast_Snipe": {
+   "display_name": "Corruptor FireBlast Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Corruptor_FireBlast_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Corruptor_PsychicBlast_Snipe": {
+   "display_name": "Corruptor PsychicBlast Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Corruptor_PsychicBlast_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Corruptor_RadiationBlast_Snipe": {
+   "display_name": "Corruptor RadiationBlast Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Corruptor_RadiationBlast_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Stalker_EpicSoulMastery_Snipe": {
+   "display_name": "Stalker EpicSoulMastery Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Stalker_EpicSoulMastery_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Stalker_EpicMaceMastery_Snipe": {
+   "display_name": "Stalker EpicMaceMastery Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Stalker_EpicMaceMastery_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Stalker_EpicMuMastery_Snipe": {
+   "display_name": "Stalker EpicMuMastery Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Stalker_EpicMuMastery_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_IceStorm_Sentinel": {
+   "display_name": "Ice Storm",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.IceStorm_Sentinel"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Blizzard_Sentinel": {
+   "display_name": "Blizzard",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Blizzard_Sentinel"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_RainofFire_Sentinel": {
+   "display_name": "Rain of Fire",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.RainofFire_Sentinel"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_VoltaicSentinel_Sentinel": {
+   "display_name": "Voltaic Sentinel",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.VoltaicSentinel_Sentinel"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Bomb_Controller": {
+   "display_name": "Bomb",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Bomb_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_RainofArrows_Sentinel": {
+   "display_name": "Rain of Arrows",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.RainofArrows_Sentinel"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_StickyArrow_Blaster": {
+   "display_name": "Sticky Arrow",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.StickyArrow_Blaster"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Seeker1_Controller": {
+   "display_name": "Seeker 1",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Traps_Seeker1_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Seeker2_Controller": {
+   "display_name": "Seeker 2",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Traps_Seeker2_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Acid_Mortar_Controller": {
+   "display_name": "Acid Mortar",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Traps_Acid_Mortar_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Trip_Mine_Controller": {
+   "display_name": "Mine",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Traps_Trip_Mine_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Whirlpool_Sentinel": {
+   "display_name": "Whirlpool",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Whirlpool_Sentinel"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_RadiationCloud_Visual": {
+   "display_name": "Radiation Control",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.RadiationCloud_Visual"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Shield_Charge_AoE4": {
+   "display_name": "Shield Defense",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Shield_Charge_AoE4"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Ice_Melee_Assassins_Frost": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Ice_Melee_Assassins_Frost"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Fiery_Melee_Assassins_Blaze": {
+   "display_name": "",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Fiery_Melee_Assassins_Blaze"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Dominator_RadioactiveAssault_Snipe": {
+   "display_name": "Dominator RadioactiveAssault Snipe",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Dominator_RadioactiveAssault_Snipe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_": {
+   "display_name": "You are able to harness the power of Radiation to crush your foes in close quarters. Radiation Melee attacks have a chance to inflict the Contaminated state on a target for a moderate amount of time. Powers that deal greater damage, have a longer recharge time and animation time have a greater chance to inflict Contaminated. Hitting Contaminated targets with Contaminated Strike, Radioactive Smash, Radiation Siphon and Devastating Blow cause a portion of that power's damage to also hit nearby foes. Radiation Melee attacks primarily deal smashing and energy damage, but this set is also capable of dealing some toxic damage.",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Villain_Pets.Radiation_Melee_Assassins_Corruption,Radiation_Melee_Assassins_Corruption"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Transfusion_Mastermind": {
+   "display_name": "Transfusion",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Transfusion_Mastermind"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Transference_Mastermind": {
+   "display_name": "Transference",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Transference_Mastermind"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_SiphonPower_Mastermind": {
+   "display_name": "Siphon Power",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.SiphonPower_Mastermind"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_KineticTransferDebuff_Mastermind": {
+   "display_name": "Kinetic Transfer",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.KineticTransferDebuff_Mastermind"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_KineticTransferBuff_Mastermind": {
+   "display_name": "Kinetic Transfer",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.KineticTransferBuff_Mastermind"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Fallout_Mastermind": {
+   "display_name": "Fallout",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Fallout_Mastermind"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Savage_Assault_Feral_Charge": {
+   "display_name": "Feral Charge",
+   "class_name": "",
+   "powerset_full_names": [],
+   "upgrade_powers": []
+  },
+  "Pets_Ember_Demon": {
+   "display_name": "Ember Demon",
+   "class_name": "Class_Lt_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Ember_Demon",
+    "Mastermind_Pets.Ember_Demon_2",
+    "Mastermind_Pets.Ember_Demon_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Demon_Summoning.Enchant_Demon",
+    "Mastermind_Summon.Demon_Summoning.Abyssal_Empowerment"
+   ]
+  },
+  "Pets_Hellfire_Gargoyle": {
+   "display_name": "Hellfire Gargoyle",
+   "class_name": "Class_Lt_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Hellfire_Gargoyle",
+    "Mastermind_Pets.Hellfire_Gargoyle_2",
+    "Mastermind_Pets.Hellfire_Gargoyle_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Demon_Summoning.Enchant_Demon",
+    "Mastermind_Summon.Demon_Summoning.Abyssal_Empowerment"
+   ]
+  },
+  "Pets_Demon_Prince": {
+   "display_name": "Demon Prince",
+   "class_name": "Class_Boss_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Demon_Prince",
+    "Mastermind_Pets.Demon_Prince_2",
+    "Mastermind_Pets.Demon_Prince_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Demon_Summoning.Enchant_Demon",
+    "Mastermind_Summon.Demon_Summoning.Abyssal_Empowerment"
+   ]
+  },
+  "Pets_Cold_Demonling": {
+   "display_name": "Cold Demonling",
+   "class_name": "Class_Minion_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Cold_Demonling",
+    "Mastermind_Pets.Cold_Demonling_2",
+    "Mastermind_Pets.Cold_Demonling_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Demon_Summoning.Enchant_Demon",
+    "Mastermind_Summon.Demon_Summoning.Abyssal_Empowerment"
+   ]
+  },
+  "Pets_Fiery_Demonling": {
+   "display_name": "Fiery Demonling",
+   "class_name": "Class_Minion_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Fiery_Demonling",
+    "Mastermind_Pets.Fiery_Demonling_2",
+    "Mastermind_Pets.Fiery_Demonling_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Demon_Summoning.Enchant_Demon",
+    "Mastermind_Summon.Demon_Summoning.Abyssal_Empowerment"
+   ]
+  },
+  "Pets_Hellfire_Demonling": {
+   "display_name": "Hellfire Demonling",
+   "class_name": "Class_Minion_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Hellfire_Demonling",
+    "Mastermind_Pets.Hellfire_Demonling_2",
+    "Mastermind_Pets.Hellfire_Demonling_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Demon_Summoning.Enchant_Demon",
+    "Mastermind_Summon.Demon_Summoning.Abyssal_Empowerment"
+   ]
+  },
+  "Pets_Living_Hellfire": {
+   "display_name": "Living Hellfire",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Mastermind_Pets.Living_Hellfire"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Howler_Wolf": {
+   "display_name": "Howler Wolf",
+   "class_name": "Class_Minion_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Howler_Wolf",
+    "Mastermind_Pets.Howler_Wolf_2",
+    "Mastermind_Pets.Howler_Wolf_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Beast_Mastery.Train_Beasts",
+    "Mastermind_Summon.Beast_Mastery.Tame_Beasts"
+   ]
+  },
+  "Pets_Alpha_Wolf": {
+   "display_name": "Alpha Wolf",
+   "class_name": "Class_Minion_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Alpha_Wolf",
+    "Mastermind_Pets.Alpha_Wolf_2",
+    "Mastermind_Pets.Alpha_Wolf_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Beast_Mastery.Train_Beasts",
+    "Mastermind_Summon.Beast_Mastery.Tame_Beasts"
+   ]
+  },
+  "Pets_Lioness": {
+   "display_name": "Lioness",
+   "class_name": "Class_Lt_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Lioness",
+    "Mastermind_Pets.Lioness_2",
+    "Mastermind_Pets.Lioness_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Beast_Mastery.Train_Beasts",
+    "Mastermind_Summon.Beast_Mastery.Tame_Beasts"
+   ]
+  },
+  "Pets_Dire_Wolf": {
+   "display_name": "Dire Wolf",
+   "class_name": "Class_Boss_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Dire_Wolf",
+    "Mastermind_Pets.Dire_Wolf_2",
+    "Mastermind_Pets.Dire_Wolf_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Beast_Mastery.Train_Beasts",
+    "Mastermind_Summon.Beast_Mastery.Tame_Beasts"
+   ]
+  },
+  "Pets_Soldier": {
+   "display_name": "Soldier",
+   "class_name": "Class_Minion_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Soldier",
+    "Mastermind_Pets.Soldier_2",
+    "Mastermind_Pets.Soldier_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Mercenaries.Equip_Mercenary",
+    "Mastermind_Summon.Mercenaries.Tactical_Upgrade"
+   ]
+  },
+  "Pets_Medic": {
+   "display_name": "Medic",
+   "class_name": "Class_Minion_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Medic",
+    "Mastermind_Pets.Medic_2",
+    "Mastermind_Pets.Medic_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Mercenaries.Equip_Mercenary",
+    "Mastermind_Summon.Mercenaries.Tactical_Upgrade"
+   ]
+  },
+  "Pets_Spec_Ops": {
+   "display_name": "Spec Ops",
+   "class_name": "Class_Lt_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Spec_Ops",
+    "Mastermind_Pets.Spec_Ops_2",
+    "Mastermind_Pets.Spec_Ops_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Mercenaries.Equip_Mercenary",
+    "Mastermind_Summon.Mercenaries.Tactical_Upgrade"
+   ]
+  },
+  "Pets_Commando": {
+   "display_name": "Commando",
+   "class_name": "Class_Boss_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Commando",
+    "Mastermind_Pets.Commando_2",
+    "Mastermind_Pets.Commando_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Mercenaries.Equip_Mercenary",
+    "Mastermind_Summon.Mercenaries.Tactical_Upgrade"
+   ]
+  },
+  "Pets_Zombie": {
+   "display_name": "Zombie",
+   "class_name": "Class_Minion_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Zombie",
+    "Mastermind_Pets.Zombie_2",
+    "Mastermind_Pets.Zombie_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Necromancy.Enchant_Undead",
+    "Mastermind_Summon.Necromancy.Dark_Empowerment"
+   ]
+  },
+  "Pets_Skeletal_Warrior": {
+   "display_name": "Skeletal Warrior",
+   "class_name": "Class_Lt_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Skeleton",
+    "Mastermind_Pets.Skeleton_2",
+    "Mastermind_Pets.Skeleton_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Necromancy.Enchant_Undead",
+    "Mastermind_Summon.Necromancy.Dark_Empowerment"
+   ]
+  },
+  "Pets_Ghost": {
+   "display_name": "Ghost",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Mastermind_Pets.Ghosts"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Lich": {
+   "display_name": "Lich",
+   "class_name": "Class_Boss_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Lich",
+    "Mastermind_Pets.Lich_2",
+    "Mastermind_Pets.Lich_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Necromancy.Enchant_Undead",
+    "Mastermind_Summon.Necromancy.Dark_Empowerment"
+   ]
+  },
+  "Pets_Genin": {
+   "display_name": "Genin",
+   "class_name": "Class_Minion_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Genin",
+    "Mastermind_Pets.Genin_2",
+    "Mastermind_Pets.Genin_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Ninjas.Train_Ninjas",
+    "Mastermind_Summon.Ninjas.Kuji_In_Zen"
+   ]
+  },
+  "Pets_Jounin": {
+   "display_name": "Jounin",
+   "class_name": "Class_Lt_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Jonin",
+    "Mastermind_Pets.Jonin_2",
+    "Mastermind_Pets.Jonin_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Ninjas.Train_Ninjas",
+    "Mastermind_Summon.Ninjas.Kuji_In_Zen"
+   ]
+  },
+  "Pets_Oni": {
+   "display_name": "Oni",
+   "class_name": "Class_Boss_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Oni",
+    "Mastermind_Pets.Oni_2",
+    "Mastermind_Pets.Oni_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Ninjas.Train_Ninjas",
+    "Mastermind_Summon.Ninjas.Kuji_In_Zen"
+   ]
+  },
+  "Pets_Droid": {
+   "display_name": "Droid",
+   "class_name": "Class_Minion_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Droid",
+    "Mastermind_Pets.Droid_2",
+    "Mastermind_Pets.Droid_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Robotics.Equip_Robot",
+    "Mastermind_Summon.Robotics.Upgrade_Robot"
+   ]
+  },
+  "Pets_Protector_Bot": {
+   "display_name": "Protector Bot",
+   "class_name": "Class_Lt_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Protector",
+    "Mastermind_Pets.Protector_2",
+    "Mastermind_Pets.Protector_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Robotics.Equip_Robot",
+    "Mastermind_Summon.Robotics.Upgrade_Robot"
+   ]
+  },
+  "Pets_Assault_Bot": {
+   "display_name": "Assault Bot",
+   "class_name": "Class_Boss_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Assault",
+    "Mastermind_Pets.Assault_2",
+    "Mastermind_Pets.Assault_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Robotics.Equip_Robot",
+    "Mastermind_Summon.Robotics.Upgrade_Robot"
+   ]
+  },
+  "Pets_Thug": {
+   "display_name": "Thug",
+   "class_name": "Class_Minion_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Thug_Minion",
+    "Mastermind_Pets.Thug_Minion_2",
+    "Mastermind_Pets.Thug_Minion_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Thugs.Equip_Thugs",
+    "Mastermind_Summon.Thugs.Upgrade_Equipment"
+   ]
+  },
+  "Pets_Arsonist": {
+   "display_name": "Arsonist",
+   "class_name": "Class_Minion_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Thug_Arsonist",
+    "Mastermind_Pets.Thug_Arsonist_2",
+    "Mastermind_Pets.Thug_Arsonist_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Thugs.Equip_Thugs",
+    "Mastermind_Summon.Thugs.Upgrade_Equipment"
+   ]
+  },
+  "Pets_Thug_Lt": {
+   "display_name": "Thug Lt",
+   "class_name": "Class_Lt_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Thug_Lt",
+    "Mastermind_Pets.Thug_Lt_2",
+    "Mastermind_Pets.Thug_Lt_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Thugs.Equip_Thugs",
+    "Mastermind_Summon.Thugs.Upgrade_Equipment"
+   ]
+  },
+  "Pets_Thug_Posse": {
+   "display_name": "Thug Posse",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Mastermind_Pets.Thug_Pose",
+    "Mastermind_Pets.Thug_Pose_Brawl",
+    "Mastermind_Pets.Thug_Pose_Rock",
+    "Mastermind_Pets.Thug_Pose_Pipe",
+    "Mastermind_Pets.Thug_Pose_Knife",
+    "Mastermind_Pets.Thug_Pose_Revolver",
+    "Mastermind_Pets.Thug_Pose_Pistol",
+    "Mastermind_Pets.Thug_Pose_Sledgehammer",
+    "Mastermind_Pets.Thug_Pose_Bat",
+    "Mastermind_Pets.Thug_Pose_Axe"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Thug_Boss": {
+   "display_name": "Thug Boss",
+   "class_name": "Class_Boss_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Thug_Boss",
+    "Mastermind_Pets.Thug_Boss_2",
+    "Mastermind_Pets.Thug_Boss_3"
+   ],
+   "upgrade_powers": [
+    "Mastermind_Summon.Thugs.Equip_Thugs",
+    "Mastermind_Summon.Thugs.Upgrade_Equipment"
+   ]
+  },
+  "Pets_Seeker_Drone": {
+   "display_name": "Seeker Drone",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Mastermind_Pets.Seeker_Drone"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Galvanic_Sentinel_Defender": {
+   "display_name": "Galvanic Sentinel",
+   "class_name": "Class_Defender",
+   "powerset_full_names": [
+    "Pets.Galvanic_Sentinel_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_CorrosiveVial": {
+   "display_name": "Corrosive Vial",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Experiment_Corrosive_Vial"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_EMP_Arrow": {
+   "display_name": "EMP Arrow",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.EMP_Arrow"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_OilSlickOil_Blaster": {
+   "display_name": "Oil Slick (Blaster)",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.OilSlickOil_Blaster"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_OilSlickTarget_Blaster": {
+   "display_name": "Oil Slick Target (Blaster)",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.OilSlickTarget_Blaster"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_OilSlickBurn_Blaster": {
+   "display_name": "Oil Slick Burn (Blaster)",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.OilSlickBurn_Blaster"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Reverberant": {
+   "display_name": "Reverberant",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Reverberant"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Cold_Snap_Fear_Dominator": {
+   "display_name": "Cold Snap Dominator",
+   "class_name": "Class_Dominator",
+   "powerset_full_names": [
+    "Pets.Cold_Snap_Fear_Dominator"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Cold_Snap_Fear_Controller": {
+   "display_name": "Cold Snap Controller",
+   "class_name": "Class_Controller",
+   "powerset_full_names": [
+    "Pets.Cold_Snap_Fear_Controller"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Specter": {
+   "display_name": "Specter",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Specter"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Maintenance_Bot": {
+   "display_name": "Maintenance Bot",
+   "class_name": "Class_Boss_Henchman",
+   "powerset_full_names": [
+    "Mastermind_Pets.Maintenance_Bot"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Burst_of_Speed": {
+   "display_name": "Burst of Speed",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Burst_of_Speed"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Dimension_Shift": {
+   "display_name": "Dimension Shift",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.DimensionShift_Normal"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Dimension_Shift_Phased": {
+   "display_name": "Dimension Shift Phased",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.DimensionShift"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Traps_Mine_Defender": {
+   "display_name": "Trip Mine",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Traps_Trip_Mine_Defender"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Overpowering_Presence_Pet": {
+   "display_name": "Energy Font",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Overpowering_Presence"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Dampening_Bubble": {
+   "display_name": "Damping Bubble",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Damping_Bubble"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Radiation_Melee_Irradiated_Ground_Pet": {
+   "display_name": "Irradiated Ground",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Radiation_Melee_Irradiated_Ground"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_StormCell": {
+   "display_name": "Storm Cell",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Storm_Cell"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Category_Five": {
+   "display_name": "Category Five",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Category_Five"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Category_Five_Nukenado": {
+   "display_name": "Category Five (Nukenado)",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Category_Five_Nukenado"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_StormCell_Sentinel": {
+   "display_name": "Storm Cell",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Storm_Cell_Sentinel"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Category_Five_Sentinel": {
+   "display_name": "Category Five",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Category_Five_Sentinel"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Category_Five_Nukenado_Sentinel": {
+   "display_name": "Category Five (Nukenado)",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Category_Five_Nukenado_Sentinel"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Arachnos_Boss": {
+   "display_name": "Lore Pet: Arachnos Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Arachnos_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Arachnos_LT": {
+   "display_name": "Lore Pet: Arachnos LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Arachnos_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Arachnos_Support": {
+   "display_name": "Lore Pet: Arachnos Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Arachnos_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Arachnos_Support_Attack": {
+   "display_name": "Lore Pet: Arachnos Support/Attack",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Arachnos_Support_Attack"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Banished_Boss": {
+   "display_name": "Lore Pet: Banished Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Banished_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Banished_LT": {
+   "display_name": "Lore Pet: Banished LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Banished_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Banished_Support": {
+   "display_name": "Lore Pet: Banished Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Banished_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Banished_Support_Attack": {
+   "display_name": "Lore Pet: Banished Support/Attack",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Banished_Support_Attack"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Carnival_Boss": {
+   "display_name": "Lore Pet: Carnival Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Carnival_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Carnival_LT": {
+   "display_name": "Lore Pet: Carnival LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Carnival_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Carnival_Support": {
+   "display_name": "Lore Pet: Carnival Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Carnival_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Carnival_Support_Attack": {
+   "display_name": "Lore Pet: Carnival Support/Attack",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Carnival_Support_Attack"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Cimeroran_Boss": {
+   "display_name": "Lore Pet: Cimeroran Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Cimeroran_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Cimeroran_LT": {
+   "display_name": "Lore Pet: Cimeroran LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Cimeroran_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Cimeroran_Support": {
+   "display_name": "Lore Pet: Cimeroran Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Cimeroran_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Clockwork_Boss": {
+   "display_name": "Lore Pet: Clockwork Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Clockwork_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Clockwork_LT": {
+   "display_name": "Lore Pet: Clockwork LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Clockwork_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Clockwork_Support": {
+   "display_name": "Lore Pet: Clockwork Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Clockwork_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Demons_Boss": {
+   "display_name": "Lore Pet: Demons Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Demons_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Demons_Boss_Buff": {
+   "display_name": "Lore Pet: Demons Boss (Buff)",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Demons_Boss_Buff"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Demons_LT": {
+   "display_name": "Lore Pet: Demons LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Demons_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Demons_LT_Buff": {
+   "display_name": "Lore Pet: Demons LT (Buff)",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Demons_LT_Buff"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Demons_Support": {
+   "display_name": "Lore Pet: Demons Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Demons_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Demons_Support_Attack": {
+   "display_name": "Lore Pet: Demons Support/Attack",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Demons_Support_Attack"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Demons_Support_Protected": {
+   "display_name": "Lore Pet: Demons Support (Protected)",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Demons_Support_Protected"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Drones_Boss": {
+   "display_name": "Lore Pet: Drones Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Drones_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Drones_LT": {
+   "display_name": "Lore Pet: Drones LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Drones_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Elementals_Boss": {
+   "display_name": "Lore Pet: Elementals Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Elementals_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Elementals_LT": {
+   "display_name": "Lore Pet: Elementals LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Elementals_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Elementals_Support": {
+   "display_name": "Lore Pet: Elementals Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Elementals_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Generic": {
+   "display_name": "Lore Pet: Generic",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Generic"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_IDF_Boss": {
+   "display_name": "Lore Pet: IDF Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_IDF_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_IDF_LT": {
+   "display_name": "Lore Pet: IDF LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_IDF_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_IDF_Support": {
+   "display_name": "Lore Pet: IDF Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_IDF_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Knives_Boss": {
+   "display_name": "Lore Pet: Knives Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Knives_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Knives_LT": {
+   "display_name": "Lore Pet: Knives LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Knives_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Knives_Support": {
+   "display_name": "Lore Pet: Knives Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Knives_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Knives_Support_Attack": {
+   "display_name": "Lore Pet: Knives Support/Attack",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Knives_Support_Attack"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Lights_Boss": {
+   "display_name": "Lore Pet: Lights Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Lights_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Lights_LT": {
+   "display_name": "Lore Pet: Lights LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Lights_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Lights_Support": {
+   "display_name": "Lore Pet: Lights Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Lights_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Longbow_Boss": {
+   "display_name": "Lore Pet: Longbow Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Longbow_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Longbow_LT": {
+   "display_name": "Lore Pet: Longbow LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Longbow_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Longbow_Support": {
+   "display_name": "Lore Pet: Longbow Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Longbow_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Nemesis_Boss": {
+   "display_name": "Lore Pet: Nemesis Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Nemesis_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Nemesis_LT": {
+   "display_name": "Lore Pet: Nemesis LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Nemesis_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Nemesis_Support": {
+   "display_name": "Lore Pet: Nemesis Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Nemesis_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Nemesis_Support_Attack": {
+   "display_name": "Lore Pet: Nemesis Support/Attack",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Nemesis_Support_Attack"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Phantoms_Boss": {
+   "display_name": "Lore Pet: Phantoms Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Phantoms_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Phantoms_LT": {
+   "display_name": "Lore Pet: Phantoms LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Phantoms_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Phantoms_Support": {
+   "display_name": "Lore Pet: Phantoms Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Phantoms_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Rikti_Boss": {
+   "display_name": "Lore Pet: Rikti Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Rikti_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Rikti_LT": {
+   "display_name": "Lore Pet: Rikti LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Rikti_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Rikti_Support": {
+   "display_name": "Lore Pet: Rikti Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Rikti_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Rularuu_Boss": {
+   "display_name": "Lore Pet: Rularuu Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Rularuu_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Rularuu_LT": {
+   "display_name": "Lore Pet: Rularuu LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Rularuu_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Rularuu_Support": {
+   "display_name": "Lore Pet: Rularuu Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Rularuu_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Rularuu_Support_Attack": {
+   "display_name": "Lore Pet: Rularuu Support/Attack",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Rularuu_Support_Attack"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Seers_Boss": {
+   "display_name": "Lore Pet: Seers Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Seers_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Seers_LT": {
+   "display_name": "Lore Pet: Seers LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Seers_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Seers_Support": {
+   "display_name": "Lore Pet: Seers Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Seers_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Talons_Boss": {
+   "display_name": "Lore Pet: Talons Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Talons_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Talons_LT": {
+   "display_name": "Lore Pet: Talons LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Talons_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Talons_Support": {
+   "display_name": "Lore Pet: Talons Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Talons_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Talons_Support_Attack": {
+   "display_name": "Lore Pet: Talons Support/Attack",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Talons_Support_Attack"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Tsoo_Boss": {
+   "display_name": "Lore Pet: Tsoo Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Tsoo_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Tsoo_LT": {
+   "display_name": "Lore Pet: Tsoo LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Tsoo_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Tsoo_Support": {
+   "display_name": "Lore Pet: Tsoo Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Tsoo_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Tsoo_Support_Attack": {
+   "display_name": "Lore Pet: Tsoo Support/Attack",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Tsoo_Support_Attack"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Vanguard_Boss": {
+   "display_name": "Lore Pet: Vanguard Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Vanguard_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Vanguard_LT": {
+   "display_name": "Lore Pet: Vanguard LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Vanguard_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Vanguard_Support": {
+   "display_name": "Lore Pet: Vanguard Support",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Vanguard_Support"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Warworks_Boss": {
+   "display_name": "Lore Pet: Warworks Boss",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Warworks_Boss"
+   ],
+   "upgrade_powers": []
+  },
+  "IncarnatePets_Lore_Warworks_LT": {
+   "display_name": "Lore Pet: Warworks LT",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Incarnate_Pets.Lore_Pet_Warworks_LT"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_Tri_Cannon": {
+   "display_name": "Tri-Cannon",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Tri_Cannon"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_IceElemental": {
+   "display_name": "Ice Elemental",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Ice_Elemental"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_PsionicNexus": {
+   "display_name": "Psionic Nexus",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Psionic_Nexus"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_RecallBeacon": {
+   "display_name": "Recall Beacon",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Recall_Beacon"
+   ],
+   "upgrade_powers": []
+  },
+  "Pets_CatherineWheel": {
+   "display_name": "Catherine Wheel",
+   "class_name": "Class_Minion_Pets",
+   "powerset_full_names": [
+    "Pets.Catherine_Wheel"
+   ],
+   "upgrade_powers": []
+  }
+ }
+}

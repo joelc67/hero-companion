@@ -1,0 +1,29 @@
+Hero Companion — an unofficial, fan-made companion tool for City of Heroes: Homecoming
+Copyright (c) 2026 Joel (joel717421@gmail.com)
+
+ORIGINAL WORK (this tool's source code, the encounter/physics model, solver logic,
+documentation, and UI) is licensed under:
+
+  Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+  (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+In plain terms:
+  * You may use, copy, modify, and share this tool and its code.
+  * You must give appropriate credit and indicate changes.
+  * You may NOT use it, or any derivative of it, for commercial purposes.
+    This tool is not-for-profit, permanently.
+  * Derivatives must be shared under this same license.
+
+WHAT THIS LICENSE DOES NOT COVER (not the author's property; all rights remain with
+their owners):
+  * City of Heroes, its archetypes, powers, names, and all game content —
+    (c) NCSoft Corporation. City of Heroes: Homecoming operates under license
+    from NCSoft.
+  * Game data files derived from the Mids Reborn database (.mhd) — the underlying
+    data belongs to NCSoft/Homecoming; the database compilation is the work of the
+    Mids Reborn team (https://midsreborn.com).
+  * Any user-created character builds processed by the tool — those belong to the
+    players who made them.
+
+This is an unofficial fan project. It is not affiliated with, endorsed by, or
+supported by NCSoft, Homecoming Servers LLC, or the Mids Reborn team.

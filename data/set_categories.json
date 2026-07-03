@@ -1,0 +1,416 @@
+{
+ "categories": [
+  {
+   "id": 0,
+   "name": "Untyped",
+   "short": "Untyped"
+  },
+  {
+   "id": 1,
+   "name": "Melee Damage",
+   "short": "MeleeST"
+  },
+  {
+   "id": 2,
+   "name": "Ranged Damage",
+   "short": "RangedST"
+  },
+  {
+   "id": 3,
+   "name": "Targeted AoE Damage",
+   "short": "RangedAoE"
+  },
+  {
+   "id": 4,
+   "name": "PBAoE Damage",
+   "short": "MeleeAoE"
+  },
+  {
+   "id": 5,
+   "name": "Sniper Attacks",
+   "short": "Snipe"
+  },
+  {
+   "id": 6,
+   "name": "Pet Damage",
+   "short": "Pets"
+  },
+  {
+   "id": 7,
+   "name": "Defense Sets",
+   "short": "Defense"
+  },
+  {
+   "id": 8,
+   "name": "Resist Damage",
+   "short": "Resistance"
+  },
+  {
+   "id": 9,
+   "name": "Healing",
+   "short": "Heal"
+  },
+  {
+   "id": 10,
+   "name": "Holds",
+   "short": "Hold"
+  },
+  {
+   "id": 11,
+   "name": "Stuns",
+   "short": "Stun"
+  },
+  {
+   "id": 12,
+   "name": "Immobilize",
+   "short": "Immob"
+  },
+  {
+   "id": 13,
+   "name": "Slow Movement",
+   "short": "Slow"
+  },
+  {
+   "id": 14,
+   "name": "Sleep",
+   "short": "Sleep"
+  },
+  {
+   "id": 15,
+   "name": "Fear",
+   "short": "Fear"
+  },
+  {
+   "id": 16,
+   "name": "Confuse",
+   "short": "Confuse"
+  },
+  {
+   "id": 17,
+   "name": "Flight",
+   "short": "Flight"
+  },
+  {
+   "id": 18,
+   "name": "Leaping",
+   "short": "Jump"
+  },
+  {
+   "id": 19,
+   "name": "Running",
+   "short": "Run"
+  },
+  {
+   "id": 20,
+   "name": "Teleport",
+   "short": "Teleport"
+  },
+  {
+   "id": 21,
+   "name": "Defense Debuff",
+   "short": "DefDebuff"
+  },
+  {
+   "id": 22,
+   "name": "Endurance Modification",
+   "short": "EndMod"
+  },
+  {
+   "id": 23,
+   "name": "Knockback",
+   "short": "Knockback"
+  },
+  {
+   "id": 24,
+   "name": "Threat Duration",
+   "short": "Threat"
+  },
+  {
+   "id": 25,
+   "name": "To Hit Buff",
+   "short": "ToHit"
+  },
+  {
+   "id": 26,
+   "name": "To Hit Debuff",
+   "short": "ToHitDeb"
+  },
+  {
+   "id": 27,
+   "name": "Recharge Intensive Pets",
+   "short": "PetRech"
+  },
+  {
+   "id": 28,
+   "name": "Travel",
+   "short": "Travel"
+  },
+  {
+   "id": 29,
+   "name": "Accurate Healing",
+   "short": "AccHeal"
+  },
+  {
+   "id": 30,
+   "name": "Accurate Defense Debuff",
+   "short": "AccDefDeb"
+  },
+  {
+   "id": 31,
+   "name": "Accurate To-Hit Debuff",
+   "short": "AccToHitDeb"
+  },
+  {
+   "id": 32,
+   "name": "Soldiers of Arachnos Archetype Sets",
+   "short": "Arachnos"
+  },
+  {
+   "id": 33,
+   "name": "Blaster Archetype Sets",
+   "short": "Blaster"
+  },
+  {
+   "id": 34,
+   "name": "Brute Archetype Sets",
+   "short": "Brute"
+  },
+  {
+   "id": 35,
+   "name": "Controller Archetype Sets",
+   "short": "Controller"
+  },
+  {
+   "id": 36,
+   "name": "Corruptor Archetype Sets",
+   "short": "Corruptor"
+  },
+  {
+   "id": 37,
+   "name": "Defender Archetype Sets",
+   "short": "Defender"
+  },
+  {
+   "id": 38,
+   "name": "Dominator Archetype Sets",
+   "short": "Dominator"
+  },
+  {
+   "id": 39,
+   "name": "Kheldian Archetype Sets",
+   "short": "Kheldian"
+  },
+  {
+   "id": 40,
+   "name": "Mastermind Archetype Sets",
+   "short": "Mastermind"
+  },
+  {
+   "id": 41,
+   "name": "Scrapper Archetype Sets",
+   "short": "Scrapper"
+  },
+  {
+   "id": 42,
+   "name": "Stalker Archetype Sets",
+   "short": "Stalker"
+  },
+  {
+   "id": 43,
+   "name": "Tanker Archetype Sets",
+   "short": "Tanker"
+  },
+  {
+   "id": 44,
+   "name": "Universal Damage",
+   "short": "UniversalDamage"
+  },
+  {
+   "id": 45,
+   "name": "Sentinel Archetype Sets",
+   "short": "Sentinel"
+  },
+  {
+   "id": 46,
+   "name": "Run (No Sprint)",
+   "short": "RunNoSprint"
+  },
+  {
+   "id": 47,
+   "name": "Jump (No Sprint)",
+   "short": "JumpNoSprint"
+  },
+  {
+   "id": 48,
+   "name": "Flight (No Sprint)",
+   "short": "FlightNoSprint"
+  },
+  {
+   "id": 49,
+   "name": "Teleport (No Sprint)",
+   "short": "TeleportNoSprint"
+  }
+ ],
+ "enhancement_classes": [
+  {
+   "id": 1,
+   "name": "Accuracy",
+   "short": "Acc"
+  },
+  {
+   "id": 2,
+   "name": "Activation Decrease",
+   "short": "ActRdx"
+  },
+  {
+   "id": 3,
+   "name": "Confuse Duration",
+   "short": "Conf"
+  },
+  {
+   "id": 4,
+   "name": "Damage Increase",
+   "short": "Dmg"
+  },
+  {
+   "id": 5,
+   "name": "Defense Buff",
+   "short": "DefBuff"
+  },
+  {
+   "id": 6,
+   "name": "Defense Debuff",
+   "short": "DefDeb"
+  },
+  {
+   "id": 7,
+   "name": "Endurance Modification",
+   "short": "EndMod"
+  },
+  {
+   "id": 8,
+   "name": "Endurance Reduction",
+   "short": "EndRdx"
+  },
+  {
+   "id": 9,
+   "name": "Fear Duration",
+   "short": "Fear"
+  },
+  {
+   "id": 10,
+   "name": "Flight Speed",
+   "short": "Flight"
+  },
+  {
+   "id": 11,
+   "name": "Healing",
+   "short": "Heal"
+  },
+  {
+   "id": 12,
+   "name": "Hold Duration",
+   "short": "Hold"
+  },
+  {
+   "id": 13,
+   "name": "Immobilisation Duration",
+   "short": "Immob"
+  },
+  {
+   "id": 14,
+   "name": "Intangibility Duration",
+   "short": "Intan"
+  },
+  {
+   "id": 15,
+   "name": "Jumping",
+   "short": "Jump"
+  },
+  {
+   "id": 16,
+   "name": "Knockback Distance",
+   "short": "KBDist"
+  },
+  {
+   "id": 17,
+   "name": "Range",
+   "short": "Range"
+  },
+  {
+   "id": 18,
+   "name": "Recharge Reduction",
+   "short": "RechRdx"
+  },
+  {
+   "id": 19,
+   "name": "Resist Damage",
+   "short": "ResDam"
+  },
+  {
+   "id": 20,
+   "name": "Run Speed",
+   "short": "Run"
+  },
+  {
+   "id": 21,
+   "name": "Sleep Duration",
+   "short": "Sleep"
+  },
+  {
+   "id": 22,
+   "name": "Slow",
+   "short": "Slow"
+  },
+  {
+   "id": 23,
+   "name": "Disorient Duration",
+   "short": "Dsrnt"
+  },
+  {
+   "id": 24,
+   "name": "Taunt Duration",
+   "short": "Taunt"
+  },
+  {
+   "id": 25,
+   "name": "To Hit Buff",
+   "short": "ToHit"
+  },
+  {
+   "id": 26,
+   "name": "To Hit Debuff",
+   "short": "ToHitDeb"
+  },
+  {
+   "id": 27,
+   "name": "Alpha Incarnate",
+   "short": "AlphInc"
+  },
+  {
+   "id": 28,
+   "name": "Destiny Incarnate",
+   "short": "DstnyInc"
+  },
+  {
+   "id": 29,
+   "name": "Hybrid Incarnate",
+   "short": "HybrdInc"
+  },
+  {
+   "id": 30,
+   "name": "Interface Incarnate",
+   "short": "IntrfInc"
+  },
+  {
+   "id": 31,
+   "name": "Judgement Incarnate",
+   "short": "JgmntInc"
+  },
+  {
+   "id": 32,
+   "name": "Lore Incarnate",
+   "short": "LoreInc"
+  }
+ ]
+}

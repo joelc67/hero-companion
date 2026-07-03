@@ -1,0 +1,56 @@
+# -*- mode: python ; coding: utf-8 -*-
+# Hero Companion — PyInstaller build spec (onedir: friendlier to antivirus heuristics
+# and faster to start than onefile). Build:  python -m PyInstaller HeroCompanion.spec
+from PyInstaller.utils.hooks import collect_data_files
+
+datas = [
+    ("data", "data"),                      # parsed game database snapshot
+    ("static", "static"),                  # UI + help PDF
+    ("VERSION", "."),
+    ("client_config.json", "."),           # GitHub-home pointers (REPLACE-ME until repo exists)
+    ("CHANGELOG.md", "."),
+    ("LICENSE", "."),
+    ("CREDITS.md", "."),
+    ("TERMS.md", "."),
+]
+datas += collect_data_files("pulp")        # bundles the CBC solver binary the ILP needs
+
+# server/ and ai/ modules are imported via runtime sys.path — name them explicitly.
+hiddenimports = [
+    "server", "engine", "solver", "first_principles", "role_output", "converter",
+    "leveling_schedule", "learn", "proc_pass", "mids_export", "mids_import",
+    "mids_powercust", "ingame_import", "ai_build", "claude_bridge",
+    "flask_cors", "requests",
+]
+
+a = Analysis(
+    ["run_app.py"],
+    pathex=["server", "ai"],
+    binaries=[],
+    datas=datas,
+    hiddenimports=hiddenimports,
+    hookspath=[],
+    runtime_hooks=[],
+    excludes=["tkinter", "matplotlib", "numpy.testing"],
+    noarchive=False,
+)
+pyz = PYZ(a.pure)
+
+exe = EXE(
+    pyz,
+    a.scripts,
+    exclude_binaries=True,
+    name="HeroCompanion",
+    debug=False,
+    strip=False,
+    upx=False,                 # UPX-packed exes trip antivirus heuristics — never pack
+    console=True,              # the console window IS the app's off switch
+)
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.datas,
+    strip=False,
+    upx=False,
+    name="HeroCompanion",
+)

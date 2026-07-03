@@ -1,0 +1,7449 @@
+{
+ "slots": [
+  {
+   "slot": "Alpha",
+   "powerset": "Incarnate.Alpha",
+   "choice_count": 72,
+   "choices": [
+    {
+     "full_name": "Incarnate.Alpha.Agility_Boost",
+     "display_name": "Agility Boost",
+     "desc": "Increases Endurance Modification",
+     "effects": [
+      {
+       "effect": "Recovery",
+       "damage_type": "None",
+       "value": 0.66
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Agility_Core_Boost",
+     "display_name": "Agility Core Boost",
+     "desc": "Increases Endurance Modification and Recharge Rate",
+     "effects": [
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "Recovery",
+       "damage_type": "None",
+       "value": 0.66
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Agility_Core_Paragon",
+     "display_name": "Agility Core Paragon",
+     "desc": "Increases Endurance Modification, Recharge Rate, and Defense Buffs",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "None",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.2
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "Recovery",
+       "damage_type": "None",
+       "value": 0.9
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Agility_Partial_Core_Revamp",
+     "display_name": "Agility Partial Core Revamp",
+     "desc": "Increases Endurance Modification, Recharge Rate, and Defense Buffs",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "None",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.2
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "Recovery",
+       "damage_type": "None",
+       "value": 0.66
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Agility_Partial_Radial_Revamp",
+     "display_name": "Agility Partial Radial Revamp",
+     "desc": "Increases Endurance Modification, Recharge Rate, Defense Buffs, and Run Speed",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "None",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.2
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.165
+      },
+      {
+       "effect": "Recovery",
+       "damage_type": "None",
+       "value": 0.66
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Agility_Radial_Boost",
+     "display_name": "Agility Radial Boost",
+     "desc": "Increases Endurance Modification and Defense Buffs",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "None",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.2
+      },
+      {
+       "effect": "Recovery",
+       "damage_type": "None",
+       "value": 0.66
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Agility_Radial_Paragon",
+     "display_name": "Agility Radial Paragon",
+     "desc": "Increases Endurance Modification, Recharge Rate, Defense Buffs, Jump Speed, Run Speed, and Fly Speed",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "None",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.2
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "Recovery",
+       "damage_type": "None",
+       "value": 0.66
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Agility_Total_Core_Revamp",
+     "display_name": "Agility Total Core Revamp",
+     "desc": "Increases Endurance Modification and Recharge Rate",
+     "effects": [
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "Recovery",
+       "damage_type": "None",
+       "value": 0.9
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Agility_Total_Radial_Revamp",
+     "display_name": "Agility Total Radial Revamp",
+     "desc": "Increases Endurance Modification, Recharge Rate, Defense Buffs, and Jump Speed",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "None",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.2
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.165
+      },
+      {
+       "effect": "Recovery",
+       "damage_type": "None",
+       "value": 0.66
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Cardiac_Boost",
+     "display_name": "Cardiac Boost",
+     "desc": "Reduces Endurance Cost",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Alpha.Cardiac_Core_Boost",
+     "display_name": "Cardiac Core Boost",
+     "desc": "Reduces Endurance Cost, Increases Range",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Alpha.Cardiac_Core_Paragon",
+     "display_name": "Cardiac Core Paragon",
+     "desc": "Reduces Endurance Cost, Increases Range, Damage Resistance",
+     "effects": [
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Cardiac_Partial_Core_Revamp",
+     "display_name": "Cardiac Partial Core Revamp",
+     "desc": "Reduces Endurance Cost, Increases Range, Damage Resistance",
+     "effects": [
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Cardiac_Partial_Radial_Revamp",
+     "display_name": "Cardiac Partial Radial Revamp",
+     "desc": "Reduces Endurance Cost, Increases Range, Damage Resistance, Fear Duration",
+     "effects": [
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Cardiac_Radial_Boost",
+     "display_name": "Cardiac Radial Boost",
+     "desc": "Reduces Endurance Cost, Increases Damage Resistance",
+     "effects": [
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Cardiac_Radial_Paragon",
+     "display_name": "Cardiac Radial Paragon",
+     "desc": "Reduces Endurance Cost, Increases Range, Damage Resistance, Sleep, Fear, Absorb",
+     "effects": [
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Cardiac_Total_Core_Revamp",
+     "display_name": "Cardiac Total Core Revamp",
+     "desc": "Reduces Endurance Cost, Increases Range",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Alpha.Cardiac_Total_Radial_Revamp",
+     "display_name": "Cardiac Total Radial Revamp",
+     "desc": "Reduces Endurance Cost, Increases Range, Damage Resistance, Sleep Duration",
+     "effects": [
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Intuition_Boost",
+     "display_name": "Intuition Boost",
+     "desc": "Increases Hold Duration",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Alpha.Intuition_Core_Boost",
+     "display_name": "Intuition Core Boost",
+     "desc": "Increases Hold Duration and Defense Debuffs",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Alpha.Intuition_Core_Paragon",
+     "display_name": "Intuition Core Paragon",
+     "desc": "Increases Hold Duration, Defense Debuffs, and Range",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Alpha.Intuition_Partial_Core_Revamp",
+     "display_name": "Intuition Partial Core Revamp",
+     "desc": "Increases Hold Duration, Defense Debuffs, and Range",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Alpha.Intuition_Partial_Radial_Revamp",
+     "display_name": "Intuition Partial Radial Revamp",
+     "desc": "Increases Hold Duration, Defense Debuffs, Range, and Damage",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.33
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Intuition_Radial_Boost",
+     "display_name": "Intuition Radial Boost",
+     "desc": "Increases Hold Duration and Range",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Alpha.Intuition_Radial_Paragon",
+     "display_name": "Intuition Radial Paragon",
+     "desc": "Increases Hold Duration, Defense Debuffs, Range, To Hit Debuffs, Damage, and Slow Movement effects",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.33
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Intuition_Total_Core_Revamp",
+     "display_name": "Intuition Total Core Revamp",
+     "desc": "Increases Hold Duration and Defense Debuffs",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Alpha.Intuition_Total_Radial_Revamp",
+     "display_name": "Intuition Total Radial Revamp",
+     "desc": "Increases Hold Duration, Defense Debuffs, Range, and To Hit Debuffs",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Alpha.Musculature_Boost",
+     "display_name": "Musculature Boost",
+     "desc": "Increases Damage",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.33
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Musculature_Core_Boost",
+     "display_name": "Musculature Core Boost",
+     "desc": "Increases Damage, Immobilization Duration",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.33
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Musculature_Core_Paragon",
+     "display_name": "Musculature Core Paragon",
+     "desc": "Increases Damage, Immobilization Duration, Defense Debuff effects",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.45
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.45
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.45
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.45
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.45
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.45
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.45
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.45
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Musculature_Partial_Core_Revamp",
+     "display_name": "Musculature Partial Core Revamp",
+     "desc": "Increases Damage, Immobilization Duration, Defense Debuff effects",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.33
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Musculature_Partial_Radial_Revamp",
+     "display_name": "Musculature Partial Radial Revamp",
+     "desc": "Increases Damage, Immobilization Duration, Defense Debuff, To Hit Debuff effects",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.33
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Musculature_Radial_Boost",
+     "display_name": "Musculature Radial Boost",
+     "desc": "Increases Damage, Defense Debuff effects",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.33
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Musculature_Radial_Paragon",
+     "display_name": "Musculature Radial Paragon",
+     "desc": "Increases Damage, Immobilization Duration, Defense Debuff, To Hit Debuff, Endurance Modification, Run Speed effects",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.33
+      },
+      {
+       "effect": "Recovery",
+       "damage_type": "None",
+       "value": 0.66
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Musculature_Total_Core_Revamp",
+     "display_name": "Musculature Total Core Revamp",
+     "desc": "Increases Damage, Immobilization Duration",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.45
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.45
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.45
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.45
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.45
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.45
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.45
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.45
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Musculature_Total_Radial_Revamp",
+     "display_name": "Musculature Total Radial Revamp",
+     "desc": "Increases Damage, Immobilization Duration, Defense Debuff, Endurance Modification effects",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.33
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.33
+      },
+      {
+       "effect": "Recovery",
+       "damage_type": "None",
+       "value": 0.66
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Nerve_Boost",
+     "display_name": "Nerve Boost",
+     "desc": "Increases Accuracy",
+     "effects": [
+      {
+       "effect": "Accuracy",
+       "damage_type": "None",
+       "value": 0.33
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Nerve_Core_Boost",
+     "display_name": "Nerve Core Boost",
+     "desc": "Increases Accuracy, Hold Duration",
+     "effects": [
+      {
+       "effect": "Accuracy",
+       "damage_type": "None",
+       "value": 0.33
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Nerve_Core_Paragon",
+     "display_name": "Nerve Core Paragon",
+     "desc": "Increases Accuracy, Hold Duration, Defense Buffs",
+     "effects": [
+      {
+       "effect": "Accuracy",
+       "damage_type": "None",
+       "value": 0.45
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "None",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Nerve_Partial_Core_Revamp",
+     "display_name": "Nerve Partial Core Revamp",
+     "desc": "Increases Accuracy, Hold Duration, Defense Buffs",
+     "effects": [
+      {
+       "effect": "Accuracy",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "None",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Nerve_Partial_Radial_Revamp",
+     "display_name": "Nerve Partial Radial Revamp",
+     "desc": "Increases Accuracy, Hold Duration, Defense Buffs, Taunt",
+     "effects": [
+      {
+       "effect": "Accuracy",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "None",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Nerve_Radial_Boost",
+     "display_name": "Nerve Radial Boost",
+     "desc": "Increases Accuracy, Defense Buffs",
+     "effects": [
+      {
+       "effect": "Accuracy",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "None",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Nerve_Radial_Paragon",
+     "display_name": "Nerve Radial Paragon",
+     "desc": "Increases Accuracy, Hold, Confuse Duration, Defense Buffs, Taunt, Fly Speed",
+     "effects": [
+      {
+       "effect": "Accuracy",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "None",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Nerve_Total_Core_Revamp",
+     "display_name": "Nerve Total Core Revamp",
+     "desc": "Increases Accuracy, Hold Duration",
+     "effects": [
+      {
+       "effect": "Accuracy",
+       "damage_type": "None",
+       "value": 0.45
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Nerve_Total_Radial_Revamp",
+     "display_name": "Nerve Total Radial Revamp",
+     "desc": "Increases Accuracy, Hold, Confuse Duration, Defense Buffs",
+     "effects": [
+      {
+       "effect": "Accuracy",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "None",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Resilient_Boost",
+     "display_name": "Resilient Boost",
+     "desc": "Increases Damage Resistance",
+     "effects": [
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Resilient_Core_Boost",
+     "display_name": "Resilient Core Boost",
+     "desc": "Increases Damage Resistance and To Hit Buff",
+     "effects": [
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.2
+      },
+      {
+       "effect": "ToHit",
+       "damage_type": "None",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Resilient_Core_Paragon",
+     "display_name": "Resilient Core Paragon",
+     "desc": "Increases Damage Resistance, To Hit Buff, and Immobilize Duration",
+     "effects": [
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.33
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.33
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.33
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.33
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.33
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.33
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.33
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.33
+      },
+      {
+       "effect": "ToHit",
+       "damage_type": "None",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Resilient_Partial_Core_Revamp",
+     "display_name": "Resilient Partial Core Revamp",
+     "desc": "Increases Damage Resistance, To Hit Buff, and Immobilize Duration",
+     "effects": [
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.2
+      },
+      {
+       "effect": "ToHit",
+       "damage_type": "None",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Resilient_Partial_Radial_Revamp",
+     "display_name": "Resilient Partial Radial Revamp",
+     "desc": "Increases Damage Resistance, To Hit Buff, Immobilize Duration, and Stun Duration",
+     "effects": [
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.2
+      },
+      {
+       "effect": "ToHit",
+       "damage_type": "None",
+       "value": 0.1
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Resilient_Radial_Boost",
+     "display_name": "Resilient Radial Boost",
+     "desc": "Increases Damage Resistance and Immobilize Duration",
+     "effects": [
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Resilient_Radial_Paragon",
+     "display_name": "Resilient Radial Paragon",
+     "desc": "Increases Damage Resistance, Taunt Duration, Immobilize Duration, Stun Duration, ToHit Buff Effects, and Absorb",
+     "effects": [
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.2
+      },
+      {
+       "effect": "ToHit",
+       "damage_type": "None",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Resilient_Total_Core_Revamp",
+     "display_name": "Resilient Total Core Revamp",
+     "desc": "Increases Damage Resistance and To Hit Buff",
+     "effects": [
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.33
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.33
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.33
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.33
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.33
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.33
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.33
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.33
+      },
+      {
+       "effect": "ToHit",
+       "damage_type": "None",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Resilient_Total_Radial_Revamp",
+     "display_name": "Resilient Total Radial Revamp",
+     "desc": "Increases Damage Resistance, To Hit Buff, Immobilize Duration, and Absorb",
+     "effects": [
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.2
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.2
+      },
+      {
+       "effect": "ToHit",
+       "damage_type": "None",
+       "value": 0.1
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Spiritual_Boost",
+     "display_name": "Spiritual Boost",
+     "desc": "Increase Recharge Rate",
+     "effects": [
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.33
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Spiritual_Core_Boost",
+     "display_name": "Spiritual Core Boost",
+     "desc": "Increase Recharge Rate, Stun Duration",
+     "effects": [
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.33
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Spiritual_Core_Paragon",
+     "display_name": "Spiritual Core Paragon",
+     "desc": "Increase Recharge Rate, Stun Duration, Healing",
+     "effects": [
+      {
+       "effect": "Healing",
+       "damage_type": "None",
+       "value": 0.99
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.45
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Spiritual_Partial_Core_Revamp",
+     "display_name": "Spiritual Partial Core Revamp",
+     "desc": "Increase Recharge Rate, Stun Duration, Healing",
+     "effects": [
+      {
+       "effect": "Healing",
+       "damage_type": "None",
+       "value": 0.99
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.33
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Spiritual_Partial_Radial_Revamp",
+     "display_name": "Spiritual Partial Radial Revamp",
+     "desc": "Increase Recharge Rate, Stun Duration, Healing, Slow Movement effects",
+     "effects": [
+      {
+       "effect": "Healing",
+       "damage_type": "None",
+       "value": 0.99
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.33
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Spiritual_Radial_Boost",
+     "display_name": "Spiritual Radial Boost",
+     "desc": "Increase Recharge Rate, Healing",
+     "effects": [
+      {
+       "effect": "Healing",
+       "damage_type": "None",
+       "value": 0.99
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.33
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Spiritual_Radial_Paragon",
+     "display_name": "Spiritual Radial Paragon",
+     "desc": "Increase Recharge Rate, Stun Duration, Healing, Jump, Slow Movement, To Hit Buff effects",
+     "effects": [
+      {
+       "effect": "Healing",
+       "damage_type": "None",
+       "value": 0.99
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "ToHit",
+       "damage_type": "None",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Spiritual_Total_Core_Revamp",
+     "display_name": "Spiritual Total Core Revamp",
+     "desc": "Increase Recharge Rate, Stun Duration",
+     "effects": [
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.45
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Spiritual_Total_Radial_Revamp",
+     "display_name": "Spiritual Total Radial Revamp",
+     "desc": "Increase Recharge Rate, Stun Duration, Healing, To Hit Buff effects",
+     "effects": [
+      {
+       "effect": "Healing",
+       "damage_type": "None",
+       "value": 0.99
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "ToHit",
+       "damage_type": "None",
+       "value": 0.2
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Vigor_Boost",
+     "display_name": "Vigor Boost",
+     "desc": "Increases Healing",
+     "effects": [
+      {
+       "effect": "Healing",
+       "damage_type": "None",
+       "value": 0.99
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Vigor_Core_Boost",
+     "display_name": "Vigor Core Boost",
+     "desc": "Increases Healing and Accuracy",
+     "effects": [
+      {
+       "effect": "Accuracy",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "Healing",
+       "damage_type": "None",
+       "value": 0.99
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Vigor_Core_Paragon",
+     "display_name": "Vigor Core Paragon",
+     "desc": "Increases Healing, Accuracy, and Endurance Reduction",
+     "effects": [
+      {
+       "effect": "Accuracy",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "Healing",
+       "damage_type": "None",
+       "value": 1.35
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Vigor_Partial_Core_Revamp",
+     "display_name": "Vigor Partial Core Revamp",
+     "desc": "Increases Healing, Accuracy, and Endurance Reduction",
+     "effects": [
+      {
+       "effect": "Accuracy",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "Healing",
+       "damage_type": "None",
+       "value": 0.99
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Vigor_Partial_Radial_Revamp",
+     "display_name": "Vigor Partial Radial Revamp",
+     "desc": "Increases Healing, Accuracy, Endurance Reduction, and Sleep Duration",
+     "effects": [
+      {
+       "effect": "Accuracy",
+       "damage_type": "None",
+       "value": 0.165
+      },
+      {
+       "effect": "Healing",
+       "damage_type": "None",
+       "value": 0.99
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Vigor_Radial_Boost",
+     "display_name": "Vigor Radial Boost",
+     "desc": "Increases Healing and Endurance Reduction",
+     "effects": [
+      {
+       "effect": "Healing",
+       "damage_type": "None",
+       "value": 0.99
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Vigor_Radial_Paragon",
+     "display_name": "Vigor Radial Paragon",
+     "desc": "Increases Healing, Accuracy, Endurance Reduction, Confuse Duration, Sleep Duration, and Fear Duration",
+     "effects": [
+      {
+       "effect": "Accuracy",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "Healing",
+       "damage_type": "None",
+       "value": 0.99
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Vigor_Total_Core_Revamp",
+     "display_name": "Vigor Total Core Revamp",
+     "desc": "Increases Healing and Accuracy",
+     "effects": [
+      {
+       "effect": "Accuracy",
+       "damage_type": "None",
+       "value": 0.33
+      },
+      {
+       "effect": "Healing",
+       "damage_type": "None",
+       "value": 1.35
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Alpha.Vigor_Total_Radial_Revamp",
+     "display_name": "Vigor Total Radial Revamp",
+     "desc": "Increases Healing, Accuracy, Endurance Reduction, and Confuse Duration",
+     "effects": [
+      {
+       "effect": "Accuracy",
+       "damage_type": "None",
+       "value": 0.165
+      },
+      {
+       "effect": "Healing",
+       "damage_type": "None",
+       "value": 0.99
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slot": "Judgement",
+   "powerset": "Incarnate.Judgement",
+   "choice_count": 54,
+   "choices": [
+    {
+     "full_name": "Incarnate.Judgement.Cryonic_Core_Final_Judgement",
+     "display_name": "Cryonic Core Final Judgement",
+     "desc": "Long Ranged Cone, Extreme DMG (Cold)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Cryonic_Core_Judgement",
+     "display_name": "Cryonic Core Judgement",
+     "desc": "Ranged Cone, Extreme DMG (Cold)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Cryonic_Judgement",
+     "display_name": "Cryonic Judgement",
+     "desc": "Ranged Cone, Extreme DMG (Cold)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Cryonic_Partial_Core_Judgement",
+     "display_name": "Cryonic Partial Core Judgement",
+     "desc": "Ranged Cone, Extreme DMG (Cold), Foe -Speed, -Recharge",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Cryonic_Partial_Radial_Judgement",
+     "display_name": "Cryonic Partial Radial Judgement",
+     "desc": "Long Ranged Cone, Extreme DMG (Cold), Foe -Speed, -Recharge",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Cryonic_Radial_Final_Judgement",
+     "display_name": "Cryonic Radial Final Judgement",
+     "desc": "Long Ranged Cone, Extreme DMG (Cold), Foe -Speed, -Recharge, Chance for Hold",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Cryonic_Radial_Judgement",
+     "display_name": "Cryonic Radial Judgement",
+     "desc": "Ranged Cone, Extreme DMG (Cold), Foe -Speed, -Recharge",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Cryonic_Total_Core_Judgement",
+     "display_name": "Cryonic Total Core Judgement",
+     "desc": "Ranged Cone, Extreme DMG (Cold)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Cryonic_Total_Radial_Judgement",
+     "display_name": "Cryonic Total Radial Judgement",
+     "desc": "Ranged Cone, Extreme DMG (Cold), Foe -Speed, -Recharge, Chance for Hold",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Ion_Core_Final_Judgement",
+     "display_name": "Ion Core Final Judgement",
+     "desc": "Chain Ranged AoE, Extreme DMG(Energy)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Ion_Core_Judgement",
+     "display_name": "Ion Core Judgement",
+     "desc": "Chain Ranged AoE, Extreme DMG(Energy)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Ion_Judgement",
+     "display_name": "Ion Judgement",
+     "desc": "Chain Ranged AoE, Extreme DMG(Energy)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Ion_Partial_Core_Judgement",
+     "display_name": "Ion Partial Core Judgement",
+     "desc": "Chain Ranged AoE, Extreme DMG(Energy), Foe -End, -Recovery",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Ion_Partial_Radial_Judgement",
+     "display_name": "Ion Partial Radial Judgement",
+     "desc": "Chain Ranged AoE, Extreme DMG(Energy), Foe -End, -Recovery",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Ion_Radial_Final_Judgement",
+     "display_name": "Ion Radial Final Judgement",
+     "desc": "Chain Ranged AoE, Extreme DMG(Energy), Foe -End, -Recovery, Chance for Hold",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Ion_Radial_Judgement",
+     "display_name": "Ion Radial Judgement",
+     "desc": "Chain Ranged AoE, Extreme DMG(Energy), Foe -End, -Recovery",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Ion_Total_Core_Judgement",
+     "display_name": "Ion Total Core Judgement",
+     "desc": "Chain Ranged AoE, Extreme DMG(Energy)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Ion_Total_Radial_Judgement",
+     "display_name": "Ion Total Radial Judgement",
+     "desc": "Chain Ranged AoE, Extreme DMG(Energy), Foe -End, -Recovery, Chance for Hold",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Mighty_Core_Final_Judgement",
+     "display_name": "Mighty Core Final Judgement",
+     "desc": "Wide PBAoE Extreme DMG(Smashing)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Mighty_Core_Judgement",
+     "display_name": "Mighty Core Judgement",
+     "desc": "PBAoE Extreme DMG(Smashing)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Mighty_Judgement",
+     "display_name": "Mighty Judgement",
+     "desc": "PBAoE Extreme DMG(Smashing)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Mighty_Partial_Core_Judgement",
+     "display_name": "Mighty Partial Core Judgement",
+     "desc": "Wide PBAoE Extreme DMG(Smashing)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Mighty_Partial_Radial_Judgement",
+     "display_name": "Mighty Partial Radial Judgement",
+     "desc": "Wide PBAoE Extreme DMG(Smashing), Foe Knockup",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Mighty_Radial_Final_Judgement",
+     "display_name": "Mighty Radial Final Judgement",
+     "desc": "Wide PBAoE Extreme DMG(Smashing), Foe Knockup",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Mighty_Radial_Judgement",
+     "display_name": "Mighty Radial Judgement",
+     "desc": "PBAoE Extreme DMG(Smashing), Foe Knockup",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Mighty_Total_Core_Judgement",
+     "display_name": "Mighty Total Core Judgement",
+     "desc": "PBAoE Extreme DMG(Smashing)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Mighty_Total_Radial_Judgement",
+     "display_name": "Mighty Total Radial Judgement",
+     "desc": "PBAoE Extreme DMG(Smashing), Foe Knockup",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Pyronic_Core_Final_Judgement",
+     "display_name": "Pyronic Core Final Judgement",
+     "desc": "Targeted Wide Ranged AoE, Extreme DMG(Fire) +  Superior DoT(Fire)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Pyronic_Core_Judgement",
+     "display_name": "Pyronic Core Judgement",
+     "desc": "Targeted Ranged AoE, Extreme DMG(Fire) + Moderate DoT(Fire)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Pyronic_Judgement",
+     "display_name": "Pyronic Judgement",
+     "desc": "Targeted Ranged AoE, Extreme DMG(Fire)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Pyronic_Partial_Core_Judgement",
+     "display_name": "Pyronic Partial Core Judgement",
+     "desc": "Targeted Ranged AoE, Extreme DMG(Fire) +  Moderate DoT(Fire)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Pyronic_Partial_Radial_Judgement",
+     "display_name": "Pyronic Partial Radial Judgement",
+     "desc": "Targeted Wide Ranged AoE, Extreme DMG(Fire)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Pyronic_Radial_Final_Judgement",
+     "display_name": "Pyronic Radial Final Judgement",
+     "desc": "Targeted Wide Ranged AoE, Extreme DMG(Fire), Chance for Foe Disorient",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Pyronic_Radial_Judgement",
+     "display_name": "Pyronic Radial Judgement",
+     "desc": "Targeted Wide Ranged AoE, Extreme DMG(Fire)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Pyronic_Total_Core_Judgement",
+     "display_name": "Pyronic Total Core Judgement",
+     "desc": "Targeted Ranged AoE, Superior DMG(Fire) +  Superior DoT(Fire)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Pyronic_Total_Radial_Judgement",
+     "display_name": "Pyronic Total Radial Judgement",
+     "desc": "Targeted Wide Ranged AoE, Extreme DMG(Fire), Chance for Foe Disorient",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Void_Core_Final_Judgement",
+     "display_name": "Void Core Final Judgement",
+     "desc": "Wide PBAoE Extreme DMG(Negative Energy)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Void_Core_Judgement",
+     "display_name": "Void Core Judgement",
+     "desc": "PBAoE Extreme DMG(Negative Energy)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Void_Judgement",
+     "display_name": "Void Judgement",
+     "desc": "PBAoE Extreme DMG(Negative Energy)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Void_Partial_Core_Judgement",
+     "display_name": "Void Partial Core Judgement",
+     "desc": "PBAoE Extreme DMG(Negative Energy), Foe Knockback",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Void_Partial_Radial_Judgement",
+     "display_name": "Void Partial Radial Judgement",
+     "desc": "PBAoE Extreme DMG(Negative Energy), Foe -DMG, Knockback",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Void_Radial_Final_Judgement",
+     "display_name": "Void Radial Final Judgement",
+     "desc": "Wide PBAoE Extreme DMG(Negative Energy), Foe -DMG",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Void_Radial_Judgement",
+     "display_name": "Void Radial Judgement",
+     "desc": "PBAoE Extreme DMG(Negative Energy), Foe -DMG",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Void_Total_Core_Judgement",
+     "display_name": "Void Total Core Judgement",
+     "desc": "PBAoE Extreme DMG(Negative Energy)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Void_Total_Radial_Judgement",
+     "display_name": "Void Total Radial Judgement",
+     "desc": "Wide PBAoE Extreme DMG(Negative Energy), Foe -DMG",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Vorpal_Core_Final_Judgement",
+     "display_name": "Vorpal Core Final Judgement",
+     "desc": "Self-Targeted Wide Cone AoE, Extreme DMG(Smashing) +  Superior DoT(Lethal)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Vorpal_Core_Judgement",
+     "display_name": "Vorpal Core Judgement",
+     "desc": "Self-Targeted Cone AoE, Extreme DMG(Smashing) + Moderate DoT(Lethal)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Vorpal_Judgement",
+     "display_name": "Vorpal Judgement",
+     "desc": "Self-Targeted Cone AoE, Extreme DMG(Smashing)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Vorpal_Partial_Core_Judgement",
+     "display_name": "Vorpal Partial Core Judgement",
+     "desc": "Self-Targeted Cone AoE, Extreme DMG(Smashing) +  Moderate DoT(Lethal)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Vorpal_Partial_Radial_Judgement",
+     "display_name": "Vorpal Partial Radial Judgement",
+     "desc": "Self-Targeted Wide Cone AoE, Extreme DMG(Smashing)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Vorpal_Radial_Final_Judgement",
+     "display_name": "Vorpal Radial Final Judgement",
+     "desc": "Self-Targeted Wide Cone AoE, Extreme DMG(Smashing), Self +Defense(All)",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "None",
+       "value": 0.3
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Judgement.Vorpal_Radial_Judgement",
+     "display_name": "Vorpal Radial Judgement",
+     "desc": "Self-Targeted Wide Cone AoE, Extreme DMG(Smashing)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Vorpal_Total_Core_Judgement",
+     "display_name": "Vorpal Total Core Judgement",
+     "desc": "Self-Targeted Cone AoE, Superior DMG(Smashing) +  Superior DoT(Lethal)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Judgement.Vorpal_Total_Radial_Judgement",
+     "display_name": "Vorpal Total Radial Judgement",
+     "desc": "Self-Targeted Wide Cone AoE, Extreme DMG(Smashing), Self +Defense(All)",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "None",
+       "value": 0.15
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slot": "Interface",
+   "powerset": "Incarnate.Interface",
+   "choice_count": 72,
+   "choices": [
+    {
+     "full_name": "Incarnate.Interface.Cognitive_Core_Flawless_Interface",
+     "display_name": "Cognitive Core Flawless Interface",
+     "desc": "Adds: Chance to Confuse, Minor DoT(Psionic)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Cognitive_Core_Interface",
+     "display_name": "Cognitive Core Interface",
+     "desc": "Adds: Chance to Confuse",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Cognitive_Interface",
+     "display_name": "Cognitive Interface",
+     "desc": "Adds: Chance to Confuse",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Cognitive_Partial_Core_Conversion",
+     "display_name": "Cognitive Partial Core Conversion",
+     "desc": "Adds: Chance to Confuse, Minor DoT(Psionic)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Cognitive_Partial_Radial_Conversion",
+     "display_name": "Cognitive Partial Radial Conversion",
+     "desc": "Adds: Chance to Confuse, Minor DoT(Psionic)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Cognitive_Radial_Flawless_Interface",
+     "display_name": "Cognitive Radial Flawless Interface",
+     "desc": "Adds: Chance to Confuse, Minor DoT(Psionic)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Cognitive_Radial_Interface",
+     "display_name": "Cognitive Radial Interface",
+     "desc": "Adds: Chance to Confuse, Minor DoT(Psionic)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Cognitive_Total_Core_Conversion",
+     "display_name": "Cognitive Total Core Conversion",
+     "desc": "Adds: Chance to Confuse",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Cognitive_Total_Radial_Conversion",
+     "display_name": "Cognitive Total Radial Conversion",
+     "desc": "Adds: Chance to Confuse, Minor DoT(Psionic)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Degenerative_Core_Flawless_Interface",
+     "display_name": "Degenerative Core Flawless Interface",
+     "desc": "Adds: Chance for -MaxHP, Minor DoT(Toxic)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Degenerative_Core_Interface",
+     "display_name": "Degenerative Core Interface",
+     "desc": "Adds: Chance for -MaxHP",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Degenerative_Interface",
+     "display_name": "Degenerative Interface",
+     "desc": "Adds: Chance for -MaxHP",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Degenerative_Partial_Core_Conversion",
+     "display_name": "Degenerative Partial Core Conversion",
+     "desc": "Adds: Chance for -MaxHP, Minor DoT(Toxic)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Degenerative_Partial_Radial_Conversion",
+     "display_name": "Degenerative Partial Radial Conversion",
+     "desc": "Adds: Chance for -MaxHP, Minor DoT(Toxic)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Degenerative_Radial_Flawless_Interface",
+     "display_name": "Degenerative Radial Flawless Interface",
+     "desc": "Adds: Chance for -MaxHP, Minor DoT(Toxic)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Degenerative_Radial_Interface",
+     "display_name": "Degenerative Radial Interface",
+     "desc": "Adds: Chance for -MaxHP, Minor DoT(Toxic)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Degenerative_Total_Core_Conversion",
+     "display_name": "Degenerative Total Core Conversion",
+     "desc": "Adds: Chance for -MaxHP",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Degenerative_Total_Radial_Conversion",
+     "display_name": "Degenerative Total Radial Conversion",
+     "desc": "Adds: Chance for Minor DoT(Toxic)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Diamagnetic_Core_Flawless_Interface",
+     "display_name": "Diamagnetic Core Flawless Interface",
+     "desc": "Adds: -To Hit, -Regeneration",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Diamagnetic_Core_Interface",
+     "display_name": "Diamagnetic Core Interface",
+     "desc": "Adds: -To Hit",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Diamagnetic_Interface",
+     "display_name": "Diamagnetic Interface",
+     "desc": "Adds: -To Hit",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Diamagnetic_Partial_Core_Conversion",
+     "display_name": "Diamagnetic Partial Core Conversion",
+     "desc": "Adds: -To Hit, -Regeneration",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Diamagnetic_Partial_Radial_Conversion",
+     "display_name": "Diamagnetic Partial Radial Conversion",
+     "desc": "Adds: -To Hit, -Regeneration",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Diamagnetic_Radial_Flawless_Interface",
+     "display_name": "Diamagnetic Radial Flawless Interface",
+     "desc": "Adds: -To Hit, -Regeneration",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Diamagnetic_Radial_Interface",
+     "display_name": "Diamagnetic Radial Interface",
+     "desc": "Adds: -Regeneration",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Diamagnetic_Total_Core_Conversion",
+     "display_name": "Diamagnetic Total Core Conversion",
+     "desc": "Adds: -To Hit",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Diamagnetic_Total_Radial_Conversion",
+     "display_name": "Diamagnetic Total Radial Conversion",
+     "desc": "Adds: -Regeneration",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Gravitic_Core_Flawless_Interface",
+     "display_name": "Gravitic Core Flawless Interface",
+     "desc": "Adds: -Recharge, -Movement, -Recovery",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Gravitic_Core_Interface",
+     "display_name": "Gravitic Core Interface",
+     "desc": "Adds: -Recharge, -Movement",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Gravitic_Interface",
+     "display_name": "Gravitic Interface",
+     "desc": "Adds: -Recharge",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Gravitic_Partial_Core_Conversion",
+     "display_name": "Gravitic Partial Core Conversion",
+     "desc": "Adds: -Recharge, -Movement, -Recovery",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Gravitic_Partial_Radial_Conversion",
+     "display_name": "Gravitic Partial Radial Conversion",
+     "desc": "Adds: -Recharge, -Special, -Recovery",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Gravitic_Radial_Flawless_Interface",
+     "display_name": "Gravitic Radial Flawless Interface",
+     "desc": "Adds: -Recharge, -Special, -Recovery",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Gravitic_Radial_Interface",
+     "display_name": "Gravitic Radial Interface",
+     "desc": "Adds: -Recharge, -Special",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Gravitic_Total_Core_Conversion",
+     "display_name": "Gravitic Total Core Conversion",
+     "desc": "Adds: -Recharge, -Movement",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Gravitic_Total_Radial_Conversion",
+     "display_name": "Gravitic Total Radial Conversion",
+     "desc": "Adds: -Recharge, -Special",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Paralytic_Core_Flawless_Interface",
+     "display_name": "Paralytic Core Flawless Interface",
+     "desc": "Adds: -DEF, -DMG",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Paralytic_Core_Interface",
+     "display_name": "Paralytic Core Interface",
+     "desc": "Adds: -DEF",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Paralytic_Interface",
+     "display_name": "Paralytic Interface",
+     "desc": "Adds: -DEF",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Paralytic_Partial_Core_Conversion",
+     "display_name": "Paralytic Partial Core Conversion",
+     "desc": "Adds: -DEF, -DMG",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Paralytic_Partial_Radial_Conversion",
+     "display_name": "Paralytic Partial Radial Conversion",
+     "desc": "Adds: -DEF, -DMG",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Paralytic_Radial_Flawless_Interface",
+     "display_name": "Paralytic Radial Flawless Interface",
+     "desc": "Adds: -DEF, -DMG",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Paralytic_Radial_Interface",
+     "display_name": "Paralytic Radial Interface",
+     "desc": "Adds: -DEF, -DMG",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Paralytic_Total_Core_Conversion",
+     "display_name": "Paralytic Total Core Conversion",
+     "desc": "Adds: -DEF",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Paralytic_Total_Radial_Conversion",
+     "display_name": "Paralytic Total Radial Conversion",
+     "desc": "Adds: -DMG",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Preemptive_Core_Flawless_Interface",
+     "display_name": "Preemptive Core Flawless Interface",
+     "desc": "Adds: Chance to proc -END over time, Chance to proc -Recovery, Moderate DoT (Energy)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Preemptive_Core_Interface",
+     "display_name": "Preemptive Core Interface",
+     "desc": "Adds: Chance to proc -END over time, Chance to proc -Recovery",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Preemptive_Interface",
+     "display_name": "Preemptive Interface",
+     "desc": "Adds: Chance to proc -END over time, Chance to proc -Recovery",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Preemptive_Partial_Core_Conversion",
+     "display_name": "Preemptive Partial Core Conversion",
+     "desc": "Adds: Chance to proc -END over time, Chance to proc -Recovery, Moderate DoT (Energy)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Preemptive_Partial_Radial_Conversion",
+     "display_name": "Preemptive Partial Radial Conversion",
+     "desc": "Adds: Chance to proc -END over time, Chance to proc -Recovery, Moderate DoT (Energy)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Preemptive_Radial_Flawless_Interface",
+     "display_name": "Preemptive Radial Flawless Interface",
+     "desc": "Adds: Chance to proc -END over time, Chance to proc -Recovery, Moderate DoT (Energy)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Preemptive_Radial_Interface",
+     "display_name": "Preemptive Radial Interface",
+     "desc": "Adds: Chance to proc -END over time, Chance to proc -Recovery, Moderate DoT (Energy)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Preemptive_Total_Core_Conversion",
+     "display_name": "Preemptive Total Core Conversion",
+     "desc": "Adds: Chance to proc -END over time, Chance to proc -Recovery",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Preemptive_Total_Radial_Conversion",
+     "display_name": "Preemptive Total Radial Conversion",
+     "desc": "Adds: Chance to proc -END over time, Chance to proc -Recovery, Moderate DoT (Energy)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Reactive_Core_Flawless_Interface",
+     "display_name": "Reactive Core Flawless Interface",
+     "desc": "Adds: -Res, Moderate DoT(Fire)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Reactive_Core_Interface",
+     "display_name": "Reactive Core Interface",
+     "desc": "Adds: -Res",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Reactive_Interface",
+     "display_name": "Reactive Interface",
+     "desc": "Adds: -Res",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Reactive_Partial_Core_Conversion",
+     "display_name": "Reactive Partial Core Conversion",
+     "desc": "Adds: -Res, Moderate DoT(Fire)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Reactive_Partial_Radial_Conversion",
+     "display_name": "Reactive Partial Radial Conversion",
+     "desc": "Adds: -Res, Moderate DoT(Fire)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Reactive_Radial_Flawless_Interface",
+     "display_name": "Reactive Radial Flawless Interface",
+     "desc": "Adds: -Res, Moderate DoT(Fire)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Reactive_Radial_Interface",
+     "display_name": "Reactive Radial Interface",
+     "desc": "Adds: -Res, Moderate DoT(Fire)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Reactive_Total_Core_Conversion",
+     "display_name": "Reactive Total Core Conversion",
+     "desc": "Adds: -Res",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Reactive_Total_Radial_Conversion",
+     "display_name": "Reactive Total Radial Conversion",
+     "desc": "Adds: Moderate DoT(Fire)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Spectral_Core_Flawless_Interface",
+     "display_name": "Spectral Core Flawless Interface",
+     "desc": "Adds: Chance to Immobilize, Moderate DoT(Negative)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Spectral_Core_Interface",
+     "display_name": "Spectral Core Interface",
+     "desc": "Adds: Chance to Immobilize",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Spectral_Interface",
+     "display_name": "Spectral Interface",
+     "desc": "Adds: Chance to Immobilize",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Spectral_Partial_Core_Conversion",
+     "display_name": "Spectral Partial Core Conversion",
+     "desc": "Adds: Chance to Immobilize, Moderate DoT(Negative)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Spectral_Partial_Radial_Conversion",
+     "display_name": "Spectral Partial Radial Conversion",
+     "desc": "Adds: Chance to Immobilize, Moderate DoT(Negative)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Spectral_Radial_Flawless_Interface",
+     "display_name": "Spectral Radial Flawless Interface",
+     "desc": "Adds: Chance to Immobilize, Moderate DoT(Negative)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Spectral_Radial_Interface",
+     "display_name": "Spectral Radial Interface",
+     "desc": "Adds: Chance to Immobilize, Moderate DoT(Negative)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Spectral_Total_Core_Conversion",
+     "display_name": "Spectral Total Core Conversion",
+     "desc": "Adds: Chance to Immobilize",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Interface.Spectral_Total_Radial_Conversion",
+     "display_name": "Spectral Total Radial Conversion",
+     "desc": "Adds: Chance to Immobilize, Moderate DoT(Negative)",
+     "effects": []
+    }
+   ]
+  },
+  {
+   "slot": "Lore",
+   "powerset": "Incarnate.Lore",
+   "choice_count": 189,
+   "choices": [
+    {
+     "full_name": "Incarnate.Lore.Arachnos_Ally",
+     "display_name": "Arachnos Ally",
+     "desc": "Summon Arachnos LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Arachnos_Core_Ally",
+     "display_name": "Arachnos Core Ally",
+     "desc": "Summon Arachnos Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Arachnos_Core_Superior_Ally",
+     "display_name": "Arachnos Core Superior Ally",
+     "desc": "Summon Arachnos Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Arachnos_Partial_Core_Improved_Ally",
+     "display_name": "Arachnos Partial Core Improved Ally",
+     "desc": "Summon Arachnos Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Arachnos_Partial_Radial_Improved_Ally",
+     "display_name": "Arachnos Partial Radial Improved Ally",
+     "desc": "Summon Arachnos LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Arachnos_Radial_Ally",
+     "display_name": "Arachnos Radial Ally",
+     "desc": "Summon Arachnos LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Arachnos_Radial_Superior_Ally",
+     "display_name": "Arachnos Radial Superior Ally",
+     "desc": "Summon Arachnos Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Arachnos_Total_Core_Improved_Ally",
+     "display_name": "Arachnos Total Core Improved Ally",
+     "desc": "Summon Arachnos Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Arachnos_Total_Radial_Improved_Ally",
+     "display_name": "Arachnos Total Radial Improved Ally",
+     "desc": "Summon Arachnos LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Banished_Pantheon_Ally",
+     "display_name": "Banished Pantheon Ally",
+     "desc": "Summon Banished Pantheon LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Banished_Pantheon_Core_Ally",
+     "display_name": "Banished Pantheon Core Ally",
+     "desc": "Summon Banished Pantheon Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Banished_Pantheon_Core_Superior_Ally",
+     "display_name": "Banished Pantheon Core Superior Ally",
+     "desc": "Summon Banished Pantheon Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Banished_Pantheon_Partial_Core_Improved_Ally",
+     "display_name": "Banished Pantheon Partial Core Improved Ally",
+     "desc": "Summon Banished Pantheon Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Banished_Pantheon_Partial_Radial_Improved_Ally",
+     "display_name": "Banished Pantheon Partial Radial Improved Ally",
+     "desc": "Summon Banished Pantheon LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Banished_Pantheon_Radial_Ally",
+     "display_name": "Banished Pantheon Radial Ally",
+     "desc": "Summon Banished Pantheon LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Banished_Pantheon_Radial_Superior_Ally",
+     "display_name": "Banished Pantheon Radial Superior Ally",
+     "desc": "Summon Banished Pantheon Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Banished_Pantheon_Total_Core_Improved_Ally",
+     "display_name": "Banished Pantheon Total Core Improved Ally",
+     "desc": "Summon Banished Pantheon Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Banished_Pantheon_Total_Radial_Improved_Ally",
+     "display_name": "Banished Pantheon Total Radial Improved Ally",
+     "desc": "Summon Banished Pantheon LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Carnival_Ally",
+     "display_name": "Carnival Ally",
+     "desc": "Summon Carnival LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Carnival_Core_Ally",
+     "display_name": "Carnival Core Ally",
+     "desc": "Summon Carnival Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Carnival_Core_Superior_Ally",
+     "display_name": "Carnival Core Superior Ally",
+     "desc": "Summon Carnival Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Carnival_Partial_Core_Improved_Ally",
+     "display_name": "Carnival Partial Core Improved Ally",
+     "desc": "Summon Carnival Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Carnival_Partial_Radial_Improved_Ally",
+     "display_name": "Carnival Partial Radial Improved Ally",
+     "desc": "Summon Carnival LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Carnival_Radial_Ally",
+     "display_name": "Carnival Radial Ally",
+     "desc": "Summon Carnival LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Carnival_Radial_Superior_Ally",
+     "display_name": "Carnival Radial Superior Ally",
+     "desc": "Summon Carnival Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Carnival_Total_Core_Improved_Ally",
+     "display_name": "Carnival Total Core Improved Ally",
+     "desc": "Summon Carnival Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Carnival_Total_Radial_Improved_Ally",
+     "display_name": "Carnival Total Radial Improved Ally",
+     "desc": "Summon Carnival LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Cimeroran_Ally",
+     "display_name": "Cimeroran Ally",
+     "desc": "Summon Cimeroran LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Cimeroran_Core_Ally",
+     "display_name": "Cimeroran Core Ally",
+     "desc": "Summon Cimeroran Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Cimeroran_Core_Superior_Ally",
+     "display_name": "Cimeroran Core Superior Ally",
+     "desc": "Summon Cimeroran Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Cimeroran_Partial_Core_Improved_Ally",
+     "display_name": "Cimeroran Partial Core Improved Ally",
+     "desc": "Summon Cimeroran Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Cimeroran_Partial_Radial_Improved_Ally",
+     "display_name": "Cimeroran Partial Radial Improved Ally",
+     "desc": "Summon Cimeroran LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Cimeroran_Radial_Ally",
+     "display_name": "Cimeroran Radial Ally",
+     "desc": "Summon Cimeroran LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Cimeroran_Radial_Superior_Ally",
+     "display_name": "Cimeroran Radial Superior Ally",
+     "desc": "Summon Cimeroran Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Cimeroran_Total_Core_Improved_Ally",
+     "display_name": "Cimeroran Total Core Improved Ally",
+     "desc": "Summon Cimeroran Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Cimeroran_Total_Radial_Improved_Ally",
+     "display_name": "Cimeroran Total Radial Improved Ally",
+     "desc": "Summon Cimeroran LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Clockwork_Ally",
+     "display_name": "Clockwork Ally",
+     "desc": "Summon Clockwork LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Clockwork_Core_Ally",
+     "display_name": "Clockwork Core Ally",
+     "desc": "Summon Clockwork Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Clockwork_Core_Superior_Ally",
+     "display_name": "Clockwork Core Superior Ally",
+     "desc": "Summon Clockwork Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Clockwork_Partial_Core_Improved_Ally",
+     "display_name": "Clockwork Partial Core Improved Ally",
+     "desc": "Summon Clockwork Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Clockwork_Partial_Radial_Improved_Ally",
+     "display_name": "Clockwork Partial Radial Improved Ally",
+     "desc": "Summon Clockwork LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Clockwork_Radial_Ally",
+     "display_name": "Clockwork Radial Ally",
+     "desc": "Summon Clockwork LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Clockwork_Radial_Superior_Ally",
+     "display_name": "Clockwork Radial Superior Ally",
+     "desc": "Summon Clockwork Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Clockwork_Total_Core_Improved_Ally",
+     "display_name": "Clockwork Total Core Improved Ally",
+     "desc": "Summon Clockwork Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Clockwork_Total_Radial_Improved_Ally",
+     "display_name": "Clockwork Total Radial Improved Ally",
+     "desc": "Summon Clockwork LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Demons_Ally",
+     "display_name": "Demons Ally",
+     "desc": "Summon Demons LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Demons_Core_Ally",
+     "display_name": "Demons Core Ally",
+     "desc": "Summon Demons Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Demons_Core_Superior_Ally",
+     "display_name": "Demons Core Superior Ally",
+     "desc": "Summon Demons Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Demons_Partial_Core_Improved_Ally",
+     "display_name": "Demons Partial Core Improved Ally",
+     "desc": "Summon Demons Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Demons_Partial_Radial_Improved_Ally",
+     "display_name": "Demons Partial Radial Improved Ally",
+     "desc": "Summon Demons LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Demons_Radial_Ally",
+     "display_name": "Demons Radial Ally",
+     "desc": "Summon Demons LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Demons_Radial_Superior_Ally",
+     "display_name": "Demons Radial Superior Ally",
+     "desc": "Summon Demons Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Demons_Total_Core_Improved_Ally",
+     "display_name": "Demons Total Core Improved Ally",
+     "desc": "Summon Demons Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Demons_Total_Radial_Improved_Ally",
+     "display_name": "Demons Total Radial Improved Ally",
+     "desc": "Summon Demons LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.IDF_Ally",
+     "display_name": "IDF Ally",
+     "desc": "Summon IDF LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.IDF_Core_Ally",
+     "display_name": "IDF Core Ally",
+     "desc": "Summon IDF Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.IDF_Core_Superior_Ally",
+     "display_name": "IDF Core Superior Ally",
+     "desc": "Summon IDF Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.IDF_Partial_Core_Improved_Ally",
+     "display_name": "IDF Partial Core Improved Ally",
+     "desc": "Summon IDF Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.IDF_Partial_Radial_Improved_Ally",
+     "display_name": "IDF Partial Radial Improved Ally",
+     "desc": "Summon IDF LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.IDF_Radial_Ally",
+     "display_name": "IDF Radial Ally",
+     "desc": "Summon IDF LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.IDF_Radial_Superior_Ally",
+     "display_name": "IDF Radial Superior Ally",
+     "desc": "Summon IDF Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.IDF_Total_Core_Improved_Ally",
+     "display_name": "IDF Total Core Improved Ally",
+     "desc": "Summon IDF Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.IDF_Total_Radial_Improved_Ally",
+     "display_name": "IDF Total Radial Improved Ally",
+     "desc": "Summon IDF LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Knives_of_Vengeance_Ally",
+     "display_name": "Knives of Vengeance Ally",
+     "desc": "Summon Knives of Vengeance LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Knives_of_Vengeance_Core_Ally",
+     "display_name": "Knives of Vengeance Core Ally",
+     "desc": "Summon Knives of Vengeance Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Knives_of_Vengeance_Core_Superior_Ally",
+     "display_name": "Knives of Vengeance Core Superior Ally",
+     "desc": "Summon Knives of Vengeance Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Knives_of_Vengeance_Partial_Core_Improved_Ally",
+     "display_name": "Knives of Vengeance Partial Core Improved Ally",
+     "desc": "Summon Knives of Vengeance Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Knives_of_Vengeance_Partial_Radial_Improved_Ally",
+     "display_name": "Knives of Vengeance Partial Radial Improved Ally",
+     "desc": "Summon Knives of Vengeance LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Knives_of_Vengeance_Radial_Ally",
+     "display_name": "Knives of Vengeance Radial Ally",
+     "desc": "Summon Knives of Vengeance LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Knives_of_Vengeance_Radial_Superior_Ally",
+     "display_name": "Knives of Vengeance Radial Superior Ally",
+     "desc": "Summon Knives of Vengeance Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Knives_of_Vengeance_Total_Core_Improved_Ally",
+     "display_name": "Knives of Vengeance Total Core Improved Ally",
+     "desc": "Summon Knives of Vengeance Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Knives_of_Vengeance_Total_Radial_Improved_Ally",
+     "display_name": "Knives of Vengeance Total Radial Improved Ally",
+     "desc": "Summon Knives of Vengeance LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Longbow_Ally",
+     "display_name": "Longbow Ally",
+     "desc": "Summon Longbow LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Longbow_Core_Ally",
+     "display_name": "Longbow Core Ally",
+     "desc": "Summon Longbow Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Longbow_Core_Superior_Ally",
+     "display_name": "Longbow Core Superior Ally",
+     "desc": "Summon Longbow Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Longbow_Partial_Core_Improved_Ally",
+     "display_name": "Longbow Partial Core Improved Ally",
+     "desc": "Summon Longbow Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Longbow_Partial_Radial_Improved_Ally",
+     "display_name": "Longbow Partial Radial Improved Ally",
+     "desc": "Summon Longbow LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Longbow_Radial_Ally",
+     "display_name": "Longbow Radial Ally",
+     "desc": "Summon Longbow LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Longbow_Radial_Superior_Ally",
+     "display_name": "Longbow Radial Superior Ally",
+     "desc": "Summon Longbow Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Longbow_Total_Core_Improved_Ally",
+     "display_name": "Longbow Total Core Improved Ally",
+     "desc": "Summon Longbow Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Longbow_Total_Radial_Improved_Ally",
+     "display_name": "Longbow Total Radial Improved Ally",
+     "desc": "Summon Longbow LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Nemesis_Ally",
+     "display_name": "Nemesis Ally",
+     "desc": "Summon Nemesis LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Nemesis_Core_Ally",
+     "display_name": "Nemesis Core Ally",
+     "desc": "Summon Nemesis Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Nemesis_Core_Superior_Ally",
+     "display_name": "Nemesis Core Superior Ally",
+     "desc": "Summon Nemesis Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Nemesis_Partial_Core_Improved_Ally",
+     "display_name": "Nemesis Partial Core Improved Ally",
+     "desc": "Summon Nemesis Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Nemesis_Partial_Radial_Improved_Ally",
+     "display_name": "Nemesis Partial Radial Improved Ally",
+     "desc": "Summon Nemesis LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Nemesis_Radial_Ally",
+     "display_name": "Nemesis Radial Ally",
+     "desc": "Summon Nemesis LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Nemesis_Radial_Superior_Ally",
+     "display_name": "Nemesis Radial Superior Ally",
+     "desc": "Summon Nemesis Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Nemesis_Total_Core_Improved_Ally",
+     "display_name": "Nemesis Total Core Improved Ally",
+     "desc": "Summon Nemesis Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Nemesis_Total_Radial_Improved_Ally",
+     "display_name": "Nemesis Total Radial Improved Ally",
+     "desc": "Summon Nemesis LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Phantom_Ally",
+     "display_name": "Phantom Ally",
+     "desc": "Summon Phantom LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Phantom_Core_Ally",
+     "display_name": "Phantom Core Ally",
+     "desc": "Summon Phantom Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Phantom_Core_Superior_Ally",
+     "display_name": "Phantom Core Superior Ally",
+     "desc": "Summon Phantom Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Phantom_Partial_Core_Improved_Ally",
+     "display_name": "Phantom Partial Core Improved Ally",
+     "desc": "Summon Phantom Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Phantom_Partial_Radial_Improved_Ally",
+     "display_name": "Phantom Partial Radial Improved Ally",
+     "desc": "Summon Phantom LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Phantom_Radial_Ally",
+     "display_name": "Phantom Radial Ally",
+     "desc": "Summon Phantom LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Phantom_Radial_Superior_Ally",
+     "display_name": "Phantom Radial Superior Ally",
+     "desc": "Summon Phantom Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Phantom_Total_Core_Improved_Ally",
+     "display_name": "Phantom Total Core Improved Ally",
+     "desc": "Summon Phantom Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Phantom_Total_Radial_Improved_Ally",
+     "display_name": "Phantom Total Radial Improved Ally",
+     "desc": "Summon Phantom LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Polar_Lights_Ally",
+     "display_name": "Polar Lights Ally",
+     "desc": "Summon Polar Lights LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Polar_Lights_Core_Ally",
+     "display_name": "Polar Lights Core Ally",
+     "desc": "Summon Polar Lights Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Polar_Lights_Core_Superior_Ally",
+     "display_name": "Polar Lights Core Superior Ally",
+     "desc": "Summon Polar Lights Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Polar_Lights_Partial_Core_Improved_Ally",
+     "display_name": "Polar Lights Partial Core Improved Ally",
+     "desc": "Summon Polar Lights Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Polar_Lights_Partial_Radial_Improved_Ally",
+     "display_name": "Polar Lights Partial Radial Improved Ally",
+     "desc": "Summon Polar Lights LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Polar_Lights_Radial_Ally",
+     "display_name": "Polar Lights Radial Ally",
+     "desc": "Summon Polar Lights LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Polar_Lights_Radial_Superior_Ally",
+     "display_name": "Polar Lights Radial Superior Ally",
+     "desc": "Summon Polar Lights Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Polar_Lights_Total_Core_Improved_Ally",
+     "display_name": "Polar Lights Total Core Improved Ally",
+     "desc": "Summon Polar Lights Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Polar_Lights_Total_Radial_Improved_Ally",
+     "display_name": "Polar Lights Total Radial Improved Ally",
+     "desc": "Summon Polar Lights LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rikti_Ally",
+     "display_name": "Rikti Ally",
+     "desc": "Summon Rikti LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rikti_Core_Ally",
+     "display_name": "Rikti Core Ally",
+     "desc": "Summon Rikti Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rikti_Core_Superior_Ally",
+     "display_name": "Rikti Core Superior Ally",
+     "desc": "Summon Rikti Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rikti_Partial_Core_Improved_Ally",
+     "display_name": "Rikti Partial Core Improved Ally",
+     "desc": "Summon Rikti Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rikti_Partial_Radial_Improved_Ally",
+     "display_name": "Rikti Partial Radial Improved Ally",
+     "desc": "Summon Rikti LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rikti_Radial_Ally",
+     "display_name": "Rikti Radial Ally",
+     "desc": "Summon Rikti LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rikti_Radial_Superior_Ally",
+     "display_name": "Rikti Radial Superior Ally",
+     "desc": "Summon Rikti Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rikti_Total_Core_Improved_Ally",
+     "display_name": "Rikti Total Core Improved Ally",
+     "desc": "Summon Rikti Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rikti_Total_Radial_Improved_Ally",
+     "display_name": "Rikti Total Radial Improved Ally",
+     "desc": "Summon Rikti LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Robotic_Drones_Ally",
+     "display_name": "Robotic Drones Ally",
+     "desc": "Summon Robotic Drones LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Robotic_Drones_Core_Ally",
+     "display_name": "Robotic Drones Core Ally",
+     "desc": "Summon Robotic Drones Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Robotic_Drones_Core_Superior_Ally",
+     "display_name": "Robotic Drones Core Superior Ally",
+     "desc": "Summon Robotic Drones Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Robotic_Drones_Partial_Core_Improved_Ally",
+     "display_name": "Robotic Drones Partial Core Improved Ally",
+     "desc": "Summon Robotic Drones Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Robotic_Drones_Partial_Radial_Improved_Ally",
+     "display_name": "Robotic Drones Partial Radial Improved Ally",
+     "desc": "Summon Robotic Drones LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Robotic_Drones_Radial_Ally",
+     "display_name": "Robotic Drones Radial Ally",
+     "desc": "Summon Robotic Drones LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Robotic_Drones_Radial_Superior_Ally",
+     "display_name": "Robotic Drones Radial Superior Ally",
+     "desc": "Summon Robotic Drones Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Robotic_Drones_Total_Core_Improved_Ally",
+     "display_name": "Robotic Drones Total Core Improved Ally",
+     "desc": "Summon Robotic Drones Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Robotic_Drones_Total_Radial_Improved_Ally",
+     "display_name": "Robotic Drones Total Radial Improved Ally",
+     "desc": "Summon Robotic Drones LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rularuu_Ally",
+     "display_name": "Rularuu Ally",
+     "desc": "Summon Rularuu LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rularuu_Core_Ally",
+     "display_name": "Rularuu Core Ally",
+     "desc": "Summon Rularuu Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rularuu_Core_Superior_Ally",
+     "display_name": "Rularuu Core Superior Ally",
+     "desc": "Summon Rularuu Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rularuu_Partial_Core_Improved_Ally",
+     "display_name": "Rularuu Partial Core Improved Ally",
+     "desc": "Summon Rularuu Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rularuu_Partial_Radial_Improved_Ally",
+     "display_name": "Rularuu Partial Radial Improved Ally",
+     "desc": "Summon Rularuu LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rularuu_Radial_Ally",
+     "display_name": "Rularuu Radial Ally",
+     "desc": "Summon Rularuu LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rularuu_Radial_Superior_Ally",
+     "display_name": "Rularuu Radial Superior Ally",
+     "desc": "Summon Rularuu Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rularuu_Total_Core_Improved_Ally",
+     "display_name": "Rularuu Total Core Improved Ally",
+     "desc": "Summon Rularuu Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Rularuu_Total_Radial_Improved_Ally",
+     "display_name": "Rularuu Total Radial Improved Ally",
+     "desc": "Summon Rularuu LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Seers_Ally",
+     "display_name": "Seers Ally",
+     "desc": "Summon Seer LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Seers_Core_Ally",
+     "display_name": "Seers Core Ally",
+     "desc": "Summon Seer Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Seers_Core_Superior_Ally",
+     "display_name": "Seers Core Superior Ally",
+     "desc": "Summon Seer Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Seers_Partial_Core_Improved_Ally",
+     "display_name": "Seers Partial Core Improved Ally",
+     "desc": "Summon Seer Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Seers_Partial_Radial_Improved_Ally",
+     "display_name": "Seers Partial Radial Improved Ally",
+     "desc": "Summon Seer LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Seers_Radial_Ally",
+     "display_name": "Seers Radial Ally",
+     "desc": "Summon Seer LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Seers_Radial_Superior_Ally",
+     "display_name": "Seers Radial Superior Ally",
+     "desc": "Summon Seer Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Seers_Total_Core_Improved_Ally",
+     "display_name": "Seers Total Core Improved Ally",
+     "desc": "Summon Seer Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Seers_Total_Radial_Improved_Ally",
+     "display_name": "Seers Total Radial Improved Ally",
+     "desc": "Summon Seer LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Storm_Elemental_Ally",
+     "display_name": "Storm Elemental Ally",
+     "desc": "Summon Storm Elemental LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Storm_Elemental_Core_Ally",
+     "display_name": "Storm Elemental Core Ally",
+     "desc": "Summon Storm Elemental Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Storm_Elemental_Core_Superior_Ally",
+     "display_name": "Storm Elemental Core Superior Ally",
+     "desc": "Summon Storm Elemental Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Storm_Elemental_Partial_Core_Improved_Ally",
+     "display_name": "Storm Elemental Partial Core Improved Ally",
+     "desc": "Summon Storm Elemental Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Storm_Elemental_Partial_Radial_Improved_Ally",
+     "display_name": "Storm Elemental Partial Radial Improved Ally",
+     "desc": "Summon Storm Elemental LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Storm_Elemental_Radial_Ally",
+     "display_name": "Storm Elemental Radial Ally",
+     "desc": "Summon Storm Elemental LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Storm_Elemental_Radial_Superior_Ally",
+     "display_name": "Storm Elemental Radial Superior Ally",
+     "desc": "Summon Storm Elemental Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Storm_Elemental_Total_Core_Improved_Ally",
+     "display_name": "Storm Elemental Total Core Improved Ally",
+     "desc": "Summon Storm Elemental Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Storm_Elemental_Total_Radial_Improved_Ally",
+     "display_name": "Storm Elemental Total Radial Improved Ally",
+     "desc": "Summon Storm Elemental LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Talons_of_Vengeance_Ally",
+     "display_name": "Talons of Vengeance Ally",
+     "desc": "Summon Talons of Vengeance LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Talons_of_Vengeance_Core_Ally",
+     "display_name": "Talons of Vengeance Core Ally",
+     "desc": "Summon Talons of Vengeance Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Talons_of_Vengeance_Core_Superior_Ally",
+     "display_name": "Talons of Vengeance Core Superior Ally",
+     "desc": "Summon Talons of Vengeance Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Talons_of_Vengeance_Partial_Core_Improved_Ally",
+     "display_name": "Talons of Vengeance Partial Core Improved Ally",
+     "desc": "Summon Talons of Vengeance Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Talons_of_Vengeance_Partial_Radial_Improved_Ally",
+     "display_name": "Talons of Vengeance Partial Radial Improved Ally",
+     "desc": "Summon Talons of Vengeance LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Talons_of_Vengeance_Radial_Ally",
+     "display_name": "Talons of Vengeance Radial Ally",
+     "desc": "Summon Talons of Vengeance LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Talons_of_Vengeance_Radial_Superior_Ally",
+     "display_name": "Talons of Vengeance Radial Superior Ally",
+     "desc": "Summon Talons of Vengeance Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Talons_of_Vengeance_Total_Core_Improved_Ally",
+     "display_name": "Talons of Vengeance Total Core Improved Ally",
+     "desc": "Summon Talons of Vengeance Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Talons_of_Vengeance_Total_Radial_Improved_Ally",
+     "display_name": "Talons of Vengeance Total Radial Improved Ally",
+     "desc": "Summon Talons of Vengeance LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Tsoo_Ally",
+     "display_name": "Tsoo Ally",
+     "desc": "Summon Tsoo LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Tsoo_Core_Ally",
+     "display_name": "Tsoo Core Ally",
+     "desc": "Summon Tsoo Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Tsoo_Core_Superior_Ally",
+     "display_name": "Tsoo Core Superior Ally",
+     "desc": "Summon Tsoo Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Tsoo_Partial_Core_Improved_Ally",
+     "display_name": "Tsoo Partial Core Improved Ally",
+     "desc": "Summon Tsoo Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Tsoo_Partial_Radial_Improved_Ally",
+     "display_name": "Tsoo Partial Radial Improved Ally",
+     "desc": "Summon Tsoo LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Tsoo_Radial_Ally",
+     "display_name": "Tsoo Radial Ally",
+     "desc": "Summon Tsoo LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Tsoo_Radial_Superior_Ally",
+     "display_name": "Tsoo Radial Superior Ally",
+     "desc": "Summon Tsoo Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Tsoo_Total_Core_Improved_Ally",
+     "display_name": "Tsoo Total Core Improved Ally",
+     "desc": "Summon Tsoo Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Tsoo_Total_Radial_Improved_Ally",
+     "display_name": "Tsoo Total Radial Improved Ally",
+     "desc": "Summon Tsoo LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Vanguard_Ally",
+     "display_name": "Vanguard Ally",
+     "desc": "Summon Vanguard LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Vanguard_Core_Ally",
+     "display_name": "Vanguard Core Ally",
+     "desc": "Summon Vanguard Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Vanguard_Core_Superior_Ally",
+     "display_name": "Vanguard Core Superior Ally",
+     "desc": "Summon Vanguard Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Vanguard_Partial_Core_Improved_Ally",
+     "display_name": "Vanguard Partial Core Improved Ally",
+     "desc": "Summon Vanguard Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Vanguard_Partial_Radial_Improved_Ally",
+     "display_name": "Vanguard Partial Radial Improved Ally",
+     "desc": "Summon Vanguard LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Vanguard_Radial_Ally",
+     "display_name": "Vanguard Radial Ally",
+     "desc": "Summon Vanguard LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Vanguard_Radial_Superior_Ally",
+     "display_name": "Vanguard Radial Superior Ally",
+     "desc": "Summon Vanguard Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Vanguard_Total_Core_Improved_Ally",
+     "display_name": "Vanguard Total Core Improved Ally",
+     "desc": "Summon Vanguard Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Vanguard_Total_Radial_Improved_Ally",
+     "display_name": "Vanguard Total Radial Improved Ally",
+     "desc": "Summon Vanguard LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Warworks_Ally",
+     "display_name": "Warworks Ally",
+     "desc": "Summon WarWorks LT Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Warworks_Core_Ally",
+     "display_name": "Warworks Core Ally",
+     "desc": "Summon WarWorks Boss Essence",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Warworks_Core_Superior_Ally",
+     "display_name": "Warworks Core Superior Ally",
+     "desc": "Summon WarWorks Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Warworks_Partial_Core_Improved_Ally",
+     "display_name": "Warworks Partial Core Improved Ally",
+     "desc": "Summon WarWorks Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Warworks_Partial_Radial_Improved_Ally",
+     "display_name": "Warworks Partial Radial Improved Ally",
+     "desc": "Summon WarWorks LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Warworks_Radial_Ally",
+     "display_name": "Warworks Radial Ally",
+     "desc": "Summon WarWorks LT & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Warworks_Radial_Superior_Ally",
+     "display_name": "Warworks Radial Superior Ally",
+     "desc": "Summon WarWorks Boss & Support Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Warworks_Total_Core_Improved_Ally",
+     "display_name": "Warworks Total Core Improved Ally",
+     "desc": "Summon WarWorks Boss & LT Essences",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Lore.Warworks_Total_Radial_Improved_Ally",
+     "display_name": "Warworks Total Radial Improved Ally",
+     "desc": "Summon WarWorks LT & Support Essences",
+     "effects": []
+    }
+   ]
+  },
+  {
+   "slot": "Destiny",
+   "powerset": "Incarnate.Destiny",
+   "choice_count": 45,
+   "choices": [
+    {
+     "full_name": "Incarnate.Destiny.Ageless_Core_Epiphany",
+     "display_name": "Ageless Core Epiphany",
+     "desc": "Wide PBAoE Ally +End, +Recharge Rate, +Recovery",
+     "effects": [
+      {
+       "effect": "Endurance",
+       "damage_type": "None",
+       "value": 1.0
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.4
+      },
+      {
+       "effect": "Recovery",
+       "damage_type": "None",
+       "value": 5.0
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Ageless_Core_Invocation",
+     "display_name": "Ageless Core Invocation",
+     "desc": "PBAoE Ally +End, +Recharge Rate, +Recovery",
+     "effects": [
+      {
+       "effect": "Endurance",
+       "damage_type": "None",
+       "value": 0.5
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.4
+      },
+      {
+       "effect": "Recovery",
+       "damage_type": "None",
+       "value": 5.0
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Ageless_Invocation",
+     "display_name": "Ageless Invocation",
+     "desc": "PBAoE Ally +End, +Recharge Rate",
+     "effects": [
+      {
+       "effect": "Endurance",
+       "damage_type": "None",
+       "value": 0.5
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.4
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Ageless_Partial_Core_Invocation",
+     "display_name": "Ageless Partial Core Invocation",
+     "desc": "PBAoE Ally +End, +Recharge Rate, +Recovery",
+     "effects": [
+      {
+       "effect": "Endurance",
+       "damage_type": "None",
+       "value": 0.75
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.4
+      },
+      {
+       "effect": "Recovery",
+       "damage_type": "None",
+       "value": 5.0
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Ageless_Partial_Radial_Invocation",
+     "display_name": "Ageless Partial Radial Invocation",
+     "desc": "PBAoE Ally +End, +Recharge Rate, +Debuff Resistance",
+     "effects": [
+      {
+       "effect": "Endurance",
+       "damage_type": "None",
+       "value": 0.75
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.4
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Ageless_Radial_Epiphany",
+     "display_name": "Ageless Radial Epiphany",
+     "desc": "Wide PBAoE Ally +End, +Recharge Rate, +Debuff Resistance",
+     "effects": [
+      {
+       "effect": "Endurance",
+       "damage_type": "None",
+       "value": 1.0
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.4
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Ageless_Radial_Invocation",
+     "display_name": "Ageless Radial Invocation",
+     "desc": "PBAoE Ally +End, +Recharge Rate, +Debuff Resistance",
+     "effects": [
+      {
+       "effect": "Endurance",
+       "damage_type": "None",
+       "value": 0.5
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.4
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Ageless_Total_Core_Invocation",
+     "display_name": "Ageless Total Core Invocation",
+     "desc": "Wide PBAoE Ally +End, +Recharge Rate, +Recovery",
+     "effects": [
+      {
+       "effect": "Endurance",
+       "damage_type": "None",
+       "value": 0.75
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.4
+      },
+      {
+       "effect": "Recovery",
+       "damage_type": "None",
+       "value": 5.0
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Ageless_Total_Radial_Invocation",
+     "display_name": "Ageless Total Radial Invocation",
+     "desc": "Wide PBAoE Ally +End, +Recharge Rate, +Debuff Resistance",
+     "effects": [
+      {
+       "effect": "Endurance",
+       "damage_type": "None",
+       "value": 0.75
+      },
+      {
+       "effect": "RechargeTime",
+       "damage_type": "None",
+       "value": 0.4
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Barrier_Core_Epiphany",
+     "display_name": "Barrier Core Epiphany",
+     "desc": "Wide PBAoE Ally +DEF(All), +Res(All)",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.575
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.575
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.575
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.575
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.575
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.575
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.575
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.575
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.575
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Barrier_Core_Invocation",
+     "display_name": "Barrier Core Invocation",
+     "desc": "PBAoE Ally +DEF(All), +Res(All)",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.6
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Barrier_Invocation",
+     "display_name": "Barrier Invocation",
+     "desc": "PBAoE Ally +DEF(All), +Res(All)",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.6
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Barrier_Partial_Core_Invocation",
+     "display_name": "Barrier Partial Core Invocation",
+     "desc": "PBAoE Ally +DEF(All), +Res(All)",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.575
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.575
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.575
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.575
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.575
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.575
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.575
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.575
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.575
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.575
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Barrier_Partial_Radial_Invocation",
+     "display_name": "Barrier Partial Radial Invocation",
+     "desc": "PBAoE Ally +DEF(All), +Res(All), Ally Rez x1",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.6
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Barrier_Radial_Epiphany",
+     "display_name": "Barrier Radial Epiphany",
+     "desc": "Wide PBAoE Ally +DEF(All), +Res(All), Ally Rez x2",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.6
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Barrier_Radial_Invocation",
+     "display_name": "Barrier Radial Invocation",
+     "desc": "PBAoE Ally +DEF(All), +Res(All), Ally Rez x1",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.6
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Barrier_Total_Core_Invocation",
+     "display_name": "Barrier Total Core Invocation",
+     "desc": "Wide PBAoE Ally +DEF(All), +Res(All)",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.6
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Barrier_Total_Radial_Invocation",
+     "display_name": "Barrier Total Radial Invocation",
+     "desc": "PBAoE Ally +DEF(All), +Res(All), Ally Rez x2",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.6
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.6
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.6
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Clarion_Core_Epiphany",
+     "display_name": "Clarion Core Epiphany",
+     "desc": "Wide PBAoE Ally Status Effect Protection",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Destiny.Clarion_Core_Invocation",
+     "display_name": "Clarion Core Invocation",
+     "desc": "PBAoE Ally Status Effect Protection",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Destiny.Clarion_Invocation",
+     "display_name": "Clarion Invocation",
+     "desc": "PBAoE Ally Status Effect Protection",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Destiny.Clarion_Partial_Core_Invocation",
+     "display_name": "Clarion Partial Core Invocation",
+     "desc": "PBAoE Ally Status Effect Protection",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Destiny.Clarion_Partial_Radial_Invocation",
+     "display_name": "Clarion Partial Radial Invocation",
+     "desc": "PBAoE Ally Status Effect Protection, +Range, +Special",
+     "effects": [
+      {
+       "effect": "ToHit",
+       "damage_type": "AoE",
+       "value": 0.4
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Clarion_Radial_Epiphany",
+     "display_name": "Clarion Radial Epiphany",
+     "desc": "Wide PBAoE Ally Status Effect Protection, +Range, +Special",
+     "effects": [
+      {
+       "effect": "ToHit",
+       "damage_type": "AoE",
+       "value": 0.6
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Clarion_Radial_Invocation",
+     "display_name": "Clarion Radial Invocation",
+     "desc": "PBAoE Ally Status Effect Protection, +Range, +Special",
+     "effects": [
+      {
+       "effect": "ToHit",
+       "damage_type": "AoE",
+       "value": 0.4
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Clarion_Total_Core_Invocation",
+     "display_name": "Clarion Total Core Invocation",
+     "desc": "Wide PBAoE Ally Status Effect Protection",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Destiny.Clarion_Total_Radial_Invocation",
+     "display_name": "Clarion Total Radial Invocation",
+     "desc": "Wide PBAoE Ally Status Effect Protection, +Range, +Special",
+     "effects": [
+      {
+       "effect": "ToHit",
+       "damage_type": "AoE",
+       "value": 0.6
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Incandescence_Core_Epiphany",
+     "display_name": "Incandescence Core Epiphany",
+     "desc": "Targeted Wide AoE League Teleport, +Healing Received.  Foe Knockback, Stun.",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Destiny.Incandescence_Core_Invocation",
+     "display_name": "Incandescence Core Invocation",
+     "desc": "Targeted Wide AoE League Teleport, +Healing Received.  Foe Knockback, Stun.",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Destiny.Incandescence_Invocation",
+     "display_name": "Incandescence Invocation",
+     "desc": "Targeted AoE League Teleport, +Healing Received.  Foe Knockback, Stun.",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Destiny.Incandescence_Partial_Core_Invocation",
+     "display_name": "Incandescence Partial Core Invocation",
+     "desc": "Targeted AoE League Teleport, +Healing Received.  Foe Knockback, Stun.",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Destiny.Incandescence_Partial_Radial_Invocation",
+     "display_name": "Incandescence Partial Radial Invocation",
+     "desc": "Targeted AoE League Teleport, +Healing Received, +Stealth Radius.  Foe Knockback, Stun.",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Destiny.Incandescence_Radial_Epiphany",
+     "display_name": "Incandescence Radial Epiphany",
+     "desc": "Targeted Wide AoE League Teleport, +Healing Received, +Stealth, +Perception Radius, +Move Speed.  Foe Knockback, Stun.",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Destiny.Incandescence_Radial_Invocation",
+     "display_name": "Incandescence Radial Invocation",
+     "desc": "Targeted AoE League Teleport, +Healing Received, +Stealth Radius.  Foe Knockback, Stun.",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Destiny.Incandescence_Total_Core_Invocation",
+     "display_name": "Incandescence Total Core Invocation",
+     "desc": "Targeted Wide AoE League Teleport, +Healing Received.  Foe Knockback, Stun.",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Destiny.Incandescence_Total_Radial_Invocation",
+     "display_name": "Incandescence Total Radial Invocation",
+     "desc": "Targeted Wide AoE League Teleport, +Healing Received, +Intangible.  Foe Knockback, Stun.",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Destiny.Rebirth_Core_Epiphany",
+     "display_name": "Rebirth Core Epiphany",
+     "desc": "Wide PBAoE Ally Heal, +Max HP",
+     "effects": [
+      {
+       "effect": "HitPoints",
+       "damage_type": "None",
+       "value": -2.0
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Rebirth_Core_Invocation",
+     "display_name": "Rebirth Core Invocation",
+     "desc": "Wide PBAoE Ally Heal",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Destiny.Rebirth_Invocation",
+     "display_name": "Rebirth Invocation",
+     "desc": "PBAoE Ally Heal",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Destiny.Rebirth_Partial_Core_Invocation",
+     "display_name": "Rebirth Partial Core Invocation",
+     "desc": "PBAoE Ally Heal, +Max HP",
+     "effects": [
+      {
+       "effect": "HitPoints",
+       "damage_type": "None",
+       "value": -2.0
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Rebirth_Partial_Radial_Invocation",
+     "display_name": "Rebirth Partial Radial Invocation",
+     "desc": "PBAoE Ally Heal, +Regeneration",
+     "effects": [
+      {
+       "effect": "Regeneration",
+       "damage_type": "None",
+       "value": 10.0
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Rebirth_Radial_Epiphany",
+     "display_name": "Rebirth Radial Epiphany",
+     "desc": "Wide PBAoE Ally Heal, +Regeneration",
+     "effects": [
+      {
+       "effect": "Regeneration",
+       "damage_type": "None",
+       "value": 10.0
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Rebirth_Radial_Invocation",
+     "display_name": "Rebirth Radial Invocation",
+     "desc": "PBAoE Ally Heal, +Regeneration",
+     "effects": [
+      {
+       "effect": "Regeneration",
+       "damage_type": "None",
+       "value": 10.0
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Rebirth_Total_Core_Invocation",
+     "display_name": "Rebirth Total Core Invocation",
+     "desc": "Wide PBAoE Ally Heal, +Max HP",
+     "effects": [
+      {
+       "effect": "HitPoints",
+       "damage_type": "None",
+       "value": 1.0
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Destiny.Rebirth_Total_Radial_Invocation",
+     "display_name": "Rebirth Total Radial Invocation",
+     "desc": "Wide PBAoE Ally Heal, +Regeneration",
+     "effects": [
+      {
+       "effect": "Regeneration",
+       "damage_type": "None",
+       "value": 1.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slot": "Hybrid",
+   "powerset": "Incarnate.Hybrid",
+   "choice_count": 36,
+   "choices": [
+    {
+     "full_name": "Incarnate.Hybrid.Assault_Core_Embodiment",
+     "display_name": "Assault Core Embodiment",
+     "desc": "Toggle: Chance for +DMG(All)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Assault_Core_Genome",
+     "display_name": "Assault Core Genome",
+     "desc": "Toggle: Chance for +DMG(All)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Assault_Genome",
+     "display_name": "Assault Genome",
+     "desc": "Toggle: Chance for +DMG(All)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Assault_Partial_Core_Graft",
+     "display_name": "Assault Partial Core Graft",
+     "desc": "Toggle: Chance for +DMG(All), Chance for Doublehit",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Assault_Partial_Radial_Graft",
+     "display_name": "Assault Partial Radial Graft",
+     "desc": "Toggle: Chance for +DMG(All), Chance for Doublehit",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Assault_Radial_Embodiment",
+     "display_name": "Assault Radial Embodiment",
+     "desc": "Toggle: Chance for Doublehit",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Assault_Radial_Genome",
+     "display_name": "Assault Radial Genome",
+     "desc": "Toggle: Chance for Doublehit",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Assault_Total_Core_Graft",
+     "display_name": "Assault Total Core Graft",
+     "desc": "Toggle: Chance for +DMG(All)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Assault_Total_Radial_Graft",
+     "display_name": "Assault Total Radial Graft",
+     "desc": "Toggle: Chance for Doublehit",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Control_Core_Embodiment",
+     "display_name": "Control Core Embodiment",
+     "desc": "Toggle: Chance for Psionic Damage (Special), Chance for +1 Magnitude",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Control_Core_Genome",
+     "display_name": "Control Core Genome",
+     "desc": "Toggle: Chance for Lethal Damage (Special), Chance for +1 Magnitude",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Control_Genome",
+     "display_name": "Control Genome",
+     "desc": "Toggle: Chance for Lethal damage (Special)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Control_Partial_Core_Graft",
+     "display_name": "Control Partial Core Graft",
+     "desc": "Toggle: Chance for Psionic Damage (Special), Chance for +1 Magnitude",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Control_Partial_Radial_Graft",
+     "display_name": "Control Partial Radial Graft",
+     "desc": "Toggle: Chance for Fear, Chance for +1 Magnitude to Crowd Control effects",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Control_Radial_Embodiment",
+     "display_name": "Control Radial Embodiment",
+     "desc": "Toggle: Chance for Fear, Chance for Immobilize, Chance for Stun (Special)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Control_Radial_Genome",
+     "display_name": "Control Radial Genome",
+     "desc": "Toggle: Chance for Fear",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Control_Total_Core_Graft",
+     "display_name": "Control Total Core Graft",
+     "desc": "Toggle: Chance for Lethal Damage (Special), Chance for +1 Magnitude",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Control_Total_Radial_Graft",
+     "display_name": "Control Total Radial Graft",
+     "desc": "Toggle: Chance for Fear, Chance for Immobilize (Special)",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Melee_Genome_8",
+     "display_name": "Melee Core Embodiment",
+     "desc": "Toggle: Self +Regen, +Resist(All), +Status Protection per nearby enemy",
+     "effects": [
+      {
+       "effect": "Regeneration",
+       "damage_type": "None",
+       "value": 2.5605
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.1707
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.1707
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.1707
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.1707
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.1707
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.1707
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.1707
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.1707
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Melee_Genome_2",
+     "display_name": "Melee Core Genome",
+     "desc": "Toggle: Self +Regen,+Res(All) per nearby enemy",
+     "effects": [
+      {
+       "effect": "Regeneration",
+       "damage_type": "None",
+       "value": 0.4545
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.0202
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.0202
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.0202
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.0202
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.0202
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.0202
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.0202
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.0202
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Melee_Genome_1",
+     "display_name": "Melee Genome",
+     "desc": "Toggle: Self +Regen",
+     "effects": [
+      {
+       "effect": "Regeneration",
+       "damage_type": "None",
+       "value": 0.15637
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Melee_Genome_5",
+     "display_name": "Melee Partial Core Graft",
+     "desc": "Toggle: Self +Regen, +Resist(All)",
+     "effects": [
+      {
+       "effect": "Regeneration",
+       "damage_type": "None",
+       "value": 1.35
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.08
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.08
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.08
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.08
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.08
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.08
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.08
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.08
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Melee_Genome_6",
+     "display_name": "Melee Partial Radial Graft",
+     "desc": "Toggle: Self +Regeneration, +Defense(All) per nearby enemy",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.01
+      },
+      {
+       "effect": "Regeneration",
+       "damage_type": "None",
+       "value": 0.3375
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Melee_Genome_9",
+     "display_name": "Melee Radial Embodiment",
+     "desc": "Toggle: Self +Regen, +Defense(All), +Status Protection per nearby enemy",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.015
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.015
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.015
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.015
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.015
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.015
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.015
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.015
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.015
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.015
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.015
+      },
+      {
+       "effect": "Regeneration",
+       "damage_type": "None",
+       "value": 0.45
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Melee_Genome_3",
+     "display_name": "Melee Radial Genome",
+     "desc": "Toggle: Self +Regen, +Def(All) per nearby enemy",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.005
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.005
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.005
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.005
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.005
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.005
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.005
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.005
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.005
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.005
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.005
+      },
+      {
+       "effect": "Regeneration",
+       "damage_type": "None",
+       "value": 0.225
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Melee_Genome_4",
+     "display_name": "Melee Total Core Graft",
+     "desc": "Toggle: Self +Regen,+Res(All), +Status Protection(All) per nearby enemy",
+     "effects": [
+      {
+       "effect": "Regeneration",
+       "damage_type": "None",
+       "value": 0.84375
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Cold",
+       "value": 0.05
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Energy",
+       "value": 0.05
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Fire",
+       "value": 0.05
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Lethal",
+       "value": 0.05
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Negative",
+       "value": 0.05
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Psionic",
+       "value": 0.05
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Smashing",
+       "value": 0.05
+      },
+      {
+       "effect": "Resistance",
+       "damage_type": "Toxic",
+       "value": 0.05
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Melee_Genome_7",
+     "display_name": "Melee Total Radial Graft",
+     "desc": "Toggle: Self +Regeneration, +Defense(All), +Status Protection per nearby enemy",
+     "effects": [
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.01
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.01
+      },
+      {
+       "effect": "Regeneration",
+       "damage_type": "None",
+       "value": 0.3375
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Support_Genome_8",
+     "display_name": "Support Core Embodiment",
+     "desc": "Toggle: +Damage, +Accuracy, +Defense, +Special",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.12
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.12
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.12
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.12
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.12
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.12
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.12
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.12
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.12
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.12
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.12
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.12
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.12
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.12
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.12
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.12
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.12
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.12
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.12
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Support_Genome_2",
+     "display_name": "Support Core Genome",
+     "desc": "Toggle: +Damage, +Defense",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.04
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.04
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.04
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.04
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.04
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.04
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.04
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.04
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.04
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.04
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.04
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.04
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.04
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.04
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Support_Genome",
+     "display_name": "Support Genome",
+     "desc": "Toggle: +Damage, +Defense",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.02
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.02
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.02
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.02
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.02
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.02
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.02
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.02
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.02
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.02
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.02
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Support_Genome_5",
+     "display_name": "Support Partial Core Graft",
+     "desc": "Toggle: +Damage, +Defense, +Special",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.06
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.06
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.06
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.06
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.06
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.06
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.06
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.06
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.06
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.06
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.06
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.06
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.06
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.06
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.06
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.06
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Support_Genome_6",
+     "display_name": "Support Partial Radial Graft",
+     "desc": "Toggle: +Damage, +Accuracy, +Defense",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.08
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Support_Genome_9",
+     "display_name": "Support Radial Embodiment",
+     "desc": "Toggle: +Damage, +Accuracy, +Defense, +Special",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Psionic",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Ranged",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Toxic",
+       "value": 0.08
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Support_Genome_3",
+     "display_name": "Support Radial Genome",
+     "desc": "Toggle: +Damage, +Accuracy, +Defense",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.02
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.02
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.02
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.02
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.02
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.02
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.02
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.02
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.02
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.02
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.02
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.02
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.02
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.02
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Support_Genome_4",
+     "display_name": "Support Total Core Graft",
+     "desc": "Toggle: +Damage, +Accuracy, +Defense",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.08
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.08
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.08
+      }
+     ]
+    },
+    {
+     "full_name": "Incarnate.Hybrid.Support_Genome_7",
+     "display_name": "Support Total Radial Graft",
+     "desc": "Toggle: +Damage, +Accuracy, +Defense, +Special",
+     "effects": [
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Cold",
+       "value": 0.06
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Energy",
+       "value": 0.06
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Fire",
+       "value": 0.06
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Lethal",
+       "value": 0.06
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Negative",
+       "value": 0.06
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Psionic",
+       "value": 0.06
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Smashing",
+       "value": 0.06
+      },
+      {
+       "effect": "DamageBuff",
+       "damage_type": "Toxic",
+       "value": 0.06
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "AoE",
+       "value": 0.06
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Cold",
+       "value": 0.06
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Energy",
+       "value": 0.06
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Fire",
+       "value": 0.06
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Lethal",
+       "value": 0.06
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Melee",
+       "value": 0.06
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Negative",
+       "value": 0.06
+      },
+      {
+       "effect": "Defense",
+       "damage_type": "Smashing",
+       "value": 0.06
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "slot": "Genesis",
+   "powerset": "Incarnate.Genesis",
+   "choice_count": 37,
+   "choices": [
+    {
+     "full_name": "Incarnate.Genesis.Data_Core_Flawless_Genesis",
+     "display_name": "Data Core Flawless Genesis",
+     "desc": "Data Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Data_Core_Genesis",
+     "display_name": "Data Core Genesis",
+     "desc": "Data Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Data_Genesis",
+     "display_name": "Data Genesis",
+     "desc": "Data Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Data_Partial_Core_Genesis",
+     "display_name": "Data Partial Core Genesis",
+     "desc": "Data Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Data_Partial_Radial_Genesis",
+     "display_name": "Data Partial Radial Genesis",
+     "desc": "Data Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Data_Radial_Flawless_Genesis",
+     "display_name": "Data Radial Flawless Genesis",
+     "desc": "Data Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Data_Radial_Genesis",
+     "display_name": "Data Radial Genesis",
+     "desc": "Data Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Data_Total_Core_Genesis",
+     "display_name": "Data Total Core Genesis",
+     "desc": "Data Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Data_Total_Radial_Genesis",
+     "display_name": "Data Total Radial Genesis",
+     "desc": "Data Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Fate_Core_Flawless_Genesis",
+     "display_name": "Fate Core Flawless Genesis",
+     "desc": "Fate Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Fate_Core_Genesis",
+     "display_name": "Fate Core Genesis",
+     "desc": "Fate Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Fate_Genesis",
+     "display_name": "Fate Genesis",
+     "desc": "Fate Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Fate_Partial_Core_Genesis",
+     "display_name": "Fate Partial Core Genesis",
+     "desc": "Fate Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Fate_Partial_Radial_Genesis",
+     "display_name": "Fate Partial Radial Genesis",
+     "desc": "Fate Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Fate_Radial_Flawless_Genesis",
+     "display_name": "Fate Radial Flawless Genesis",
+     "desc": "Fate Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Fate_Radial_Genesis",
+     "display_name": "Fate Radial Genesis",
+     "desc": "Fate Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Fate_Total_Core_Genesis",
+     "display_name": "Fate Total Core Genesis",
+     "desc": "Fate Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Fate_Total_Radial_Genesis",
+     "display_name": "Fate Total Radial Genesis",
+     "desc": "Fate Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Nothing",
+     "display_name": "Nothing",
+     "desc": "Nothing",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Socket_Core_Flawless_Genesis",
+     "display_name": "Socket Core Flawless Genesis",
+     "desc": "Socket Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Socket_Core_Genesis",
+     "display_name": "Socket Core Genesis",
+     "desc": "Socket Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Socket_Genesis",
+     "display_name": "Socket Genesis",
+     "desc": "Socket Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Socket_Partial_Core_Genesis",
+     "display_name": "Socket Partial Core Genesis",
+     "desc": "Socket Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Socket_Partial_Radial_Genesis",
+     "display_name": "Socket Partial Radial Genesis",
+     "desc": "Socket Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Socket_Radial_Flawless_Genesis",
+     "display_name": "Socket Radial Flawless Genesis",
+     "desc": "Socket Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Socket_Radial_Genesis",
+     "display_name": "Socket Radial Genesis",
+     "desc": "Socket Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Socket_Total_Core_Genesis",
+     "display_name": "Socket Total Core Genesis",
+     "desc": "Socket Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Socket_Total_Radial_Genesis",
+     "display_name": "Socket Total Radial Genesis",
+     "desc": "Socket Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Verdict_Core_Flawless_Genesis",
+     "display_name": "Verdict Core Flawless Genesis",
+     "desc": "Verdict Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Verdict_Core_Genesis",
+     "display_name": "Verdict Core Genesis",
+     "desc": "Verdict Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Verdict_Genesis",
+     "display_name": "Verdict Genesis",
+     "desc": "Verdict Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Verdict_Partial_Core_Genesis",
+     "display_name": "Verdict Partial Core Genesis",
+     "desc": "Verdict Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Verdict_Partial_Radial_Genesis",
+     "display_name": "Verdict Partial Radial Genesis",
+     "desc": "Verdict Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Verdict_Radial_Flawless_Genesis",
+     "display_name": "Verdict Radial Flawless Genesis",
+     "desc": "Verdict Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Verdict_Radial_Genesis",
+     "display_name": "Verdict Radial Genesis",
+     "desc": "Verdict Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Verdict_Total_Core_Genesis",
+     "display_name": "Verdict Total Core Genesis",
+     "desc": "Verdict Genesis text",
+     "effects": []
+    },
+    {
+     "full_name": "Incarnate.Genesis.Verdict_Total_Radial_Genesis",
+     "display_name": "Verdict Total Radial Genesis",
+     "desc": "Verdict Genesis text",
+     "effects": []
+    }
+   ]
+  }
+ ]
+}

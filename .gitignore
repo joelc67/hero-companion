@@ -1,0 +1,35 @@
+# User data — never commit someone's saved characters-in-progress
+saves/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Windows .exe packaging (PyInstaller) — output only; HeroCompanion.spec IS the
+# committed build recipe
+build/
+dist/
+
+# Not ours to publish — other players' hand-made master builds stay a private,
+# local-only calibration corpus (see docs/architecture.md)
+benchmarks/masters/
+
+# Regenerable hub artifacts (sweep results are large and machine-specific)
+benchmarks/*.jsonl
+benchmarks/*.v1.jsonl
+
+# Generated build exports (user artifacts)
+exports/
+
+# Shelved costume/3D experiment (kept local until it returns from the archive)
+_archive_costume/
+gamedata/
+
+# Local session/tooling state
+.claude/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp

@@ -1,0 +1,3111 @@
+{
+ "by_archetype": {
+  "Class_Arachnos_Soldier": {
+   "primary": [
+    {
+     "full_name": "Arachnos_Soldiers.Arachnos_Soldier",
+     "display_name": "Arachnos Soldier",
+     "set_type": "Primary",
+     "archetype_index": 14
+    },
+    {
+     "full_name": "Arachnos_Soldiers.Bane_Spider_Soldier",
+     "display_name": "Bane Spider Soldier",
+     "set_type": "Primary",
+     "archetype_index": 14
+    },
+    {
+     "full_name": "Arachnos_Soldiers.Crab_Spider_Soldier",
+     "display_name": "Crab Spider Soldier",
+     "set_type": "Primary",
+     "archetype_index": 14
+    }
+   ],
+   "secondary": [
+    {
+     "full_name": "Training_Gadgets.Bane_Spider_Training",
+     "display_name": "Bane Spider Training",
+     "set_type": "Secondary",
+     "archetype_index": 14
+    },
+    {
+     "full_name": "Training_Gadgets.Crab_Spider_Training",
+     "display_name": "Crab Spider Training",
+     "set_type": "Secondary",
+     "archetype_index": 14
+    },
+    {
+     "full_name": "Training_Gadgets.Training_and_Gadgets",
+     "display_name": "Training and Gadgets",
+     "set_type": "Secondary",
+     "archetype_index": 14
+    }
+   ],
+   "epic": [
+    {
+     "full_name": "Epic.VEAT_Leviathan_Mastery",
+     "display_name": "Leviathan Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.VEAT_Mace_Mastery",
+     "display_name": "Mace Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.VEAT_Mu_Mastery",
+     "display_name": "Mu Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.VEAT_Soul_Mastery",
+     "display_name": "Soul Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    }
+   ]
+  },
+  "Class_Blaster": {
+   "primary": [
+    {
+     "full_name": "Blaster_Ranged.Archery",
+     "display_name": "Archery",
+     "set_type": "Primary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Ranged.Assault_Rifle",
+     "display_name": "Assault Rifle",
+     "set_type": "Primary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Ranged.Beam_Rifle",
+     "display_name": "Beam Rifle",
+     "set_type": "Primary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Ranged.Dark_Blast",
+     "display_name": "Dark Blast",
+     "set_type": "Primary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Ranged.Dual_Pistols",
+     "display_name": "Dual Pistols",
+     "set_type": "Primary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Ranged.Electrical_Blast",
+     "display_name": "Electrical Blast",
+     "set_type": "Primary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Ranged.Energy_Blast",
+     "display_name": "Energy Blast",
+     "set_type": "Primary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Ranged.Fire_Blast",
+     "display_name": "Fire Blast",
+     "set_type": "Primary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Ranged.Ice_Blast",
+     "display_name": "Ice Blast",
+     "set_type": "Primary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Ranged.Psychic_Blast",
+     "display_name": "Psychic Blast",
+     "set_type": "Primary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Ranged.Radiation_Blast",
+     "display_name": "Radiation Blast",
+     "set_type": "Primary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Ranged.Seismic_Blast",
+     "display_name": "Seismic Blast",
+     "set_type": "Primary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Ranged.Sonic_Attack",
+     "display_name": "Sonic Attack",
+     "set_type": "Primary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Ranged.Storm_Blast",
+     "display_name": "Storm Blast",
+     "set_type": "Primary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Ranged.Water_Blast",
+     "display_name": "Water Blast",
+     "set_type": "Primary",
+     "archetype_index": 0
+    }
+   ],
+   "secondary": [
+    {
+     "full_name": "Blaster_Support.Radiation_Manipulation",
+     "display_name": "Atomic Manipulation",
+     "set_type": "Secondary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Support.Darkness_Manipulation",
+     "display_name": "Darkness Manipulation",
+     "set_type": "Secondary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Support.Gadgets",
+     "display_name": "Devices",
+     "set_type": "Secondary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Support.Earth_Manipulation",
+     "display_name": "Earth Manipulation",
+     "set_type": "Secondary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Support.Electricity_Manipulation",
+     "display_name": "Electricity Manipulation",
+     "set_type": "Secondary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Support.Energy_Manipulation",
+     "display_name": "Energy Manipulation",
+     "set_type": "Secondary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Support.Fire_Manipulation",
+     "display_name": "Fire Manipulation",
+     "set_type": "Secondary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Support.Ice_Manipulation",
+     "display_name": "Ice Manipulation",
+     "set_type": "Secondary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Support.Martial_Manipulation",
+     "display_name": "Martial Combat",
+     "set_type": "Secondary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Support.Mental_Manipulation",
+     "display_name": "Mental Manipulation",
+     "set_type": "Secondary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Support.Ninja_Training",
+     "display_name": "Ninja Training",
+     "set_type": "Secondary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Support.Plant_Manipulation",
+     "display_name": "Plant Manipulation",
+     "set_type": "Secondary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Support.Sonic_Manipulation",
+     "display_name": "Sonic Manipulation",
+     "set_type": "Secondary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Support.Tactical_Arrow",
+     "display_name": "Tactical Arrow",
+     "set_type": "Secondary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Blaster_Support.Temporal_Manipulation",
+     "display_name": "Temporal Manipulation",
+     "set_type": "Secondary",
+     "archetype_index": 0
+    }
+   ],
+   "epic": [
+    {
+     "full_name": "Epic.Munitions_Mastery",
+     "display_name": "Arsenal Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Dark_Mastery_Blaster",
+     "display_name": "Dark Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 0
+    },
+    {
+     "full_name": "Epic.Electrical_Mastery",
+     "display_name": "Electricity Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Flame_Mastery",
+     "display_name": "Fire Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Force_Mastery",
+     "display_name": "Force Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Cold_Mastery",
+     "display_name": "Ice Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Mastermind_Leviathan_Mastery",
+     "display_name": "Leviathan Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Blaster_Mace_Mastery",
+     "display_name": "Mace Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Blaster_Mu_Mastery",
+     "display_name": "Mu Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Mastermind_Soul_Mastery",
+     "display_name": "Soul Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    }
+   ]
+  },
+  "Class_Defender": {
+   "primary": [
+    {
+     "full_name": "Defender_Buff.Cold_Domination",
+     "display_name": "Cold Domination",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Buff.Dark_Miasma",
+     "display_name": "Dark Miasma",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Buff.Shock_Therapy",
+     "display_name": "Electrical Affinity",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Buff.Empathy",
+     "display_name": "Empathy",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Buff.Force_Field",
+     "display_name": "Force Field",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Buff.Kinetics",
+     "display_name": "Kinetics",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Buff.Marine_Affinity",
+     "display_name": "Marine Affinity",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Buff.Nature_Affinity",
+     "display_name": "Nature Affinity",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Buff.Pain_Domination",
+     "display_name": "Pain Domination",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Buff.Poison",
+     "display_name": "Poison",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Buff.Radiation_Emission",
+     "display_name": "Radiation Emission",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Buff.Sonic_Debuff",
+     "display_name": "Sonic Resonance",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Buff.Storm_Summoning",
+     "display_name": "Storm Summoning",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Buff.Thermal_Radiation",
+     "display_name": "Thermal Radiation",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Buff.Time_Manipulation",
+     "display_name": "Time Manipulation",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Buff.Traps",
+     "display_name": "Traps",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Buff.Trick_Arrow",
+     "display_name": "Trick Arrow",
+     "set_type": "Primary",
+     "archetype_index": 2
+    }
+   ],
+   "secondary": [
+    {
+     "full_name": "Defender_Ranged.Archery",
+     "display_name": "Archery",
+     "set_type": "Secondary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Ranged.Assault_Rifle",
+     "display_name": "Assault Rifle",
+     "set_type": "Secondary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Ranged.Beam_Rifle",
+     "display_name": "Beam Rifle",
+     "set_type": "Secondary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Ranged.Dark_Blast",
+     "display_name": "Dark Blast",
+     "set_type": "Secondary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Ranged.Dual_Pistols",
+     "display_name": "Dual Pistols",
+     "set_type": "Secondary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Ranged.Electrical_Blast",
+     "display_name": "Electrical Blast",
+     "set_type": "Secondary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Ranged.Energy_Blast",
+     "display_name": "Energy Blast",
+     "set_type": "Secondary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Ranged.Fire_Blast",
+     "display_name": "Fire Blast",
+     "set_type": "Secondary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Ranged.Ice_Blast",
+     "display_name": "Ice Blast",
+     "set_type": "Secondary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Ranged.Psychic_Blast",
+     "display_name": "Psychic Blast",
+     "set_type": "Secondary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Ranged.Radiation_Blast",
+     "display_name": "Radiation Blast",
+     "set_type": "Secondary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Ranged.Seismic_Blast",
+     "display_name": "Seismic Blast",
+     "set_type": "Secondary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Ranged.Sonic_Attack",
+     "display_name": "Sonic Attack",
+     "set_type": "Secondary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Ranged.Storm_Blast",
+     "display_name": "Storm Blast",
+     "set_type": "Secondary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Defender_Ranged.Water_Blast",
+     "display_name": "Water Blast",
+     "set_type": "Secondary",
+     "archetype_index": 2
+    }
+   ],
+   "epic": [
+    {
+     "full_name": "Epic.Dark_Mastery",
+     "display_name": "Dark Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Electricity_Mastery",
+     "display_name": "Electricity Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Power_Mastery",
+     "display_name": "Energy Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Def_Flame_Mastery",
+     "display_name": "Fire Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 2
+    },
+    {
+     "full_name": "Epic.Ice_Mastery_DefCorr",
+     "display_name": "Ice Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Corruptor_Leviathan_Mastery",
+     "display_name": "Leviathan Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Corruptor_Mace_Mastery",
+     "display_name": "Mace Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Corruptor_Mu_Mastery",
+     "display_name": "Mu Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Psychic_Mastery",
+     "display_name": "Psionic Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Corruptor_Soul_Mastery",
+     "display_name": "Soul Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    }
+   ]
+  },
+  "Class_Brute": {
+   "primary": [
+    {
+     "full_name": "Brute_Melee.Battle_Axe",
+     "display_name": "Battle Axe",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Broad_Sword",
+     "display_name": "Broad Sword",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Claws",
+     "display_name": "Claws",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Dark_Melee",
+     "display_name": "Dark Melee",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Dual_Blades",
+     "display_name": "Dual Blades",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Electrical_Melee",
+     "display_name": "Electrical Melee",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Energy_Melee",
+     "display_name": "Energy Melee",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Fiery_Melee",
+     "display_name": "Fiery Melee",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Ice_Melee",
+     "display_name": "Ice Melee",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Katana",
+     "display_name": "Katana",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Kinetic_Attack",
+     "display_name": "Kinetic Melee",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Martial_Arts",
+     "display_name": "Martial Arts",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Psionic_Melee",
+     "display_name": "Psionic Melee",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Radiation_Melee",
+     "display_name": "Radiation Melee",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Savage_Melee",
+     "display_name": "Savage Melee",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Sonic_Melee",
+     "display_name": "Sonic Melee",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Spines",
+     "display_name": "Spines",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Staff_Fighting",
+     "display_name": "Staff Fighting",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Stone_Melee",
+     "display_name": "Stone Melee",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Brawling",
+     "display_name": "Street Justice",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Super_Strength",
+     "display_name": "Super Strength",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.Titan_Weapons",
+     "display_name": "Titan Weapons",
+     "set_type": "Primary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Melee.War_Mace",
+     "display_name": "War Mace",
+     "set_type": "Primary",
+     "archetype_index": 8
+    }
+   ],
+   "secondary": [
+    {
+     "full_name": "Brute_Defense.Bio_Organic_Armor",
+     "display_name": "Bio Armor",
+     "set_type": "Secondary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Defense.Dark_Armor",
+     "display_name": "Dark Armor",
+     "set_type": "Secondary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Defense.Electric_Armor",
+     "display_name": "Electric Armor",
+     "set_type": "Secondary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Defense.Energy_Aura",
+     "display_name": "Energy Aura",
+     "set_type": "Secondary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Defense.Fiery_Aura",
+     "display_name": "Fiery Aura",
+     "set_type": "Secondary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Defense.Ice_Armor",
+     "display_name": "Ice Armor",
+     "set_type": "Secondary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Defense.Invulnerability",
+     "display_name": "Invulnerability",
+     "set_type": "Secondary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Defense.Psionic_Armor",
+     "display_name": "Psionic Armor",
+     "set_type": "Secondary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Defense.Radiation_Armor",
+     "display_name": "Radiation Armor",
+     "set_type": "Secondary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Defense.Regeneration",
+     "display_name": "Regeneration",
+     "set_type": "Secondary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Defense.Shield_Defense",
+     "display_name": "Shield Defense",
+     "set_type": "Secondary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Defense.Stone_Armor",
+     "display_name": "Stone Armor",
+     "set_type": "Secondary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Defense.Super_Reflexes",
+     "display_name": "Super Reflexes",
+     "set_type": "Secondary",
+     "archetype_index": 8
+    },
+    {
+     "full_name": "Brute_Defense.Willpower",
+     "display_name": "Willpower",
+     "set_type": "Secondary",
+     "archetype_index": 8
+    }
+   ],
+   "epic": [
+    {
+     "full_name": "Epic.Dark_Mastery_TankBrute",
+     "display_name": "Dark Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Earth_Mastery",
+     "display_name": "Earth Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Energy_Mastery_Brute",
+     "display_name": "Energy Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Pyre_Mastery",
+     "display_name": "Fire Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Arctic_Mastery",
+     "display_name": "Ice Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Brute_Leviathan_Mastery",
+     "display_name": "Leviathan Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Brute_Mace_Mastery",
+     "display_name": "Mace Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Brute_Mu_Mastery",
+     "display_name": "Mu Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Psionic_Mastery_TankBrute",
+     "display_name": "Psionic Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Brute_Soul_Mastery",
+     "display_name": "Soul Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    }
+   ]
+  },
+  "Class_Controller": {
+   "primary": [
+    {
+     "full_name": "Controller_Control.Arsenal_Control",
+     "display_name": "Arsenal Control",
+     "set_type": "Primary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Control.Darkness_Control",
+     "display_name": "Darkness Control",
+     "set_type": "Primary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Control.Earth_Control",
+     "display_name": "Earth Control",
+     "set_type": "Primary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Control.Electric_Control",
+     "display_name": "Electric Control",
+     "set_type": "Primary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Control.Fire_Control",
+     "display_name": "Fire Control",
+     "set_type": "Primary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Control.Gravity_Control",
+     "display_name": "Gravity Control",
+     "set_type": "Primary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Control.Ice_Control",
+     "display_name": "Ice Control",
+     "set_type": "Primary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Control.Illusion_Control",
+     "display_name": "Illusion Control",
+     "set_type": "Primary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Control.Mind_Control",
+     "display_name": "Mind Control",
+     "set_type": "Primary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Control.Plant_Control",
+     "display_name": "Plant Control",
+     "set_type": "Primary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Control.Pyrotechnic_Control",
+     "display_name": "Pyrotechnic Control",
+     "set_type": "Primary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Control.Symphony_Control",
+     "display_name": "Symphony Control",
+     "set_type": "Primary",
+     "archetype_index": 1
+    }
+   ],
+   "secondary": [
+    {
+     "full_name": "Controller_Buff.Cold_Domination",
+     "display_name": "Cold Domination",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Darkness_Affinity",
+     "display_name": "Darkness Affinity",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Electrical_Affinity",
+     "display_name": "Electrical Affinity",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Empathy",
+     "display_name": "Empathy",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Force_Field",
+     "display_name": "Force Field",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Kinetics",
+     "display_name": "Kinetics",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Marine_Affinity",
+     "display_name": "Marine Affinity",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Nature_Affinity",
+     "display_name": "Nature Affinity",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Pain_Domination",
+     "display_name": "Pain Domination",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Poison",
+     "display_name": "Poison",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Radiation_Emission",
+     "display_name": "Radiation Emission",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Sonic_Debuff",
+     "display_name": "Sonic Resonance",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Storm_Summoning",
+     "display_name": "Storm Summoning",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Thermal_Radiation",
+     "display_name": "Thermal Radiation",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Time_Manipulation",
+     "display_name": "Time Manipulation",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Traps",
+     "display_name": "Traps",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Trick_Arrow",
+     "display_name": "Trick Arrow",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    }
+   ],
+   "epic": [
+    {
+     "full_name": "Epic.Dark_Mastery_Controller",
+     "display_name": "Dark Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Epic.Stone_Mastery",
+     "display_name": "Earth Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Primal_Forces_Mastery",
+     "display_name": "Energy Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Fire_Mastery",
+     "display_name": "Fire Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Ice_Mastery",
+     "display_name": "Ice Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Dominator_Leviathan_Mastery",
+     "display_name": "Leviathan Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Controller_Mace_Mastery",
+     "display_name": "Mace Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Dominator_Mu_Mastery",
+     "display_name": "Mu Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Psionic_Mastery",
+     "display_name": "Psionic Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Dominator_Soul_Mastery",
+     "display_name": "Soul Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    }
+   ]
+  },
+  "Class_Corruptor": {
+   "primary": [
+    {
+     "full_name": "Corruptor_Ranged.Archery",
+     "display_name": "Archery",
+     "set_type": "Primary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Ranged.Assault_Rifle",
+     "display_name": "Assault Rifle",
+     "set_type": "Primary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Ranged.Beam_Rifle",
+     "display_name": "Beam Rifle",
+     "set_type": "Primary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Ranged.Dark_Blast",
+     "display_name": "Dark Blast",
+     "set_type": "Primary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Ranged.Dual_Pistols",
+     "display_name": "Dual Pistols",
+     "set_type": "Primary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Ranged.Electrical_Blast",
+     "display_name": "Electrical Blast",
+     "set_type": "Primary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Ranged.Energy_Blast",
+     "display_name": "Energy Blast",
+     "set_type": "Primary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Ranged.Fire_Blast",
+     "display_name": "Fire Blast",
+     "set_type": "Primary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Ranged.Ice_Blast",
+     "display_name": "Ice Blast",
+     "set_type": "Primary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Ranged.Psychic_Blast",
+     "display_name": "Psychic Blast",
+     "set_type": "Primary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Ranged.Radiation_Blast",
+     "display_name": "Radiation Blast",
+     "set_type": "Primary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Ranged.Seismic_Blast",
+     "display_name": "Seismic Blast",
+     "set_type": "Primary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Ranged.Sonic_Attack",
+     "display_name": "Sonic Attack",
+     "set_type": "Primary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Ranged.Storm_Blast",
+     "display_name": "Storm Blast",
+     "set_type": "Primary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Ranged.Water_Blast",
+     "display_name": "Water Blast",
+     "set_type": "Primary",
+     "archetype_index": 12
+    }
+   ],
+   "secondary": [
+    {
+     "full_name": "Corruptor_Buff.Cold_Domination",
+     "display_name": "Cold Domination",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Dark_Miasma",
+     "display_name": "Dark Miasma",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Electrical_Affinity",
+     "display_name": "Electrical Affinity",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Empathy",
+     "display_name": "Empathy",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Force_Field",
+     "display_name": "Force Field",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Kinetics",
+     "display_name": "Kinetics",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Marine_Affinity",
+     "display_name": "Marine Affinity",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Nature_Affinity",
+     "display_name": "Nature Affinity",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Pain_Domination",
+     "display_name": "Pain Domination",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Poison",
+     "display_name": "Poison",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Radiation_Emission",
+     "display_name": "Radiation Emission",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Sonic_Resonance",
+     "display_name": "Sonic Resonance",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Storm_Summoning",
+     "display_name": "Storm Summoning",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Thermal_Radiation",
+     "display_name": "Thermal Radiation",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Time_Manipulation",
+     "display_name": "Time Manipulation",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Traps",
+     "display_name": "Traps",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Trick_Arrow",
+     "display_name": "Trick Arrow",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    }
+   ],
+   "epic": [
+    {
+     "full_name": "Epic.Dark_Mastery",
+     "display_name": "Dark Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Electricity_Mastery",
+     "display_name": "Electricity Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Power_Mastery",
+     "display_name": "Energy Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Corr_Flame_Mastery",
+     "display_name": "Fire Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Ice_Mastery_DefCorr",
+     "display_name": "Ice Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Corruptor_Leviathan_Mastery",
+     "display_name": "Leviathan Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Corruptor_Mace_Mastery",
+     "display_name": "Mace Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Corruptor_Mu_Mastery",
+     "display_name": "Mu Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Psychic_Mastery",
+     "display_name": "Psionic Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Corruptor_Soul_Mastery",
+     "display_name": "Soul Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    }
+   ]
+  },
+  "Class_Dominator": {
+   "primary": [
+    {
+     "full_name": "Dominator_Control.Arsenal_Control",
+     "display_name": "Arsenal Control",
+     "set_type": "Primary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Control.Darkness_Control",
+     "display_name": "Darkness Control",
+     "set_type": "Primary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Control.Earth_Control",
+     "display_name": "Earth Control",
+     "set_type": "Primary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Control.Electric_Control",
+     "display_name": "Electric Control",
+     "set_type": "Primary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Control.Fire_Control",
+     "display_name": "Fire Control",
+     "set_type": "Primary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Control.Gravity_Control",
+     "display_name": "Gravity Control",
+     "set_type": "Primary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Control.Ice_Control",
+     "display_name": "Ice Control",
+     "set_type": "Primary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Control.Illusion_Control",
+     "display_name": "Illusion Control",
+     "set_type": "Primary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Control.Mind_Control",
+     "display_name": "Mind Control",
+     "set_type": "Primary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Control.Plant_Control",
+     "display_name": "Plant Control",
+     "set_type": "Primary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Control.Pyrotechnic_Control",
+     "display_name": "Pyrotechnic Control",
+     "set_type": "Primary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Control.Symphony_Control",
+     "display_name": "Symphony Control",
+     "set_type": "Primary",
+     "archetype_index": 11
+    }
+   ],
+   "secondary": [
+    {
+     "full_name": "Dominator_Assault.Arsenal_Assault",
+     "display_name": "Arsenal Assault",
+     "set_type": "Secondary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Assault.Dark_Assault",
+     "display_name": "Dark Assault",
+     "set_type": "Secondary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Assault.Earth_Assault",
+     "display_name": "Earth Assault",
+     "set_type": "Secondary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Assault.Electricity_Manipulation",
+     "display_name": "Electricity Assault",
+     "set_type": "Secondary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Assault.Energy_Assault",
+     "display_name": "Energy Assault",
+     "set_type": "Secondary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Assault.Fiery_Assault",
+     "display_name": "Fiery Assault",
+     "set_type": "Secondary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Assault.Icy_Assault",
+     "display_name": "Icy Assault",
+     "set_type": "Secondary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Assault.Martial_Assault",
+     "display_name": "Martial Assault",
+     "set_type": "Secondary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Assault.Psionic_Assault",
+     "display_name": "Psionic Assault",
+     "set_type": "Secondary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Assault.Radioactive_Assault",
+     "display_name": "Radioactive Assault",
+     "set_type": "Secondary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Assault.Savage_Assault",
+     "display_name": "Savage Assault",
+     "set_type": "Secondary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Assault.Sonic_Assault",
+     "display_name": "Sonic Assault",
+     "set_type": "Secondary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Dominator_Assault.Thorny_Assault",
+     "display_name": "Thorny Assault",
+     "set_type": "Secondary",
+     "archetype_index": 11
+    }
+   ],
+   "epic": [
+    {
+     "full_name": "Epic.Dark_Mastery_Dominator",
+     "display_name": "Dark Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 11
+    },
+    {
+     "full_name": "Epic.Dark_Mastery_TankBrute",
+     "display_name": "Dark Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Primal_Forces_Mastery_Dominator",
+     "display_name": "Energy Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Fire_Mastery_Dominator",
+     "display_name": "Fire Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Ice_Mastery_Dominator",
+     "display_name": "Ice Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Dominator_Leviathan_Mastery",
+     "display_name": "Leviathan Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Dominator_Mace_Mastery",
+     "display_name": "Mace Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Dominator_Mu_Mastery",
+     "display_name": "Mu Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Sentinel_Psi_Mastery",
+     "display_name": "Psionic Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Epic.Psionic_Mastery_Domingator",
+     "display_name": "Psionic Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Dominator_Soul_Mastery",
+     "display_name": "Soul Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    }
+   ]
+  },
+  "Class_Tanker": {
+   "primary": [
+    {
+     "full_name": "Tanker_Defense.Bio_Organic_Armor",
+     "display_name": "Bio Armor",
+     "set_type": "Primary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Defense.Dark_Armor",
+     "display_name": "Dark Armor",
+     "set_type": "Primary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Defense.Electric_Armor",
+     "display_name": "Electric Armor",
+     "set_type": "Primary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Defense.Energy_Aura",
+     "display_name": "Energy Aura",
+     "set_type": "Primary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Defense.Fiery_Aura",
+     "display_name": "Fiery Aura",
+     "set_type": "Primary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Defense.Ice_Armor",
+     "display_name": "Ice Armor",
+     "set_type": "Primary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Defense.Invulnerability",
+     "display_name": "Invulnerability",
+     "set_type": "Primary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Defense.Psionic_Armor",
+     "display_name": "Psionic Armor",
+     "set_type": "Primary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Defense.Radiation_Armor",
+     "display_name": "Radiation Armor",
+     "set_type": "Primary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Defense.Regeneration",
+     "display_name": "Regeneration",
+     "set_type": "Primary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Defense.Shield_Defense",
+     "display_name": "Shield Defense",
+     "set_type": "Primary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Defense.Stone_Armor",
+     "display_name": "Stone Armor",
+     "set_type": "Primary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Defense.Super_Reflexes",
+     "display_name": "Super Reflexes",
+     "set_type": "Primary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Defense.Willpower",
+     "display_name": "Willpower",
+     "set_type": "Primary",
+     "archetype_index": 4
+    }
+   ],
+   "secondary": [
+    {
+     "full_name": "Tanker_Melee.Battle_Axe",
+     "display_name": "Battle Axe",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Broad_Sword",
+     "display_name": "Broad Sword",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Claws",
+     "display_name": "Claws",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Dark_Melee",
+     "display_name": "Dark Melee",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Dual_Blades",
+     "display_name": "Dual Blades",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Electrical_Melee",
+     "display_name": "Electrical Melee",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Energy_Melee",
+     "display_name": "Energy Melee",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Fiery_Melee",
+     "display_name": "Fiery Melee",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Ice_Melee",
+     "display_name": "Ice Melee",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Katana",
+     "display_name": "Katana",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Kinetic_Attack",
+     "display_name": "Kinetic Melee",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Martial_Arts",
+     "display_name": "Martial Arts",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Psionic_Melee",
+     "display_name": "Psionic Melee",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Radiation_Melee",
+     "display_name": "Radiation Melee",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Savage_Melee",
+     "display_name": "Savage Melee",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Sonic_Melee",
+     "display_name": "Sonic Melee",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Spines",
+     "display_name": "Spines",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Staff_Fighting",
+     "display_name": "Staff Fighting",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Stone_Melee",
+     "display_name": "Stone Melee",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Brawling",
+     "display_name": "Street Justice",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Super_Strength",
+     "display_name": "Super Strength",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.Titan_Weapons",
+     "display_name": "Titan Weapons",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    },
+    {
+     "full_name": "Tanker_Melee.War_Mace",
+     "display_name": "War Mace",
+     "set_type": "Secondary",
+     "archetype_index": 4
+    }
+   ],
+   "epic": [
+    {
+     "full_name": "Epic.Dark_Mastery_TankBrute",
+     "display_name": "Dark Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Earth_Mastery",
+     "display_name": "Earth Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Energy_Mastery",
+     "display_name": "Energy Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Pyre_Mastery",
+     "display_name": "Fire Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Arctic_Mastery",
+     "display_name": "Ice Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Brute_Leviathan_Mastery",
+     "display_name": "Leviathan Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Brute_Mace_Mastery",
+     "display_name": "Mace Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Brute_Mu_Mastery",
+     "display_name": "Mu Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Psionic_Mastery_TankBrute",
+     "display_name": "Psionic Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Brute_Soul_Mastery",
+     "display_name": "Soul Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    }
+   ]
+  },
+  "Class_Sentinel": {
+   "primary": [
+    {
+     "full_name": "Sentinel_Ranged.Archery",
+     "display_name": "Archery",
+     "set_type": "Primary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Ranged.Assault_Rifle",
+     "display_name": "Assault Rifle",
+     "set_type": "Primary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Ranged.Beam_Rifle",
+     "display_name": "Beam Rifle",
+     "set_type": "Primary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Ranged.Dark_Blast",
+     "display_name": "Dark Blast",
+     "set_type": "Primary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Ranged.Dual_Pistols",
+     "display_name": "Dual Pistols",
+     "set_type": "Primary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Ranged.Electrical_Blast",
+     "display_name": "Electrical Blast",
+     "set_type": "Primary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Ranged.Energy_Blast",
+     "display_name": "Energy Blast",
+     "set_type": "Primary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Ranged.Fire_Blast",
+     "display_name": "Fire Blast",
+     "set_type": "Primary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Ranged.Ice_Blast",
+     "display_name": "Ice Blast",
+     "set_type": "Primary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Ranged.Psychic_Blast",
+     "display_name": "Psychic Blast",
+     "set_type": "Primary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Ranged.Radiation_Blast",
+     "display_name": "Radiation Blast",
+     "set_type": "Primary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Ranged.Seismic_Blast",
+     "display_name": "Seismic Blast",
+     "set_type": "Primary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Ranged.Sonic_Attack",
+     "display_name": "Sonic Attack",
+     "set_type": "Primary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Ranged.Storm_Blast",
+     "display_name": "Storm Blast",
+     "set_type": "Primary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Ranged.Water_Blast",
+     "display_name": "Water Blast",
+     "set_type": "Primary",
+     "archetype_index": 7
+    }
+   ],
+   "secondary": [
+    {
+     "full_name": "Sentinel_Defense.Bio_Organic_Armor",
+     "display_name": "Bio Armor",
+     "set_type": "Secondary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Defense.Dark_Armor",
+     "display_name": "Dark Armor",
+     "set_type": "Secondary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Defense.Electric_Armor",
+     "display_name": "Electric Armor",
+     "set_type": "Secondary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Defense.Energy_Aura",
+     "display_name": "Energy Aura",
+     "set_type": "Secondary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Defense.Fiery_Aura",
+     "display_name": "Fiery Aura",
+     "set_type": "Secondary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Defense.Ice_Armor",
+     "display_name": "Ice Armor",
+     "set_type": "Secondary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Defense.Invulnerability",
+     "display_name": "Invulnerability",
+     "set_type": "Secondary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Defense.Ninjitsu",
+     "display_name": "Ninjitsu",
+     "set_type": "Secondary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Defense.Psionic_Armor",
+     "display_name": "Psionic Armor",
+     "set_type": "Secondary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Defense.Radiation_Armor",
+     "display_name": "Radiation Armor",
+     "set_type": "Secondary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Defense.Regeneration",
+     "display_name": "Regeneration",
+     "set_type": "Secondary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Defense.Stone_Armor",
+     "display_name": "Stone Armor",
+     "set_type": "Secondary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Defense.Super_Reflexes",
+     "display_name": "Super Reflexes",
+     "set_type": "Secondary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Sentinel_Defense.Willpower",
+     "display_name": "Willpower",
+     "set_type": "Secondary",
+     "archetype_index": 7
+    }
+   ],
+   "epic": [
+    {
+     "full_name": "Epic.Sentinel_Dark_Mastery",
+     "display_name": "Dark Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Epic.Sentinel_Elec_Mastery",
+     "display_name": "Electricity Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Epic.Sentinel_Fire_Mastery",
+     "display_name": "Fire Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Epic.Sentinel_Ice_Mastery",
+     "display_name": "Ice Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Epic.Sentinel_Lev_Mastery",
+     "display_name": "Leviathan Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Epic.Sentinel_Mace_Mastery",
+     "display_name": "Mace Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Epic.Sentinel_Mu_Mastery",
+     "display_name": "Mu Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Epic.Sentinel_Psi_Mastery",
+     "display_name": "Psionic Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Epic.Sentinel_Soul_Mastery",
+     "display_name": "Soul Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Epic.Sentinel_Ninja_Mastery",
+     "display_name": "Weapon Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 7
+    }
+   ]
+  },
+  "Class_Scrapper": {
+   "primary": [
+    {
+     "full_name": "Scrapper_Melee.Battle_Axe",
+     "display_name": "Battle Axe",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Broad_Sword",
+     "display_name": "Broad Sword",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Claws",
+     "display_name": "Claws",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Dark_Melee",
+     "display_name": "Dark Melee",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Dual_Blades",
+     "display_name": "Dual Blades",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Electrical_Melee",
+     "display_name": "Electrical Melee",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Energy_Melee",
+     "display_name": "Energy Melee",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Fiery_Melee",
+     "display_name": "Fiery Melee",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Ice_Melee",
+     "display_name": "Ice Melee",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Katana",
+     "display_name": "Katana",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Kinetic_Attack",
+     "display_name": "Kinetic Melee",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Martial_Arts",
+     "display_name": "Martial Arts",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Psionic_Melee",
+     "display_name": "Psionic Melee",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Radiation_Melee",
+     "display_name": "Radiation Melee",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Savage_Melee",
+     "display_name": "Savage Melee",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Sonic_Melee",
+     "display_name": "Sonic Melee",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Quills",
+     "display_name": "Spines",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Staff_Fighting",
+     "display_name": "Staff Fighting",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Stone_Melee",
+     "display_name": "Stone Melee",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Brawling",
+     "display_name": "Street Justice",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.Titan_Weapons",
+     "display_name": "Titan Weapons",
+     "set_type": "Primary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Melee.War_Mace",
+     "display_name": "War Mace",
+     "set_type": "Primary",
+     "archetype_index": 3
+    }
+   ],
+   "secondary": [
+    {
+     "full_name": "Scrapper_Defense.Bio_Organic_Armor",
+     "display_name": "Bio Armor",
+     "set_type": "Secondary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Defense.Dark_Armor",
+     "display_name": "Dark Armor",
+     "set_type": "Secondary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Defense.Electric_Armor",
+     "display_name": "Electric Armor",
+     "set_type": "Secondary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Defense.Energy_Aura",
+     "display_name": "Energy Aura",
+     "set_type": "Secondary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Defense.Fiery_Aura",
+     "display_name": "Fiery Aura",
+     "set_type": "Secondary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Defense.Ice_Armor",
+     "display_name": "Ice Armor",
+     "set_type": "Secondary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Defense.Invulnerability",
+     "display_name": "Invulnerability",
+     "set_type": "Secondary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Defense.Ninjitsu",
+     "display_name": "Ninjitsu",
+     "set_type": "Secondary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Defense.Psionic_Armor",
+     "display_name": "Psionic Armor",
+     "set_type": "Secondary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Defense.Radiation_Armor",
+     "display_name": "Radiation Armor",
+     "set_type": "Secondary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Defense.Regeneration",
+     "display_name": "Regeneration",
+     "set_type": "Secondary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Defense.Shield_Defense",
+     "display_name": "Shield Defense",
+     "set_type": "Secondary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Defense.Stone_Armor",
+     "display_name": "Stone Armor",
+     "set_type": "Secondary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Defense.Super_Reflexes",
+     "display_name": "Super Reflexes",
+     "set_type": "Secondary",
+     "archetype_index": 3
+    },
+    {
+     "full_name": "Scrapper_Defense.Willpower",
+     "display_name": "Willpower",
+     "set_type": "Secondary",
+     "archetype_index": 3
+    }
+   ],
+   "epic": [
+    {
+     "full_name": "Epic.Darkness_Mastery",
+     "display_name": "Dark Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Body_Mastery",
+     "display_name": "Energy Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Blaze_Mastery",
+     "display_name": "Fire Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Ice_Mastery_ScrapStalk",
+     "display_name": "Ice Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Stalker_Leviathan_Mastery",
+     "display_name": "Leviathan Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Scrapper_Mace_Mastery",
+     "display_name": "Mace Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Stalker_Mu_Mastery",
+     "display_name": "Mu Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Psionic_Mastery_ScrapStalk",
+     "display_name": "Psionic Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Stalker_Soul_Mastery",
+     "display_name": "Soul Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Weapon_Mastery",
+     "display_name": "Weapon Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    }
+   ]
+  },
+  "Class_Stalker": {
+   "primary": [
+    {
+     "full_name": "Stalker_Melee.Broad_Sword",
+     "display_name": "Broad Sword",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Claws",
+     "display_name": "Claws",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Dark_Melee",
+     "display_name": "Dark Melee",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Dual_Blades",
+     "display_name": "Dual Blades",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Electrical_Melee",
+     "display_name": "Electrical Melee",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Energy_Melee",
+     "display_name": "Energy Melee",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Fiery_Melee",
+     "display_name": "Fiery Melee",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Ice_Melee",
+     "display_name": "Ice Melee",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Kinetic_Attack",
+     "display_name": "Kinetic Melee",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Martial_Arts",
+     "display_name": "Martial Arts",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Ninja_Sword",
+     "display_name": "Ninja Blade",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Psionic_Melee",
+     "display_name": "Psionic Melee",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Radiation_Melee",
+     "display_name": "Radiation Melee",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Savage_Melee",
+     "display_name": "Savage Melee",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Sonic_Melee",
+     "display_name": "Sonic Melee",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Spines",
+     "display_name": "Spines",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Staff_Fighting",
+     "display_name": "Staff Fighting",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Stone_Melee",
+     "display_name": "Stone Melee",
+     "set_type": "Primary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Melee.Brawling",
+     "display_name": "Street Justice",
+     "set_type": "Primary",
+     "archetype_index": 9
+    }
+   ],
+   "secondary": [
+    {
+     "full_name": "Stalker_Defense.Bio_Organic_Armor",
+     "display_name": "Bio Armor",
+     "set_type": "Secondary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Defense.Dark_Armor",
+     "display_name": "Dark Armor",
+     "set_type": "Secondary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Defense.Electric_Armor",
+     "display_name": "Electric Armor",
+     "set_type": "Secondary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Defense.Energy_Aura",
+     "display_name": "Energy Aura",
+     "set_type": "Secondary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Defense.Fiery_Aura",
+     "display_name": "Fiery Aura",
+     "set_type": "Secondary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Defense.Ice_Armor",
+     "display_name": "Ice Armor",
+     "set_type": "Secondary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Defense.Invulnerability",
+     "display_name": "Invulnerability",
+     "set_type": "Secondary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Defense.Ninjitsu",
+     "display_name": "Ninjitsu",
+     "set_type": "Secondary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Defense.Psionic_Armor",
+     "display_name": "Psionic Armor",
+     "set_type": "Secondary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Defense.Radiation_Armor",
+     "display_name": "Radiation Armor",
+     "set_type": "Secondary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Defense.Regeneration",
+     "display_name": "Regeneration",
+     "set_type": "Secondary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Defense.Shield_Defense",
+     "display_name": "Shield Defense",
+     "set_type": "Secondary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Defense.Stone_Armor",
+     "display_name": "Stone Armor",
+     "set_type": "Secondary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Defense.Super_Reflexes",
+     "display_name": "Super Reflexes",
+     "set_type": "Secondary",
+     "archetype_index": 9
+    },
+    {
+     "full_name": "Stalker_Defense.Willpower",
+     "display_name": "Willpower",
+     "set_type": "Secondary",
+     "archetype_index": 9
+    }
+   ],
+   "epic": [
+    {
+     "full_name": "Epic.Darkness_Mastery",
+     "display_name": "Dark Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Body_Mastery_Stalker",
+     "display_name": "Energy Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Blaze_Mastery",
+     "display_name": "Fire Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Sentinel_Fire_Mastery",
+     "display_name": "Fire Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 7
+    },
+    {
+     "full_name": "Epic.Ice_Mastery_ScrapStalk",
+     "display_name": "Ice Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Stalker_Leviathan_Mastery",
+     "display_name": "Leviathan Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Stalker_Mace_Mastery",
+     "display_name": "Mace Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Stalker_Mu_Mastery",
+     "display_name": "Mu Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Psionic_Mastery_ScrapStalk",
+     "display_name": "Psionic Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Stalker_Soul_Mastery",
+     "display_name": "Soul Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Weapon_Mastery_Stalker",
+     "display_name": "Weapon Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    }
+   ]
+  },
+  "Class_Mastermind": {
+   "primary": [
+    {
+     "full_name": "Mastermind_Summon.Beast_Mastery",
+     "display_name": "Beast Mastery",
+     "set_type": "Primary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Summon.Demon_Summoning",
+     "display_name": "Demon Summoning",
+     "set_type": "Primary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Summon.Mercenaries",
+     "display_name": "Mercenaries",
+     "set_type": "Primary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Summon.Necromancy",
+     "display_name": "Necromancy",
+     "set_type": "Primary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Summon.Ninjas",
+     "display_name": "Ninjas",
+     "set_type": "Primary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Summon.Robotics",
+     "display_name": "Robotics",
+     "set_type": "Primary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Summon.Thugs",
+     "display_name": "Thugs",
+     "set_type": "Primary",
+     "archetype_index": 10
+    }
+   ],
+   "secondary": [
+    {
+     "full_name": "Mastermind_Buff.Cold_Domination",
+     "display_name": "Cold Domination",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Dark_Miasma",
+     "display_name": "Dark Miasma",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Electrical_Affinity",
+     "display_name": "Electrical Affinity",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Empathy",
+     "display_name": "Empathy",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Force_Field",
+     "display_name": "Force Field",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Kinetics",
+     "display_name": "Kinetics",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Marine_Affinity",
+     "display_name": "Marine Affinity",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Nature_Affinity",
+     "display_name": "Nature Affinity",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Pain_Domination",
+     "display_name": "Pain Domination",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Poison",
+     "display_name": "Poison",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Radiation_Emission",
+     "display_name": "Radiation Emission",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Sonic_Resonance",
+     "display_name": "Sonic Resonance",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Storm_Summoning",
+     "display_name": "Storm Summoning",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Thermal_Radiation",
+     "display_name": "Thermal Radiation",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Time_Manipulation",
+     "display_name": "Time Manipulation",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Traps",
+     "display_name": "Traps",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Trick_Arrow",
+     "display_name": "Trick Arrow",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    }
+   ],
+   "epic": [
+    {
+     "full_name": "Epic.Dark_Mastery_Mastermind",
+     "display_name": "Dark Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Epic.Charge_Mastery",
+     "display_name": "Electricity Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Field_Mastery",
+     "display_name": "Field Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Heat_Mastery_Stalker",
+     "display_name": "Fire Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Chill_Mastery",
+     "display_name": "Ice Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Mastermind_Leviathan_Mastery",
+     "display_name": "Leviathan Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Mastermind_Mace_Mastery",
+     "display_name": "Mace Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Mastermind_Mu_Mastery",
+     "display_name": "Mu Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.Mastermind_Soul_Mastery",
+     "display_name": "Soul Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    }
+   ]
+  },
+  "Class_Arachnos_Widow": {
+   "primary": [
+    {
+     "full_name": "Widow_Training.Fortunata_Training",
+     "display_name": "Fortunata Training",
+     "set_type": "Primary",
+     "archetype_index": 13
+    },
+    {
+     "full_name": "Widow_Training.Night_Widow_Training",
+     "display_name": "Night Widow Training",
+     "set_type": "Primary",
+     "archetype_index": 13
+    },
+    {
+     "full_name": "Widow_Training.Widow_Training",
+     "display_name": "Widow Training",
+     "set_type": "Primary",
+     "archetype_index": 13
+    }
+   ],
+   "secondary": [
+    {
+     "full_name": "Teamwork.Fortunata_Teamwork",
+     "display_name": "Fortunata Teamwork",
+     "set_type": "Secondary",
+     "archetype_index": 13
+    },
+    {
+     "full_name": "Teamwork.Teamwork",
+     "display_name": "Teamwork",
+     "set_type": "Secondary",
+     "archetype_index": 13
+    },
+    {
+     "full_name": "Teamwork.Widow_Teamwork",
+     "display_name": "Widow Teamwork",
+     "set_type": "Secondary",
+     "archetype_index": 13
+    }
+   ],
+   "epic": [
+    {
+     "full_name": "Epic.VEAT_Leviathan_Mastery",
+     "display_name": "Leviathan Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.VEAT_Mace_Mastery",
+     "display_name": "Mace Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.VEAT_Mu_Mastery",
+     "display_name": "Mu Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    },
+    {
+     "full_name": "Epic.VEAT_Soul_Mastery",
+     "display_name": "Soul Mastery",
+     "set_type": "Ancillary",
+     "archetype_index": -1
+    }
+   ]
+  },
+  "Class_Signature_Pets": {
+   "primary": [],
+   "secondary": [],
+   "epic": []
+  },
+  "Class_Minion_Henchman": {
+   "primary": [
+    {
+     "full_name": "Mastermind_Pets.Alpha_Wolf_3",
+     "display_name": "Alpha Wolf",
+     "set_type": "Primary",
+     "archetype_index": 17
+    },
+    {
+     "full_name": "Mastermind_Pets.Alpha_Wolf_2",
+     "display_name": "Alpha Wolf",
+     "set_type": "Primary",
+     "archetype_index": 17
+    },
+    {
+     "full_name": "Mastermind_Pets.Alpha_Wolf",
+     "display_name": "Alpha Wolf",
+     "set_type": "Primary",
+     "archetype_index": 17
+    }
+   ],
+   "secondary": [],
+   "epic": []
+  },
+  "Class_Peacebringer": {
+   "primary": [
+    {
+     "full_name": "Peacebringer_Offensive.Luminous_Blast",
+     "display_name": "Luminous Blast",
+     "set_type": "Primary",
+     "archetype_index": 5
+    }
+   ],
+   "secondary": [
+    {
+     "full_name": "Peacebringer_Defensive.Luminous_Aura",
+     "display_name": "Luminous Aura",
+     "set_type": "Secondary",
+     "archetype_index": 5
+    }
+   ],
+   "epic": []
+  },
+  "Class_Warshade": {
+   "primary": [
+    {
+     "full_name": "Warshade_Offensive.Umbral_Blast",
+     "display_name": "Umbral Blast",
+     "set_type": "Primary",
+     "archetype_index": 6
+    }
+   ],
+   "secondary": [
+    {
+     "full_name": "Warshade_Defensive.Umbral_Aura",
+     "display_name": "Umbral Aura",
+     "set_type": "Secondary",
+     "archetype_index": 6
+    }
+   ],
+   "epic": []
+  }
+ },
+ "pools": [
+  {
+   "full_name": "Pool.Invisibility",
+   "display_name": "Concealment",
+   "set_type": "Pool",
+   "archetype_index": -1
+  },
+  {
+   "full_name": "Pool.Experimentation",
+   "display_name": "Experimentation",
+   "set_type": "Pool",
+   "archetype_index": -1
+  },
+  {
+   "full_name": "Pool.Fighting",
+   "display_name": "Fighting",
+   "set_type": "Pool",
+   "archetype_index": -1
+  },
+  {
+   "full_name": "Pool.Flight",
+   "display_name": "Flight",
+   "set_type": "Pool",
+   "archetype_index": -1
+  },
+  {
+   "full_name": "Pool.Force_of_Will",
+   "display_name": "Force of Will",
+   "set_type": "Pool",
+   "archetype_index": -1
+  },
+  {
+   "full_name": "Pool.Leadership",
+   "display_name": "Leadership",
+   "set_type": "Pool",
+   "archetype_index": -1
+  },
+  {
+   "full_name": "Pool.Leaping",
+   "display_name": "Leaping",
+   "set_type": "Pool",
+   "archetype_index": -1
+  },
+  {
+   "full_name": "Pool.Medicine",
+   "display_name": "Medicine",
+   "set_type": "Pool",
+   "archetype_index": -1
+  },
+  {
+   "full_name": "Pool.Manipulation",
+   "display_name": "Presence",
+   "set_type": "Pool",
+   "archetype_index": -1
+  },
+  {
+   "full_name": "Pool.Sorcery",
+   "display_name": "Sorcery",
+   "set_type": "Pool",
+   "archetype_index": -1
+  },
+  {
+   "full_name": "Pool.Speed",
+   "display_name": "Speed",
+   "set_type": "Pool",
+   "archetype_index": -1
+  },
+  {
+   "full_name": "Pool.Teleportation",
+   "display_name": "Teleportation",
+   "set_type": "Pool",
+   "archetype_index": -1
+  }
+ ]
+}

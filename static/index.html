@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hero Companion — City of Heroes</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <!-- ENTRY ROUTER: the first thing a user sees — how do you want to start? -->
+  <div id="entry-overlay" class="modal">
+    <div class="entry-box">
+      <h2>How do you want to start?</h2>
+      <p class="muted">Pick a starting point — you can switch any time from the header.</p>
+      <div class="align-cards" id="align-cards">
+        <button class="align-card hero" data-align="hero"><b>🦸 Hero side</b><span>Paragon City — blue &amp; gold</span></button>
+        <button class="align-card villain" data-align="villain"><b>🦹 Villain side</b><span>Rogue Isles — crimson &amp; black</span></button>
+      </div>
+      <div class="entry-cards" id="entry-cards">
+        <button class="entry-card" id="entry-continue" style="display:none">
+          <div class="entry-ico">⏯️</div>
+          <h3>Continue where you left off</h3>
+          <p>Pick up a character you're partway through — leveling one from scratch is weeks of play, so your plan and progress are saved.</p>
+          <span class="entry-go"><span id="continue-count"></span> saved — open →</span>
+        </button>
+        <button class="entry-card" id="entry-scratch">
+          <div class="entry-ico">✨</div>
+          <h3>Start a new character</h3>
+          <p>Not sure what to roll? Tell me what you want to do and where you'll play — I'll recommend an archetype and powers, walk each level's pick and slotting, and show the end-game IO build, caps, epics, and incarnates you're building toward.</p>
+          <span class="entry-go">Pick my character →</span>
+        </button>
+        <button class="entry-card" id="entry-respec">
+          <div class="entry-ico">♻️</div>
+          <h3>Build a new level-50 character</h3>
+          <p>Planning an end-game build from scratch? Just tell me your archetype and main powersets (e.g. <em>Defender · Kinetics · Dark Blast</em>) and where you play — I'll build a brand-new optimized level-50 kit: power picks, slotting, soft/hard caps, epic, and incarnates. No file needed, and you can freely swap archetype or powersets while you plan.</p>
+          <span class="entry-go">Build a new 50 →</span>
+        </button>
+        <button class="entry-card" id="entry-mids">
+          <div class="entry-ico">📋</div>
+          <h3>Import a Mids Reborn build</h3>
+          <p>Already have a <code>.mbd</code>? Load it for a critique, then optimize the slotting toward a goal — keeping the sets you've already invested in.</p>
+          <span class="entry-go">Choose a .mbd file →</span>
+        </button>
+        <button class="entry-card" id="entry-ingame">
+          <div class="entry-ico">🎮</div>
+          <h3>Import a character you play</h3>
+          <p>Bring in a live character from the game:</p>
+          <ol class="entry-steps">
+            <li>In game, type <code>/build_save_file</code> in chat.</li>
+            <li>It writes a <code>.txt</code> into your Homecoming install's account folder — <code>…\accounts\&lt;account&gt;\</code> (e.g. <code>C:\Games\HC2\accounts\&lt;account&gt;\</code>).</li>
+            <li>Load that <code>.txt</code> here.</li>
+          </ol>
+          <span class="entry-go">Choose a .txt file →</span>
+        </button>
+      </div>
+      <!-- saved characters list (shown when "Continue" is chosen) -->
+      <div id="saves-panel" class="hidden">
+        <div class="saves-head">
+          <strong>Continue a saved character</strong>
+          <button id="saves-back" class="linkchip">← Back</button>
+        </div>
+        <div id="saves-list" class="saves-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESPEC WIZARD: short guided flow so a level-50 respec isn't dropped on the dense builder cold -->
+  <div id="respec-wizard" class="modal hidden">
+    <div class="entry-box wizard-box">
+      <div class="wizard-head">
+        <h2 id="wiz-title">♻️ Build a new level-50 character</h2>
+        <button id="wiz-close" class="linkchip">✕ Close</button>
+      </div>
+      <p id="wiz-intro" class="muted">Answer a few questions and I'll build the whole thing — powers, slotting,
+        soft/hard caps, epic, and incarnates. You can fine-tune everything afterward.</p>
+
+      <!-- DISCOVERY (Start-new only): what do you want to do → recommended archetypes -->
+      <div id="wiz-discover" class="hidden">
+        <div class="wiz-step" style="border-top:none">
+          <div class="wiz-q">Not sure what to roll? Tell me your aim.</div>
+          <div class="wiz-row wiz-grid">
+            <label>I want to<select id="disc-role">
+              <option value="damage">deal damage</option>
+              <option value="buffer">buff / support a team</option>
+              <option value="healer">heal</option>
+              <option value="tank">tank / protect</option>
+              <option value="control">control / lock down</option>
+              <option value="pets">command pets</option>
+            </select></label>
+            <label>mostly in<select id="disc-content"></select></label>
+            <label>from<select id="disc-exposure">
+              <option value="flex">flexible range</option>
+              <option value="front">the front line (melee)</option>
+              <option value="back">long range (backline)</option>
+            </select></label>
+          </div>
+          <button id="disc-find" class="solve-btn" style="width:auto;margin-top:10px">🔍 Find my character</button>
+        </div>
+        <div id="disc-results" class="disc-results"></div>
+      </div>
+
+      <div class="wiz-step">
+        <div class="wiz-q">1 · Your character</div>
+        <p class="muted small">Your archetype and your two main powersets.</p>
+        <div class="wiz-row">
+          <select id="wiz-at"></select>
+          <select id="wiz-primary" disabled></select>
+          <select id="wiz-secondary" disabled></select>
+        </div>
+      </div>
+
+      <div class="wiz-step">
+        <div class="wiz-q">2 · How do you play?</div>
+        <p class="muted small">This steers survival, power picks, and the incarnate plan.</p>
+        <div class="wiz-row wiz-grid">
+          <label>Role<select id="wiz-role"></select></label>
+          <label>You fight from<select id="wiz-exposure">
+            <option value="flex">flexible range</option>
+            <option value="front">the front line (melee)</option>
+            <option value="back">long range (backline)</option>
+          </select></label>
+          <label>Mostly in<select id="wiz-content"></select></label>
+          <label>Travel by<select id="wiz-travel">
+            <option value="none">No extra travel power</option>
+            <option value="super_speed" selected>Super Speed</option>
+            <option value="fly">Fly</option>
+            <option value="teleport">Teleport</option>
+            <option value="super_jump">Super Jump</option>
+          </select></label>
+        </div>
+        <p id="wiz-hint" class="wiz-hint muted small"></p>
+      </div>
+
+      <div class="wiz-actions">
+        <button id="wiz-build" class="solve-btn">🛠️ Build my kit</button>
+        <span id="wiz-status" class="muted small"></span>
+      </div>
+      <div id="wiz-result" class="wiz-result hidden"></div>
+    </div>
+  </div>
+
+  <!-- Alignment corner art: decorative only (pointer-events none), themed via CSS -->
+  <div class="corner-deco tl" aria-hidden="true"></div>
+  <div class="corner-deco tr" aria-hidden="true"></div>
+  <div class="corner-deco bl" aria-hidden="true"></div>
+  <div class="corner-deco br" aria-hidden="true"></div>
+
+  <div id="page-scroll">
+  <header>
+    <h1 id="app-title"><span id="app-glyph">🦸</span> <span id="app-name">Hero Companion</span>
+      <span class="app-tag muted">your City of Heroes sidekick</span>
+      <span id="db-version" class="muted"></span></h1>
+    <div class="legend">
+      <span class="chip cap-def">Defense soft cap 45%</span>
+      <span class="chip cap-res" id="res-cap-chip">Resistance hard cap 75%</span>
+      <span id="claude-status" class="chip">AI: checking…</span>
+      <button id="save-btn" class="chip linkchip" title="Save this character's plan + progress so you can resume later">💾 Save</button>
+      <span id="autosave-ind" class="muted small" title="Auto-saves in the background every couple of minutes when something changes"></span>
+      <button id="alignment-btn" class="chip linkchip" title="Switch alignment — reskins the whole app">🦹 Go Villain</button>
+      <button id="start-over-btn" class="chip linkchip" title="Change how you started">↺ Start over</button>
+      <a id="help-btn" class="chip linkchip" href="/static/help/HeroCompanion-Help.pdf" target="_blank"
+         rel="noopener" title="Open the user guide + release notes (PDF)">❓ Help</a>
+      <button id="bug-btn" class="chip linkchip" title="Something wrong? Opens a pre-filled bug report (your versions auto-included; nothing is sent until you post it)">🐞 Report a bug</button>
+      <button id="champ-btn" class="chip linkchip" title="Think your current build beats the shipped champion? Save it as a candidate file + open the submission queue — the hub re-verifies every claim">🏆 Submit champion</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- LEFT: Build Builder -->
+    <section id="builder" class="panel">
+      <h2>Build</h2>
+
+      <label>Archetype
+        <select id="sel-archetype"></select>
+      </label>
+      <label>Primary
+        <select id="sel-primary" disabled></select>
+      </label>
+      <label>Secondary
+        <select id="sel-secondary" disabled></select>
+      </label>
+      <div id="identity-lock" class="identity-lock hidden">
+        🔒 <strong>Archetype &amp; powersets are fixed</strong> — these are set at character creation, and <em>no respec can change them</em>. Your pools, epic, powers &amp; slotting stay fully editable. To change these, you'd be rolling a different character.
+        <button type="button" class="linkchip reroll" onclick="rerollCharacter()">↻ Reroll as a new character (from level&nbsp;1)</button>
+      </div>
+
+      <details open>
+        <summary>Power Pools (up to 4)</summary>
+        <div id="pool-selectors"></div>
+      </details>
+
+      <details open class="endgame">
+        <summary>🎯 End-game plan — Epic (lvl 35) &amp; Incarnates (lvl 50)</summary>
+        <div class="endgame-body">
+          <div class="endgame-block">
+            <div class="endgame-label">Epic / Ancillary Pool <span class="muted small">— survival / utility; unlocks at level 35</span></div>
+            <select id="sel-epic" disabled></select>
+            <div id="patron-note" class="patron-note hidden">⚔️ <strong>Patron pool</strong> — unlike Ancillary pools, this must be unlocked in-game by completing a <strong>Patron arc</strong> (the patron missions, available from level&nbsp;35). <a href="https://homecoming.wiki/wiki/Patron_Power_Pools" target="_blank" rel="noopener">How to unlock ↗</a></div>
+          </div>
+          <div class="endgame-block">
+            <div class="endgame-label">Incarnates <span class="muted small">— unlock at level 50; <strong>Solve</strong> recommends a set for your role + content</span></div>
+            <div id="incarnate-selectors" class="incarnates"></div>
+          </div>
+          <p class="muted small">Incarnate buffs are situational/timed, so they're left out of the passive
+            totals by default — tick <strong>"Include incarnates (peak)"</strong> above the Stats to fold
+            them in (Destiny, Hybrid &amp; Judgement) and match Mids' fully-buffed display.</p>
+        </div>
+      </details>
+
+      <h3>Powers &amp; Slots</h3>
+      <div id="edit-bar" class="edit-bar">
+        <button id="undo-btn" class="ghost-btn" type="button" onclick="undoEdit()" disabled
+          title="Revert your last edit (add/remove power, slot change, enhancement swap, pool change)">↶ Undo</button>
+        <span id="slot-tally" class="slot-tally" title="Added enhancement slots in use, out of the 67-slot budget (every power gets 1 free base slot on top).">0 / 67 slots</span>
+        <span class="edit-hint muted small">Your edits stay put — hit <strong>🧮 Solve</strong> to re-optimize the slotting around your picks (it won't change which powers you chose).</span>
+      </div>
+      <p class="muted small">Pick a powerset above, then add powers. Click a slot to
+        choose an enhancement set — <strong>only sets that fit the power's
+        categories are shown.</strong> Right-click a slot to clear it; use −/+ to move slots between powers.</p>
+      <div id="powers-list"></div>
+
+      <details class="conv-guide" id="conv-guide-details">
+        <summary>💰 Get expensive IOs cheap — enhancement converters</summary>
+        <div id="conv-tool" class="conv-tool"></div>
+        <div id="conv-guide-body" class="conv-guide-body"></div>
+      </details>
+
+      <div class="io-row">
+        <button id="import-btn" class="import-btn" title="Load a Mids Reborn .mbd file OR an in-game /build_save_file .txt export, see a critique, then optimize it.">⬆ Import a build (.mbd or in-game .txt)</button>
+        <button id="export-btn" class="export-btn">⬇ Export to Mids Reborn (.mbd)</button>
+        <input type="file" id="import-file" accept=".mbd,.json,.txt,application/json,text/plain" class="hidden">
+      </div>
+      <div id="import-report" class="import-report hidden"></div>
+
+      <details id="powercolor" class="powercolor">
+        <summary>🎨 Power colors &amp; glow → Homecoming .powerCust</summary>
+        <p class="muted small">Tint your powers' FX. <strong>Primary</strong> = main color,
+          <strong>Glow</strong> = secondary / inner color. Brightness scales both.
+          Set a default for all powers, or override per powerset below.</p>
+        <div class="pc-scheme pc-default">
+          <span class="pc-name">All powers (default)</span>
+          <label>Primary <input type="color" class="pc-c1" value="#0057ff"></label>
+          <label>Glow <input type="color" class="pc-c2" value="#00c85a"></label>
+          <select class="pc-bright">
+            <option value="dark">Dark</option>
+            <option value="default" selected>Default</option>
+            <option value="bright">Bright</option>
+          </select>
+        </div>
+        <div id="pc-powersets" class="pc-powersets"></div>
+        <div class="pc-actions">
+          <button id="pc-preview-btn" class="secondary">Preview</button>
+          <button id="pc-download-btn">⬇ Download .powerCust</button>
+        </div>
+        <div id="pc-preview" class="pc-preview"></div>
+        <p id="pc-howto" class="muted small"></p>
+      </details>
+
+    </section>
+
+    <!-- RIGHT RAIL: live stats + AI controls in ONE sticky column; the page scrolls under it -->
+    <aside class="rail">
+    <section id="stats" class="panel">
+      <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span></h2>
+
+      <label class="incarnate-toggle" title="Fold incarnate buffs (Destiny/Hybrid, e.g. Barrier) into the totals to match Mids' fully-buffed display.">
+        <input type="checkbox" id="incarnate-peak-toggle">
+        Include incarnates (peak)
+      </label>
+      <label class="incarnate-toggle" title="Add the 3 inspiration Amplifiers (Defense +5% Def/+7.5% Res, Offense +ToHit/+Rech, Survival +Regen/+Recovery) and permanent accolades (+Max HP/End). Amplifiers are temporary buyable buffs.">
+        <input type="checkbox" id="external-toggle">
+        Include accolades + amplifiers
+      </label>
+      <label class="incarnate-toggle" title="PvP arena rules: activates PvP-only set bonuses and PvP effect variants, and disables PvE-only ones — same as Mids' PvP mode. The Solve/Generate buttons will also build with PvP set bonuses. (Live-combat diminishing returns & suppression are gameplay mechanics, not static build stats, so they're not modeled — Mids doesn't either.)">
+        <input type="checkbox" id="pvp-toggle">
+        PvP build mode
+      </label>
+
+      <h3>Defense <span class="muted small">soft cap 45%</span></h3>
+      <div id="defense-bars" class="bars"></div>
+
+      <h3>Resistance <span class="muted small" id="res-cap-label">hard cap 75%</span></h3>
+      <div id="resistance-bars" class="bars"></div>
+
+      <h3>Other</h3>
+      <div id="other-stats" class="other"></div>
+
+      <div id="offense-section" class="hidden">
+        <h3>Offense <span class="muted small">damage / debuffs / buffs</span></h3>
+        <div id="offense-stats" class="offense"></div>
+      </div>
+
+      <div id="validation" class="validation"></div>
+      <p id="stats-note" class="muted small"></p>
+    </section>
+
+    <!-- RIGHT: AI Assistant -->
+    <section id="assistant" class="panel">
+      <h2>AI Assistant</h2>
+
+      <div class="generate">
+        <strong>🔧 Build this for me</strong>
+        <p class="muted small">Pick archetype + primary + secondary above, describe a
+          goal, choose which build tiers you want, and Claude designs them — pick
+          more than one to compare cost vs. payoff.</p>
+        <div class="preset-pick">
+          <span class="muted small"><strong>What are you building for?</strong> Pick a target and the solver optimizes for your archetype automatically — no description needed.</span>
+          <div class="preset-row">
+            <label class="preset-field">Content
+              <select id="preset-content">
+                <option value="">— choose —</option>
+                <option value="fire_farm">Fire Farm</option>
+                <option value="itrial">League / iTrials</option>
+                <option value="team">Team play</option>
+                <option value="general">General / solo</option>
+                <option value="av">EB / AV (hard targets)</option>
+              </select>
+            </label>
+            <label class="preset-field">Role
+              <select id="preset-role">
+                <option value="">— choose —</option>
+                <option value="controller">Controller / Lockdown</option>
+                <option value="debuffer">Debuffer</option>
+                <option value="buffer">Buffer / Support</option>
+                <option value="healer">Healer</option>
+                <option value="damage">Damage dealer</option>
+                <option value="tank">Tank / Survivor</option>
+              </select>
+            </label>
+          </div>
+          <div id="preset-targets" class="preset-targets muted small"></div>
+        </div>
+        <input id="gen-goal"
+          placeholder="(optional) fine-tune in words, e.g. 'also soft-cap energy defense'">
+        <div class="role-pick">
+          <span class="muted small">What should we base this build on? <em>(pick any that fit — they steer which IO sets the solver leans toward)</em></span>
+          <div id="role-chips" class="role-chips"></div>
+        </div>
+        <div class="tier-pick">
+          <span class="muted small">Which builds?</span>
+          <label><input type="checkbox" class="tier-cb" value="budget" checked> Budget</label>
+          <label><input type="checkbox" class="tier-cb" value="balanced" checked> Balanced</label>
+          <label><input type="checkbox" class="tier-cb" value="premium" checked> Premium</label>
+        </div>
+        <button id="gen-btn">Generate 3 builds</button>
+        <div id="gen-confirm" class="gen-confirm hidden">
+          <p id="gen-confirm-text"></p>
+          <div id="gen-confirm-chips" class="confirm-chips"></div>
+          <div class="confirm-actions">
+            <button id="gen-confirm-yes">✓ Yes, generate</button>
+            <button id="gen-confirm-edit" class="secondary">✏ Edit goal</button>
+          </div>
+        </div>
+        <p id="fit-hint" class="fit-hint muted small" style="display:none">Completing an imported or current build? Use <strong>Solve</strong> — it's instant and keeps your power picks. Optimize hands the build to Claude and takes a minute or two.</p>
+        <label id="preserve-toggle-label" class="preserve-toggle" style="display:none" title="ON (recommended): keep every IO set + unique global you already have; only re-slot plain (generic) IOs and empty slots toward the goal. OFF: full re-slot from scratch — may replace expensive sets (it'll flag what it removes).">
+          <input type="checkbox" id="preserve-toggle" checked>
+          <span>Preserve my IO sets — only re-slot generic IOs &amp; empty slots</span>
+        </label>
+        <label id="keeplayout-label" class="preserve-toggle keeplayout" style="display:none" title="Tightest option: stay within the slots you ALREADY placed (fill only your empty slots, don't add slots), and keep any cheap IO the solve doesn't upgrade — a generic IO is swapped only when a goal-advancing set takes its place.">
+          <input type="checkbox" id="keeplayout-toggle">
+          <span>…and keep my slot layout — fill only the empty slots I placed, don't add slots</span>
+        </label>
+        <button id="solve-btn" class="solve-btn" style="display:none">🧮 Solve optimal slotting for goal (instant)</button>
+        <button id="opt-btn" class="opt-btn" style="display:none">⚡ Optimize with AI instead (slower, ~1–2 min)</button>
+        <button id="changes-btn" class="changes-btn" style="display:none" title="Open a window summarizing exactly what the solve changed from your imported build. Close it any time." onclick="showChangeModal()">📋 What changed? (open / close anytime)</button>
+        <button id="reset-btn" class="reset-btn" style="display:none" title="Restore your imported build exactly as it came in, so you can try a different goal/options without re-importing." onclick="resetToImported()">↺ Reset to imported build (try again)</button>
+        <div id="gen-status" class="muted small"></div>
+      </div>
+      <hr class="sep">
+
+      <p class="muted small">Or ask a question — every question automatically
+        includes your full build state.</p>
+      <div id="suggested" class="suggested"></div>
+      <textarea id="ai-question" rows="3"
+        placeholder="Ask about your build… e.g. 'How close am I to the defense soft cap?'"></textarea>
+      <button id="ai-send">Ask Claude</button>
+      <div id="ai-response" class="ai-response muted">No question asked yet.</div>
+    </section>
+    <div id="order-out" class="order-out panel hidden"></div>
+    <div id="tray-out" class="order-out panel hidden"></div>
+    </aside>
+  </main>
+
+  <!-- Enhancement picker modal -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-box">
+      <div class="modal-head">
+        <strong id="modal-title">Choose enhancement</strong>
+        <button id="modal-close">✕</button>
+      </div>
+      <p id="modal-sub" class="muted small"></p>
+      <input id="modal-search" placeholder="Filter sets…">
+      <div id="modal-sets" class="modal-sets"></div>
+    </div>
+  </div>
+
+  <!-- Tier comparison overlay (3 generated builds, side-by-side) -->
+  <div id="tier-modal" class="modal hidden">
+    <div class="modal-box wide">
+      <div class="modal-head">
+        <strong id="tier-title">Compare builds — pick one to load</strong>
+        <button id="tier-close">✕</button>
+      </div>
+      <p id="tier-sub" class="muted small"></p>
+      <div id="tier-cards" class="tier-cards"></div>
+    </div>
+  </div>
+
+  <!-- Post-solve "what changed" summary (pop-up after solving an imported build) -->
+  <div id="change-modal" class="modal hidden">
+    <div class="modal-box">
+      <div class="modal-head">
+        <strong id="change-title">What changed</strong>
+        <button id="change-close" onclick="document.getElementById('change-modal').classList.add('hidden')">✕</button>
+      </div>
+      <div id="change-body" class="modal-sets"></div>
+      <div class="change-actions">
+        <button id="change-reset" class="reset-btn" onclick="resetToImported(); document.getElementById('change-modal').classList.add('hidden')">↺ Reset &amp; try again</button>
+        <button id="change-export" class="export-btn" onclick="exportMids(); document.getElementById('change-modal').classList.add('hidden')">⬇ Export to Mids</button>
+        <button id="change-keep" class="secondary" onclick="document.getElementById('change-modal').classList.add('hidden')">✓ Keep &amp; close</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-credits muted small">
+    Unofficial fan-made companion for <b>City of Heroes: Homecoming</b> · not affiliated with
+    NCSoft or Homecoming · game content &copy; NCSoft · data via your
+    <a href="https://midsreborn.com" target="_blank" rel="noopener">Mids Reborn</a> install ·
+    knowledge:
+    <a href="https://homecoming.wiki" target="_blank" rel="noopener">Homecoming Wiki</a> ·
+    <a href="https://cod.uberguy.net" target="_blank" rel="noopener">City of Data v2</a> ·
+    <a href="https://forums.homecomingservers.com" target="_blank" rel="noopener">HC Forums</a>
+    · free &amp; noncommercial forever ·
+    <a href="/docs/terms" target="_blank">Terms of Use</a> ·
+    <a href="/docs/license" target="_blank">License (CC BY-NC-SA 4.0)</a> ·
+    <a href="/docs/credits" target="_blank">Credits</a>
+    · <span id="app-version-foot"></span>
+    <button id="update-check" class="linkbtn quiet">check for updates</button>
+  </footer>
+  </div><!-- /page-scroll -->
+  <script src="/static/app.js"></script>
+</body>
+</html>

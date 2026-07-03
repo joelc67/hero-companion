@@ -1,0 +1,3267 @@
+"use strict";
+
+// ---------------------------------------------------------------------------
+// Global build state
+// ---------------------------------------------------------------------------
+const build = {
+  archetype: null,
+  primary: null, primary_display: null,
+  secondary: null, secondary_display: null,
+  pools: [], pools_display: [],
+  epic: null, epic_display: null,
+  incarnates: {},   // slot -> {full_name, display_name}
+  include_incarnates: false,  // peak totals: fold incarnate buffs into totals
+  include_external: false,    // add accolades + amplifiers (external buffs)
+  pvp: false,                 // PvP arena: PvP set bonuses + PvP effect variants
+  tier: null,       // budget | balanced | premium — the loaded AI build's tier
+  imported: false,  // true only for an IMPORTED build — gates the preserve-my-sets
+                    // Solve behavior (a from-scratch/AI build has no investment to keep)
+  powers: [],   // {full_name, display_name, powerset_full_name,
+                //  accepted_set_category_ids, accepted_set_categories,
+                //  slotCount, slots:[slot|null]}
+};
+
+let POWERSETS_CACHE = null;          // current archetype's powersets
+const POWERS_CACHE = {};             // powerset_full_name -> [powers]
+let activeSlot = null;               // {powerIdx, slotIdx}
+let INCARNATES = null;               // /incarnates payload
+
+const $ = (id) => document.getElementById(id);
+const api = (p, opts) => fetch(p, opts).then(r => r.json());
+
+// ---------------------------------------------------------------------------
+// Init
+// ---------------------------------------------------------------------------
+const escHtml = (s) => String(s == null ? "" : s)
+  .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&#39;");
+
+// Collapse + EMPTY the transient build-specific panels (tray layout, respec order) so
+// they never carry a previous character's content into a new/restarted/loaded build.
+function resetTrayPanels() {
+  const t = $("tray-out"), o = $("order-out");
+  if (t) { t.classList.add("hidden"); t.innerHTML = ""; }
+  if (o) { o.classList.add("hidden"); o.innerHTML = ""; }
+}
+
+function showEntry() {
+  $("entry-overlay").classList.remove("hidden");
+  $("entry-cards").classList.remove("hidden");
+  $("saves-panel").classList.add("hidden");
+  resetTrayPanels();          // restart → don't show the prior build's trays/order
+  refreshContinueCard();
+}
+function hideEntry() { $("entry-overlay").classList.add("hidden"); }
+
+// ---- Save / resume: a from-scratch character is weeks of real play ----
+let CURRENT_SAVE = null;   // {id, name} once saved/loaded, so re-saves update in place
+
+async function saveProgress() {
+  if (!build.archetype) { alert("Pick an archetype (or import/start a build) before saving."); return; }
+  let name = CURRENT_SAVE && CURRENT_SAVE.name;
+  if (!name) {
+    const dflt = build.primary_display
+      ? `${build.primary_display} ${(build.archetype || "").replace("Class_", "")}` : "My character";
+    name = prompt("Name this character (so you can resume it later):", dflt);
+    if (!name) return;
+  }
+  const plan = { content: $("preset-content") && $("preset-content").value,
+                 role: $("preset-role") && $("preset-role").value, role_mix: roleMixPayload(), mode: build._mode || null };
+  const res = await api("/saves", postJson({ name, id: CURRENT_SAVE && CURRENT_SAVE.id,
+    build, plan, level_reached: build.level_reached || null }));
+  if (res && res.ok) {
+    CURRENT_SAVE = { id: res.id, name: res.name };
+    _lastSavedSnapshot = buildSnapshot();   // mark clean so auto-save doesn't re-fire
+    const s = $("gen-status"); if (s) s.textContent = `💾 Saved “${res.name}”. Resume it any time from Start over → Continue.`;
+  }
+}
+
+async function openSavesList() {
+  const res = await api("/saves");
+  const saves = (res && res.saves) || [];
+  $("saves-list").innerHTML = saves.length
+    ? saves.map((s) => {
+        const at = (s.archetype || "").replace("Class_", "");
+        const sub = [s.primary, s.secondary].filter(Boolean).join(" / ");
+        // A "new"-mode save with a level below 50 is a character still being LEVELED —
+        // label it as leveling-in-progress (⏳ L23/50) so it reads differently from a
+        // finished level-50 kit (✓ Level-50 build). This is the Continue-screen
+        // distinction between "help me get to 50" and "optimize my 50".
+        const lv = s.level || null;
+        const leveling = s.mode === "new" && (!lv || lv < 50);
+        const pill = leveling
+          ? `<span class="save-pill leveling">⏳ Leveling · L${lv || 1}/50</span>`
+          : `<span class="save-pill done">✓ Level-50 build</span>`;
+        return `<div class="save-row"><div class="save-main">`
+          + `<div class="save-name">${escHtml(s.name)} ${pill}</div>`
+          + `<div class="save-sub">${escHtml(at)}${sub ? " · " + escHtml(sub) : ""}</div></div>`
+          + `<button onclick="loadSave('${escHtml(s.id)}')">Resume</button>`
+          + `<button class="save-del" title="Delete" onclick="deleteSave('${escHtml(s.id)}')">🗑</button></div>`;
+      }).join("")
+    : `<div class="saves-empty">No saved characters yet. Start one, then hit 💾 Save in the header.</div>`;
+  $("entry-cards").classList.add("hidden");
+  $("saves-panel").classList.remove("hidden");
+}
+
+window.loadSave = async function (id) {
+  const res = await api(`/saves/${encodeURIComponent(id)}`);
+  if (!res || !res.ok) { alert((res && res.error) || "Couldn't load that save."); return; }
+  await applyImportedBuild(res.save.build || {});
+  CURRENT_SAVE = { id, name: res.save.name };
+  build._mode = (res.save.plan && res.save.plan.mode) || build._mode;
+  applyIdentityLock();          // lock archetype/powersets if this is a real (imported/respec'd) character
+  _lastSavedSnapshot = buildSnapshot();   // just loaded — already clean
+  hideEntry();
+  recompute();
+};
+
+window.deleteSave = async function (id) {
+  if (!confirm("Delete this saved character?")) return;
+  await api(`/saves/${encodeURIComponent(id)}`, { method: "DELETE" });
+  openSavesList();
+};
+
+async function refreshContinueCard() {
+  try {
+    const res = await api("/saves");
+    const n = (res && res.saves && res.saves.length) || 0;
+    const card = $("entry-continue");
+    if (n > 0) { $("continue-count").textContent = n; card.style.display = ""; }
+    else card.style.display = "none";
+  } catch (e) { /* offline-safe: just don't show the card */ }
+}
+
+// ---- Background auto-save: a from-scratch character is weeks of play, so persist
+// progress on an interval — but ONLY when something actually changed (dirty check via
+// a snapshot compare), so an idle build never re-writes. ----
+let _lastSavedSnapshot = null;
+function buildSnapshot() {
+  return JSON.stringify({
+    a: build.archetype, p: build.primary, s: build.secondary, pl: build.pools, e: build.epic,
+    inc: build.incarnates, pw: (build.powers || []).map(pw => [pw.full_name, pw.slots]),
+    fl: [build.include_incarnates, build.pvp, build.tier, build.level_reached],
+  });
+}
+async function autoSaveTick() {
+  if (!build.archetype || !(build.powers && build.powers.length)) return;  // nothing worth saving yet
+  const snap = buildSnapshot();
+  if (snap === _lastSavedSnapshot) return;                                  // unchanged → skip
+  const name = (CURRENT_SAVE && CURRENT_SAVE.name)
+    || (build.primary_display ? `${build.primary_display} ${(build.archetype || "").replace("Class_", "")}` : "Autosave");
+  const plan = { content: $("preset-content") && $("preset-content").value,
+                 role: $("preset-role") && $("preset-role").value, role_mix: roleMixPayload(), mode: build._mode || null };
+  const res = await api("/saves", postJson({ name, id: CURRENT_SAVE && CURRENT_SAVE.id,
+    build, plan, level_reached: build.level_reached || null }));
+  if (res && res.ok) {
+    CURRENT_SAVE = { id: res.id, name: res.name };
+    _lastSavedSnapshot = snap;
+    const ind = $("autosave-ind");
+    if (ind) ind.textContent = `auto-saved ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+  }
+}
+
+// Auto-pick a sensible, legal power selection for the chosen AT + sets, tuned to
+// role × exposure × content — the engine piece behind "Respec 50" and "Start new".
+async function autoPickPowers() {
+  if (!build.archetype || !build.primary || !build.secondary) {
+    alert("Pick an archetype, primary, and secondary first."); return;
+  }
+  build._exposure = $("autopick-exposure") && $("autopick-exposure").value;
+  const res = await api("/build/autopick", postJson({
+    archetype: build.archetype, primary: build.primary, secondary: build.secondary,
+    role: $("preset-role") && $("preset-role").value, role_mix: roleMixPayload(),
+    content: $("preset-content") && $("preset-content").value,
+    exposure: build._exposure,
+    travel: $("autopick-travel") && $("autopick-travel").value }));
+  if (!res || !res.ok) { alert((res && res.error) || "Auto-pick failed."); return; }
+  build.powers = res.powers;
+  build.imported = false;
+  await syncPoolsEpicFromPowers(res.powers);   // reflect the chosen pool/epic powers in the dropdowns
+  renderPowers();
+  recompute();
+  const s = $("gen-status");
+  if (s) {
+    s.textContent = `🪄 Auto-picked ${res.count} powers for your goal. Now hit Solve to optimize the slotting + incarnates.`;
+    // Travel heads-up: Super Speed / Super Jump are GROUND travel. They share a pool
+    // efficiently (Super Speed + Hasten = one Speed pool), but you can't run into some
+    // iTrials (BAF, Lambda) — those need Flight or Teleport, or a P2W jet pack.
+    const tv = $("autopick-travel") && $("autopick-travel").value;
+    if (tv === "super_speed" || tv === "super_jump") {
+      const itrial = $("preset-content") && $("preset-content").value === "itrial";
+      const tname = tv === "super_speed" ? "Super Speed" : "Super Jump";
+      const tip = document.createElement("p");
+      tip.className = "lvl-tip";
+      tip.innerHTML = `🚀 <strong>${tname}</strong> is <em>ground</em> travel`
+        + (itrial ? ` — and your <strong>iTrial</strong> goal needs vertical access` : ``)
+        + `: you can't run into iTrials like <strong>BAF / Lambda</strong>. Carry a P2W `
+        + `<strong>jet pack</strong>, or switch travel to <strong>Fly / Teleport</strong> `
+        + `(that costs an extra pool — Super Speed shares its pool with Hasten, Fly/Teleport don't).`;
+      s.appendChild(tip);
+    }
+  }
+}
+
+function revealBuilder() {
+  const b = $("builder");
+  if (b) b.scrollIntoView({ behavior: "smooth", block: "start" });
+  const at = $("sel-archetype");
+  if (at) setTimeout(() => at.focus(), 350);
+}
+// "Start a new character" — reveal the builder and focus the first choice. The guided
+// discovery flow (recommend an AT from role × exposure × content) + the level-by-level
+// path layer on here next. `_mode` will branch new-character vs respec behavior.
+function startFromScratch() { build._mode = "new"; build.level_reached = build.level_reached || 1; openWizard("new"); }
+// "Build a new level-50 character" — a SHORT guided wizard that plans a fresh end-game kit
+// from scratch (so a 50 isn't dropped on the dense builder cold). Start-new adds a DISCOVERY
+// step in front (recommend an AT/sets). This is a PLANNING build for a character that doesn't
+// exist in-game yet, so its identity is NOT locked (unlike an imported/respec'd real character)
+// — you can freely swap archetype/powersets while planning. level_reached=50 marks it a 50 build.
+function startNew50() { build._mode = "new50"; build.level_reached = 50; openWizard("new50"); }
+
+// Clone a select's options AND its current selection — copying innerHTML alone drops the
+// chosen value, which silently reset the wizard's Content/Role to "— choose —" and lost
+// the user's pick (it then defaulted to "general").
+const cloneOptions = (dst, src) => { if (dst && src) { dst.innerHTML = src.innerHTML; dst.value = src.value; } };
+
+function openWizard(mode) {
+  if ($("wiz-at").options.length <= 1) $("wiz-at").innerHTML = $("sel-archetype").innerHTML;
+  cloneOptions($("wiz-content"), $("preset-content"));
+  cloneOptions($("wiz-role"), $("preset-role"));
+  cloneOptions($("disc-content"), $("preset-content"));
+  $("wiz-primary").innerHTML = "<option value=''>— primary set —</option>";
+  $("wiz-secondary").innerHTML = "<option value=''>— secondary set —</option>";
+  $("wiz-primary").disabled = $("wiz-secondary").disabled = true;
+  $("wiz-result").classList.add("hidden");
+  $("disc-results").innerHTML = "";
+  $("wiz-status").textContent = "";
+  const isNew = mode === "new";
+  $("wiz-title").textContent = isNew ? "✨ Create a new character" : "♻️ Build a new level-50 character";
+  $("wiz-intro").textContent = isNew
+    ? "Let's find a character that fits how you want to play — then build it."
+    : "Answer a few questions and I'll build the whole thing — powers, slotting, caps, epic, and incarnates.";
+  $("wiz-discover").classList.toggle("hidden", !isNew);   // discovery only for Start-new
+  wizUpdateHint();
+  $("respec-wizard").classList.remove("hidden");
+}
+function closeRespecWizard() { $("respec-wizard").classList.add("hidden"); }
+
+// DISCOVERY: what do you want to do → ranked archetypes (support-as-secondary, roles
+// fluid, easiest-not-only). Picking one fills the character step.
+async function runDiscovery() {
+  const role = $("disc-role").value, content = $("disc-content").value, exposure = $("disc-exposure").value;
+  const res = await api("/discover", postJson({ role, content, exposure }));
+  if (!res || !res.ok) return;
+  $("disc-results").innerHTML = res.recommendations.map((r) =>
+    `<div class="disc-card"><div class="disc-top"><span class="disc-at">${escHtml(r.display)}</span>`
+    + `<span class="disc-ease">${escHtml(r.ease)}</span></div>`
+    + `<div class="disc-why">${escHtml(r.why)} — your <b>${escHtml(r.role_slot)}</b> set is the defining choice `
+    + `(${r.defining_sets.length} to pick from).</div>`
+    + (r.note ? `<div class="disc-note ${r.note.charAt(0) === "✓" ? "good" : "warn"}">${escHtml(r.note)}</div>` : "")
+    + `<button onclick="pickDiscovery('${escHtml(r.archetype)}')">Choose ${escHtml(r.display)} →</button></div>`).join("")
+    + `<p class="muted small">${escHtml(res.note)}</p>`;
+}
+// Level-by-level path (v1): the ordered picks + their slotting, derived from the solved
+// build (each power carries its pick_level + slots). The interactive per-step stat popup
+// is the next iteration on this same data.
+function levelingPlanHtml() {
+  const ps = (build.powers || []).slice().filter(p => p.pick_level)
+    .sort((a, b) => (a.pick_level || 1) - (b.pick_level || 1));
+  if (!ps.length) return "<p class='muted small'>Build a kit first.</p>";
+  const rows = ps.map((p) => {
+    const filled = (p.slots || []).filter(Boolean).length;
+    const sets = [...new Set((p.slots || []).map(s => s && s.set_name)
+      .filter(s => s && s !== "Common IO"))];
+    const slotTxt = filled
+      ? `${filled} slot${filled > 1 ? "s" : ""}${sets.length ? ` — ${sets.slice(0, 2).join(", ")}${sets.length > 2 ? "…" : ""}`
+        : (filled === 1 && !sets.length ? " (common IO)" : "")}`
+      : "1 slot";
+    return `<div class="lvl-row"><span class="lvl-num">${p.pick_level}</span>`
+      + `<span class="lvl-pwr"><b>${escHtml(p.display_name || p.full_name.split(".").pop())}</b>`
+      + `<span class="muted small"> · ${escHtml(slotTxt)}</span></span></div>`;
+  }).join("");
+  // Incarnates (all "level 50"), shown after the leveled picks if any are set.
+  const inc = Object.entries(build.incarnates || {})
+    .filter(([, v]) => v && (v.full_name || v.display_name))
+    .map(([slot, v]) => `<div class="lvl-row"><span class="lvl-num">50</span>`
+      + `<span class="lvl-pwr"><b>${escHtml(slot)}</b>`
+      + `<span class="muted small"> · ${escHtml(v.display_name || v.full_name.split(".").pop().replace(/_/g, " "))}</span></span></div>`)
+    .join("");
+  return `<div class="lvl-head">📋 Your respec order — pick these in sequence in-game</div>`
+    + `<div class="lvl-list">${rows}${inc}</div>`
+    + `<p class="muted small">This is the exact in-game order: take each power at the level shown. Drop your earned slots into them as you go and craft the sets when you can afford them — slot <strong>Attuned</strong> so they survive exemplaring. Travel + survival are taken early on purpose. By 50 you'll match the optimized build.</p>`;
+}
+
+// POWER TRAY LAYOUT — fetch the 4-row in-game tray arrangement for the current build and
+// render it like the game's trays. App runs offline, so type glyphs map to native emoji
+// (no CDN icon font). Hover a slot for the full power + role.
+const GLYPH_EMOJI = {
+  "ti-lock": "🔒", "ti-sword": "⚔️", "ti-trending-down": "📉", "ti-shield": "🛡️",
+  "ti-shield-bolt": "🛡️", "ti-flag": "🚩", "ti-plane": "✈️", "ti-run": "🏃",
+  "ti-clock-bolt": "⏱️", "ti-paw": "🐾", "ti-heart-plus": "➕", "ti-flame": "🔥",
+  "ti-sparkles": "✨", "ti-eye": "👁️", "ti-eye-off": "🚫", "ti-building-arch": "🏛️",
+  "ti-map-pin": "📍", "ti-users-group": "👥", "ti-bed": "🛏️", "ti-mood-smile": "😀",
+  "ti-pill": "💊", "ti-circle": "⚪",
+};
+const TRAY_ROLE = { 1: "tray-rot", 2: "tray-on", 3: "tray-util", 4: "tray-move" };
+
+// Render the 4-row in-game tray layout into `out`. These are always-visible labeled sections
+// now (no toggle) — refreshBuildViews() keeps them live. App runs offline, so glyphs map to emoji.
+async function renderTrayLayout(out) {
+  const head = `<div class="lvl-head">🎮 In-game power trays — hover a slot for the full power</div>`;
+  try {
+    const res = await api("/build/trays", postJson({ powers: build.powers, incarnates: build.incarnates || {},
+      archetype: build.archetype, role: ($("preset-role") && $("preset-role").value) || null, role_mix: roleMixPayload(),
+      exposure: build._exposure || ($("autopick-exposure") && $("autopick-exposure").value) || null, totals: LAST_TOTALS }));
+    if (!res || !res.ok) { out.innerHTML = head + "<p class='muted small'>Couldn't build the tray layout.</p>"; return; }
+    out.innerHTML = head
+      + res.trays.map(t => {
+          const slots = t.slots.map(s => {
+            const emoji = GLYPH_EMOJI[s.glyph] || "⚪";
+            const ico = s.icon
+              ? `<img class="tray-ico-img" src="${s.icon}" alt=""`
+                + ` onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'tray-ico',textContent:'${emoji}'}))">`
+              : `<span class="tray-ico">${emoji}</span>`;
+            return `<div class="tray-slot" title="${escHtml(s.title)}">${ico}`
+              + `<span class="tray-name">${escHtml(s.short)}</span></div>`;
+          }).join("");
+          return `<div class="tray-row ${TRAY_ROLE[t.group || t.n]}"><div class="tray-label">${escHtml(t.label)}</div>`
+            + `<div class="tray-slots">${slots}</div>`
+            + (t.note ? `<div class="tray-note">${escHtml(t.note)}</div>` : "") + `</div>`;
+        }).join("")
+      + `<p class="muted small">The rotation is a priority order, not a strict left-to-right macro — recharge gaps mean you weave the next ready hit. Macros are suggestions to bind; Low FX cuts league visual noise.</p>`;
+  } catch (e) {
+    out.innerHTML = head + "<p class='muted small'>Couldn't build the tray layout.</p>";
+  }
+}
+
+// Keep the respec-order + tray-layout sections in plain view and in sync with the current
+// build — called at the end of every recompute(). Hidden only when there are no powers yet.
+async function refreshBuildViews() {
+  const o = $("order-out"), t = $("tray-out");
+  const has = !!(build.powers && build.powers.length);
+  if (o) { o.classList.toggle("hidden", !has); if (has) o.innerHTML = levelingPlanHtml(); }
+  if (t) { t.classList.toggle("hidden", !has); if (has) await renderTrayLayout(t); }
+}
+
+// Interactive leveling STEPPER: walk each pick, see the stat it contributes (delta) +
+// the cumulative build so far. The per-step "what this choice buys you" the user wanted.
+let LEVELING_STEPS = null, LEVEL_STEP_I = 0;
+// The stepper is a light, constant evaluator — it suggests, you decide. It tracks whether you've
+// gone off the suggested plan (to offer an ADAPT), and holds the last end-game re-fit summary.
+let LEVELING_DEVIATED = false, LAST_REFIT = "", LEVELING_TOTAL = 67, LEVELING_IS_EAT = false, LEVELING_EAT_TYPE = null;
+const _LVL_STATS = [["sl_res", "S/L res", "%"], ["fire_res", "Fire res", "%"],
+  ["ranged_def", "Ranged def", "%"], ["melee_def", "Melee def", "%"], ["aoe_def", "AoE def", "%"],
+  ["recharge", "Recharge", "%"], ["recovery", "Recovery", "%"], ["max_hp", "Max HP", "%"],
+  ["st_dps", "ST DPS", ""], ["aoe_dps", "AoE DPS", ""]];
+
+async function openLevelStepper() {
+  const out = $("wiz-plan-out");
+  out.innerHTML = "<p class='muted small'>Walking your levels…</p>";
+  const res = await api("/build/leveling-steps", postJson({ archetype: build.archetype, powers: build.powers }));
+  if (!res || !res.ok || !res.steps || !res.steps.length) { out.innerHTML = levelingPlanHtml(); return; }
+  LEVELING_STEPS = res.steps;
+  LEVELING_TOTAL = res.total_slots || 67;
+  LEVELING_IS_EAT = !!res.is_eat;
+  LEVELING_EAT_TYPE = res.eat_type || null;
+  // Resume a leveling character at the level they last told us they're at, not level 1 —
+  // so the walk opens where they actually are in-game.
+  LEVEL_STEP_I = (isLevelingBuild() && build.level_reached)
+    ? _stepIndexForLevel(build.level_reached) : 0;
+  renderLevelStep();
+}
+function renderLevelStep() {
+  const steps = LEVELING_STEPS, i = LEVEL_STEP_I, s = steps[i];
+  const hasPicks = (s.picks || []).length > 0;
+  const deltas = _LVL_STATS.map(([k, lab, u]) => {
+    const dv = (s.delta || {})[k]; if (!dv || Math.abs(dv) < 1) return "";
+    return `<span class="rt-delta ${dv > 0 ? "up" : "down"}">${dv > 0 ? "+" : ""}${dv}${u} ${lab}</span>`;
+  }).filter(Boolean).join(" ");
+  const cum = _LVL_STATS.filter(([k]) => (s.stats || {})[k]).map(([k, lab, u]) =>
+    `<span class="lvl-stat">${lab} <b>${s.stats[k]}${u}</b></span>`).join("");
+
+  // POWER PICK(S) at this level — each with a "your call" alternative picker.
+  let pickHtml = "";
+  for (const pk of (s.picks || [])) {
+    if (pk.temp) {
+      // VEAT phase-1 filler: the end-game build doesn't need a power in this slot,
+      // because the level-24 respec re-places everything anyway.
+      pickHtml += `<div class="lvl-pick"><span class="lvl-pick-lead">🎬 Pick a power:</span> `
+        + `<b>Your choice</b> <span class="muted small">any base-set or pool power you like — `
+        + `the level-24 respec rebuilds every pick, so this one is temporary</span></div>`;
+      continue;
+    }
+    const alts = _altPowersForLevel(s.level, pk.full_name);
+    pickHtml += `<div class="lvl-pick"><span class="lvl-pick-lead">🎬 Pick a power:</span> `
+      + `<b>${escHtml(pk.name)}</b> <span class="muted small">${escHtml(pk.powerset)}</span>`
+      + (alts.length
+          ? `<div class="lvl-choice"><label class="muted small">🎚️ or take your own here: `
+            + `<select onchange="swapLevelPick(${i}, '${escHtml(pk.full_name)}', this.value)">`
+            + `<option value="">— guided: ${escHtml(pk.name)} —</option>`
+            + alts.map(a => `<option value="${escHtml(a.full_name)}">${escHtml(a.display_name)} · ${escHtml(a.powerset)}</option>`).join("")
+            + `</select></label></div>`
+          : "")
+      + `</div>`;
+  }
+  // SLOTS granted at this level (only on real slot levels).
+  const slotHtml = s.slots
+    ? `<div class="lvl-slots">🔧 <b>Place ${s.slots} enhancement slot${s.slots > 1 ? "s" : ""}</b> `
+      + `<span class="muted small">(${s.slots_running} / ${LEVELING_TOTAL} placed so far)</span>`
+      + (s.enh_advice ? `<div class="muted small lvl-enh">${escHtml(s.enh_advice)}</div>` : "")
+      + `</div>`
+    : "";
+  const msHtml = s.milestone ? `<div class="lvl-milestone">⭐ ${escHtml(s.milestone)}</div>` : "";
+  // VEAT level-24 respec: the complete re-place order, branch powers included — placed
+  // retroactively, so early slots can now hold branch powers the live walk couldn't offer.
+  const respecHtml = (s.respec_order && s.respec_order.length)
+    ? `<div class="lvl-respec"><b>🕸️ Respec re-place order</b> <span class="muted small">— in the respec
+       screen, take your picks in this order (all six sets are open now, and branch powers can sit in
+       early slots):</span><ol class="respec-list">`
+      + s.respec_order.map(r => `<li><span class="respec-lvl">L${r.level}</span> ${escHtml(r.name)}
+         <span class="muted small">${escHtml(r.powerset)}</span></li>`).join("")
+      + `</ol></div>`
+    : "";
+  const eatBanner = LEVELING_EAT_TYPE === "veat"
+    ? `<div class="lvl-eat">🕸️ <strong>Arachnos VEAT</strong> — a two-phase career: levels 1–23 use only your <strong>base sets</strong> (branch powers aren't available yet), then the <strong>mandatory level-24 respec</strong> opens your branch (Crab/Bane · Night Widow/Fortunata) and re-places every pick — the walk hands you the full re-place order at that step. Patron pools open at 35.</div>`
+    : LEVELING_EAT_TYPE === "kheldian"
+    ? `<div class="lvl-eat">🌌 <strong>Kheldian</strong> — you level from your two big sets (Nova & Dwarf <strong>forms</strong> included) with inherent flight, and take <strong>no epic pool</strong>. The walk reflects that.</div>`
+    : "";
+
+  $("wiz-plan-out").innerHTML =
+    `<div class="lvl-step">`
+    + `<div class="lvl-reassure">🧭 A companion, not a script — take each suggestion or make it yours. Nothing's permanent (a <strong>/respec</strong> at 50 rewrites it all), and I'll keep evaluating as you go.</div>`
+    + levelSyncBanner(s.level)
+    + eatBanner
+    + `<div class="lvl-step-nav">`
+    + `<button class="secondary" ${i === 0 ? "disabled" : ""} onclick="levelStep(-1)">◀ Prev</button>`
+    + `<span class="lvl-num-big">Level ${s.level}</span>`
+    + `<button class="secondary" ${i === steps.length - 1 ? "disabled" : ""} onclick="levelStep(1)">Next ▶</button></div>`
+    + pickHtml + slotHtml + msHtml + respecHtml
+    + (hasPicks && deltas ? `<div class="lvl-step-delta"><span class="muted small">This pick adds:</span><br>${deltas}</div>` : "")
+    + (cum ? `<div class="lvl-step-cum"><span class="muted small">Build so far:</span> ${cum}</div>` : "")
+    + (s.tips || []).map(t => `<div class="lvl-tip">💡 ${escHtml(t)}</div>`).join("")
+    + (s.play || []).map(t => `<div class="lvl-play">${escHtml(t)}</div>`).join("")
+    + `<div class="lvl-eval">`
+    + (LEVELING_DEVIATED
+        ? `🔀 You've made this your own — good. Want me to <button class="linkbtn" onclick="refitEndgame()">re-fit the end-game around your choices</button>, or keep going and I'll keep suggesting? <button class="linkbtn quiet" onclick="resetToOptimal()">↩ back to the suggested plan</button>`
+        : `🧭 Take each suggestion or pick your own — I'll keep evaluating as you go and flag anything worth a look. Nothing's locked.`)
+    + `</div>`
+    + `<div id="lvl-endgame">${LAST_REFIT}</div>`
+    + `</div>`;
+}
+// ── Level tracking + absence flag (leveling builds only) ────────────────────
+// The companion can only stay in sync with what the player TELLS it — we don't watch
+// the game. So a leveling character carries build.level_reached (last-known level), and
+// the banner lets them confirm/update it. If they've advanced several levels since the
+// last sync, we flag the drift and offer the in-game .txt import as the catch-up path,
+// because guiding from a stale level ("take Hover at 6" when they're already 18) is
+// exactly the amateur-hour mistake the tool must avoid.
+const SYNC_DRIFT_LEVELS = 5;   // gap that triggers a "let's re-sync" nudge
+
+function isLevelingBuild() { return build._mode === "new"; }
+
+// Nearest walk-step index for a given game level (first step at/after it, else the last).
+function _stepIndexForLevel(level) {
+  const steps = LEVELING_STEPS || [];
+  for (let i = 0; i < steps.length; i++) if ((steps[i].level || 0) >= level) return i;
+  return Math.max(0, steps.length - 1);
+}
+
+// The re-sync banner shown atop each level step for a character being leveled. `stepLevel`
+// is the level of the step currently on screen; build.level_reached is where the player
+// actually is in-game (what they last told us).
+function levelSyncBanner(stepLevel) {
+  if (!isLevelingBuild()) return "";
+  const tracked = build.level_reached || null;
+  const gap = tracked ? Math.abs((stepLevel || tracked) - tracked) : 0;
+  const behind = tracked && (stepLevel || 0) < tracked - SYNC_DRIFT_LEVELS;
+  let msg;
+  if (!tracked) {
+    msg = `📍 <strong>What level are you in-game right now?</strong> Tell me and I'll jump the walk to match — so every suggestion is a choice you can actually make at your level.`;
+  } else if (behind) {
+    msg = `📍 I have you at <strong>level ${tracked}</strong>, but you're viewing level ${stepLevel}. Update me whenever you level so I never suggest a pick you've already passed.`;
+  } else {
+    msg = `📍 Tracking you at <strong>level ${tracked}</strong>. Leveled up? Update it so we stay in step.`;
+  }
+  const input = `<span class="lvl-sync-set">I'm now level `
+    + `<input type="number" min="1" max="50" class="lvl-sync-input" value="${tracked || ''}" `
+    + `onchange="setCurrentLevel(this.value)" onkeydown="if(event.key==='Enter'){setCurrentLevel(this.value)}"> `
+    + `<button class="linkbtn" onclick="setCurrentLevel(this.previousElementSibling.value)">sync ▶</button></span>`;
+  // Absence / drift warning + the catch-up import path (point: framing the in-game .txt
+  // import as re-sync). Shown when the tool and the player are several levels apart.
+  const drifted = tracked && gap >= SYNC_DRIFT_LEVELS;
+  const resync = drifted
+    ? `<div class="lvl-sync-warn">⚠️ We're about <strong>${gap} levels apart</strong>. If you've been playing without me for a while, the fastest way to get back in step is to `
+      + `<button class="linkbtn" onclick="resyncFromGame()">import your character from the game</button> `
+      + `— save it to a text file in-game and I'll re-read exactly where you are (powers, slots, level) and pick the walk up from there.`
+      + `<div class="lvl-sync-exemplar">🕰️ Outran the content getting here? No harm done — <strong>Ouroboros flashback</strong> lets you exemplar back down and experience the arcs you skipped (and learn your powers one at a time, the way the game teaches itself).</div>`
+      + `</div>`
+    : "";
+  return `<div class="lvl-sync">${msg}<div class="lvl-sync-row">${input}</div>${resync}</div>`;
+}
+
+// Player tells us their real in-game level → record it, jump the walk to that level, and
+// autosave picks up the new level_reached. If it's a big jump forward from the last sync,
+// the drift warning (above) will surface the catch-up import on the next render.
+window.setCurrentLevel = function (val) {
+  const n = Math.max(1, Math.min(50, parseInt(val, 10) || 0));
+  if (!n) return;
+  build.level_reached = n;
+  if (LEVELING_STEPS && LEVELING_STEPS.length) { LEVEL_STEP_I = _stepIndexForLevel(n); }
+  renderLevelStep();
+  autoSaveTick();   // persist the new level immediately so Continue shows ⏳ L{n}/50
+};
+
+// "Import your character from the game" — the re-sync path for a leveler who's been away.
+// Reuses the existing in-game import entry; framed as a catch-up rather than a fresh import.
+window.resyncFromGame = function () {
+  const f = $("import-file");
+  if (f) f.click();
+  const s = $("gen-status");
+  if (s) s.textContent = "📥 Re-syncing: pick the character file you exported in-game and I'll pick up exactly where you are.";
+};
+
+// Powers you could legally take AT THIS LEVEL instead of the guided pick — from your own
+// powersets, available by this level, and not already taken elsewhere in the plan.
+function _altPowersForLevel(level, currentFullName) {
+  const picked = new Set(build.powers.map(p => p.full_name));
+  const out = [];
+  for (const ps of chosenPowersets()) {
+    // VEAT branch sets only exist after the level-24 respec — before that the game
+    // won't allow their powers, so don't offer them as alternatives.
+    if (LEVELING_EAT_TYPE === "veat" && level < 24 && VEAT_BASE_SET[ps]) continue;
+    for (const p of (POWERS_CACHE[ps] || [])) {
+      if (!p.slottable) continue;
+      if ((p.level_available || 1) > level) continue;   // not available at this level yet
+      if (p.full_name === currentFullName || picked.has(p.full_name)) continue;
+      out.push({ full_name: p.full_name,
+                 display_name: p.display_name || p.full_name.split(".").pop().replace(/_/g, " "),
+                 powerset: ps.split(".").pop().replace(/_/g, " ") });
+    }
+  }
+  return out.sort((a, b) => a.display_name.localeCompare(b.display_name));
+}
+// Swap the guided pick at a step for the player's own choice, re-walk the plan, and land back
+// on the same step so they immediately see what their pick contributes.
+window.swapLevelPick = async function (stepIndex, oldFullName, newFullName) {
+  if (!newFullName) return;
+  const step = LEVELING_STEPS[stepIndex];
+  let np = null, nps = null;
+  for (const ps of chosenPowersets()) {
+    const f = (POWERS_CACHE[ps] || []).find(x => x.full_name === newFullName);
+    if (f) { np = f; nps = ps; break; }
+  }
+  if (!np) return;
+  recordEdit();
+  const idx = build.powers.findIndex(p => p.full_name === oldFullName);
+  const pickLevel = idx >= 0 ? (build.powers[idx].pick_level || step.level) : step.level;
+  const swapped = {
+    full_name: np.full_name, display_name: np.display_name, powerset_full_name: nps,
+    accepted_set_categories: np.accepted_set_categories || [],
+    accepted_set_category_ids: np.accepted_set_category_ids || [],
+    power_type: np.power_type, include_in_totals: np.power_type === 1 || np.power_type === 2,
+    pick_level: pickLevel, level_available: np.level_available, slotCount: 1, slots: [null],
+  };
+  if (idx >= 0) build.powers[idx] = swapped; else build.powers.push(swapped);
+  LEVELING_DEVIATED = true; LAST_REFIT = "";   // off the suggested plan → offer an adapt; old re-fit is now stale
+  renderPowers(); recompute();
+  await openLevelStepper();                    // re-walk the plan with your pick in place
+  LEVEL_STEP_I = Math.min(stepIndex, (LEVELING_STEPS || []).length - 1);
+  renderLevelStep();
+};
+
+// Support roles kill slowly SOLO (no team to finish) — flag it honestly on a re-fit.
+const _SUPPORT_ROLES = new Set(["buffer", "healer", "support", "controller", "control", "debuffer"]);
+function _wizGoal() {
+  const g = (id, ...fallbacks) => ($(id) && $(id).value) || fallbacks.find(Boolean) || "";
+  return {
+    role: g("wiz-role", $("preset-role") && $("preset-role").value, "damage"),
+    content: g("wiz-content", $("preset-content") && $("preset-content").value, "general"),
+    exposure: ($("wiz-exposure") && $("wiz-exposure").value) || build._exposure || null,
+    travel: ($("wiz-travel") && $("wiz-travel").value) || "teleport",
+  };
+}
+// 2b — the DOWNSTREAM horizon: re-solve the level-50 slotting around the picks you've actually
+// made, and show what your end-game becomes (+ an honest solo-support heads-up).
+window.refitEndgame = async function () {
+  const out = $("lvl-endgame"); if (!out) return;
+  out.innerHTML = "<p class='muted small'>Re-fitting your level-50 build around your picks…</p>";
+  const goal = _wizGoal();
+  const sol = await api("/build/solve", postJson({
+    archetype: build.archetype, powers: build.powers, content: goal.content, role: goal.role, preserve: false }));
+  if (!sol || !sol.ok) { out.innerHTML = "<p class='muted small'>Couldn't re-fit — set a Content goal and try again.</p>"; return; }
+  build.powers = sol.powers; renderPowers(); recompute();
+  const t = sol.totals || {};
+  const g = p => { const v = p.reduce((a, k) => (a ? a[k] : undefined), t); return typeof v === "number" ? v : ((v && v.value) || 0); };
+  const stat = (lab, val) => `<span class="lvl-stat">${lab} <b>${val}</b></span>`;
+  const cells = [stat("Recharge", g(["recharge"]) + "%"), stat("S/L def", g(["defense", "Smashing"]) + "%"),
+    stat("S/L res", g(["resistance", "Smashing"]) + "%"), stat("Ranged def", g(["defense", "Ranged"]) + "%"),
+    stat("ST DPS", Math.round((t.offense && t.offense.st_dps) || 0)),
+    stat("AoE DPS", Math.round((t.offense && t.offense.aoe_dps) || 0))].join(" ");
+  const solo = goal.content === "general" || goal.content === "av";
+  const note = (solo && _SUPPORT_ROLES.has(goal.role))
+    ? `<div class="disc-note warn">⚠ Solo + support — these ATs kill slowly alone. Lean on your secondary/epic damage + procs so you can finish fights yourself (or a respec can shift you toward more personal damage).</div>` : "";
+  LAST_REFIT = `<div class="lvl-endgame-box"><div class="muted small">✓ Re-fit around your choices — your level-50 now:</div>`
+    + `<div class="lvl-endgame-stats">${cells}</div>${note}`
+    + `<div class="muted small">This is your plan now — keep stepping, I'll keep suggesting from here.</div></div>`;
+  LEVELING_DEVIATED = false;               // your choices ARE the plan now — back to calm advisory
+  const keepStep = LEVEL_STEP_I;
+  await openLevelStepper();                // re-walk toward the NEW end-game fit
+  LEVEL_STEP_I = Math.min(keepStep, (LEVELING_STEPS || []).length - 1);
+  renderLevelStep();                       // renders LAST_REFIT + keeps the walk going
+};
+// Discard deviations and rebuild the solver's optimal plan for this AT + powersets.
+window.resetToOptimal = async function () {
+  if (!confirm("Reset to the solver's optimal plan?\n\nThis replaces your custom picks with the recommended end-game for your archetype and powersets. Your saved character isn't touched — this only changes the current plan.")) return;
+  const out = $("lvl-endgame"); if (out) out.innerHTML = "<p class='muted small'>Rebuilding the optimal plan…</p>";
+  const goal = _wizGoal();
+  recordEdit();
+  const ap = await api("/build/autopick", postJson({
+    archetype: build.archetype, primary: build.primary, secondary: build.secondary,
+    role: goal.role, content: goal.content, exposure: goal.exposure, travel: goal.travel }));
+  if (!ap || !ap.ok) { if (out) out.innerHTML = "<p class='muted small'>Couldn't rebuild right now.</p>"; return; }
+  const sol = await api("/build/solve", postJson({
+    archetype: build.archetype, powers: ap.powers, content: goal.content, role: goal.role, preserve: false }));
+  build.powers = (sol && sol.ok) ? sol.powers : ap.powers;
+  LEVELING_DEVIATED = false; LAST_REFIT = "";   // back on the suggested plan
+  renderPowers(); recompute();
+  await openLevelStepper(); LEVEL_STEP_I = 0; renderLevelStep();
+};
+window.levelStep = (d) => {
+  LEVEL_STEP_I = Math.max(0, Math.min(LEVELING_STEPS.length - 1, LEVEL_STEP_I + d));
+  renderLevelStep();
+};
+
+window.pickDiscovery = async function (at) {
+  $("wiz-at").value = at;
+  await wizLoadPowersets();
+  $("wiz-role").value = $("disc-role").value;
+  $("wiz-content").value = $("disc-content").value;
+  $("wiz-exposure").value = $("disc-exposure").value;
+  wizUpdateHint();
+  $("wiz-discover").classList.add("hidden");   // collapse discovery, reveal the picked character in step 1
+  $("wiz-at").scrollIntoView({ behavior: "smooth", block: "center" });
+};
+
+// Show the tool's read of role × content × exposure, so the user sees how it's
+// interpreting the goal — esp. that a SUPPORT character in a fire farm is a team /
+// dual-box mule, never a soloist.
+function wizInterpret(role, content, exposure) {
+  const support = role === "buffer" || role === "healer";
+  const frontish = exposure === "front";
+  if (content === "fire_farm") {
+    return support
+      ? "→ As support in a fire farm you're on a team or a dual-box mule for the farmer — I'll build for survival + buff uptime"
+        + (frontish ? " (and you're in the spawn, so survival to the fire/S-L caps)." : ", staying at the edge.")
+      : "→ You're the farmer — AoE clear plus survival to the fire & S/L caps.";
+  }
+  if (content === "itrial" || content === "team")
+    return support ? "→ League/team support — group buffs + a survival cushion for spike & debuff content."
+                   : "→ League/team — AoE clear + survival for +3/+4 content.";
+  if (content === "av") return "→ Hard single targets — sustained single-target DPS + survival through long fights.";
+  return support ? "→ General support — survivable buffs/heals for everyday content."
+                 : "→ General — balanced damage + survival.";
+}
+function wizUpdateHint() {
+  const h = $("wiz-hint");
+  if (h) h.textContent = wizInterpret($("wiz-role").value, $("wiz-content").value, $("wiz-exposure").value);
+}
+
+async function wizLoadPowersets() {
+  const at = $("wiz-at").value, pri = $("wiz-primary"), sec = $("wiz-secondary");
+  pri.innerHTML = "<option value=''>— primary set —</option>";
+  sec.innerHTML = "<option value=''>— secondary set —</option>";
+  pri.disabled = sec.disabled = !at;
+  if (!at) return;
+  const ps = await api(`/powersets/${at}`);
+  for (const p of (ps.primary || [])) pri.add(new Option(p.display_name, p.full_name));
+  for (const p of (ps.secondary || [])) sec.add(new Option(p.display_name, p.full_name));
+  // Single-path ATs (Kheldians): the only primary/secondary select themselves,
+  // and innate flight/teleport means no extra travel power by default.
+  if ((ps.primary || []).length === 1) pri.selectedIndex = 1;
+  if ((ps.secondary || []).length === 1) sec.selectedIndex = 1;
+  pri.onchange = () => pairVeatSets(pri, sec, VEAT_PAIR);
+  sec.onchange = () => pairVeatSets(sec, pri, VEAT_PAIR_REV);
+  const wt = $("wiz-travel");
+  if (wt) wt.value = (at === "Class_Peacebringer" || at === "Class_Warshade")
+    ? "none" : (wt.value === "none" ? "super_speed" : wt.value);
+}
+
+async function buildRespec() {
+  const at = $("wiz-at").value, pri = $("wiz-primary").value, sec = $("wiz-secondary").value;
+  if (!at || !pri || !sec) { $("wiz-status").textContent = "Pick an archetype, primary, and secondary first."; return; }
+  // Fall back to the main-builder selection before the generic default, so an empty
+  // wizard field never silently downgrades the user's Content/Role to general/damage.
+  const role = $("wiz-role").value || ($("preset-role") && $("preset-role").value) || "damage";
+  const content = $("wiz-content").value || ($("preset-content") && $("preset-content").value) || "general";
+  const exposure = $("wiz-exposure").value, travel = $("wiz-travel").value;
+  build._exposure = exposure;   // carries into the solve so the def vector matches
+  $("wiz-build").disabled = true;
+  $("wiz-status").textContent = "Choosing powers + solving the slotting…";
+  try {
+    await applyImportedBuild({ archetype: at, primary: pri, secondary: sec, pools: [], incarnates: {}, powers: [] });
+    const ap = await api("/build/autopick", postJson({ archetype: at, primary: pri, secondary: sec, role, content, exposure, travel }));
+    if (!ap || !ap.ok) { $("wiz-status").textContent = (ap && ap.error) || "Auto-pick failed."; return; }
+    build.powers = ap.powers; build.imported = false;
+    // Autopick chose pool + epic powers — sync the top-of-page dropdowns to them (the empty-powers
+    // applyImportedBuild call above couldn't, since the powers didn't exist yet).
+    await syncPoolsEpicFromPowers(ap.powers);
+    if ($("preset-content")) $("preset-content").value = content;
+    if ($("preset-role")) $("preset-role").value = role;
+    renderPowers();
+    // The wizard ALREADY gathered + showed the role/content/exposure intent, so skip the
+    // confirm gate (its button would render behind this modal and hang the flow).
+    await solveSlotting(null, { skipConfirm: true });
+    $("wiz-result").classList.remove("hidden");
+    $("wiz-result").innerHTML = `<strong>✓ Your ${ap.count}-power kit is ready.</strong>`
+      + `<p class="muted small">Powers chosen, slotting optimized, and incarnates recommended for your goal. `
+      + `Travel + survival are taken early so they survive exemplaring into old Task Forces. `
+      + `Open the full build to review caps, DPS, and per-slot enhancements — and tweak anything, or 💾 Save it.</p>`
+      + `<p class="muted small">💡 Crafting tip: slot your sets as <strong>Attuned</strong> — they scale to any level and keep their set bonuses when you exemplar down for low-level content.</p>`
+      + ((content === "itrial" && (travel === "super_speed" || travel === "super_jump"))
+          ? `<p class="lvl-tip">🚀 <strong>iTrial access:</strong> some trials (BAF, Lambda) can only be entered by <strong>Flight or Teleport</strong> — you can't run in. With ${travel === "super_speed" ? "Super Speed" : "Super Jump"} you'll want a P2W <strong>jet pack</strong> on hand. Switching travel to Fly/Teleport fixes it but costs an extra pool (Super Speed shares its pool with Hasten; Fly/Teleport don't).</p>`
+          : "")
+      + `<div class="wiz-result-btns"><button id="wiz-step" class="secondary" style="width:auto">▶ Walk it step-by-step</button>`
+      + `<button id="wiz-open" class="solve-btn" style="width:auto">Open the full build →</button></div>`
+      + `<div id="wiz-plan-out"></div>`;
+    $("wiz-plan-out").innerHTML = levelingPlanHtml();   // show the full in-game respec order up front
+    $("wiz-open").addEventListener("click", () => { closeRespecWizard(); $("builder").scrollIntoView({ behavior: "smooth", block: "start" }); });
+    $("wiz-step").addEventListener("click", openLevelStepper);
+    $("wiz-status").textContent = "";
+  } finally { $("wiz-build").disabled = false; }
+}
+
+// Natural roles per archetype (from /archetypes): picking outside them is a DELIBERATE
+// off-role build (Offender, tankermind…) — warn loudly so the user owns the choice.
+let NATURAL_ROLES = {};
+const ROLE_LABELS = { controller: "Controller / Lockdown", debuffer: "Debuffer",
+                     buffer: "Buffer / Support", healer: "Healer",
+                     damage: "Damage dealer", tank: "Tank / Survivor" };
+
+let SET_ROLE_EXTENSIONS = {};
+// The user's answer to "if we split your focus, what percentage on each role?" —
+// {primaryRole, secondaryRole, pct} (pct = % on the primary). Null until they answer.
+let roleFocus = { secondary: "", pct: 100 };
+
+function roleMixPayload() {
+  const roleSel = $("preset-role");
+  const r = roleSel && roleSel.value;
+  if (!r || !roleFocus.secondary || roleFocus.secondary === r || roleFocus.pct >= 100)
+    return null;
+  return { [r]: roleFocus.pct, [roleFocus.secondary]: 100 - roleFocus.pct };
+}
+
+function renderRoleFocusSplit() {
+  // When the AT + chosen sets legitimize MORE than one role, don't guess the player's
+  // intent — ASK: "how do you want to split your focus?" (e.g. an MM with Empathy:
+  // henchmen support vs team healing).
+  const roleSel = $("preset-role");
+  if (!roleSel) return;
+  let box = $("role-focus-split");
+  if (!box) {
+    box = document.createElement("div");
+    box.id = "role-focus-split";
+    box.style.cssText = "margin:6px 0;";
+    ($("off-role-warning") || roleSel.closest("label") || roleSel)
+      .insertAdjacentElement("afterend", box);
+  }
+  const at = build.archetype;
+  const r = ({ control: "controller", support: "buffer" })[roleSel.value] || roleSel.value;
+  const legit = [...new Set([...(NATURAL_ROLES[at] || []), ...rolesFromSets()])];
+  const others = legit.filter(x => x !== r);
+  if (!(at && r && others.length)) { box.innerHTML = ""; roleFocus = { secondary: "", pct: 100 }; return; }
+  const opts = others.map(o =>
+    `<option value="${o}" ${roleFocus.secondary === o ? "selected" : ""}>${ROLE_LABELS[o] || o}</option>`).join("");
+  box.innerHTML =
+    `<div class="muted small">Your picks support more than one role — <b>how do you want to split your focus?</b></div>
+     <label class="small">${ROLE_LABELS[r] || r} <b><span id="rf-pct">${roleFocus.pct}</span>%</b>
+       <input type="range" id="rf-slider" min="50" max="100" step="5" value="${roleFocus.pct}">
+       <select id="rf-secondary"><option value="">— all-in (100%) —</option>${opts}</select>
+       <span id="rf-note" class="muted small"></span></label>`;
+  const upd = () => {
+    roleFocus.pct = +$("rf-slider").value;
+    roleFocus.secondary = $("rf-secondary").value;
+    $("rf-pct").textContent = roleFocus.pct;
+    $("rf-note").textContent = roleFocus.secondary && roleFocus.pct < 100
+      ? `→ ${roleFocus.pct}% ${ROLE_LABELS[r] || r} / ${100 - roleFocus.pct}% ${ROLE_LABELS[roleFocus.secondary]}`
+      : "(single-role focus)";
+  };
+  $("rf-slider").addEventListener("input", upd);
+  $("rf-secondary").addEventListener("change", upd);
+  upd();
+}
+
+function rolesFromSets() {
+  // Roles legitimized by the CHOSEN powersets — a Controller with Poison plays Debuffer,
+  // an MM with Empathy heals (his own henchmen are a team). Control primaries ⇒ controller.
+  const out = [];
+  for (const ps of [build.primary, build.secondary]) {
+    if (!ps) continue;
+    const base = ps.split(".").pop();
+    (SET_ROLE_EXTENSIONS[base] || []).forEach(r => { if (!out.includes(r)) out.push(r); });
+    if (ps.split(".")[0].endsWith("_Control") && !out.includes("controller"))
+      out.push("controller");
+  }
+  return out;
+}
+
+function updateOffRoleWarning() {
+  const roleSel = $("preset-role");
+  if (!roleSel) return;
+  let warn = $("off-role-warning");
+  if (!warn) {
+    warn = document.createElement("div");
+    warn.id = "off-role-warning";
+    warn.style.cssText = "font-weight:bold;margin:4px 0;";
+    const host = roleSel.closest("label") || roleSel;
+    host.insertAdjacentElement("afterend", warn);
+  }
+  const at = build.archetype;
+  const role = ({ control: "controller", support: "buffer" })[roleSel.value] || roleSel.value;
+  const nat = NATURAL_ROLES[at] || [];
+  warn.textContent = ""; warn.style.color = "";
+  if (!(at && role && nat.length) || nat.includes(role)) return;
+  const atName = (($("sel-archetype") || {}).selectedOptions || [{}])[0].textContent
+    || "this archetype";
+  const ext = rolesFromSets();
+  if (ext.includes(role)) {
+    const srcs = [build.primary, build.secondary].filter(ps => ps &&
+      ((SET_ROLE_EXTENSIONS[ps.split(".").pop()] || []).includes(role)
+        || (role === "controller" && ps.split(".")[0].endsWith("_Control"))))
+      .map(ps => ps.split(".").pop().replace(/_/g, " "));
+    warn.style.color = "#7ec8ff";
+    warn.textContent = `◆ ROLE EXTENSION: ${ROLE_LABELS[role] || role} isn't a ` +
+      `${atName}'s official role, but your ${srcs.join(" / ") || "powerset"} choice ` +
+      `makes it a legitimate multi-role play — deliberate diversity, still role-based.`;
+  } else {
+    warn.style.color = "#ffb347";
+    warn.textContent = `⚠ OFF-ROLE CHOICE: a ${atName}'s natural role is ` +
+      `${nat.map(n => ROLE_LABELS[n] || n).join(" / ")}, and none of your powersets ` +
+      `extend to ${ROLE_LABELS[role] || role}. The optimizer will honor it — a ` +
+      `deliberate off-role character, and that's the choice you're making.`;
+  }
+}
+
+function refreshRoleUI() { updateOffRoleWarning(); renderRoleFocusSplit(); }
+
+
+// ── ALIGNMENT (Hero Companion reskin): the app has an alignment like any CoH character.
+// Hero = Paragon blue & gold, Villain = Rogue Isles crimson. Persisted per browser.
+function applyAlignment(al) {
+  document.body.classList.remove("theme-hero", "theme-villain");
+  document.body.classList.add(al === "villain" ? "theme-villain" : "theme-hero");
+  const name = al === "villain" ? "Villain Companion" : "Hero Companion";
+  const glyph = al === "villain" ? "🦹" : "🦸";
+  const tag = al === "villain" ? "your Rogue Isles accomplice" : "your City of Heroes sidekick";
+  if ($("app-name")) $("app-name").textContent = name;
+  if ($("app-glyph")) $("app-glyph").textContent = glyph;
+  const tagEl = document.querySelector(".app-tag"); if (tagEl) tagEl.textContent = tag;
+  const btn = $("alignment-btn");
+  if (btn) btn.textContent = al === "villain" ? "🦸 Go Hero" : "🦹 Go Villain";
+  document.title = name + " — City of Heroes";
+  document.querySelectorAll(".align-card").forEach(c =>
+    c.classList.toggle("on", c.dataset.align === al));
+  try { localStorage.setItem("cohAlignment", al); } catch (e) {}
+}
+window.toggleAlignment = function () {
+  const cur = localStorage.getItem("cohAlignment") || "hero";
+  applyAlignment(cur === "hero" ? "villain" : "hero");
+};
+
+
+// Bottom frame corners appear only at the very bottom of the scrolled content —
+// an end-of-page flourish, not a permanent overlay.
+function updateBottomCorners() {
+  const el = $("page-scroll");
+  if (!el) return;
+  const atBottom = el.scrollHeight - (el.scrollTop + el.clientHeight) <= 8;
+  document.querySelectorAll(".corner-deco.bl, .corner-deco.br")
+    .forEach(c => c.classList.toggle("show", atBottom));
+}
+
+
+// VEAT BRANCH PAIRING: a Soldier/Widow makes ONE choice — the branch — not two independent
+// set picks (master corpus: Bane↔Bane Training, Crab↔Crab Training, Night Widow↔Widow
+// Teamwork; cross-branch combos are impossible in game). Picking either side selects its mate.
+const VEAT_PAIR = {
+  Arachnos_Soldier: "Training_and_Gadgets", Bane_Spider_Soldier: "Bane_Spider_Training",
+  Crab_Spider_Soldier: "Crab_Spider_Training",
+  Widow_Training: "Teamwork", Night_Widow_Training: "Widow_Teamwork",
+  Fortunata_Training: "Fortunata_Teamwork",
+};
+const VEAT_PAIR_REV = Object.fromEntries(Object.entries(VEAT_PAIR).map(([k, v]) => [v, k]));
+
+function pairVeatSets(changedSel, otherSel, map) {
+  const base = (changedSel.value || "").split(".").pop();
+  const mate = map[base];
+  if (!mate) return false;
+  const opt = [...otherSel.options].find(o => (o.value || "").split(".").pop() === mate);
+  if (opt && otherSel.value !== opt.value) {
+    otherSel.value = opt.value;
+    otherSel.dispatchEvent(new Event("change"));
+  }
+  return !!opt;
+}
+
+// ── Project home: versions, bug reports, champion submissions, update check ──
+// Everything here is USER-CLICK only — the app never sends anything on its own.
+let META = null;
+const _urlReady = (u) => !!u && !u.includes("REPLACE-ME");
+
+async function loadMeta() {
+  try { META = await api("/meta"); } catch { META = null; }
+  const f = $("app-version-foot");
+  if (f && META) f.textContent = `v${META.app_version} · model v${META.model_version}`;
+}
+
+function reportBug() {
+  if (!META) return;
+  const url = (META.urls || {}).bug_report;
+  if (!_urlReady(url)) {
+    alert("The project's GitHub home isn't set up yet — once it exists, this button opens a "
+        + "pre-filled bug report there. (Dev note: set the real repo in client_config.json.)");
+    return;
+  }
+  const ctx = build.archetype
+    ? `\n**Character:** ${build.archetype} · ${build.primary || "?"} / ${build.secondary || "?"}`
+      + ` · role ${build.role || "?"} · ${(build.powers || []).length} powers`
+    : "\n**Character:** (none loaded)";
+  const body =
+    "**What happened?**\n(describe the bug — what you did, what you expected, what you got)\n\n"
+    + "**Versions** (auto-filled)\n"
+    + `- App: ${META.app_version}\n- Model: v${META.model_version}\n- Game data: ${META.db_name} ${META.db_version}`
+    + ctx + "\n\n**Build export** (optional but very helpful)\n"
+    + "Paste your Mids export or attach your save file here.\n";
+  window.open(`${url}?title=${encodeURIComponent("[bug] ")}&body=${encodeURIComponent(body)}`, "_blank");
+}
+
+async function submitChampion() {
+  if (!build.archetype || !(build.powers || []).length) {
+    alert("Load or build a character first — a champion candidate is your CURRENT build."); return;
+  }
+  const res = await api("/champion/bundle", postJson({
+    archetype: build.archetype, primary: build.primary, secondary: build.secondary,
+    epic: build.epic, role: build.role, content: build.content,
+    build: { powers: build.powers, pools: build.pools },
+  }));
+  if (!res || !res.ok) { alert("Couldn't bundle the build — is the server running?"); return; }
+  // download the candidate file...
+  const blob = new Blob([JSON.stringify(res.bundle, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `champion-candidate-${(build.archetype || "at").replace("Class_", "")}`
+             + `-${(build.primary || "").split(".").pop()}-${(build.secondary || "").split(".").pop()}.json`;
+  a.click(); URL.revokeObjectURL(a.href);
+  // ...then point at the submission queue (hub re-scores everything, so the file is safe to share)
+  const url = (META && META.urls || {}).champion_submit;
+  if (_urlReady(url)) {
+    if (confirm("Candidate file saved. Open the champion submission page to post it?")) window.open(url, "_blank");
+  } else {
+    alert("Candidate file saved. The online submission queue isn't set up yet — once the GitHub "
+        + "home exists, this button will open it for you. Keep the file; it stays valid.");
+  }
+}
+
+async function checkUpdates() {
+  const el = $("update-check");
+  if (el) el.textContent = "checking…";
+  const r = await api("/meta/update-check").catch(() => null);
+  if (!el) return;
+  if (!r || !r.ok) {
+    el.textContent = r && r.reason === "not_configured" ? "updates: not configured yet" : "updates: offline";
+    setTimeout(() => { el.textContent = "check for updates"; }, 4000);
+    return;
+  }
+  if (r.update_available) {
+    el.innerHTML = `⬆ v${escHtml(r.latest)} available — <b>open releases</b>`;
+    el.onclick = () => window.open(r.url, "_blank");
+  } else {
+    el.textContent = `✓ up to date (v${r.current})`;
+    setTimeout(() => { el.textContent = "check for updates"; }, 4000);
+  }
+}
+
+async function init() {
+  const data = await api("/archetypes");
+  $("db-version").textContent = data.version ? `· Mids data ${data.version}` : "";
+  loadMeta();   // versions + project-home links (bug reports, champions, updates)
+  NATURAL_ROLES = Object.fromEntries(
+    data.archetypes.map(a => [a.name, a.natural_roles || []]));
+  SET_ROLE_EXTENSIONS = data.set_role_extensions || {};
+  const sel = $("sel-archetype");
+  sel.innerHTML = `<option value="">— choose archetype —</option>` +
+    data.archetypes.map(a => `<option value="${a.name}">${a.display_name}</option>`).join("");
+  sel.addEventListener("change", (e) => { onArchetypeChange(e); refreshRoleUI(); });
+  const _pr = $("preset-role");
+  if (_pr) _pr.addEventListener("change", refreshRoleUI);
+  document.querySelectorAll(".align-card").forEach(c =>
+    c.addEventListener("click", () => applyAlignment(c.dataset.align)));
+  applyAlignment(localStorage.getItem("cohAlignment") || "hero");
+  const _psc = $("page-scroll");
+  if (_psc) _psc.addEventListener("scroll", updateBottomCorners, { passive: true });
+  window.addEventListener("resize", updateBottomCorners);
+  setInterval(updateBottomCorners, 1200);   // content height changes after solves/renders
+  updateBottomCorners();
+  if ($("alignment-btn")) $("alignment-btn").addEventListener("click", toggleAlignment);
+
+  // pool selectors (4)
+  $("pool-selectors").innerHTML = [0,1,2,3].map(i =>
+    `<select class="pool-sel" data-i="${i}" disabled></select>`).join("");
+
+  $("sel-primary").addEventListener("change", e => {
+    addPowersetPowers(e.target, "primary");
+    pairVeatSets(e.target, $("sel-secondary"), VEAT_PAIR);
+    refreshRoleUI(); });
+  $("sel-secondary").addEventListener("change", e => {
+    addPowersetPowers(e.target, "secondary");
+    pairVeatSets(e.target, $("sel-primary"), VEAT_PAIR_REV);
+    refreshRoleUI(); });
+  $("sel-epic").addEventListener("change", e => addPowersetPowers(e.target, "epic"));
+
+  $("modal-close").addEventListener("click", closeModal);
+  $("tier-close").addEventListener("click", () => $("tier-modal").classList.add("hidden"));
+  $("modal-search").addEventListener("input", renderModalSets);
+  $("ai-send").addEventListener("click", askAI);
+  $("gen-btn").addEventListener("click", confirmGoalThenGenerate);
+  $("gen-confirm-yes").addEventListener("click", generateBuild);
+  $("gen-confirm-edit").addEventListener("click", () => {
+    $("gen-confirm").classList.add("hidden");
+    $("gen-goal").focus();
+  });
+  document.querySelectorAll(".tier-cb").forEach(cb =>
+    cb.addEventListener("change", updateGenBtnLabel));
+  renderRoleChips();
+  updateGenBtnLabel();
+  $("opt-btn").addEventListener("click", optimizeBuild);
+  $("solve-btn").addEventListener("click", solveSlotting);
+  if ($("preset-content")) $("preset-content").addEventListener("change", previewPreset);
+  if ($("preset-role")) $("preset-role").addEventListener("change", previewPreset);
+  $("export-btn").addEventListener("click", exportMids);
+  // Converter panel: build the interactive "want/have" tool when first opened (works with no build).
+  if ($("conv-guide-details")) {
+    $("conv-guide-details").addEventListener("toggle", (e) => {
+      if (e.target.open) { renderConverterTool(); renderConverterGuide(); }
+    });
+  }
+  $("import-btn").addEventListener("click", () => $("import-file").click());
+  $("import-file").addEventListener("change", importMids);
+  // Entry router — the front door: how do you want to start?
+  $("entry-mids").addEventListener("click", () => { hideEntry(); $("import-file").click(); });
+  $("entry-ingame").addEventListener("click", () => { hideEntry(); $("import-file").click(); });
+  $("entry-scratch").addEventListener("click", () => { hideEntry(); startFromScratch(); });
+  $("entry-respec").addEventListener("click", () => { hideEntry(); startNew50(); });
+  $("entry-continue").addEventListener("click", openSavesList);
+  $("saves-back").addEventListener("click", () => {
+    $("saves-panel").classList.add("hidden"); $("entry-cards").classList.remove("hidden"); });
+  $("save-btn").addEventListener("click", saveProgress);
+  if ($("bug-btn")) $("bug-btn").addEventListener("click", reportBug);
+  if ($("champ-btn")) $("champ-btn").addEventListener("click", submitChampion);
+  if ($("update-check")) $("update-check").addEventListener("click", checkUpdates);
+  $("wiz-close").addEventListener("click", closeRespecWizard);
+  $("wiz-at").addEventListener("change", wizLoadPowersets);
+  $("wiz-build").addEventListener("click", buildRespec);
+  $("disc-find").addEventListener("click", runDiscovery);
+  ["wiz-role", "wiz-content", "wiz-exposure"].forEach((id) =>
+    $(id).addEventListener("change", wizUpdateHint));
+  $("start-over-btn").addEventListener("click", showEntry);
+  refreshContinueCard();   // overlay shows on load — reveal Continue if saves exist
+  setInterval(autoSaveTick, 120000);   // background auto-save every 2 min (only if changed)
+  $("powercolor").addEventListener("toggle", (e) => { if (e.target.open) renderPowerColorRows(); });
+  $("pc-preview-btn").addEventListener("click", () => previewPowerColors());
+  $("pc-download-btn").addEventListener("click", downloadPowerCust);
+  $("incarnate-peak-toggle").addEventListener("change", (e) => {
+    build.include_incarnates = e.target.checked;
+    recompute();
+  });
+  $("external-toggle").addEventListener("change", (e) => {
+    build.include_external = e.target.checked;
+    recompute();
+  });
+  $("pvp-toggle").addEventListener("change", (e) => {
+    build.pvp = e.target.checked;
+    recompute();
+  });
+
+  // claude availability
+  api("/health").then(h => {
+    $("claude-status").textContent = h.claude_available
+      ? "AI: Claude Code ready" : "AI: Claude Code not found";
+    $("claude-status").style.color = h.claude_available ? "var(--def)" : "var(--bad)";
+  });
+
+  INCARNATES = await api("/incarnates");
+  renderIncarnates();
+
+  renderSuggested();
+  recompute();
+}
+
+function renderIncarnates() {
+  const host = $("incarnate-selectors");
+  if (!host || !INCARNATES) return;
+  host.innerHTML = INCARNATES.slots.map((s) => {
+    const cur = (build.incarnates[s.slot] || {}).full_name || "";
+    return `<label class="muted small">${s.slot}
+      <select data-slot="${s.slot}" onchange="onIncarnate(this)">
+        <option value="">— none —</option>
+        ${s.choices.map((c) => `<option value="${c.full_name}"${c.full_name === cur ? " selected" : ""}>${c.display_name}</option>`).join("")}
+      </select>
+    </label>`;
+  }).join("");
+}
+
+window.onIncarnate = function (sel) {
+  const slot = sel.dataset.slot;
+  build._incarnatesManual = true;   // user hand-picked — don't let a re-solve clobber it
+  if (!sel.value) {
+    delete build.incarnates[slot];
+  } else {
+    build.incarnates[slot] = {
+      full_name: sel.value,
+      display_name: sel.options[sel.selectedIndex].text,
+    };
+  }
+  recompute();
+};
+
+// ---------------------------------------------------------------------------
+// Archetype / powerset selection
+// ---------------------------------------------------------------------------
+async function onArchetypeChange(e) {
+  const at = e.target.value;
+  build.archetype = at;
+  build.primary = build.secondary = build.epic = null;
+  build.pools = []; build.pools_display = [];
+  build.powers = [];
+  build.imported = false;   // fresh start — nothing to preserve
+  if (!at) { renderPowers(); recompute(); return; }
+
+  POWERSETS_CACHE = await api(`/powersets/${encodeURIComponent(at)}`);
+  fillPowersetSelect($("sel-primary"), POWERSETS_CACHE.primary, "— primary —");
+  fillPowersetSelect($("sel-secondary"), POWERSETS_CACHE.secondary, "— secondary —");
+  // SINGLE-PATH ARCHETYPES (Kheldians): exactly one primary + one secondary exist —
+  // don't make the user open a one-item dropdown; pick them automatically.
+  if ((POWERSETS_CACHE.primary || []).length === 1) {
+    $("sel-primary").selectedIndex = 1;
+    $("sel-primary").dispatchEvent(new Event("change"));
+  }
+  if ((POWERSETS_CACHE.secondary || []).length === 1) {
+    $("sel-secondary").selectedIndex = 1;
+    $("sel-secondary").dispatchEvent(new Event("change"));
+  }
+  // Kheldians travel innately (Energy Flight / Shadow Step) — default to NO extra travel
+  // power; picking one anyway stays available in the dropdown.
+  const _wt = $("wiz-travel");
+  if (_wt) _wt.value = (at === "Class_Peacebringer" || at === "Class_Warshade")
+    ? "none" : (_wt.value === "none" ? "super_speed" : _wt.value);
+  fillPowersetSelect($("sel-epic"), POWERSETS_CACHE.epic, "— epic/ancillary —");
+  // No epic/patron pools for this AT (Kheldians)? Hide the moot dropdown and say why.
+  {
+    const epicList = POWERSETS_CACHE.epic || [];
+    const wrap = $("sel-epic").closest("label") || $("sel-epic").parentElement;
+    wrap.style.display = epicList.length ? "" : "none";
+    let note = $("no-epic-note");
+    if (!note) {
+      note = document.createElement("p");
+      note.id = "no-epic-note";
+      note.className = "muted small";
+      wrap.insertAdjacentElement("afterend", note);
+    }
+    note.style.display = epicList.length ? "none" : "";
+    note.textContent = "This archetype has no Epic or Patron pools — its primary and " +
+      "secondary carry more powers (and inherent travel) to make up for it.";
+  }
+  document.querySelectorAll(".pool-sel").forEach(s => {
+    fillPowersetSelect(s, POWERSETS_CACHE.pools, "— pool —");
+    s.disabled = false;
+    s.onchange = () => onPoolChange();
+  });
+  [$("sel-primary"), $("sel-secondary"), $("sel-epic")].forEach(s => s.disabled = false);
+  renderPowers();
+  recompute();
+}
+
+function fillPowersetSelect(sel, list, placeholder) {
+  sel.innerHTML = `<option value="">${placeholder}</option>` +
+    (list || []).map(ps =>
+      `<option value="${ps.full_name}">${ps.display_name}</option>`).join("");
+}
+
+async function loadPowers(psFullName) {
+  if (POWERS_CACHE[psFullName]) return POWERS_CACHE[psFullName];
+  const data = await api(`/powers/${encodeURIComponent(psFullName)}`);
+  POWERS_CACHE[psFullName] = data.powers;
+  return data.powers;
+}
+
+// When a powerset is chosen we expose its powers as an "add power" picker
+async function addPowersetPowers(sel, slot) {
+  const psFull = sel.value;
+  const psDisplay = sel.options[sel.selectedIndex]?.text;
+  if (slot === "primary") { build.primary = psFull; build.primary_display = psDisplay; }
+  if (slot === "secondary") { build.secondary = psFull; build.secondary_display = psDisplay; }
+  if (slot === "epic") { build.epic = psFull; build.epic_display = psDisplay; }
+  if (psFull) await loadPowers(psFull);
+  // VEAT branch chosen → also load its base set so the "Add from" row can offer it
+  if (VEAT_BASE_SET[psFull]) await loadPowers(VEAT_BASE_SET[psFull]);
+  renderPowers();
+  recompute();
+}
+
+async function onPoolChange() {
+  recordEdit();
+  const sels = [...document.querySelectorAll(".pool-sel")];
+  build.pools = []; build.pools_display = [];
+  for (const s of sels) {
+    if (s.value) {
+      build.pools.push(s.value);
+      build.pools_display.push(s.options[s.selectedIndex].text);
+      await loadPowers(s.value);
+    }
+  }
+  renderPowers();
+  recompute();
+}
+
+// ---------------------------------------------------------------------------
+// Powers + slots rendering
+// ---------------------------------------------------------------------------
+// VEAT dual set access: choosing a branch keeps the BASE set available (a Crab build may
+// legally take base Wolf Spider powers — post-24 respec keeps both).
+const VEAT_BASE_SET = {
+  "Arachnos_Soldiers.Bane_Spider_Soldier": "Arachnos_Soldiers.Arachnos_Soldier",
+  "Arachnos_Soldiers.Crab_Spider_Soldier": "Arachnos_Soldiers.Arachnos_Soldier",
+  "Training_Gadgets.Bane_Spider_Training": "Training_Gadgets.Training_and_Gadgets",
+  "Training_Gadgets.Crab_Spider_Training": "Training_Gadgets.Training_and_Gadgets",
+  "Widow_Training.Night_Widow_Training": "Widow_Training.Widow_Training",
+  "Widow_Training.Fortunata_Training": "Widow_Training.Widow_Training",
+  "Teamwork.Widow_Teamwork": "Teamwork.Teamwork",
+  "Teamwork.Fortunata_Teamwork": "Teamwork.Teamwork",
+};
+
+function chosenPowersets() {
+  const list = [];
+  if (build.primary) list.push(build.primary);
+  if (build.secondary) list.push(build.secondary);
+  for (const ps of [build.primary, build.secondary]) {
+    const base = VEAT_BASE_SET[ps];
+    if (base && !list.includes(base)) list.push(base);
+  }
+  build.pools.forEach(p => list.push(p));
+  if (build.epic) list.push(build.epic);
+  return list;
+}
+
+function renderPowers() {
+  applyIdentityLock();          // keep archetype/powerset lock in sync (onArchetypeChange re-enables them)
+  const host = $("powers-list");
+  const sets = chosenPowersets();
+  if (!sets.length) { host.innerHTML = `<p class="muted small">Select powersets to add powers.</p>`; return; }
+
+  let html = "";
+  // "Add power" pickers per chosen powerset
+  for (const ps of sets) {
+    const powers = (POWERS_CACHE[ps] || []).filter(p => p.slottable);
+    if (!powers.length) continue;
+    const psName = powers[0] ? ps.split(".").slice(-1)[0].replace(/_/g, " ") : ps;
+    html += `<div class="add-power"><label class="muted small">Add from ${psName}
+      <select data-ps="${ps}" onchange="addPower(this)">
+        <option value="">+ add power…</option>
+        ${powers.map(p => `<option value="${p.full_name}">${p.display_name}</option>`).join("")}
+      </select></label></div>`;
+  }
+
+  // Added power cards
+  build.powers.forEach((pw, idx) => {
+    html += `<div class="power-card">
+      <div class="ph">
+        <div>
+          <div class="pname">${pw.display_name}${pw.pick_level ? ` <span class="pick-lvl" title="Chosen at level ${pw.pick_level}${pw.level_available ? ` (available at ${pw.level_available})` : ""}">Lv ${pw.pick_level}</span>` : ""}</div>
+          <div class="cats">accepts: ${(pw.accepted_set_categories || []).join(", ") || "no set categories"}</div>
+        </div>
+        <div class="slot-count">
+          <button class="mini" onclick="changeSlots(${idx}, -1)">−</button>
+          <span>${pw.slotCount} slot${pw.slotCount>1?"s":""}</span>
+          <button class="mini" onclick="changeSlots(${idx}, 1)">+</button>
+          <button class="remove-power" onclick="removePower(${idx})">remove</button>
+        </div>
+      </div>
+      <div class="slot-row">
+        ${pw.slots.map((s, si) => slotHtml(idx, si, s)).join("")}
+      </div>
+      ${setSummaryHtml(pw)}
+      <label class="include-toggle" title="Count this power's defense/resistance/etc. in the Stats totals">
+        <input type="checkbox" ${pw.include_in_totals ? "checked" : ""}
+          onchange="toggleInclude(${idx}, this.checked)">
+        include in totals${pw.power_type === 0 ? " (click power)" : ""}
+      </label>
+    </div>`;
+  });
+
+  host.innerHTML = html;
+  updateEditBar();
+  updateEpicBadge();
+  renderConverterGuide();
+}
+
+// A power's slots show as icons (set name only in the hover tooltip), which makes a
+// build unrecognizable vs. Mids / the .mbd. Summarize the SETS in plain text under each
+// power: "Enfeebled Operation ×5", "Numina's · Miracle · Regen Tissue", etc.
+function setSummaryHtml(pw) {
+  const filled = (pw.slots || []).filter(Boolean);
+  if (!filled.length) return "";
+  const order = [], count = {};
+  for (const s of filled) {
+    const n = s.set_name || "Common IO";
+    if (!(n in count)) order.push(n);
+    count[n] = (count[n] || 0) + 1;
+  }
+  const parts = order.map(n => `${escHtml(n)}${count[n] > 1 ? ` ×${count[n]}` : ""}`);
+  return `<div class="set-summary"><span class="muted small">sets:</span> ${parts.join(" · ")}</div>`;
+}
+
+const enhIconUrl = (img) => img ? `/static/icons/enh/${img}` : "";
+
+function slotHtml(powerIdx, slotIdx, slot) {
+  if (slot) {
+    const url = enhIconUrl(slot.image);
+    const inner = url
+      ? `<img src="${url}" alt="${slot.piece_name}" loading="lazy"
+           onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'slot-abbr',textContent:this.alt.slice(0,2)}))">`
+      : `<span class="slot-abbr">${slot.piece_name.slice(0,2)}</span>`;
+    const lvl = slot.io_level ? ` · level ${slot.io_level}${slot.attuned ? " (attuned)" : ""}` : "";
+    return `<div class="slot filled${slot.unique?' unique':''}" title="${slot.set_name}: ${slot.piece_name}${lvl}\n(click to change, right-click to clear)"
+      onclick="openSlot(${powerIdx},${slotIdx})"
+      oncontextmenu="clearSlot(event,${powerIdx},${slotIdx})">${inner}</div>`;
+  }
+  return `<div class="slot" title="empty slot — click to choose"
+    onclick="openSlot(${powerIdx},${slotIdx})">+</div>`;
+}
+
+window.addPower = function (sel) {
+  const psFull = sel.dataset.ps;
+  const fullName = sel.value;
+  if (!fullName) return;
+  const p = (POWERS_CACHE[psFull] || []).find(x => x.full_name === fullName);
+  if (!p) return;
+  if (build.powers.some(x => x.full_name === fullName)) { sel.value=""; return; }
+  recordEdit();
+  build.powers.push({
+    full_name: p.full_name,
+    display_name: p.display_name,
+    powerset_full_name: psFull,
+    accepted_set_category_ids: p.accepted_set_category_ids || [],
+    accepted_set_categories: p.accepted_set_categories || [],
+    power_type: p.power_type,
+    include_in_totals: p.power_type === 1 || p.power_type === 2,
+    slotCount: 1,
+    slots: [null],
+  });
+  sel.value = "";
+  renderPowers();
+  recompute();
+};
+
+window.removePower = function (idx) {
+  recordEdit();
+  build.powers.splice(idx, 1);
+  renderPowers(); recompute();
+};
+
+window.changeSlots = function (idx, delta) {
+  const pw = build.powers[idx];
+  const n = Math.max(1, Math.min(6, pw.slotCount + delta));
+  if (n === pw.slotCount) return;                       // clamped (1–6) — nothing to do
+  if (n > pw.slotCount && _addedSlots() >= SLOT_BUDGET) {  // budget guard
+    alert(`Slot budget full — ${SLOT_BUDGET}/${SLOT_BUDGET} added slots in use.\nRemove a slot from another power first, then add it here.`);
+    return;
+  }
+  recordEdit();
+  pw.slotCount = n;
+  while (pw.slots.length < n) pw.slots.push(null);
+  pw.slots.length = n;
+  renderPowers(); recompute();
+};
+
+window.clearSlot = function (ev, powerIdx, slotIdx) {
+  ev.preventDefault();
+  if (!build.powers[powerIdx].slots[slotIdx]) return;   // already empty
+  recordEdit();
+  build.powers[powerIdx].slots[slotIdx] = null;
+  renderPowers(); recompute();
+};
+
+window.toggleInclude = function (idx, checked) {
+  recordEdit();
+  build.powers[idx].include_in_totals = checked;
+  recompute();
+};
+
+// ── Edit history (Undo) + live slot budget ──────────────────────────────────
+// The build editor is fully freeform (swap powers, add/remove slots, clear IOs).
+// recordEdit() snapshots the build BEFORE each change so any edit is reversible,
+// and the slot tally makes the 67-added-slot budget visible while you move slots.
+let EDIT_HISTORY = [];
+const SLOT_BUDGET = 67;   // added slots beyond the 1 free base per power (matches the solver)
+function _snapshotBuild() {
+  return JSON.parse(JSON.stringify({
+    powers: build.powers, pools: build.pools, pools_display: build.pools_display,
+    epic: build.epic, epic_display: build.epic_display, incarnates: build.incarnates,
+  }));
+}
+function recordEdit() {                 // call BEFORE any build-mutating edit
+  EDIT_HISTORY.push(_snapshotBuild());
+  if (EDIT_HISTORY.length > 60) EDIT_HISTORY.shift();
+  updateEditBar();
+}
+function _addedSlots() {
+  return (build.powers || []).reduce((n, p) => n + Math.max(0, (p.slotCount || 1) - 1), 0);
+}
+function updateEditBar() {
+  const ub = $("undo-btn"); if (ub) ub.disabled = !EDIT_HISTORY.length;
+  const tally = $("slot-tally");
+  if (tally) {
+    const used = _addedSlots();
+    tally.textContent = `${used} / ${SLOT_BUDGET} slots`;
+    tally.classList.toggle("over", used > SLOT_BUDGET);
+  }
+}
+window.undoEdit = function () {
+  if (!EDIT_HISTORY.length) return;
+  Object.assign(build, EDIT_HISTORY.pop());
+  document.querySelectorAll(".pool-sel").forEach((s, i) => { s.value = build.pools[i] || ""; });
+  if ($("sel-epic")) $("sel-epic").value = build.epic || "";
+  renderPowers(); recompute(); updateEditBar();
+};
+
+// Patron Power Pools (Mace/Mu/Soul/Leviathan Mastery) must be unlocked by completing a Patron
+// arc in-game, unlike Ancillary pools — flag the epic selector when one is chosen.
+function isPatronEpic(fullName) {
+  return /(?:Mace|Mu|Soul|Leviathan)_Mastery/.test(fullName || "");
+}
+function updateEpicBadge() {
+  const note = $("patron-note"); if (!note) return;
+  const epic = build.epic || ($("sel-epic") && $("sel-epic").value) || "";
+  note.classList.toggle("hidden", !isPatronEpic(epic));
+}
+
+// ── Enhancement-converter guidance ──────────────────────────────────────────
+// Teach players to MAKE expensive IOs via converters instead of buying 15-20M pieces. Rules
+// (Homecoming wiki): In-Set = 3 conv (same set), By Rarity = 1 conv (any set of same rarity),
+// By Category = 2 conv (same aspect, crosses Uncommon↔Rare, never Purple/PvP/Winter).
+// Enhancement-converter PLANNER — for the pricey IOs in the build, the concrete cheapest path to
+// make each via converters (By-Set 3 / By-Rarity 1 / By-Category 2). The backend classifies each
+// set's rarity + category + pool sizes and applies the Homecoming rules (no cheap→purple, Category
+// never reaches purple/PvP/Winter, ATOs only By-Set), returning per-set steps + a converter/merit est.
+const _CONV_TAG = { purple: "Very Rare", pvp: "PvP", winter: "Winter",
+  superior_ato: "Superior ATO", ato: "ATO", standard: "Set IO" };
+const _CONV_CHART =
+  `<table class="conv-modes"><tr><th>Convert…</th><th>Cost</th><th>Gets you</th></tr>`
+  + `<tr><td>By-Set</td><td>3</td><td>another piece of the <b>same set</b></td></tr>`
+  + `<tr><td>By-Rarity</td><td>1</td><td>any set of the <b>same rarity</b> (purple→purple, PvP→PvP…)</td></tr>`
+  + `<tr><td>By-Category</td><td>2</td><td>same <b>aspect</b>, crosses Uncommon↔Rare — <b>never</b> purple/PvP/Winter</td></tr></table>`
+  + `<div class="muted small">Converters: 3 = 1 Reward Merit (any merit vendor, L10+) or drops. Common IOs / SO / DO / TO can't be converted.</div>`;
+
+async function renderConverterGuide() {
+  const host = $("conv-guide-body"); if (!host) return;
+  const hasSets = (build.powers || []).some(p => (p.slots || []).some(s => s && s.set_uid));
+  if (!hasSets) {
+    host.innerHTML = _CONV_CHART + `<div class="muted small conv-sub">Slot some IO sets first — then this
+      shows the cheapest converter path to make each pricey piece, instead of buying it for 10–20M.</div>`;
+    return;
+  }
+  host.innerHTML = _CONV_CHART + `<div class="muted small conv-sub">Planning converter paths…</div>`;
+  let res;
+  try { res = await api("/converter/plan", postJson({ powers: build.powers })); }
+  catch (e) { host.innerHTML = _CONV_CHART; return; }
+  const plans = (res && res.plans) || [];
+  const sm = (res && res.summary) || {};
+  // The WHOLE recommended fit, grouped by rarity so EVERY IO is covered (not just the pricey ones)
+  // — a complete "gear this build cheaply" checklist with per-section + grand totals.
+  const header = `<div class="conv-total">🧾 <b>Gear this recommended build</b> — ${sm.set_count || plans.length} IO sets, `
+    + `≈ <b>${sm.total_converters || 0} converters</b> (~<b>${sm.total_merits || 0} merits</b>) instead of buying them.`
+    + ((sm.shopping || []).length ? `<div class="muted small">Cheap seeds to buy: ${sm.shopping.map(escHtml).join(" · ")}.</div>` : "")
+    + `</div>`;
+  let sections = "";
+  for (const [rar, label] of _CONV_SECTIONS) {
+    const grp = plans.filter(p => p.rarity === rar);
+    if (!grp.length) continue;
+    const sc = grp.reduce((a, p) => a + (p.est_converters || 0), 0);
+    sections += `<div class="conv-sect"><div class="conv-sect-h">${label}`
+      + ` <span class="muted small">· ${grp.length} set${grp.length > 1 ? "s" : ""} · ≈${sc} conv (~${Math.round(sc / 3)} merits)</span></div>`
+      + `<div class="conv-list">${grp.map(_convCard).join("")}</div></div>`;
+  }
+  host.innerHTML = _CONV_CHART + header + (sections || `<div class="muted small conv-sub">No IO sets slotted yet.</div>`);
+}
+
+// Rarity sections in acquisition order (hardest first) + a shared per-set card renderer.
+const _CONV_SECTIONS = [["purple", "Very Rare (purple)"], ["pvp", "PvP"], ["superior_ato", "Superior ATO"],
+  ["ato", "Archetype (ATO)"], ["winter", "Winter"], ["standard", "Set IOs (Rare / Uncommon)"]];
+function _convCard(p) {
+  return `<div class="conv-item"><div class="conv-head"><b>${escHtml(p.set)}</b> `
+    + `<span class="conv-tag ${p.rarity}">${_CONV_TAG[p.rarity] || p.rarity}</span> `
+    + `<span class="muted small">${escHtml(p.category)} · lvl ${p.level}`
+    + `${(p.pieces || []).length ? ` · ${p.pieces.length} piece${p.pieces.length > 1 ? "s" : ""}` : ""} · ≈${p.est_converters} conv (~${p.est_merits} merits)</span></div>`
+    + `<div class="conv-headline">${escHtml(p.headline)}</div>`
+    + `<ol class="conv-steps">${(p.steps || []).map(s => `<li>${escHtml(s)}</li>`).join("")}</ol></div>`;
+}
+
+// ── Interactive converter tool: "I want this IO → how" (reverse) and "I have this IO → what it
+// can become" (forward), for ANY archetype's sets. Backed by /converter/catalog|to|from.
+let _CONV_CAT = null;          // {sets, byCat, byUid}
+let _convMode = "want";
+
+async function _loadConvCatalog() {
+  if (_CONV_CAT) return _CONV_CAT;
+  const res = await api("/converter/catalog");
+  const sets = (res && res.sets) || [];
+  const byCat = {};
+  for (const s of sets) (byCat[s.category] = byCat[s.category] || []).push(s);
+  _CONV_CAT = { sets, byCat, byUid: Object.fromEntries(sets.map(s => [s.uid, s])) };
+  return _CONV_CAT;
+}
+
+async function renderConverterTool() {
+  const host = $("conv-tool"); if (!host || host.dataset.init) return;   // build once, keep state
+  host.dataset.init = "1";
+  const cat = await _loadConvCatalog();
+  const cats = Object.keys(cat.byCat).sort();
+  host.innerHTML =
+    `<div class="conv-tool-modes">`
+    + `<button class="conv-mode-btn" data-mode="want" onclick="setConvMode('want')">🎯 I want an IO — how do I get it</button>`
+    + `<button class="conv-mode-btn" data-mode="have" onclick="setConvMode('have')">🔁 I have an IO — what can it become</button>`
+    + `<button class="conv-mode-btn" data-mode="haul" onclick="setConvMode('haul')">🧺 Farm haul → my build's needs</button></div>`
+    + `<div class="conv-pickers">`
+    + `<select id="conv-cat" onchange="convPickCat()"><option value="">— category —</option>`
+    + cats.map(c => `<option>${escHtml(c)}</option>`).join("") + `</select>`
+    + `<select id="conv-set" onchange="convPickSet()" disabled><option value="">— set —</option></select>`
+    + `<select id="conv-piece" onchange="convPickPiece()" disabled><option value="">— any piece —</option></select>`
+    + `<button id="conv-haul-add" style="display:none" onclick="convHaulAdd()">+ add drop</button></div>`
+    + `<div id="conv-haul-list" class="conv-haul-list" style="display:none"></div>`
+    + `<div id="conv-result" class="conv-result"></div>`;
+  setConvMode(_convMode);
+}
+let _convHaul = [];   // [{uid, name, count}] — the drops you walked out of the farm with
+window.setConvMode = function (mode) {
+  _convMode = mode;
+  document.querySelectorAll(".conv-mode-btn").forEach(b => b.classList.toggle("on", b.dataset.mode === mode));
+  const pc = $("conv-piece"); if (pc) pc.style.display = mode === "want" ? "" : "none";
+  const ha = $("conv-haul-add"); if (ha) ha.style.display = mode === "haul" ? "" : "none";
+  const hl = $("conv-haul-list"); if (hl) hl.style.display = mode === "haul" ? "" : "none";
+  if (mode === "haul") { renderConvHaul(); return; }
+  const uid = $("conv-set") && $("conv-set").value;
+  if (uid) convPickSet(); else { const r = $("conv-result"); if (r) r.innerHTML = ""; }
+};
+
+window.convHaulAdd = function () {
+  const uid = $("conv-set") && $("conv-set").value;
+  if (!uid) return;
+  const s = _CONV_CAT.byUid[uid];
+  const e = _convHaul.find(x => x.uid === uid);
+  if (e) e.count += 1; else _convHaul.push({ uid, name: s.name, count: 1 });
+  renderConvHaul();
+};
+window.convHaulRemove = function (uid) {
+  _convHaul = _convHaul.filter(x => x.uid !== uid);
+  renderConvHaul();
+};
+
+function renderConvHaul() {
+  const hl = $("conv-haul-list"); if (!hl) return;
+  const chips = _convHaul.length
+    ? `<div style="margin:4px 0"><span class="muted small">Your haul:</span> ` + _convHaul.map(h =>
+        `<span class="conv-haul-chip">${escHtml(h.name)} ×${h.count} `
+        + `<a href="#" onclick="convHaulRemove('${h.uid}');return false">✕</a></span>`).join(" ")
+      + ` <button onclick="convHaulMatch()">⚖ Match against my build</button></div>`
+    : `<div class="muted small" style="margin:4px 0">Add drops with the pickers above — or just type them below, straight off your salvage window.</div>`;
+  // Paste box survives re-renders: keep whatever the user typed.
+  const prev = $("conv-haul-paste") ? $("conv-haul-paste").value : "";
+  hl.innerHTML = chips
+    + `<div class="conv-haul-pastebox">`
+    + `<textarea id="conv-haul-paste" rows="3" placeholder="Paste or type your drops — one per line or comma-separated. Counts work: 16x Multi-Strike · Armageddon · 2 Titanium Coating · Devastation x3"></textarea>`
+    + `<button onclick="convHaulParse()">📋 Parse list</button>`
+    + `<span id="conv-haul-parse-note" class="muted small"></span></div>`;
+  if ($("conv-haul-paste")) $("conv-haul-paste").value = prev;
+  if (!_convHaul.length) { const r = $("conv-result"); if (r) r.innerHTML = ""; }
+}
+
+window.convHaulParse = function () {
+  const box = $("conv-haul-paste"); if (!box) return;
+  const sets = Object.values(_CONV_CAT.byUid);
+  const unknown = [];
+  let added = 0;
+  for (let raw of box.value.split(/[\n,;]+/)) {
+    raw = raw.trim(); if (!raw) continue;
+    // counts: "16x Name", "16 Name", "Name x16", "Name ×16"
+    let count = 1, name = raw;
+    let mm = raw.match(/^(\d+)\s*[x×]?\s+(.+)$/i);
+    if (mm) { count = +mm[1]; name = mm[2]; }
+    else if ((mm = raw.match(/^(.+?)\s*[x×]\s*(\d+)$/i))) { name = mm[1]; count = +mm[2]; }
+    // In-game recipes read "Set Name: Piece Name" (and often "Recipe: Set: Piece") —
+    // the SET is what routing needs; strip the piece and any Recipe/level prefix.
+    name = name.replace(/^recipe:\s*/i, "").split(":")[0];
+    name = name.replace(/\(level \d+\)/i, "").trim().toLowerCase();
+    // match: exact → starts-with → contains (unique only)
+    let hit = sets.find(s => s.name.toLowerCase() === name)
+      || sets.find(s => s.name.toLowerCase().startsWith(name));
+    if (!hit) {
+      const part = sets.filter(s => s.name.toLowerCase().includes(name));
+      if (part.length === 1) hit = part[0];
+    }
+    if (!hit) { unknown.push(raw); continue; }
+    const e = _convHaul.find(x => x.uid === hit.uid);
+    if (e) e.count += count; else _convHaul.push({ uid: hit.uid, name: hit.name, count });
+    added += count;
+  }
+  box.value = unknown.join("\n");
+  renderConvHaul();
+  const note = $("conv-haul-parse-note");
+  if (note) note.textContent = added
+    ? `added ${added} drop(s)` + (unknown.length ? ` — ${unknown.length} not recognized (left in the box; check spelling or pick via the dropdowns)` : "")
+    : (unknown.length ? "nothing recognized — set names need to match the in-game set (e.g. 'Multi-Strike', 'Titanium Coating')" : "");
+};
+
+window.convHaulMatch = async function () {
+  const r = $("conv-result");
+  if (!(build.powers || []).some(p => (p.slots || []).some(Boolean))) {
+    r.innerHTML = `<div class="muted">Load or Solve a build first — the matchmaker assigns drops to THIS build's needed sets.</div>`;
+    return;
+  }
+  r.innerHTML = `<div class="muted">Matching…</div>`;
+  const res = await api("/converter/assign", postJson({
+    powers: build.powers, haul: _convHaul.map(h => ({ set_uid: h.uid, count: h.count })) }));
+  if (!res || !res.ok) { r.innerHTML = `<div class="muted">Matchmaker failed.</div>`; return; }
+  const rows = (res.assignments || []).map(a =>
+    `<tr><td>${a.craft_first ? "🔨 " : ""}${escHtml(a.drop_set)}</td><td>→ <b>${escHtml(a.target_set)}</b>`
+    + ` <span class="muted small">(${escHtml((a.target_pieces || []).join(", "))})</span></td>`
+    + `<td>≈${a.est_converters} conv (~${a.est_merits} merits)</td>`
+    + `<td class="muted small">${escHtml(a.route)}</td></tr>`).join("");
+  const sellCount = {};
+  (res.sell || []).forEach(s => { sellCount[s.drop_set] = (sellCount[s.drop_set] || 0) + 1; });
+  const sell = Object.entries(sellCount).map(([n, c]) => `${escHtml(n)}${c > 1 ? " ×" + c : ""}`).join(", ");
+  const keepCount = {};
+  (res.keep || []).forEach(k => { keepCount[k.drop_set] = (keepCount[k.drop_set] || 0) + 1; });
+  const keep = Object.entries(keepCount).map(([n, c]) => `${escHtml(n)}${c > 1 ? " ×" + c : ""}`).join(", ");
+  const unseeded = (res.unseeded || []).slice(0, 10).map(u => escHtml(u.set)).join(", ");
+  const ncraft = (res.assignments || []).filter(a => a.craft_first).length;
+  r.innerHTML =
+    `<div class="conv-card"><b>⚖ ${res.totals.seeded} of ${res.totals.drops} drops become seeds`
+    + ` — ≈${res.totals.est_converters} converters (~${res.totals.est_merits} merits) total</b>`
+    + (ncraft ? `<div class="muted small">🔨 Recipe drops must be CRAFTED before converting `
+      + `(converters only work on built enhancements) — craft the ${ncraft} seed recipe(s) `
+      + `below first (common salvage + crafting fee at any invention table).</div>` : "")
+    + (rows ? `<table class="conv-assign-table">${rows}</table>` : "")
+    + (keep ? `<div class="small">💎 <b>Keep / craft & sell high</b> (purple·PvP·Winter class — valuable even though this build doesn't need them; never vendor): ${keep}</div>` : "")
+    + (sell ? `<div class="small">💰 <b>Sell as-is</b> (no needed set reachable at sane cost — fund the rest): ${sell}</div>` : "")
+    + (unseeded ? `<div class="muted small">🛒 Still need seeds for: ${unseeded}${(res.unseeded || []).length > 10 ? "…" : ""} — see the build plan above for each.</div>` : "")
+    + `</div>`;
+};
+window.convPickCat = function () {
+  const c = $("conv-cat").value, setSel = $("conv-set");
+  const sets = (_CONV_CAT.byCat[c] || []);
+  setSel.innerHTML = `<option value="">— set —</option>`
+    + sets.map(s => `<option value="${s.uid}">${escHtml(s.name)} · ${_CONV_TAG[s.rarity] || s.rarity}</option>`).join("");
+  setSel.disabled = !c;
+  $("conv-piece").innerHTML = `<option value="">— any piece —</option>`; $("conv-piece").disabled = true;
+  $("conv-result").innerHTML = "";
+};
+window.convPickSet = function () {
+  const uid = $("conv-set").value;
+  if (!uid) { $("conv-result").innerHTML = ""; return; }
+  const s = _CONV_CAT.byUid[uid];
+  if (_convMode === "want") {
+    const pc = $("conv-piece");
+    pc.innerHTML = `<option value="">— any piece —</option>` + s.pieces.map(p => `<option>${escHtml(p)}</option>`).join("");
+    pc.disabled = false;
+    _convReverse(uid, "");
+  } else { _convForward(uid); }
+};
+window.convPickPiece = function () { _convReverse($("conv-set").value, $("conv-piece").value); };
+
+async function _convReverse(uid, piece) {
+  const res = await api("/converter/to", postJson({ set_uid: uid, piece }));
+  const p = res && res.plan; if (!p) { $("conv-result").innerHTML = ""; return; }
+  $("conv-result").innerHTML = _convCard(p);
+}
+
+async function _convForward(uid) {
+  const res = await api("/converter/from", postJson({ set_uid: uid }));
+  const o = res && res.options; if (!o) { $("conv-result").innerHTML = ""; return; }
+  const dest = s => `<button class="conv-dest" onclick="convGoto('${s.uid}')">${escHtml(s.name)} `
+    + `<span class="conv-tag ${s.rarity}">${_CONV_TAG[s.rarity] || s.rarity}</span></button>`;
+  const rr = o.by_rarity.sets, huge = rr.length > 30;
+  $("conv-result").innerHTML =
+    `<div class="conv-fwd">`
+    + `<div class="conv-fwd-grp"><b>By-Set</b> <span class="muted small">(3 conv) — another piece of this set:</span>`
+    + `<div class="conv-pieces">${o.by_set.pieces.map(p => `<span class="conv-piece-chip">${escHtml(p)}</span>`).join("")}</div></div>`
+    + `<div class="conv-fwd-grp"><b>By-Category</b> <span class="muted small">(2 conv) — same aspect, any rarity except purple/PvP/Winter:</span>`
+    + (o.by_category.note ? `<div class="muted small">${escHtml(o.by_category.note)}</div>`
+        : `<div class="conv-dests">${o.by_category.sets.map(dest).join("") || "<span class='muted small'>none at this level</span>"}</div>`)
+    + `</div>`
+    + `<div class="conv-fwd-grp"><b>By-Rarity</b> <span class="muted small">(1 conv) — any of ${rr.length} sets of the same rarity`
+    + (huge ? " (huge pool — prefer By-Category/By-Set)" : "") + `:</span>`
+    + `<div class="conv-dests">${rr.slice(0, 30).map(dest).join("")}${huge ? "<span class='muted small'>…</span>" : ""}</div></div>`
+    + `</div>`;
+}
+window.convGoto = function (uid) {   // step to a destination set (forward chaining toward a goal)
+  const s = _CONV_CAT.byUid[uid];
+  $("conv-cat").value = s.category; convPickCat();
+  $("conv-set").value = uid; convPickSet();
+};
+
+// In-game, Archetype / Primary / Secondary are fixed at character creation — NO respec changes
+// them (only a reroll from level 1 does). Lock them for an EXISTING character (imported, or being
+// respec'd); leave pools/epic/powers/slots open, since a respec CAN rewrite those. The signal is
+// build._mode (persisted in saves): "new" = open plan; "respec"/"import" = a real character.
+function identityLocked() { return build._mode === "respec" || build._mode === "import"; }
+function applyIdentityLock() {
+  const locked = identityLocked();
+  ["sel-archetype", "sel-primary", "sel-secondary"].forEach(id => {
+    const el = $(id); if (el) el.disabled = locked;
+  });
+  const note = $("identity-lock"); if (note) note.classList.toggle("hidden", !locked);
+}
+window.rerollCharacter = function () {
+  if (!confirm("Start a brand-new character from level 1?\n\nArchetype and powersets can't be changed on an existing character — only a reroll can. This clears the current powers & slotting (your saved character stays intact unless you save over it).")) return;
+  startFromScratch();   // sets build._mode = "new" and opens the new-character wizard
+};
+
+// ---------------------------------------------------------------------------
+// Enhancement picker modal (SLOT ENFORCEMENT happens here)
+// ---------------------------------------------------------------------------
+let MODAL_SETS = [];
+
+window.openSlot = async function (powerIdx, slotIdx) {
+  activeSlot = { powerIdx, slotIdx };
+  const pw = build.powers[powerIdx];
+  $("modal-title").textContent = `Enhancement for: ${pw.display_name}`;
+  $("modal-sub").textContent =
+    `Showing ONLY sets matching this power's categories: ` +
+    (pw.accepted_set_categories.join(", ") || "none");
+  $("modal-search").value = "";
+  $("modal").classList.remove("hidden");
+
+  // Ask backend for ONLY the sets whose category fits this power.
+  const res = await api("/sets/for-power", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ accepted_set_category_ids: pw.accepted_set_category_ids }),
+  });
+  MODAL_SETS = res.sets || [];
+  renderModalSets();
+};
+
+function renderModalSets() {
+  const q = ($("modal-search").value || "").toLowerCase();
+  const host = $("modal-sets");
+  if (!MODAL_SETS.length) {
+    host.innerHTML = `<p class="muted">No enhancement sets fit this power's
+      categories. (Standard IOs/SOs would go here in a full slotting model.)</p>`;
+    return;
+  }
+  const groups = {};
+  for (const s of MODAL_SETS) {
+    if (q && !s.name.toLowerCase().includes(q)) continue;
+    (groups[s.category] = groups[s.category] || []).push(s);
+  }
+  let html = "";
+  for (const cat of Object.keys(groups).sort()) {
+    html += `<div class="set-group"><h4>${cat}</h4>`;
+    for (const s of groups[cat]) {
+      const setIcon = enhIconUrl(s.image);
+      html += `<div class="set-item">
+        <div class="si-head" onclick="this.nextElementSibling.classList.toggle('open')">
+          ${setIcon ? `<img class="si-icon" src="${setIcon}" alt="" loading="lazy">` : ""}
+          <div>
+            <span class="si-name">${s.name}</span>
+            <div class="si-meta">${s.piece_count} pieces · lvl ${s.level_min}-${s.level_max} · ${s.category}</div>
+          </div>
+        </div>
+        <div class="piece-list">
+          ${s.pieces.map((p, pi) => {
+            const pIcon = enhIconUrl(p.image || s.image);
+            return `
+            <div class="piece ${p.unique?'unique':''}"
+              onclick='pickPiece(${JSON.stringify(s.uid)}, ${JSON.stringify(s.name)}, ${pi})'>
+              ${pIcon ? `<img class="piece-icon" src="${pIcon}" alt="" loading="lazy">` : ""}
+              <span>${p.name}</span>
+              <span class="muted">${(p.enhances||[]).join("/")}</span>
+            </div>`;
+          }).join("")}
+        </div>
+      </div>`;
+    }
+    html += `</div>`;
+  }
+  host.innerHTML = html || `<p class="muted">No sets match "${q}".</p>`;
+}
+
+window.pickPiece = function (setUid, setName, pieceIdx) {
+  const s = MODAL_SETS.find(x => x.uid === setUid);
+  const piece = s.pieces[pieceIdx];
+  const { powerIdx, slotIdx } = activeSlot;
+  recordEdit();
+  build.powers[powerIdx].slots[slotIdx] = {
+    set_uid: s.uid,
+    set_name: setName,
+    piece_uid: piece.uid,
+    piece_name: piece.name,
+    category_id: s.category_id,
+    enhances: piece.enhances,
+    unique: piece.unique,
+    image: piece.image || s.image || "",
+  };
+  closeModal();
+  renderPowers();
+  recompute();
+};
+
+function closeModal() { $("modal").classList.add("hidden"); activeSlot = null; }
+
+// ---------------------------------------------------------------------------
+// Stats + validation
+// ---------------------------------------------------------------------------
+async function recompute() {
+  const hasPowers = build.powers.length > 0;
+  const ob = $("opt-btn");
+  if (ob) ob.style.display = hasPowers ? "block" : "none";
+  const sb = $("solve-btn");
+  if (sb) sb.style.display = hasPowers ? "block" : "none";
+  const hint = $("fit-hint");
+  if (hint) hint.style.display = hasPowers ? "block" : "none";
+  const presLbl = $("preserve-toggle-label");
+  // preserve-my-sets only applies to IMPORTED builds (a from-scratch/AI build has
+  // no prior investment to keep — Solve optimizes it freely).
+  const showPres = hasPowers && build.imported;
+  if (presLbl) presLbl.style.display = showPres ? "flex" : "none";
+  const klLbl = $("keeplayout-label");
+  if (klLbl) klLbl.style.display = showPres ? "flex" : "none";
+  const rb = $("reset-btn");
+  if (rb) rb.style.display = (hasPowers && IMPORTED_POWERS) ? "block" : "none";
+  const cb = $("changes-btn");
+  if (cb) cb.style.display = (hasPowers && IMPORTED_POWERS && CHANGES_AVAILABLE) ? "block" : "none";
+  const payload = buildPayload();
+  const [totals, validation] = await Promise.all([
+    api("/build/calculate", postJson(payload)),
+    api("/build/validate", postJson(payload)),
+  ]);
+  renderStats(totals);
+  renderValidation(validation);
+  LAST_TOTALS = (totals && (totals.totals || totals)) || null;  // feed the tray rotation + notes
+  refreshBuildViews();   // keep the always-visible respec-order + tray sections live
+}
+let LAST_TOTALS = null;
+
+function buildPayload() {
+  return {
+    archetype: build.archetype,
+    primary: build.primary, primary_display: build.primary_display,
+    secondary: build.secondary, secondary_display: build.secondary_display,
+    pools: build.pools, pools_display: build.pools_display,
+    epic: build.epic, epic_display: build.epic_display,
+    incarnates: Object.fromEntries(
+      Object.entries(build.incarnates).map(([k, v]) => [k, v.display_name])),
+    incarnates_full: Object.fromEntries(
+      Object.entries(build.incarnates).map(([k, v]) => [k, v.full_name])),
+    include_incarnates: build.include_incarnates,
+    include_external: build.include_external,
+    pvp: build.pvp,
+    powers: build.powers.map(p => ({
+      full_name: p.full_name,
+      display_name: p.display_name,
+      accepted_set_category_ids: p.accepted_set_category_ids,
+      accepted_set_categories: p.accepted_set_categories,
+      include_in_totals: p.include_in_totals,
+      pick_level: p.pick_level,
+      slots: p.slots,
+    })),
+  };
+}
+const postJson = (obj) => ({
+  method: "POST", headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(obj),
+});
+
+function renderStats(t) {
+  const resCap = (t.caps && t.caps.resistance_hard_cap) || 75;
+  $("res-cap-label").textContent = `hard cap ${resCap}%`;
+  $("res-cap-chip").textContent = `Resistance hard cap ${resCap}%`;
+  $("defense-bars").innerHTML = Object.entries(t.defense)
+    .map(([k, v]) => barRow(k, v, "def")).join("");
+  $("resistance-bars").innerHTML = Object.entries(t.resistance)
+    .map(([k, v]) => barRow(k, v, "res")).join("");
+
+  const other = [
+    ["Recharge (global)", t.recharge],
+    ["Recovery", t.recovery],
+    ["Regeneration", t.regeneration],
+    ["Max HP", t.max_hp],
+    ["ToHit", t.tohit],
+    ["Accuracy", t.accuracy],
+  ];
+  // HP / regen / recovery carry a per-AT hard cap: show the capped value + a CAP
+  // badge and the wasted overage, so the build doesn't silently overstate.
+  $("other-stats").innerHTML = other.map(([k, d]) => {
+    const badge = d.at_cap ? ' <span class="aoe-tag">CAP</span>' : "";
+    const over = (d.over_cap > 0) ? ` <span class="over">(+${d.over_cap} over)</span>` : "";
+    return `<div class="o-row"><span>${k}${badge}</span><span>+${d.value}%${over}</span></div>`;
+  }).join("");
+  renderOffense(t.offense);
+  $("stats-note").textContent = t.note || "";
+}
+
+// Damage/DPS + debuff/buff + pet summary. Hidden when there's no offense at all.
+function renderOffense(off) {
+  const sec = $("offense-section");
+  const hasAny = off && (off.attack_count || (off.pets && off.pets.length)
+    || (off.debuffs && off.debuffs.length) || (off.buffs && off.buffs.length));
+  if (!hasAny) { sec.classList.add("hidden"); return; }
+  sec.classList.remove("hidden");
+  const sign = p => (p > 0 ? `+${p}` : `${p}`);
+  let html = "";
+  if (off.attack_count) {
+    if (off.aoe_count) {
+      html += `<div class="o-row o-head"><span>AoE throughput <span class="muted small">(farm DPS — ${off.aoe_count} AoE${off.aoe_count === 1 ? "" : "s"} cycled, per target)</span></span><span class="dps">${off.aoe_dps}</span></div>`;
+      html += `<div class="o-row"><span>AoE alpha <span class="muted small">(one full AoE volley)</span></span><span>${off.aoe_burst}</span></div>`;
+    }
+    html += `<div class="o-row o-head"><span>Single-target DPS <span class="muted small">(best-attack chain — EB/AV)</span></span><span class="dps">${off.st_dps}</span></div>`;
+    html += `<div class="o-row"><span>Top attack (damage / animation)</span><span>${off.top_dpa}</span></div>`;
+    const top = (off.attacks || []).slice(0, 6).map(a =>
+      `<div class="o-atk"><span>${a.name}${a.is_aoe ? ' <span class="aoe-tag">AoE</span>' : ''}</span>`
+      + `<span class="muted small">${a.damage} dmg · ${a.cast_time}s · ${a.recharge}s rech · ${a.dpa} DPA</span></div>`).join("");
+    if (top) html += `<div class="o-atks">${top}</div>`;
+  }
+  if (off.pets && off.pets.length) {
+    html += `<div class="o-sub">Pet damage <span class="muted small">(per pet · squad size not multiplied)</span></div>`
+      + off.pets.map(p => `<div class="o-atk"><span>${p.name}</span>`
+        + `<span class="muted small">~${p.dps_each} DPS each · ${p.attack_count} atk · via ${p.from_power}</span></div>`).join("");
+  }
+  if ((off.debuffs || []).length) {
+    html += `<div class="o-sub">Enemy debuffs <span class="muted small">(base, per application)</span></div>`
+      + off.debuffs.map(d => `<div class="o-row"><span>${d.effect}${d.type && d.type !== "all" ? " (" + d.type + ")" : d.type === "all" ? " (all)" : ""}</span><span class="deb">${sign(d.pct)}%</span></div>`).join("");
+  }
+  if ((off.buffs || []).length) {
+    html += `<div class="o-sub">Ally buffs <span class="muted small">(base, per application)</span></div>`
+      + off.buffs.map(d => `<div class="o-row"><span>${d.effect}${d.type && d.type !== "all" ? " (" + d.type + ")" : d.type === "all" ? " (all)" : ""}</span><span class="buf">${sign(d.pct)}%</span></div>`).join("");
+  }
+  $("offense-stats").innerHTML = html;
+}
+
+function barRow(label, d, kind) {
+  const cap = d.cap;
+  const widthPct = Math.min(d.value / cap * 100, 100);
+  const capped = d.at_cap;
+  // Defense can exceed its soft cap; show the overage. Resistance can't.
+  const over = (kind === "def" && d.over_cap > 0) ? ` <span class="over">(+${d.over_cap})</span>` : "";
+  return `<div class="bar-row">
+    <span class="bar-label">${label}</span>
+    <div class="bar-track">
+      <div class="bar-fill ${kind} ${capped?'capped':''}" style="width:${widthPct}%"></div>
+    </div>
+    <span class="bar-val ${capped?'capped':''}">${d.value}%${over}</span>
+  </div>`;
+}
+
+function renderValidation(v) {
+  const host = $("validation");
+  let html = "";
+  if ((v.errors || []).length) {
+    html += v.errors.map(e => `<div class="v-err">✖ ${e}</div>`).join("");
+  }
+  if ((v.warnings || []).length) {
+    html += v.warnings.map(w => `<div class="v-warn">⚠ ${w}</div>`).join("");
+  }
+  if (!html) html = `<div class="v-ok">✓ No validation issues.</div>`;
+  // Coaching — common-build-mistakes advice (soft, non-blocking): shown below hard errors/warnings.
+  if ((v.coaching || []).length) {
+    html += `<div class="v-coach-head">💡 Coaching — worth a look (not errors):</div>`
+      + v.coaching.map(c => `<div class="v-coach">• ${escHtml(c)}</div>`).join("");
+  }
+  host.innerHTML = html;
+}
+
+// ---------------------------------------------------------------------------
+// AI assistant
+// ---------------------------------------------------------------------------
+function renderSuggested() {
+  const qs = [
+    "How close am I to the defense soft cap?",
+    "What enhancement sets fit my open slots?",
+    "What's the best Fire/Cold resistance set for this build?",
+    "Where can I add global recharge with Luck of the Gambler?",
+    "Review my build for survivability gaps.",
+  ];
+  $("suggested").innerHTML = qs.map(q =>
+    `<button onclick="suggest(this)">${q}</button>`).join("");
+}
+window.suggest = function (btn) { $("ai-question").value = btn.textContent; };
+
+async function askAI() {
+  const question = $("ai-question").value.trim();
+  if (!question) return;
+  const out = $("ai-response");
+  out.classList.add("muted");
+  out.textContent = "Asking Claude Code… (this calls the local CLI and may take a moment)";
+  try {
+    const res = await api("/ai/query", postJson({
+      current_build: buildPayload(), question,
+    }));
+    out.classList.remove("muted");
+    if (res.ok) {
+      out.innerHTML = renderMarkdown(res.response || "(no response)");
+    } else {
+      // errors / not-logged-in messages: keep as plain text
+      out.textContent = res.response || "(no response)";
+    }
+  } catch (e) {
+    out.textContent = "Error contacting AI bridge: " + e;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Export current build to a Mids Reborn .mbd file
+// ---------------------------------------------------------------------------
+async function exportMids() {
+  if (!build.archetype || !build.powers.length) {
+    alert("Pick an archetype and add at least one power before exporting.");
+    return;
+  }
+  const payload = buildPayload();
+  payload.name = "CoH Planner Build";
+  try {
+    const res = await api("/build/export", postJson(payload));
+    if (!res.ok) { alert("Export failed."); return; }
+    const blob = new Blob([JSON.stringify(res.mbd, null, 1)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = res.filename || "build.mbd";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  } catch (e) {
+    alert("Export error: " + e);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Import a Mids .mbd: parse server-side -> load into the builder -> critique.
+// Then the user sets a goal/role/tier and Solves to get an improved build; the
+// before/after diff is shown, and they can export the improved .mbd.
+// ---------------------------------------------------------------------------
+let IMPORT_BEFORE = null;   // snapshot {totals, slots} for the before/after diff
+let IMPORTED_POWERS = null; // deep copy of the imported powers+slots, for "reset & try again"
+let CHANGES_AVAILABLE = false; // a solve has changed the imported build → offer the "what changed" window
+
+async function importMids(e) {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = "";   // allow re-importing the same file
+  if (!file) return;
+  const report = $("import-report");
+  report.classList.remove("hidden");
+  report.innerHTML = `<p class="muted small">Reading <strong>${file.name}</strong>…</p>`;
+  let text;
+  try { text = await file.text(); } catch (err) { report.innerHTML = `<p class="v-err">Couldn't read the file: ${err}</p>`; return; }
+  let res;
+  try {
+    res = await api("/build/import", postJson({ mbd: text, pvp: build.pvp }));
+  } catch (err) { report.innerHTML = `<p class="v-err">Import failed: ${err}</p>`; return; }
+  if (!res.ok) { report.innerHTML = `<p class="v-err">${res.response || "Import failed."}</p>`; return; }
+
+  await applyImportedBuild(res.build);
+  build._mode = "import";        // a real, created character → lock its archetype/powersets
+  applyIdentityLock();
+  // snapshot the imported build for a later before/after diff + reset/try-again
+  IMPORT_BEFORE = { totals: res.totals, slots: snapshotSlots(res.build), name: res.name };
+  IMPORTED_POWERS = JSON.parse(JSON.stringify(build.powers));
+  renderImportReport(res);
+  recompute();   // reveal the Reset button now that an imported build exists
+}
+
+// Restore the imported build exactly as it came in, so the user can try a
+// different goal/role/options without re-importing the file.
+function resetToImported() {
+  if (!IMPORTED_POWERS) return;
+  build.powers = JSON.parse(JSON.stringify(IMPORTED_POWERS));
+  build.imported = true;
+  CHANGES_AVAILABLE = false;   // back to the imported build — nothing changed to show
+  renderPowers();
+  recompute();
+  const out = $("ai-response");
+  if (out) { out.classList.add("muted"); out.innerHTML = "Reset to your imported build. Adjust the goal/options and Solve again."; }
+  const status = $("gen-status");
+  if (status) status.textContent = "↺ Reset to imported build.";
+}
+window.resetToImported = resetToImported;
+
+// Per-power set summary, for diffing what the solver changes.
+function snapshotSlots(b) {
+  const m = {};
+  for (const p of b.powers || []) {
+    const sets = {};
+    for (const s of p.slots || []) {
+      const n = s && (s.set_name || s.piece_name) || "—";
+      sets[n] = (sets[n] || 0) + 1;
+    }
+    m[p.full_name] = { display: p.display_name, sets, count: (p.slots || []).length };
+  }
+  return m;
+}
+
+// A build's pools + epic are IMPLICIT in its powers (Pool.Fighting.Weave, Epic.*.Scorpion_Shield…).
+// Derive them from the powers so the top-of-page dropdowns ALWAYS reflect the real build — needed by
+// every path that generates powers (import, respec-at-50, autopick), not just import. Relying on a
+// separate `pools`/`epic` field left the selectors blank (a solved/respec'd build doesn't populate
+// them), so a build using 4 pools + an epic rendered with empty "— pool —" / "— epic —" selects.
+// `fallbackPools`/`fallbackEpic` are used only when the powers carry no pool/epic (e.g. a bare kit).
+async function syncPoolsEpicFromPowers(powers, fallbackPools, fallbackEpic) {
+  const epicPs = (powers || []).map(p => p.powerset_full_name || "")
+    .find(ps => ps.startsWith("Epic.")) || fallbackEpic || "";
+  if (epicPs) {
+    $("sel-epic").value = epicPs; build.epic = epicPs;
+    build.epic_display = $("sel-epic").selectedOptions[0]?.text; await loadPowers(epicPs);
+  } else {
+    $("sel-epic").value = ""; build.epic = null; build.epic_display = null;
+  }
+  const poolSels = [...document.querySelectorAll(".pool-sel")];
+  const usedPools = [];
+  for (const p of (powers || [])) {
+    const ps = p.powerset_full_name || "";
+    if (ps.startsWith("Pool.") && !usedPools.includes(ps)) usedPools.push(ps);
+  }
+  build.pools = (usedPools.length ? usedPools : (fallbackPools || [])).slice(0, 4);
+  build.pools_display = [];
+  for (let i = 0; i < poolSels.length; i++) {
+    poolSels[i].value = build.pools[i] || "";
+    if (build.pools[i]) { build.pools_display.push(poolSels[i].selectedOptions[0]?.text); await loadPowers(build.pools[i]); }
+  }
+}
+
+async function applyImportedBuild(b) {
+  resetTrayPanels();          // swapping in a new build → drop the prior tray/order panels
+  // archetype cascade (loads powerset options)
+  $("sel-archetype").value = b.archetype || "";
+  await onArchetypeChange({ target: { value: b.archetype || "" } });
+  // primary / secondary / epic
+  if (b.primary) { $("sel-primary").value = b.primary; build.primary = b.primary;
+    build.primary_display = $("sel-primary").selectedOptions[0]?.text; await loadPowers(b.primary); }
+  if (b.secondary) { $("sel-secondary").value = b.secondary; build.secondary = b.secondary;
+    build.secondary_display = $("sel-secondary").selectedOptions[0]?.text; await loadPowers(b.secondary); }
+  // Sync the Pool + Epic dropdowns to whatever powers the build actually uses.
+  await syncPoolsEpicFromPowers(b.powers || [], b.pools, b.epic);
+  // powers + slots
+  build.powers = (b.powers || []).map((p) => ({
+    full_name: p.full_name, display_name: p.display_name,
+    powerset_full_name: p.powerset_full_name,
+    accepted_set_category_ids: p.accepted_set_category_ids || [],
+    accepted_set_categories: p.accepted_set_categories || [],
+    power_type: p.power_type,
+    include_in_totals: p.power_type === 1 || p.power_type === 2,
+    pick_level: p.pick_level, level_available: p.level_available,
+    earned_slot_count: p.earned_slot_count,
+    slots: p.slots || [], slotCount: (p.slots || []).length,
+  }));
+  // incarnates
+  build.incarnates = {};
+  for (const [slot, v] of Object.entries(b.incarnates || {})) build.incarnates[slot] = v;
+  document.querySelectorAll("#incarnate-selectors select").forEach((s) => {
+    const v = build.incarnates[s.dataset.slot]; if (v) s.value = v.full_name;
+  });
+  build.level_reached = b.level_reached || null;   // restore where the player was in-game
+  build.imported = true;    // an imported build → preserve its sets on Solve
+  renderPowers();
+  recompute();
+}
+
+function renderImportReport(res) {
+  const report = $("import-report");
+  report.classList.remove("hidden");
+  const ICON = { good: "✓", warn: "⚠", info: "•" };
+  const items = (res.critique || []).map(c =>
+    `<li class="crit-${c.kind}">${ICON[c.kind] || "•"} ${c.text}</li>`).join("");
+  report.innerHTML = `
+    <div class="import-head"><strong>Imported: ${res.name}</strong>
+      <span class="muted small">critique below — set a goal/role/tier, then Solve to improve it</span></div>
+    <ul class="crit-list">${items}</ul>
+    ${res.note ? `<p class="muted small">${res.note}</p>` : ""}
+    <p class="muted small">Keep your powers and just re-slot (🧮 Solve on the right) — or do a
+      clean-sheet rebuild that also re-picks powers (damage-aware), shown before you commit:</p>
+    <button id="respec-preview-btn" class="respec-preview-btn" onclick="previewRespec()">🔧 Preview a full respec</button>
+    <div id="respec-preview" class="respec-preview hidden"></div>`;
+}
+
+// Full-respec PREVIEW: re-pick powers (damage-aware autopicker, seeded from the imported AT +
+// sets) -> solve + proc-bomb -> compute totals, and SHOW a before/after diff WITHOUT applying,
+// so the user commits only after seeing what a respec would do. (The user's requested flow:
+// import what you have -> offer a full respec -> show what it can do -> then commit.)
+let PROPOSED_RESPEC = null;
+
+async function previewRespec() {
+  const at = build.archetype, pri = build.primary, sec = build.secondary;
+  if (!at || !pri || !sec) { alert("Import or start a build first."); return; }
+  const content = ($("preset-content") && $("preset-content").value) || "general";
+  const role = ($("preset-role") && $("preset-role").value) || "damage";
+  const btn = $("respec-preview-btn");
+  if (btn) { btn.disabled = true; btn.textContent = "Building a full respec…"; }
+  try {
+    const ap = await api("/build/autopick", postJson({ archetype: at, primary: pri, secondary: sec,
+      role, content, exposure: build._exposure || "flex", travel: "speed" }));
+    if (!ap || !ap.ok) throw new Error((ap && ap.error) || "auto-pick failed");
+    const pw = ap.powers.filter(p => !p.full_name.startsWith("Incarnate"))
+                        .map(p => ({ full_name: p.full_name, slots: [] }));
+    const sol = await api("/build/solve", postJson({ archetype: at, powers: pw, content, role, preserve: false }));
+    if (!sol || !sol.ok) throw new Error((sol && sol.response) || "solve failed");
+    const calc = await api("/build/calculate", postJson({ archetype: at, powers: sol.powers, pvp: build.pvp }));
+    PROPOSED_RESPEC = { powers: sol.powers, totals: (calc && calc.totals) || calc || {},
+                        warnings: sol.warnings || [] };
+    renderRespecPreview();
+  } catch (e) {
+    const host = $("respec-preview");
+    if (host) { host.classList.remove("hidden"); host.innerHTML = `<p class="v-err">Couldn't build a respec: ${(e && e.message) || e}</p>`; }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = "🔧 Preview a full respec"; }
+  }
+}
+window.previewRespec = previewRespec;
+
+function _statVal(t, kind, key) {
+  if (!t || !t[kind]) return 0;
+  return key ? ((t[kind][key] && t[kind][key].value) || 0) : (t[kind].value || 0);
+}
+
+function renderRespecPreview() {
+  const host = $("respec-preview");
+  if (!host || !PROPOSED_RESPEC) return;
+  const before = (IMPORT_BEFORE && IMPORT_BEFORE.totals) || {};
+  const after = PROPOSED_RESPEC.totals || {};
+  const dispOf = (fn) => fn.split(".").slice(-1)[0].replace(/_/g, " ");
+  const skip = (f) => f.startsWith("Incarnate") || f.startsWith("Inherent") || /\.(Boxing|Brawl|Sprint|Rest|Hurdle|Swift|Health|Stamina)$/.test(f);
+  const impFns = new Set((IMPORTED_POWERS || []).map(p => p.full_name).filter(f => !skip(f)));
+  const propFns = new Set(PROPOSED_RESPEC.powers.map(p => p.full_name).filter(f => !skip(f)));
+  const added = [...propFns].filter(f => !impFns.has(f)).map(dispOf);
+  const removed = [...impFns].filter(f => !propFns.has(f)).map(dispOf);
+  const rows = [["S/L resist", "resistance", "Smashing"], ["Fire resist", "resistance", "Fire"],
+    ["Melee def", "defense", "Melee"], ["Ranged def", "defense", "Ranged"],
+    ["AoE def", "defense", "AoE"], ["Recharge", "recharge", null]];
+  const statHtml = rows.map(([lbl, kind, key]) => {
+    const b = _statVal(before, kind, key), a = _statVal(after, kind, key), d = a - b;
+    const cls = d > 0.5 ? "delta-up" : d < -0.5 ? "delta-down" : "delta-flat";
+    return `<tr><td>${lbl}</td><td class="muted">${b.toFixed(1)}%</td><td>${a.toFixed(1)}%</td>`
+      + `<td class="${cls}">${d >= 0 ? "+" : ""}${d.toFixed(1)}</td></tr>`;
+  }).join("");
+  const warns = (PROPOSED_RESPEC.warnings || []).filter(w => w.kind === "warn")
+    .map(w => `<li class="crit-warn">⚠ ${w.text}</li>`).join("");
+  host.classList.remove("hidden");
+  host.innerHTML = `
+    <div class="rp-head"><strong>🔧 Full respec — preview only (nothing applied yet)</strong></div>
+    <div class="rp-grid">
+      <div><div class="rp-sub">Power changes</div>
+        ${added.length ? `<div class="rp-add"><strong>+ Added:</strong> ${added.join(", ")}</div>` : ""}
+        ${removed.length ? `<div class="rp-rem"><strong>− Dropped:</strong> ${removed.join(", ")}</div>` : ""}
+        ${(!added.length && !removed.length) ? `<div class="muted small">Same power picks — only slotting changes (auras proc-bombed, etc.).</div>` : ""}
+      </div>
+      <div><div class="rp-sub">Key stats — before → after</div>
+        <table class="rp-stats"><tr><th></th><th>now</th><th>respec</th><th>Δ</th></tr>${statHtml}</table></div>
+    </div>
+    ${warns ? `<div class="rp-sub">Flags on the respec</div><ul class="crit-list">${warns}</ul>`
+            : `<div class="rp-clean">✓ No build-quality flags on the respec.</div>`}
+    <div class="rp-actions">
+      <button class="rp-apply" onclick="applyProposedRespec()">✓ Apply this respec</button>
+      <button class="rp-keep" onclick="document.getElementById('respec-preview').classList.add('hidden')">Keep my current build</button>
+    </div>`;
+  host.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+async function applyProposedRespec() {
+  if (!PROPOSED_RESPEC) return;
+  build.powers = PROPOSED_RESPEC.powers;
+  build.imported = false;            // it's a fresh respec now, not the imported build
+  await syncPoolsEpicFromPowers(PROPOSED_RESPEC.powers);   // reflect its pool/epic in the dropdowns
+  CHANGES_AVAILABLE = false;
+  renderPowers();
+  recompute();
+  const host = $("respec-preview");
+  if (host) host.classList.add("hidden");
+  const status = $("gen-status");
+  if (status) status.textContent = "✓ Applied the full respec — export it, or tweak the goal and re-solve.";
+}
+window.applyProposedRespec = applyProposedRespec;
+
+// ---------------------------------------------------------------------------
+// Power colors / glow -> Homecoming .powerCust
+// ---------------------------------------------------------------------------
+function hexToRgb(h) {
+  const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(h || "");
+  return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : [255, 255, 255];
+}
+function rgbCss(rgb) { return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`; }
+
+// Distinct powersets in the build, with display names.
+function buildPowersets() {
+  const seen = new Map();
+  for (const p of build.powers) {
+    if (!seen.has(p.powerset_full_name)) {
+      const label = p.powerset_full_name.split(".").slice(-1)[0].replace(/_/g, " ");
+      seen.set(p.powerset_full_name, label);
+    }
+  }
+  return [...seen.entries()];   // [[full, label], ...]
+}
+
+function renderPowerColorRows() {
+  const host = $("pc-powersets");
+  if (!host) return;
+  const sets = buildPowersets();
+  if (!sets.length) { host.innerHTML = `<p class="muted small">Add powers first.</p>`; return; }
+  const def1 = document.querySelector(".pc-default .pc-c1").value;
+  const def2 = document.querySelector(".pc-default .pc-c2").value;
+  host.innerHTML = sets.map(([full, label]) => `
+    <div class="pc-scheme" data-ps="${full}">
+      <label class="pc-ov"><input type="checkbox" class="pc-override"> ${label}</label>
+      <label>Primary <input type="color" class="pc-c1" value="${def1}" disabled></label>
+      <label>Glow <input type="color" class="pc-c2" value="${def2}" disabled></label>
+      <select class="pc-bright" disabled>
+        <option value="dark">Dark</option><option value="default" selected>Default</option><option value="bright">Bright</option>
+      </select>
+    </div>`).join("");
+  host.querySelectorAll(".pc-scheme").forEach(row => {
+    const cb = row.querySelector(".pc-override");
+    cb.addEventListener("change", () => {
+      row.querySelectorAll("input[type=color],select").forEach(el => { el.disabled = !cb.checked; });
+    });
+  });
+}
+
+function collectColorSchemes() {
+  const d = document.querySelector(".pc-default");
+  const def = { c1: hexToRgb(d.querySelector(".pc-c1").value),
+                c2: hexToRgb(d.querySelector(".pc-c2").value),
+                brightness: d.querySelector(".pc-bright").value };
+  const by = {};
+  document.querySelectorAll("#pc-powersets .pc-scheme").forEach(row => {
+    if (row.querySelector(".pc-override").checked) {
+      by[row.dataset.ps] = { c1: hexToRgb(row.querySelector(".pc-c1").value),
+                             c2: hexToRgb(row.querySelector(".pc-c2").value),
+                             brightness: row.querySelector(".pc-bright").value };
+    }
+  });
+  const powers = build.powers.map(p => ({ full_name: p.full_name, powerset_full_name: p.powerset_full_name }));
+  return { powers, default: def, by_powerset: by };
+}
+
+async function previewPowerColors() {
+  if (!build.powers.length) { $("pc-preview").innerHTML = `<p class="muted small">Add powers first.</p>`; return; }
+  try {
+    const res = await api("/build/powercust", postJson(collectColorSchemes()));
+    if (!res.ok) { $("pc-preview").innerHTML = `<p class="v-err">${res.response}</p>`; return null; }
+    const byName = {}; build.powers.forEach(p => { byName[p.full_name] = p.display_name; });
+    $("pc-preview").innerHTML = res.preview.map(p =>
+      `<div class="pc-swatch"><span class="pc-dot" style="background:${rgbCss(p.c1)}"></span>`
+      + `<span class="pc-dot glow" style="background:${rgbCss(p.c2)}"></span>`
+      + `<span class="pc-pwr">${byName[p.full_name] || p.full_name}</span></div>`).join("");
+    return res;
+  } catch (e) { $("pc-preview").innerHTML = `<p class="v-err">Preview error: ${e}</p>`; return null; }
+}
+
+async function downloadPowerCust() {
+  const res = await previewPowerColors();
+  if (!res || !res.ok) return;
+  const blob = new Blob([res.text], { type: "text/plain" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = res.filename || "coh_colors.powerCust";
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(a.href);
+  $("pc-howto").innerHTML =
+    `✓ Saved <strong>${res.filename}</strong> (${res.count} powers). To use it: drop it in `
+    + `<code>C:\\Games\\Homecoming\\powercust\\</code>, then in-game open <strong>Powers → `
+    + `Customize</strong> and click <strong>Load</strong> (or preview your character in `
+    + `<strong>Titan Icon</strong>). If colors don't apply, tell me — we may need the power's numeric id.`;
+}
+
+// ---------------------------------------------------------------------------
+// "Build this for me" — generate a full build with Claude and apply it
+// ---------------------------------------------------------------------------
+// Tier metadata mirrors ai_build.TIER_META (used for the pending placeholders).
+const TIERS = [
+  { key: "budget",   label: "Budget",   cost: "Cheapest & efficient",
+    blurb: "SOs / common IOs and cheap sets. Meets the goal at minimal influence cost." },
+  { key: "balanced", label: "Balanced", cost: "Middle of the road",
+    blurb: "Strong common IO sets + LotG global recharge. No purples / ATOs / Winter / PvP IOs." },
+  { key: "premium",  label: "Premium",  cost: "Top-end, where it counts",
+    blurb: "Purples, Superior ATOs, Winter & PvP IOs — used only where they noticeably beat the cheaper option. Maximizes impact per slot, not spend." },
+];
+let LAST_TIERS = {};   // tier key -> resolved build result
+let PENDING_FOCUS = null;   // confirmed-priority text from interpret-goal
+let INTERP_MATCHED = [];    // [{label, focus}] currently shown as confirm chips
+
+// Player-facing "what should we base this build on?" roles. These bias the
+// solver toward set categories + stat kinds that pay off for that play style.
+// Multi-select: blend as many as fit. Keys must match solver.ROLE_DEFS.
+const ROLE_OPTIONS = [
+  { key: "survival",  label: "🛡 Survive",  desc: "Lean toward defense, resistance, HP & regen sets — stay alive longer." },
+  { key: "damage",    label: "⚔ Damage",   desc: "Lean toward damage sets and faster attack recharge — kill faster." },
+  { key: "healing",   label: "💚 Healing",  desc: "Lean toward healing sets and regen/recovery — keep the team topped up." },
+  { key: "buffing",   label: "📈 Buffing",  desc: "Lean toward to-hit/defense buff & endurance sets — empower allies." },
+  { key: "debuffing", label: "📉 Debuffing", desc: "Lean toward to-hit/defense debuff & slow sets — weaken enemies." },
+  { key: "recharge",  label: "⏱ Recharge", desc: "Lean toward recharge bonuses — powers ready more often." },
+];
+
+function selectedRoles() {
+  return [...document.querySelectorAll(".role-cb")]
+    .filter(cb => cb.checked).map(cb => cb.value);
+}
+
+function renderRoleChips() {
+  const host = $("role-chips");
+  if (!host) return;
+  host.innerHTML = ROLE_OPTIONS.map(r =>
+    `<label class="role-chip" title="${r.desc}">`
+    + `<input type="checkbox" class="role-cb" value="${r.key}"> ${r.label}</label>`).join("");
+}
+
+// Which tiers the user ticked (in canonical order).
+function selectedTiers() {
+  const on = new Set([...document.querySelectorAll(".tier-cb")]
+    .filter(cb => cb.checked).map(cb => cb.value));
+  return TIERS.filter(t => on.has(t.key));
+}
+
+function updateGenBtnLabel() {
+  const n = selectedTiers().length;
+  const btn = $("gen-btn");
+  btn.textContent = n === 0 ? "Select at least one build tier"
+    : n === 1 ? `Generate the ${selectedTiers()[0].label} build`
+    : `Generate ${n} builds`;
+  btn.disabled = n === 0;
+}
+
+// Step 1: interpret the goal against the lexicon and ask the user to confirm
+// BEFORE spending time — so none is wasted on a misread goal.
+async function confirmGoalThenGenerate() {
+  const status = $("gen-status");
+  if (!build.archetype || !build.primary || !build.secondary) {
+    status.textContent = "Select an archetype, primary, and secondary first.";
+    return;
+  }
+  if (!selectedTiers().length) {
+    status.textContent = "Tick at least one build tier (Budget / Balanced / Premium).";
+    return;
+  }
+  const goal = $("gen-goal").value.trim();
+  if (!goal) { status.textContent = "Enter a goal first."; return; }
+
+  status.textContent = "Interpreting your goal…";
+  let interp;
+  try {
+    interp = await api("/ai/interpret-goal", postJson({ goal,
+      primary: build.primary_display || build.primary,
+      secondary: build.secondary_display || build.secondary }));
+  } catch (e) {
+    status.textContent = "Couldn't interpret the goal: " + e; return;
+  }
+  INTERP_MATCHED = interp.matched || [];
+  renderConfirm();
+  $("gen-confirm").classList.remove("hidden");
+  status.textContent = "Confirm the interpretation to generate.";
+}
+
+function joinList(a) {
+  return a.length <= 1 ? (a[0] || "")
+    : a.length === 2 ? `${a[0]} and ${a[1]}`
+    : `${a.slice(0, -1).join(", ")}, and ${a[a.length - 1]}`;
+}
+
+// Build the priority text sent to generation from the (possibly edited) chips.
+function buildFocus(matched) {
+  if (!matched.length) {
+    return "No specific priorities; build a well-rounded, generally strong "
+      + "character for this archetype and powersets.";
+  }
+  return "CONFIRMED PRIORITIES (the user verified these — honor them, in roughly "
+    + "this order):\n" + matched.map(m => `- ${m.label}: ${m.focus}`).join("\n");
+}
+
+function renderConfirm() {
+  const labels = INTERP_MATCHED.map(m => m.label);
+  $("gen-confirm-text").textContent = labels.length
+    ? `Based on your request, you want: ${joinList(labels)}. Remove any that don't fit, then generate.`
+    : "No priorities left — I'll build a well-rounded character. Edit your goal to steer it, or generate as-is.";
+  $("gen-confirm-chips").innerHTML = INTERP_MATCHED.map((m, i) =>
+    `<span class="chip removable">${m.label}<button class="chip-x" title="Remove this priority" onclick="removeChip(${i})">×</button></span>`).join("");
+  PENDING_FOCUS = buildFocus(INTERP_MATCHED);
+}
+
+window.removeChip = function (i) {
+  INTERP_MATCHED.splice(i, 1);
+  renderConfirm();
+};
+
+// Step 2: user confirmed — ONE LLM call picks the powers, the deterministic
+// solver slots all tiers. Fast (~10-30s total) and no slotting guesswork.
+async function generateBuild() {
+  const status = $("gen-status");
+  $("gen-confirm").classList.add("hidden");
+  if (!build.archetype || !build.primary || !build.secondary) {
+    status.textContent = "Select an archetype, primary, and secondary first.";
+    return;
+  }
+  const goal = $("gen-goal").value.trim();
+  if (!goal) { status.textContent = "Enter a goal first."; return; }
+
+  const tiers = selectedTiers();
+  const btn = $("gen-btn");
+  btn.disabled = true;
+  LAST_TIERS = {};
+  initTierCompare(goal, tiers);
+  tiers.forEach(t => setTierCard(t.key, { pending: true }));
+  status.textContent = "Claude is picking the powers; the solver slots them "
+    + "optimally per tier — ~10–30s.";
+  try {
+    const res = await api("/ai/generate-solved", postJson({
+      archetype: build.archetype, primary: build.primary,
+      secondary: build.secondary, goal, roles: selectedRoles(), pvp: build.pvp,
+    }));
+    if (!res.ok) {
+      status.textContent = res.response || "Generation failed.";
+      tiers.forEach(t => setTierCard(t.key, { ok: false, response: res.response }));
+      btn.disabled = false; return;
+    }
+    const byTier = {};
+    (res.tiers || []).forEach(tr => { byTier[tr.tier] = tr; });
+    tiers.forEach(t => {
+      const tr = byTier[t.key];
+      if (tr) { LAST_TIERS[t.key] = tr; setTierCard(t.key, tr); }
+      else setTierCard(t.key, { ok: false, response: "tier not returned" });
+    });
+  } catch (e) {
+    status.textContent = "Error generating build: " + e;
+    btn.disabled = false; return;
+  }
+  const okCount = Object.values(LAST_TIERS).filter(t => t.ok).length;
+  btn.disabled = false;
+  if (tiers.length === 1 && okCount === 1) {
+    status.textContent = `✓ ${tiers[0].label} build ready.`;
+    loadTier(tiers[0].key);
+  } else {
+    status.textContent = `✓ ${okCount} of ${tiers.length} build(s) ready — compare and load one.`;
+  }
+}
+
+// ----- tier comparison overlay -----
+function tierStatLine(t) {
+  if (!t) return "";
+  const defCapped = Object.values(t.defense).filter(d => d.at_cap).length;
+  const topDef = Object.entries(t.defense).sort((a, b) => b[1].value - a[1].value)[0];
+  const topRes = Object.entries(t.resistance).sort((a, b) => b[1].value - a[1].value)[0];
+  const row = (label, val) => `<div class="ts-row"><span>${label}</span><span>${val}</span></div>`;
+  const aoe = t.offense && t.offense.aoe_count ? row("AoE DPS", `${t.offense.aoe_dps}`) : "";
+  const dps = t.offense && t.offense.st_dps ? row("ST DPS", `${t.offense.st_dps}`) : "";
+  return row("Def soft-capped", `${defCapped} type${defCapped === 1 ? "" : "s"}`)
+    + row("Top defense", `${topDef[0]} ${topDef[1].value}%`)
+    + row("Top resistance", `${topRes[0]} ${topRes[1].value}%`)
+    + row("Recharge", `+${t.recharge.value}%`)
+    + row("Recovery", `+${t.recovery.value}%`)
+    + aoe + dps
+    + row("Set bonuses", `${t.applied_bonus_count || 0}`);
+}
+
+function initTierCompare(goal, tiers) {
+  tiers = tiers && tiers.length ? tiers : TIERS;
+  $("tier-title").textContent = tiers.length === 1
+    ? "Generating your build" : "Compare builds — pick one to load";
+  $("tier-sub").textContent = `Goal: ${goal}`;
+  const host = $("tier-cards");
+  host.style.gridTemplateColumns = `repeat(${tiers.length}, 1fr)`;
+  host.innerHTML = tiers.map(t =>
+    `<div class="tier-card tier-${t.key}" id="tc-${t.key}"></div>`).join("");
+  tiers.forEach(t => setTierCard(t.key, { idle: true }));
+  $("tier-modal").classList.remove("hidden");
+}
+
+function setTierCard(key, res) {
+  const meta = TIERS.find(t => t.key === key);
+  const el = $(`tc-${key}`);
+  if (!el) return;
+  const head = `<div class="tc-head"><span class="tc-name">${meta.label}</span>
+      <span class="tc-cost">${meta.cost}</span></div>
+    <p class="tc-blurb muted small">${meta.blurb}</p>`;
+  if (res.idle) {
+    el.innerHTML = head + `<p class="muted small">Waiting…</p>`;
+  } else if (res.pending) {
+    el.innerHTML = head + `<p class="muted small tc-spin">⏳ Designing this build…</p>`;
+  } else if (!res.ok) {
+    el.classList.add("err");
+    el.innerHTML = head + `<p class="muted small">Failed: ${res.response || "unknown error"}</p>`;
+  } else {
+    el.classList.remove("err");
+    const nPowers = (res.powers || []).length;
+    const nAdj = (res.warnings || []).length;
+    el.innerHTML = head
+      + `<div class="tc-stats">${tierStatLine(res.totals)}</div>
+         <p class="tc-summary small">${res.summary || ""}</p>
+         <div class="tc-meta muted small">${nPowers} powers${nAdj ? ` · ${nAdj} item(s) auto-adjusted` : ""}</div>
+         <button class="tc-load" onclick="loadTier('${key}')">Load this build →</button>`;
+  }
+}
+
+window.loadTier = async function (key) {
+  const t = LAST_TIERS[key];
+  if (!t || !t.ok) return;
+  $("tier-modal").classList.add("hidden");
+  build.tier = t.tier;
+  await applyGeneratedBuild(t);
+  const m = t.tier_meta || {};
+  const adj = (t.warnings || []).length;
+  $("gen-status").textContent =
+    `✓ Loaded the ${m.label || t.tier} build${adj ? ` (${adj} item(s) adjusted)` : ""}.`;
+  const out = $("ai-response");
+  out.classList.remove("muted");
+  let md = `**${m.label || t.tier} build — ${m.cost || ""}.** `;
+  md += t.summary ? `${t.summary}\n\n` : "\n\n";
+  if (adj) md += "**Adjustments made (invalid/unfound items dropped):**\n" +
+    t.warnings.map((w) => `- ${w}`).join("\n");
+  out.innerHTML = renderMarkdown(md);
+};
+
+// Put a button into a clearly-working state (so a slow action never looks dead),
+// returning a restore() that puts its label/state back.
+function setWorking(btn, label) {
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.classList.add("btn-working");
+  btn.textContent = label;
+  return () => { btn.disabled = false; btn.classList.remove("btn-working"); btn.textContent = orig; };
+}
+
+async function optimizeBuild() {
+  const status = $("gen-status");
+  if (!build.archetype || !build.primary || !build.secondary || !build.powers.length) {
+    status.textContent = "Generate or build something first, then optimize.";
+    return;
+  }
+  const goal = $("gen-goal").value.trim();
+  if (!goal) { status.textContent = "Enter a goal to optimize toward."; return; }
+  // Optimize is a from-scratch AI REDESIGN — it does NOT preserve your sets. For
+  // an imported build, warn before discarding the player's invested slotting.
+  if (build.imported && !confirm(
+      "⚡ Optimize redesigns the WHOLE build with AI and will replace your current "
+      + "IO sets — it does NOT preserve them, and may relocate or drop expensive "
+      + "sets you already slotted.\n\nTo keep your sets and only fill the gaps, "
+      + "click “🧮 Solve” with “Preserve my IO sets” "
+      + "checked instead.\n\nContinue with a full AI redesign anyway?")) {
+    status.textContent = "Optimize cancelled — use 🧮 Solve to keep your sets.";
+    return;
+  }
+  const optBtn = $("opt-btn");
+  const restore = setWorking(optBtn, "⏳ Optimizing with AI… (~1–2 min, please wait)");
+  status.textContent = "Optimizing toward your goal… Claude reviews the current "
+    + "totals and refines. This runs in the background — it can take a minute or two.";
+  try {
+    const res = await api("/ai/refine-build", postJson({
+      archetype: build.archetype, primary: build.primary,
+      secondary: build.secondary, goal, tier: build.tier || "balanced",
+      build: buildPayload(),
+    }));
+    if (!res.ok) { status.textContent = res.response || "Optimize failed."; return; }
+    await applyGeneratedBuild(res);
+    const adj = (res.warnings || []).length;
+    status.textContent = `✓ Build optimized and applied${adj ? ` (${adj} adjusted)` : ""}.`;
+    const out = $("ai-response");
+    out.classList.remove("muted");
+    let md = res.summary ? `**Optimization:** ${res.summary}\n\n` : "";
+    if (res.totals_before) {
+      md += `**Totals before this pass:**\n\n` + res.totals_before
+        + "\n\n_(New totals are in the Stats panel — compare.)_\n\n";
+    }
+    out.innerHTML = renderMarkdown(md || "Optimized build applied.");
+  } catch (e) {
+    status.textContent = "Error optimizing: " + e;
+  } finally {
+    restore();
+  }
+}
+
+// Constraint solver: re-slot the CURRENT powers optimally toward the goal's
+// targets (deterministic, no AI). Keeps your power picks, replaces the slotting.
+const PERK_FOCUSES = [
+  ["hp", "More HP"], ["recovery", "Better endurance recovery"],
+  ["regen", "Faster HP regen"], ["recharge", "More recharge"],
+  ["defense", "More defense"], ["resistance", "More resistance"],
+];
+
+async function previewPreset() {
+  const el = $("preset-targets");
+  if (!el) return;
+  const content = $("preset-content").value, role = $("preset-role").value;
+  if (!content && !role) { el.textContent = ""; return; }
+  if (!build.archetype) { el.textContent = "Pick an archetype first."; return; }
+  el.textContent = "…";
+  try {
+    const res = await api("/build/preset", postJson({
+      archetype: build.archetype, content, role }));
+    if (res && res.ok) {
+      const tag = (res.labels || []).join(" · ");
+      el.innerHTML = `<strong>🎯 ${tag}</strong> → ${res.summary || "—"}`
+        + (res.perk_focus ? ` · spare slots → ${res.perk_focus}` : "");
+    } else { el.textContent = ""; }
+  } catch { el.textContent = ""; }
+}
+
+let LAST_ASSESS_ROUTES = [];
+
+async function renderAssessment(presolvePowers, ctx) {
+  const out = $("ai-response");
+  const card = document.createElement("div");
+  card.className = "assess-card";
+  card.innerHTML = `<div class="muted small">⏳ Checking alternative routes…</div>`;
+  out.appendChild(card);
+  try {
+    const res = await api("/build/assess", postJson({
+      archetype: build.archetype, content: ctx.content || null, role: ctx.role || null,
+      goal: ctx.goal || "", tier: build.tier || "premium", roles: selectedRoles(),
+      pvp: build.pvp, preserve: ctx.preserve, keep_layout: ctx.keep_layout,
+      powers: presolvePowers }));
+    if (!res || !res.ok) { card.remove(); return; }
+    LAST_ASSESS_ROUTES = res.alternatives || [];
+    card.innerHTML = assessHtml(res);
+  } catch { card.remove(); }
+}
+
+function assessHtml(res) {
+  const fmtD = d => `${d.d >= 0 ? "+" : ""}${d.d}%`;
+  let h = `<div class="assess-head">🤔 <strong>Does this match your priorities?</strong></div>`;
+  h += `<div class="assess-line muted small">Optimized for: ${res.optimized || "—"}.</div>`;
+  const short = (res.achieved || []).filter(a => !a.met);
+  if (short.length) {
+    h += `<div class="assess-line small">⚠ Falling short: `
+      + short.map(a => `<b>${a.stat}</b> ${a.have}/${a.want}%`).join(", ")
+      + ` <span class="muted">(powerset/slot ceiling)</span>.</div>`;
+  }
+  if ((res.alternatives || []).length) {
+    h += `<div class="assess-line small">Prioritize differently? Each route is <b>pre-solved</b> — these are the real trade-offs:</div>`;
+    h += `<div class="assess-routes">`;
+    res.alternatives.forEach((alt, i) => {
+      if (alt.maxed) {
+        h += `<div class="assess-route maxed" title="No further gain available on these powers">`
+          + `<span class="rt-label">${alt.label}</span> <span class="rt-maxed">already maxed</span></div>`;
+      } else {
+        const deltas = alt.deltas.map(d =>
+          `<span class="rt-delta ${d.d >= 0 ? "up" : "down"}">${d.stat} ${fmtD(d)}</span>`).join(" ");
+        h += `<button class="assess-route" onclick="applyRoute(${i})" title="Re-solve toward: ${alt.label}">`
+          + `<span class="rt-label">${alt.label} →</span> ${deltas}</button>`;
+      }
+    });
+    h += `</div>`;
+  }
+  h += `<div class="assess-line muted small">…or keep it as-is — nothing changes until you pick a route.</div>`;
+  return h;
+}
+
+window.applyRoute = function (i) {
+  const alt = LAST_ASSESS_ROUTES[i];
+  if (!alt || !alt.targets) return;
+  solveSlotting(null, { targets: alt.targets, routeLabel: alt.label });
+};
+
+let INCARNATE_RECS = [];
+let INCARNATE_LOADOUTS = [];
+
+function renderIncarnateRecs(recs, loadouts) {
+  INCARNATE_RECS = recs || [];
+  INCARNATE_LOADOUTS = loadouts || [];
+  if (!INCARNATE_RECS.length) return;
+  // Apply the optimal set so it lands in the Mids export. Refresh on every solve UNLESS
+  // the user HAND-PICKED incarnates (build._incarnatesManual) — that way a re-solve for a
+  // controller updates stale Spiritual/Assault defaults to the role's Nerve/Control, but
+  // a player's deliberate choices are never clobbered.
+  const hadNone = Object.keys(build.incarnates).length === 0;
+  const applied = hadNone || !build._incarnatesManual;
+  if (applied) applyIncarnateRecs(true);
+  const card = document.createElement("div");
+  card.className = "assess-card";
+  card.innerHTML =
+    `<div class="assess-head">🜂 <strong>Recommended incarnates</strong> <span class="muted small">(endgame · all slots unlocked)</span></div>`
+    + INCARNATE_RECS.map(r =>
+        `<div class="assess-line small"><b>${r.slot}:</b> ${r.display}`
+        + (r.magnitude ? ` <span class="rt-delta up">${r.magnitude}</span>` : "")
+        + (r.always_on ? ' <span class="aoe-tag">ALWAYS-ON</span>' : "")
+        + `<br><span class="muted">${r.why}</span></div>`).join("")
+    + `<div class="assess-line small">`
+    + (applied ? "✓ Applied to your build — they'll be written into the Mids export."
+               : `<button class="assess-route" style="width:auto" onclick="applyIncarnateRecs()">Apply these to my build</button>`)
+    + `</div>`
+    + incarnateLoadoutsHtml();
+  $("ai-response").appendChild(card);
+}
+
+// Per-content loadouts — incarnates are swappable per encounter, so show the
+// fire-farm vs iTrial vs AV Alpha/Destiny picks (the ones that actually differ) and
+// let the user swap the whole set with one click.
+function incarnateLoadoutsHtml() {
+  if (!INCARNATE_LOADOUTS.length) return "";
+  const pick = (recs, slot) => (recs.find(r => r.slot === slot) || {}).display || "—";
+  const rows = INCARNATE_LOADOUTS.map((lo, i) =>
+    `<div class="assess-line small"><b>${lo.label}:</b> `
+    + `Alpha ${pick(lo.recs, "Alpha")} · Destiny ${pick(lo.recs, "Destiny")} `
+    + `<button class="assess-route" style="width:auto;padding:1px 8px" onclick="applyIncarnateLoadout(${i})">Use</button></div>`
+  ).join("");
+  return `<div class="assess-head small" style="margin-top:8px">↔ <strong>Swap by content</strong> `
+    + `<span class="muted">(incarnates are re-slottable per encounter)</span></div>` + rows;
+}
+
+window.applyIncarnateLoadout = function (i) {
+  const lo = INCARNATE_LOADOUTS[i];
+  if (!lo) return;
+  INCARNATE_RECS = lo.recs;
+  applyIncarnateRecs();
+};
+
+window.applyIncarnateRecs = function (silent) {
+  INCARNATE_RECS.forEach(r => {
+    build.incarnates[r.slot] = { full_name: r.full_name, display_name: r.display };
+  });
+  build._incarnatesManual = false;   // these came from the recommendation, not the user
+  renderIncarnates();
+  if (!silent) recompute();
+};
+
+let SOLVE_INTENT = null;   // signature of the last user-CONFIRMED solve intent (role|goal|content)
+
+// State the solver's UNDERSTANDING — the firm role STANDARD for this archetype, or the explicit
+// OVERRIDE (Role picker / goal text) that bends it — and wait for the user to confirm BEFORE any
+// solve commits. Resolves true (go) / false (user wants to adjust). Fails OPEN (never blocks).
+function confirmIntent(req) {
+  return new Promise(async (resolve) => {
+    let interp;
+    try {
+      const r = await api("/build/interpret", postJson(req));
+      interp = r && r.ok && r.interpretation;
+    } catch (e) { resolve(true); return; }
+    if (!interp) { resolve(true); return; }
+    const out = $("ai-response");
+    out.classList.remove("muted");
+    const conflict = interp.conflict
+      ? `<p class="intent-conflict">⚠️ Your Role picker and goal text point at different roles — I'm going with the <strong>Role picker</strong>. Clear one to resolve the ambiguity.</p>` : "";
+    out.innerHTML = `<div class="intent-confirm">
+        ${renderMarkdown(interp.banner)}
+        ${conflict}
+        <p class="muted small">🎯 Targets: ${interp.targets_summary || "—"}</p>
+        <p class="muted small">${interp.switch_hint || ""}</p>
+        <div class="intent-actions">
+          <button id="intent-go" class="solve-btn" style="width:auto">✓ Yes, build it this way</button>
+          <button id="intent-adjust" class="ghost-btn" style="width:auto">✗ Let me adjust</button>
+        </div></div>`;
+    $("intent-go").addEventListener("click", () => resolve(true));
+    $("intent-adjust").addEventListener("click", () => {
+      $("gen-status").textContent = "Adjust the Role or goal text, then Solve again.";
+      out.innerHTML = ""; out.classList.add("muted");
+      resolve(false);
+    });
+  });
+}
+
+async function solveSlotting(perkFocus, opts) {
+  // Called from a perk chip (perkFocus = string), the Solve button's click listener
+  // (perkFocus = a MouseEvent), or applyRoute (opts.targets = an alternative route).
+  // Only a string is a real perk focus.
+  if (typeof perkFocus !== "string") perkFocus = null;
+  opts = opts || {};
+  const status = $("gen-status");
+  if (!build.archetype || !build.powers.length) {
+    status.textContent = "Add some powers first, then solve the slotting.";
+    return;
+  }
+  // Snapshot the CURRENT totals so a manual-edit Solve shows the same before/after diff that
+  // imports get (imports keep using IMPORT_BEFORE, which also carries slot-level changes).
+  const solveBefore = (LAST_TOTALS && typeof LAST_TOTALS === "object")
+    ? { totals: LAST_TOTALS, name: "your previous slotting" } : null;
+  const goal = $("gen-goal").value.trim();
+  const content = $("preset-content") ? $("preset-content").value : "";
+  const role = $("preset-role") ? $("preset-role").value : "";
+  if (!goal && !content && !opts.targets) {
+    status.textContent = "Pick a Content preset (Fire Farm, iTrials, Team, General) — Role refines it. Or type a goal.";
+    return;
+  }
+  // Confirm-understanding gate (initial solve only — perk re-solves & applied routes skip it):
+  // state the firm role STANDARD vs any override and get the user's OK before committing. Only
+  // re-prompts when the intent (role/goal/content/exposure) changes, so tweaks don't nag.
+  const isRefine = !!perkFocus || !!opts.targets;
+  const intentSig = JSON.stringify([role, goal, content, build._exposure || ""]);
+  if (opts.skipConfirm) {
+    SOLVE_INTENT = intentSig;          // caller (wizard) already gathered + confirmed the intent
+  } else if (!isRefine && SOLVE_INTENT !== intentSig) {
+    const ok = await confirmIntent({ archetype: build.archetype, role: role || null, goal,
+      content: content || null, primary: build.primary, secondary: build.secondary });
+    if (!ok) return;
+    SOLVE_INTENT = intentSig;
+  }
+  const btn = $("solve-btn");
+  const restore = setWorking(btn, perkFocus
+    ? `⏳ Re-solving (${perkFocus})…` : "⏳ Solving slotting…");
+  status.textContent = perkFocus
+    ? `Re-solving with spare slots focused on ${perkFocus}…`
+    : "Solving optimal slotting (deterministic, ~1s)…";
+  try {
+    // Preserve only applies to imported builds; from-scratch/AI builds solve fully.
+    const preserve = build.imported
+      && ($("preserve-toggle") ? $("preserve-toggle").checked : true);
+    // keep_layout (tightest): stay within placed slots + keep un-upgraded cheap IOs.
+    const keep_layout = preserve
+      && ($("keeplayout-toggle") ? $("keeplayout-toggle").checked : false);
+    // snapshot the PRE-solve powers — reused for the request AND the post-solve
+    // assessment (which re-solves alternatives from this same starting point).
+    const presolvePowers = build.powers.map(p => ({ full_name: p.full_name,
+      slots: p.slots, earned_slot_count: p.earned_slot_count }));
+    const res = await api("/build/solve", postJson({
+      archetype: build.archetype, goal, tier: build.tier || "premium",
+      content: content || null, role: role || null, exposure: build._exposure || null,
+      targets: opts.targets || null,    // an applied alternative route overrides
+      perk_focus: perkFocus || null, roles: selectedRoles(), pvp: build.pvp,
+      preserve, keep_layout,
+      // powerset display names -> context-aware goal interpretation (e.g. a
+      // Kinetics support set + "fire farm" = supporting a farmer, not solo)
+      primary_display: build.primary_display, secondary_display: build.secondary_display,
+      powers: presolvePowers,
+    }));
+    if (!res.ok) {
+      status.textContent = res.response || "Solve failed.";
+      // surface the failure (and any goal interpretation) in the panel, not just
+      // the small status line, so it's never silent.
+      const out = $("ai-response");
+      out.classList.remove("muted");
+      let em = `⚠️ **Couldn't solve.** ${res.response || "Solve failed."}`;
+      if (res.understood && res.understood.length) {
+        em += `\n\n📋 I read your goal as: ${res.understood.join(", ")}.`;
+      }
+      out.innerHTML = renderMarkdown(em);
+      return;
+    }
+    const byName = {};
+    res.powers.forEach(p => { byName[p.full_name] = p; });
+    build.powers.forEach(p => {
+      const np = byName[p.full_name];
+      if (np) { p.slots = np.slots; p.slotCount = np.slotCount; }
+    });
+    renderPowers();
+    recompute();
+    const out = $("ai-response");
+    out.classList.remove("muted");
+    const addedTxt = (res.added_slots != null)
+      ? `${res.added_slots}/${res.added_budget || 67} added slots (+1 free base per power)`
+      : `${res.slots_used} slots`;
+    let md = "";
+    if (res.understood && res.understood.length) {
+      md += `📋 **I read your goal as:** ${res.understood.join(", ")}.`;
+      if (res.target_summary) md += `\n\n**Targeting:** ${res.target_summary}.`;
+      md += "\n\n";
+    } else if (res.target_summary) {
+      md += `📋 **Targeting:** ${res.target_summary}.\n\n`;
+    }
+    md += `**Optimal slotting solved** — ${addedTxt}, no AI guesswork`;
+    md += perkFocus ? ` (spare slots → ${perkFocus}).` : ".";
+    // Be explicit about what happened to existing investment — but only for an
+    // IMPORTED build (a from-scratch/AI build has no prior investment to report on).
+    const removed = res.removed_expensive || [];
+    if (build.imported) {
+      if (res.preserved) {
+        const kept = (res.kept_sets || []).length;
+        md += `\n\n🔒 **Preserved your sets** — kept ${kept} existing IO set${kept === 1 ? "" : "s"} + unique globals; only re-slotted generic IOs and empty slots toward the goal.`;
+        if (keep_layout) {
+          md += " 📐 **Kept your slot layout** — stayed within the slots you placed (no added slots); any cheap IO not upgraded by a goal-advancing set was left in place.";
+        }
+        if (removed.length) {
+          md += "\n\n⚠️ **Had to drop some set pieces to fit** (a power ran out of room):\n\n"
+            + removed.map(r => `- ${r.power}: ${r.set} (${r.before}→${r.after})`).join("\n");
+        }
+      } else if (removed.length) {
+        md += "\n\n⚠️ **Full re-slot — removed these expensive IOs you had:**\n\n"
+          + removed.map(r => `- ${r.power}: ${r.set} (${r.before}→${r.after})`).join("\n")
+          + "\n\n_Turn on \"Preserve my IO sets\" to keep these and only re-slot generic IOs instead._";
+      }
+    }
+    md += "\n\nAchieved vs target:\n\n";
+    md += res.report.map(r =>
+      `- ${r.stat}: **${r.have}%** / ${r.want}% ${r.met ? "✅" : "— short"}`).join("\n");
+    if (res.report.some(r => !r.met)) {
+      md += res.preserved
+        ? "\n\n_Some targets are short. With your sets preserved there may not be enough "
+          + "free slots — untick \"Preserve my IO sets\" to let the solver respec for a "
+          + "better fit (it will flag what it removes)._"
+        : "\n\n_\"Short\" targets aren't reachable with these powers — change "
+          + "powers or accept the trade._";
+    }
+    // Optimization headroom: what a full respec would GAIN vs what it would COST.
+    const h = res.headroom;
+    if (h && (h.gains.length || h.n_lost)) {
+      md += "\n\n---\n\n### 📊 Go further? (full respec)\n";
+      if (h.gains.length) {
+        md += "\nA full re-slot could reach:\n\n"
+          + h.gains.map(g => `- ${g.stat}: ${g.from}% → **${g.to}%**  (+${g.delta})`).join("\n");
+      } else {
+        md += "\n_No meaningful stat gain available beyond your preserved build._";
+      }
+      if (h.n_lost) {
+        const items = h.lost.slice(0, 8).map(l => `${l.set} (${l.power})`).join(", ");
+        md += `\n\n**Cost:** it would change **${h.n_lost}** of your set${h.n_lost === 1 ? "" : "s"} — ${items}${h.lost.length > 8 ? " …" : ""}`;
+      }
+      md += `\n\n_${h.verdict}_`;
+    }
+    out.innerHTML = renderMarkdown(md);
+    // If this build was imported, show the before/after improvement diff + a
+    // clear "what changed" pop-up (main solve only, not the perk-chip re-solves).
+    const diffBefore = IMPORT_BEFORE || solveBefore;
+    if (diffBefore) renderImproveDiff(diffBefore, res);
+    // Don't interrupt — make the "what changed" window available on demand instead.
+    if (IMPORTED_POWERS) { CHANGES_AVAILABLE = true; recompute(); }
+    // Plain-language perk choice: targets are solved; what should spare slots push?
+    const chips = PERK_FOCUSES.map(([f, label]) =>
+      `<button class="perk-chip${perkFocus === f ? " on" : ""}" onclick="solveSlotting('${f}')">${label}</button>`).join("");
+    out.insertAdjacentHTML("beforeend",
+      `<div class="perk-pick"><span class="muted small">Targets solved — point the `
+      + `leftover slots at what you want most:</span>`
+      + `<div class="perk-chips">${chips}</div></div>`);
+    // Assessment card: what this optimized + pre-computed alternative routes with
+    // real deltas. Only on a MAIN/route solve (not the lightweight perk-chip re-solves).
+    if (!perkFocus) renderAssessment(presolvePowers,
+      { content, role, goal, preserve, keep_layout });
+    if (!perkFocus && res.incarnate_recs) renderIncarnateRecs(res.incarnate_recs, res.incarnate_loadouts);
+    status.textContent = res.added_slots != null
+      ? `✓ Slotting solved (${res.added_slots}/${res.added_budget || 67} added slots).`
+      : `✓ Slotting solved (${res.slots_used} slots).`;
+  } catch (e) {
+    status.textContent = "Solve error: " + e;
+  } finally {
+    restore();
+  }
+}
+window.solveSlotting = solveSlotting;
+
+// Before/after diff for an imported build that was just re-solved.
+// Pop-up summary of exactly what the solve changed from the imported build:
+// which empty/generic slots were filled, with what, per power.
+function showChangeModal() {
+  if (!IMPORTED_POWERS) return;
+  const beforeBy = {};
+  IMPORTED_POWERS.forEach(p => { beforeBy[p.full_name] = p; });
+  const summarize = (slots) => {
+    const sets = {}; let cheap = 0, empty = 0;
+    (slots || []).forEach(s => {
+      if (!s) { empty++; return; }
+      if (s.set_uid && s.set_name) sets[s.set_name] = (sets[s.set_name] || 0) + 1;
+      else if (s.piece_uid) cheap++;
+      else empty++;
+    });
+    return { sets, cheap, empty };
+  };
+  const key = (i) => Object.keys(i.sets).sort().join("|") + `|c${i.cheap}|e${i.empty}`;
+  // Plain-language delta for one power: what sets were ADDED, what was KEPT,
+  // how many empty slots got filled, and how many cheap IOs were replaced.
+  const describe = (bi, ai) => {
+    const added = [];
+    for (const [n, c] of Object.entries(ai.sets)) {
+      const bc = bi.sets[n] || 0;
+      if (c > bc) added.push(c > 1 ? `${n} ×${c}` : n);
+    }
+    const kept = Object.keys(bi.sets).filter(n => ai.sets[n]);
+    const filled = Math.max(0, bi.empty - ai.empty);
+    const cheapGone = Math.max(0, bi.cheap - ai.cheap);
+    const parts = [];
+    if (added.length) parts.push(`<span class="act-add">added ${added.join(", ")}</span>`);
+    if (filled) parts.push(`<span class="act-fill">filled ${filled} empty slot${filled > 1 ? "s" : ""}</span>`);
+    if (cheapGone) parts.push(`<span class="act-fill">replaced ${cheapGone} common IO${cheapGone > 1 ? "s" : ""}</span>`);
+    if (kept.length) parts.push(`<span class="act-keep">kept ${kept.join(", ")}</span>`);
+    if (ai.cheap) parts.push(`<span class="act-keep">kept ${ai.cheap} common IO${ai.cheap > 1 ? "s" : ""}</span>`);
+    return parts.join(" · ") || "rearranged";
+  };
+  const changed = []; let unchanged = 0;
+  build.powers.forEach(p => {
+    const b = beforeBy[p.full_name];
+    if (!b) return;
+    const bi = summarize(b.slots), ai = summarize(p.slots);
+    if (key(bi) !== key(ai)) {
+      changed.push(`<div class="change-line"><span class="pname">${p.display_name}</span> — ${describe(bi, ai)}</div>`);
+    } else unchanged++;
+  });
+  let html = `<p class="muted small">Your IO sets stayed in place — the solver filled empty &amp; generic slots toward your goal. <strong>${changed.length}</strong> power(s) changed, ${unchanged} unchanged.</p>`;
+  html += changed.length ? changed.join("")
+    : `<p class="muted small">Nothing to change — your build was already on-target.</p>`;
+  $("change-body").innerHTML = html;
+  $("change-title").textContent = `What changed — ${(IMPORT_BEFORE && IMPORT_BEFORE.name) || "imported build"}`;
+  $("change-modal").classList.remove("hidden");
+}
+window.showChangeModal = showChangeModal;
+
+function renderImproveDiff(before, res) {
+  const report = $("import-report");
+  if (!report) return;
+  const after = res.totals || {};
+  const bt = before.totals || {};
+  const rows = [];
+  const pct = (o, path) => {
+    const v = path.reduce((a, k) => (a ? a[k] : undefined), o);
+    return typeof v === "number" ? v : (v && v.value);
+  };
+  const stat = (label, b, a) => {
+    if (b == null && a == null) return;
+    const d = (a || 0) - (b || 0);
+    if (Math.abs(d) < 0.1) return;
+    const arrow = d > 0 ? "▲" : "▼";
+    const cls = d > 0 ? "up" : "down";
+    rows.push(`<tr><td>${label}</td><td>${(b || 0).toFixed(1)}</td><td>${(a || 0).toFixed(1)}</td>`
+      + `<td class="diff-${cls}">${arrow} ${Math.abs(d).toFixed(1)}</td></tr>`);
+  };
+  ["Smashing", "Fire", "Energy", "Melee", "Ranged", "AoE"].forEach(t => {
+    stat(`Def ${t}`, pct(bt, ["defense", t, "value"]), pct(after, ["defense", t, "value"]));
+  });
+  ["Smashing", "Fire", "Energy"].forEach(t => {
+    stat(`Res ${t}`, pct(bt, ["resistance", t, "value"]), pct(after, ["resistance", t, "value"]));
+  });
+  stat("Recharge", pct(bt, ["recharge", "value"]), pct(after, ["recharge", "value"]));
+  stat("Max HP", pct(bt, ["max_hp", "value"]), pct(after, ["max_hp", "value"]));
+  if (bt.offense || after.offense) {
+    if ((bt.offense && bt.offense.aoe_count) || (after.offense && after.offense.aoe_count)) {
+      stat("AoE DPS", bt.offense && bt.offense.aoe_dps, after.offense && after.offense.aoe_dps);
+    }
+    stat("ST DPS", bt.offense && bt.offense.st_dps, after.offense && after.offense.st_dps);
+  }
+  stat("Set bonuses", bt.applied_bonus_count, after.applied_bonus_count);
+
+  // slot changes: which powers got different sets
+  const afterSlots = {};
+  (res.powers || []).forEach(p => {
+    const sets = {};
+    (p.slots || []).forEach(s => { const n = s && (s.set_name || s.piece_name) || "—"; sets[n] = (sets[n] || 0) + 1; });
+    afterSlots[p.full_name] = sets;
+  });
+  const changes = [];
+  for (const [fn, info] of Object.entries(before.slots || {})) {
+    const a = afterSlots[fn] || {};
+    const bKey = Object.keys(info.sets).sort().join(",");
+    const aKey = Object.keys(a).sort().join(",");
+    if (bKey !== aKey) {
+      const fmt = o => Object.keys(o).length ? Object.entries(o).map(([n, c]) => `${n}×${c}`).join(", ") : "(empty)";
+      changes.push(`<li><strong>${info.display}</strong>: ${fmt(info.sets)} → ${fmt(a)}</li>`);
+    }
+  }
+  const tbl = rows.length
+    ? `<table class="diff-tbl"><tr><th>Stat</th><th>Before</th><th>After</th><th>Δ</th></tr>${rows.join("")}</table>`
+    : `<p class="muted small">No net stat change (the import was already on-target for this goal).</p>`;
+  report.classList.remove("hidden");
+  report.innerHTML = `
+    <div class="import-head"><strong>Improvement — ${before.name}</strong>
+      <span class="muted small">solved for your goal · review before exporting</span></div>
+    ${tbl}
+    ${changes.length ? `<details open><summary>${changes.length} power(s) re-slotted</summary><ul class="crit-list">${changes.join("")}</ul></details>` : ""}
+    <p class="muted small">Happy with it? Use <strong>⬇ Export to Mids Reborn</strong> above to save the improved build.</p>`;
+}
+
+async function applyGeneratedBuild(res) {
+  build.imported = false;   // AI/optimize build from scratch — no investment to preserve
+  // Load every powerset this build uses so its powers are available
+  const used = [build.primary, build.secondary,
+    ...(res.pools_used || []), res.epic_used].filter(Boolean);
+  for (const ps of used) await loadPowers(ps);
+
+  // Reflect pool selections
+  const poolSels = [...document.querySelectorAll(".pool-sel")];
+  build.pools = (res.pools_used || []).slice(0, 4);
+  build.pools_display = build.pools.map((ps) => {
+    const e = (POWERSETS_CACHE.pools || []).find((x) => x.full_name === ps);
+    return e ? e.display_name : ps;
+  });
+  poolSels.forEach((s, i) => { s.value = build.pools[i] || ""; });
+
+  // Reflect epic selection
+  if (res.epic_used) {
+    $("sel-epic").value = res.epic_used;
+    build.epic = res.epic_used;
+    const e = (POWERSETS_CACHE.epic || []).find((x) => x.full_name === res.epic_used);
+    build.epic_display = e ? e.display_name : res.epic_used;
+  }
+
+  // Powers (already resolved + validated server-side)
+  build.powers = (res.powers || []).map((p) => ({
+    full_name: p.full_name,
+    display_name: p.display_name,
+    powerset_full_name: p.powerset_full_name,
+    accepted_set_category_ids: p.accepted_set_category_ids || [],
+    accepted_set_categories: p.accepted_set_categories || [],
+    power_type: p.power_type,
+    include_in_totals: p.include_in_totals !== undefined
+      ? p.include_in_totals : (p.power_type === 1 || p.power_type === 2),
+    slotCount: p.slotCount,
+    slots: p.slots,
+  }));
+
+  // Incarnates
+  build.incarnates = {};
+  for (const [slot, v] of Object.entries(res.incarnates || {})) build.incarnates[slot] = v;
+  document.querySelectorAll("#incarnate-selectors select").forEach((s) => {
+    const v = build.incarnates[s.dataset.slot];
+    s.value = v ? v.full_name : "";
+  });
+
+  renderPowers();
+  recompute();
+}
+
+// Minimal, self-contained Markdown -> HTML (offline; no external libs).
+// Handles headings, tables, bold/italic/code, lists, hr, paragraphs.
+function renderMarkdown(md) {
+  const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const inline = (s) => esc(s)
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, "$1<em>$2</em>")
+    .replace(/`([^`]+)`/g, "<code>$1</code>");
+  const lines = md.replace(/\r/g, "").split("\n");
+  const isHr = (l) => /^\s*([-*_])\1\1+\s*$/.test(l);
+  const isUl = (l) => /^\s*[-*]\s+/.test(l);
+  const isOl = (l) => /^\s*\d+\.\s+/.test(l);
+  const isH = (l) => /^#{1,6}\s/.test(l);
+  const isTblRow = (l) => /^\s*\|/.test(l);
+  let html = "", i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    // Table: a |row| followed by a |---|---| separator
+    if (isTblRow(line) && i + 1 < lines.length &&
+        /^\s*\|?[\s:|-]*-[\s:|-]*$/.test(lines[i + 1])) {
+      const cells = (l) => l.trim().replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
+      const header = cells(line);
+      i += 2;
+      const rows = [];
+      while (i < lines.length && isTblRow(lines[i])) { rows.push(cells(lines[i])); i++; }
+      html += "<table><thead><tr>" +
+        header.map((h) => `<th>${inline(h)}</th>`).join("") +
+        "</tr></thead><tbody>" +
+        rows.map((r) => "<tr>" + r.map((c) => `<td>${inline(c)}</td>`).join("") + "</tr>").join("") +
+        "</tbody></table>";
+      continue;
+    }
+    const h = /^(#{1,6})\s+(.*)$/.exec(line);
+    if (h) { html += `<h${h[1].length}>${inline(h[2])}</h${h[1].length}>`; i++; continue; }
+    if (isHr(line)) { html += "<hr>"; i++; continue; }
+    if (isUl(line)) {
+      html += "<ul>";
+      while (i < lines.length && isUl(lines[i])) {
+        html += `<li>${inline(lines[i].replace(/^\s*[-*]\s+/, ""))}</li>`; i++;
+      }
+      html += "</ul>"; continue;
+    }
+    if (isOl(line)) {
+      html += "<ol>";
+      while (i < lines.length && isOl(lines[i])) {
+        html += `<li>${inline(lines[i].replace(/^\s*\d+\.\s+/, ""))}</li>`; i++;
+      }
+      html += "</ol>"; continue;
+    }
+    if (/^\s*$/.test(line)) { i++; continue; }
+    const para = [];
+    while (i < lines.length && !/^\s*$/.test(lines[i]) && !isTblRow(lines[i]) &&
+           !isH(lines[i]) && !isUl(lines[i]) && !isOl(lines[i]) && !isHr(lines[i])) {
+      para.push(lines[i]); i++;
+    }
+    html += `<p>${para.map(inline).join("<br>")}</p>`;
+  }
+  return html;
+}
+
+init();
