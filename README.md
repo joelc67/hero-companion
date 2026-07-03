@@ -1,159 +1,79 @@
-# CoH Build Planner (Homecoming) with AI Assistant
+# Hero Companion
 
-A local, offline web app for City of Heroes (Homecoming) character build planning.
-Game data comes from **Mids Reborn**; the AI layer is **Claude Code running
-locally**.
+**Your City of Heroes sidekick** — a free, offline build planner for
+[City of Heroes: Homecoming](https://homecomingservers.com) that designs, optimizes,
+and levels character builds from the game's actual math.
 
-## Quick start (Windows 11)
+No templates. No AI. No cloud. A deterministic first-principles model of the game's
+combat physics (to-hit, resistance, the purple patch, debuff economics, endurance,
+recharge) drives a real optimizer that searches powers, pools, and enhancement
+slotting until no single change can improve the build — and says so honestly.
+
+## What it does
+
+- **Build a level 50** — pick archetype, powersets, the content you run, and your
+  team role; get a complete end-game build with IO-set slotting, verified against
+  the game's caps and rules.
+- **Level from 1 to 50** — a per-level walk of the real Homecoming schedule: every
+  power pick, every slot, cost-smart enhancement advice, respec trials — including
+  the Arachnos Soldier/Widow two-phase career (base sets → mandatory level-24
+  respec → branch) and Kheldian rules (inherent flight, forms, no epic pool).
+- **Appraise your drops** — paste recipes and enhancements from the game; get
+  keep / craft-then-convert / sell verdicts with concrete converter paths and costs.
+- **Import/export Mids Reborn** — `.mbd` files round-trip; Mids' View Totals is the
+  authoritative cross-check.
+- **Champions** — the best certified build per context ships with the app and gives
+  the optimizer its head start. Beat one, and the 🏆 button lets you submit yours.
+
+## Quick start
+
+**PC version (recommended):** download the latest release, unzip, run
+`HeroCompanion.exe`. The app opens in your browser; closing the console window
+stops it. Saves live in `%APPDATA%\HeroCompanion`.
+
+**From source (Windows):**
 
 ```
-install.bat      :: installs Flask deps (one time)
+install.bat      :: one-time: installs Python deps
 start.bat        :: launches the server and opens http://localhost:5000
 ```
 
-The app runs fully offline. Only the AI Assistant panel needs Claude Code active.
+Game data is parsed from a [Mids Reborn](https://midsreborn.com) installation
+(`tools/parse_mids.py`); a parsed snapshot ships in `data/`.
 
-## Features
+**Build the executable:** `python -m PyInstaller HeroCompanion.spec` (onedir output
+in `dist/HeroCompanion/`).
 
-- **Slot enforcement** — clicking a slot shows ONLY enhancement sets whose category
-  fits that power (a power's accepted categories and a set's category both index
-  the same `TypeGrades.json` table).
-- **Live stat engine** — real Defense / Resistance / Recharge / Recovery / etc.,
-  computed like Mids: base magnitude (`Scale × AttribMod[level 49][archetype
-  column]`) × slotted enhancement value (`MultIO`) with **Enhancement
-  Diversification** (schedules A–D), summed over active powers + set bonuses.
-  Resistance uses the archetype's real hard cap (Tanker/Brute 90 %, Khelds /
-  Arachnos 85 %, rest 75 %); Defense's 45 % is a soft cap and shows overcap.
-- **Per-power "include in totals"** — each power has a checkbox (on by default for
-  toggles/autos, off for click powers). Opt click buffs like Hasten in, or opt a
-  toggle you don't run out.
-- **Incarnates** — pick one of each of the 7 slots (Alpha … Genesis). Fed to the
-  AI and the export. (Incarnate buffs are not summed into the passive totals —
-  their values are peak/timed.)
-- **"Build this for me"** — describe a goal; Claude generates a full build
-  (powers, slot counts, IO sets/pieces, incarnates). The backend resolves every
-  name to real data and validates each enhancement against the power's
-  categories, then the builder auto-fills. Takes ~2–4 minutes (local generation).
-- **Export to Mids Reborn** — downloads a `.mbd` file that Mids opens via
-  File → Open (incarnates included). Use Mids' "View Totals" as the authoritative
-  cross-check.
+## Feedback and champions
 
-## AI Assistant setup (one time)
+- **🐞 Report a bug** (in-app) — opens a pre-filled GitHub issue with your app,
+  model, and data versions. Nothing is ever sent without your click.
+- **🏆 Submit champion** (in-app) — exports your build as a candidate file and opens
+  the submission queue. Every candidate is re-scored deterministically by the
+  maintainer's hub before promotion; verified wins ship in the next update with
+  credit to the builder.
+- **Check for updates** (footer) — compares your version against the latest GitHub
+  release. Never automatic.
 
-The AI uses your local Claude Code. If the panel says "not logged in for headless
-use," generate a token and store it:
+How all this fits together — including what the words *champion*, *candidate*,
+*model version*, and *data pack* mean precisely — is in
+[docs/architecture.md](docs/architecture.md).
 
-```
-claude setup-token                          :: complete the browser sign-in, copy the token
-setx CLAUDE_CODE_OAUTH_TOKEN "<token>"      :: persists it (uses your subscription)
-```
+## Documentation
 
-Then relaunch via the shortcut. `start.bat` reads the token from the registry at
-launch (so a stale Explorer environment doesn't matter) and locates the bundled
-`claude.exe` automatically. No separate API billing is needed.
+- [In-app help + release notes (PDF)](static/help/HeroCompanion-Help.pdf) — also the
+  ❓ Help button
+- [CHANGELOG.md](CHANGELOG.md) — what's new
+- [docs/architecture.md](docs/architecture.md) — distribution architecture + glossary
+- [TERMS.md](TERMS.md) — terms of use
+- [CREDITS.md](CREDITS.md) — the shoulders this stands on
 
-## How the data was produced (Step 1 — verified, not assumed)
+## License
 
-The Mids Reborn `.mhd` files are **.NET `BinaryWriter` output**, not JSON:
+Original work (code, model, docs, UI): **CC BY-NC-SA 4.0** — free and noncommercial,
+forever; modify and share under the same terms with credit. See [LICENSE](LICENSE).
 
-- strings = LEB128 7-bit length prefix + UTF-8
-- numbers = little-endian int32 / int64 / float32; bool = 1 byte
-- array idiom: a count `N` is written, then `N+1` elements follow
-
-`tools/parse_mids.py` re-implements a .NET `BinaryReader` and transcribes the
-field order **1:1 from the MidsReborn C# reader constructors** (`DatabaseAPI.cs`,
-`Power.cs`, `Effect.cs`, `Archetype.cs`, `Powerset.cs`, `Enhancement.cs`,
-`EnhancementSet.cs`). Re-run it with:
-
-```
-python tools/parse_mids.py
-```
-
-It reads `MidsReborn/MidsReborn/Databases/Homecoming/` and writes `data/*.json`.
-Override the source with the `MIDS_DB_DIR` env var.
-
-### The slot-enforcement linchpin
-
-Each **Power** stores a list of accepted set-category ids; each **EnhancementSet**
-stores one set-category id. **Both index into the same `TypeGrades.json` SetTypes
-table** (7 = "Defense Sets", 8 = "Resist Damage", …). Matching them is exactly the
-rule "only show sets whose category fits this power." The UI calls
-`POST /sets/for-power` with a power's accepted category ids and receives only the
-sets that match — invalid sets are never sent to the client.
-
-### Data files (`data/`)
-
-| File | Contents |
-|------|----------|
-| `archetypes.json` | 15 playable ATs + caps (HP, res, recharge, damage) + AttribMod `column` |
-| `powersets.json` | primary / secondary / **epic** (resolved via `Requires.ClassName`) per AT, plus shared pools |
-| `powers.json` | per power: accepted categories/types, slot defaults, and **`self_effects`** (scale + modifier table + ED schedule for the stat engine) |
-| `enhancement_sets.json` | 227 sets: pieces (what each enhances + **`boosts`** = per-aspect enh value), set bonuses with numeric effects |
-| `set_bonuses.json` | per-set bonus thresholds with resolved numeric stat effects |
-| `incarnates.json` | the 7 incarnate slots and their choices |
-| `common_ios.json` | single-aspect Invention IOs (uid + boosts) for generic slotting |
-| `modifier_tables.json` | `AttribMod` table rows at level 49 (base-magnitude lookup) |
-| `maths.json` | `MultIO` (enhancement values per level) and `MultED` (ED thresholds) from `Maths.mhd` |
-| `set_categories.json` | the category and enhancement-class lookup tables |
-
-## API
-
-| Endpoint | Purpose |
-|----------|---------|
-| `GET /archetypes` | playable archetypes |
-| `GET /powersets/<archetype>` | primary, secondary, epic, pools |
-| `GET /powers/<powerset_full_name>` | powers with accepted categories/types |
-| `GET /sets/<category>` | all sets in a category (id / short / name) |
-| `POST /sets/for-power` | **slot enforcement** — only sets matching a power |
-| `GET /setbonuses/<setname>` | a set's pieces and bonuses |
-| `GET /incarnates` | the 7 incarnate slots and choices |
-| `POST /build/validate` | category mismatches, unique dupes, dup pieces |
-| `POST /build/calculate` | full defense/resistance/recharge/etc. vs caps |
-| `POST /build/export` | a Mids Reborn `.mbd` for the current build |
-| `POST /ai/query` | sends build state + question to Claude Code |
-| `POST /ai/generate-build` | "Build this for me" — structured build, resolved + validated |
-
-## What the calculator computes (scope & honesty)
-
-Totals = **active-power self-buffs** (base magnitude from the `AttribMod` tables ×
-slotted enhancement value with Enhancement Diversification) **+ set bonuses**.
-Verified against known values: Weave 5 %, Combat Jumping 2.5 %, Tanker Tough 15 %
-S/L resist, Tough + 3 resist IOs = 23.77 % (ED-correct), Hasten +70 % recharge.
-Set bonuses also match Mids (LotG 2pc +10 % Regen, 5pc +3.75 % S/L resist).
-
-The validator hardcodes: Defense soft cap **45 %** (exceedable), resistance hard
-cap **per archetype** (90 / 85 / 75), rule of five, unique-enhancement limit
-(LotG Def/Global Recharge treated as non-unique), and the full ED schedules
-(A–D) in `engine.apply_ed_sched`.
-
-**Not auto-included:** click buffs are off by default (toggle them on per power);
-**incarnate** buffs are excluded entirely because their values are peak/timed
-(e.g. Barrier starts at +57.5 % defense and decays). Cross-check any build with
-Mids' "View Totals" after exporting.
-
-## AI Assistant
-
-`ai/claude_bridge.py` formats a structured prompt (archetype, powersets, every
-power with its slotted enhancements, set-bonus totals vs caps, open slots and
-their available categories, and the question) and invokes the local Claude Code
-CLI headless (`claude -p`). The CLI is auto-detected on PATH or under
-`%APPDATA%\Claude\claude-code\<version>\claude.exe`; override with `CLAUDE_BIN`.
-
-> The headless CLI must be authenticated. If you see *"Not logged in"*, run
-> `claude` once interactively and `/login` (or set `ANTHROPIC_API_KEY`).
-
-## Project layout
-
-```
-coh-builder/
-  data/                 generated JSON (output of parse_mids.py)
-  server/
-    server.py           Flask app + routes
-    engine.py           validation + full stat calculation (AttribMod + ED + sets)
-    ai_build.py         "Build this for me": prompt + resolve/validate structured build
-    mids_export.py      build -> Mids Reborn .mbd
-  ai/claude_bridge.py   Claude Code bridge (headless claude -p via stdin)
-  static/               index.html, style.css, app.js (single-page app)
-  tools/parse_mids.py   Mids .mhd/.json -> data JSON parser
-  requirements.txt  install.bat  start.bat
-```
+*City of Heroes* and all game content © NCSoft Corporation. *City of Heroes:
+Homecoming* operates under license from NCSoft. Game data via the Mids Reborn
+team's database compilation. This is an unofficial fan project — not affiliated
+with or endorsed by NCSoft, Homecoming Servers LLC, or the Mids Reborn team.
