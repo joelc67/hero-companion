@@ -6,6 +6,7 @@ from PyInstaller.utils.hooks import collect_data_files
 datas = [
     ("data", "data"),                      # parsed game database snapshot
     ("static", "static"),                  # UI + help PDF
+    ("assets/HeroCompanion-icon-512.png", "assets"),   # tray icon image
     ("VERSION", "."),
     ("client_config.json", "."),           # GitHub-home pointers (REPLACE-ME until repo exists)
     ("CHANGELOG.md", "."),
@@ -24,6 +25,7 @@ hiddenimports = [
     "leveling_schedule", "learn", "proc_pass", "mids_export", "mids_import",
     "mids_powercust", "ingame_import", "ai_build", "claude_bridge",
     "flask_cors", "requests",
+    "pystray", "pystray._win32",           # tray icon backend
 ]
 
 a = Analysis(
@@ -47,7 +49,8 @@ exe = EXE(
     debug=False,
     strip=False,
     upx=False,                 # UPX-packed exes trip antivirus heuristics — never pack
-    console=True,              # the console window IS the app's off switch
+    console=False,             # windowed: the TRAY ICON is the app's handle (Open/Quit);
+                               # output goes to %APPDATA%\HeroCompanion\app.log
     icon="assets/HeroCompanion.ico",
 )
 coll = COLLECT(

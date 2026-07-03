@@ -1,5 +1,21 @@
 # Hero Companion — What's New
 
+## 0.10.0 — July 3, 2026
+
+**The installer release** — Hero Companion now behaves like a proper Windows app.
+
+- **Real installer**: download `HeroCompanion-Setup-0.10.0.exe`, run it, done. It
+  installs to a standard location, offers a desktop icon, adds a Start Menu entry,
+  registers in Add/Remove Programs with a working uninstaller, and upgrades in
+  place. (The portable zip still exists for folder-preferring folks.)
+- **No more console window**: the app runs in the background with a tray icon (the
+  lime pulse, next to your clock). Right-click it to open the app or quit. Closing
+  the browser tab no longer strands a mystery window.
+- **⟳ Updates button in the header** — check for updates on demand, whatever you
+  answered at startup.
+- Your saves live in %APPDATA%\HeroCompanion as always — installing, upgrading, or
+  uninstalling never touches your characters.
+
 ## 0.9.1 — July 3, 2026
 
 - **Update prompts (opt-in)**: on first run the app asks once whether to check for

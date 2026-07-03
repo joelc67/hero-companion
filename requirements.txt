@@ -4,3 +4,4 @@ requests==2.31.0
 Werkzeug==2.3.7
 pulp==3.3.2          # ILP constraint solver (server/solver.py); bundles CBC
 Pillow==12.2.0  # DDS texture decode for the costume 3D viewer
+pystray==0.19.5      # tray icon for the packaged (windowed) app
