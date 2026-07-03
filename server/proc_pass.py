@@ -13,16 +13,23 @@ Fails safe: any error returns the build untouched.
 """
 import json
 import os
+import sys
 
 _CATALOG = None
+
+
+def _data_dir():
+    """The data folder — bundle root when packaged (PyInstaller), repo root from source."""
+    if getattr(sys, "frozen", False):
+        return os.path.join(getattr(sys, "_MEIPASS", os.path.dirname(sys.executable)), "data")
+    return os.path.join(os.path.dirname(__file__), "..", "data")
 
 
 def _catalog():
     global _CATALOG
     if _CATALOG is None:
         try:
-            with open(os.path.join(os.path.dirname(__file__), "..", "data", "proc_catalog.json"),
-                      encoding="utf-8") as f:
+            with open(os.path.join(_data_dir(), "proc_catalog.json"), encoding="utf-8") as f:
                 _CATALOG = json.load(f)
         except Exception:  # noqa: BLE001
             _CATALOG = {"damage_procs": {}, "res_procs": {}}

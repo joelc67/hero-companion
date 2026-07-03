@@ -3227,8 +3227,9 @@ _INC_TRAY = {  # incarnate slot -> (tray, glyph); Alpha/Interface are passive (s
 
 
 try:
-    with open(os.path.join(os.path.dirname(__file__), "..", "data", "power_icon_map.json"),
-              encoding="utf-8") as _pif:
+    # DATA_DIR, not __file__-relative: in the packaged exe the data lives under the
+    # bundle root, and the __file__-relative path silently loads nothing (no tray icons).
+    with open(os.path.join(DATA_DIR, "power_icon_map.json"), encoding="utf-8") as _pif:
         _POWER_ICON_MAP = json.load(_pif)        # full_name -> in-game icon basename
 except Exception:                                # noqa: BLE001
     _POWER_ICON_MAP = {}

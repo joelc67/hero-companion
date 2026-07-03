@@ -432,7 +432,12 @@ def _inc_magnitudes():
         try:
             import json
             import os
-            path = os.path.join(os.path.dirname(__file__), "..", "data", "incarnates.json")
+            import sys
+            if getattr(sys, "frozen", False):
+                base = getattr(sys, "_MEIPASS", os.path.dirname(sys.executable))
+            else:
+                base = os.path.join(os.path.dirname(__file__), "..")
+            path = os.path.join(base, "data", "incarnates.json")
             for s in json.load(open(path, encoding="utf-8"))["slots"]:
                 for c in s["choices"]:
                     best = {}

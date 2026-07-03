@@ -2,6 +2,11 @@
 
 ## 0.10.1 — unreleased
 
+- **Fixed: power tray icons missing in the installed app.** Three data files (power
+  icons, the proc catalog, incarnate magnitudes) were loaded with a path that only
+  worked when running from source — in the packaged app they silently loaded empty.
+  The tray now shows real power icons, and the solver's proc pass has its full
+  catalog back.
 - **The app finds your in-game saves for you.** After `/build_save_file` in game,
   click "Find my characters for me" — Hero Companion scans the usual Homecoming
   install locations, lists every character save it finds (newest first), and
