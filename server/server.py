@@ -120,6 +120,23 @@ try:
 except Exception:  # noqa: BLE001 — missing/broken config just disables the links
     CLIENT_CONFIG = {}
 
+# AI seam — the standalone (packaged) build ships AI-OFF: the planner is fully
+# deterministic, the assistant needs a paid Claude key, and a permanently dead
+# panel reads as broken. HC_AI=1 forces it on (bring-your-own-key), HC_AI=0
+# forces it off; running from source defaults on.
+AI_ENABLED = os.environ.get("HC_AI", "0" if getattr(sys, "frozen", False) else "1") == "1"
+
+
+def _ai_gate():
+    """None when AI may run; otherwise the friendly refusal every /ai endpoint returns."""
+    if AI_ENABLED:
+        return None
+    return jsonify({"ok": False, "response":
+                    "The AI assistant isn't included in this standalone build — everything "
+                    "the planner does (the wizard, Solve, the optimizer) is deterministic "
+                    "and needs no AI. Advanced: set HC_AI=1 with your own Claude key to "
+                    "enable the assistant."}), 403
+
 # ---- stat-engine data ----
 MODIFIER_TABLES = _load("modifier_tables.json")["tables"]
 MATHS = _load("maths.json")
@@ -2159,6 +2176,9 @@ def build_powercust():
 
 @app.route("/ai/query", methods=["POST"])
 def ai_query():
+    gate = _ai_gate()
+    if gate:
+        return gate
     body = request.get_json(force=True) or {}
     build = body.get("current_build", body.get("build", {}))
     question = body.get("question", "").strip()
@@ -2389,6 +2409,9 @@ def _generate_one(g, archetype, primary, secondary, goal, tier, focus=None):
 
 @app.route("/ai/generate-build", methods=["POST"])
 def ai_generate_build():
+    gate = _ai_gate()
+    if gate:
+        return gate
     body = request.get_json(force=True) or {}
     archetype = body.get("archetype")          # class name, e.g. Class_Tanker
     primary = body.get("primary")              # powerset full_name
@@ -2423,6 +2446,9 @@ def _solved_base(archetype, powers):
 
 @app.route("/ai/generate-solved", methods=["POST"])
 def ai_generate_solved():
+    gate = _ai_gate()
+    if gate:
+        return gate
     """The chained flow: ONE LLM call picks the powers, then the deterministic
     solver slots them at each tier (budget/balanced/premium). Replaces three
     slow LLM builds with one call + three instant optimal solves."""
@@ -2509,6 +2535,9 @@ def ai_generate_solved():
 
 @app.route("/ai/refine-build", methods=["POST"])
 def ai_refine_build():
+    gate = _ai_gate()
+    if gate:
+        return gate
     """Optimize an existing build toward the goal: compute its totals, feed them
     back to Claude, return a refined build. Runs only on demand (one pass)."""
     body = request.get_json(force=True) or {}
@@ -4105,8 +4134,10 @@ def health():
                     "archetypes": len(PLAYABLE),
                     "powersets": len(POWERS),
                     "sets": len(ENH_SETS),
-                    "claude_available": (claude_bridge._api_creds()[0] is not None
-                                         or claude_bridge._find_claude_bin() is not None)})
+                    "ai_enabled": AI_ENABLED,
+                    "claude_available": AI_ENABLED
+                                        and (claude_bridge._api_creds()[0] is not None
+                                             or claude_bridge._find_claude_bin() is not None)})
 
 
 # ---------------------------------------------------------------------------

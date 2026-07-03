@@ -296,11 +296,11 @@
 
     <!-- RIGHT: AI Assistant -->
     <section id="assistant" class="panel">
-      <h2>AI Assistant</h2>
+      <h2 id="assistant-title">AI Assistant</h2>
 
       <div class="generate">
         <strong>🔧 Build this for me</strong>
-        <p class="muted small">Pick archetype + primary + secondary above, describe a
+        <p id="gen-intro" class="muted small">Pick archetype + primary + secondary above, describe a
           goal, choose which build tiers you want, and Claude designs them — pick
           more than one to compare cost vs. payoff.</p>
         <div class="preset-pick">
@@ -366,15 +366,16 @@
         <button id="reset-btn" class="reset-btn" style="display:none" title="Restore your imported build exactly as it came in, so you can try a different goal/options without re-importing." onclick="resetToImported()">↺ Reset to imported build (try again)</button>
         <div id="gen-status" class="muted small"></div>
       </div>
-      <hr class="sep">
-
-      <p class="muted small">Or ask a question — every question automatically
-        includes your full build state.</p>
-      <div id="suggested" class="suggested"></div>
-      <textarea id="ai-question" rows="3"
-        placeholder="Ask about your build… e.g. 'How close am I to the defense soft cap?'"></textarea>
-      <button id="ai-send">Ask Claude</button>
-      <div id="ai-response" class="ai-response muted">No question asked yet.</div>
+      <div id="ai-qa">
+        <hr class="sep">
+        <p class="muted small">Or ask a question — every question automatically
+          includes your full build state.</p>
+        <div id="suggested" class="suggested"></div>
+        <textarea id="ai-question" rows="3"
+          placeholder="Ask about your build… e.g. 'How close am I to the defense soft cap?'"></textarea>
+        <button id="ai-send">Ask Claude</button>
+        <div id="ai-response" class="ai-response muted">No question asked yet.</div>
+      </div>
     </section>
     <div id="order-out" class="order-out panel hidden"></div>
     <div id="tray-out" class="order-out panel hidden"></div>

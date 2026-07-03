@@ -904,6 +904,7 @@ function pairVeatSets(changedSel, otherSel, map) {
 // ── Project home: versions, bug reports, champion submissions, update check ──
 // Everything here is USER-CLICK only — the app never sends anything on its own.
 let META = null;
+let AI_ON = true;   // flipped by /health; standalone builds report ai_enabled:false
 const _urlReady = (u) => !!u && !u.includes("REPLACE-ME");
 
 async function loadMeta() {
@@ -1080,8 +1081,23 @@ async function init() {
     recompute();
   });
 
-  // claude availability
+  // AI availability. Standalone builds ship AI-OFF (ai_enabled false): the whole
+  // assistant seam disappears — no dead chip, no "Ask Claude" that can't answer.
+  // The deterministic controls (presets, goal text, Solve) stay; they never needed AI.
   api("/health").then(h => {
+    AI_ON = !!h.ai_enabled;
+    if (!AI_ON) {
+      const chip = $("claude-status"); if (chip) chip.remove();
+      const t = $("assistant-title"); if (t) t.textContent = "Build Assistant";
+      const gi = $("gen-intro");
+      if (gi) gi.textContent = "Pick archetype + primary + secondary above, choose "
+        + "what you're building for, and the solver designs and slots it instantly.";
+      const gb = $("gen-btn"); if (gb) gb.style.display = "none";
+      document.querySelectorAll(".tier-pick").forEach(el => { el.style.display = "none"; });
+      const qa = $("ai-qa"); if (qa) qa.style.display = "none";
+      recompute();          // re-gate opt-btn/fit-hint now that AI_ON is known
+      return;
+    }
     $("claude-status").textContent = h.claude_available
       ? "AI: Claude Code ready" : "AI: Claude Code not found";
     $("claude-status").style.color = h.claude_available ? "var(--def)" : "var(--bad)";
@@ -1821,12 +1837,12 @@ function closeModal() { $("modal").classList.add("hidden"); activeSlot = null; }
 // ---------------------------------------------------------------------------
 async function recompute() {
   const hasPowers = build.powers.length > 0;
-  const ob = $("opt-btn");
-  if (ob) ob.style.display = hasPowers ? "block" : "none";
+  const ob = $("opt-btn");   // AI refine — hidden entirely when the AI seam is off
+  if (ob) ob.style.display = (hasPowers && AI_ON) ? "block" : "none";
   const sb = $("solve-btn");
   if (sb) sb.style.display = hasPowers ? "block" : "none";
-  const hint = $("fit-hint");
-  if (hint) hint.style.display = hasPowers ? "block" : "none";
+  const hint = $("fit-hint");   // explains Solve-vs-AI — pointless without the AI option
+  if (hint) hint.style.display = (hasPowers && AI_ON) ? "block" : "none";
   const presLbl = $("preserve-toggle-label");
   // preserve-my-sets only applies to IMPORTED builds (a from-scratch/AI build has
   // no prior investment to keep — Solve optimizes it freely).
