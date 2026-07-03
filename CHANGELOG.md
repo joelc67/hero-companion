@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## 0.10.1 — unreleased
+## 0.10.1 — July 3, 2026
 
 - **Fixed: power tray icons missing in the installed app.** Three data files (power
   icons, the proc catalog, incarnate magnitudes) were loaded with a path that only
