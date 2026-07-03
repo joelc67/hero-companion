@@ -28,6 +28,10 @@ Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
 LicenseFile=..\LICENSE
+; The app runs WINDOWLESS in the tray, so users upgrading won't know it's running —
+; close it for them (force: a tray app has no window to ask politely).
+CloseApplications=force
+RestartApplications=no
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional shortcuts:"
