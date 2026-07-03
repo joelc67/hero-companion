@@ -1,10 +1,10 @@
 {
-  "_comment": "Where this install looks for its online home. Replace REPLACE-ME with the real GitHub owner once the repository exists (e.g. joelc/hero-companion). Until then every phone-home feature (bug reports, champion submissions, update checks) stays politely disabled — the app itself never sends anything on its own.",
+  "_comment": "Where this install looks for its online home (the joelc67/hero-companion GitHub repository). Every phone-home feature (bug reports, champion submissions, update checks) fires only on a user click - the app never sends anything on its own.",
   "urls": {
-    "project_home": "https://github.com/REPLACE-ME/hero-companion",
-    "releases": "https://github.com/REPLACE-ME/hero-companion/releases",
-    "releases_api": "https://api.github.com/repos/REPLACE-ME/hero-companion/releases/latest",
-    "bug_report": "https://github.com/REPLACE-ME/hero-companion/issues/new",
-    "champion_submit": "https://github.com/REPLACE-ME/hero-companion/discussions/new?category=champion-builds"
+    "project_home": "https://github.com/joelc67/hero-companion",
+    "releases": "https://github.com/joelc67/hero-companion/releases",
+    "releases_api": "https://api.github.com/repos/joelc67/hero-companion/releases/latest",
+    "bug_report": "https://github.com/joelc67/hero-companion/issues/new",
+    "champion_submit": "https://github.com/joelc67/hero-companion/discussions/new?category=champion-builds"
   }
 }
