@@ -1,5 +1,7 @@
 # Hero Companion
 
+### [⬇ Download the latest version](https://github.com/joelc67/hero-companion/releases/latest) — unzip, run `HeroCompanion.exe`, done. Free, no account, no install.
+
 **Your City of Heroes sidekick** — a free, offline build planner for
 [City of Heroes: Homecoming](https://homecomingservers.com) that designs, optimizes,
 and levels character builds from the game's actual math.

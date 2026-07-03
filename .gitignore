@@ -10,6 +10,7 @@ __pycache__/
 # committed build recipe
 build/
 dist/
+HeroCompanion-*.zip
 
 # Not ours to publish — other players' hand-made master builds stay a private,
 # local-only calibration corpus (see docs/architecture.md)

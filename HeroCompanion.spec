@@ -13,6 +13,9 @@ datas = [
     ("CREDITS.md", "."),
     ("TERMS.md", "."),
 ]
+# "Add Shortcuts.bat" belongs NEXT TO the exe (dist root), not inside _internal —
+# COLLECT datas land in _internal, so it's copied post-build by tools/finish_dist.py
+# (or manually). Kept out of `datas` on purpose.
 datas += collect_data_files("pulp")        # bundles the CBC solver binary the ILP needs
 
 # server/ and ai/ modules are imported via runtime sys.path — name them explicitly.
