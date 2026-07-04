@@ -1450,7 +1450,6 @@ function powerCardHtml(pw, idx, icon, lv) {
         ${icon ? `<img class="pc-ico" src="${icon}" alt="" loading="lazy"
                    onerror="this.style.display='none'">` : ""}
         <span class="pname">${escHtml(pw.display_name)}</span></span>
-        <span class="pick-lvl" title="Inherent — granted automatically, never picked">auto</span>
         <span class="pc-tools">
           <label class="include-toggle" title="Count this power's stats in the totals">
             <input type="checkbox" ${pw.include_in_totals ? "checked" : ""}
