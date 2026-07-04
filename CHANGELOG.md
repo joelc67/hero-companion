@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## 0.12.3 — unreleased
+## 0.12.3 — July 4, 2026
 
 - **Only one copy of the app can run.** Launching Hero Companion while it's already
   running now just opens the running copy's page instead of silently starting a
