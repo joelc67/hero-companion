@@ -84,6 +84,24 @@ late = sorted(real, key=lambda p: -int(p["pick_level"]))[:4]
 print("  late picks: " + ", ".join(
     f"{p['full_name'].split('.')[-1]}@{p['pick_level']} ({1 + srv._sched_added(p)} slots)" for p in late))
 
+# ── 3b. level-1 creation rule (field report #2: "only Shriek and Scream") ────
+print("\n── level-1 creation composition ──")
+l1 = [p for p in real if int(p["pick_level"]) == 1]
+l1_sets = sorted((p.get("powerset_full_name") or "").split(".")[-1] for p in l1)
+check("exactly two L1 picks", len(l1) == 2, ", ".join(l1_sets))
+check("one primary + one secondary at L1",
+      l1_sets == ["Poison", "Sonic_Attack"], ", ".join(l1_sets))
+ok_f2 = all(p["full_name"] in srv._set_first_two(p["powerset_full_name"]) for p in l1)
+check("both L1 picks are their set's first two", ok_f2,
+      ", ".join(p["full_name"].split(".")[-1] for p in l1))
+# validator: a build with neither of the secondary's first two must be flagged
+f2 = srv._set_first_two("Defender_Ranged.Sonic_Attack")
+stripped = [p for p in sol["powers"] if p["full_name"] not in f2]
+verrs = srv._l1_pick_errors(stripped, "Class_Defender")
+check("validator flags a missing creation pick", len(verrs) == 1 and "creation" in verrs[0],
+      (verrs or ["?"])[0][:80])
+check("validator quiet on the legal build", not srv._l1_pick_errors(sol["powers"], "Class_Defender"))
+
 # ── 4. leveling walk agrees ──────────────────────────────────────────────────
 print("\n── leveling walk on the solved build ──")
 ls = c.post("/build/leveling-steps", json={"archetype": "Defender",
@@ -93,6 +111,11 @@ picks49 = [pk for st in ls["steps"] if st.get("level") == 49 for pk in (st.get("
 names49 = {pk.get("full_name") for pk in picks49}
 heavy49 = [p for p in real if p["full_name"] in names49 and srv._sched_added(p) > 3]
 check("no heavy power picked at 49 in the walk", not heavy49)
+st1 = next((st for st in ls["steps"] if st.get("level") == 1), None)
+check("walk L1 has two picks", st1 and len(st1.get("picks") or []) == 2)
+creation_tips = [t for t in (st1.get("tips") or []) if "creation" in t.lower()]
+check("walk L1 explains the creation choices", len(creation_tips) == 2,
+      creation_tips[0][:80] if creation_tips else "none")
 
 print(f"\n══ {'ALL PASS' if not fails else f'{len(fails)} FAILURE(S): ' + ', '.join(fails)} ══")
 sys.exit(1 if fails else 0)

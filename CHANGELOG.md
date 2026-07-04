@@ -16,6 +16,13 @@
   tab while the old one lingers on the old version. (If that tab was closed, a
   fresh one still opens after a short wait.)
 
+- **Level 1 is now framed as character creation.** In game your level-1 powers are
+  one of the first two powers of your primary AND one of the first two of your
+  secondary (verified against 2,255 master builds) — the plan now always seats a
+  legal creation pair at level 1, the leveling walk says which choice was made and
+  what the other option was, and the validator flags a build that skipped both of
+  a set's first two powers.
+
 ## 0.12.1 — July 4, 2026
 
 - **The decorative frame corners are gone.** The hero/villain identity now lives

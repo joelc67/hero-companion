@@ -48,6 +48,15 @@ for at, groups in srv.POWERSETS["by_archetype"].items():
     verrs = srv._slot_schedule_errors(sol["powers"])
     if verrs:
         problems.append(f"{at}: validator — {verrs[0][:100]}")
+    l1e = srv._l1_pick_errors(sol["powers"], at)
+    if l1e:
+        problems.append(f"{at}: L1 creation rule — {l1e[0][:100]}")
+    if srv.leveling_schedule.eat_type(at) is None:
+        l1 = [p for p in real if int(p["pick_level"]) == 1]
+        if len(l1) != 2 or not all(
+                p["full_name"] in srv._set_first_two(p.get("powerset_full_name") or "") for p in l1):
+            problems.append(f"{at}: bad L1 seating — "
+                            + ", ".join(p["full_name"].split(".")[-1] for p in l1))
     tail = sorted(real, key=lambda p: -int(p["pick_level"]))[:2]
     print(f"  {at:18s} ok — last picks: " + ", ".join(
         f"{p['full_name'].split('.')[-1]}@{p['pick_level']}({1 + srv._sched_added(p)}sl)" for p in tail))

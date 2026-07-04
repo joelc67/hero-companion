@@ -813,6 +813,9 @@ def build_validate():
     sched = _slot_schedule_errors(build.get("powers") or [])
     if sched:
         res.setdefault("errors", []).extend(sched)
+    l1 = _l1_pick_errors(build.get("powers") or [], build.get("archetype"))
+    if l1:
+        res.setdefault("errors", []).extend(l1)
     # Origin-themed pools are one-per-build in game — flag a manual double-pick.
     _origin = sorted({(p.get("full_name") or "").rsplit(".", 1)[0]
                       for p in (build.get("powers") or [])
@@ -1141,20 +1144,63 @@ def _schedule_feasible(real_powers):
     return True
 
 
-def _assign_pick_levels(powers):
-    """Stamp pick_level onto every non-inherent power: natural seating (earliest
-    available first on the real pick ladder), then repaired by swapping heavy late
-    picks with light early ones until the slot schedule is satisfiable. Mutates the
-    power dicts. Returns True when the final assignment is fully feasible."""
+def _set_first_two(ps):
+    """A set's first two PICKABLE powers (the level-1 creation choice), by level then
+    data order. level_available 0 = auto-granted set mechanics (Pack Mentality…),
+    which are never picks."""
+    seq = sorted([x for x in (POWERS.get(ps) or []) if x.get("level_available") != 0],
+                 key=lambda x: (x.get("level_available") or 1))
+    return [x["full_name"] for x in seq[:2]]
+
+
+def _l1_creation_pair(powers, archetype):
+    """The two powers that belong at level 1: in game, character creation picks ONE of
+    the primary's first two powers and ONE of the secondary's first two (master corpus:
+    2202/2211 builds seat exactly primary+secondary at L1; T2-at-1 is common, so neither
+    T1 is forced). Returns (primary_pick, secondary_pick) — either may be None. VEATs
+    are excluded (their two-phase career has its own walk)."""
+    if not archetype or leveling_schedule.eat_type(archetype) == "veat":
+        return None, None
+    groups = POWERSETS["by_archetype"].get(archetype) or {}
+    prims = {e["full_name"] for e in (groups.get("primary") or [])}
+    secs = {e["full_name"] for e in (groups.get("secondary") or [])}
+    by_full = {p.get("full_name"): p for p in powers}
+
+    def _pick(setnames):
+        for ps in {p.get("powerset_full_name") for p in powers}:
+            if ps in setnames:
+                for fn in _set_first_two(ps):        # prefer the T1 when both are in the build
+                    if fn in by_full:
+                        return by_full[fn]
+        return None
+    prim_pick = _pick(prims)
+    sec_pick = _pick(secs)
+    return prim_pick, (sec_pick if sec_pick is not prim_pick else None)
+
+
+def _assign_pick_levels(powers, archetype=None):
+    """Stamp pick_level onto every non-inherent power: the level-1 creation pair first
+    (one primary + one secondary from each set's first two), then natural seating
+    (earliest available first on the real pick ladder), then repaired by swapping heavy
+    late picks with light early ones until the slot schedule is satisfiable. Mutates
+    the power dicts. Returns True when the final assignment is fully feasible."""
     real = [p for p in powers if not (p.get("full_name") or "").startswith("Inherent")]
     for p in powers:
         if (p.get("full_name") or "").startswith("Inherent"):
             p["pick_level"] = 1
     if not real:
         return True
-    order = sorted(real, key=_sched_avail)          # stable → in-set tier order survives
     ladder = list(leveling_schedule.POWER_PICK_LEVELS)
-    seats, si = [], 0                                # [[level, power], ...] ascending
+    seats, pinned = [], 0                            # [[level, power], ...] ascending
+    l1a, l1b = _l1_creation_pair(real, archetype)
+    for lp in (l1a, l1b):
+        if lp is not None:
+            seats.append([ladder[pinned], lp])       # the two level-1 seats
+            pinned += 1
+    seated = {id(p) for _, p in seats}
+    order = sorted([p for p in real if id(p) not in seated],
+                   key=_sched_avail)                 # stable → in-set tier order survives
+    si = pinned
     for p in order:
         while si < len(ladder) and ladder[si] < _sched_avail(p):
             si += 1
@@ -1181,10 +1227,11 @@ def _assign_pick_levels(powers):
     for _ in range(80):
         if _excess() == 0:
             break
-        order_by_added = sorted(range(len(seats)), key=lambda k: _sched_added(seats[k][1]))
+        # The level-1 creation pair (seats < pinned) never moves — the game fixes it.
+        order_by_added = sorted(range(pinned, len(seats)), key=lambda k: _sched_added(seats[k][1]))
         improved = False
         # 1) plain swap: a heavy late power trades seats with a light early one.
-        for j in sorted(range(len(seats)), key=lambda j: -_sched_added(seats[j][1])):
+        for j in sorted(range(pinned, len(seats)), key=lambda j: -_sched_added(seats[j][1])):
             for k in order_by_added:
                 if k >= j or _sched_added(seats[k][1]) >= _sched_added(seats[j][1]):
                     continue
@@ -1255,6 +1302,30 @@ def _sched_budget_caps(powers):
         else:
             consumed += add
     return caps
+
+
+def _l1_pick_errors(powers, archetype):
+    """Character creation picks one of the primary's first two powers and one of the
+    secondary's first two — a build containing neither (for either set) can't exist.
+    (Corpus-verified: 2202/2211 master builds seat exactly primary+secondary at L1.)"""
+    if not archetype or leveling_schedule.eat_type(archetype) in ("veat", "kheldian"):
+        return []
+    groups = POWERSETS["by_archetype"].get(archetype) or {}
+    have = {(p.get("full_name") or "") for p in powers or []}
+    build_sets = {p.get("powerset_full_name") for p in powers or []}
+    errs = []
+    for label, grp in (("primary", "primary"), ("secondary", "secondary")):
+        names = {e["full_name"] for e in (groups.get(grp) or [])}
+        ps = next((s for s in build_sets if s in names), None)
+        if not ps:
+            continue
+        first2 = _set_first_two(ps)
+        if first2 and not (set(first2) & have):
+            disp = [fn.split(".")[-1].replace("_", " ") for fn in first2]
+            errs.append(f"At character creation the game makes you take {disp[0]} or "
+                        f"{disp[1]} (the first two {ps.split('.')[-1].replace('_', ' ')} "
+                        f"powers) — this build has neither.")
+    return errs
 
 
 def _slot_schedule_errors(powers):
@@ -2013,7 +2084,7 @@ def build_solve():
                                                       role=role, content=content)
             sol["powers"] = _endurance_relief_pass(sol["powers"], archetype, ctx, _rescap)
 
-        if _assign_pick_levels(sol["powers"]) or _sched_round == 1:
+        if _assign_pick_levels(sol["powers"], archetype) or _sched_round == 1:
             break
         caps = _sched_budget_caps(sol["powers"])
         if not caps:
@@ -2924,7 +2995,7 @@ def ai_generate_solved():
                                    archetype=archetype)
             # Pick order must fit the slot schedule (a 49 pick holds at most 4 slots) —
             # if it can't be repaired by reordering, cap the tail and re-solve once.
-            if _assign_pick_levels(sol["powers"]) or _sched_round == 1:
+            if _assign_pick_levels(sol["powers"], archetype) or _sched_round == 1:
                 break
             caps = _sched_budget_caps(sol["powers"])
             if not caps:
@@ -4436,7 +4507,7 @@ def leveling_steps():
     # powers already picked) — recompute the seating slot-aware unless the build carries
     # a complete assignment that already works.
     if not all(p.get("pick_level") for p in real) or not _schedule_feasible(real):
-        _assign_pick_levels(powers)
+        _assign_pick_levels(powers, archetype)
     real.sort(key=lambda p: (int(p["pick_level"]), _lvl_avail(p)))
     picks_by_level = defaultdict(list)
     for p in real:
@@ -4518,6 +4589,18 @@ def leveling_steps():
         else:
             s = prev
         tips = []
+        # Level 1 = character creation: the game offers one of the FIRST TWO powers of
+        # each of your two main sets — frame the picks as those choices, not free picks.
+        if lvl == 1 and not veat and len(picks) >= 1:
+            for p in picks:
+                ps = p.get("powerset_full_name")
+                f2 = _set_first_two(ps) if ps and not ps.startswith(("Pool.", "Epic.")) else []
+                if len(f2) == 2 and p["full_name"] in f2:
+                    other = [fn for fn in f2 if fn != p["full_name"]][0]
+                    nm = p.get("display_name") or p["full_name"].split(".")[-1].replace("_", " ")
+                    tips.append(f"At creation the game offers {ps.split('.')[-1].replace('_', ' ')}'s "
+                                f"first two powers — this plan takes {nm} "
+                                f"(the other option is {other.split('.')[-1].replace('_', ' ')}).")
         for i, (tlvl, msg) in enumerate(_LEVEL_TIPS):
             if lvl >= tlvl and i not in tips_done:
                 tips.append(msg)
