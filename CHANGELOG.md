@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## 0.12.1 — unreleased
+## 0.12.1 — July 4, 2026
 
 - **The decorative frame corners are gone.** The hero/villain identity now lives
   entirely in the color themes; the app uses the full window edge to edge.
