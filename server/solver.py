@@ -935,11 +935,12 @@ def _fill_generated_empties(powers, slots_left):
         types = {t.lower() for t in (p.get("accepted_enhancement_types") or [])}
         if not types:
             continue                              # e.g. Rest/Walk — nothing to enhance
-        # A long-recharge click (Hasten) wants 3 Recharge toward perma. Otherwise fill ONE
-        # slot with the power's DEFINING aspect — an armor → Resist, a debuff toggle → its
-        # debuff — NOT a recharge filler (effects-first order, recharge/endrdx last).
+        # A long-recharge click (Hasten) gets TWO Recharge IOs, never three — the third
+        # is ED-crushed to ~13% of face value, a wasted slot (master rule: "never go past
+        # two slots on Hasten"). Otherwise fill ONE slot with the power's DEFINING aspect —
+        # an armor → Resist, a debuff toggle → its debuff — NOT a recharge filler.
         if "recharge reduction" in types and (p.get("base_recharge") or 0) >= 60:
-            order, want = ["recharge reduction"], 3
+            order, want = ["recharge reduction"], 2
         else:
             order = [t for t in _FILL_PRIMARY if t in types] or ["recharge reduction"]
             want = 1
