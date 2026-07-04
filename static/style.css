@@ -42,14 +42,31 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
 .muted { color: var(--muted); }
 .small { font-size: 12px; }
 
-/* Overview bar — the build's vitals in ONE horizontal line, sticky under the header. */
-.overview-bar {
+/* MASTHEAD: identity + vitals + icon actions as ONE tight sticky block. */
+#masthead {
   position: sticky; top: 0; z-index: 30;
+  background: color-mix(in srgb, var(--panel) 92%, black);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 3px 12px #0007;
+  padding: 0;
+  display: block;
+}
+.tb-row { display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; padding: 5px 60px 4px; flex-wrap: wrap; }
+.iconbtn {
+  width: 27px; height: 27px; padding: 0; display: inline-flex; align-items: center;
+  justify-content: center; font-size: 14px; line-height: 1;
+  background: var(--panel2); border: 1px solid var(--border); border-radius: 7px;
+  cursor: pointer; color: var(--ink); text-decoration: none;
+}
+.iconbtn:hover { border-color: var(--accent); }
+.cap-chips { display: flex; gap: 6px; margin: 4px 0 6px; }
+
+/* Overview bar — the build's vitals in ONE horizontal line, inside the masthead. */
+.overview-bar {
   display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
-  padding: 5px 12px; margin: 0 12px;
-  background: color-mix(in srgb, var(--panel) 88%, black); border: 1px solid var(--border);
-  border-radius: 0 0 10px 10px; border-top: none;
-  font-size: 11px; box-shadow: 0 3px 12px #0007;
+  padding: 4px 60px 6px;
+  font-size: 11px;
 }
 .overview-bar.hidden { display: none; }
 .ov-group { color: var(--muted); font-weight: 700; font-size: 9.5px; letter-spacing: .06em; margin: 0 3px 0 8px; }

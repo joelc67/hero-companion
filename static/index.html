@@ -146,29 +146,28 @@
   <div id="update-banner" class="update-banner hidden"></div>
 
   <div id="page-scroll">
-  <header>
-    <h1 id="app-title"><span id="app-glyph">🦸</span> <span id="app-name">Hero Companion</span>
-      <span class="app-tag muted">your City of Heroes sidekick</span>
-      <span id="db-version" class="muted"></span></h1>
-    <div class="legend">
-      <span class="chip cap-def">Defense soft cap 45%</span>
-      <span class="chip cap-res" id="res-cap-chip">Resistance hard cap 75%</span>
-      <span id="claude-status" class="chip">AI: checking…</span>
-      <button id="save-btn" class="chip linkchip" title="Save this character's plan + progress so you can resume later">💾 Save</button>
-      <span id="autosave-ind" class="muted small" title="Auto-saves in the background every couple of minutes when something changes"></span>
-      <button id="alignment-btn" class="chip linkchip" title="Switch alignment — reskins the whole app">🦹 Go Villain</button>
-      <button id="start-over-btn" class="chip linkchip" title="Change how you started">↺ Start over</button>
-      <a id="help-btn" class="chip linkchip" href="/static/help/HeroCompanion-Help.pdf" target="_blank"
-         rel="noopener" title="Open the user guide + release notes (PDF)">❓ Help</a>
-      <button id="bug-btn" class="chip linkchip" title="Something wrong? Opens a pre-filled bug report (your versions auto-included; nothing is sent until you post it)">🐞 Report a bug</button>
-      <button id="champ-btn" class="chip linkchip" title="Think your current build beats the shipped champion? Save it as a candidate file + open the submission queue — the hub re-verifies every claim">🏆 Submit champion</button>
-      <button id="update-btn" class="chip linkchip" title="Compare your version against the latest release on GitHub — works whether or not startup checks are on">⟳ Updates</button>
+  <!-- MASTHEAD: one tight, balanced strip — identity left, vitals center-line,
+       icon-only actions right. Everything else lives below it. Sticky. -->
+  <header id="masthead">
+    <div class="tb-row">
+      <h1 id="app-title"><span id="app-glyph">🦸</span> <span id="app-name">Hero Companion</span>
+        <span class="app-tag muted">your City of Heroes sidekick</span>
+        <span id="db-version" class="muted"></span></h1>
+      <div class="legend">
+        <span id="autosave-ind" class="muted small" title="Auto-saves in the background when something changes"></span>
+        <button id="save-btn" class="iconbtn" title="Save this character's plan + progress so you can resume later">💾</button>
+        <a id="help-btn" class="iconbtn" href="/static/help/HeroCompanion-Help.pdf" target="_blank"
+           rel="noopener" title="User guide + release notes (PDF)">❓</a>
+        <button id="bug-btn" class="iconbtn" title="Report a bug — opens a pre-filled report; nothing is sent until you post it">🐞</button>
+        <button id="champ-btn" class="iconbtn" title="Submit your build as a champion candidate — the hub re-verifies every claim">🏆</button>
+        <button id="update-btn" class="iconbtn" title="Check for updates">⟳</button>
+        <button id="alignment-btn" class="iconbtn" title="Switch alignment — reskins the whole app">🦹</button>
+        <button id="start-over-btn" class="iconbtn" title="Change how you started">↺</button>
+      </div>
     </div>
+    <!-- Sidekick-style overview: the whole build's vitals in ONE horizontal line. -->
+    <div id="overview-bar" class="overview-bar hidden"></div>
   </header>
-
-  <!-- Sidekick-style overview: the whole build's vitals in ONE horizontal line,
-       sticky while you scroll. Fills from every recompute. -->
-  <div id="overview-bar" class="overview-bar hidden"></div>
 
   <main>
     <!-- LEFT: Build Builder -->
@@ -267,6 +266,10 @@
     <aside class="rail">
     <section id="stats" class="panel">
       <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span></h2>
+      <div class="cap-chips">
+        <span class="chip cap-def">Defense soft cap 45%</span>
+        <span class="chip cap-res" id="res-cap-chip">Resistance hard cap 75%</span>
+      </div>
 
       <label class="incarnate-toggle" title="Fold incarnate buffs (Destiny/Hybrid, e.g. Barrier) into the totals to match Mids' fully-buffed display.">
         <input type="checkbox" id="incarnate-peak-toggle">

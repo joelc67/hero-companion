@@ -855,7 +855,10 @@ function applyAlignment(al) {
   if ($("app-glyph")) $("app-glyph").textContent = glyph;
   const tagEl = document.querySelector(".app-tag"); if (tagEl) tagEl.textContent = tag;
   const btn = $("alignment-btn");
-  if (btn) btn.textContent = al === "villain" ? "🦸 Go Hero" : "🦹 Go Villain";
+  if (btn) {
+    btn.textContent = al === "villain" ? "🦸" : "🦹";
+    btn.title = al === "villain" ? "Go Hero — reskin the whole app" : "Go Villain — reskin the whole app";
+  }
   document.title = name + " — City of Heroes";
   document.querySelectorAll(".align-card").forEach(c =>
     c.classList.toggle("on", c.dataset.align === al));
