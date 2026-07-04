@@ -18,12 +18,12 @@ body {
   font-family: "Segoe UI", system-ui, sans-serif;
   background: var(--bg);
   color: var(--ink);
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 13px;          /* density pass: tighter, Sidekick-style */
+  line-height: 1.42;
   -webkit-font-smoothing: antialiased;
 }
 header {
-  padding: 10px 60px;
+  padding: 7px 60px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -42,13 +42,34 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
 .muted { color: var(--muted); }
 .small { font-size: 12px; }
 
+/* Overview bar — the build's vitals in ONE horizontal line, sticky under the header. */
+.overview-bar {
+  position: sticky; top: 0; z-index: 30;
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+  padding: 5px 12px; margin: 0 12px;
+  background: color-mix(in srgb, var(--panel) 88%, black); border: 1px solid var(--border);
+  border-radius: 0 0 10px 10px; border-top: none;
+  font-size: 11px; box-shadow: 0 3px 12px #0007;
+}
+.overview-bar.hidden { display: none; }
+.ov-group { color: var(--muted); font-weight: 700; font-size: 9.5px; letter-spacing: .06em; margin: 0 3px 0 8px; }
+.ov-group:first-child { margin-left: 0; }
+.ov-cell { display: inline-flex; flex-direction: column; align-items: center; min-width: 34px;
+  padding: 1px 5px; border-radius: 5px; background: var(--panel2); line-height: 1.15; }
+.ov-num { font-weight: 700; font-size: 12px; }
+.ov-lab { font-size: 8.5px; color: var(--muted); letter-spacing: .04em; }
+.ov-good .ov-num { color: var(--def); }
+.ov-mid .ov-num { color: var(--warn); }
+.ov-dim .ov-num { color: var(--muted); }
+.ov-plain .ov-num { color: var(--ink); }
+
 /* Two zones, not three frames: a wide BUILD column + a right rail (controls over stats).
    The whole PAGE scrolls (no per-panel scroll boxes); the stats rail sticks in view. */
 main {
   display: grid;
   grid-template-columns: minmax(0, 1.65fr) minmax(330px, 1fr);
-  gap: 12px;
-  padding: 12px;
+  gap: 10px;
+  padding: 10px 12px;
   align-items: start;
 }
 /* Right rail: live stats + AI controls stacked. NO sticky, NO inner scrollbar — the whole
@@ -56,7 +77,13 @@ main {
 .rail {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+}
+/* Wide screens: the rail's panels sit SIDE BY SIDE — stats and controls both visible,
+   page height nearly halves. (The Sidekick-style "one view" ask.) */
+@media (min-width: 1460px) {
+  main { grid-template-columns: minmax(0, 1.15fr) minmax(660px, 1.3fr); }
+  .rail { display: grid; grid-template-columns: 1fr 1fr; align-items: start; }
 }
 @media (max-width: 980px) {
   main { grid-template-columns: 1fr; }
@@ -65,7 +92,7 @@ main {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 16px 18px;
+  padding: 10px 13px;
   box-shadow: 0 1px 2px rgba(0,0,0,.25), 0 6px 20px rgba(0,0,0,.18);
 }
 /* Type scale: h2 = panel title (prominent), h3 = quiet uppercase section eyebrow. */

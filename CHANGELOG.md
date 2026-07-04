@@ -2,6 +2,12 @@
 
 ## 0.11.2 — unreleased
 
+- **Overview bar**: your build's vitals — typed and positional defense, resistance,
+  recharge, HP, ST/AoE DPS — in one color-coded line that stays visible while you
+  scroll. Green means you've hit the current-meta mark.
+- **Tighter layout**: on wide screens the stats and controls panels sit side by side
+  (three columns total), paddings and text are denser — much more of the build fits
+  in one view.
 - During a one-click update, the old browser tab now says plainly that the app
   reopens in a new tab and this one can be closed — and it refreshes itself into
   the new version the moment you look at it (browsers throttle background tabs,

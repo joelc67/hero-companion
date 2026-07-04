@@ -1954,7 +1954,46 @@ async function recompute() {
   renderStats(totals);
   renderValidation(validation);
   LAST_TOTALS = (totals && (totals.totals || totals)) || null;  // feed the tray rotation + notes
+  updateOverviewBar(LAST_TOTALS);
   refreshBuildViews();   // keep the always-visible respec-order + tray sections live
+}
+
+// ── Overview bar: the build's vitals in one horizontal line (Sidekick-style) ─
+// Color logic: defense vs the current-meta 35 (green ≥35, amber ≥25), resistance
+// vs the AT cap fraction, recharge green ≥70. Dim = not there yet, never red — the
+// bar is a dashboard, not a nag.
+function _ovCell(label, val, cls) {
+  return `<span class="ov-cell ${cls}"><span class="ov-num">${val}</span><span class="ov-lab">${label}</span></span>`;
+}
+function _ovDef(v) { return v >= 35 ? "ov-good" : v >= 25 ? "ov-mid" : "ov-dim"; }
+function updateOverviewBar(t) {
+  const bar = $("overview-bar");
+  if (!bar) return;
+  if (!t || !build.powers.length) { bar.classList.add("hidden"); return; }
+  const num = (x) => Math.round((x && typeof x === "object" ? x.value : x) || 0);
+  const d = t.defense || {}, r = t.resistance || {}, off = t.offense || {};
+  const rcap = Math.round(((t.caps || {}).resistance || 75));
+  const _ovRes = (v) => v >= rcap - 5 ? "ov-good" : v >= rcap * 0.6 ? "ov-mid" : "ov-dim";
+  const rech = num(t.recharge);
+  bar.innerHTML =
+    `<span class="ov-group">DEF</span>`
+    + _ovCell("S/L", num(d.Smashing), _ovDef(num(d.Smashing)))
+    + _ovCell("F/C", Math.min(num(d.Fire), num(d.Cold)), _ovDef(Math.min(num(d.Fire), num(d.Cold))))
+    + _ovCell("Mel", num(d.Melee), _ovDef(num(d.Melee)))
+    + _ovCell("Rng", num(d.Ranged), _ovDef(num(d.Ranged)))
+    + _ovCell("AoE", num(d.AoE), _ovDef(num(d.AoE)))
+    + `<span class="ov-group">RES</span>`
+    + _ovCell("S/L", num(r.Smashing), _ovRes(num(r.Smashing)))
+    + _ovCell("F/C", Math.min(num(r.Fire), num(r.Cold)), _ovRes(Math.min(num(r.Fire), num(r.Cold))))
+    + _ovCell("E/N", Math.min(num(r.Energy), num(r.Negative)), _ovRes(Math.min(num(r.Energy), num(r.Negative))))
+    + `<span class="ov-group">BUILD</span>`
+    + _ovCell("Rech", `+${rech}%`, rech >= 70 ? "ov-good" : rech >= 40 ? "ov-mid" : "ov-dim")
+    + _ovCell("Rec", `+${num(t.recovery)}%`, "ov-plain")
+    + _ovCell("HP", `+${num(t.max_hp)}%`, "ov-plain")
+    + `<span class="ov-group">DPS</span>`
+    + _ovCell("ST", num(off.st_dps), "ov-plain")
+    + _ovCell("AoE", num(off.aoe_dps), "ov-plain");
+  bar.classList.remove("hidden");
 }
 let LAST_TOTALS = null;
 
