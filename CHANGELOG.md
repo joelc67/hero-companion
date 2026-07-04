@@ -1,5 +1,13 @@
 # Hero Companion — What's New
 
+## 0.12.1 — unreleased
+
+- **Fixed: inherent powers shown as picks.** Health, Stamina, and other inherents are
+  granted automatically by the game — the respec order no longer tells you to "take"
+  them at a level (they get their own "automatic" footer line with slot counts), and
+  their cards wear an "auto" badge instead of a level. Real picks' derived levels no
+  longer shift to make room for them.
+
 ## 0.12.0 — July 4, 2026
 
 **The layout release** — a complete redesign around one idea: a tight, horizontal,
