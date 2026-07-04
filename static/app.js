@@ -963,14 +963,19 @@ window.oneClickUpdate = async function (latest, pageUrl) {
       + `<button class="linkbtn quiet" onclick="_ubHide()">Dismiss</button>`);
     return;
   }
-  _ubShow(`🔧 Installing v${escHtml(latest)}… the app will restart itself; this page reconnects automatically.`);
+  _ubShow(`🔧 Installing v${escHtml(latest)}… the app restarts itself and opens in a <b>new tab</b> — `
+    + `you can close this one. (It'll also refresh itself into the new version if you keep it.)`);
   const before = META ? META.app_version : "";
-  const timer = setInterval(async () => {
+  const check = async () => {
     try {
       const m = await fetch("/meta").then(x => x.json());
       if (m.app_version && m.app_version !== before) { clearInterval(timer); location.reload(); }
     } catch { /* app is mid-restart — keep waiting */ }
-  }, 2000);
+  };
+  const timer = setInterval(check, 2000);
+  // Browsers throttle background-tab timers (the field-test stale-tab report) — the
+  // moment this tab regains focus, check immediately instead of waiting out the throttle.
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) check(); });
 };
 async function runStartupUpdateCheck() {
   const r = await api("/meta/update-check").catch(() => null);

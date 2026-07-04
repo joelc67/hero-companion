@@ -1,5 +1,12 @@
 # Hero Companion — What's New
 
+## 0.11.2 — unreleased
+
+- During a one-click update, the old browser tab now says plainly that the app
+  reopens in a new tab and this one can be closed — and it refreshes itself into
+  the new version the moment you look at it (browsers throttle background tabs,
+  which is why it previously seemed stuck on the old version).
+
 ## 0.11.1 — July 3, 2026
 
 - **The optimizer now completes winter sets to 6 pieces** when typed defense is the
