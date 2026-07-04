@@ -2,6 +2,12 @@
 
 ## 0.12.1 — unreleased
 
+- **Fixed: epic-pool pets taken without their prerequisites.** The game requires two
+  other powers from an epic pool before its top-tier powers (Ice Elemental, Summon
+  Spiderlings…) and one before the mid tier — the optimizer now takes the lower
+  powers first, the search respects the ladder, and the validator counts precisely
+  ("requires 2 other Ice Mastery powers — this build has 1").
+
 - **Fixed: inherent powers shown as picks.** Health, Stamina, and other inherents are
   granted automatically by the game — the respec order no longer tells you to "take"
   them at a level (they get their own "automatic" footer line with slot counts), and
