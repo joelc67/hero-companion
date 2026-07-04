@@ -1,5 +1,13 @@
 # Hero Companion — What's New
 
+## 0.11.1 — July 3, 2026
+
+- **The optimizer now completes winter sets to 6 pieces** when typed defense is the
+  goal — the big fire/cold defense bonuses the master builder flagged as missed are
+  now chased properly (typed-defense targets carry full priority in the solver).
+- **Wizard-built kits include procs by default.** A freshly generated build has no
+  slotting to "preserve", so the proc pass now always runs on it.
+
 ## 0.11.0 — July 3, 2026
 
 **The master-class release** — the optimizer went to school on 4,000+ builds shared
