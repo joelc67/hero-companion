@@ -120,11 +120,11 @@ try:
 except Exception:  # noqa: BLE001 — missing/broken config just disables the links
     CLIENT_CONFIG = {}
 
-# AI seam — the standalone (packaged) build ships AI-OFF: the planner is fully
-# deterministic, the assistant needs a paid Claude key, and a permanently dead
-# panel reads as broken. HC_AI=1 forces it on (bring-your-own-key), HC_AI=0
-# forces it off; running from source defaults on.
-AI_ENABLED = os.environ.get("HC_AI", "0" if getattr(sys, "frozen", False) else "1") == "1"
+# AI seam — AI is OPT-IN everywhere (user decision 2026-07-04: "no mention of an
+# AI assistant"): the planner is fully deterministic and the product has ONE face.
+# HC_AI=1 enables the assistant (hub work / bring-your-own-key); default is off,
+# packaged or from source alike.
+AI_ENABLED = os.environ.get("HC_AI") == "1"
 
 
 def _ai_gate():
