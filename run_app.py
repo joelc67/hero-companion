@@ -8,6 +8,8 @@ Console output goes to %APPDATA%\\HeroCompanion\\app.log in windowed mode.
 Also runs from source:  python run_app.py   (console mode, Ctrl+C to stop)
 Env knobs: PORT (default 5000), HC_NO_BROWSER=1 (don't auto-open a browser tab).
 """
+import atexit
+import json
 import os
 import sys
 import threading
@@ -30,6 +32,61 @@ if _WINDOWED:
     sys.stdout = sys.stderr = _log
 
 import server  # noqa: E402  — the Flask app module; loads the game data on import
+
+
+# ── SINGLE INSTANCE (field report: THREE copies running at once) ─────────────
+# Every extra launch used to start another server on the next port while the
+# browser tab stayed on the oldest copy — so users saw stale versions forever.
+# The packaged app now defers to a live copy instead of starting a second one.
+_APPDIR = os.path.join(os.environ.get("APPDATA") or os.path.expanduser("~"), "HeroCompanion")
+_LOCK = os.path.join(_APPDIR, "instance.lock")
+_SINGLE = getattr(sys, "frozen", False) or os.environ.get("HC_SINGLE_INSTANCE") == "1"
+
+
+def _live_instance_port():
+    """Port of an already-running copy (lockfile + live /meta probe), or None."""
+    try:
+        with open(_LOCK, encoding="utf-8") as f:
+            port = int(json.load(f).get("port", 0))
+        if not port:
+            return None
+        import urllib.request
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/meta", timeout=2) as r:
+            if json.load(r).get("app_version"):
+                return port
+    except Exception:  # noqa: BLE001 — no lock / stale lock / dead instance
+        return None
+    return None
+
+
+def _write_lock(port):
+    try:
+        os.makedirs(_APPDIR, exist_ok=True)
+        with open(_LOCK, "w", encoding="utf-8") as f:
+            json.dump({"port": port, "pid": os.getpid()}, f)
+        atexit.register(_clear_lock)
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def _clear_lock():
+    try:
+        with open(_LOCK, encoding="utf-8") as f:
+            if int(json.load(f).get("pid", -1)) == os.getpid():
+                os.remove(_LOCK)
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def _kill_other_copies():
+    """After a self-update, any straggler process still serves the PRE-upgrade code
+    (Windows keeps the old image alive) — remove them so the fresh copy owns port 5000."""
+    import subprocess
+    try:
+        subprocess.run(["taskkill", "/F", "/IM", "HeroCompanion.exe",
+                        "/FI", f"PID ne {os.getpid()}"], capture_output=True, timeout=15)
+    except Exception:  # noqa: BLE001
+        pass
 
 
 def _pick_port(start):
@@ -59,6 +116,7 @@ def _run_tray(port):
 
         def _quit(icon, item):
             icon.stop()
+            _clear_lock()          # os._exit skips atexit — release the instance lock here
             os._exit(0)
 
         icon = pystray.Icon(
@@ -74,6 +132,17 @@ def _run_tray(port):
 
 
 def main():
+    after_update = "--after-update" in sys.argv
+    if _SINGLE and after_update:
+        _kill_other_copies()
+    elif _SINGLE:
+        existing = _live_instance_port()
+        if existing:
+            print(f"Hero Companion is already running at http://localhost:{existing} — "
+                  "opening that copy instead of starting a second one.")
+            if os.environ.get("HC_NO_BROWSER") != "1":
+                webbrowser.open(f"http://localhost:{existing}")
+            return
     want = int(os.environ.get("PORT", "5000"))
     port = _pick_port(want)
     print(f"Hero Companion v{server.APP_VERSION} — model v{__import__('first_principles').MODEL_VERSION}"
@@ -82,11 +151,13 @@ def main():
         print(f"Port {want} is busy (another copy running?) — using {port} instead.")
     print(f"Running at http://localhost:{port}")
 
+    if _SINGLE:
+        _write_lock(port)
     threading.Thread(
         target=lambda: server.app.run(host="127.0.0.1", port=port, debug=False),
         daemon=True).start()
     if os.environ.get("HC_NO_BROWSER") != "1":
-        if "--after-update" in sys.argv:
+        if after_update:
             # Relaunched by the installer after a self-update. The tab the user
             # clicked "Update now" in is polling us and will reload itself into
             # the new version — give it time to reconnect before opening a

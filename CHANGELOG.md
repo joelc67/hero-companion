@@ -1,5 +1,18 @@
 # Hero Companion — What's New
 
+## 0.12.3 — unreleased
+
+- **Only one copy of the app can run.** Launching Hero Companion while it's already
+  running now just opens the running copy's page instead of silently starting a
+  second (or third) hidden copy on another port — the cause of "the app shows no
+  difference after an update" reports: the browser was talking to a leftover old
+  copy the whole time. After a self-update, any leftover old copies are shut down
+  so the new version is the one you see.
+
+- **Fixed: a generated build's pick levels were dropped when loading an
+  AI-designed tier**, so the build grid fell back to naive level badges (Alkaloid
+  AND Envenom both shown at level 1). The seated pick levels now survive the load.
+
 ## 0.12.2 — July 4, 2026
 
 - **Fixed: slots the game could never grant.** An enhancement slot is earned at a

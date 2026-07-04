@@ -3595,6 +3595,11 @@ async function applyGeneratedBuild(res) {
       ? p.include_in_totals : (p.power_type === 1 || p.power_type === 2),
     slotCount: p.slotCount,
     slots: p.slots,
+    // The server seats pick levels around the slotting + the creation rules —
+    // dropping this field made the wall badge the first two cards "~L1" (field
+    // report: Alkaloid AND Envenom both shown as level-1 choices).
+    pick_level: p.pick_level,
+    level_available: p.level_available,
   }));
 
   // Incarnates
