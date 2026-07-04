@@ -2,6 +2,9 @@
 
 ## 0.11.2 — unreleased
 
+- **No AI anywhere.** The panel is simply the Build Assistant — deterministic presets,
+  goals, and instant Solve. (The AI seam still exists for those who bring their own
+  key, but it's opt-in and invisible otherwise.)
 - **The build is now an icon grid** (Sidekick-style): taken powers appear as compact
   cards — power icon, name, level badge — with their slotted enhancements as an icon
   row (IO level under each), arranged in three level columns (1–12 / 14–28 / 30–49).
