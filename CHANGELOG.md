@@ -2,6 +2,9 @@
 
 ## 0.12.1 — unreleased
 
+- **The decorative frame corners are gone.** The hero/villain identity now lives
+  entirely in the color themes; the app uses the full window edge to edge.
+
 - **Fixed: epic-pool pets taken without their prerequisites.** The game requires two
   other powers from an epic pool before its top-tier powers (Ice Elemental, Summon
   Spiderlings…) and one before the mid tier — the optimizer now takes the lower

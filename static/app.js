@@ -883,17 +883,6 @@ window.toggleAlignment = function () {
 };
 
 
-// Bottom frame corners appear only at the very bottom of the scrolled content —
-// an end-of-page flourish, not a permanent overlay.
-function updateBottomCorners() {
-  const el = $("page-scroll");
-  if (!el) return;
-  const atBottom = el.scrollHeight - (el.scrollTop + el.clientHeight) <= 8;
-  document.querySelectorAll(".corner-deco.bl, .corner-deco.br")
-    .forEach(c => c.classList.toggle("show", atBottom));
-}
-
-
 // VEAT BRANCH PAIRING: a Soldier/Widow makes ONE choice — the branch — not two independent
 // set picks (master corpus: Bane↔Bane Training, Crab↔Crab Training, Night Widow↔Widow
 // Teamwork; cross-branch combos are impossible in game). Picking either side selects its mate.
@@ -1101,11 +1090,6 @@ async function init() {
   document.querySelectorAll(".align-card").forEach(c =>
     c.addEventListener("click", () => applyAlignment(c.dataset.align)));
   applyAlignment(localStorage.getItem("cohAlignment") || "hero");
-  const _psc = $("page-scroll");
-  if (_psc) _psc.addEventListener("scroll", updateBottomCorners, { passive: true });
-  window.addEventListener("resize", updateBottomCorners);
-  setInterval(updateBottomCorners, 1200);   // content height changes after solves/renders
-  updateBottomCorners();
   if ($("alignment-btn")) $("alignment-btn").addEventListener("click", toggleAlignment);
 
   // pool selectors (4)

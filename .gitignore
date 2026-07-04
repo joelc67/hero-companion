@@ -37,3 +37,4 @@ gamedata/
 .DS_Store
 Thumbs.db
 *.swp
+settings.json

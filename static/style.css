@@ -864,35 +864,9 @@ body.theme-villain #alignment-btn { border-color: #27395c; color: #7ec8ff; }
 /* Buttons/accent surfaces pick up the alignment automatically via --accent */
 body.theme-villain button.primary, body.theme-villain .entry-go { color: var(--accent); }
 
-/* ── ALIGNMENT CORNER FRAME — picture-frame corner brackets (2026-07-02 v2: the first
-   pass read as "thin lines"; these are SOLID frame corners with a medallion at the joint).
-   Fixed to the viewport, above panels (z-index 2) but always below modals (50) and never
-   clickable. One SVG per theme, mirrored into the other three corners via transform. */
-.corner-deco {
-  position: fixed; width: 118px; height: 118px; z-index: 2;
-  pointer-events: none;
-  background-repeat: no-repeat; background-size: contain;
-}
-.corner-deco.tl { top: 0; left: 0; }
-.corner-deco.tr { top: 0; right: 0; transform: scaleX(-1); }
-/* Bottom corners are an end-of-page flourish: hidden until the scroll box hits bottom */
-.corner-deco.bl { bottom: 0; left: 0; transform: scaleY(-1); opacity: 0; transition: opacity 0.3s; }
-.corner-deco.br { bottom: 0; right: 0; transform: scale(-1, -1); opacity: 0; transition: opacity 0.3s; }
-.corner-deco.bl.show, .corner-deco.br.show { opacity: 0.85; }
+/* (The alignment corner-frame graphics were removed 2026-07-04 by user preference —
+   the hero/villain THEME COLORS carry the alignment identity on their own.) */
 main, header, footer { position: relative; z-index: 1; }
-
-/* HERO: art-deco GOLD frame corner — thick L-band, blue inner pinstripe, star medallion */
-body.theme-hero .corner-deco {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'%3E%3Cpath fill='%234da3ff' d='M0 0 H148 L158 7 L148 13 H13 V148 L7 158 L0 148 Z'/%3E%3Cpath fill='%23153060' d='M17 17 H126 L133 20.5 L126 24 H24 V126 L20.5 133 L17 126 Z'/%3E%3Cpath fill='%23ffd166' d='M19 19 H124 L129 20.5 L124 22 H22 V124 L20.5 129 L19 124 Z'/%3E%3Ccircle cx='26' cy='26' r='24' fill='%23153060' stroke='%234da3ff' stroke-width='4'/%3E%3Cpath fill='%23ffd166' d='M26 8 l5.3 10.9 12 1.7 -8.7 8.5 2.1 11.9 -10.7 -5.6 -10.7 5.6 2.1 -11.9 -8.7 -8.5 12 -1.7 z'/%3E%3C/svg%3E");
-}
-
-/* VILLAIN: riveted CRIMSON frame corner — claw-tipped L-band, spider medallion */
-body.theme-villain .corner-deco {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'%3E%3Cpath fill='%23b3262e' d='M0 0 H146 L158 13 L146 13 H13 V146 L13 158 L0 146 Z'/%3E%3Cpath fill='%23701318' d='M30 13 l5 8 5 -8 z M55 13 l5 8 5 -8 z M80 13 l5 8 5 -8 z M105 13 l5 8 5 -8 z M13 30 l8 5 -8 5 z M13 55 l8 5 -8 5 z M13 80 l8 5 -8 5 z M13 105 l8 5 -8 5 z'/%3E%3Ccircle cx='26' cy='26' r='24' fill='%231a0d10' stroke='%23ff5252' stroke-width='4'/%3E%3Cg fill='%23ff5252'%3E%3Cellipse cx='26' cy='30' rx='6.5' ry='9'/%3E%3Ccircle cx='26' cy='18' r='4.5'/%3E%3C/g%3E%3Cg stroke='%23ff5252' stroke-width='2.5' fill='none'%3E%3Cpath d='M20 24 q-9 -5 -12 -13'/%3E%3Cpath d='M19 30 q-10 -1 -15 5'/%3E%3Cpath d='M20 35 q-8 5 -9 13'/%3E%3Cpath d='M32 24 q9 -5 12 -13'/%3E%3Cpath d='M33 30 q10 -1 15 5'/%3E%3Cpath d='M32 35 q8 5 9 13'/%3E%3C/g%3E%3C/svg%3E");
-}
-
-/* Corners step aside on narrow windows instead of crowding content */
-@media (max-width: 860px) { .corner-deco { display: none; } }
 
 /* ── Alignment CARDS on the entry banner — pick your side up front ── */
 .align-cards { display: flex; gap: 10px; margin: 10px 0 16px; }
@@ -906,17 +880,16 @@ body.theme-villain .corner-deco {
 .align-card.hero.on { border-color: #ffd166; box-shadow: 0 0 12px #4da3ff44; }
 .align-card.villain.on { border-color: #ff5252; box-shadow: 0 0 12px #ff525244; }
 
-/* ── FRAME MATTE: the app scrolls inside an inset box; the frame owns the border zone.
-   Corners/arms can never overlap text — content physically cannot enter the matte. ── */
+/* Full-bleed scroll container (the frame matte went with the corner graphics). */
 html, body { height: 100%; }
 body { overflow: hidden; }
 #page-scroll {
-  position: fixed; inset: 14px 30px; overflow-y: auto;
-  border-radius: 10px; z-index: 1;
+  position: fixed; inset: 0; overflow-y: auto;
+  z-index: 1;
 }
 @media (max-width: 860px) {
   body { overflow: auto; }
-  #page-scroll { position: static; inset: auto; overflow: visible; border-radius: 0; }
+  #page-scroll { position: static; inset: auto; overflow: visible; }
 }
 
 /* Very short windows: cards become title-only tiles — still never a scrollbar */
