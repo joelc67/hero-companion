@@ -1,7 +1,18 @@
 # Hero Companion — What's New
 
-## 0.11.2 — unreleased
+## 0.12.0 — July 4, 2026
 
+**The layout release** — a complete redesign around one idea: a tight, horizontal,
+Sidekick-shaped workspace where every block fits snugly and every gap holds
+useful information.
+
+- **The powers wall**: your build is a grid of uniform icon cards — power icon, name,
+  level badge, enhancement icons with IO levels — flowing in pick order. No columns,
+  no holes.
+- **The build summary course**: beneath the wall, three equal bricks — Build Vitals
+  (a labeled DEF/RES table plus recharge/recovery/HP/DPS), active Set Bonuses with
+  stack counts and rule-of-five warnings, and the Uniques Carried checklist.
+- **One tight masthead**: identity and icon-only actions in a single 40px strip.
 - **Power Info panel**: click any power's name and a detail column opens on the
   right — type, availability, endurance cost, cast time, live damage/DPA/cycled-DPS
   (proc contributions included), allowed enhancement categories, and what's slotted
