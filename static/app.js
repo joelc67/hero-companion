@@ -263,9 +263,15 @@ async function runDiscovery() {
 // build (each power carries its pick_level + slots). The interactive per-step stat popup
 // is the next iteration on this same data.
 function levelingPlanHtml() {
-  const ps = (build.powers || []).slice().filter(p => p.pick_level)
+  // Inherents (Health/Stamina/Brawl…) are AUTO-GRANTED — never a pick. They carry an
+  // internal pick_level for sorting, but showing them as choices misleads (field
+  // report: "the solver told me to take Health at level 2").
+  const isInherent = (p) => (p.full_name || "").startsWith("Inherent.");
+  const ps = (build.powers || []).slice().filter(p => p.pick_level && !isInherent(p))
     .sort((a, b) => (a.pick_level || 1) - (b.pick_level || 1));
   if (!ps.length) return "<p class='muted small'>Build a kit first.</p>";
+  const inhSlotted = (build.powers || []).filter(p => isInherent(p)
+    && (p.slots || []).filter(Boolean).length);
   const rows = ps.map((p) => {
     const filled = (p.slots || []).filter(Boolean).length;
     const sets = [...new Set((p.slots || []).map(s => s && s.set_name)
@@ -285,8 +291,15 @@ function levelingPlanHtml() {
       + `<span class="lvl-pwr"><b>${escHtml(slot)}</b>`
       + `<span class="muted small"> · ${escHtml(v.display_name || v.full_name.split(".").pop().replace(/_/g, " "))}</span></span></div>`)
     .join("");
+  const inh = inhSlotted.length
+    ? `<div class="lvl-row"><span class="lvl-num">—</span><span class="lvl-pwr">`
+      + `<b>Inherent (automatic, never picked):</b> <span class="muted small">`
+      + inhSlotted.map(p => `${escHtml(p.display_name || p.full_name.split(".").pop())} `
+        + `(${(p.slots || []).filter(Boolean).length} slot${(p.slots || []).filter(Boolean).length > 1 ? "s" : ""})`).join(" · ")
+      + ` — the game grants these; just place the slots.</span></span></div>`
+    : "";
   return `<div class="lvl-head">📋 Your respec order — pick these in sequence in-game</div>`
-    + `<div class="lvl-list">${rows}${inc}</div>`
+    + `<div class="lvl-list">${rows}${inc}${inh}</div>`
     + `<p class="muted small">This is the exact in-game order: take each power at the level shown. Drop your earned slots into them as you go and craft the sets when you can afford them — slot <strong>Attuned</strong> so they survive exemplaring. Travel + survival are taken early on purpose. By 50 you'll match the optimized build.</p>`;
 }
 
@@ -1384,10 +1397,13 @@ function renderPowers() {
                   30, 32, 35, 38, 41, 44, 47, 49];
   let ladderI = 0;
   const cards = build.powers.map((pw, idx) => {
+    // Inherents are auto-granted: no pick level, no ladder slot — they sort last
+    // and their card badge reads "auto" instead of a level.
+    if ((pw.full_name || "").startsWith("Inherent.")) return [pw, idx, null];
     const lv = pw.pick_level || LADDER[Math.min(ladderI++, LADDER.length - 1)];
     return [pw, idx, lv];
   });
-  cards.sort((a, b) => a[2] - b[2]);
+  cards.sort((a, b) => (a[2] ?? 999) - (b[2] ?? 999));
   let html = "";
   if (cards.length) {
     // A pure uniform wall of power cards, then the INFO COURSE: the three summary
@@ -1427,6 +1443,26 @@ function renderPowers() {
 // the enhancement-icon row as the star, tools tucked right, set summary as fine print.
 function powerCardHtml(pw, idx, icon, lv) {
   const cats = (pw.accepted_set_categories || []).join(", ") || "no set categories";
+  if ((pw.full_name || "").startsWith("Inherent.")) {
+    return `<div class="power-card" title="accepts: ${escHtml(cats)}\nInherent — the game grants this automatically; it is never a pick.">
+      <div class="pc-head">
+        <span class="pc-title" onclick="selectPower('${escHtml(pw.full_name)}')">
+        ${icon ? `<img class="pc-ico" src="${icon}" alt="" loading="lazy"
+                   onerror="this.style.display='none'">` : ""}
+        <span class="pname">${escHtml(pw.display_name)}</span></span>
+        <span class="pick-lvl" title="Inherent — granted automatically, never picked">auto</span>
+        <span class="pc-tools">
+          <label class="include-toggle" title="Count this power's stats in the totals">
+            <input type="checkbox" ${pw.include_in_totals ? "checked" : ""}
+              onchange="toggleInclude(${idx}, this.checked)">Σ</label>
+          <button class="mini" onclick="changeSlots(${idx}, -1)" title="remove a slot">−</button>
+          <button class="mini" onclick="changeSlots(${idx}, 1)" title="add a slot">+</button>
+        </span>
+      </div>
+      <div class="slot-row">${pw.slots.map((s, si) => slotHtml(idx, si, s)).join("")}</div>
+      ${setSummaryHtml(pw)}
+    </div>`;
+  }
   const lvl = pw.pick_level || lv;
   return `<div class="power-card" title="accepts: ${escHtml(cats)}\n(click the name for full power info)">
     <div class="pc-head">
