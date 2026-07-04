@@ -916,6 +916,12 @@ async function loadMeta() {
   try { META = await api("/meta"); } catch { META = null; }
   const f = $("app-version-foot");
   if (f && META) f.textContent = `v${META.app_version} · model v${META.model_version}`;
+  // Running from source = the dev copy. Badge it so it can never be mistaken
+  // for the installed app when both are open (they serve different ports).
+  if (META && !META.packaged && $("app-name") && !$("dev-badge")) {
+    $("app-name").insertAdjacentHTML("afterend",
+      ` <span id="dev-badge" title="Development copy running from source (port ${location.port || 80}) — the installed app is separate">DEV</span>`);
+  }
   initUpdateFlow();
 }
 

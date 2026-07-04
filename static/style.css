@@ -857,6 +857,12 @@ body.theme-villain #app-name {
   font-weight: 800; letter-spacing: 0.02em;
 }
 .app-tag { font-size: 11px; font-weight: 400; margin-left: 6px; font-style: italic; }
+/* Source-run copies wear a DEV badge so they can't be confused with the installed app */
+#dev-badge {
+  font-size: 10px; font-weight: 700; letter-spacing: 1px; vertical-align: 2px;
+  padding: 1px 6px; border-radius: 4px; margin-left: 2px;
+  background: #b7ff5c; color: #14200a; border: 1px solid #7fb32e;
+}
 #app-glyph { font-size: 19px; }
 #alignment-btn { cursor: pointer; }
 body.theme-hero #alignment-btn { border-color: #4a2430; color: #ff8a8a; }
