@@ -71,6 +71,10 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
 .overview-card.hidden { display: none; }
 .ovc-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin: 3px 0; }
 .ovc-row .ov-group { min-width: 34px; margin: 0; }
+.ovc-head { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--muted); margin-bottom: 4px; }
+.ovc-line { font-size: 11.5px; line-height: 1.5; }
+.ovc-line b { color: var(--accent); }
+.ovc-dim { color: var(--muted); }
 .ov-group { color: var(--muted); font-weight: 700; font-size: 9.5px; letter-spacing: .06em; margin: 0 3px 0 8px; }
 .ov-group:first-child { margin-left: 0; }
 .ov-cell { display: inline-flex; flex-direction: column; align-items: center; min-width: 34px;
@@ -156,7 +160,8 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 
 /* Powers list */
 /* Sidekick-style build grid: taken powers as icon cards in LEVEL COLUMNS. */
-.powers-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.powers-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;
+  align-items: start;   /* columns hug their content — real heights for the masonry balancer */ }
 @media (max-width: 1200px) { .powers-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 700px) { .powers-cols { grid-template-columns: 1fr; } }
 .col-head { font-size: 10px; font-weight: 700; letter-spacing: .07em; color: var(--muted);

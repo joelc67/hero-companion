@@ -1389,13 +1389,17 @@ function renderPowers() {
   });
   let html = "";
   if (build.powers.length) {
-    // The vitals card fills the gap: it docks at the end of the SHORTEST column,
-    // keeping the wall's top level (masonry doctrine — no empty pockets).
-    const shortest = buckets.reduce((m, b, i, a) => b[1].length < a[m][1].length ? i : m, 0);
+    // Info bricks (vitals, set bonuses, uniques) start in the last column;
+    // balanceGridColumns() re-docks each into the shortest column after render,
+    // so the wall stays level for ANY archetype's column shape.
     html += `<div class="powers-cols">` + buckets.map(([label, list], bi) =>
       `<div class="powers-col"><div class="col-head">${label}</div>`
       + list.map(([pw, idx, lv]) => powerCardHtml(pw, idx, iconOf(pw.full_name), lv)).join("")
-      + (bi === shortest ? `<div id="overview-card" class="overview-card hidden"></div>` : "")
+      + (bi === buckets.length - 1
+          ? `<div id="overview-card" class="overview-card hidden"></div>`
+            + `<div id="bonuses-card" class="overview-card hidden"></div>`
+            + `<div id="uniques-card" class="overview-card hidden"></div>`
+          : "")
       + `</div>`).join("") + `</div>`;
   }
 
@@ -1414,7 +1418,7 @@ function renderPowers() {
   html += `</div>`;
 
   host.innerHTML = html;
-  updateOverviewBar(LAST_TOTALS);   // refill the vitals card renderPowers just re-docked
+  updateInfoCards(LAST_TOTALS);   // refill + re-dock the info bricks (masonry balance)
   updateEditBar();
   updateEpicBadge();
   renderConverterGuide();
@@ -2056,7 +2060,7 @@ async function recompute() {
   renderStats(totals);
   renderValidation(validation);
   LAST_TOTALS = (totals && (totals.totals || totals)) || null;  // feed the tray rotation + notes
-  updateOverviewBar(LAST_TOTALS);
+  updateInfoCards(LAST_TOTALS);
   refreshBuildViews();   // keep the always-visible respec-order + tray sections live
 }
 
@@ -2100,6 +2104,74 @@ function updateOverviewBar(t) {
       _ovCell("ST", num(off.st_dps), "ov-plain"),
       _ovCell("AoE", num(off.aoe_dps), "ov-plain")]);
   card.classList.remove("hidden");
+}
+
+// Active set bonuses, aggregated: "+7.5% Recharge ×5" style, biggest stacks first.
+function updateBonusesCard(t) {
+  const card = $("bonuses-card");
+  if (!card) return;
+  const list = (t && t.applied_bonuses) || [];
+  if (!list.length || !build.powers.length) { card.classList.add("hidden"); return; }
+  const counts = {};
+  list.forEach(b => {
+    const label = (Array.isArray(b.text) ? b.text[0] : b.text) || `${b.set} ${b.pieces}pc`;
+    counts[label] = (counts[label] || 0) + 1;
+  });
+  const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 9);
+  const capped = (t.rule_of_five_capped || []).length;
+  card.innerHTML = `<div class="ovc-head">SET BONUSES <span class="muted">(${list.length} active)</span></div>`
+    + top.map(([label, n]) =>
+        `<div class="ovc-line">${n > 1 ? `<b>×${n}</b> ` : ""}${escHtml(label)}</div>`).join("")
+    + (capped ? `<div class="ovc-line ovc-dim">⚠ ${capped} bonus${capped > 1 ? "es" : ""} lost to the rule of five</div>` : "");
+  card.classList.remove("hidden");
+}
+
+// The meta-invariant uniques layer (per the master corpus: same ~9 uniques in both
+// eras) — a checklist of what this build carries.
+const _UNIQUE_CHECKS = [
+  ["LotG +Recharge", s => (s.set_name || "").includes("Luck of the Gambler") && (s.piece_name || "").includes("Recharge")],
+  ["Steadfast +Def", s => (s.set_name || "").includes("Steadfast") && (s.piece_name || "").includes("Def")],
+  ["Glad Armor +Def", s => (s.set_name || "").includes("Gladiator's Armor") && (s.piece_name || "").includes("Def")],
+  ["Shield Wall +Res", s => (s.set_name || "").includes("Shield Wall") && (s.piece_name || "").includes("Res")],
+  ["Panacea proc", s => (s.set_name || "").includes("Panacea") && (s.piece_name || "").includes("+")],
+  ["Miracle +Rec", s => (s.set_name || "").includes("Miracle") && (s.piece_name || "").includes("Recovery")],
+  ["Numina +Reg/Rec", s => (s.set_name || "").includes("Numina") && (s.piece_name || "").includes("+")],
+  ["Perf Shifter +End", s => (s.set_name || "").includes("Performance Shifter") && (s.piece_name || "").toLowerCase().includes("chance")],
+  ["Reactive scaling Res", s => (s.set_name || "").includes("Reactive Defenses") && (s.piece_name || "").includes("Scaling")],
+];
+function updateUniquesCard() {
+  const card = $("uniques-card");
+  if (!card) return;
+  if (!build.powers.length) { card.classList.add("hidden"); return; }
+  const slots = build.powers.flatMap(p => (p.slots || []).filter(Boolean));
+  const rows = _UNIQUE_CHECKS.map(([name, test]) => {
+    const n = slots.filter(test).length;
+    return `<div class="ovc-line ${n ? "" : "ovc-dim"}">${n ? "✓" : "·"} ${escHtml(name)}${n > 1 ? ` <b>×${n}</b>` : ""}</div>`;
+  });
+  card.innerHTML = `<div class="ovc-head">UNIQUES CARRIED</div>` + rows.join("");
+  card.classList.remove("hidden");
+}
+
+// Masonry balancer: measure the level columns and re-dock each info brick into the
+// currently-shortest one, so no archetype's column shape leaves an empty pocket.
+function balanceGridColumns() {
+  const cols = [...document.querySelectorAll(".powers-cols .powers-col")];
+  if (cols.length < 2) return;
+  for (const id of ["overview-card", "bonuses-card", "uniques-card"]) {
+    const el = $(id);
+    if (!el || el.classList.contains("hidden")) continue;
+    let best = cols[0];
+    for (const c of cols) if (c.offsetHeight < best.offsetHeight) best = c;
+    best.appendChild(el);
+  }
+}
+
+// One call fills every info brick and levels the wall.
+function updateInfoCards(t) {
+  updateOverviewBar(t);
+  updateBonusesCard(t);
+  updateUniquesCard();
+  balanceGridColumns();
 }
 let LAST_TOTALS = null;
 
