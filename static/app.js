@@ -1389,9 +1389,13 @@ function renderPowers() {
   });
   let html = "";
   if (build.powers.length) {
-    html += `<div class="powers-cols">` + buckets.map(([label, list]) =>
+    // The vitals card fills the gap: it docks at the end of the SHORTEST column,
+    // keeping the wall's top level (masonry doctrine — no empty pockets).
+    const shortest = buckets.reduce((m, b, i, a) => b[1].length < a[m][1].length ? i : m, 0);
+    html += `<div class="powers-cols">` + buckets.map(([label, list], bi) =>
       `<div class="powers-col"><div class="col-head">${label}</div>`
       + list.map(([pw, idx, lv]) => powerCardHtml(pw, idx, iconOf(pw.full_name), lv)).join("")
+      + (bi === shortest ? `<div id="overview-card" class="overview-card hidden"></div>` : "")
       + `</div>`).join("") + `</div>`;
   }
 
@@ -1410,6 +1414,7 @@ function renderPowers() {
   html += `</div>`;
 
   host.innerHTML = html;
+  updateOverviewBar(LAST_TOTALS);   // refill the vitals card renderPowers just re-docked
   updateEditBar();
   updateEpicBadge();
   renderConverterGuide();
@@ -2064,33 +2069,37 @@ function _ovCell(label, val, cls) {
 }
 function _ovDef(v) { return v >= 35 ? "ov-good" : v >= 25 ? "ov-mid" : "ov-dim"; }
 function updateOverviewBar(t) {
-  const bar = $("overview-bar");
-  if (!bar) return;
-  if (!t || !build.powers.length) { bar.classList.add("hidden"); return; }
+  // The vitals live in the OVERVIEW CARD — the gap-filling brick renderPowers
+  // docks at the end of the shortest level column.
+  const card = $("overview-card");
+  if (!card) return;
+  if (!t || !build.powers.length) { card.classList.add("hidden"); return; }
   const num = (x) => Math.round((x && typeof x === "object" ? x.value : x) || 0);
   const d = t.defense || {}, r = t.resistance || {}, off = t.offense || {};
   const rcap = Math.round(((t.caps || {}).resistance || 75));
   const _ovRes = (v) => v >= rcap - 5 ? "ov-good" : v >= rcap * 0.6 ? "ov-mid" : "ov-dim";
   const rech = num(t.recharge);
-  bar.innerHTML =
-    `<span class="ov-group">DEF</span>`
-    + _ovCell("S/L", num(d.Smashing), _ovDef(num(d.Smashing)))
-    + _ovCell("F/C", Math.min(num(d.Fire), num(d.Cold)), _ovDef(Math.min(num(d.Fire), num(d.Cold))))
-    + _ovCell("Mel", num(d.Melee), _ovDef(num(d.Melee)))
-    + _ovCell("Rng", num(d.Ranged), _ovDef(num(d.Ranged)))
-    + _ovCell("AoE", num(d.AoE), _ovDef(num(d.AoE)))
-    + `<span class="ov-group">RES</span>`
-    + _ovCell("S/L", num(r.Smashing), _ovRes(num(r.Smashing)))
-    + _ovCell("F/C", Math.min(num(r.Fire), num(r.Cold)), _ovRes(Math.min(num(r.Fire), num(r.Cold))))
-    + _ovCell("E/N", Math.min(num(r.Energy), num(r.Negative)), _ovRes(Math.min(num(r.Energy), num(r.Negative))))
-    + `<span class="ov-group">BUILD</span>`
-    + _ovCell("Rech", `+${rech}%`, rech >= 70 ? "ov-good" : rech >= 40 ? "ov-mid" : "ov-dim")
-    + _ovCell("Rec", `+${num(t.recovery)}%`, "ov-plain")
-    + _ovCell("HP", `+${num(t.max_hp)}%`, "ov-plain")
-    + `<span class="ov-group">DPS</span>`
-    + _ovCell("ST", num(off.st_dps), "ov-plain")
-    + _ovCell("AoE", num(off.aoe_dps), "ov-plain");
-  bar.classList.remove("hidden");
+  const group = (label, cells) =>
+    `<div class="ovc-row"><span class="ov-group">${label}</span>${cells.join("")}</div>`;
+  card.innerHTML =
+    group("DEF", [
+      _ovCell("S/L", num(d.Smashing), _ovDef(num(d.Smashing))),
+      _ovCell("F/C", Math.min(num(d.Fire), num(d.Cold)), _ovDef(Math.min(num(d.Fire), num(d.Cold)))),
+      _ovCell("Mel", num(d.Melee), _ovDef(num(d.Melee))),
+      _ovCell("Rng", num(d.Ranged), _ovDef(num(d.Ranged))),
+      _ovCell("AoE", num(d.AoE), _ovDef(num(d.AoE)))])
+    + group("RES", [
+      _ovCell("S/L", num(r.Smashing), _ovRes(num(r.Smashing))),
+      _ovCell("F/C", Math.min(num(r.Fire), num(r.Cold)), _ovRes(Math.min(num(r.Fire), num(r.Cold)))),
+      _ovCell("E/N", Math.min(num(r.Energy), num(r.Negative)), _ovRes(Math.min(num(r.Energy), num(r.Negative))))])
+    + group("BUILD", [
+      _ovCell("Rech", `+${rech}%`, rech >= 70 ? "ov-good" : rech >= 40 ? "ov-mid" : "ov-dim"),
+      _ovCell("Rec", `+${num(t.recovery)}%`, "ov-plain"),
+      _ovCell("HP", `+${num(t.max_hp)}%`, "ov-plain")])
+    + group("DPS", [
+      _ovCell("ST", num(off.st_dps), "ov-plain"),
+      _ovCell("AoE", num(off.aoe_dps), "ov-plain")]);
+  card.classList.remove("hidden");
 }
 let LAST_TOTALS = null;
 

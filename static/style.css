@@ -62,15 +62,15 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
 .iconbtn:hover { border-color: var(--accent); }
 .cap-chips { display: flex; gap: 6px; margin: 4px 0 6px; }
 
-/* Overview bar — the build's vitals in ONE horizontal line, inside the masthead.
-   Right-aligned: dead space (if any) sits left, cells hug the action icons above. */
-.overview-bar {
-  display: flex; align-items: center; justify-content: flex-end;
-  gap: 4px; flex-wrap: wrap;
-  padding: 4px 60px 6px;
-  font-size: 11px;
+/* Overview CARD — the build's vitals as a gap-filling brick inside the powers grid
+   (docked at the end of the shortest level column by renderPowers). */
+.overview-card {
+  background: var(--panel2); border: 1px solid var(--accent); border-radius: 6px;
+  padding: 8px 10px; margin: 6px 0; font-size: 11px;
 }
-.overview-bar.hidden { display: none; }
+.overview-card.hidden { display: none; }
+.ovc-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin: 3px 0; }
+.ovc-row .ov-group { min-width: 34px; margin: 0; }
 .ov-group { color: var(--muted); font-weight: 700; font-size: 9.5px; letter-spacing: .06em; margin: 0 3px 0 8px; }
 .ov-group:first-child { margin-left: 0; }
 .ov-cell { display: inline-flex; flex-direction: column; align-items: center; min-width: 34px;
