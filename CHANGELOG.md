@@ -1,5 +1,21 @@
 # Hero Companion — What's New
 
+## 0.12.2 — unreleased
+
+- **Fixed: slots the game could never grant.** An enhancement slot is earned at a
+  specific level and can only be placed in a power you already have — so a power
+  picked at level 49 can hold at most 4 slots (its free one plus the 3 earned at
+  50), and the 47 + 49 picks share just 6. The optimizer now seats heavily-slotted
+  powers earlier in the pick order, re-solves with tighter budgets when even
+  reordering can't fit (dense melee epics), and the validator calls out any
+  hand-made arrangement the game would refuse ("picked at level 49 — it can hold
+  at most 4 slots").
+
+- **Smoother one-click updates.** The tab you click "Update now" in simply becomes
+  the new version when the install finishes — the app no longer opens a duplicate
+  tab while the old one lingers on the old version. (If that tab was closed, a
+  fresh one still opens after a short wait.)
+
 ## 0.12.1 — July 4, 2026
 
 - **The decorative frame corners are gone.** The hero/villain identity now lives

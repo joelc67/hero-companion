@@ -558,6 +558,11 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
         # a full re-slot (neither preserve nor keep-layout) lets a power grow to 6.
         cap_layout = (keep_layout or preserve) and p.get("_earned")
         p["_slot_budget"] = min(6, int(p["_earned"])) if cap_layout else 6
+        # Slot-schedule cap (set by the caller after an infeasible pick-level pass):
+        # a power stuck in the pick ladder's tail can only receive the few slots the
+        # game still grants there — e.g. a level-49 pick holds at most 4.
+        if p.get("_sched_budget") is not None:
+            p["_slot_budget"] = min(p["_slot_budget"], max(1, int(p["_sched_budget"])))
         # Inherent utility powers (Brawl/Sprint/Rest/prestige sprints/Swift/Hurdle) gain
         # nothing from slotting. Brawl even accepts "Damage Increase", so a full re-slot
         # would dump a damage SET into it to farm bonuses. Cap their budget to the real

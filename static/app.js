@@ -974,8 +974,8 @@ window.oneClickUpdate = async function (latest, pageUrl) {
       + `<button class="linkbtn quiet" onclick="_ubHide()">Dismiss</button>`);
     return;
   }
-  _ubShow(`🔧 Installing v${escHtml(latest)}… the app restarts itself and opens in a <b>new tab</b> — `
-    + `you can close this one. (It'll also refresh itself into the new version if you keep it.)`);
+  _ubShow(`🔧 Installing v${escHtml(latest)}… <b>keep this tab open</b> — it becomes the new `
+    + `version by itself when the install finishes (usually under a minute).`);
   const before = META ? META.app_version : "";
   const check = async () => {
     try {
@@ -984,9 +984,11 @@ window.oneClickUpdate = async function (latest, pageUrl) {
     } catch { /* app is mid-restart — keep waiting */ }
   };
   const timer = setInterval(check, 2000);
-  // Browsers throttle background-tab timers (the field-test stale-tab report) — the
-  // moment this tab regains focus, check immediately instead of waiting out the throttle.
+  // Browsers throttle (Edge: suspend) background-tab timers — the field-tested
+  // stale-tab papercut. Check immediately on every signal that the user is back.
   document.addEventListener("visibilitychange", () => { if (!document.hidden) check(); });
+  window.addEventListener("focus", check);
+  window.addEventListener("pageshow", check);
 };
 async function runStartupUpdateCheck() {
   const r = await api("/meta/update-check").catch(() => null);
@@ -3337,7 +3339,12 @@ async function solveSlotting(perkFocus, opts) {
     res.powers.forEach(p => { byName[p.full_name] = p; });
     build.powers.forEach(p => {
       const np = byName[p.full_name];
-      if (np) { p.slots = np.slots; p.slotCount = np.slotCount; }
+      if (np) {
+        p.slots = np.slots; p.slotCount = np.slotCount;
+        // Solve re-seats pick levels around the new slotting (a level-49 pick can
+        // only ever hold 4 slots) — adopt them so the wall and respec order agree.
+        if (np.pick_level) p.pick_level = np.pick_level;
+      }
     });
     renderPowers();
     recompute();

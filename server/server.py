@@ -46,6 +46,16 @@ STATIC_DIR = os.path.join(ROOT, "static")
 app = Flask(__name__, static_folder=None)
 CORS(app)
 
+# After a self-update relaunch, run_app waits briefly for the OLD browser tab to
+# reconnect (its update poll) before deciding whether to open a new tab at all.
+SEEN_REQUEST = False
+
+
+@app.before_request
+def _mark_request_seen():
+    global SEEN_REQUEST
+    SEEN_REQUEST = True
+
 
 # ---------------------------------------------------------------------------
 # Load data once
@@ -800,6 +810,9 @@ def build_validate():
     prereq = _epic_prereq_errors(build.get("powers") or [])
     if prereq:
         res.setdefault("errors", []).extend(prereq)
+    sched = _slot_schedule_errors(build.get("powers") or [])
+    if sched:
+        res.setdefault("errors", []).extend(sched)
     # Origin-themed pools are one-per-build in game — flag a manual double-pick.
     _origin = sorted({(p.get("full_name") or "").rsplit(".", 1)[0]
                       for p in (build.get("powers") or [])
@@ -1069,6 +1082,203 @@ def joint_refine(archetype, primary, secondary, role, content, powers_in,
 def _pool_tiers(ps):
     """{full_name: tier index} for a Pool.*/Epic.* powerset, in data (tier) order."""
     return {p["full_name"]: i for i, p in enumerate(POWERS.get(ps) or [])}
+
+
+# ── SLOT-SCHEDULE-AWARE PICK LEVELS (field report: a 5-slotted power "picked at 49") ──
+# In game every enhancement slot is granted at a specific level and can only be placed
+# in a power you already have — a respec follows the same ladder. So a level-49 pick can
+# never hold more than 4 slots (its free one + the 3 granted at 50), the 47 and 49 picks
+# together share the 6 slots granted at 48+50, and so on up the tail. Pick levels must
+# therefore be assigned with the SLOTTING in mind: heavy powers early, 1-slot utility late.
+
+def _sched_avail(p):
+    return max(1, int(p.get("level_available")
+                      or (POWER_BY_FULL.get(p.get("full_name"), {}) or {}).get("level_available") or 1))
+
+
+def _sched_added(p):
+    return max(0, len(p.get("slots") or [None]) - 1)
+
+
+def _grants_from(level):
+    """Total enhancement slots still granted at levels >= `level` (grant levels and
+    pick levels never coincide on the Homecoming ladder, so >= is exact)."""
+    return sum(v for g, v in leveling_schedule.SLOT_GRANTS.items() if g >= level)
+
+
+def _tier_need(full_name):
+    """Same-set powers required BEFORE this one (the Pool/Epic tier ladder rule)."""
+    ps = (full_name or "").rsplit(".", 1)[0]
+    if not ps.startswith(("Pool.", "Epic.")):
+        return 0
+    t = _pool_tiers(ps).get(full_name, 0)
+    return 0 if t <= 1 else (1 if t == 2 else 2)
+
+
+def _pick_order_legal(seq):
+    """Every power in pick order satisfies availability + its set's tier ladder."""
+    seen = defaultdict(int)
+    for lv, p in seq:
+        if _sched_avail(p) > lv:
+            return False
+        ps = (p.get("full_name") or "").rsplit(".", 1)[0]
+        if seen[ps] < _tier_need(p.get("full_name")):
+            return False
+        seen[ps] += 1
+    return True
+
+
+def _schedule_feasible(real_powers):
+    """True if the powers' existing pick_levels can actually receive their slots —
+    for every pick level L, the slots added to powers picked at or after L must fit
+    inside the slots the game still grants at levels >= L."""
+    seq = sorted(real_powers, key=lambda p: int(p.get("pick_level") or 1))
+    tail = 0
+    for p in reversed(seq):
+        tail += _sched_added(p)
+        if tail > _grants_from(int(p.get("pick_level") or 1)):
+            return False
+    return True
+
+
+def _assign_pick_levels(powers):
+    """Stamp pick_level onto every non-inherent power: natural seating (earliest
+    available first on the real pick ladder), then repaired by swapping heavy late
+    picks with light early ones until the slot schedule is satisfiable. Mutates the
+    power dicts. Returns True when the final assignment is fully feasible."""
+    real = [p for p in powers if not (p.get("full_name") or "").startswith("Inherent")]
+    for p in powers:
+        if (p.get("full_name") or "").startswith("Inherent"):
+            p["pick_level"] = 1
+    if not real:
+        return True
+    order = sorted(real, key=_sched_avail)          # stable → in-set tier order survives
+    ladder = list(leveling_schedule.POWER_PICK_LEVELS)
+    seats, si = [], 0                                # [[level, power], ...] ascending
+    for p in order:
+        while si < len(ladder) and ladder[si] < _sched_avail(p):
+            si += 1
+        seats.append([ladder[si] if si < len(ladder) else min(49, _sched_avail(p)), p])
+        si += 1
+
+    def _excess():
+        """Total slot overweight across all pick-ladder suffixes (0 = feasible)."""
+        tail = over = 0
+        for i in range(len(seats) - 1, -1, -1):
+            tail += _sched_added(seats[i][1])
+            over += max(0, tail - _grants_from(seats[i][0]))
+        return over
+
+    def _try(op):
+        """Apply op(); keep it only if legal and strictly less overweight."""
+        before = _excess()
+        undo = op()
+        if _pick_order_legal(seats) and _excess() < before:
+            return True
+        undo()
+        return False
+
+    for _ in range(80):
+        if _excess() == 0:
+            break
+        order_by_added = sorted(range(len(seats)), key=lambda k: _sched_added(seats[k][1]))
+        improved = False
+        # 1) plain swap: a heavy late power trades seats with a light early one.
+        for j in sorted(range(len(seats)), key=lambda j: -_sched_added(seats[j][1])):
+            for k in order_by_added:
+                if k >= j or _sched_added(seats[k][1]) >= _sched_added(seats[j][1]):
+                    continue
+                if _sched_avail(seats[j][1]) > seats[k][0]:
+                    continue
+
+                def _op(j=j, k=k):
+                    seats[j][1], seats[k][1] = seats[k][1], seats[j][1]
+                    def undo(j=j, k=k):
+                        seats[j][1], seats[k][1] = seats[k][1], seats[j][1]
+                    return undo
+                if _try(_op):
+                    improved = True
+                    break
+            if improved:
+                break
+        if improved:
+            continue
+        # 2) rotate-left: when a heavy power is pinned behind its own set's prereqs
+        # (Ice Elemental behind two Ice Mastery picks), a swap can't help — instead
+        # pull a light power out of seat k, shift everything after it one seat
+        # earlier (the whole chain moves together, order preserved), and re-seat the
+        # light power at the end of the rotated span.
+        for k in order_by_added:
+            for j in range(len(seats) - 1, k, -1):
+                if _sched_added(seats[j][1]) <= _sched_added(seats[k][1]):
+                    continue
+                if any(_sched_avail(seats[m][1]) > seats[m - 1][0] for m in range(k + 1, j + 1)):
+                    continue                          # someone can't shift a seat earlier
+
+                def _op(j=j, k=k):
+                    moved = seats[k][1]
+                    for m in range(k, j):
+                        seats[m][1] = seats[m + 1][1]
+                    seats[j][1] = moved
+                    def undo(j=j, k=k):
+                        back = seats[j][1]
+                        for m in range(j, k, -1):
+                            seats[m][1] = seats[m - 1][1]
+                        seats[k][1] = back
+                    return undo
+                if _try(_op):
+                    improved = True
+                    break
+            if improved:
+                break
+        if not improved:
+            break                                    # no legal move left — report best effort
+    for lv, p in seats:
+        p["pick_level"] = lv
+    return _excess() == 0
+
+
+def _sched_budget_caps(powers):
+    """After an unrepairable pick-level pass: per-power TOTAL-slot caps that make the
+    tail placeable (walk the seats from 49 down, never letting a suffix outweigh the
+    slots the game still grants there). Feed to the solver as _sched_budget and re-solve
+    so the weight migrates to earlier powers instead of being silently dropped."""
+    real = [p for p in powers
+            if not (p.get("full_name") or "").startswith("Inherent") and p.get("pick_level")]
+    caps, consumed = {}, 0
+    for p in sorted(real, key=lambda p: -int(p["pick_level"])):
+        allow = max(0, _grants_from(int(p["pick_level"])) - consumed)
+        add = _sched_added(p)
+        if add > allow:
+            caps[p["full_name"]] = 1 + allow
+            consumed += allow
+        else:
+            consumed += add
+    return caps
+
+
+def _slot_schedule_errors(powers):
+    """Validator messages for slots that could never be placed at the build's own
+    pick levels. Only speaks when pick levels are present (imported/solved builds)."""
+    real = [p for p in powers or []
+            if not (p.get("full_name") or "").startswith("Inherent") and p.get("pick_level")]
+    if not real:
+        return []
+    errs = []
+    for p in real:
+        lv = int(p["pick_level"])
+        cap = 1 + _grants_from(lv)
+        have = 1 + _sched_added(p)
+        if have > cap:
+            name = p.get("display_name") or (p.get("full_name") or "").split(".")[-1].replace("_", " ")
+            errs.append(f"{name} is picked at level {lv} — after that the game only grants "
+                        f"{_grants_from(lv)} more slots, so it can hold at most {cap} "
+                        f"(this build gives it {have}). Take it earlier or move slots to an earlier power.")
+    if not errs and not _schedule_feasible(real):
+        errs.append("The late picks carry more added slots than the game grants at those levels "
+                    "(each slot can only go into a power you already have) — move some slots "
+                    "to earlier powers or re-Solve to reshuffle the pick order.")
+    return errs
 
 
 # The origin-themed pools are ONE-PER-BUILD (homecoming.wiki Power Pools: "you can only
@@ -1776,28 +1986,41 @@ def build_solve():
     _add_typed_def_route(powers, targets, archetype)
     _attach_base_dmg(powers, ctx)
 
-    try:
-        # In-game slot rule: each power has 1 FREE base slot; you distribute 67
-        # ADDITIONAL slots (MidsReborn MaxSlots=67). So total placeable slots =
-        # 67 + one base per power.
-        slot_cap = 67 + len(powers)
-        sol = solver.solve_ilp(powers, targets, SETS_BY_CATEGORY,
-                               engine.PIECE_GLOBALS, base, slot_cap=slot_cap, tier=tier,
-                               perk_focus=perk_focus, roles=roles, pvp=pvp,
-                               preserve=preserve, keep_layout=keep_layout, archetype=archetype)
-    except Exception as e:  # noqa: BLE001
-        return jsonify({"ok": False, "response": f"Solver failed: {e}"})
-
-    # Proc-bombing pass (doctrine §3): for offense builds, convert damage auras + filler
-    # AoEs into proc bombs — the #1 master-build damage lever. Fails safe (no-op on error).
-    # Runs on a full re-slot, AND (v24) on GENERATED builds even in preserve mode — a
-    # fresh wizard/autopick build has no player IO choices to preserve, and skipping the
-    # pass there was why generated kits shipped proc-less in the proc meta.
     _generated = not any(p.get("_earned") for p in powers_in)
-    if not preserve or _generated:
-        sol["powers"] = proc_pass.apply_proc_pass(sol["powers"], POWER_BY_FULL,
-                                                  role=role, content=content)
-        sol["powers"] = _endurance_relief_pass(sol["powers"], archetype, ctx, _rescap)
+    # In-game slot rule: each power has 1 FREE base slot; you distribute 67
+    # ADDITIONAL slots (MidsReborn MaxSlots=67). So total placeable slots =
+    # 67 + one base per power.
+    slot_cap = 67 + len(powers)
+    # Up to one re-solve: if the slotting can't be seated on the real pick ladder
+    # (a level-49 pick holds at most 4 slots; 47+49 share 6), cap the tail offenders
+    # and let the solver move that weight to earlier powers.
+    for _sched_round in range(2):
+        try:
+            sol = solver.solve_ilp(powers, targets, SETS_BY_CATEGORY,
+                                   engine.PIECE_GLOBALS, base, slot_cap=slot_cap, tier=tier,
+                                   perk_focus=perk_focus, roles=roles, pvp=pvp,
+                                   preserve=preserve, keep_layout=keep_layout, archetype=archetype)
+        except Exception as e:  # noqa: BLE001
+            return jsonify({"ok": False, "response": f"Solver failed: {e}"})
+
+        # Proc-bombing pass (doctrine §3): for offense builds, convert damage auras + filler
+        # AoEs into proc bombs — the #1 master-build damage lever. Fails safe (no-op on error).
+        # Runs on a full re-slot, AND (v24) on GENERATED builds even in preserve mode — a
+        # fresh wizard/autopick build has no player IO choices to preserve, and skipping the
+        # pass there was why generated kits shipped proc-less in the proc meta.
+        if not preserve or _generated:
+            sol["powers"] = proc_pass.apply_proc_pass(sol["powers"], POWER_BY_FULL,
+                                                      role=role, content=content)
+            sol["powers"] = _endurance_relief_pass(sol["powers"], archetype, ctx, _rescap)
+
+        if _assign_pick_levels(sol["powers"]) or _sched_round == 1:
+            break
+        caps = _sched_budget_caps(sol["powers"])
+        if not caps:
+            break
+        for p in powers:
+            if p["full_name"] in caps:
+                p["_sched_budget"] = min(caps[p["full_name"]], p.get("_sched_budget") or 6)
 
     resolved = {"powers": sol["powers"]}
     _fill_slot_images(resolved)
@@ -2693,10 +2916,22 @@ def ai_generate_solved():
     # 67 ADDITIONAL slots beyond each power's free base slot (in-game rule).
     slot_cap = 67 + len(picked["powers"])
     for tier in ai_build.TIER_ORDER:
-        sol = solver.solve_ilp(copy.deepcopy(picked["powers"]), targets,
-                               SETS_BY_CATEGORY, engine.PIECE_GLOBALS,
-                               dict(base), slot_cap=slot_cap, tier=tier, roles=roles, pvp=pvp,
-                               archetype=archetype)
+        _pw = copy.deepcopy(picked["powers"])
+        for _sched_round in range(2):
+            sol = solver.solve_ilp(copy.deepcopy(_pw), targets,
+                                   SETS_BY_CATEGORY, engine.PIECE_GLOBALS,
+                                   dict(base), slot_cap=slot_cap, tier=tier, roles=roles, pvp=pvp,
+                                   archetype=archetype)
+            # Pick order must fit the slot schedule (a 49 pick holds at most 4 slots) —
+            # if it can't be repaired by reordering, cap the tail and re-solve once.
+            if _assign_pick_levels(sol["powers"]) or _sched_round == 1:
+                break
+            caps = _sched_budget_caps(sol["powers"])
+            if not caps:
+                break
+            for p in _pw:
+                if p["full_name"] in caps:
+                    p["_sched_budget"] = min(caps[p["full_name"]], p.get("_sched_budget") or 6)
         resolved = {"powers": sol["powers"]}
         _fill_slot_images(resolved)
         final = engine.calculate_build(
@@ -4197,19 +4432,15 @@ def leveling_steps():
                           or (POWER_BY_FULL.get(p.get("full_name"), {}) or {}).get("level_available") or 1))
     inherent_powers = [p for p in powers if (p.get("full_name") or "").startswith("Inherent.")]
     real = [p for p in powers if not (p.get("full_name") or "").startswith("Inherent.")]
-    real.sort(key=lambda p: (int(p["pick_level"]) if p.get("pick_level") else _lvl_avail(p), _lvl_avail(p)))
-    _PL = leveling_schedule.POWER_PICK_LEVELS
-    picks_by_level, _si = defaultdict(list), 0
+    # Pick levels must let every slot actually land (a slot granted at level g only fits
+    # powers already picked) — recompute the seating slot-aware unless the build carries
+    # a complete assignment that already works.
+    if not all(p.get("pick_level") for p in real) or not _schedule_feasible(real):
+        _assign_pick_levels(powers)
+    real.sort(key=lambda p: (int(p["pick_level"]), _lvl_avail(p)))
+    picks_by_level = defaultdict(list)
     for p in real:
-        if p.get("pick_level"):
-            plevel = max(1, int(p["pick_level"]))
-        else:
-            ml = _lvl_avail(p)
-            while _si < len(_PL) and _PL[_si] < ml:
-                _si += 1
-            plevel = _PL[_si] if _si < len(_PL) else min(49, ml)
-            _si += 1
-        picks_by_level[plevel].append(p)
+        picks_by_level[max(1, int(p["pick_level"]))].append(p)
     ctx = _stat_ctx(archetype)
     at = ARCH_BY_NAME.get(archetype)
     res_cap = round(at["res_cap"] * 100, 1) if at else engine.RESISTANCE_HARD_CAP

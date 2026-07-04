@@ -86,7 +86,24 @@ def main():
         target=lambda: server.app.run(host="127.0.0.1", port=port, debug=False),
         daemon=True).start()
     if os.environ.get("HC_NO_BROWSER") != "1":
-        threading.Timer(1.0, lambda: webbrowser.open(f"http://localhost:{port}")).start()
+        if "--after-update" in sys.argv:
+            # Relaunched by the installer after a self-update. The tab the user
+            # clicked "Update now" in is polling us and will reload itself into
+            # the new version — give it time to reconnect before opening a
+            # SECOND tab (the field-tested papercut: old tab + duplicate tab).
+            def _open_if_no_tab():
+                import time
+                deadline = time.time() + 30
+                while time.time() < deadline:
+                    if server.SEEN_REQUEST:
+                        print("after-update: the existing tab reconnected — not opening a new one")
+                        return
+                    time.sleep(1)
+                print("after-update: no tab reconnected in 30s — opening the browser")
+                webbrowser.open(f"http://localhost:{port}")
+            threading.Thread(target=_open_if_no_tab, daemon=True).start()
+        else:
+            threading.Timer(1.0, lambda: webbrowser.open(f"http://localhost:{port}")).start()
 
     if _WINDOWED:
         if not _run_tray(port):

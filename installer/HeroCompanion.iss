@@ -78,7 +78,7 @@ Name: "{userdesktop}\{#AppName}"; Filename: "{app}\HeroCompanion.exe"; Tasks: de
 Filename: "{app}\HeroCompanion.exe"; Description: "Launch {#AppName} now"; Flags: nowait postinstall skipifsilent
 ; One-click self-update path: the app runs this installer silently with /RELAUNCH=1
 ; and expects to be brought back to life afterward.
-Filename: "{app}\HeroCompanion.exe"; Flags: nowait; Check: WantRelaunch
+Filename: "{app}\HeroCompanion.exe"; Parameters: "--after-update"; Flags: nowait; Check: WantRelaunch
 
 [UninstallDelete]
 ; the app folder only — saves in %APPDATA%\HeroCompanion are the player's, not ours to delete
