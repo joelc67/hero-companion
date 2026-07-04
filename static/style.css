@@ -478,7 +478,8 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .preset-pick { margin: 6px 0 10px; padding: 9px 10px; border: 1px solid var(--border);
   border-radius: 8px; background: color-mix(in srgb, var(--accent) 6%, var(--panel)); }
 .preset-pick > span { display: block; margin-bottom: 7px; }
-.preset-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.preset-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.preset-row .preset-field { flex: 1 1 140px; min-width: 140px; }  /* Content + Role side by side */
 .preset-field { display: flex; flex-direction: column; gap: 3px; font-size: 12px;
   font-weight: 600; flex: 1 1 150px; }
 .preset-field select { width: 100%; padding: 5px 6px; font-size: 13px; font-weight: 400;
@@ -657,6 +658,11 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .lvl-pwr { font-size: 13px; }
 .order-row { margin: 8px 0; }
 .order-out { margin: 6px 0 10px; padding: 6px 12px 10px; border: 1px solid var(--accent); border-radius: 8px; background: var(--panel2); }
+/* In the wide column these are full-width bricks: their content flows HORIZONTALLY
+   (courses of a wall), instead of the tall scrolling list the wizard modal uses. */
+.order-out .lvl-list { flex-direction: row; flex-wrap: wrap; gap: 2px 16px;
+  max-height: none; overflow: visible; }
+.order-out .lvl-row { width: 205px; }
 .set-summary { font-size: 12px; line-height: 1.5; margin: 4px 0 2px; color: var(--ink); }
 /* Power tray layout (in-game-style 4 rows) */
 .tray-row { margin-bottom: 12px; }
