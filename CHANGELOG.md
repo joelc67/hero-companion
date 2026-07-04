@@ -2,6 +2,10 @@
 
 ## 0.11.2 — unreleased
 
+- **Power Info panel**: click any power's name and a detail column opens on the
+  right — type, availability, endurance cost, cast time, live damage/DPA/cycled-DPS
+  (proc contributions included), allowed enhancement categories, and what's slotted
+  in it right now. Numbers update with every change.
 - **Horizontal-first layout**: character setup (archetype, sets, pools, epic,
   incarnates) is a compact left rail with Stats and the Build Assistant stacked
   beneath it; the powers icon grid owns the entire wide side. The masthead is one

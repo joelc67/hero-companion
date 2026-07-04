@@ -94,12 +94,34 @@ main {
   padding: 10px 12px;
   align-items: start;
 }
+/* Click a power card → the Sidekick-style POWER INFO column opens on the right. */
+main.has-info {
+  grid-template-columns: minmax(300px, 370px) minmax(0, 1fr) minmax(270px, 320px);
+  grid-template-areas:
+    "setup build info"
+    "rail  build info";
+}
 #setup { grid-area: setup; }
 #builder { grid-area: build; }
+#power-info { grid-area: info; position: sticky; top: 84px; }
+#power-info.hidden { display: none; }
 .rail { grid-area: rail; display: flex; flex-direction: column; gap: 10px; }
 @media (max-width: 980px) {
-  main { grid-template-columns: 1fr; grid-template-areas: "setup" "build" "rail"; }
+  main, main.has-info { grid-template-columns: 1fr; grid-template-areas: "setup" "info" "build" "rail"; }
+  #power-info { position: static; }
 }
+
+/* Power Info internals */
+.pinfo h2 { display: flex; align-items: center; gap: 8px; }
+.pinfo .pi-ico { width: 26px; height: 26px; border-radius: 5px; }
+.pinfo .pi-close { margin-left: auto; }
+.pinfo .pi-tags { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
+.pinfo .pi-tag { font-size: 10px; padding: 1px 7px; border-radius: 8px;
+  background: var(--panel2); border: 1px solid var(--border); color: var(--muted); }
+.pinfo table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 6px 0; }
+.pinfo td { padding: 2px 4px; border-bottom: 1px solid var(--border); }
+.pinfo td:last-child { text-align: right; font-weight: 600; }
+.pinfo .pi-note { font-size: 11px; color: var(--muted); margin-top: 6px; }
 .panel {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -147,6 +169,8 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
   border-radius: 6px; padding: 6px 8px; margin: 6px 0;
 }
 .pc-head { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.pc-title { display: inline-flex; align-items: center; gap: 6px; min-width: 0; cursor: pointer; }
+.pc-title:hover .pname { color: var(--accent); }
 .pc-ico { width: 22px; height: 22px; border-radius: 4px; flex: none; }
 .power-card .pname { font-weight: 600; font-size: 12px; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis; min-width: 0; }

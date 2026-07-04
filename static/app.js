@@ -1420,11 +1420,12 @@ function renderPowers() {
 function powerCardHtml(pw, idx, icon, lv) {
   const cats = (pw.accepted_set_categories || []).join(", ") || "no set categories";
   const lvl = pw.pick_level || lv;
-  return `<div class="power-card" title="accepts: ${escHtml(cats)}">
+  return `<div class="power-card" title="accepts: ${escHtml(cats)}\n(click the name for full power info)">
     <div class="pc-head">
+      <span class="pc-title" onclick="selectPower('${escHtml(pw.full_name)}')">
       ${icon ? `<img class="pc-ico" src="${icon}" alt="" loading="lazy"
                  onerror="this.style.display='none'">` : ""}
-      <span class="pname">${escHtml(pw.display_name)}</span>
+      <span class="pname">${escHtml(pw.display_name)}</span></span>
       ${lvl ? `<span class="pick-lvl" title="${pw.pick_level ? `Chosen at level ${lvl}` : `Suggested pick order — about level ${lvl}`}">${pw.pick_level ? "" : "~"}L${lvl}</span>` : ""}
       <span class="pc-tools">
         <label class="include-toggle" title="Count this power's stats in the totals">
@@ -1438,6 +1439,71 @@ function powerCardHtml(pw, idx, icon, lv) {
     <div class="slot-row">${pw.slots.map((s, si) => slotHtml(idx, si, s)).join("")}</div>
     ${setSummaryHtml(pw)}
   </div>`;
+}
+
+// ── Power Info: the Sidekick-style right-hand detail panel ───────────────────
+// Fills the layout's third column with the selected power's real numbers: type,
+// costs, cycle, live attack stats (proc-inclusive, from the last recompute), the
+// enhancement categories it accepts, and what's slotted in it right now.
+let SELECTED_POWER = null;
+
+window.selectPower = function (fullName) {
+  SELECTED_POWER = fullName;
+  renderPowerInfo();
+};
+window.closePowerInfo = function () {
+  SELECTED_POWER = null;
+  const panel = $("power-info");
+  if (panel) panel.classList.add("hidden");
+  document.querySelector("main").classList.remove("has-info");
+};
+
+function renderPowerInfo() {
+  const panel = $("power-info");
+  if (!panel || !SELECTED_POWER) return;
+  let rec = null;
+  for (const ps of Object.keys(POWERS_CACHE)) {
+    rec = (POWERS_CACHE[ps] || []).find(p => p.full_name === SELECTED_POWER);
+    if (rec) break;
+  }
+  const pw = build.powers.find(p => p.full_name === SELECTED_POWER) || {};
+  const name = (rec && rec.display_name) || pw.display_name || SELECTED_POWER.split(".").pop();
+  const type = { 0: "Click", 1: "Auto (always on)", 2: "Toggle" }[
+    (rec && rec.power_type) ?? pw.power_type] || "";
+  // live attack numbers (proc damage included — the engine prices procs)
+  const atk = ((LAST_TOTALS && LAST_TOTALS.offense && LAST_TOTALS.offense.attacks) || [])
+    .find(a => a.name === name);
+  const rows = [];
+  if (type) rows.push(["Type", type]);
+  if (rec && rec.level_available) rows.push(["Available", `level ${rec.level_available}`]);
+  if (rec && rec.end_cost) rows.push(["End cost", rec.end_cost.toFixed(2)]);
+  if (rec && rec.cast_time) rows.push(["Cast time", `${rec.cast_time.toFixed(2)}s`]);
+  if (rec && rec.base_recharge) rows.push(["Base recharge", `${rec.base_recharge}s`]);
+  if (atk) {
+    rows.push(["Damage / hit", atk.damage]);
+    if (atk.recharge != null) rows.push(["Recharge (slotted)", `${atk.recharge}s`]);
+    if (atk.dpa) rows.push(["DPA (dmg/sec cast)", atk.dpa]);
+    if (atk.dps_spam) rows.push(["Cycled DPS", atk.dps_spam]);
+  }
+  const cats = ((rec && rec.accepted_set_categories) || pw.accepted_set_categories || []);
+  const slotted = (pw.slots || []).filter(Boolean);
+  const setCounts = {};
+  slotted.forEach(s => { const n = s.set_name || "Common IO"; setCounts[n] = (setCounts[n] || 0) + 1; });
+  panel.innerHTML =
+    `<h2>${rec && rec.icon ? `<img class="pi-ico" src="${rec.icon}" alt="">` : ""}
+       <span>${escHtml(name)}</span>
+       <button class="iconbtn pi-close" onclick="closePowerInfo()" title="close">✕</button></h2>`
+    + (rows.length ? `<table>${rows.map(([k, v]) =>
+        `<tr><td>${k}</td><td>${escHtml(String(v))}</td></tr>`).join("")}</table>` : "")
+    + (cats.length ? `<div class="muted small">Allowed enhancements</div>
+       <div class="pi-tags">${cats.map(c => `<span class="pi-tag">${escHtml(c)}</span>`).join("")}</div>` : "")
+    + (Object.keys(setCounts).length ? `<div class="muted small">Slotted now</div>
+       <div class="pi-tags">${Object.entries(setCounts).map(([n, c]) =>
+         `<span class="pi-tag">${escHtml(n)}${c > 1 ? ` ×${c}` : ""}</span>`).join("")}</div>` : "")
+    + (atk ? `<p class="pi-note">Damage numbers include slotted proc contributions and your
+       global recharge — they update with every change.</p>` : "");
+  panel.classList.remove("hidden");
+  document.querySelector("main").classList.add("has-info");
 }
 
 // A power's slots show as icons (set name only in the hover tooltip), which makes a
