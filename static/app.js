@@ -1376,31 +1376,26 @@ function renderPowers() {
     return "";
   };
 
-  // Sidekick-style: the BUILD (icon cards in level columns) on top, add-power
-  // choices below. Buckets mirror Sidekick's columns. Generated builds carry no
-  // pick_level — derive one from the real Homecoming pick ladder by pick order.
+  // THE BRICK WALL: uniform-size power cards flowing left-to-right in pick order
+  // (the L-badge carries the level), with the three info bricks as double-height
+  // blocks in the same flow. Snug by construction — no columns, no pockets.
+  // Generated builds carry no pick_level — derive one from the real pick ladder.
   const LADDER = [1, 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28,
                   30, 32, 35, 38, 41, 44, 47, 49];
-  const buckets = [["Levels 1–12", []], ["Levels 14–28", []], ["Levels 30–49", []]];
   let ladderI = 0;
-  build.powers.forEach((pw, idx) => {
+  const cards = build.powers.map((pw, idx) => {
     const lv = pw.pick_level || LADDER[Math.min(ladderI++, LADDER.length - 1)];
-    (lv <= 12 ? buckets[0][1] : lv <= 28 ? buckets[1][1] : buckets[2][1]).push([pw, idx, lv]);
+    return [pw, idx, lv];
   });
+  cards.sort((a, b) => a[2] - b[2]);
   let html = "";
-  if (build.powers.length) {
-    // Info bricks (vitals, set bonuses, uniques) start in the last column;
-    // balanceGridColumns() re-docks each into the shortest column after render,
-    // so the wall stays level for ANY archetype's column shape.
-    html += `<div class="powers-cols">` + buckets.map(([label, list], bi) =>
-      `<div class="powers-col"><div class="col-head">${label}</div>`
-      + list.map(([pw, idx, lv]) => powerCardHtml(pw, idx, iconOf(pw.full_name), lv)).join("")
-      + (bi === buckets.length - 1
-          ? `<div id="overview-card" class="overview-card hidden"></div>`
-            + `<div id="bonuses-card" class="overview-card hidden"></div>`
-            + `<div id="uniques-card" class="overview-card hidden"></div>`
-          : "")
-      + `</div>`).join("") + `</div>`;
+  if (cards.length) {
+    html += `<div class="powers-wall">`
+      + cards.map(([pw, idx, lv]) => powerCardHtml(pw, idx, iconOf(pw.full_name), lv)).join("")
+      + `<div id="overview-card" class="overview-card info-brick hidden"></div>`
+      + `<div id="bonuses-card" class="overview-card info-brick hidden"></div>`
+      + `<div id="uniques-card" class="overview-card info-brick hidden"></div>`
+      + `</div>`;
   }
 
   // "Add power" pickers — the choices, below the build
@@ -1528,7 +1523,8 @@ function setSummaryHtml(pw) {
     count[n] = (count[n] || 0) + 1;
   }
   const parts = order.map(n => `${escHtml(n)}${count[n] > 1 ? ` ×${count[n]}` : ""}`);
-  return `<div class="set-summary"><span class="muted small">sets:</span> ${parts.join(" · ")}</div>`;
+  const plain = order.map(n => `${n}${count[n] > 1 ? ` ×${count[n]}` : ""}`).join(" · ");
+  return `<div class="set-summary" title="sets: ${escHtml(plain)}"><span class="muted small">sets:</span> ${parts.join(" · ")}</div>`;
 }
 
 const enhIconUrl = (img) => img ? `/static/icons/enh/${img}` : "";
@@ -2117,11 +2113,13 @@ function updateBonusesCard(t) {
     const label = (Array.isArray(b.text) ? b.text[0] : b.text) || `${b.set} ${b.pieces}pc`;
     counts[label] = (counts[label] || 0) + 1;
   });
-  const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 9);
+  const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
   const capped = (t.rule_of_five_capped || []).length;
+  const top = entries.slice(0, capped ? 6 : 7);   // fits the double-height brick exactly
   card.innerHTML = `<div class="ovc-head">SET BONUSES <span class="muted">(${list.length} active)</span></div>`
     + top.map(([label, n]) =>
-        `<div class="ovc-line">${n > 1 ? `<b>×${n}</b> ` : ""}${escHtml(label)}</div>`).join("")
+        `<div class="ovc-line ovc-clip">${n > 1 ? `<b>×${n}</b> ` : ""}${escHtml(label)}</div>`).join("")
+    + (entries.length > top.length ? `<div class="ovc-line ovc-dim">… +${entries.length - top.length} more</div>` : "")
     + (capped ? `<div class="ovc-line ovc-dim">⚠ ${capped} bonus${capped > 1 ? "es" : ""} lost to the rule of five</div>` : "");
   card.classList.remove("hidden");
 }
@@ -2152,26 +2150,12 @@ function updateUniquesCard() {
   card.classList.remove("hidden");
 }
 
-// Masonry balancer: measure the level columns and re-dock each info brick into the
-// currently-shortest one, so no archetype's column shape leaves an empty pocket.
-function balanceGridColumns() {
-  const cols = [...document.querySelectorAll(".powers-cols .powers-col")];
-  if (cols.length < 2) return;
-  for (const id of ["overview-card", "bonuses-card", "uniques-card"]) {
-    const el = $(id);
-    if (!el || el.classList.contains("hidden")) continue;
-    let best = cols[0];
-    for (const c of cols) if (c.offsetHeight < best.offsetHeight) best = c;
-    best.appendChild(el);
-  }
-}
-
-// One call fills every info brick and levels the wall.
+// One call fills every info brick. (The wall is snug by construction — uniform
+// bricks in a row-flow grid — so no balancing pass is needed anymore.)
 function updateInfoCards(t) {
   updateOverviewBar(t);
   updateBonusesCard(t);
   updateUniquesCard();
-  balanceGridColumns();
 }
 let LAST_TOTALS = null;
 

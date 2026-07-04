@@ -73,6 +73,7 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
 .ovc-row .ov-group { min-width: 34px; margin: 0; }
 .ovc-head { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--muted); margin-bottom: 4px; }
 .ovc-line { font-size: 11.5px; line-height: 1.5; }
+.ovc-clip { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ovc-line b { color: var(--accent); }
 .ovc-dim { color: var(--muted); }
 .ov-group { color: var(--muted); font-weight: 700; font-size: 9.5px; letter-spacing: .06em; margin: 0 3px 0 8px; }
@@ -159,13 +160,13 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .incarnates label { margin: 4px 0; }
 
 /* Powers list */
-/* Sidekick-style build grid: taken powers as icon cards in LEVEL COLUMNS. */
-.powers-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;
-  align-items: start;   /* columns hug their content — real heights for the masonry balancer */ }
-@media (max-width: 1200px) { .powers-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 700px) { .powers-cols { grid-template-columns: 1fr; } }
-.col-head { font-size: 10px; font-weight: 700; letter-spacing: .07em; color: var(--muted);
-  text-transform: uppercase; padding: 2px 2px 4px; border-bottom: 1px solid var(--border); }
+/* THE BRICK WALL: uniform bricks flowing in rows — snug by construction.
+   Every power card is the same height; info bricks span two rows exactly. */
+.powers-wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  grid-auto-rows: 96px; gap: 8px; }
+.powers-wall .power-card { height: 100%; margin: 0; overflow: hidden;
+  display: flex; flex-direction: column; }
+.powers-wall .info-brick { grid-row: span 2; height: auto; margin: 0; overflow: hidden; }
 .add-powers-row { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px;
   padding-top: 8px; border-top: 1px solid var(--border); }
 
@@ -173,6 +174,8 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
   background: var(--panel2); border: 1px solid var(--border);
   border-radius: 6px; padding: 6px 8px; margin: 6px 0;
 }
+.powers-wall .set-summary { white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin: auto 0 0; }   /* one line, pinned to the brick's bottom; full list in the tooltip */
 .pc-head { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .pc-title { display: inline-flex; align-items: center; gap: 6px; min-width: 0; cursor: pointer; }
 .pc-title:hover .pname { color: var(--accent); }
