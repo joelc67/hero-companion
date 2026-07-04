@@ -1390,11 +1390,13 @@ function renderPowers() {
   cards.sort((a, b) => a[2] - b[2]);
   let html = "";
   if (cards.length) {
+    // Info bricks LEAD the wall (top-left cornerstones — vitals read first), cards
+    // flow around them; dense packing backfills any hole a span could leave.
     html += `<div class="powers-wall">`
-      + cards.map(([pw, idx, lv]) => powerCardHtml(pw, idx, iconOf(pw.full_name), lv)).join("")
       + `<div id="overview-card" class="overview-card info-brick hidden"></div>`
       + `<div id="bonuses-card" class="overview-card info-brick hidden"></div>`
       + `<div id="uniques-card" class="overview-card info-brick hidden"></div>`
+      + cards.map(([pw, idx, lv]) => powerCardHtml(pw, idx, iconOf(pw.full_name), lv)).join("")
       + `</div>`;
   }
 
