@@ -760,16 +760,16 @@ def get_setbonuses(setname):
 # ---------------------------------------------------------------------------
 # Build endpoints
 # ---------------------------------------------------------------------------
-_AT_SUFFIX_RE = re.compile(r"_(TankBrute|Tank|Brute|Scrapper|Stalker|Sentinel|Blaster|"
-                           r"Defender|Corruptor|Controller|Dominator|Mastermind|Arachnos|"
+_AT_SUFFIX_RE = re.compile(r"_(TankBrute|Tank|Brute|ScrapStalk|Scrapper|Stalker|Sentinel|Blaster|"
+                           r"DefCorr|Defender|Corruptor|Controller|Dominator|Mastermind|Arachnos|"
                            r"Epic|Villain|Hero)$", re.IGNORECASE)
 
 
 def _epic_prereq_errors(powers):
-    """Epic/ancillary powers taken WITHOUT the required tier-1 gateway. Epic pools are a tier
-    ladder by level_available: a power above the entry tier (Dark Blast 38, Night Fall 41) needs
-    a tier-1 pool power (Penumbral Grasp / Petrifying Gaze, lvl 35) already taken. Primary/
-    secondary and curated Pool packages use other rules, so only Epic.* pools are checked."""
+    """Epic/ancillary powers taken WITHOUT their tier prerequisites. Epic pools are a
+    tier ladder: the first two powers are free, the third needs ONE other power from
+    the pool, and the top tiers (the pets — Ice Elemental, Summon Spiderlings…) need
+    TWO. Counted per power, so 'pet + one attack' is correctly flagged as one short."""
     by_ps = defaultdict(list)
     for p in (powers or []):
         rec = POWER_BY_FULL.get(p.get("full_name"))
@@ -777,20 +777,19 @@ def _epic_prereq_errors(powers):
             by_ps[rec["powerset_full_name"]].append(rec)
     out = []
     for ps, recs in by_ps.items():
-        allp = POWERS.get(ps) or []
-        if not allp:
-            continue
-        entry = min((q.get("level_available") or 35) for q in allp)
-        higher = [r for r in recs if (r.get("level_available") or 35) > entry]
-        if higher and not any((r.get("level_available") or 35) <= entry for r in recs):
-            setname = _AT_SUFFIX_RE.sub("", ps.split(".")[-1]).replace("_", " ")
-            gates = [q.get("display_name") for q in allp
-                     if (q.get("level_available") or 35) <= entry]
-            hi = ", ".join(r.get("display_name") for r in higher)
-            out.append(
-                f"{hi} can't be taken yet: {setname} is an epic pool, and its higher-tier "
-                f"powers require a tier-1 pool power first. Add {' or '.join(gates)} "
-                f"(level {entry}) to make the build legal in-game.")
+        tiers = _pool_tiers(ps)
+        setname = _AT_SUFFIX_RE.sub("", ps.split(".")[-1]).replace("_", " ")
+        n_others = len(recs) - 1
+        for r in recs:
+            t = tiers.get(r.get("full_name"), 0)
+            need = 0 if t <= 1 else (1 if t == 2 else 2)
+            if n_others < need:
+                short = need - n_others
+                out.append(
+                    f"{r.get('display_name')} can't be taken yet: the game requires "
+                    f"{need} other {setname} power{'s' if need > 1 else ''} first — "
+                    f"this build has {n_others}. Add {short} more lower-tier "
+                    f"{setname} power{'s' if short > 1 else ''} to make it legal in-game.")
     return out
 
 
@@ -1117,11 +1116,17 @@ def _picks_legal(fns, primary, secondary):
     (Sorcery/Experimentation/Force of Will); pool/epic tier prereqs (T1-2 free, T3 needs 1
     other from its pool, T4-5 need 2); at least one level-1 pick from BOTH primary and secondary
     (the game grants one of each at L1)."""
-    pools = {}
+    pools, tiered = {}, {}
     for fn in fns:
         ps = fn.rsplit(".", 1)[0]
         if ps.startswith("Pool."):
             pools.setdefault(ps, set()).add(fn)
+            tiered.setdefault(ps, set()).add(fn)
+        elif ps.startswith("Epic."):
+            # Epic/ancillary pools follow the SAME tier ladder (T1-2 free, T3 needs
+            # one other, T4-5 — the pets like Ice Elemental — need two others), but
+            # do NOT count toward the 4-pool cap.
+            tiered.setdefault(ps, set()).add(fn)
     if len(pools) > 4:
         return False
     if len(set(pools) & _EXCLUSIVE_POOLS) > 1:
@@ -1129,7 +1134,7 @@ def _picks_legal(fns, primary, secondary):
     for a, b in _VEAT_DUPLICATE_PAIRS:      # base vs branch versions of the same grenade
         if a in fns and b in fns:
             return False
-    for ps, members in pools.items():
+    for ps, members in tiered.items():
         tiers = _pool_tiers(ps)
         for fn in members:
             t = tiers.get(fn, 0)
@@ -3039,19 +3044,31 @@ def _pick_epic(archetype, content, role="damage", exposure="flex"):
         if p["full_name"] not in seen:
             seen.add(p["full_name"]); uniq.append(p)
     take = uniq
-    # LEGALITY: epic/ancillary pools are a tier ladder by level_available. A higher-tier power
-    # (Dark Blast 38, Night Fall 41) can't be taken until you own a tier-1 pool power
-    # (Penumbral Grasp / Petrifying Gaze, lvl 35). If our picks are all above the entry tier,
-    # prepend the best entry-tier power as the prerequisite gateway.
+    # LEGALITY: epic/ancillary pools are a tier ladder — T1-2 free, T3 needs ONE other
+    # power from the pool, T4-5 (the pets: Ice Elemental, Summon Spiderlings…) need TWO.
+    # Keep prepending the best still-legal lower-tier power until every pick's
+    # prerequisite count is satisfied.
     allp = POWERS.get(ps) or []
     if allp and take:
-        entry_lvl = min((q.get("level_available") or 35) for q in allp)
-        take_fns = {q["full_name"] for q in take}
-        if not any((q.get("level_available") or 35) <= entry_lvl for q in take):
-            entries = [q for q in allp if (q.get("level_available") or 35) <= entry_lvl
-                       and q["full_name"] not in take_fns]
-            if entries:                       # best gateway: highest value, deterministic
-                take = [max(entries, key=lambda q: (_epic_power_value(q, exposure), q["full_name"]))] + take
+        tiers = _pool_tiers(ps)
+
+        def _needs(fn):
+            t = tiers.get(fn, 0)
+            return 0 if t <= 1 else (1 if t == 2 else 2)
+
+        for _ in range(4):                    # at most a few gateways ever needed
+            max_need = max((_needs(q["full_name"]) for q in take), default=0)
+            if len(take) - 1 >= max_need:
+                break
+            have = {q["full_name"] for q in take}
+            # candidates whose own prerequisite is already met by the current picks
+            entries = [q for q in allp if q["full_name"] not in have
+                       and _needs(q["full_name"]) <= len(take)]
+            if not entries:
+                break
+            entries.sort(key=lambda q: (tiers.get(q["full_name"], 0),
+                                        -_epic_power_value(q, exposure), q["full_name"]))
+            take = [entries[0]] + take
     return [(p["full_name"], p.get("level_available") or 35) for p in take]
 
 
