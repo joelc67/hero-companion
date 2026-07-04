@@ -21,6 +21,7 @@ benchmarks/*.jsonl
 benchmarks/*.v1.jsonl
 # Derived from the private masters corpus — stays local like the corpus itself
 benchmarks/guyver_analysis.json
+benchmarks/guyver_mxd_analysis.json
 
 # Generated build exports (user artifacts)
 exports/
