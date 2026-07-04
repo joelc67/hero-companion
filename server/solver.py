@@ -709,6 +709,12 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
             # 6th-piece control-set bonuses: Coercive 6pc=Rng+5, Frozen 6pc=AoE+7.5).
             if k[0] == "Defense" and k[1] in ("Ranged", "AoE", "Melee"):
                 priority[k] = max(priority[k], 4.0)
+            # v24 meta: the TYPED quad (S/L/F/C ~35) is now the default survival route —
+            # give an explicitly-targeted typed def the same lift, or the ILP funds cheap
+            # abundant S/L riders and leaves scarce Fire/Cold (winter 6-pieces) unfunded.
+            if (k[0] == "Defense" and k[1] in ("Smashing", "Lethal", "Fire", "Cold")
+                    and tgt >= 0.30):
+                priority[k] = max(priority[k], 4.0)
     # RECHARGE is targeted high (90-100%), so its per-target weight (÷1.0) is tiny next to a
     # 0.45 def target (÷0.45) — phase 1 caps def and spends NOTHING on recharge, leaving the
     # recharge perk-pass no slots. But EATs (perma-pets/Hasten), controllers (perma-control)

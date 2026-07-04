@@ -1784,7 +1784,11 @@ def build_solve():
 
     # Proc-bombing pass (doctrine §3): for offense builds, convert damage auras + filler
     # AoEs into proc bombs — the #1 master-build damage lever. Fails safe (no-op on error).
-    if not preserve:   # only on a full re-slot; preserve mode keeps the player's IO choices
+    # Runs on a full re-slot, AND (v24) on GENERATED builds even in preserve mode — a
+    # fresh wizard/autopick build has no player IO choices to preserve, and skipping the
+    # pass there was why generated kits shipped proc-less in the proc meta.
+    _generated = not any(p.get("_earned") for p in powers_in)
+    if not preserve or _generated:
         sol["powers"] = proc_pass.apply_proc_pass(sol["powers"], POWER_BY_FULL,
                                                   role=role, content=content)
         sol["powers"] = _endurance_relief_pass(sol["powers"], archetype, ctx, _rescap)
