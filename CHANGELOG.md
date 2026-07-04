@@ -1,11 +1,22 @@
 # Hero Companion — What's New
 
-## 0.10.2 — unreleased
+## 0.11.0 — July 3, 2026
 
-- **One-click updates.** "Update now" in the installed app now downloads the new
-  version and installs it for you — no trip to the download page. The app closes,
-  updates, and (from this version's installer onward) restarts itself. The download
-  page remains the fallback if anything goes sideways.
+**The master-class release** — the optimizer went to school on 4,000+ builds shared
+by one of the community's best builders, plus his direct coaching.
+
+- **Damage procs are now priced.** The engine computes each slotted %Damage proc's
+  real contribution (PPM math: recharge, cast time, area factor), so the optimizer
+  can genuinely trade set bonuses against procs — the core trade of the current meta.
+- **Current-meta defense targets.** Presets now aim for ~35% Smashing/Lethal/Fire/Cold
+  (typed) defense — or 35% Melee/Ranged/AoE for positional-armor characters — with the
+  freed slots buying damage. Want the old 45% style? Put "classic softcap" in your goal.
+  (Fire farm keeps its hard 45% fire floor — farms are still farms.)
+- **Hasten gets 2 slots, never 3** — the third recharge IO is worth ~13% of face value
+  after diminishing returns. A wasted slot, now unwasted.
+- **One-click updates** — "Update now" downloads and installs the new version for you;
+  the app closes, updates, and restarts itself. No more trips to the download page.
+- Model v24; scoring is stamped, so older champion scores aren't compared to new ones.
 
 ## 0.10.1 — July 3, 2026
 
