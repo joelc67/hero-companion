@@ -121,32 +121,46 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .incarnates label { margin: 4px 0; }
 
 /* Powers list */
+/* Sidekick-style build grid: taken powers as icon cards in LEVEL COLUMNS. */
+.powers-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 1200px) { .powers-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .powers-cols { grid-template-columns: 1fr; } }
+.col-head { font-size: 10px; font-weight: 700; letter-spacing: .07em; color: var(--muted);
+  text-transform: uppercase; padding: 2px 2px 4px; border-bottom: 1px solid var(--border); }
+.add-powers-row { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px;
+  padding-top: 8px; border-top: 1px solid var(--border); }
+
 .power-card {
   background: var(--panel2); border: 1px solid var(--border);
-  border-radius: 6px; padding: 8px 10px; margin: 8px 0;
+  border-radius: 6px; padding: 6px 8px; margin: 6px 0;
 }
-.power-card .ph {
-  display: flex; justify-content: space-between; align-items: center; gap: 6px;
-}
-.power-card .pname { font-weight: 600; font-size: 13px; }
+.pc-head { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.pc-ico { width: 22px; height: 22px; border-radius: 4px; flex: none; }
+.power-card .pname { font-weight: 600; font-size: 12px; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .power-card .pick-lvl {
-  font-weight: 600; font-size: 10px; color: var(--accent);
+  font-weight: 600; font-size: 9.5px; color: var(--accent);
   border: 1px solid var(--accent); border-radius: 8px;
-  padding: 0 5px; margin-left: 6px; vertical-align: middle; white-space: nowrap;
+  padding: 0 4px; white-space: nowrap; flex: none;
 }
+.pc-tools { display: flex; align-items: center; gap: 2px; margin-left: auto; flex: none; }
+.pc-tools .include-toggle { margin: 0 3px 0 0; font-size: 11px; gap: 2px; }
 .power-card .cats { font-size: 10.5px; color: var(--muted); margin-top: 2px; }
-.slot-row { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 7px; }
+.slot-row { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
 .slot {
-  width: 30px; height: 30px; border-radius: 50%;
+  width: 27px; height: 27px; border-radius: 50%;
   background: #141b25; border: 2px solid var(--border);
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; font-size: 9px; color: var(--muted); position: relative;
+  margin-bottom: 8px;                  /* room for the level tag below */
 }
 .slot:hover { border-color: var(--accent); }
-.slot.filled { border-color: var(--def); color: var(--ink); background: #1d2a22; overflow: hidden; }
+.slot.filled { border-color: var(--def); color: var(--ink); background: #1d2a22; }
 .slot.filled.unique { border-color: var(--warn); }
-.slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.slot img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
 .slot .slot-abbr { font-size: 9px; }
+.slot .slot-lvl { position: absolute; bottom: -9px; left: 50%; transform: translateX(-50%);
+  font-size: 8px; color: var(--muted); line-height: 1; pointer-events: none; }
 .slot-count { display:flex; align-items:center; gap:4px; }
 .slot-count button { width: 24px; height: 24px; padding: 0; border-radius: 4px; }
 .include-toggle { display: flex; align-items: center; gap: 5px; margin-top: 7px; font-size: 11px; color: var(--muted); cursor: pointer; }

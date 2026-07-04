@@ -1364,50 +1364,77 @@ function renderPowers() {
   const sets = chosenPowersets();
   if (!sets.length) { host.innerHTML = `<p class="muted small">Select powersets to add powers.</p>`; return; }
 
+  // Power ICON lookup (records carry it since the /powers endpoint attaches one).
+  const iconOf = (fullName) => {
+    for (const ps of Object.keys(POWERS_CACHE)) {
+      const rec = (POWERS_CACHE[ps] || []).find(p => p.full_name === fullName);
+      if (rec && rec.icon) return rec.icon;
+    }
+    return "";
+  };
+
+  // Sidekick-style: the BUILD (icon cards in level columns) on top, add-power
+  // choices below. Buckets mirror Sidekick's columns. Generated builds carry no
+  // pick_level — derive one from the real Homecoming pick ladder by pick order.
+  const LADDER = [1, 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28,
+                  30, 32, 35, 38, 41, 44, 47, 49];
+  const buckets = [["Levels 1–12", []], ["Levels 14–28", []], ["Levels 30–49", []]];
+  let ladderI = 0;
+  build.powers.forEach((pw, idx) => {
+    const lv = pw.pick_level || LADDER[Math.min(ladderI++, LADDER.length - 1)];
+    (lv <= 12 ? buckets[0][1] : lv <= 28 ? buckets[1][1] : buckets[2][1]).push([pw, idx, lv]);
+  });
   let html = "";
-  // "Add power" pickers per chosen powerset
+  if (build.powers.length) {
+    html += `<div class="powers-cols">` + buckets.map(([label, list]) =>
+      `<div class="powers-col"><div class="col-head">${label}</div>`
+      + list.map(([pw, idx, lv]) => powerCardHtml(pw, idx, iconOf(pw.full_name), lv)).join("")
+      + `</div>`).join("") + `</div>`;
+  }
+
+  // "Add power" pickers — the choices, below the build
+  html += `<div class="add-powers-row">`;
   for (const ps of sets) {
     const powers = (POWERS_CACHE[ps] || []).filter(p => p.slottable);
     if (!powers.length) continue;
-    const psName = powers[0] ? ps.split(".").slice(-1)[0].replace(/_/g, " ") : ps;
+    const psName = ps.split(".").slice(-1)[0].replace(/_/g, " ");
     html += `<div class="add-power"><label class="muted small">Add from ${psName}
       <select data-ps="${ps}" onchange="addPower(this)">
         <option value="">+ add power…</option>
         ${powers.map(p => `<option value="${p.full_name}">${p.display_name}</option>`).join("")}
       </select></label></div>`;
   }
-
-  // Added power cards
-  build.powers.forEach((pw, idx) => {
-    html += `<div class="power-card">
-      <div class="ph">
-        <div>
-          <div class="pname">${pw.display_name}${pw.pick_level ? ` <span class="pick-lvl" title="Chosen at level ${pw.pick_level}${pw.level_available ? ` (available at ${pw.level_available})` : ""}">Lv ${pw.pick_level}</span>` : ""}</div>
-          <div class="cats">accepts: ${(pw.accepted_set_categories || []).join(", ") || "no set categories"}</div>
-        </div>
-        <div class="slot-count">
-          <button class="mini" onclick="changeSlots(${idx}, -1)">−</button>
-          <span>${pw.slotCount} slot${pw.slotCount>1?"s":""}</span>
-          <button class="mini" onclick="changeSlots(${idx}, 1)">+</button>
-          <button class="remove-power" onclick="removePower(${idx})">remove</button>
-        </div>
-      </div>
-      <div class="slot-row">
-        ${pw.slots.map((s, si) => slotHtml(idx, si, s)).join("")}
-      </div>
-      ${setSummaryHtml(pw)}
-      <label class="include-toggle" title="Count this power's defense/resistance/etc. in the Stats totals">
-        <input type="checkbox" ${pw.include_in_totals ? "checked" : ""}
-          onchange="toggleInclude(${idx}, this.checked)">
-        include in totals${pw.power_type === 0 ? " (click power)" : ""}
-      </label>
-    </div>`;
-  });
+  html += `</div>`;
 
   host.innerHTML = html;
   updateEditBar();
   updateEpicBadge();
   renderConverterGuide();
+}
+
+// One taken power as a Sidekick-style card: power icon + name + level badge on top,
+// the enhancement-icon row as the star, tools tucked right, set summary as fine print.
+function powerCardHtml(pw, idx, icon, lv) {
+  const cats = (pw.accepted_set_categories || []).join(", ") || "no set categories";
+  const lvl = pw.pick_level || lv;
+  return `<div class="power-card" title="accepts: ${escHtml(cats)}">
+    <div class="pc-head">
+      ${icon ? `<img class="pc-ico" src="${icon}" alt="" loading="lazy"
+                 onerror="this.style.display='none'">` : ""}
+      <span class="pname">${escHtml(pw.display_name)}</span>
+      ${lvl ? `<span class="pick-lvl" title="${pw.pick_level ? `Chosen at level ${lvl}` : `Suggested pick order — about level ${lvl}`}">${pw.pick_level ? "" : "~"}L${lvl}</span>` : ""}
+      <span class="pc-tools">
+        <label class="include-toggle" title="Count this power's stats in the totals">
+          <input type="checkbox" ${pw.include_in_totals ? "checked" : ""}
+            onchange="toggleInclude(${idx}, this.checked)">Σ</label>
+        <button class="mini" onclick="changeSlots(${idx}, -1)" title="remove a slot">−</button>
+        <button class="mini" onclick="changeSlots(${idx}, 1)" title="add a slot">+</button>
+        <button class="remove-power" onclick="removePower(${idx})" title="remove this power">✕</button>
+      </span>
+    </div>
+    <div class="slot-row">${pw.slots.map((s, si) => slotHtml(idx, si, s)).join("")}</div>
+    ${setSummaryHtml(pw)}
+  </div>`;
 }
 
 // A power's slots show as icons (set name only in the hover tooltip), which makes a
@@ -1436,9 +1463,10 @@ function slotHtml(powerIdx, slotIdx, slot) {
            onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'slot-abbr',textContent:this.alt.slice(0,2)}))">`
       : `<span class="slot-abbr">${slot.piece_name.slice(0,2)}</span>`;
     const lvl = slot.io_level ? ` · level ${slot.io_level}${slot.attuned ? " (attuned)" : ""}` : "";
+    const tag = slot.attuned ? "A" : (slot.io_level || "");
     return `<div class="slot filled${slot.unique?' unique':''}" title="${slot.set_name}: ${slot.piece_name}${lvl}\n(click to change, right-click to clear)"
       onclick="openSlot(${powerIdx},${slotIdx})"
-      oncontextmenu="clearSlot(event,${powerIdx},${slotIdx})">${inner}</div>`;
+      oncontextmenu="clearSlot(event,${powerIdx},${slotIdx})">${inner}${tag ? `<span class="slot-lvl">${tag}</span>` : ""}</div>`;
   }
   return `<div class="slot" title="empty slot — click to choose"
     onclick="openSlot(${powerIdx},${slotIdx})">+</div>`;

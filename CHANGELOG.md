@@ -2,6 +2,11 @@
 
 ## 0.11.2 — unreleased
 
+- **The build is now an icon grid** (Sidekick-style): taken powers appear as compact
+  cards — power icon, name, level badge — with their slotted enhancements as an icon
+  row (IO level under each), arranged in three level columns (1–12 / 14–28 / 30–49).
+  Add-power choices moved below the build. Same clicks as before: click a slot to
+  change it, right-click to clear.
 - **Overview bar**: your build's vitals — typed and positional defense, resistance,
   recharge, HP, ST/AoE DPS — in one color-coded line that stays visible while you
   scroll. Green means you've hit the current-meta mark.

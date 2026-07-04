@@ -678,6 +678,7 @@ def _powers_for(powerset_full_name):
              "short": CAT_BY_ID.get(cid, {}).get("short", str(cid))}
             for cid in p.get("accepted_set_category_ids", [])
         ]
+        rec["icon"] = _power_icon_url(p.get("full_name"))   # in-game power icon (card art)
         out.append(rec)
     return out
 
