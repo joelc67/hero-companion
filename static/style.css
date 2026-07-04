@@ -167,7 +167,21 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
   grid-auto-flow: dense;   /* puzzle rule: any hole a 2-row brick would leave gets backfilled */ }
 .powers-wall .power-card { height: 100%; margin: 0; overflow: hidden;
   display: flex; flex-direction: column; }
-.powers-wall .info-brick { grid-row: span 2; height: auto; margin: 0; overflow: hidden; }
+/* INFO COURSE: the three summary bricks as one level row under the wall. */
+.info-course { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+@media (max-width: 1100px) { .info-course { grid-template-columns: 1fr; } }
+.info-course .overview-card { margin: 0; }
+.ov-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.ov-table th { font-size: 9.5px; color: var(--muted); font-weight: 700; letter-spacing: .05em;
+  text-align: center; padding: 1px 2px; }
+.ov-table th:first-child { text-align: left; }
+.ov-table td { text-align: center; font-weight: 700; font-size: 12.5px; padding: 1px 2px; }
+.ov-table td.ov-good, .ov-buildline b.ov-good { color: var(--def); }
+.ov-table td.ov-mid, .ov-buildline b.ov-mid { color: var(--warn); }
+.ov-table td.ov-dim, .ov-buildline b.ov-dim { color: var(--muted); font-weight: 400; }
+.ov-buildline { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 6px;
+  font-size: 11.5px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 5px; }
+.ov-buildline b { color: var(--ink); }
 .add-powers-row { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px;
   padding-top: 8px; border-top: 1px solid var(--border); }
 

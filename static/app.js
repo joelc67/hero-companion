@@ -1390,13 +1390,15 @@ function renderPowers() {
   cards.sort((a, b) => a[2] - b[2]);
   let html = "";
   if (cards.length) {
-    // Info bricks LEAD the wall (top-left cornerstones — vitals read first), cards
-    // flow around them; dense packing backfills any hole a span could leave.
+    // A pure uniform wall of power cards, then the INFO COURSE: the three summary
+    // bricks as one full-width row at the bottom of the powers section.
     html += `<div class="powers-wall">`
-      + `<div id="overview-card" class="overview-card info-brick hidden"></div>`
-      + `<div id="bonuses-card" class="overview-card info-brick hidden"></div>`
-      + `<div id="uniques-card" class="overview-card info-brick hidden"></div>`
       + cards.map(([pw, idx, lv]) => powerCardHtml(pw, idx, iconOf(pw.full_name), lv)).join("")
+      + `</div>`
+      + `<div class="info-course">`
+      + `<div id="overview-card" class="overview-card hidden"></div>`
+      + `<div id="bonuses-card" class="overview-card hidden"></div>`
+      + `<div id="uniques-card" class="overview-card hidden"></div>`
       + `</div>`;
   }
 
@@ -2079,28 +2081,30 @@ function updateOverviewBar(t) {
   const num = (x) => Math.round((x && typeof x === "object" ? x.value : x) || 0);
   const d = t.defense || {}, r = t.resistance || {}, off = t.offense || {};
   const rcap = Math.round(((t.caps || {}).resistance || 75));
-  const _ovRes = (v) => v >= rcap - 5 ? "ov-good" : v >= rcap * 0.6 ? "ov-mid" : "ov-dim";
+  const _resCls = (v) => v >= rcap - 5 ? "ov-good" : v >= rcap * 0.6 ? "ov-mid" : "ov-dim";
   const rech = num(t.recharge);
-  const group = (label, cells) =>
-    `<div class="ovc-row"><span class="ov-group">${label}</span>${cells.join("")}</div>`;
+  // A real table: damage types across the top, DEF and RES as rows. One glance.
+  const dv = { sl: Math.min(num(d.Smashing), num(d.Lethal)), fc: Math.min(num(d.Fire), num(d.Cold)),
+               en: Math.min(num(d.Energy), num(d.Negative)), mel: num(d.Melee),
+               rng: num(d.Ranged), aoe: num(d.AoE) };
+  const rv = { sl: Math.min(num(r.Smashing), num(r.Lethal)), fc: Math.min(num(r.Fire), num(r.Cold)),
+               en: Math.min(num(r.Energy), num(r.Negative)) };
+  const td = (v, cls) => `<td class="${cls}">${v}</td>`;
   card.innerHTML =
-    group("DEF", [
-      _ovCell("S/L", num(d.Smashing), _ovDef(num(d.Smashing))),
-      _ovCell("F/C", Math.min(num(d.Fire), num(d.Cold)), _ovDef(Math.min(num(d.Fire), num(d.Cold)))),
-      _ovCell("Mel", num(d.Melee), _ovDef(num(d.Melee))),
-      _ovCell("Rng", num(d.Ranged), _ovDef(num(d.Ranged))),
-      _ovCell("AoE", num(d.AoE), _ovDef(num(d.AoE)))])
-    + group("RES", [
-      _ovCell("S/L", num(r.Smashing), _ovRes(num(r.Smashing))),
-      _ovCell("F/C", Math.min(num(r.Fire), num(r.Cold)), _ovRes(Math.min(num(r.Fire), num(r.Cold)))),
-      _ovCell("E/N", Math.min(num(r.Energy), num(r.Negative)), _ovRes(Math.min(num(r.Energy), num(r.Negative))))])
-    + group("BUILD", [
-      _ovCell("Rech", `+${rech}%`, rech >= 70 ? "ov-good" : rech >= 40 ? "ov-mid" : "ov-dim"),
-      _ovCell("Rec", `+${num(t.recovery)}%`, "ov-plain"),
-      _ovCell("HP", `+${num(t.max_hp)}%`, "ov-plain")])
-    + group("DPS", [
-      _ovCell("ST", num(off.st_dps), "ov-plain"),
-      _ovCell("AoE", num(off.aoe_dps), "ov-plain")]);
+    `<div class="ovc-head">BUILD VITALS</div>
+     <table class="ov-table">
+       <tr><th></th><th>S/L</th><th>F/C</th><th>E/N</th><th>Mel</th><th>Rng</th><th>AoE</th></tr>
+       <tr><th>DEF %</th>${td(dv.sl, _ovDef(dv.sl))}${td(dv.fc, _ovDef(dv.fc))}${td(dv.en, _ovDef(dv.en))}
+           ${td(dv.mel, _ovDef(dv.mel))}${td(dv.rng, _ovDef(dv.rng))}${td(dv.aoe, _ovDef(dv.aoe))}</tr>
+       <tr><th>RES %</th>${td(rv.sl, _resCls(rv.sl))}${td(rv.fc, _resCls(rv.fc))}${td(rv.en, _resCls(rv.en))}
+           <td class="ov-dim">—</td><td class="ov-dim">—</td><td class="ov-dim">—</td></tr>
+     </table>
+     <div class="ov-buildline">
+       <span>Recharge <b class="${rech >= 70 ? "ov-good" : rech >= 40 ? "ov-mid" : "ov-dim"}">+${rech}%</b></span>
+       <span>Recovery <b>+${num(t.recovery)}%</b></span>
+       <span>HP <b>+${num(t.max_hp)}%</b></span>
+       <span>DPS <b>${num(off.st_dps)}</b> ST / <b>${num(off.aoe_dps)}</b> AoE</span>
+     </div>`;
   card.classList.remove("hidden");
 }
 
