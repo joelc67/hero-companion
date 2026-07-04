@@ -2,6 +2,10 @@
 
 ## 0.11.2 — unreleased
 
+- **Horizontal-first layout**: character setup (archetype, sets, pools, epic,
+  incarnates) is a compact left rail with Stats and the Build Assistant stacked
+  beneath it; the powers icon grid owns the entire wide side. The masthead is one
+  tight strip — identity, vitals, icon-only actions — that stays pinned as you scroll.
 - **No AI anywhere.** The panel is simply the Build Assistant — deterministic presets,
   goals, and instant Solve. (The AI seam still exists for those who bring their own
   key, but it's opt-in and invisible otherwise.)
