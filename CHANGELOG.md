@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## 0.12.2 — unreleased
+## 0.12.2 — July 4, 2026
 
 - **Fixed: slots the game could never grant.** An enhancement slot is earned at a
   specific level and can only be placed in a power you already have — so a power
