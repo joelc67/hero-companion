@@ -290,6 +290,13 @@ SUPPORT_SETS = {
 # "CAP" in a resistance spec means "this AT's resistance cap". A free-text goal stays
 # OPTIONAL — it just layers extra named caps on top via goal_targets().
 
+# CURRENT-META targets (model v24, calibrated against the 2,255-build Sovereign
+# corpus + the master builder's stated doctrine): ~35% defense to Smashing/Lethal/
+# Fire/Cold (TYPED) for most characters — positional-armor characters take 35%
+# Melee/Ranged/AoE instead (preset_targets swaps this in) — with the freed slots
+# spent on PROCS, which the engine now prices. The OLD 45%-softcap style remains
+# reachable via the "classic softcap" goal text. Fire farm keeps its hard fire
+# floor — farm spawns are a special case where the cap still rules.
 CONTENT_PRESETS = {
     "fire_farm": {
         "label": "Fire Farm",   # farmer (damage/tank) OR support mule (buffer/healer on a team / dual-box) — role decides
@@ -302,31 +309,63 @@ CONTENT_PRESETS = {
     },
     "itrial": {                     # league / incarnate content: +3/+4 enemies
         "label": "League / iTrials",
-        "defense": {"Ranged": 45, "AoE": 45, "Melee": 32},
+        "defense": {"Smashing": 35, "Lethal": 35, "Fire": 35, "Cold": 35},
         "resistance": {"Smashing": 50, "Lethal": 50, "Energy": 40, "Negative": 40},
         "recharge": 90, "recovery": 50,
     },
     "team": {                       # team covers your survival; you bring uptime
         "label": "Team play",
-        "defense": {"Ranged": 45, "AoE": 45},
+        "defense": {"Smashing": 35, "Lethal": 35, "Fire": 35, "Cold": 35},
         "recharge": 80, "recovery": 30,
     },
     "general": {                    # everyday solo / AV soloing: balanced
         "label": "General / solo",
-        "defense": {"Smashing": 32, "Lethal": 32, "Ranged": 32},
+        "defense": {"Smashing": 35, "Lethal": 35, "Fire": 35, "Cold": 35},
         "resistance": {"Smashing": 50, "Lethal": 50},
         "recharge": 70, "recovery": 40,
     },
     "av": {                         # hard single targets (EB/AV): tank it + sustain ST DPS
         "label": "EB / AV (hard targets)",
-        # broad defense soft-cap (AVs deal mixed damage in long fights) + high recharge
-        # for an unbroken attack chain. The damage emphasis is SINGLE-TARGET, and the
-        # incarnate recommender shifts to -Regen / debuff-resist for this content.
-        "defense": {"Smashing": 45, "Lethal": 45, "Energy": 45, "Negative": 45, "Ranged": 45},
+        # typed 35 + a bit of E/N (AV mixed damage) + high recharge for the chain.
+        "defense": {"Smashing": 35, "Lethal": 35, "Fire": 35, "Cold": 35,
+                    "Energy": 30, "Negative": 30},
         "resistance": {"Smashing": 50, "Lethal": 50},
         "recharge": 95, "recovery": 40,
     },
 }
+
+# Armor sets whose native defense is POSITIONAL — characters built on these chase
+# 35% Melee/Ranged/AoE instead of typed S/L/F/C (the typed targets would fight the
+# armor's own geometry). Matched on the set's short name, lowercased.
+POSITIONAL_ARMOR_SETS = {
+    "super_reflexes", "shield_defense", "ninjitsu", "ninja_training",
+    "widow_training", "night_widow_training", "fortunata_training",
+    "energy_aura", "scrapper_ninjitsu", "stalker_ninjitsu",
+}
+
+_POSITIONAL_35 = {"Melee": 35, "Ranged": 35, "AoE": 35}
+_CLASSIC_RE = None
+
+
+def wants_classic_softcap(goal):
+    """The old 45%-softcap style, on request: 'classic softcap', '45 def', 'old meta'…"""
+    import re as _re
+    global _CLASSIC_RE
+    if _CLASSIC_RE is None:
+        _CLASSIC_RE = _re.compile(r"classic\s+soft\s*cap|old\s+meta|45%?\s*(def|defense)|soft\s*cap\s*everything", _re.I)
+    return bool(goal and _CLASSIC_RE.search(goal))
+
+
+_CLASSIC_DEF = {"Smashing": 45, "Lethal": 45, "Fire": 45, "Cold": 45, "Ranged": 45, "AoE": 45}
+
+
+def positional_build(primary=None, secondary=None):
+    """True when either main set is a positional-defense armor."""
+    for ps in (primary, secondary):
+        short = ((ps or "").split(".")[-1]).lower()
+        if short in POSITIONAL_ARMOR_SETS:
+            return True
+    return False
 
 # Role -> solver role list (ROLE_DEFS keys), perk dial, and perk floors it raises.
 # tank also pushes resistances toward the AT cap + adds HP.
@@ -356,22 +395,34 @@ ROLE_PRESETS = {
 }
 
 
-def preset_targets(content, role, res_cap=75, exposure=None):
+def preset_targets(content, role, res_cap=75, exposure=None,
+                   primary=None, secondary=None, goal=None):
     """Compose a CONTENT preset + ROLE (+ EXPOSURE) into a concrete solver request:
     {"targets": {...}, "roles": [...], "perk_focus": ...}. No free text needed.
 
-    NOTE on role-first: the survival def/res targets are KEPT high for every role on purpose —
-    they are SET-BONUS HARVEST proxies, not literal goals. Chasing the def softcap makes the solver
-    slot defense SETS, whose recharge/recovery/HP/res BONUSES help the whole build even when the def
-    number never reaches 45 (a controller lands ~22% def but harvests the recharge that powers
-    perma-control). Lowering the target to "what's achievable" tested WORSE across recovery/res.
-    Role-first lives instead in the role KIND-MULTIPLIERS (ROLE_DEFS: controlling→RechargeTime 2.2,
-    survival→Def/Res 1.8, …), which tilt WHICH bonuses get harvested without starving the harvest."""
+    v24 meta targets: the typed S/L/F/C-35 baseline swaps to POSITIONAL 35 when the
+    build's armor is positional-natured (pass primary/secondary), and the whole
+    defense vector lifts to the classic 45 profile when the goal asks for it.
+    The lowered 35 baseline is safe now because the engine PRICES PROCS — the slots
+    the old 45-proxy would have spent on marginal defense sets buy real damage.
+
+    NOTE on role-first: the survival def/res targets remain HARVEST proxies, not
+    literal goals — the role KIND-MULTIPLIERS (ROLE_DEFS) still tilt which bonuses
+    get harvested."""
     base = CONTENT_PRESETS.get(content) or {}
     rolespec = ROLE_PRESETS.get(role) or {}
     out = {"defense": {}, "resistance": {}}
     for t, v in base.get("defense", {}).items():
         out["defense"][t] = v
+    # meta-baseline reshaping (never touches fire_farm's hard 45 floor)
+    _meta_quad = all(out["defense"].get(t) == 35 for t in ("Smashing", "Lethal", "Fire", "Cold"))
+    if goal and wants_classic_softcap(goal):
+        for t, v in _CLASSIC_DEF.items():
+            out["defense"][t] = max(out["defense"].get(t, 0), v)
+    elif _meta_quad and positional_build(primary, secondary):
+        for t in ("Smashing", "Lethal", "Fire", "Cold"):
+            del out["defense"][t]
+        out["defense"].update(_POSITIONAL_35)
     # EXPOSURE shapes the DEFENSE vector via the achievable POSITIONAL route: a front-
     # liner is hit in melee (aim Melee def), a backliner by ranged/AoE (aim Ranged+AoE).
     if exposure == "front":

@@ -1587,7 +1587,10 @@ def build_assess():
     keep_layout = bool(body.get("keep_layout"))
     at = ARCH_BY_NAME.get(archetype)
     res_cap = round(at["res_cap"] * 100, 1) if at else engine.RESISTANCE_HARD_CAP
-    preset = ai_build.preset_targets(content, role, res_cap=res_cap) if (content or role) else None
+    _mp, _ms = _main_sets(powers_in)
+    preset = ai_build.preset_targets(content, role, res_cap=res_cap,
+                                     primary=_mp, secondary=_ms,
+                                     goal=goal) if (content or role) else None
     if body.get("targets"):
         targets = body["targets"]
     elif preset:
@@ -1635,7 +1638,9 @@ def build_preset():
     rescap = round(_at["res_cap"] * 100, 1) if _at else engine.RESISTANCE_HARD_CAP
     if not (content or role):
         return jsonify({"ok": False})
-    pre = ai_build.preset_targets(content, role, res_cap=rescap)
+    pre = ai_build.preset_targets(content, role, res_cap=rescap,
+                                  primary=body.get("primary"), secondary=body.get("secondary"),
+                                  goal=body.get("goal"))
     labels = [x for x in (ai_build.CONTENT_PRESETS.get(content, {}).get("label"),
                           ai_build.ROLE_PRESETS.get(role, {}).get("label")) if x]
     return jsonify({"ok": True, "summary": _targets_summary(pre["targets"]),
@@ -1677,7 +1682,11 @@ def build_solve():
     _rescap = round(_at["res_cap"] * 100, 1) if _at else engine.RESISTANCE_HARD_CAP
     # PRESET path: a CONTENT and/or ROLE pick generates the targets (no typing needed).
     # A free-text goal stays OPTIONAL — it just layers extra named caps on top.
-    preset = ai_build.preset_targets(content, role, res_cap=_rescap, exposure=exposure) if (content or role) else None
+    _mp2, _ms2 = _main_sets(body.get("powers"))
+    preset = ai_build.preset_targets(content, role, res_cap=_rescap, exposure=exposure,
+                                     primary=body.get("primary") or _mp2,
+                                     secondary=body.get("secondary") or _ms2,
+                                     goal=body.get("goal")) if (content or role) else None
     preset_labels = []
     if body.get("targets"):
         targets = body["targets"]
@@ -3452,7 +3461,9 @@ def build_interpret():
                                 body.get("goal") or body.get("goal_text") or "")
     _at = ARCH_BY_NAME.get(archetype)
     rescap = round(_at["res_cap"] * 100, 1) if _at else engine.RESISTANCE_HARD_CAP
-    pre = ai_build.preset_targets(body.get("content"), interp["resolved_role"], res_cap=rescap)
+    pre = ai_build.preset_targets(body.get("content"), interp["resolved_role"], res_cap=rescap,
+                                  primary=body.get("primary"), secondary=body.get("secondary"),
+                                  goal=body.get("goal") or body.get("goal_text"))
     interp["targets_summary"] = _targets_summary(pre["targets"]) if pre else ""
     return jsonify({"ok": True, "interpretation": interp})
 
@@ -4023,6 +4034,21 @@ _TRAVEL_POWER_NAMES = {"Super_Speed", "Leap", "Fly", "Teleport",
 _FILLER_POOL_ATTACKS = {"Flurry", "Jump_Kick"}
 # These never need extra slots.
 _NO_EXTRA_SLOT_NAMES = {"Brawl", "Sprint", "Rest"}
+
+
+def _main_sets(powers):
+    """(primary, secondary) powerset full-names guessed from a power list — the first
+    two non-pool/epic/inherent sets in pick order. For the meta-target positional swap."""
+    seen = []
+    for p in powers or []:
+        ps = p.get("powerset_full_name") or ""
+        if not ps or ps.startswith(("Pool.", "Epic.", "Inherent.", "Incarnate.")):
+            continue
+        if ps not in seen:
+            seen.append(ps)
+        if len(seen) >= 2:
+            break
+    return (seen[0] if seen else None), (seen[1] if len(seen) > 1 else None)
 
 
 def _pname(p):
