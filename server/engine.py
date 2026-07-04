@@ -14,6 +14,7 @@ about this: it reports the set-bonus contribution to each stat and labels it as
 such, so "how close to the soft cap am I from set bonuses" is accurate.
 """
 
+import os
 from collections import defaultdict
 
 # ---- Hardcoded CoH constants (Step 6) ----
@@ -445,6 +446,64 @@ AOE_DMG_CATS = {"Targeted AoE Damage", "PBAoE Damage", "Melee AoE",
 _AOE_EFFECT_AREAS = {2, 3, 4}
 
 
+# ── Damage-proc pricing (model v24) ─────────────────────────────────────────
+# PPM math prices each slotted %Damage proc into the attack's damage, so the
+# optimizer can trade set bonuses against procs — the current meta's core trade.
+# PROVISIONAL until verified against homecoming.wiki "Procs Per Minute":
+#   click chance = min(90%, PPM × (local_recharge_time + cast) / 60)
+#   (LOCAL slotted recharge only — global recharge deliberately excluded, per PPM rules)
+#   AoE divides by AreaFactor = 1 + radius × 0.15 × (0.75 + 0.25×arc/360 for cones)
+_PROC_TABLE = None
+
+
+def _proc_table():
+    global _PROC_TABLE
+    if _PROC_TABLE is None:
+        import json as _json
+        import sys as _sys
+        if getattr(_sys, "frozen", False):
+            base = getattr(_sys, "_MEIPASS", os.path.dirname(_sys.executable))
+        else:
+            base = os.path.join(os.path.dirname(__file__), "..")
+        try:
+            with open(os.path.join(base, "data", "proc_catalog.json"), encoding="utf-8") as f:
+                cat = _json.load(f)
+            _PROC_TABLE = {p["uid"]: (p.get("ppm") or 3.5, p.get("dmg50") or 71.75)
+                           for procs in cat.get("damage_procs", {}).values() for p in procs}
+        except Exception:  # noqa: BLE001
+            _PROC_TABLE = {}
+    return _PROC_TABLE
+
+
+def _area_factor(rec):
+    r = rec.get("radius") or 0
+    if r <= 0:
+        return 1.0
+    arc = rec.get("arc") or 0
+    k = 0.15 * ((0.75 + 0.25 * (arc / 360.0)) if arc else 1.0)
+    return 1.0 + r * k
+
+
+def proc_damage_per_activation(power, rec, local_rech_boost):
+    """Expected proc damage added to ONE activation of this attack, from every
+    %Damage proc slotted in it."""
+    table = _proc_table()
+    total = 0.0
+    for slot in (power.get("slots") or []):
+        if not slot:
+            continue
+        entry = table.get(slot.get("piece_uid"))
+        if not entry:
+            continue
+        ppm, dmg = entry
+        base_rech = rec.get("base_recharge") or 0.0
+        cast = rec.get("cast_time") or 0.0
+        local_rech = base_rech / (1.0 + max(0.0, local_rech_boost))
+        chance = min(0.90, ppm * (local_rech + cast) / 60.0 / _area_factor(rec))
+        total += chance * dmg
+    return total
+
+
 def is_aoe(rec):
     """Does the power hit an AREA? From the authoritative Mids geometry (radius + effect_area),
     not guessed from accepted set categories. PBAoE/cone/sphere/location all qualify."""
@@ -516,6 +575,9 @@ def _offense(build, totals, ctx):
         if rech_cap is not None:
             rech_total = min(rech_total, rech_cap)
         dmg = base * (1.0 + dmg_boost)
+        # model v24: slotted %Damage procs are DAMAGE — priced by PPM math (see
+        # proc_damage_per_activation). Procs ignore the damage buff/cap by design.
+        dmg += proc_damage_per_activation(power, p, rech_boost)
         cast = p.get("cast_time") or 0.0
         base_rech = p.get("base_recharge") or 0.0
         actual_rech = base_rech / (1.0 + rech_total) if rech_total > -0.999 else base_rech
