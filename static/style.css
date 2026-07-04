@@ -62,9 +62,11 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
 .iconbtn:hover { border-color: var(--accent); }
 .cap-chips { display: flex; gap: 6px; margin: 4px 0 6px; }
 
-/* Overview bar — the build's vitals in ONE horizontal line, inside the masthead. */
+/* Overview bar — the build's vitals in ONE horizontal line, inside the masthead.
+   Right-aligned: dead space (if any) sits left, cells hug the action icons above. */
 .overview-bar {
-  display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 4px; flex-wrap: wrap;
   padding: 4px 60px 6px;
   font-size: 11px;
 }
@@ -80,31 +82,23 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
 .ov-dim .ov-num { color: var(--muted); }
 .ov-plain .ov-num { color: var(--ink); }
 
-/* Two zones, not three frames: a wide BUILD column + a right rail (controls over stats).
-   The whole PAGE scrolls (no per-panel scroll boxes); the stats rail sticks in view. */
+/* HORIZONTAL layout, always: a LEFT column (setup on top, stats + assistant below)
+   and the POWERS GRID owning the wide side. The whole page is ONE scroll. */
 main {
   display: grid;
-  grid-template-columns: minmax(0, 1.65fr) minmax(330px, 1fr);
+  grid-template-columns: minmax(300px, 370px) minmax(0, 1fr);
+  grid-template-areas:
+    "setup build"
+    "rail  build";
   gap: 10px;
   padding: 10px 12px;
   align-items: start;
 }
-/* Right rail: live stats + AI controls stacked. NO sticky, NO inner scrollbar — the whole
-   page is ONE scroll. (Three independent scroll boxes were the old "wonky frames" problem.) */
-.rail {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-/* Wide screens: the rail's panels sit SIDE BY SIDE — stats and controls both visible,
-   page height nearly halves. The BUILD grid gets the lion's share of width (the icon
-   cards are the main event); the rail is capped so it can't hoard dead space. */
-@media (min-width: 1460px) {
-  main { grid-template-columns: minmax(0, 1.9fr) minmax(560px, 1fr); }
-  .rail { display: grid; grid-template-columns: 1fr 1fr; align-items: start; }
-}
+#setup { grid-area: setup; }
+#builder { grid-area: build; }
+.rail { grid-area: rail; display: flex; flex-direction: column; gap: 10px; }
 @media (max-width: 980px) {
-  main { grid-template-columns: 1fr; }
+  main { grid-template-columns: 1fr; grid-template-areas: "setup" "build" "rail"; }
 }
 .panel {
   background: var(--panel);

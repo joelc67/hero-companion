@@ -170,8 +170,8 @@
   </header>
 
   <main>
-    <!-- LEFT: Build Builder -->
-    <section id="builder" class="panel">
+    <!-- LEFT RAIL, top: character setup (archetype, sets, pools, epic, incarnates) -->
+    <section id="setup" class="panel">
       <h2>Build</h2>
 
       <label>Archetype
@@ -211,7 +211,11 @@
         </div>
       </details>
 
-      <h3>Powers &amp; Slots</h3>
+    </section>
+
+    <!-- WIDE: the powers grid — the main event -->
+    <section id="builder" class="panel">
+      <h2>Powers &amp; Slots</h2>
       <div id="edit-bar" class="edit-bar">
         <button id="undo-btn" class="ghost-btn" type="button" onclick="undoEdit()" disabled
           title="Revert your last edit (add/remove power, slot change, enhancement swap, pool change)">↶ Undo</button>
