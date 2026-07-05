@@ -256,11 +256,19 @@ def _fill_slot_images(resolved):
                 continue
             if not slot.get("image"):
                 slot["image"] = PIECE_IMAGE.get(slot.get("piece_uid"), "")
-            if not slot.get("io_level") and slot.get("set_uid"):
-                rec = (SET_BY_UID.get(slot["set_uid"])                       # solver slots
-                       or SET_BY_NAME.get((slot.get("set_name") or "").lower()))  # proc-pass slots
-                if rec and rec.get("level_max") is not None:
-                    slot["io_level"] = min(50, int(rec["level_max"]) + 1)
+            rec = (SET_BY_UID.get(slot.get("set_uid"))                       # solver slots
+                   or SET_BY_NAME.get((slot.get("set_name") or "").lower()))  # proc-pass slots
+            if not rec:
+                continue
+            if not slot.get("io_level") and rec.get("level_max") is not None:
+                slot["io_level"] = min(50, int(rec["level_max"]) + 1)
+            # The proc pass labels its pieces just "proc" (field report: "Annihilation:
+            # proc — what is that?") — resolve the REAL piece name from the catalog.
+            if slot.get("piece_name") in (None, "", "proc") and slot.get("piece_uid"):
+                pc = next((q for q in (rec.get("pieces") or [])
+                           if q.get("uid") == slot["piece_uid"]), None)
+                if pc and pc.get("name"):
+                    slot["piece_name"] = pc["name"]
     return resolved
 
 
