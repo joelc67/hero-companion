@@ -8,6 +8,11 @@
   in-game incarnate icons (family art + rarity ring) and the full ability name
   on hover. Slots you haven't filled show as dashed placeholders.
 
+- **Every IO icon now shows its level.** Set pieces the optimizer slots (and ones
+  you pick by hand) carry the level to buy or craft them at — the set's maximum,
+  so a Cloud Senses piece reads 30, an Achilles' Heel proc 20, premium sets 50 —
+  right under the icon, the same way common IOs already did.
+
 ## 0.12.4 — July 4, 2026
 
 - **Level 1 always satisfies the creation requirement: one primary power AND one

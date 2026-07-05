@@ -247,11 +247,20 @@ def _enrich_solver_powers(powers):
 
 
 def _fill_slot_images(resolved):
-    """Ensure every resolved slot carries an icon filename (by piece uid)."""
+    """Ensure every resolved slot carries an icon filename (by piece uid) AND the IO's
+    buy level — the set's max (Mids stores levels 0-based, so +1). Field report: set
+    pieces showed no level under their icons while common IOs showed 50."""
     for pw in resolved.get("powers", []):
         for slot in pw.get("slots", []) or []:
-            if slot and not slot.get("image"):
+            if not slot:
+                continue
+            if not slot.get("image"):
                 slot["image"] = PIECE_IMAGE.get(slot.get("piece_uid"), "")
+            if not slot.get("io_level") and slot.get("set_uid"):
+                rec = (SET_BY_UID.get(slot["set_uid"])                       # solver slots
+                       or SET_BY_NAME.get((slot.get("set_name") or "").lower()))  # proc-pass slots
+                if rec and rec.get("level_max") is not None:
+                    slot["io_level"] = min(50, int(rec["level_max"]) + 1)
     return resolved
 
 

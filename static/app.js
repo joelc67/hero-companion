@@ -2087,6 +2087,9 @@ window.pickPiece = function (setUid, setName, pieceIdx) {
     enhances: piece.enhances,
     unique: piece.unique,
     image: piece.image || s.image || "",
+    // buy level = the set's max (Mids data stores levels 0-based) — shown as the
+    // tag under the icon, same as common IOs
+    io_level: s.level_max != null ? Math.min(50, s.level_max + 1) : null,
   };
   closeModal();
   renderPowers();
