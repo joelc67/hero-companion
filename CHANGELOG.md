@@ -13,6 +13,10 @@
   so a Cloud Senses piece reads 30, an Achilles' Heel proc 20, premium sets 50 —
   right under the icon, the same way common IOs already did.
 
+- **Procs are named properly.** Slots the proc pass fills used to read just
+  "Annihilation: proc" — they now carry the real piece name ("Annihilation:
+  Chance for Res Debuff"), so you know exactly what to buy.
+
 ## 0.12.4 — July 4, 2026
 
 - **Level 1 always satisfies the creation requirement: one primary power AND one
