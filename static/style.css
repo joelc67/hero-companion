@@ -955,3 +955,7 @@ body { overflow: hidden; }
 .gl-pre { font-size: 11px; white-space: pre-wrap; word-break: break-all;
   background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 8px; }
 #gl-coverage { margin-top: 8px; }
+.gl-acct-btn { display: inline-block; width: auto; margin: 4px 6px 4px 0; padding: 5px 12px;
+  background: var(--panel2); border: 1px solid var(--accent); border-radius: 6px;
+  color: var(--ink); cursor: pointer; font-size: 12.5px; }
+.gl-acct-btn:hover { filter: brightness(1.15); }

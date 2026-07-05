@@ -1268,9 +1268,9 @@ function renderGamelogPicker(accounts) {
   $("gl-setup").innerHTML =
     `Which account do you want to watch? `
     + accounts.map(a =>
-        `<button class="linkbtn" onclick="gamelogWatch('${escHtml(a.log_dir).replace(/\\/g, "\\\\")}')">`
-        + `${escHtml(a.account)}${a.has_logs ? ` (${a.log_files} log file${a.log_files > 1 ? "s" : ""})`
-                                             : " (no logs yet)"}</button>`).join(" ")
+        `<button class="gl-acct-btn" onclick="gamelogWatch('${escHtml(a.log_dir).replace(/\\/g, "\\\\")}')">`
+        + `▶ Watch ${escHtml(a.account)}${a.has_logs ? ` <span class="muted">(${a.log_files} log file${a.log_files > 1 ? "s" : ""})</span>`
+                                                     : ` <span class="muted">(no logs yet)</span>`}</button>`).join(" ")
     + `<br><span class="muted">No logs yet? In game, type <code>/logchat</code> once (it stays on) — `
     + `the game then writes a day file to that account's Logs folder every session.</span>`;
 }
@@ -1290,7 +1290,14 @@ window.gamelogWatch = async function (logDir) {
 
 window.gamelogIngest = async function () {
   const r = await api("/gamelog/ingest", postJson({}));
-  if (!r || !r.ok) { $("gl-setup").textContent = (r && r.response) || "Pick an account first."; return; }
+  if (!r || !r.ok) {
+    // Never a dead end (field report: the error text replaced the picker, leaving no
+    // way forward) — bring the account choices back with the guidance attached.
+    await gamelogPick();
+    $("gl-coverage").innerHTML =
+      `<b>First pick the account to watch</b> — click its name above, then ⟳.`;
+    return;
+  }
   renderGamelog(r.insights, r.report);
 };
 

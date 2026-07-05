@@ -1,5 +1,13 @@
 # Hero Companion — What's New
 
+## 0.12.7 — unreleased
+
+- **Fixed: the Play Log could dead-end.** Clicking "Read new log entries" before
+  choosing an account replaced the account choices with an error message that
+  told you to pick an account — with nothing left to pick. The choices now come
+  back with the guidance attached, and the account buttons look like buttons
+  ("▶ Watch filofinfain") instead of plain text.
+
 ## 0.12.6 — July 5, 2026
 
 - **The Play Log (first cut).** A new full-width section at the bottom of the app
