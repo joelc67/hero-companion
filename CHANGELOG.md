@@ -1,15 +1,17 @@
 # Hero Companion — What's New
 
-## 0.12.4 — unreleased
+## 0.12.4 — July 4, 2026
 
-- **Level 1 now follows the real creation order: your secondary's power is picked
-  FIRST** (a Poison/Sonic Defender chooses Shriek or Scream before the Poison
-  choice), and the leveling walk lists it that way.
+- **Level 1 always satisfies the creation requirement: one primary power AND one
+  secondary power**, each from that set's first two — the basics come before
+  anything else, on every archetype (same treatment as the epic-pool prerequisite
+  rule). A Poison/Sonic Defender's level 1 is Shriek/Scream + Alkaloid/Envenom;
+  Envenom-and-Alkaloid-both-at-1 can't happen anymore, anywhere it's displayed.
 - **Old saves fix themselves.** A character saved by an earlier version could carry
-  an impossible level-1 arrangement (both Poison powers marked level 1) that
-  survived every update because it was stored with the build. The app now
-  re-checks the pick order every time it recalculates and quietly corrects it —
-  open the build and it's right, no re-solve needed.
+  an impossible level-1 arrangement that survived every update because it was
+  stored with the build. The app now re-checks the pick order every time it
+  recalculates and quietly corrects it — open the build and it's right, no
+  re-solve needed.
 
 ## 0.12.3 — July 4, 2026
 

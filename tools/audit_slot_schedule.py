@@ -52,9 +52,10 @@ for at, groups in srv.POWERSETS["by_archetype"].items():
     if l1e:
         problems.append(f"{at}: L1 creation rule — {l1e[0][:100]}")
     if srv.leveling_schedule.eat_type(at) is None:
-        l1 = [p for p in real if int(p["pick_level"]) == 1]
-        if len(l1) != 2 or not all(
-                p["full_name"] in srv._set_first_two(p.get("powerset_full_name") or "") for p in l1):
+        # COMPOSITION, not just membership: one primary + one secondary, each from its
+        # set's first two (the earlier membership-only check passed two Poison powers).
+        if not srv._l1_seating_ok(real, at):
+            l1 = [p for p in real if int(p["pick_level"]) == 1]
             problems.append(f"{at}: bad L1 seating — "
                             + ", ".join(p["full_name"].split(".")[-1] for p in l1))
         # creation ORDER (universal rule, all ATs): the walk asks the SECONDARY first
@@ -72,6 +73,31 @@ for at, groups in srv.POWERSETS["by_archetype"].items():
     tail = sorted(real, key=lambda p: -int(p["pick_level"]))[:2]
     print(f"  {at:18s} ok — last picks: " + ", ".join(
         f"{p['full_name'].split('.')[-1]}@{p['pick_level']}({1 + srv._sched_added(p)}sl)" for p in tail))
+
+# ── Pinned field case: the exact combo from the report, WITHOUT champions ────
+# The standalone app ships no champions.json, so end users always get the
+# heuristic picker — audit that path explicitly (champions masked this once).
+print("\n── pinned: Defender Poison/Sonic debuffer (heuristic path, no champion) ──")
+_orig_champ = srv._champion_picks
+srv._champion_picks = lambda *a, **k: None
+try:
+    ap = c.post("/build/autopick", json={"archetype": "Class_Defender",
+                                         "primary": "Defender_Buff.Poison",
+                                         "secondary": "Defender_Ranged.Sonic_Attack",
+                                         "role": "debuffer", "content": "itrial",
+                                         "travel": "fly"}).get_json()
+    sol = c.post("/build/solve", json={"archetype": "Class_Defender", "powers": ap["powers"],
+                                       "role": "debuffer", "content": "itrial",
+                                       "preserve": False}).get_json()
+    _real = [p for p in sol["powers"] if not p["full_name"].startswith("Inherent")]
+    _l1 = sorted(p["full_name"].split(".")[-1] for p in _real if int(p["pick_level"]) == 1)
+    print("  heuristic L1:", ", ".join(_l1))
+    if not srv._l1_seating_ok(_real, "Class_Defender"):
+        problems.append(f"pinned heuristic case: bad L1 — {_l1}")
+    if srv._l1_pick_errors(sol["powers"], "Class_Defender"):
+        problems.append("pinned heuristic case: validator flags the generated build")
+finally:
+    srv._champion_picks = _orig_champ
 
 print(f"\n══ {runs} archetypes solved, {len(problems)} problem(s) ══")
 for p in problems:

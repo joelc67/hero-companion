@@ -3447,6 +3447,14 @@ def _champion_picks(archetype, primary, secondary, content):
     real = [fn for fn in champ if not fn.startswith("Inherent")]
     if not _picks_legal(set(real), primary, secondary):
         return None
+    # Champions predating the creation rule may lack a level-1 pick from one of the
+    # sets (one of each set's first two is FORCED at creation) — those can't be
+    # seated legally; fall back to the heuristic, which injects the required pair.
+    if leveling_schedule.eat_type(archetype) is None:
+        for want in (primary, secondary):
+            first2 = _set_first_two(want)
+            if first2 and not (set(first2) & set(real)):
+                return None
     out = [{"full_name": fn, "pick_level": 1} for fn in champ if fn.startswith("Inherent")]
     slots = list(_PICK_LEVELS)
     # L1 rule first (one primary + one secondary), then greedy by availability.
@@ -3593,6 +3601,14 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
                      if (POWER_BY_FULL.get(fn) or {}).get("powerset_full_name") in _ok
                      and ((POWER_BY_FULL.get(fn) or {}).get("level_available") or 1) <= 1),
                     None)
+        if not best:
+            # The creation pick is NOT optional: the game forces one of the set's first
+            # two powers at level 1 (field report: a debuffer kit skipped both Sonic T1
+            # blasts entirely, so nothing legal could sit at level 1). Inject the
+            # better-scoring of the pair even though the priority list passed on it.
+            pair = [fn for s in _ok for fn in _set_first_two(s) if fn in POWER_BY_FULL]
+            pair.sort(key=lambda fn: -_ps_priority(POWER_BY_FULL[fn], role, exposure, content))
+            best = pair[0] if pair else None
         if best:
             place(best, 1)
     for fn, lvl in sorted(early, key=lambda x: x[1]):
