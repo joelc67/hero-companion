@@ -1,5 +1,13 @@
 # Hero Companion — What's New
 
+## 0.12.5 — unreleased
+
+- **The Incarnates brick.** Your six incarnate choices (the solver's
+  recommendations, or your own picks) now live in a card of their own — same
+  shape as the in-game power trays and docked right above them, with the real
+  in-game incarnate icons (family art + rarity ring) and the full ability name
+  on hover. Slots you haven't filled show as dashed placeholders.
+
 ## 0.12.4 — July 4, 2026
 
 - **Level 1 always satisfies the creation requirement: one primary power AND one

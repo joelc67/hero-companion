@@ -704,13 +704,55 @@ def get_powers(powerset_full_name):
     return jsonify({"powerset": powerset_full_name, "powers": powers})
 
 
+# In-game incarnate art ships as one FAMILY icon per rarity ring:
+# Incarnate_{Slot}_{FamilyFirstWord}_{Common|Uncommon|Rare|VeryRare}.png. The ability's
+# NAME encodes its tier (Boost < Core/Radial < Partial/Total < Paragon/Final/Epiphany/
+# Embodiment/Flawless/Superior), so the icon resolves from name alone.
+try:
+    _INC_ICON_FILES = {f[:-4].lower(): f[:-4]
+                       for f in os.listdir(os.path.join(STATIC_DIR, "icons", "powers"))
+                       if f.startswith("Incarnate_")}
+except Exception:  # noqa: BLE001
+    _INC_ICON_FILES = {}
+
+
+def _incarnate_icon(full_name, display_name):
+    parts = (full_name or "").split(".")
+    if len(parts) < 2 or not display_name:
+        return None
+    slot = parts[1]
+    words = display_name.split(" ")
+    d = display_name.lower()
+    if any(m in d for m in ("paragon", "final", "epiphany", "embodiment", "flawless", "superior")):
+        rar = "VeryRare"
+    elif "partial" in d or "total" in d:
+        rar = "Rare"
+    elif "core" in d or "radial" in d:
+        rar = "Uncommon"
+    else:
+        rar = "Common"
+    # Family token variants cover the art's naming quirks: two-word families keep the
+    # SECOND word (Storm Elementals, Polar Lights, Robotic Drones), some pluralize
+    # (Phantom→Phantoms), some differ only in case (Warworks→WarWorks).
+    fams = [words[0], words[0] + "s"] + (words[1:2])
+    for fam in fams:
+        for r in (rar, "VeryRare", "Common"):
+            hit = _INC_ICON_FILES.get(f"incarnate_{slot}_{fam}_{r}".lower())
+            if hit:
+                return "/static/icons/powers/" + hit + ".png"
+    return _power_icon_url(full_name)    # a few (Mighty Judgement…) only exist in the old map
+
+
 @app.route("/incarnates")
 def get_incarnates():
     """The SIX live incarnate slots. Genesis (and later Omega-tier slots) were DESIGNED
     but never released — the Mids DB carries them as dormant data (37 choices, zero
     effects), and showing them confused players (user report 2026-07-02). Filtered here."""
     live = dict(INCARNATES)
-    live["slots"] = [s for s in INCARNATES.get("slots", [])
+    live["slots"] = [dict(s, choices=[dict(ch, icon=_incarnate_icon(ch.get("full_name"),
+                                                                    ch.get("display_name")))
+                                      for ch in (s.get("choices") or [])])
+                     for s in INCARNATES.get("slots", [])
                      if (s.get("slot") or s.get("name") or "") != "Genesis"]
     return jsonify(live)
 

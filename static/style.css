@@ -704,6 +704,10 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .tray-rot .tray-slot { border-color: #c0594a; }
 .tray-on .tray-slot { border-color: #3f9e6f; }
 .tray-util .tray-slot { border-color: var(--accent); }
+/* The Incarnates brick — same shape as a power tray, incarnate-gold accent */
+.tray-inc .tray-slot { border-color: #b9932e; }
+.tray-inc .tray-label { color: #d9b64a; font-weight: 600; letter-spacing: 0.04em; }
+.tray-inc .tray-slot.inc-empty { opacity: 0.45; border-style: dashed; }
 .lvl-step { margin-top: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
 .lvl-step-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .lvl-step-nav button { width: auto; padding: 3px 12px; }

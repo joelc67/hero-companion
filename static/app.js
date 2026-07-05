@@ -321,6 +321,29 @@ const TRAY_ROLE = { 1: "tray-rot", 2: "tray-on", 3: "tray-util", 4: "tray-move" 
 
 // Render the 4-row in-game tray layout into `out`. These are always-visible labeled sections
 // now (no toggle) — refreshBuildViews() keeps them live. App runs offline, so glyphs map to emoji.
+// The INCARNATES brick: same shape as a power tray, docked right above them — the
+// solver's (or your) six incarnate choices with their in-game family icons.
+const INC_SLOT_ORDER = ["Alpha", "Judgement", "Interface", "Lore", "Destiny", "Hybrid"];
+function incarnateTrayHtml() {
+  const inc = build.incarnates || {};
+  if (!Object.keys(inc).length) return "";
+  const cells = INC_SLOT_ORDER.map(slot => {
+    const v = inc[slot];
+    if (!v) {
+      return `<div class="tray-slot inc-empty" title="${slot} — no choice yet (Solve recommends one)">`
+        + `<span class="tray-ico">⬡</span><span class="tray-name">${slot}</span></div>`;
+    }
+    const icon = INC_ICON[v.full_name];
+    const ico = icon
+      ? `<img class="tray-ico-img" src="${icon}" alt="">`
+      : `<span class="tray-ico">🜂</span>`;
+    return `<div class="tray-slot" title="${escHtml(`${slot}: ${v.display_name}`)}">${ico}`
+      + `<span class="tray-name">${escHtml(v.display_name.split(" ")[0])}</span></div>`;
+  }).join("");
+  return `<div class="tray-row tray-inc"><div class="tray-label">Incarnates</div>`
+    + `<div class="tray-slots">${cells}</div></div>`;
+}
+
 async function renderTrayLayout(out) {
   const head = `<div class="lvl-head">🎮 In-game power trays — hover a slot for the full power</div>`;
   try {
@@ -329,6 +352,7 @@ async function renderTrayLayout(out) {
       exposure: build._exposure || ($("autopick-exposure") && $("autopick-exposure").value) || null, totals: LAST_TOTALS }));
     if (!res || !res.ok) { out.innerHTML = head + "<p class='muted small'>Couldn't build the tray layout.</p>"; return; }
     out.innerHTML = head
+      + incarnateTrayHtml()
       + res.trays.map(t => {
           const slots = t.slots.map(s => {
             const emoji = GLYPH_EMOJI[s.glyph] || "⚪";
@@ -1213,7 +1237,16 @@ async function init() {
   recompute();
 }
 
+// full_name -> family icon URL (server resolves Incarnate_{Slot}_{Family}_{Rarity}.png)
+let INC_ICON = {};
+
 function renderIncarnates() {
+  if (INCARNATES) {
+    INC_ICON = {};
+    (INCARNATES.slots || []).forEach(s => (s.choices || []).forEach(ch => {
+      if (ch.icon) INC_ICON[ch.full_name] = ch.icon;
+    }));
+  }
   const host = $("incarnate-selectors");
   if (!host || !INCARNATES) return;
   host.innerHTML = INCARNATES.slots.map((s) => {
@@ -3236,6 +3269,7 @@ window.applyIncarnateRecs = function (silent) {
   });
   build._incarnatesManual = false;   // these came from the recommendation, not the user
   renderIncarnates();
+  refreshBuildViews();               // the incarnates brick above the trays updates too
   if (!silent) recompute();
 };
 
