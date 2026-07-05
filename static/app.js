@@ -267,8 +267,11 @@ function levelingPlanHtml() {
   // internal pick_level for sorting, but showing them as choices misleads (field
   // report: "the solver told me to take Health at level 2").
   const isInherent = (p) => (p.full_name || "").startsWith("Inherent.");
+  // Creation order: when two picks share level 1, the game asks for the SECONDARY
+  // power first (Shriek before Alkaloid) — the tie-break mirrors that everywhere.
+  const secFirst = (p) => (p.powerset_full_name === build.secondary ? 0 : 1);
   const ps = (build.powers || []).slice().filter(p => p.pick_level && !isInherent(p))
-    .sort((a, b) => (a.pick_level || 1) - (b.pick_level || 1));
+    .sort((a, b) => ((a.pick_level || 1) - (b.pick_level || 1)) || (secFirst(a) - secFirst(b)));
   if (!ps.length) return "<p class='muted small'>Build a kit first.</p>";
   const inhSlotted = (build.powers || []).filter(p => isInherent(p)
     && (p.slots || []).filter(Boolean).length);
@@ -1395,7 +1398,9 @@ function renderPowers() {
     const lv = pw.pick_level || LADDER[Math.min(ladderI++, LADDER.length - 1)];
     return [pw, idx, lv];
   });
-  cards.sort((a, b) => (a[2] ?? 999) - (b[2] ?? 999));
+  // Level ties (the two level-1 creation picks): secondary first, matching the game.
+  const _secTie = (c) => (c[0].powerset_full_name === build.secondary ? 0 : 1);
+  cards.sort((a, b) => ((a[2] ?? 999) - (b[2] ?? 999)) || (_secTie(a) - _secTie(b)));
   let html = "";
   if (cards.length) {
     // A pure uniform wall of power cards, then the INFO COURSE: the three summary
