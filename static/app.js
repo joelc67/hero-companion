@@ -2088,6 +2088,16 @@ async function recompute() {
   renderValidation(validation);
   LAST_TOTALS = (totals && (totals.totals || totals)) || null;  // feed the tray rotation + notes
   updateInfoCards(LAST_TOTALS);
+  // Server-corrected pick levels (older saves carry naive assignments — e.g. both
+  // Poison powers badged level 1). Adopt them and repaint the wall once.
+  if (totals && totals.pick_levels) {
+    let changed = false;
+    build.powers.forEach(p => {
+      const lv = totals.pick_levels[p.full_name];
+      if (lv && p.pick_level !== lv) { p.pick_level = lv; changed = true; }
+    });
+    if (changed) renderPowers();
+  }
   refreshBuildViews();   // keep the always-visible respec-order + tray sections live
 }
 

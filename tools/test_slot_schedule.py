@@ -113,9 +113,31 @@ heavy49 = [p for p in real if p["full_name"] in names49 and srv._sched_added(p) 
 check("no heavy power picked at 49 in the walk", not heavy49)
 st1 = next((st for st in ls["steps"] if st.get("level") == 1), None)
 check("walk L1 has two picks", st1 and len(st1.get("picks") or []) == 2)
+l1names = [pk["powerset"] for pk in (st1.get("picks") or [])]
+check("walk L1 asks the SECONDARY first (in-game creation order)",
+      l1names == ["Sonic_Attack", "Poison"], " -> ".join(l1names))
 creation_tips = [t for t in (st1.get("tips") or []) if "creation" in t.lower()]
 check("walk L1 explains the creation choices", len(creation_tips) == 2,
       creation_tips[0][:80] if creation_tips else "none")
+
+# ── 5. stuck save heals: both Poison powers stored at level 1 ─────────────────
+print("\n── old-save healing (Alkaloid AND Envenom stored at L1) ──")
+stuck = []
+for p in sol["powers"]:
+    q = dict(p)
+    if q["full_name"].endswith((".Alkaloid", ".Envenom")):
+        q["pick_level"] = 1
+    stuck.append(q)
+calc = c.post("/build/calculate", json={"archetype": "Class_Defender",
+                                        "powers": stuck}).get_json()
+pl = calc.get("pick_levels") or {}
+check("calculate returns corrected pick levels", bool(pl))
+alk = pl.get("Defender_Buff.Poison.Alkaloid")
+env = pl.get("Defender_Buff.Poison.Envenom")
+shr = pl.get("Defender_Ranged.Sonic_Attack.Shriek")
+check("only ONE Poison power at level 1", (alk == 1) != (env == 1), f"Alkaloid@{alk}, Envenom@{env}")
+check("a Sonic power shares level 1", shr == 1 or pl.get("Defender_Ranged.Sonic_Attack.Scream") == 1,
+      f"Shriek@{shr}")
 
 print(f"\n══ {'ALL PASS' if not fails else f'{len(fails)} FAILURE(S): ' + ', '.join(fails)} ══")
 sys.exit(1 if fails else 0)

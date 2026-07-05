@@ -1,5 +1,16 @@
 # Hero Companion — What's New
 
+## 0.12.4 — unreleased
+
+- **Level 1 now follows the real creation order: your secondary's power is picked
+  FIRST** (a Poison/Sonic Defender chooses Shriek or Scream before the Poison
+  choice), and the leveling walk lists it that way.
+- **Old saves fix themselves.** A character saved by an earlier version could carry
+  an impossible level-1 arrangement (both Poison powers marked level 1) that
+  survived every update because it was stored with the build. The app now
+  re-checks the pick order every time it recalculates and quietly corrects it —
+  open the build and it's right, no re-solve needed.
+
 ## 0.12.3 — July 4, 2026
 
 - **Only one copy of the app can run.** Launching Hero Companion while it's already

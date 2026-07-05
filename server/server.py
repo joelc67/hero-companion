@@ -848,7 +848,19 @@ def build_calculate():
                 if not p.get(k):
                     p[k] = rec.get(k)
         _attach_base_resdef(build.get("powers", []), build.get("archetype"), ctx, res_cap)
-    return jsonify(engine.calculate_build(build, SET_BONUSES, res_cap=res_cap, ctx=ctx))
+    res = engine.calculate_build(build, SET_BONUSES, res_cap=res_cap, ctx=ctx)
+    # Self-heal pick levels on every recompute: saved builds from older versions carry
+    # naive assignments (both Poison powers at level 1) or none at all — re-seat them
+    # and hand the corrected levels back so the build grid never shows an illegal order.
+    pw = build.get("powers") or []
+    real = [p for p in pw if not (p.get("full_name") or "").startswith("Inherent")]
+    if real and (not all(p.get("pick_level") for p in real)
+                 or not _schedule_feasible(real)
+                 or not _l1_seating_ok(real, build.get("archetype"))):
+        _assign_pick_levels(pw, build.get("archetype"))
+        res["pick_levels"] = {p["full_name"]: p["pick_level"]
+                              for p in pw if p.get("pick_level")}
+    return jsonify(res)
 
 
 def _attach_base_resdef(powers, archetype, ctx, res_cap):
@@ -1153,12 +1165,25 @@ def _set_first_two(ps):
     return [x["full_name"] for x in seq[:2]]
 
 
+def _at_canon(archetype):
+    """Canonical archetype key ("Class_Defender") — tolerant of display names
+    ("Defender"), so the creation-pair rules never silently no-op on a mismatch."""
+    if not archetype or archetype in POWERSETS["by_archetype"]:
+        return archetype
+    for k, rec in ARCH_BY_NAME.items():
+        if rec.get("display_name") == archetype:
+            return k
+    return archetype
+
+
 def _l1_creation_pair(powers, archetype):
-    """The two powers that belong at level 1: in game, character creation picks ONE of
-    the primary's first two powers and ONE of the secondary's first two (master corpus:
-    2202/2211 builds seat exactly primary+secondary at L1; T2-at-1 is common, so neither
-    T1 is forced). Returns (primary_pick, secondary_pick) — either may be None. VEATs
+    """The two powers that belong at level 1: in game, character creation asks for ONE
+    of the SECONDARY's first two powers FIRST, then ONE of the primary's first two
+    (field-verified by the user in the creator; the corpus confirms both are choices —
+    2202/2211 master builds seat exactly primary+secondary at L1, with T2-at-1 common).
+    Returns (secondary_pick, primary_pick) IN THAT ORDER — either may be None. VEATs
     are excluded (their two-phase career has its own walk)."""
+    archetype = _at_canon(archetype)
     if not archetype or leveling_schedule.eat_type(archetype) == "veat":
         return None, None
     groups = POWERSETS["by_archetype"].get(archetype) or {}
@@ -1175,7 +1200,35 @@ def _l1_creation_pair(powers, archetype):
         return None
     prim_pick = _pick(prims)
     sec_pick = _pick(secs)
-    return prim_pick, (sec_pick if sec_pick is not prim_pick else None)
+    if sec_pick is prim_pick:
+        sec_pick = None
+    return sec_pick, prim_pick
+
+
+def _l1_seating_ok(powers, archetype):
+    """True when the powers' EXISTING pick levels put a legal creation pair at level 1
+    (one primary + one secondary, each from its set's first two). Saved builds from
+    older versions carry naive assignments (Alkaloid AND Envenom both at 1) — those
+    must be re-seated, not respected."""
+    archetype = _at_canon(archetype)
+    if not archetype or leveling_schedule.eat_type(archetype) is not None:
+        return True
+    real = [p for p in powers if not (p.get("full_name") or "").startswith("Inherent")]
+    if len(real) < 2:
+        return True
+    l1 = [p for p in real if int(p.get("pick_level") or 0) == 1]
+    if len(l1) != 2:
+        return False
+    groups = POWERSETS["by_archetype"].get(archetype) or {}
+    prims = {e["full_name"] for e in (groups.get("primary") or [])}
+    secs = {e["full_name"] for e in (groups.get("secondary") or [])}
+    kinds = set()
+    for p in l1:
+        ps = p.get("powerset_full_name")
+        if p.get("full_name") not in _set_first_two(ps or ""):
+            return False
+        kinds.add("p" if ps in prims else ("s" if ps in secs else "?"))
+    return kinds == {"p", "s"}
 
 
 def _assign_pick_levels(powers, archetype=None):
@@ -1308,6 +1361,7 @@ def _l1_pick_errors(powers, archetype):
     """Character creation picks one of the primary's first two powers and one of the
     secondary's first two — a build containing neither (for either set) can't exist.
     (Corpus-verified: 2202/2211 master builds seat exactly primary+secondary at L1.)"""
+    archetype = _at_canon(archetype)
     if not archetype or leveling_schedule.eat_type(archetype) in ("veat", "kheldian"):
         return []
     groups = POWERSETS["by_archetype"].get(archetype) or {}
@@ -4506,12 +4560,18 @@ def leveling_steps():
     # Pick levels must let every slot actually land (a slot granted at level g only fits
     # powers already picked) — recompute the seating slot-aware unless the build carries
     # a complete assignment that already works.
-    if not all(p.get("pick_level") for p in real) or not _schedule_feasible(real):
+    if (not all(p.get("pick_level") for p in real) or not _schedule_feasible(real)
+            or not _l1_seating_ok(real, archetype)):
         _assign_pick_levels(powers, archetype)
     real.sort(key=lambda p: (int(p["pick_level"]), _lvl_avail(p)))
     picks_by_level = defaultdict(list)
     for p in real:
         picks_by_level[max(1, int(p["pick_level"]))].append(p)
+    # Creation order: the game asks for the SECONDARY power first, then the primary.
+    if picks_by_level.get(1):
+        _secs = {e["full_name"] for e in ((POWERSETS["by_archetype"].get(_at_canon(archetype)) or {})
+                                          .get("secondary") or [])}
+        picks_by_level[1].sort(key=lambda p: 0 if p.get("powerset_full_name") in _secs else 1)
     ctx = _stat_ctx(archetype)
     at = ARCH_BY_NAME.get(archetype)
     res_cap = round(at["res_cap"] * 100, 1) if at else engine.RESISTANCE_HARD_CAP
