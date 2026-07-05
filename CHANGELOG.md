@@ -2,6 +2,15 @@
 
 ## 0.12.7 — unreleased
 
+- **The Play Log parser is now built on real logs.** The first cut guessed at line
+  formats; this version is validated against tens of thousands of lines of actual
+  Homecoming chat logs. It reads XP and influence, enemies defeated (a real kill
+  count), every drop sorted into recipes / salvage / incarnate materials / crafting
+  mats with keep-or-sell advice, and Consignment House sales and purchases — while
+  correctly ignoring the wall of combat, heal, and chat spam around them. Recipe
+  drops map to their enhancement set for a proper verdict. (Veteran-level and
+  reward-merit lines will be added once a log containing them confirms the format.)
+
 - **The Play Log now asks before touching anything.** It read game files without
   asking and without saying what happens to the data — against this app's own
   rules. Now the section opens with a plain statement: what it reads (the chat

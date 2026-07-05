@@ -1350,12 +1350,15 @@ function renderGamelog(ins, report) {
     <div class="glc-line">XP gained <b>${fmt(s.xp)}</b></div>
     <div class="glc-line">Influence <b class="up">+${fmt(s.inf_gained)}</b>${s.inf_spent ? ` / <b class="dn">-${fmt(s.inf_spent)}</b> spent` : ""}</div>
     <div class="glc-line">Reward merits <b>${fmt(s.merits)}</b></div>
-    <div class="glc-line">Defeats ${fmt(s.defeats)}</div>
+    <div class="glc-line">Enemies defeated <b>${fmt(s.kills)}</b>${s.deaths ? ` · <span class="dn">${fmt(s.deaths)} faceplant${s.deaths > 1 ? "s" : ""}</span>` : ""}</div>
     ${s.days && s.days.length ? `<div class="glc-line muted">across ${s.days.length} day(s) of logs</div>` : ""}</div>`);
-  cards.push(`<div class="gl-card"><div class="glc-head">PROGRESS</div>
-    <div class="glc-line">${s.max_level ? `Reached <b>level ${s.max_level}</b>` : "No level-ups logged yet"}</div>
-    <div class="glc-line">${s.vet_levels ? `Veteran levels: <b>${s.vet_levels}</b>` : "No veteran-level lines seen <span class='muted'>(format unconfirmed)</span>"}</div>
-    <div class="glc-line">${(s.badges || []).length ? `Badges: <b>${s.badges.slice(-5).map(escHtml).join(", ")}</b>${s.badges.length > 5 ? ` +${s.badges.length - 5} more` : ""}` : "No badges logged yet"}</div></div>`);
+  const kinds = s.drop_kinds || {};
+  const kindLine = Object.keys(kinds).length
+    ? Object.entries(kinds).map(([k, n]) => `${n} ${escHtml(k)}`).join(" · ") : "none yet";
+  cards.push(`<div class="gl-card"><div class="glc-head">PROGRESS &amp; LOOT</div>
+    <div class="glc-line">${s.max_level ? `Reached <b>level ${s.max_level}</b>` : "Level 50 (no level-ups logged this session)"}</div>
+    <div class="glc-line">Drops: <b>${kindLine}</b></div>
+    <div class="glc-line">${(s.badges || []).length ? `Badges: <b>${s.badges.slice(-5).map(escHtml).join(", ")}</b>${s.badges.length > 5 ? ` +${s.badges.length - 5} more` : ""}` : "No badges logged this session"}</div></div>`);
   const rows = haul.slice(-15).reverse().map(h =>
     `<tr title="${escHtml(h.why || "")}"><td>${escHtml(h.item)}</td><td class="muted">${escHtml(h.kind || "")}</td>
      <td class="${h.verdict === "KEEP" ? "gl-keep" : "gl-sell"}">${escHtml(h.verdict)}</td></tr>`).join("");

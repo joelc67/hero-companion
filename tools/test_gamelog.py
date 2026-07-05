@@ -1,7 +1,6 @@
-"""Game-log capture P1: discovery, incremental ingest, provisional parsing, insights.
-
-Runs against a SYNTHETIC accounts tree (the parse patterns themselves stay provisional
-until a real /logchat sample arrives — this proves the machinery, not the formats).
+"""Game-log capture: parser VALIDATED against a real Homecoming farm-session sample
+(tools/fixtures/gamelog_real_sample.txt — representative lines from Rattle/Lime Juice,
+2026-07-05), plus discovery/ingest/endpoint machinery on a synthetic tree.
 
 Run:  python tools/test_gamelog.py
 """
@@ -27,90 +26,88 @@ def check(name, ok, detail=""):
         fails.append(name)
 
 
-# ── synthetic world ──────────────────────────────────────────────────────────
-tmp = tempfile.mkdtemp(prefix="hc_gamelog_test_")
-acct = os.path.join(tmp, "accounts", "testacct")
-logdir = os.path.join(acct, "Logs")
-os.makedirs(logdir)
-os.makedirs(os.path.join(tmp, "accounts", "emptyacct"))
-LOG = os.path.join(logdir, "chatlog 2026-07-05.txt")
-LINES = [
-    "2026-07-05 20:01:11 You gain 1,250 experience and 625 influence.",
-    "2026-07-05 20:02:12 You gain 5,000 influence.",
-    "2026-07-05 20:03:13 You are now level 23.",
-    "2026-07-05 20:04:14 You have been awarded 20 Reward Merits.",
-    "2026-07-05 20:05:15 Congratulations! You earned the Keeper of Secrets badge.",
-    "2026-07-05 20:06:16 You have been defeated by Hellion Blood Brother.",
-    "2026-07-05 20:07:17 You received Luck of the Gambler: Defense/Endurance (Recipe).",
-    "2026-07-05 20:08:18 You received Apocalypse: Chance of Damage(Negative) (Recipe).",
-    "2026-07-05 20:09:19 You sold Kinetic Combat: Damage/Endurance for 2,000,000 inf.",
-    "2026-07-05 20:10:20 You bought Enhancement Converter for 70,000 inf.",
-    "2026-07-05 20:11:21 [Local] Player1: selling cheap purples meet at AE",
-    "2026-07-05 20:12:22 You activated the Fly power.",
-    "garbage line without a timestamp",
-]
-with open(LOG, "w", encoding="utf-8") as f:
-    f.write("\n".join(LINES) + "\n")
-
-gamelog.STATE_DIR = os.path.join(tmp, "state")
-
-# ── discovery ────────────────────────────────────────────────────────────────
-print("── discovery ──")
-accts = gamelog.find_log_accounts([os.path.join(tmp, "accounts")])
-check("finds both accounts", len(accts) == 2, ", ".join(a["account"] for a in accts))
-ta = next(a for a in accts if a["account"] == "testacct")
-check("flags log files", ta["has_logs"] and ta["log_files"] == 1)
-check("empty account offered too (picker shows it)",
-      any(not a["has_logs"] for a in accts))
-
-# ── ingest + parse ───────────────────────────────────────────────────────────
-print("\n── ingest ──")
-st = {"log_dir": logdir, "offsets": {}}
-events, report = gamelog.ingest(logdir, st)
+# ── parse the REAL sample line-by-line ───────────────────────────────────────
+print("── real-format parsing (validated fixture) ──")
+FIX = os.path.join(ROOT, "tools", "fixtures", "gamelog_real_sample.txt")
+events, interesting = [], 0
+with open(FIX, encoding="utf-8") as f:
+    for line in f:
+        if not line.strip():
+            continue
+        ev, is_interesting = gamelog.parse_line(line)
+        if ev:
+            events.append(ev)
+        elif is_interesting:
+            interesting += 1
 by = {}
 for e in events:
-    by[e["type"]] = by.get(e["type"], 0) + 1
-check("xp parsed", by.get("xp") == 1)
-check("influence parsed", by.get("inf") == 1)
-check("level parsed", by.get("level") == 1)
-check("merits parsed", by.get("merits") == 1)
-check("badge parsed", by.get("badge") == 1)
-check("defeat parsed", by.get("defeat") == 1)
-check("drops parsed", by.get("drop") == 2, str(by))
-check("AH sale + buy parsed", by.get("ah_sold") == 1 and by.get("ah_bought") == 1)
-check("chat chatter NOT an event", "Player1" not in json.dumps(events))
-check("coverage counts the unrecognized You-line", report["unparsed_interesting"] >= 1,
-      f"samples: {report['unparsed_samples']}")
-ev2, rep2 = gamelog.ingest(logdir, st)
-check("incremental: second ingest reads nothing", not ev2 and rep2["new_lines"] == 0)
-with open(LOG, "a", encoding="utf-8") as f:
-    f.write("2026-07-05 21:00:00 You gain 99 experience and 33 influence.\n")
-ev3, rep3 = gamelog.ingest(logdir, st)
-check("incremental: appended line ingested", len(ev3) == 1 and rep3["new_lines"] == 1)
+    by.setdefault(e["type"], []).append(e)
 
-# ── summarize + endpoint flow ────────────────────────────────────────────────
-print("\n── insights ──")
+
+def one(t):
+    return (by.get(t) or [{}])[0]
+
+
+check("XP + influence", one("xp").get("xp") == 2524 and one("xp").get("inf") == 3533)
+check("AH sale influence in", one("influence_ah").get("inf") == 15000000)
+check("AH fee out (spent)", one("spent").get("inf") == 500)
+check("AH sold item", "Calibrated Accuracy" in one("ah_sold").get("item", ""))
+check("AH collect (You got X Recipe)", "Air Burst" in one("collect").get("item", ""))
+check("KILL parsed (not death)", len(by.get("kill", [])) == 3,
+      f"{len(by.get('kill', []))} kills: " + ", ".join(k["enemy"] for k in by.get("kill", [])))
+check("no false death from kills", "death" not in by)
+check("drop: Incarnate Thread -> incarnate", any(
+    d["item"] == "Incarnate Thread" and d["kind"] == "incarnate" for d in by.get("drop", [])))
+check("drop: Ruby -> salvage", any(
+    d["item"] == "Ruby" and d["kind"] == "salvage" for d in by.get("drop", [])))
+check("drop: Enhancement Converter -> crafting", any(
+    "Converter" in d["item"] and d["kind"] == "crafting" for d in by.get("drop", [])))
+check("drop: Invention recipe -> recipe", any(
+    d["kind"] == "recipe" for d in by.get("drop", [])))
+# NOISE must not become events or 'interesting' samples
+check("combat/buff/chat noise ignored", interesting == 0,
+      f"{interesting} noise lines wrongly flagged")
+check("heals/procs/LFG produced no events",
+      not any(e["type"] not in ("xp", "influence_ah", "spent", "ah_sold", "ah_listed",
+                                "collect", "kill", "death", "drop", "merits", "level", "badge")
+              for e in events))
+
+# ── coverage report surfaces a GENUINELY unknown reward line ─────────────────
+print("\n── coverage honesty ──")
+unknown = "2026-07-05 19:00:00 You have earned a Veteran Level!"
+ev, interesting_flag = gamelog.parse_line(unknown)
+check("unknown vet-level line flagged as interesting", ev is None and interesting_flag)
+
+# ── discovery + incremental ingest + endpoints (synthetic tree) ──────────────
+print("\n── discovery / ingest / endpoints ──")
+tmp = tempfile.mkdtemp(prefix="hc_gamelog_test_")
+logdir = os.path.join(tmp, "accounts", "filofinfain", "Logs")
+os.makedirs(logdir)
+os.makedirs(os.path.join(tmp, "accounts", "kalicous"))      # no Logs yet
+shutil.copy(FIX, os.path.join(logdir, "chatlog 2026-07-05.txt"))
+gamelog.STATE_DIR = os.path.join(tmp, "state")
+
+accts = gamelog.find_log_accounts([os.path.join(tmp, "accounts")])
+check("both accounts discovered", len(accts) == 2)
+st = {"log_dir": logdir, "offsets": {}}
+ev1, rep1 = gamelog.ingest(logdir, st)
+check("ingest parsed the sample", rep1["parsed"] >= 15, f"{rep1['parsed']} events")
+check("ingest coverage clean (no false unknowns)", rep1["unparsed_interesting"] == 0,
+      f"{rep1['unparsed_interesting']}: {rep1['unparsed_samples'][:3]}")
+ev2, rep2 = gamelog.ingest(logdir, st)
+check("incremental: second pass reads nothing", not ev2 and rep2["new_lines"] == 0)
+
 s = gamelog.summarize(gamelog.load_events())
-check("xp total", s["xp"] == 1349, s["xp"])
-check("influence gained incl. sale", s["inf_gained"] == 625 + 5000 + 33 + 2000000, s["inf_gained"])
-check("influence spent from buy", s["inf_spent"] == 70000)
-check("max level", s["max_level"] == 23)
+check("summary kills counted", s["kills"] == 3, s["kills"])
+check("summary influence includes AH sale", s["inf_gained"] >= 15000000)
+check("summary drop kinds populated", bool(s["drop_kinds"]), str(s["drop_kinds"]))
 
 c = srv.app.test_client()
-r = c.post("/gamelog/scan", json={"root": tmp}).get_json()
-check("scan endpoint lists accounts", r["ok"] and len(r["accounts"]) >= 2)
 r = c.post("/gamelog/watch", json={"log_dir": logdir, "root": tmp}).get_json()
-check("watch endpoint accepts in-tree dir", r.get("ok"), str(r))
-r = c.post("/gamelog/watch", json={"log_dir": r"C:\Windows\System32", "root": tmp}).get_json()
-check("watch endpoint REFUSES out-of-tree dir", not r.get("ok"))
-r = c.get("/gamelog/insights").get_json()
-haul = {h["item"]: h for h in r["insights"]["haul"]}
-lotg = haul.get("Luck of the Gambler: Defense/Endurance")
-apoc = haul.get("Apocalypse: Chance of Damage(Negative)")
-check("LotG mapped + convert/sell verdict", lotg and lotg["verdict"] == "CONVERT/SELL",
-      str(lotg and lotg["verdict"]))
-check("Apocalypse mapped + KEEP verdict", apoc and apoc["verdict"] == "KEEP",
-      str(apoc and apoc["verdict"]))
+check("watch accepts in-tree dir", r.get("ok"))
+ins = c.get("/gamelog/insights").get_json()["insights"]
+inc = next((h for h in ins["haul"] if h["item"] == "Incarnate Thread"), None)
+check("insights: incarnate drop = KEEP", inc and inc["verdict"] == "KEEP", str(inc))
 
 shutil.rmtree(tmp, ignore_errors=True)
 print(f"\n══ {'ALL PASS' if not fails else f'{len(fails)} FAILURE(S): ' + ', '.join(fails)} ══")

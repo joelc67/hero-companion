@@ -2751,26 +2751,41 @@ def gamelog_insights():
 
 
 def _gamelog_insights():
-    """Summarized events + haul verdicts. A drop maps to its enhancement set by the name
-    before the ':' (e.g. 'Luck of the Gambler: Defense/…'); the verdict is the converter
-    doctrine by rarity — premium pools keep, standard pieces are convert fodder."""
+    """Summarized events + haul verdicts. A recipe drop maps to its enhancement set by
+    the name before the ':' (e.g. 'Kinetic Combat: Damage/…'); the verdict is the
+    converter doctrine by rarity — premium pools keep, standard pieces are convert fodder.
+    Non-recipe drops (salvage, incarnate, crafting mats) get a category verdict."""
     s = gamelog.summarize(gamelog.load_events())
     haul = []
-    for d in s["drops"][-60:]:
+    for d in s["drops"][-80:]:
         item = d.get("item") or ""
-        setname = item.split(":")[0].strip()
-        rec = SET_BY_NAME.get(setname.lower())
-        verdict, why = "—", "not an enhancement-set item"
-        if rec:
-            r = converter.rarity_of(rec)
-            if r in ("purple", "pvp", "winter"):
-                verdict, why = "KEEP", f"{r} pool — premium; convert within the pool if unneeded"
-            elif r == "ato":
-                verdict, why = "KEEP", "archetype set — By-Set converts only"
+        kind = d.get("kind", "salvage")
+        verdict, why, setname = "—", "", None
+        if kind == "recipe":
+            base = re.sub(r"\s*\(Recipe\)$", "", item)
+            base = re.sub(r"^Invention:\s*", "", base)
+            rec = SET_BY_NAME.get(base.split(":")[0].strip().lower())
+            setname = rec.get("name") if rec else None
+            if rec:
+                r = converter.rarity_of(rec)
+                if r in ("purple", "pvp", "winter"):
+                    verdict, why = "KEEP", f"{r} pool — premium; convert within the pool if unneeded"
+                elif r == "ato":
+                    verdict, why = "KEEP", "archetype set — By-Set converts only"
+                else:
+                    verdict, why = "CONVERT/SELL", "standard set — By-Category fodder, or sell to fund seeds"
             else:
-                verdict, why = "CONVERT/SELL", "standard set — By-Category fodder, or sell to fund seeds"
-        haul.append({"ts": d.get("ts"), "item": item, "kind": d.get("kind"),
-                     "set": rec.get("name") if rec else None, "verdict": verdict, "why": why})
+                verdict, why = "SELL", "generic/common recipe — craft-and-sell or vendor"
+        elif kind == "incarnate":
+            verdict, why = "KEEP", "incarnate salvage — feeds your incarnate abilities"
+        elif kind == "incarnate_merit":
+            verdict, why = "KEEP", "incarnate merit — buy incarnate components"
+        elif kind == "crafting":
+            verdict, why = "KEEP", "crafting material (catalyst/converter) — always useful or sellable"
+        else:
+            verdict, why = "SELL", "salvage — sell the surplus, keep what your recipes need"
+        haul.append({"ts": d.get("ts"), "item": item, "kind": kind,
+                     "set": setname, "verdict": verdict, "why": why})
     return {"summary": {k: v for k, v in s.items() if k not in ("drops",)},
             "haul": haul}
 

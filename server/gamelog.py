@@ -63,8 +63,12 @@ def find_log_accounts(accounts_dirs):
     return out
 
 
-# ── parsing (PROVISIONAL patterns — see module docstring) ────────────────────
-_TS = re.compile(r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})(?:\s+\[(?P<chan>[^\]]+)\])?\s+(?P<msg>.*)$")
+# ── parsing (VALIDATED against real Homecoming logs, 2026-07-05) ─────────────
+# Real formats confirmed from a farm session (Rattle/Lime Juice). Key facts the
+# guessed patterns got wrong: DROPS say "You received X" (combat) or "You got X"
+# (Consignment House collection); "You have defeated X" is a KILL, not a death;
+# influence from sales reads "You got N influence from the Consignment House".
+_TS = re.compile(r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+(?P<msg>.*)$")
 _N = r"([\d,]+)"
 
 
@@ -72,46 +76,91 @@ def _num(s):
     return int(s.replace(",", "")) if s else 0
 
 
+def _drop_kind(item):
+    """Categorize a received item by its name (no external salvage list needed)."""
+    low = item.lower()
+    if item.endswith("(Recipe)") or low.startswith("invention:"):
+        return "recipe"
+    if "incarnate thread" in low or "incarnate shard" in low:
+        return "incarnate"
+    if "empyrean" in low or "astral" in low:
+        return "incarnate_merit"
+    if low.startswith("enhancement catalyst") or low.startswith("enhancement converter"):
+        return "crafting"
+    if low.startswith(("catalyst:", "awakening:", "boost")):
+        return "enhancement"
+    return "salvage"        # bare names: Ruby, Gold, Spirit Thorn, Fortune…
+
+
 _PATTERNS = [
-    # (type, regex, extractor)  — extractor(match) -> event fields
-    ("xp", re.compile(rf"You gain {_N} experience(?: and {_N} (?:influence|infamy|information))?[.,]?", re.I),
+    # (type, regex, extractor)  — order matters; specific before general.
+    ("xp", re.compile(rf"^You gain {_N} experience(?: and {_N} (?:influence|infamy))?\.?$", re.I),
      lambda m: {"xp": _num(m.group(1)), "inf": _num(m.group(2))}),
-    ("inf", re.compile(rf"You gain {_N} (?:influence|infamy|information)[.,]?", re.I),
+    ("influence_ah", re.compile(rf"^You got {_N} (?:influence|infamy) from the Consignment House\.?$", re.I),
      lambda m: {"inf": _num(m.group(1))}),
-    ("level", re.compile(r"You are now (?:a )?level (\d+)|You have reached level (\d+)", re.I),
-     lambda m: {"level": int(m.group(1) or m.group(2))}),
-    ("vet_level", re.compile(r"[Vv]eteran [Ll]evel\s*(\d+)?"),
-     lambda m: {"vet_level": int(m.group(1)) if m.group(1) else None}),
-    ("merits", re.compile(rf"You (?:have been awarded|are awarded|received) {_N} [Rr]eward [Mm]erits?", re.I),
-     lambda m: {"merits": _num(m.group(1))}),
-    ("badge", re.compile(r"(?:Congratulations! )?[Yy]ou (?:have )?earned the (.+?) [Bb]adge", re.I),
-     lambda m: {"badge": m.group(1).strip()}),
-    ("defeat", re.compile(r"You have been defeated(?: by (.+?))?[.!]?$", re.I),
+    ("spent", re.compile(rf"^You paid {_N} to the Consignment House\.?$", re.I),
+     lambda m: {"inf": _num(m.group(1))}),
+    ("ah_sold", re.compile(r"^You (?:have )?sold (.+?)\.?$", re.I),
+     lambda m: {"item": m.group(1).strip()}),
+    ("ah_listed", re.compile(r"^You put (?:\d+ )?(.+?) in the Consignment House\.?$", re.I),
+     lambda m: {"item": m.group(1).strip()}),
+    ("collect", re.compile(r"^You got (?:\d+ )?(.+?)\.?$", re.I),
+     lambda m: {"item": m.group(1).strip()}),
+    ("kill", re.compile(r"^You have defeated (.+?)\.?$", re.I),
+     lambda m: {"enemy": m.group(1).strip()}),
+    ("death", re.compile(r"^You have been defeated(?: by (.+?))?\.?$", re.I),
      lambda m: {"by": (m.group(1) or "").strip() or None}),
-    ("ah_sold", re.compile(rf"You (?:have )?sold (.+?) for {_N} (?:influence|infamy|inf)\b", re.I),
-     lambda m: {"item": m.group(1).strip(), "price": _num(m.group(2))}),
-    ("ah_bought", re.compile(rf"You (?:have )?bought (.+?) for {_N} (?:influence|infamy|inf)\b", re.I),
-     lambda m: {"item": m.group(1).strip(), "price": _num(m.group(2))}),
-    ("drop", re.compile(r"You (?:received|found) (.+?)(\s*\((?:Recipe|Salvage)\))?\.?$", re.I),
-     lambda m: {"item": m.group(1).strip(),
-                "kind": (m.group(2) or "").strip(" ()").lower() or "enhancement"}),
+    ("merits", re.compile(rf"^You (?:have been awarded|are awarded|receive) {_N} (?:reward )?merits?\.?$", re.I),
+     lambda m: {"merits": _num(m.group(1))}),
+    ("level", re.compile(r"^(?:Welcome to level|You are now level|You have reached level) (\d+)", re.I),
+     lambda m: {"level": int(m.group(1))}),
+    ("badge", re.compile(r"^(?:Congratulations! )?You (?:have )?(?:earned|received) the (.+?) [Bb]adge", re.I),
+     lambda m: {"badge": m.group(1).strip()}),
+    ("drop", re.compile(r"^You received (.+?)\.?$", re.I),
+     lambda m: {"item": m.group(1).strip(), "kind": _drop_kind(m.group(1).strip())}),
 ]
+
+# Known-NOISE lines (combat, buffs, status, MOTD, chat) — recognized so the coverage
+# report does NOT flag them. Built against the real farm log's actual chatter (Brute
+# Taunt spam, heals, Fury, Sprint, login MOTD). Reward verbs are parsed BEFORE this
+# check, so a broad "You gain/heal/Taunt…" here can't swallow xp/drops/kills/sales.
+_NOISE = re.compile(
+    r"^(You \w+ .+ with (your|the) |"                    # any "You <verb> <target> with your <power>"
+    r"You (are |hit |miss|heal |[Tt]aunt |activate|increase|decrease|gain \d|"
+    r"can'?t? |may |have \d|have (Insight|Keen|Uncanny|Robust|Rugged|Enrage|Focused|"
+    r"Righteous|Sturdy|good |the power)|don't|feel|start to|now have|conjure|summon|"
+    r"throw|unleash|place|slot|enter|do |knock|interrupt|were|contaminate|disorient|"
+    r"hold|immobilize|confuse|terrorize|placate|stun|sap|absorb|Take a|Catch a|undergo|"
+    r"think|rated|revive|resurrect|awaken)|"
+    r"HIT |MISS |Your |A |An |The |.+ (hits you|HITS you|MISSES you|heals you|"
+    r"misses you|grants you|is |was |has |begins|patrol|appeared)|"
+    r"Entering |Now entering|Joined channel|Left channel|Passcode |"
+    r"\[|.+: <(color|bgcolor))", re.I)
 
 
 def parse_line(line):
-    """(event dict | None, interesting) — `interesting` marks unparsed lines that LOOK
-    like they carry data ("You …"), which the coverage report samples for format fixes."""
+    """(event dict | None, interesting). `interesting` flags an UNPARSED line that looks
+    like it carries reward data but matched no pattern AND isn't known noise — those are
+    the samples the coverage report surfaces so real logs keep improving the parser."""
     m = _TS.match(line.strip())
     if not m:
         return None, False
     msg = m.group("msg")
     for etype, rex, extract in _PATTERNS:
-        h = rex.search(msg)
+        h = rex.match(msg)
         if h:
             ev = {"ts": m.group(1), "type": etype}
             ev.update(extract(h))
             return ev, True
-    return None, msg.startswith("You ") or "eteran" in msg
+    if _NOISE.match(msg):
+        return None, False
+    # Unrecognized but genuinely REWARD-shaped — the things the parser might be missing
+    # (merits, veteran levels, badges, accolades) or an unhandled gain/receipt verb.
+    # Deliberately NOT keyed on bare "defeat/influence/experience" — those are already
+    # parsed, and AE farm mobs spew flavor text full of "defeat".
+    interesting = bool(re.search(r"\b(merit|veteran|badge|accolade|component)\b", msg, re.I)) \
+        or bool(re.match(r"^You (gain \d|got |received |earned |have earned|have been awarded)", msg))
+    return None, interesting
 
 
 def ingest(log_dir, state):
@@ -175,34 +224,34 @@ def load_events(limit=20000):
 def summarize(events):
     """Aggregate events into the insight card's numbers (all-time within the store)."""
     s = {"xp": 0, "inf_gained": 0, "inf_spent": 0, "merits": 0, "levels": [],
-         "vet_levels": 0, "badges": [], "defeats": 0, "drops": [],
-         "ah_sold": [], "ah_bought": [], "days": set()}
+         "badges": [], "kills": 0, "deaths": 0, "drops": [], "ah_sold": 0,
+         "drop_kinds": {}, "days": set()}
     for ev in events:
         s["days"].add((ev.get("ts") or "")[:10])
         t = ev["type"]
         if t == "xp":
             s["xp"] += ev.get("xp", 0)
             s["inf_gained"] += ev.get("inf", 0)
-        elif t == "inf":
+        elif t == "influence_ah":
             s["inf_gained"] += ev.get("inf", 0)
+        elif t == "spent":
+            s["inf_spent"] += ev.get("inf", 0)
         elif t == "level":
             s["levels"].append(ev.get("level"))
-        elif t == "vet_level":
-            s["vet_levels"] += 1
         elif t == "merits":
             s["merits"] += ev.get("merits", 0)
         elif t == "badge":
             s["badges"].append(ev.get("badge"))
-        elif t == "defeat":
-            s["defeats"] += 1
+        elif t == "kill":
+            s["kills"] += 1
+        elif t == "death":
+            s["deaths"] += 1
+        elif t == "ah_sold":
+            s["ah_sold"] += 1
         elif t == "drop":
             s["drops"].append(ev)
-        elif t == "ah_sold":
-            s["ah_sold"].append(ev)
-            s["inf_gained"] += ev.get("price", 0)
-        elif t == "ah_bought":
-            s["ah_bought"].append(ev)
-            s["inf_spent"] += ev.get("price", 0)
+            k = ev.get("kind", "salvage")
+            s["drop_kinds"][k] = s["drop_kinds"].get(k, 0) + 1
     s["days"] = sorted(s["days"])
     s["max_level"] = max([x for x in s["levels"] if x], default=None)
     return s
