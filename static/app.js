@@ -1252,6 +1252,7 @@ async function initGamelog() {
     if (!scan || !scan.ok || !(scan.accounts || []).length) return;   // no game install found
     sec.classList.remove("hidden");
     if (scan.watching) {
+      $("gl-refresh").style.display = "";
       $("gl-setup").innerHTML = `Watching <b>${escHtml(scan.watching)}</b> `
         + `<button class="linkbtn quiet" onclick="gamelogPick()">change account</button>`;
       const ins = await api("/gamelog/insights");
@@ -1263,6 +1264,9 @@ async function initGamelog() {
 }
 
 function renderGamelogPicker(accounts) {
+  // The read button can't do anything until an account is watched (field report:
+  // clicking it pre-pick was a trap) — it simply doesn't exist until then.
+  $("gl-refresh").style.display = "none";
   $("gl-cards").innerHTML = "";
   $("gl-coverage").innerHTML = "";
   $("gl-setup").innerHTML =
@@ -1282,7 +1286,12 @@ window.gamelogPick = async function () {
 
 window.gamelogWatch = async function (logDir) {
   const r = await api("/gamelog/watch", postJson({ log_dir: logDir }));
-  if (!r || !r.ok) { $("gl-setup").textContent = (r && r.response) || "Couldn't watch that folder."; return; }
+  if (!r || !r.ok) {
+    await gamelogPick();
+    $("gl-coverage").textContent = (r && r.response) || "Couldn't watch that folder.";
+    return;
+  }
+  $("gl-refresh").style.display = "";
   $("gl-setup").innerHTML = `Watching <b>${escHtml(logDir)}</b> `
     + `<button class="linkbtn quiet" onclick="gamelogPick()">change account</button>`;
   gamelogIngest();
