@@ -17,6 +17,10 @@
   "Annihilation: proc" — they now carry the real piece name ("Annihilation:
   Chance for Res Debuff"), so you know exactly what to buy.
 
+- **Ctrl+Z undoes your last edit.** Mis-clicked a slot? One keystroke takes it
+  back — same as the ↶ Undo button (power picks, slot changes, enhancement
+  swaps, pool changes). Typing in a text box keeps its normal Ctrl+Z.
+
 ## 0.12.4 — July 4, 2026
 
 - **Level 1 always satisfies the creation requirement: one primary power AND one

@@ -1710,6 +1710,19 @@ window.undoEdit = function () {
   if ($("sel-epic")) $("sel-epic").value = build.epic || "";
   renderPowers(); recompute(); updateEditBar();
 };
+// Ctrl+Z anywhere on the page = the Undo button (field ask: a mis-click on a slot
+// icon should be one keystroke to take back). Skipped while typing in a field so
+// text editing keeps its native undo; the set-picker dialog closes first if open.
+document.addEventListener("keydown", (e) => {
+  if (!(e.ctrlKey || e.metaKey) || e.key.toLowerCase() !== "z" || e.shiftKey || e.altKey) return;
+  const t = e.target;
+  if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+  if (!EDIT_HISTORY.length) return;
+  e.preventDefault();
+  const modal = $("modal");
+  if (modal && !modal.classList.contains("hidden")) modal.classList.add("hidden");
+  undoEdit();
+});
 
 // Patron Power Pools (Mace/Mu/Soul/Leviathan Mastery) must be unlocked by completing a Patron
 // arc in-game, unlike Ancillary pools — flag the epic selector when one is chosen.
