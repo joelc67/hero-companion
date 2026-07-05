@@ -935,3 +935,23 @@ body { overflow: hidden; }
 .app-credits { text-align: center; padding: 14px 24px 18px; border-top: 1px solid var(--border);
   margin-top: 18px; line-height: 1.8; }
 .app-credits a { color: var(--accent); text-decoration: none; }
+
+/* ── PLAY LOG: full-width insight course at the very bottom, grows downward ── */
+#gamelog { margin: 12px 14px 0; }
+#gamelog h2 { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+#gl-refresh { width: auto; margin-left: auto; font-size: 12px; padding: 2px 10px; }
+.gl-cards { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; margin-top: 8px; }
+.gl-card { flex: 1 1 240px; background: var(--panel2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 12px; min-width: 0; }
+.gl-card.gl-wide { flex: 2 1 420px; }
+.glc-head { font-size: 11px; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 6px; }
+.glc-line { font-size: 12.5px; line-height: 1.7; }
+.glc-line .up { color: var(--def); }
+.glc-line .dn { color: var(--bad); }
+.gl-table { width: 100%; font-size: 12px; border-collapse: collapse; }
+.gl-table td { padding: 2px 6px 2px 0; border-bottom: 1px solid var(--border); }
+.gl-keep { color: var(--def); font-weight: 600; }
+.gl-sell { color: var(--muted); }
+.gl-pre { font-size: 11px; white-space: pre-wrap; word-break: break-all;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 8px; }
+#gl-coverage { margin-top: 8px; }

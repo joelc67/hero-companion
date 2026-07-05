@@ -1,5 +1,18 @@
 # Hero Companion — What's New
 
+## 0.12.6 — unreleased
+
+- **The Play Log (first cut).** A new full-width section at the bottom of the app
+  reads your in-game chat logs (type `/logchat` in game once to start writing
+  them) and turns them into insight — no raw log ever shown. Pick which account
+  to watch (multi-account players choose their main), hit "Read new log entries"
+  after a session, and get: session totals (XP, influence in/out, merits,
+  defeats), progress (level-ups, badges), and your recent haul with
+  keep-vs-convert/sell verdicts on every drop. Reading is incremental — only new
+  lines since last time. The line formats are provisional until validated against
+  real logs, and the tool says so: it reports how much it parsed and shows any
+  data-looking lines it didn't recognize, so early users help perfect it.
+
 ## 0.12.5 — July 5, 2026
 
 - **Power trays now follow the community standard** (researched from player forums):

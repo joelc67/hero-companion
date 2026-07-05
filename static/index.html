@@ -391,6 +391,17 @@
     </aside>
   </main>
 
+  <!-- PLAY LOG: full-width insight course at the very bottom — grows downward as the
+       user's /logchat sessions accumulate. Raw log stays invisible; insights only. -->
+  <section id="gamelog" class="panel hidden">
+    <h2>📜 Play Log <span class="muted small">— insights from your game sessions</span>
+      <button id="gl-refresh" class="ghost-btn" type="button" onclick="gamelogIngest()">⟳ Read new log entries</button>
+    </h2>
+    <div id="gl-setup" class="muted small"></div>
+    <div id="gl-cards" class="gl-cards"></div>
+    <div id="gl-coverage" class="muted small"></div>
+  </section>
+
   <!-- Enhancement picker modal -->
   <div id="modal" class="modal hidden">
     <div class="modal-box">

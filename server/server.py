@@ -2695,6 +2695,86 @@ def ingame_read():
         return jsonify({"ok": False, "response": f"Couldn't read the file: {e}"}), 500
 
 
+# ── GAME-LOG CAPTURE (P1: import + insights; see server/gamelog.py) ─────────
+import gamelog  # noqa: E402
+
+if getattr(sys, "frozen", False):
+    gamelog.STATE_DIR = os.path.join(os.environ.get("APPDATA") or os.path.expanduser("~"),
+                                     "HeroCompanion", "gamelog")
+else:
+    gamelog.STATE_DIR = os.path.abspath(os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "..", "gamelog"))
+
+
+@app.route("/gamelog/scan", methods=["POST"])
+def gamelog_scan():
+    """Accounts (with/without Logs folders) so the user picks which to watch —
+    multi-account players monitor the one they actually play."""
+    body = request.get_json(force=True) or {}
+    accounts = gamelog.find_log_accounts(_find_accounts_dirs(body.get("root")))
+    st = gamelog.load_state()
+    return jsonify({"ok": True, "accounts": accounts, "watching": st.get("log_dir")})
+
+
+@app.route("/gamelog/watch", methods=["POST"])
+def gamelog_watch():
+    """Remember which account's Logs folder to ingest. Path must live under a known
+    accounts directory — same containment rule as /ingame/read."""
+    body = request.get_json(force=True) or {}
+    path = os.path.abspath(body.get("log_dir") or "")
+    allowed = [os.path.normcase(a) for a in _find_accounts_dirs(body.get("root"))]
+    if not any(os.path.normcase(path).startswith(a + os.sep) for a in allowed):
+        return jsonify({"ok": False, "response": "That folder isn't under a known accounts "
+                        "directory."}), 400
+    st = gamelog.load_state()
+    st["log_dir"] = path
+    gamelog.save_state(st)
+    return jsonify({"ok": True, "watching": path})
+
+
+@app.route("/gamelog/ingest", methods=["POST"])
+def gamelog_ingest():
+    """Incrementally read the watched account's log files and return fresh insights.
+    The report is honest about coverage: pattern formats are PROVISIONAL until a real
+    log validates them, so unparsed 'You …' lines are counted and sampled."""
+    st = gamelog.load_state()
+    if not st.get("log_dir"):
+        return jsonify({"ok": False, "response": "Pick an account to watch first."}), 400
+    _, report = gamelog.ingest(st["log_dir"], st)
+    gamelog.save_state(st)
+    return jsonify({"ok": True, "report": report, "insights": _gamelog_insights()})
+
+
+@app.route("/gamelog/insights", methods=["GET"])
+def gamelog_insights():
+    return jsonify({"ok": True, "insights": _gamelog_insights()})
+
+
+def _gamelog_insights():
+    """Summarized events + haul verdicts. A drop maps to its enhancement set by the name
+    before the ':' (e.g. 'Luck of the Gambler: Defense/…'); the verdict is the converter
+    doctrine by rarity — premium pools keep, standard pieces are convert fodder."""
+    s = gamelog.summarize(gamelog.load_events())
+    haul = []
+    for d in s["drops"][-60:]:
+        item = d.get("item") or ""
+        setname = item.split(":")[0].strip()
+        rec = SET_BY_NAME.get(setname.lower())
+        verdict, why = "—", "not an enhancement-set item"
+        if rec:
+            r = converter.rarity_of(rec)
+            if r in ("purple", "pvp", "winter"):
+                verdict, why = "KEEP", f"{r} pool — premium; convert within the pool if unneeded"
+            elif r == "ato":
+                verdict, why = "KEEP", "archetype set — By-Set converts only"
+            else:
+                verdict, why = "CONVERT/SELL", "standard set — By-Category fodder, or sell to fund seeds"
+        haul.append({"ts": d.get("ts"), "item": item, "kind": d.get("kind"),
+                     "set": rec.get("name") if rec else None, "verdict": verdict, "why": why})
+    return {"summary": {k: v for k, v in s.items() if k not in ("drops",)},
+            "haul": haul}
+
+
 @app.route("/build/import", methods=["POST"])
 def build_import():
     """Import a Mids Reborn .mbd: parse -> resolve -> totals -> quick critique.

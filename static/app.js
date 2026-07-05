@@ -1237,6 +1237,93 @@ async function init() {
 
   renderSuggested();
   recompute();
+  initGamelog();               // the Play Log course at the bottom (fire-and-forget)
+}
+
+// ── PLAY LOG (P1): pick an account, ingest /logchat day files, show insights ──
+// The raw log never renders — only conclusions (haul verdicts, session totals) plus
+// an honest coverage footer, since the parse patterns are provisional until a real
+// log sample confirms them.
+async function initGamelog() {
+  const sec = $("gamelog");
+  if (!sec) return;
+  try {
+    const scan = await api("/gamelog/scan", postJson({}));
+    if (!scan || !scan.ok || !(scan.accounts || []).length) return;   // no game install found
+    sec.classList.remove("hidden");
+    if (scan.watching) {
+      $("gl-setup").innerHTML = `Watching <b>${escHtml(scan.watching)}</b> `
+        + `<button class="linkbtn quiet" onclick="gamelogPick()">change account</button>`;
+      const ins = await api("/gamelog/insights");
+      if (ins && ins.ok) renderGamelog(ins.insights, null);
+    } else {
+      renderGamelogPicker(scan.accounts);
+    }
+  } catch { /* section stays hidden on any failure */ }
+}
+
+function renderGamelogPicker(accounts) {
+  $("gl-cards").innerHTML = "";
+  $("gl-coverage").innerHTML = "";
+  $("gl-setup").innerHTML =
+    `Which account do you want to watch? `
+    + accounts.map(a =>
+        `<button class="linkbtn" onclick="gamelogWatch('${escHtml(a.log_dir).replace(/\\/g, "\\\\")}')">`
+        + `${escHtml(a.account)}${a.has_logs ? ` (${a.log_files} log file${a.log_files > 1 ? "s" : ""})`
+                                             : " (no logs yet)"}</button>`).join(" ")
+    + `<br><span class="muted">No logs yet? In game, type <code>/logchat</code> once (it stays on) — `
+    + `the game then writes a day file to that account's Logs folder every session.</span>`;
+}
+
+window.gamelogPick = async function () {
+  const scan = await api("/gamelog/scan", postJson({}));
+  if (scan && scan.ok) renderGamelogPicker(scan.accounts);
+};
+
+window.gamelogWatch = async function (logDir) {
+  const r = await api("/gamelog/watch", postJson({ log_dir: logDir }));
+  if (!r || !r.ok) { $("gl-setup").textContent = (r && r.response) || "Couldn't watch that folder."; return; }
+  $("gl-setup").innerHTML = `Watching <b>${escHtml(logDir)}</b> `
+    + `<button class="linkbtn quiet" onclick="gamelogPick()">change account</button>`;
+  gamelogIngest();
+};
+
+window.gamelogIngest = async function () {
+  const r = await api("/gamelog/ingest", postJson({}));
+  if (!r || !r.ok) { $("gl-setup").textContent = (r && r.response) || "Pick an account first."; return; }
+  renderGamelog(r.insights, r.report);
+};
+
+function renderGamelog(ins, report) {
+  const s = (ins || {}).summary || {};
+  const haul = (ins || {}).haul || [];
+  const fmt = (n) => (n || 0).toLocaleString();
+  const cards = [];
+  cards.push(`<div class="gl-card"><div class="glc-head">SESSION TOTALS</div>
+    <div class="glc-line">XP gained <b>${fmt(s.xp)}</b></div>
+    <div class="glc-line">Influence <b class="up">+${fmt(s.inf_gained)}</b>${s.inf_spent ? ` / <b class="dn">-${fmt(s.inf_spent)}</b> spent` : ""}</div>
+    <div class="glc-line">Reward merits <b>${fmt(s.merits)}</b></div>
+    <div class="glc-line">Defeats ${fmt(s.defeats)}</div>
+    ${s.days && s.days.length ? `<div class="glc-line muted">across ${s.days.length} day(s) of logs</div>` : ""}</div>`);
+  cards.push(`<div class="gl-card"><div class="glc-head">PROGRESS</div>
+    <div class="glc-line">${s.max_level ? `Reached <b>level ${s.max_level}</b>` : "No level-ups logged yet"}</div>
+    <div class="glc-line">${s.vet_levels ? `Veteran levels: <b>${s.vet_levels}</b>` : "No veteran-level lines seen <span class='muted'>(format unconfirmed)</span>"}</div>
+    <div class="glc-line">${(s.badges || []).length ? `Badges: <b>${s.badges.slice(-5).map(escHtml).join(", ")}</b>${s.badges.length > 5 ? ` +${s.badges.length - 5} more` : ""}` : "No badges logged yet"}</div></div>`);
+  const rows = haul.slice(-15).reverse().map(h =>
+    `<tr title="${escHtml(h.why || "")}"><td>${escHtml(h.item)}</td><td class="muted">${escHtml(h.kind || "")}</td>
+     <td class="${h.verdict === "KEEP" ? "gl-keep" : "gl-sell"}">${escHtml(h.verdict)}</td></tr>`).join("");
+  cards.push(`<div class="gl-card gl-wide"><div class="glc-head">RECENT HAUL <span class="muted small">(hover a row for the why)</span></div>
+    ${rows ? `<table class="gl-table">${rows}</table>` : `<div class="glc-line muted">No drops logged yet — play a session with /logchat on, then hit ⟳.</div>`}</div>`);
+  $("gl-cards").innerHTML = cards.join("");
+  if (report) {
+    const cov = report.new_lines
+      ? `Read ${fmt(report.new_lines)} new line(s) from ${report.files} file(s) — parsed ${fmt(report.parsed)} event(s), `
+        + `${fmt(report.unparsed_interesting)} data-looking line(s) not recognized.`
+      : "No new log lines since last read.";
+    $("gl-coverage").innerHTML = `${cov} <span class="muted">Formats are provisional until confirmed against a real log.</span>`
+      + ((report.unparsed_samples || []).length
+        ? `<details><summary>unrecognized samples (help improve the parser)</summary><pre class="gl-pre">${escHtml(report.unparsed_samples.join("\n"))}</pre></details>` : "");
+  }
 }
 
 // full_name -> family icon URL (server resolves Incarnate_{Slot}_{Family}_{Rarity}.png)
