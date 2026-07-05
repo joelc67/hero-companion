@@ -2,6 +2,15 @@
 
 ## 0.12.7 — unreleased
 
+- **The Play Log now asks before touching anything.** It read game files without
+  asking and without saying what happens to the data — against this app's own
+  rules. Now the section opens with a plain statement: what it reads (the chat
+  logs your game writes), what you get (insights), and the promise — everything
+  stays on this computer, nothing is uploaded or shared, and any future optional
+  sharing will be a separate, clearly labeled, anonymous opt-in. Until you click
+  "Enable the Play Log", the app doesn't even look at the game's folders. "No
+  thanks" is remembered and reversible.
+
 - **Fixed: the Play Log could dead-end.** Clicking "Read new log entries" before
   choosing an account replaced the account choices with an error message that
   told you to pick an account — with nothing left to pick. Now the read button

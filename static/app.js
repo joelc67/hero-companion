@@ -1247,6 +1247,32 @@ async function init() {
 async function initGamelog() {
   const sec = $("gamelog");
   if (!sec) return;
+  // CONSENT FIRST (field report: the app read game files with no permission asked and
+  // no statement of use). Until the user explicitly enables the Play Log, the app
+  // does not even LOOK at the game's folders — same promise as the update check.
+  const consent = localStorage.getItem("hc_playlog");
+  if (consent !== "on") {
+    sec.classList.remove("hidden");
+    $("gl-refresh").style.display = "none";
+    $("gl-cards").innerHTML = "";
+    $("gl-coverage").innerHTML = "";
+    if (consent === "off") {
+      $("gl-setup").innerHTML = `<span class="muted">The Play Log is off — the app does not read `
+        + `any game files. <button class="linkbtn quiet" onclick="playlogConsent('on')">Turn it on</button></span>`;
+    } else {
+      $("gl-setup").innerHTML =
+        `The Play Log can read the <b>chat log files your game writes</b> (only after you turn on `
+        + `<code>/logchat</code> in game) and turn them into insights here: session totals, drops with `
+        + `keep/sell advice, level-ups, badges.<br>`
+        + `<b>Everything stays on this computer.</b> Nothing is uploaded, shared, or sent anywhere — the `
+        + `app only ever reads the log files and shows you the results. If a future version offers `
+        + `optional sharing (like market price data), it will be a separate, clearly labeled opt-in, `
+        + `and anonymous.<br>`
+        + `<button class="gl-acct-btn" onclick="playlogConsent('on')">✅ Enable the Play Log</button> `
+        + `<button class="linkbtn quiet" onclick="playlogConsent('off')">No thanks</button>`;
+    }
+    return;
+  }
   try {
     const scan = await api("/gamelog/scan", postJson({}));
     if (!scan || !scan.ok || !(scan.accounts || []).length) return;   // no game install found
@@ -1278,6 +1304,11 @@ function renderGamelogPicker(accounts) {
     + `<br><span class="muted">No logs yet? In game, type <code>/logchat</code> once (it stays on) — `
     + `the game then writes a day file to that account's Logs folder every session.</span>`;
 }
+
+window.playlogConsent = function (v) {
+  localStorage.setItem("hc_playlog", v);
+  initGamelog();
+};
 
 window.gamelogPick = async function () {
   const scan = await api("/gamelog/scan", postJson({}));
