@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## 0.12.6 — unreleased
+## 0.12.6 — July 5, 2026
 
 - **The Play Log (first cut).** A new full-width section at the bottom of the app
   reads your in-game chat logs (type `/logchat` in game once to start writing
