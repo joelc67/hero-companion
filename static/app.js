@@ -317,7 +317,9 @@ const GLYPH_EMOJI = {
   "ti-map-pin": "📍", "ti-users-group": "👥", "ti-bed": "🛏️", "ti-mood-smile": "😀",
   "ti-pill": "💊", "ti-circle": "⚪",
 };
-const TRAY_ROLE = { 1: "tray-rot", 2: "tray-on", 3: "tray-util", 4: "tray-move" };
+// Tray semantics (community standard): 1 rotation, 2 mid-fight clicks, 3 set-and-forget
+// toggles, 4 travel — colors follow the meaning, not the tray number.
+const TRAY_ROLE = { 1: "tray-rot", 2: "tray-util", 3: "tray-on", 4: "tray-move" };
 
 // Render the 4-row in-game tray layout into `out`. These are always-visible labeled sections
 // now (no toggle) — refreshBuildViews() keeps them live. App runs offline, so glyphs map to emoji.

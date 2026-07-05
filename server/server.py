@@ -3728,10 +3728,11 @@ _TRAY_MACROS = {  # (label, hover, glyph) — utility/macros, not powers in the 
     3: [("Low FX", "macro LowFX:  maxParticles 500 $$ suppressCloseFx 1  — cut league "
          "visual noise so the client doesn't choke and you can see the target", "ti-eye"),
         ("Full FX", "macro FullFX:  restore particle count + close FX", "ti-eye-off"),
-        ("Base TP", "macro — Base Teleport", "ti-building-arch"),
+        ("Rest", "Rest — parked at the end of the set-and-forget tray, next to the "
+         "recovery clicks (community convention)", "ti-bed")],
+    4: [("Base TP", "macro — Base Teleport", "ti-building-arch"),
         ("LRT", "Long Range Teleporter", "ti-map-pin"),
-        ("Team TP", "Assemble the Team / Mission Teleporter", "ti-users-group")],
-    4: [("Rest", "Rest", "ti-bed"),
+        ("Team TP", "Assemble the Team / Mission Teleporter", "ti-users-group"),
         ("Emote", "emote macro", "ti-mood-smile"),
         ("Insp", "inspiration-combine macro", "ti-pill")],
 }
@@ -4142,44 +4143,57 @@ def _tray_layout(powers, incarnates=None, archetype=None, role=None, totals=None
                 pos["ranged"] += 1
         ptype = rec.get("power_type")
         steroid = nm.lower() in _DMG_ENABLER_NAMES
-        # --- assign a tray ---
-        if nm in _SPRINTS or nm.startswith("prestige") or nm in ("Rest",):
+        # --- assign a tray + a within-tray band (community standard, forum-researched):
+        # tray 1 = the active rotation; tray 2 = mid-fight CLICKS (self-buffs → heals →
+        # endurance recovery, grouped last); tray 3 = set-and-forget (toggles in switch-on
+        # order, then utility, Rest parked at the end); tray 4 = travel, isolated from
+        # combat keys so it's never fat-fingered mid-fight.
+        sub = 0
+        cats = set(rec.get("accepted_set_categories") or [])
+        if nm in _SPRINTS or nm.startswith("prestige"):
             tray = 4
+        elif nm == "Rest":
+            tray, sub = 3, 9
         elif nm in _TRAVEL_EXTRA:
-            tray = 3
+            tray, sub = 3, 3                 # Hover/CJ — toggles, live with the toggles
         elif nm in _TRAVEL_MAIN:
-            tray = 2
+            tray = 4
         elif nm == "Hasten":
-            tray = 2
-        elif ptype == 2:                     # toggle: armor / leadership / etc. = always-on
-            tray = 2
+            tray, sub = 2, 0
+        elif ptype == 2:                     # toggle: switch-on order = armors → epic → pools
+            tray = 3
+            sub = 1 if fn.startswith("Epic.") else (2 if fn.startswith("Pool.") else 0)
         elif ptype == 1:                     # auto/passive — no tray slot
             continue
         else:                                # click
             is_support_power = (cls["support"] or _is_support_powerset(rec.get("powerset_full_name"))
                                 or bool(rec.get("buff_effects")))
+            is_heal = "Healing" in cats
+            is_refuel = _is_recovery_click(rec) or "Endurance Modification" in cats
             if role in ("buffer", "healer"):
                 # A SUPPORT primary's ROTATION is its buffs/heals (Fortitude, Adrenalin Boost, the
                 # Auras, Clear Mind, Heal Other) — that's the job. Attacks/steroids are the SECONDARY
-                # contribution (damage + -def debuff), so they drop to the attack tray, not lead it.
-                tray = 1 if (is_support_power and not cls["atk"]) else 3
+                # contribution (damage + -def debuff): occasional mid-fight clicks, tray 2.
+                tray = 1 if (is_support_power and not cls["atk"]) else 2
             elif (cls["atk"] or cls["control"] or steroid
                     or (cls["support"] and rec.get("debuff_effects"))):
                 # Active rotation = attacks, control, debuff-patches, AND damage steroids (Build
                 # Up / Fiery Embrace are OPENERS you fire before a burst — not "secondary buffs").
                 tray = 1
-            else:
-                tray = 3                     # heals, rezzes, situational buffs
+            elif cls["pet"] or rec.get("summons"):
+                tray, sub = 3, 4             # pet summons = occasional utility (community norm)
+            else:                            # mid-fight clicks: buffs → heals → recovery LAST
+                tray = 2
+                sub = 2 if is_refuel else (1 if is_heal else 0)
         if tray == 1:
             rotation_end += rec.get("end_cost") or 0.0
         dpa = dpa_by.get(disp, 0) or 0
-        # Within-band sort value: DPA + a mild AoE lead (so an AoE/cone edges out a same-DPA
-        # single-target, but a hard-hitting melee attack isn't buried under a weak AoE).
-        sort_val = dpa + (40 if (tray == 1 and _is_aoe(rec)) else 0)
         slot = {"label": disp, "short": disp, "icon": _power_icon_url(fn),
                 "glyph": glyph, "title": title,
-                "_o": _rotation_phase(rec, cls, role, dpa, prefers_melee) if tray == 1 else 0,
-                "_dpa": sort_val}
+                "_o": _rotation_phase(rec, cls, role, dpa, prefers_melee) if tray == 1 else sub,
+                # Single-target chain leads its band (slots 1-3 muscle memory); AoEs/cones after.
+                "_aoe": 1 if (tray == 1 and _is_aoe(rec)) else 0,
+                "_dpa": dpa}
         trays[tray].append(slot)
     # incarnates
     for slotname, v in (incarnates or {}).items():
@@ -4190,21 +4204,27 @@ def _tray_layout(powers, incarnates=None, archetype=None, role=None, totals=None
         disp = v.get("display_name") or slotname
         trays[t].append({"label": disp, "short": disp, "glyph": glyph,
                          "title": f"{disp} ({slotname} incarnate)",
-                         "_o": 900 if t == 1 else 0, "_dpa": 0})   # Judgement = the nuke, last
-    # Tray 1 = the rotation: by phase, then hardest-hitting (highest DPA) first within a phase.
-    trays[1].sort(key=lambda s: (s.get("_o", 99), -(s.get("_dpa") or 0)))
+                         # Judgement = the nuke, pinned last; Destiny/Lore = utility band
+                         "_o": 900 if t == 1 else (5 if t == 3 else 0), "_dpa": 0})
+    # Tray 1 = the rotation: by phase; within a phase the SINGLE-TARGET chain leads
+    # (slots 1-3, hardest-hitting first — the community's muscle-memory row), then
+    # AoEs/cones; Judgement/nukes are phase-pinned to the end. Trays 2/3 sort by their
+    # bands (buffs → heals → recovery; armors → epic → pools → travel-toggles → Rest).
+    trays[1].sort(key=lambda s: (s.get("_o", 99), s.get("_aoe", 0), -(s.get("_dpa") or 0)))
+    trays[2].sort(key=lambda s: s.get("_o", 0))
+    trays[3].sort(key=lambda s: s.get("_o", 0))
     macros = {t: [{"label": m[0], "short": m[0], "glyph": m[2], "title": m[1], "macro": True}
                   for m in ms] for t, ms in _TRAY_MACROS.items()}
     if role in ("buffer", "healer"):
         base = {1: "support rotation  ·  buffs + heals you cycle to keep the team up",
-                2: "always-on toggles + main travel  ·  set and forget",
-                3: "secondary  ·  attacks & -def debuff (between buffs)",
-                4: "movement + utility + emotes"}
+                2: "mid-fight clicks  ·  attacks & -def debuff between buffs → heals → recovery",
+                3: "set and forget  ·  toggles (armors → pools) → utility → Rest",
+                4: "travel + sprints + emotes  ·  away from combat keys"}
     else:
-        base = {1: "rotation  ·  openers → hardest hits → refuel → nuke",
-                2: "always-on toggles + main travel  ·  set and forget",
-                3: "secondary buffs + travel/zone macros",
-                4: "movement + utility + emotes"}
+        base = {1: "rotation  ·  openers → single-target chain → AoEs → refuel → nuke",
+                2: "mid-fight clicks  ·  self-buffs → heals → endurance recovery",
+                3: "set and forget  ·  toggles (armors → pools) → utility → Rest",
+                4: "travel + sprints + emotes  ·  away from combat keys"}
     notes = _tray_notes(role, totals, rotation_end, pos)
     out = []
     phys = 1

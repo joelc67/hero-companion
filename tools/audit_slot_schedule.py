@@ -74,6 +74,27 @@ for at, groups in srv.POWERSETS["by_archetype"].items():
     print(f"  {at:18s} ok — last picks: " + ", ".join(
         f"{p['full_name'].split('.')[-1]}@{p['pick_level']}({1 + srv._sched_added(p)}sl)" for p in tail))
 
+    # ── tray-order standard (community-researched): bands must be monotonic ──
+    tr = c.post("/build/trays", json={"archetype": at, "powers": sol["powers"],
+                                      "incarnates": {}, "role": None}).get_json()
+    if not (tr or {}).get("ok"):
+        problems.append(f"{at}: trays failed")
+    else:
+        by_group = {}
+        for t in tr["trays"]:
+            by_group.setdefault(t.get("group") or t["n"], []).extend(
+                s for s in t["slots"] if not s.get("macro"))
+        for g, slots in by_group.items():
+            bands = [s.get("_o", 0) for s in slots]
+            if bands != sorted(bands):
+                problems.append(f"{at}: tray {g} band order broken — {bands}")
+        # within tray 1's same band: single-target before AoE
+        for s1, s2 in zip(by_group.get(1, []), by_group.get(1, [])[1:]):
+            if (s1.get("_o") == s2.get("_o")
+                    and (s1.get("_aoe") or 0) > (s2.get("_aoe") or 0)):
+                problems.append(f"{at}: tray 1 AoE '{s1['short']}' before ST '{s2['short']}'")
+                break
+
 # ── Pinned field case: the exact combo from the report, WITHOUT champions ────
 # The standalone app ships no champions.json, so end users always get the
 # heuristic picker — audit that path explicitly (champions masked this once).

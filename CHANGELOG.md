@@ -1,6 +1,16 @@
 # Hero Companion — What's New
 
-## 0.12.5 — unreleased
+## 0.12.5 — July 5, 2026
+
+- **Power trays now follow the community standard** (researched from player forums):
+  Tray 1 is your active rotation — openers, then the single-target chain in slots
+  1-3 (the muscle-memory keys), then AoEs and cones, with the nuke pinned at the
+  end. Tray 2 is mid-fight clicks — self-buffs, then heals, then endurance
+  recovery grouped together at the end. Tray 3 is set-and-forget — toggles in
+  switch-on order (your armors first, then pools), utility, and Rest parked last.
+  Tray 4 is travel and sprints, deliberately away from the combat keys. The same
+  kind of power lands in the same place on every character, so your muscle memory
+  transfers between alts — the way experienced players actually set up their bars.
 
 - **The Incarnates brick.** Your six incarnate choices (the solver's
   recommendations, or your own picks) now live in a card of their own — same
