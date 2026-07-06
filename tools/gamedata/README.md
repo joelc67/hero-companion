@@ -10,30 +10,22 @@ which is the same origin City of Data and Mids are both built from.
 
 ## Source of truth
 
-The game client's own binary data, extracted with **Bin Crawler**
-(part of [wednesdaywoe/CoH-Planner](https://github.com/wednesdaywoe/CoH-Planner),
-which reads the `.pigg` archives via Pigg Wrangler). This is what CoD uses — we just
-run it ourselves against the installed client, so there's no scraping or third-party
-download in the loop.
+The authoritative current game values (the same origin the established community data
+projects derive from). The exact extraction procedure is kept out of this repo on
+purpose — it's standard community tooling, and there's no reason for our public repo to
+publish a how-to. The maintainer runs it locally and drops the resulting reference
+tables into `tables/`.
 
 `tables/` holds a snapshot of the per-archetype modifier tables (the 15 playable ATs),
-extracted from `…/assets/live` on **2026-06-19**.
+current as of **2026-06-19**.
 
 ## Refresh after a game patch
 
-```
-git clone https://github.com/wednesdaywoe/CoH-Planner
-cd CoH-Planner/tools/bin-crawler
-py -m bin_crawler.export_classes  --assets-dir "<CoH>/assets/live" --output-dir out
-py -m bin_crawler.export_powers   --assets-dir "<CoH>/assets/live" --output-dir out   # powers, powersets, IO sets
-py -m bin_crawler.export_salvage  --assets-dir "<CoH>/assets/live" --output out/salvage.json
-py -m bin_crawler.export_entities --assets-dir "<CoH>/assets/live" --output-dir out/entities
-```
-
-Copy `out/tables/<playable-at>.json` into `tools/gamedata/tables/`, then:
+Re-generate the reference tables in `tables/` from current game values (procedure held
+by the maintainer), then:
 
 ```
-python tools/reality_check_gamedata.py     # lists any archetype modifier that drifted from the live game
+python tools/reality_check_gamedata.py     # lists any archetype modifier that drifted
 ```
 
 The reality check compares only **level-independent** (flat) modifiers, where a single
