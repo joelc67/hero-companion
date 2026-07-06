@@ -20,6 +20,9 @@
   there's no chat log for the day, the app says so and tells you how to start it. The
   opening screen is now framed simply: turn your sessions into *your* stats, all
   private and local — with any future community sharing kept as a separate choice.
+  A plain privacy note spells out the promise: the tool only ever handles game
+  data (prices, drops, stats), never your real name, email, location, IP, or
+  account login, and never anything about the other players in your chat log.
 
 - **The Play Log now asks before touching anything.** It read game files without
   asking and without saying what happens to the data — against this app's own

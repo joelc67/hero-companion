@@ -1264,8 +1264,12 @@ async function initGamelog() {
         `<b>Turn your game sessions into insights</b> — your stats, on your screen. The Play Log reads `
         + `the chat log your game writes and shows you what you earned: influence, drops with keep/sell `
         + `advice, kills, incarnate materials.<br>`
-        + `<span class="muted">It all stays on this computer — nothing is uploaded or shared. `
-        + `(Sharing anonymous stats to help the community would be a separate choice, later.)</span><br>`
+        + `<span class="muted">It all stays on this computer — nothing is uploaded or shared.</span><br>`
+        + `<div class="gl-privacy">🔒 <b>Your privacy:</b> this tool only ever handles <b>game data</b> — `
+        + `prices, drops, and stats. It never touches your real name, email, location, IP, or account `
+        + `login, and it never shares anything about the other players in your chat log. If a future `
+        + `version lets you share stats to help the community, that will be a <b>separate, clearly `
+        + `labeled opt-in</b> — game data only, and anonymous.</div>`
         + `<button class="gl-acct-btn" onclick="playlogConsent('on')">✅ Show me my stats</button> `
         + `<button class="linkbtn quiet" onclick="playlogConsent('off')">Not now</button>`
         + gamelogSetupHelp();

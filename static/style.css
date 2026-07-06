@@ -969,3 +969,5 @@ body { overflow: hidden; }
 .gl-help ol { margin: 8px 0 4px 18px; line-height: 1.7; }
 .gl-help ul { margin: 4px 0 4px 4px; line-height: 1.6; }
 .gl-help code { background: var(--bg); padding: 1px 5px; border-radius: 4px; }
+.gl-privacy { background: rgba(90, 160, 120, 0.10); border: 1px solid #3f9e6f; border-radius: 6px;
+  padding: 8px 11px; margin: 8px 0; font-size: 12.5px; line-height: 1.6; }
