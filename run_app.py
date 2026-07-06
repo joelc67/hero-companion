@@ -170,12 +170,18 @@ def _run_tray(port):
                 pystray.MenuItem("Quit Hero Companion", _quit)))
 
         # Let a self-update (or any other instance) retire THIS copy cleanly via
-        # POST /app/shutdown — a clean stop drops the tray icon instead of ghosting it.
+        # POST /app/shutdown, or the app retire ITSELF before its installer force-kills it
+        # (server._graceful_self_exit_for_update). icon.stop() is what removes the tray icon;
+        # it runs on the tray's own message loop (this hook may be called from a Flask/worker
+        # thread), so we give that loop a moment to actually delete the icon BEFORE os._exit —
+        # exiting too fast re-orphans the icon as the very "ghost" we're preventing.
         def _graceful_quit():
             try:
                 icon.stop()
             except Exception:  # noqa: BLE001
                 pass
+            import time
+            time.sleep(0.6)          # let the message loop process the NIM_DELETE
             _clear_lock()
             os._exit(0)
         server.SHUTDOWN_HOOK = _graceful_quit

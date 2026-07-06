@@ -1,5 +1,13 @@
 # Hero Companion — What's New
 
+## 0.12.9 — unreleased
+
+- **Updating no longer leaves a ghost tray icon, for real this time.** When the app
+  updates itself, it now removes its own tray icon cleanly before the installer takes
+  over, instead of being force-killed and leaving a dead icon behind that only clears
+  when you mouse over it. (0.12.8 improved this for extra copies; this closes the main
+  path — the app replacing itself.)
+
 ## 0.12.8 — July 6, 2026
 
 - **Watch multiple accounts at once — per-character stat cards.** Dual-boxers can now

@@ -494,6 +494,28 @@ def app_shutdown():
     return jsonify({"ok": True, "stopping": True})
 
 
+def _graceful_self_exit_for_update():
+    """After a self-update hands off to the installer, retire THIS process by removing its
+    own tray icon cleanly (SHUTDOWN_HOOK -> icon.stop) instead of waiting to be force-killed
+    — a force-kill orphans the icon as a lingering tray "ghost" (field-reported). Delayed so
+    the /update/install response reaches the browser first; the installer then replaces the
+    now-unlocked files and relaunches us with --after-update. No-op when there's no tray
+    (running from source / headless: no icon to orphan, installer's kill is fine)."""
+    hook = SHUTDOWN_HOOK
+    if not hook:
+        return
+    import threading
+
+    def _later():
+        import time
+        time.sleep(2.5)          # response flushed + installer has a head start
+        try:
+            hook()
+        except Exception:  # noqa: BLE001
+            os._exit(0)
+    threading.Thread(target=_later, daemon=True).start()
+
+
 @app.route("/update/install", methods=["POST"])
 def update_install():
     """One-click self-update, packaged builds only: download the latest release's
@@ -536,6 +558,8 @@ def update_install():
             return jsonify({"ok": False, "response": "Download came out the wrong size — "
                             "try again, or use the download page."})
         subprocess.Popen([dest, "/SILENT", "/RELAUNCH=1"], close_fds=True)
+        # Drop our own tray icon cleanly before the installer force-kills us (no ghost icon).
+        _graceful_self_exit_for_update()
         return jsonify({"ok": True, "version": latest})
     except Exception as e:  # noqa: BLE001 — fall back to the manual download page
         return jsonify({"ok": False, "response": f"Auto-update failed ({str(e)[:160]}) — "
