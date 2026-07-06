@@ -2822,11 +2822,11 @@ def _gamelog_insights():
             else:
                 verdict, why = "SELL", "generic/common recipe — craft-and-sell or vendor"
         elif kind == "incarnate":
-            verdict, why = "KEEP", "incarnate salvage — feeds your incarnate abilities"
+            verdict, why = "—", "incarnate salvage — just bank it and spend later, nothing to decide"
         elif kind == "incarnate_merit":
-            verdict, why = "KEEP", "incarnate merit — buy incarnate components"
+            verdict, why = "—", "incarnate merit — bank it and spend later, nothing to decide"
         elif kind == "crafting":
-            verdict, why = "KEEP", "crafting material (catalyst/converter) — always useful or sellable"
+            verdict, why = "—", "crafting material (catalyst/converter) — bank it; useful later or sellable"
         else:
             verdict, why = "SELL", "salvage — sell the surplus, keep what your recipes need"
         haul.append({"ts": d.get("ts"), "item": item, "kind": kind,

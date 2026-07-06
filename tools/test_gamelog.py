@@ -157,7 +157,11 @@ r = c.post("/gamelog/watch", json={"log_dir": logdir, "root": tmp}).get_json()
 check("watch accepts in-tree dir", r.get("ok"))
 ins = c.get("/gamelog/insights").get_json()["insights"]
 inc = next((h for h in ins["haul"] if h["item"] == "Incarnate Thread"), None)
-check("insights: incarnate drop = KEEP", inc and inc["verdict"] == "KEEP", str(inc))
+check("insights: incarnate drop has NO keep/sell verdict (just bank it)",
+      inc and inc["verdict"] == "—", str(inc and inc["verdict"]))
+rec = next((h for h in ins["haul"] if h["kind"] == "recipe"), None)
+check("insights: recipe still gets a real keep/sell verdict",
+      rec and rec["verdict"] in ("KEEP", "SELL", "CONVERT/SELL"), str(rec and rec["verdict"]))
 
 shutil.rmtree(tmp, ignore_errors=True)
 print(f"\n══ {'ALL PASS' if not fails else f'{len(fails)} FAILURE(S): ' + ', '.join(fails)} ══")

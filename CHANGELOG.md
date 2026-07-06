@@ -2,6 +2,12 @@
 
 ## 0.12.8 — unreleased
 
+- **Cleaner haul advice.** Incarnate salvage and crafting materials no longer get a
+  "KEEP" tag — there's no decision to make (you bank them and spend later), so the
+  haul now saves its keep/sell verdicts for the drops that actually warrant one
+  (enhancement recipes and salvage). Incarnate materials are still counted in your
+  loot summary.
+
 - **The Play Log now knows who you're playing — and links to their fit.** It reads
   the character name from the log ("playing Rattle") instead of only showing the
   account, tracks it across character switches, and attributes your stats to the
