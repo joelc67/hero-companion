@@ -1218,9 +1218,11 @@ async function init() {
   // The deterministic controls (presets, goal text, Solve) stay; they never needed AI.
   api("/health").then(h => {
     AI_ON = !!h.ai_enabled;
+    const _at = $("assistant-title");
+    if (_at) _at.innerHTML = escHtml(_at.textContent) + " " + helpIcon('build-assistant');
     if (!AI_ON) {
       const chip = $("claude-status"); if (chip) chip.remove();
-      const t = $("assistant-title"); if (t) t.textContent = "Build Assistant";
+      const t = $("assistant-title"); if (t) t.innerHTML = "Build Assistant " + helpIcon('build-assistant');
       const gi = $("gen-intro");
       if (gi) gi.textContent = "Pick archetype + primary + secondary above, choose "
         + "what you're building for, and the solver designs and slots it instantly.";
@@ -2081,7 +2083,11 @@ const HELP = {
   "respec": { title: "🛠️ Respec plan",
     what: "A concrete plan to re-slot this character: exactly which sets change in which powers, the stat gains, and a grocery list of what to craft/buy and what to unslot & sell.",
     why: "When a build has slots that aren't earning set bonuses, a full respec can convert that wasted investment into real defense, recharge, or damage. The plan shows the trade-off up front so you can decide before spending influence.",
-    options: "Apply it now, or note the grocery list and do it later in-game — nothing is committed until you say so, and you can undo an applied respec." },
+    options: "Apply it now, or note the grocery list and do it later in-game — nothing is committed until you say so, and you can undo an applied respec. Your check-off progress is saved to the character." },
+  "build-assistant": { title: "🔧 Build Assistant",
+    what: "The general-purpose optimizer. Pick what you're building for — a Content preset (Fire Farm, iTrials, Team, General, EB/AV) and optionally a Role — and the solver chooses IO sets and fills every slot toward that goal instantly. No AI; it's deterministic math.",
+    why: "It's the fastest way from a set of chosen powers to a finished, optimized build. Turn on “Preserve my IO sets” to complete an imported build without disturbing sets you already picked, or off for a full re-slot from scratch.",
+    options: "On a character you resumed, the respec plan card (above the build) is the more tailored path — it compares your CURRENT slotting to the optimum and hands you a grocery list. The Build Assistant is the from-a-goal optimizer. On a wide window it sits to the right of your build; on a narrow one it stacks to the bottom." },
 };
 function helpIcon(topic) {
   return `<button class="help-i" onclick="showHelp('${topic}',event)" title="What's this?" aria-label="Explain">?</button>`;
