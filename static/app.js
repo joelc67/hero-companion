@@ -1662,32 +1662,116 @@ function chosenPowersets() {
   return list;
 }
 
-// A factual respec nudge: N powers hold slots that earn no set bonuses. Points at Solve,
-// never judges. Dismissable; a fresh load re-evaluates (setRespecHintFresh on load/import).
+// A respec card: on a loaded build with slots not earning bonuses, it surfaces the
+// suggestion, then (on request) the concrete respec plan + grocery list. Never judges;
+// dismissable; a fresh load re-evaluates (setRespecHintFresh on load/import).
 let RESPEC_HINT_DISMISSED = false;
-function setRespecHintFresh() { RESPEC_HINT_DISMISSED = false; }
-function renderRespecHint(hint) {
+let RESPEC_SOLVED = null;          // the optimized powers, stashed for Apply
+function setRespecHintFresh() { RESPEC_HINT_DISMISSED = false; RESPEC_SOLVED = null; }
+function _respecCardEl() {
   let el = $("respec-hint");
-  if (!hint || RESPEC_HINT_DISMISSED) { if (el) el.remove(); return; }
   if (!el) {
     el = document.createElement("div");
     el.id = "respec-hint";
-    el.className = "respec-hint";
+    el.className = "respec-card";
     const host = $("powers-list");
     if (host && host.parentNode) host.parentNode.insertBefore(el, host);
   }
+  return el;
+}
+function _who() { return (build.name || "").trim() || "this character"; }
+function renderRespecHint(hint) {
+  const el = $("respec-hint");
+  if (!hint || RESPEC_HINT_DISMISSED) { if (el) el.remove(); return; }
+  // Don't clobber an already-expanded plan on a routine recompute.
+  if (el && el.dataset.expanded === "1") return;
+  const card = _respecCardEl();
   const names = (hint.powers || []).slice(0, 3).map(escHtml).join(", ");
   const more = hint.count > 3 ? "…" : "";
-  el.innerHTML = `<span class="rh-ico">💡</span><span class="rh-text">`
-    + `<b>${hint.count} power${hint.count > 1 ? "s" : ""}</b> have slots that aren't earning set `
-    + `bonuses (${names}${more}). <b>Solve</b> can show what a full respec would gain versus keeping `
-    + `your current sets.</span>`
-    + `<button class="rh-x" onclick="dismissRespecHint()" title="Dismiss">✕</button>`;
+  card.dataset.expanded = "0";
+  card.innerHTML = `<div class="rc-head"><span class="rc-ico">💡</span>`
+    + `<span class="rc-title">Based on ${escHtml(_who())}, the builder suggests changes</span>`
+    + `<button class="rc-x" onclick="dismissRespecHint()" title="Dismiss">✕</button></div>`
+    + `<div class="rc-body"><b>${hint.count} power${hint.count > 1 ? "s" : ""}</b> have slots that `
+    + `aren't earning set bonuses (${names}${more}). Build a full respec plan to see exactly what to `
+    + `change, what it gains, and a grocery list of what to craft and what to unslot &amp; sell.</div>`
+    + `<div class="rc-actions"><button class="rc-go" onclick="buildRespecPlan()">Build the respec plan →</button></div>`;
 }
 window.dismissRespecHint = function () {
   RESPEC_HINT_DISMISSED = true;
   const el = $("respec-hint"); if (el) el.remove();
 };
+
+// Fetch a FULL respec (preserve:false) and render the concrete plan into the card.
+async function buildRespecPlan() {
+  const card = _respecCardEl();
+  const go = card.querySelector(".rc-go");
+  if (go) { go.disabled = true; go.textContent = "⏳ Solving the respec…"; }
+  const content = ($("preset-content") && $("preset-content").value) || "general";
+  const role = ($("preset-role") && $("preset-role").value) || null;
+  const presolve = build.powers.map(p => ({ full_name: p.full_name, slots: p.slots,
+    earned_slot_count: p.earned_slot_count }));
+  const res = await api("/build/solve", postJson({
+    archetype: build.archetype, content, role, tier: build.tier || "premium",
+    roles: (typeof selectedRoles === "function" ? selectedRoles() : []), pvp: build.pvp,
+    preserve: false, primary_display: build.primary_display,
+    secondary_display: build.secondary_display, powers: presolve,
+  })).catch(() => null);
+  if (!res || !res.ok) {
+    if (go) { go.disabled = false; go.textContent = "Build the respec plan →"; }
+    const b = card.querySelector(".rc-body");
+    if (b) b.innerHTML = "Couldn't build the plan just now — try Solve directly.";
+    return;
+  }
+  if (!res.respec_plan) {   // solver found nothing worth changing
+    card.dataset.expanded = "1";
+    card.innerHTML = `<div class="rc-head"><span class="rc-ico">✓</span>`
+      + `<span class="rc-title">${escHtml(_who())} is already well slotted</span>`
+      + `<button class="rc-x" onclick="dismissRespecHint()" title="Dismiss">✕</button></div>`
+      + `<div class="rc-body">A full respec wouldn't meaningfully improve this build — keep what you have.</div>`;
+    return;
+  }
+  RESPEC_SOLVED = res.powers;
+  renderRespecPlanCard(res.respec_plan);
+}
+
+function renderRespecPlanCard(plan) {
+  const card = _respecCardEl();
+  card.dataset.expanded = "1";
+  const gains = (plan.gains || []).map(g =>
+    `<span class="rc-gain">${escHtml(g.stat)} <b>+${g.delta}</b> <span class="muted">(${g.from}→${g.to})</span></span>`).join("");
+  const changes = (plan.changes || []).map(ch => {
+    const rem = (ch.remove || []).map(r => `<span class="rc-rem">−${r.n} ${escHtml(r.set)}</span>`).join(" ");
+    const add = (ch.add || []).map(a => `<span class="rc-add">+${a.n} ${escHtml(a.set)}</span>`).join(" ");
+    return `<div class="rc-change"><b>${escHtml(ch.power)}</b> ${rem}${rem && add ? " → " : ""}${add}</div>`;
+  }).join("");
+  const acquire = (plan.acquire || []).map(a =>
+    `<li>${escHtml(a.set)} <b>×${a.pieces}</b>${a.rarity ? ` <span class="rc-tag rc-${escHtml(a.rarity)}">${escHtml(a.rarity)}</span>` : ""}</li>`).join("");
+  const sell = (plan.sell || []).map(s =>
+    `<li>${escHtml(s.set)} <b>×${s.pieces}</b> <span class="muted small">— ${escHtml(s.advice || "")}</span></li>`).join("");
+  card.innerHTML = `<div class="rc-head"><span class="rc-ico">🛠️</span>`
+    + `<span class="rc-title">Respec plan for ${escHtml(_who())}</span>`
+    + `<button class="rc-x" onclick="dismissRespecHint()" title="Dismiss">✕</button></div>`
+    + (gains ? `<div class="rc-gains">${gains}</div>` : "")
+    + `<div class="rc-section"><div class="rc-label">What changes (${plan.power_count} power${plan.power_count > 1 ? "s" : ""})</div>${changes}</div>`
+    + `<div class="rc-groceries">`
+    + `<div class="rc-col"><div class="rc-label">🛒 Craft / buy</div><ul class="rc-list">${acquire || "<li class='muted'>nothing new</li>"}</ul></div>`
+    + `<div class="rc-col"><div class="rc-label">💰 Unslot &amp; sell</div><ul class="rc-list">${sell || "<li class='muted'>nothing to remove</li>"}</ul></div>`
+    + `</div>`
+    + `<div class="rc-actions"><button class="rc-apply" onclick="applyRespec()">Apply this respec</button>`
+    + `<button class="rc-cancel" onclick="dismissRespecHint()">Not now</button></div>`;
+}
+
+window.applyRespec = function () {
+  if (!RESPEC_SOLVED) return;
+  build.powers = RESPEC_SOLVED;
+  RESPEC_SOLVED = null;
+  RESPEC_HINT_DISMISSED = true;
+  const el = $("respec-hint"); if (el) el.remove();
+  renderPowers();
+  recompute();
+};
+window.buildRespecPlan = buildRespecPlan;
 
 function renderPowers() {
   applyIdentityLock();          // keep archetype/powerset lock in sync (onArchetypeChange re-enables them)

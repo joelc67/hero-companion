@@ -7,10 +7,12 @@
   mules) right away — previously those tags only appeared right after solving, which made a
   loaded build look like the update hadn't taken.
 
-- **A gentle respec nudge.** When you load a build that has powers with open slots not
-  earning any set bonuses, the planner points it out and notes that Solve can show what a
-  full respec would gain versus keeping your current sets. It's factual, dismissable, and
-  never fires on a build that's already well slotted.
+- **Suggested-respec card with a grocery list.** When you resume a build that has powers
+  with open slots not earning set bonuses, a card offers to build a full respec plan for
+  that character. It lays out exactly what changes power by power, the stat gains, and a
+  grocery list split two ways — what to craft or buy, and what to unslot and sell (with a
+  note on each item's worth). One click applies the whole respec. It's dismissable and
+  never appears on a build that's already well slotted.
 
 - **Updating no longer leaves a ghost tray icon, for real this time.** When the app
   updates itself, it now removes its own tray icon cleanly before the installer takes

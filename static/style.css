@@ -701,16 +701,43 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .slot-plan-global-mules,
 .slot-plan-mixed       { background: rgba(70, 140, 200, .13);  border-color: rgba(70,140,200,.45); color: #2f76ad; }
 .powers-wall .slot-plan { margin-top: auto; }   /* sit at the brick's bottom edge */
-/* Respec suggestion: factual, dismissable nudge above the build wall. */
-.respec-hint { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 10px;
-  padding: 9px 12px; border-radius: 8px; font-size: 12.5px; line-height: 1.45;
-  background: rgba(90, 150, 220, .10); border: 1px solid rgba(90, 150, 220, .35);
-  color: var(--ink); }
-.respec-hint .rh-ico { flex: none; }
-.respec-hint .rh-text { flex: 1 1 auto; min-width: 0; }
-.respec-hint .rh-x { flex: none; width: auto; background: none; border: none; color: var(--muted);
+/* Respec card: a loaded build's suggested changes → concrete plan + grocery list. */
+.respec-card { margin: 0 0 10px; padding: 10px 12px; border-radius: 8px; font-size: 12.5px;
+  line-height: 1.45; color: var(--ink); background: rgba(90, 150, 220, .09);
+  border: 1px solid rgba(90, 150, 220, .38); }
+.respec-card .rc-head { display: flex; align-items: center; gap: 7px; }
+.respec-card .rc-ico { flex: none; }
+.respec-card .rc-title { flex: 1 1 auto; min-width: 0; font-weight: 700; }
+.respec-card .rc-x { flex: none; width: auto; background: none; border: none; color: var(--muted);
   cursor: pointer; font-size: 13px; padding: 0 2px; line-height: 1; }
-.respec-hint .rh-x:hover { color: var(--ink); }
+.respec-card .rc-x:hover { color: var(--ink); }
+.respec-card .rc-body { margin: 6px 0 2px; }
+.respec-card .rc-actions { display: flex; gap: 8px; margin-top: 9px; flex-wrap: wrap; }
+.respec-card .rc-go, .respec-card .rc-apply { width: auto; padding: 5px 12px; border-radius: 6px;
+  border: none; cursor: pointer; font-weight: 600; font-size: 12px;
+  background: var(--accent, #3a7bd5); color: #fff; }
+.respec-card .rc-cancel { width: auto; padding: 5px 10px; border-radius: 6px; cursor: pointer;
+  font-size: 12px; background: none; border: 1px solid var(--border); color: var(--muted); }
+.respec-card .rc-go[disabled] { opacity: .7; cursor: default; }
+.respec-card .rc-gains { display: flex; flex-wrap: wrap; gap: 5px 10px; margin: 8px 0 4px; }
+.respec-card .rc-gain { font-size: 12px; background: rgba(60,160,90,.12);
+  border: 1px solid rgba(60,160,90,.35); border-radius: 10px; padding: 1px 8px; }
+.respec-card .rc-gain b { color: #2f8a53; }
+.respec-card .rc-section { margin: 8px 0; }
+.respec-card .rc-label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+.respec-card .rc-change { padding: 2px 0; }
+.respec-card .rc-rem { color: #c15b5b; }
+.respec-card .rc-add { color: #2f8a53; }
+.respec-card .rc-groceries { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
+.respec-card .rc-col { flex: 1 1 200px; min-width: 0; }
+.respec-card .rc-list { margin: 0; padding-left: 16px; }
+.respec-card .rc-list li { padding: 1px 0; }
+.respec-card .rc-tag { font-size: 10px; border-radius: 6px; padding: 0 5px; text-transform: uppercase;
+  border: 1px solid var(--border); color: var(--muted); }
+.respec-card .rc-purple { color: #a066cc; border-color: rgba(160,102,204,.5); }
+.respec-card .rc-winter { color: #4a9fd0; border-color: rgba(74,159,208,.5); }
+.respec-card .rc-superior_ato, .respec-card .rc-ato { color: #d08a2f; border-color: rgba(208,138,47,.5); }
 /* Power tray layout (in-game-style 4 rows) */
 .tray-row { margin-bottom: 12px; }
 .tray-label { font-size: 12px; color: var(--muted); margin-bottom: 5px; }

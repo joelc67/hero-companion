@@ -2262,6 +2262,108 @@ def build_preset():
                     "labels": labels, "perk_focus": pre.get("perk_focus")})
 
 
+# ── RESPEC PLAN ─────────────────────────────────────────────────────────────
+# A concrete respec for a loaded build: the per-power slotting changes, a grocery list
+# (what to acquire + what to unslot & sell), and the stat gains — so the suggestion isn't
+# just "this could be better" but "here's exactly what to change and buy."
+_RESPEC_GAINS = [
+    ("S/L def", "defense", "Smashing"), ("Fire/Cold def", "defense", "Fire"),
+    ("Energy def", "defense", "Energy"), ("Ranged def", "defense", "Ranged"),
+    ("AoE def", "defense", "AoE"), ("Melee def", "defense", "Melee"),
+    ("S/L res", "resistance", "Smashing"), ("Fire res", "resistance", "Fire"),
+    ("Cold res", "resistance", "Cold"), ("Energy res", "resistance", "Energy"),
+    ("Recharge", "recharge", None), ("Recovery", "recovery", None),
+    ("Regen", "regeneration", None), ("Max HP", "max_hp", None),
+]
+
+
+def _respec_gains(cur, opt, res_cap):
+    """Meaningful stat improvements (>=2 pts) from current -> optimized, biggest first."""
+    out = []
+    for label, k, sub in _RESPEC_GAINS:
+        a = cur[k].get(sub, {}).get("value", 0) if sub else cur[k]["value"]
+        b = opt[k].get(sub, {}).get("value", 0) if sub else opt[k]["value"]
+        if k == "resistance":                 # over-cap gains aren't real
+            a, b = min(a, res_cap), min(b, res_cap)
+        if b - a >= 2:
+            out.append({"stat": label, "from": round(a, 1), "to": round(b, 1),
+                        "delta": round(b - a, 1)})
+    out.sort(key=lambda g: -g["delta"])
+    return out[:8]
+
+
+def _unslot_advice(rarity):
+    """What to do with a piece a respec frees up (you're pulling it OUT)."""
+    if rarity in ("purple", "pvp", "winter", "ato"):
+        return "premium — sells high on the market, or bank it if you'll reuse it"
+    if rarity:
+        return "standard set — sell on the market or convert as fodder"
+    return "common IO — vendor or craft-and-sell"
+
+
+def _respec_grocery(counts, selling):
+    """Turn {set_name: pieces} into a shopping/sell list with rarity + advice."""
+    out = []
+    for s, n in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0])):
+        rec = SET_BY_NAME.get((s or "").lower())
+        rarity = converter.rarity_of(rec) if rec else None
+        row = {"set": s, "pieces": n, "rarity": rarity}
+        if selling:
+            row["advice"] = _unslot_advice(rarity)
+        out.append(row)
+    return out
+
+
+def _respec_plan(powers_in, optimized, cur_totals, opt_totals, res_cap):
+    """Diff the player's CURRENT slotting against the optimized one at set granularity
+    (how players shop and slot): per-power add/remove + aggregated acquire/sell grocery
+    lists + stat gains. Returns None when nothing would change."""
+    def _sets(power):
+        c = {}
+        for s in power.get("slots") or []:
+            if s and s.get("set_name") and SET_BY_NAME.get(s["set_name"].lower()):
+                c[s["set_name"]] = c.get(s["set_name"], 0) + 1
+        return c
+    opt_by_full = {p.get("full_name"): p for p in optimized}
+    changes, acquire, sell = [], {}, {}
+    for p in powers_in:
+        fn = p.get("full_name")
+        before, after = _sets(p), _sets(opt_by_full.get(fn) or {})
+        if before == after:
+            continue
+        adds = {s: after[s] - before.get(s, 0) for s in after if after[s] > before.get(s, 0)}
+        drops = {s: before[s] - after.get(s, 0) for s in before if before[s] > after.get(s, 0)}
+        if not adds and not drops:
+            continue
+        pname = (POWER_BY_FULL.get(fn, {}).get("display_name")
+                 or (fn or "").split(".")[-1].replace("_", " "))
+        changes.append({"power": pname,
+                        "add": [{"set": s, "n": n} for s, n in adds.items()],
+                        "remove": [{"set": s, "n": n} for s, n in drops.items()]})
+        for s, n in adds.items():
+            acquire[s] = acquire.get(s, 0) + n
+        for s, n in drops.items():
+            sell[s] = sell.get(s, 0) + n
+    if not changes:
+        return None
+    # A set that leaves one power and enters another is MOVED, not sold-then-rebought — net
+    # the overlap out so the grocery list only lists genuine new buys and genuine sales.
+    for s in list(acquire.keys()):
+        if s in sell:
+            moved = min(acquire[s], sell[s])
+            acquire[s] -= moved
+            sell[s] -= moved
+            if not acquire[s]:
+                del acquire[s]
+            if not sell[s]:
+                del sell[s]
+    return {"changes": changes,
+            "acquire": _respec_grocery(acquire, selling=False),
+            "sell": _respec_grocery(sell, selling=True),
+            "gains": _respec_gains(cur_totals, opt_totals, res_cap),
+            "power_count": len(changes)}
+
+
 @app.route("/build/solve", methods=["POST"])
 def build_solve():
     """Constraint solver: take the build's POWERS + a target profile (from the
@@ -2484,7 +2586,19 @@ def build_solve():
         _plan = _slot_plan(_p)
         if _plan:
             _p["slot_plan"] = _plan
-    return jsonify({"ok": True, "powers": sol["powers"],
+    # RESPEC PLAN: on a FULL respec, diff the loaded build against the optimized one into a
+    # concrete change list + grocery list (acquire / unslot & sell) + stat gains, so the
+    # "suggest a respec" card can show exactly what to do. None when nothing changes.
+    respec_plan = None
+    if not preserve:
+        try:
+            cur_totals = engine.calculate_build(
+                {"archetype": archetype, "powers": powers_in, "pvp": pvp},
+                SET_BONUSES, res_cap=res_cap, ctx=ctx)
+            respec_plan = _respec_plan(powers_in, sol["powers"], cur_totals, final, res_cap)
+        except Exception:  # noqa: BLE001 — the plan is a nicety; never fail the solve over it
+            respec_plan = None
+    return jsonify({"ok": True, "powers": sol["powers"], "respec_plan": respec_plan,
                     "warnings": _build_warnings(sol["powers"], archetype, final, content, role, exposure),
                     "slots_used": sol["slots_used"],
                     "added_slots": sol.get("added_slots"),
