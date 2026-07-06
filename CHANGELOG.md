@@ -7,12 +7,19 @@
   mules) right away — previously those tags only appeared right after solving, which made a
   loaded build look like the update hadn't taken.
 
-- **Suggested-respec card with a grocery list.** When you resume a build that has powers
-  with open slots not earning set bonuses, a card offers to build a full respec plan for
-  that character. It lays out exactly what changes power by power, the stat gains, and a
-  grocery list split two ways — what to craft or buy, and what to unslot and sell (with a
-  note on each item's worth). One click applies the whole respec. It's dismissable and
-  never appears on a build that's already well slotted.
+- **Respec worksheet.** When you resume a build with slots not earning set bonuses, a card
+  offers to build a full respec plan for that character. It shows every change power by
+  power — the old slotting struck through, the new below it — the stat gains, and a grocery
+  list split two ways: what to craft or buy, and what to unslot and sell (with a note on
+  each item's worth). Every line has a checkbox so you can track your progress, and the plan
+  is saved to the character, so you can work it over several sessions of crafting. Apply it
+  to your build when ready, Undo to revert, or mark the whole thing completed. It never
+  appears on a build that's already well slotted.
+
+- **Explanations everywhere.** The slotting tags (proc bomb, full set, frankenslot, global
+  mules) and the respec card now have a **?** that opens a plain-language explanation of what
+  the term means, why that approach is used, and your options — including why, for example, a
+  frankenslot can beat a single six-piece set.
 
 - **Updating no longer leaves a ghost tray icon, for real this time.** When the app
   updates itself, it now removes its own tray icon cleanly before the installer takes
