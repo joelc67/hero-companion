@@ -95,7 +95,17 @@ def _run_tray():
     def _show_status(icon, _item):
         icon.notify(_status_text(), "Hero Companion Lite")
 
-    menu = pystray.Menu(pystray.MenuItem("Status", _show_status),
+    def _open_boards(_icon, _item):
+        # regenerate from the current store, then open — the alpha Pulse Boards,
+        # fed by this machine's eyes only
+        import subprocess
+        import webbrowser
+        gen = os.path.join(_HERE, "tools", "build_pulse_boards.py")
+        subprocess.run([sys.executable, gen], capture_output=True, timeout=60)
+        webbrowser.open("file:///" + os.path.join(APPDIR, "pulse_boards.html").replace("\\", "/"))
+
+    menu = pystray.Menu(pystray.MenuItem("Open Pulse Boards (alpha)", _open_boards),
+                        pystray.MenuItem("Status", _show_status),
                         pystray.MenuItem("Quit", _quit))
     icon = pystray.Icon("HeroCompanionLite", img, "Hero Companion Lite — capturing", menu)
     t = threading.Thread(target=_capture_loop, daemon=True)
