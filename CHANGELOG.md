@@ -1,5 +1,13 @@
 # Hero Companion — What's New
 
+## 0.12.8 — unreleased
+
+- **The Play Log's account switch is now obvious.** Which account you're watching
+  shows as a row of chips (the active one highlighted with ●), and switching is one
+  click on another chip — no more hunting for a "change account" link. For
+  dual-boxers this matters: each account is its own log, so you flip between your
+  two characters' stats instantly, and a note says so.
+
 ## 0.12.7 — July 5, 2026
 
 - **The Play Log parser is now built on real logs.** The first cut guessed at line

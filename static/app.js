@@ -1280,6 +1280,7 @@ async function initGamelog() {
     const scan = await api("/gamelog/scan", postJson({}));
     if (!scan || !scan.ok || !(scan.accounts || []).length) return;   // no game install found
     sec.classList.remove("hidden");
+    GAMELOG_ACCOUNTS = scan.accounts;
     if (scan.watching) {
       gamelogWatchingUI(scan.watching);
       gamelogIngest();                 // first read + starts the live poll
@@ -1289,11 +1290,26 @@ async function initGamelog() {
   } catch { /* section stays hidden on any failure */ }
 }
 
+// All discovered accounts, cached so the watching UI can show them as switch chips —
+// a dual-boxer flips between their two accounts in one obvious click.
+let GAMELOG_ACCOUNTS = [];
+
 function gamelogWatchingUI(dir) {
   $("gl-refresh").style.display = "";
-  $("gl-setup").innerHTML = `<span id="gl-live" class="gl-live" title="Reading new log entries automatically">● live</span> `
-    + `Watching <b>${escHtml(dir)}</b> `
-    + `<button class="linkbtn quiet" onclick="gamelogPick()">change account</button>`;
+  const nd = (p) => (p || "").replace(/\\/g, "\\\\");
+  const chips = (GAMELOG_ACCOUNTS || []).map(a => {
+    const active = a.log_dir === dir;
+    return `<button class="gl-chip${active ? " active" : ""}"`
+      + (active ? " disabled" : ` onclick="gamelogWatch('${nd(escHtml(a.log_dir))}')"`)
+      + `>${active ? "● " : ""}${escHtml(a.account)}</button>`;
+  }).join(" ");
+  $("gl-setup").innerHTML =
+    `<span id="gl-live" class="gl-live" title="Reading new log entries automatically">● live</span> `
+    + `<b>Watching:</b> ${chips}`
+    + ((GAMELOG_ACCOUNTS || []).length > 1
+        ? ` <span class="muted small">— click another account to switch. `
+          + `Dual-boxing? Each account is its own log; watch each to see that character.</span>`
+        : "");
 }
 
 // Live reader: while an account is watched and the Play Log is on screen, poll for new
@@ -1311,6 +1327,7 @@ function gamelogStopLive() {
 }
 
 function renderGamelogPicker(accounts) {
+  GAMELOG_ACCOUNTS = accounts;
   // The read button can't do anything until an account is watched (field report:
   // clicking it pre-pick was a trap) — it simply doesn't exist until then.
   $("gl-refresh").style.display = "none";
