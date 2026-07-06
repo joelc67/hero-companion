@@ -1,6 +1,14 @@
 # Hero Companion — What's New
 
-## 0.12.9 — unreleased
+## 0.12.9 — July 6, 2026
+
+- **Game data brought current.** Our numbers came from a Mids database that turned out to be
+  about six months old, so recent balance patches were missing. We now reality-check against
+  the live game and fixed everything that had drifted: the Brute, Sentinel, Tanker, and
+  Dominator defense/resist/damage modifiers (this is why Brute defense was reading low), a
+  batch of power endurance/recharge/range values, and slotting rules — including Mastermind
+  archetype IOs now being slottable in personal attacks. Set bonuses were checked and are
+  current. Thanks to Maelwys on the Homecoming forums for catching the stale data.
 
 - **The slotting tags now show on any build, not just after Solve.** Resume or import a
   build and each power shows why it's slotted the way it is (full set / proc bomb / global
