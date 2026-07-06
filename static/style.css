@@ -719,10 +719,29 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .help-card .help-x { position: absolute; top: 8px; right: 10px; width: auto; background: none;
   border: none; color: var(--muted); cursor: pointer; font-size: 15px; }
 .help-card .help-x:hover { color: var(--ink); }
-/* Respec card: a loaded build's suggested changes → concrete plan + grocery list. */
-.respec-card { margin: 0 0 10px; padding: 10px 12px; border-radius: 8px; font-size: 12.5px;
-  line-height: 1.45; color: var(--ink); background: rgba(90, 150, 220, .09);
-  border: 1px solid rgba(90, 150, 220, .38); }
+/* Respec TRIGGER: a small labeled bar at the top of the build; opens the plan pop-up. */
+.respec-trigger { display: flex; align-items: stretch; gap: 0; margin: 0 0 10px;
+  border-radius: 8px; overflow: hidden; border: 1px solid rgba(90, 150, 220, .45);
+  background: rgba(90, 150, 220, .10); }
+.respec-trigger.rt-has-plan { border-color: rgba(230, 168, 23, .55); background: rgba(230, 168, 23, .10); }
+.respec-trigger .rt-open { flex: 1 1 auto; width: auto; display: flex; align-items: center; gap: 8px;
+  background: none; border: none; color: var(--ink); cursor: pointer; font-size: 12.5px;
+  font-weight: 600; padding: 8px 12px; text-align: left; }
+.respec-trigger .rt-open:hover { background: rgba(127,127,127,.08); }
+.respec-trigger .rt-ico { flex: none; }
+.respec-trigger .rt-label { flex: 1 1 auto; min-width: 0; }
+.respec-trigger .rt-prog { flex: none; font-size: 11px; font-weight: 600; color: #c8961a;
+  background: rgba(230,168,23,.14); border-radius: 8px; padding: 1px 7px; }
+.respec-trigger .rt-go { flex: none; color: var(--muted); font-weight: 400; }
+.respec-trigger .rt-x { flex: none; width: auto; background: none; border: none; border-left: 1px solid var(--border);
+  color: var(--muted); cursor: pointer; font-size: 13px; padding: 0 10px; }
+.respec-trigger .rt-x:hover { color: var(--ink); }
+/* Respec pop-up: the full worksheet in a modal card (reuses .help-overlay backdrop). */
+.respec-modal-card { position: relative; max-width: 620px; width: 100%; max-height: 84vh; overflow-y: auto;
+  background: var(--panel, #1b2333); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px 18px; color: var(--ink); box-shadow: 0 12px 40px rgba(0,0,0,.5); line-height: 1.45;
+  font-size: 12.5px; }
+.respec-card, .respec-modal-card { }
 .respec-card .rc-head { display: flex; align-items: center; gap: 7px; }
 .respec-card .rc-ico { flex: none; }
 .respec-card .rc-title { flex: 1 1 auto; min-width: 0; font-weight: 700; }
