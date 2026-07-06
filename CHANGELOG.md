@@ -2,6 +2,12 @@
 
 ## Unreleased (0.12.11)
 
+- **The respec suggestion now notices when the optimizer has learned.** Resuming a build
+  made under an older version offers "Built under an older optimizer — see what's
+  improved?" even when nothing is structurally wrong with the slotting. Build the plan to
+  see whether a respec is worth it; if nothing meaningful improves, it says so. Saying
+  "no" is remembered for that character until the optimizer actually changes again.
+
 - **IO levels show on resumed builds again.** Resuming a saved character could show set
   pieces without the level badge under their icons (while common IOs still showed 50).
   Saves are now healed as they load, so every existing save gets its levels and icons

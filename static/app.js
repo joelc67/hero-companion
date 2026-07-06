@@ -111,6 +111,14 @@ window.loadSave = async function (id) {
   // Restore an in-progress respec worksheet (applyImportedBuild cleared it) so a respec
   // being worked over days picks up exactly where it left off — checkboxes and all.
   restoreWorksheet(res.save.respec_worksheet || null);
+  // Version drift: this save predates the current optimizer model — offer the respec
+  // even when the structural hint doesn't fire (an old solver's competent slotting
+  // passes the under-invest check; the CURRENT solver would still do better).
+  // Dismissal is remembered per save per model, so a "no" holds until the optimizer
+  // actually learns something new again.
+  const vd = res.save.version_drift;
+  RESPEC_VERSION_DRIFT = (vd && !localStorage.getItem(
+    `respecDriftDismissed:${id}:m${vd.current_model}`)) ? vd : null;
   applyIdentityLock();          // lock archetype/powersets if this is a real (imported/respec'd) character
   _lastSavedSnapshot = buildSnapshot();   // just loaded — already clean
   hideEntry();
@@ -1676,9 +1684,11 @@ function chosenPowersets() {
 let RESPEC_HINT_DISMISSED = false;
 let RESPEC_WORKSHEET = null;   // {character, plan, optimized, before, applied, checks}
 let RESPEC_LAST_HINT = null;   // most recent under-investment hint (drives the "ready?" bar)
+let RESPEC_VERSION_DRIFT = null; // save predates the current optimizer model (loadSave sets it)
 let RESPEC_MODAL_OPEN = false;
 function setRespecHintFresh() {
   RESPEC_HINT_DISMISSED = false; RESPEC_WORKSHEET = null; RESPEC_LAST_HINT = null;
+  RESPEC_VERSION_DRIFT = null;
 }
 function restoreWorksheet(ws) { RESPEC_WORKSHEET = ws || null; }
 function _who() { return (build.name || "").trim() || "this character"; }
@@ -1713,7 +1723,7 @@ function _respecTriggerEl() {
 }
 function renderRespecTrigger() {
   const ws = RESPEC_WORKSHEET;
-  const show = !!ws || (RESPEC_LAST_HINT && !RESPEC_HINT_DISMISSED);
+  const show = !!ws || ((RESPEC_LAST_HINT || RESPEC_VERSION_DRIFT) && !RESPEC_HINT_DISMISSED);
   const existing = $("respec-trigger");
   if (!show) { if (existing) existing.remove(); return; }
   let ico, label, extra = "";
@@ -1722,9 +1732,12 @@ function renderRespecTrigger() {
     ico = "🛠️"; label = "Respec in progress"; extra = `<span class="rt-prog">${pr.done}/${pr.total} done</span>`;
   } else if (ws) {
     ico = "🛠️"; label = "Respec plan ready — review";
-  } else {
+  } else if (RESPEC_LAST_HINT) {
     const n = RESPEC_LAST_HINT.count;
     ico = "💡"; label = `Ready for respec? ${n} power${n > 1 ? "s" : ""} could gain set bonuses`;
+  } else {
+    // version drift only: the build is fine structurally, the OPTIMIZER got better
+    ico = "🔭"; label = "Built under an older optimizer — see what's improved?";
   }
   const el = _respecTriggerEl();
   el.className = "respec-trigger" + (ws ? " rt-has-plan" : "");
@@ -1735,6 +1748,12 @@ function renderRespecTrigger() {
 }
 window.dismissRespecHint = function () {
   RESPEC_HINT_DISMISSED = true;
+  // A dismissed version-drift offer stays dismissed for this save until the optimizer
+  // model actually changes again (keyed save+model) — a remembered "no", not a nag.
+  if (RESPEC_VERSION_DRIFT && CURRENT_SAVE && CURRENT_SAVE.id) {
+    localStorage.setItem(
+      `respecDriftDismissed:${CURRENT_SAVE.id}:m${RESPEC_VERSION_DRIFT.current_model}`, "1");
+  }
   const el = $("respec-trigger"); if (el) el.remove();
 };
 
@@ -1757,16 +1776,27 @@ function renderRespecModalBody() {
 }
 
 function _hintBodyHTML() {
-  const hint = RESPEC_LAST_HINT || { count: 0, powers: [] };
-  const names = (hint.powers || []).slice(0, 3).map(escHtml).join(", ");
-  const more = hint.count > 3 ? "…" : "";
-  return `<div class="rc-head"><span class="rc-ico">💡</span>`
+  const hint = RESPEC_LAST_HINT;
+  let body;
+  if (hint) {
+    const names = (hint.powers || []).slice(0, 3).map(escHtml).join(", ");
+    const more = hint.count > 3 ? "…" : "";
+    body = `<b>${hint.count} power${hint.count > 1 ? "s" : ""}</b> have slots that aren't `
+      + `earning set bonuses (${names}${more}). Build a full respec plan to see exactly what to change, `
+      + `what it gains, and a grocery list of what to craft and what to unslot &amp; sell.`;
+  } else {
+    // version-drift offer: nothing is structurally wrong — the optimizer moved on
+    const vd = RESPEC_VERSION_DRIFT || {};
+    const from = vd.saved_model ? `optimizer v${vd.saved_model}` : "an older version of the optimizer";
+    body = `This build was made under ${from}; the current one (v${vd.current_model || "?"}) knows `
+      + `more — newer game data and better slotting rules. Build the plan to see whether a respec `
+      + `is worth it: if nothing meaningful improves, it will say so.`;
+  }
+  return `<div class="rc-head"><span class="rc-ico">${hint ? "💡" : "🔭"}</span>`
     + `<span class="rc-title">Suggested respec for ${escHtml(_who())}</span>`
     + helpIcon('respec')
     + `<button class="rc-x" onclick="closeRespecModal()" title="Close">✕</button></div>`
-    + `<div class="rc-body"><b>${hint.count} power${hint.count > 1 ? "s" : ""}</b> have slots that aren't `
-    + `earning set bonuses (${names}${more}). Build a full respec plan to see exactly what to change, `
-    + `what it gains, and a grocery list of what to craft and what to unslot &amp; sell.</div>`
+    + `<div class="rc-body">${body}</div>`
     + `<div class="rc-actions"><button class="rc-apply" onclick="buildRespecPlan()">Build the respec plan →</button>`
     + `<button class="rc-cancel" onclick="closeRespecModal()">Not now</button></div>`;
 }

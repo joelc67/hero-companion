@@ -5464,12 +5464,18 @@ def saves_put():
     name = (body.get("name") or "Untitled").strip() or "Untitled"
     sid = _save_slug(body.get("id") or name)
     b = body.get("build") or {}
+    import first_principles as fp
     data = {"name": name, "archetype": b.get("archetype"),
             "primary_display": b.get("primary_display"),
             "secondary_display": b.get("secondary_display"),
             "level_reached": body.get("level_reached"),
             "plan": body.get("plan") or {},
             "notes": body.get("notes") or "",
+            # Version stamp: which optimizer/app produced this save. On resume, a save
+            # stamped by an OLDER model triggers the version-drift respec offer — a
+            # competently-slotted old build passes the structural under-invest check
+            # even though the current solver + game data would build it better.
+            "versions": {"app": APP_VERSION, "model": fp.MODEL_VERSION},
             "build": b}
     with open(os.path.join(_saves_dir(), sid + ".json"), "w", encoding="utf-8") as f:
         json.dump(data, f, indent=1)
@@ -5488,6 +5494,16 @@ def saves_get(sid):
     # ones written after the fix — the same pass solve/import already run.
     if isinstance(data.get("build"), dict):
         _fill_slot_images(data["build"])
+    # Version drift: the save predates the current optimizer model (or carries no
+    # stamp at all — every save from before stamping is by definition old). The
+    # client shows the "the optimizer has learned since this was built" respec
+    # offer. Not persisted — recomputed against whatever model is current.
+    import first_principles as fp
+    saved_model = (data.get("versions") or {}).get("model")
+    if saved_model is None or (isinstance(saved_model, (int, float))
+                               and saved_model < fp.MODEL_VERSION):
+        data["version_drift"] = {"saved_model": saved_model,
+                                 "current_model": fp.MODEL_VERSION}
     return jsonify({"ok": True, "save": data})
 
 
