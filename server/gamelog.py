@@ -14,6 +14,7 @@ instead of silently dropping data. Veteran-level lines are a known unknown.
 import json
 import os
 import re
+import time
 
 STATE_DIR = None      # set by server.py -> %APPDATA%\HeroCompanion\gamelog
 
@@ -164,8 +165,10 @@ def parse_line(line):
 
 
 def ingest(log_dir, state):
-    """Read every log file's NEW bytes (per-file offset), append events, return a report.
-    Incremental and idempotent — running it twice ingests nothing the second time."""
+    """Read every log file's NEW bytes (byte offset per file), append events, return a
+    report. BINARY read + seek-to-end so it works LIVE while the game holds the file open
+    (the game shares the handle for reading; a partial trailing line is left for next
+    poll). Incremental and idempotent."""
     events, report = [], {"files": 0, "new_lines": 0, "parsed": 0,
                           "unparsed_interesting": 0, "unparsed_samples": []}
     if not (log_dir and os.path.isdir(log_dir)):
@@ -176,27 +179,33 @@ def ingest(log_dir, state):
             continue
         path = os.path.join(log_dir, fname)
         try:
-            size = os.path.getsize(path)
-            start = offsets.get(path, 0)
-            if start > size:                     # rotated/truncated — start over
-                start = 0
-            if start == size:
-                continue
-            report["files"] += 1
-            with open(path, encoding="utf-8", errors="replace") as f:
+            start = int(offsets.get(path, 0))
+            with open(path, "rb") as f:
+                f.seek(0, 2)
+                size = f.tell()
+                if start > size:                 # rotated/truncated — start over
+                    start = 0
+                if start >= size:
+                    continue
                 f.seek(start)
-                for line in f:
-                    report["new_lines"] += 1
-                    ev, interesting = parse_line(line)
-                    if ev:
-                        ev["file"] = fname
-                        events.append(ev)
-                        report["parsed"] += 1
-                    elif interesting:
-                        report["unparsed_interesting"] += 1
-                        if len(report["unparsed_samples"]) < 20:
-                            report["unparsed_samples"].append(line.strip()[:160])
-                offsets[path] = f.tell()
+                chunk = f.read()
+            nl = chunk.rfind(b"\n")
+            if nl == -1:                         # only a partial line so far — wait
+                continue
+            complete = chunk[:nl + 1]
+            offsets[path] = start + len(complete)
+            report["files"] += 1
+            for line in complete.decode("utf-8", "replace").splitlines():
+                report["new_lines"] += 1
+                ev, interesting = parse_line(line)
+                if ev:
+                    ev["file"] = fname
+                    events.append(ev)
+                    report["parsed"] += 1
+                elif interesting:
+                    report["unparsed_interesting"] += 1
+                    if len(report["unparsed_samples"]) < 20:
+                        report["unparsed_samples"].append(line.strip()[:160])
         except Exception:  # noqa: BLE001 — one unreadable file never blocks the rest
             continue
     if events:
@@ -205,6 +214,23 @@ def ingest(log_dir, state):
             for ev in events:
                 f.write(json.dumps(ev) + "\n")
     return events, report
+
+
+def log_status(log_dir, now):
+    """Best-effort 'is logging on?' signal for the UI: the newest log file, how long ago
+    it changed, and whether one exists for today. We can't see whether the game is
+    running, so we report facts and let the UI nudge — never a false alarm."""
+    if not (log_dir and os.path.isdir(log_dir)):
+        return {"has_files": False}
+    files = [f for f in os.listdir(log_dir) if f.lower().endswith(".txt")]
+    if not files:
+        return {"has_files": False}
+    newest = max(files, key=lambda f: os.path.getmtime(os.path.join(log_dir, f)))
+    mtime = os.path.getmtime(os.path.join(log_dir, newest))
+    today = time.strftime("%Y-%m-%d", time.localtime(now))
+    return {"has_files": True, "newest": newest,
+            "age_sec": max(0, int(now - mtime)),
+            "today_log": any(today in f for f in files)}
 
 
 def load_events(limit=20000):

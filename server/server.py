@@ -9,6 +9,7 @@ tools/parse_mids.py (sourced from Mids Reborn).
 import copy
 import json
 import os
+import time
 import re
 import sys
 from collections import defaultdict
@@ -2742,7 +2743,8 @@ def gamelog_ingest():
         return jsonify({"ok": False, "response": "Pick an account to watch first."}), 400
     _, report = gamelog.ingest(st["log_dir"], st)
     gamelog.save_state(st)
-    return jsonify({"ok": True, "report": report, "insights": _gamelog_insights()})
+    return jsonify({"ok": True, "report": report, "insights": _gamelog_insights(),
+                    "status": gamelog.log_status(st["log_dir"], time.time())})
 
 
 @app.route("/gamelog/insights", methods=["GET"])

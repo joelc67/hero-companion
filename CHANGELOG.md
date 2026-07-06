@@ -12,6 +12,15 @@
   written to the chat log by the game, so post-50 progress is shown as the
   incarnate materials you earn instead — that's what the log actually records.)
 
+- **The Play Log reads live and walks you through setup.** Once you pick an account
+  it now updates on its own as you play (a "● live" marker shows it's watching), so
+  you don't have to keep clicking refresh. A built-in guide spells out the one-time
+  in-game setup — make a chat tab named "Companion", add all channels to it, and turn
+  on `/logchat` — so the only thing you have to remember is turning the log on. If
+  there's no chat log for the day, the app says so and tells you how to start it. The
+  opening screen is now framed simply: turn your sessions into *your* stats, all
+  private and local — with any future community sharing kept as a separate choice.
+
 - **The Play Log now asks before touching anything.** It read game files without
   asking and without saying what happens to the data — against this app's own
   rules. Now the section opens with a plain statement: what it reads (the chat

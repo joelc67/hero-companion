@@ -1257,19 +1257,18 @@ async function initGamelog() {
     $("gl-cards").innerHTML = "";
     $("gl-coverage").innerHTML = "";
     if (consent === "off") {
-      $("gl-setup").innerHTML = `<span class="muted">The Play Log is off — the app does not read `
-        + `any game files. <button class="linkbtn quiet" onclick="playlogConsent('on')">Turn it on</button></span>`;
+      $("gl-setup").innerHTML = `<span class="muted">The Play Log is off — the app reads no `
+        + `game files. <button class="linkbtn quiet" onclick="playlogConsent('on')">Turn it on</button></span>`;
     } else {
       $("gl-setup").innerHTML =
-        `The Play Log can read the <b>chat log files your game writes</b> (only after you turn on `
-        + `<code>/logchat</code> in game) and turn them into insights here: session totals, drops with `
-        + `keep/sell advice, level-ups, badges.<br>`
-        + `<b>Everything stays on this computer.</b> Nothing is uploaded, shared, or sent anywhere — the `
-        + `app only ever reads the log files and shows you the results. If a future version offers `
-        + `optional sharing (like market price data), it will be a separate, clearly labeled opt-in, `
-        + `and anonymous.<br>`
-        + `<button class="gl-acct-btn" onclick="playlogConsent('on')">✅ Enable the Play Log</button> `
-        + `<button class="linkbtn quiet" onclick="playlogConsent('off')">No thanks</button>`;
+        `<b>Turn your game sessions into insights</b> — your stats, on your screen. The Play Log reads `
+        + `the chat log your game writes and shows you what you earned: influence, drops with keep/sell `
+        + `advice, kills, incarnate materials.<br>`
+        + `<span class="muted">It all stays on this computer — nothing is uploaded or shared. `
+        + `(Sharing anonymous stats to help the community would be a separate choice, later.)</span><br>`
+        + `<button class="gl-acct-btn" onclick="playlogConsent('on')">✅ Show me my stats</button> `
+        + `<button class="linkbtn quiet" onclick="playlogConsent('off')">Not now</button>`
+        + gamelogSetupHelp();
     }
     return;
   }
@@ -1278,15 +1277,33 @@ async function initGamelog() {
     if (!scan || !scan.ok || !(scan.accounts || []).length) return;   // no game install found
     sec.classList.remove("hidden");
     if (scan.watching) {
-      $("gl-refresh").style.display = "";
-      $("gl-setup").innerHTML = `Watching <b>${escHtml(scan.watching)}</b> `
-        + `<button class="linkbtn quiet" onclick="gamelogPick()">change account</button>`;
-      const ins = await api("/gamelog/insights");
-      if (ins && ins.ok) renderGamelog(ins.insights, null);
+      gamelogWatchingUI(scan.watching);
+      gamelogIngest();                 // first read + starts the live poll
     } else {
       renderGamelogPicker(scan.accounts);
     }
   } catch { /* section stays hidden on any failure */ }
+}
+
+function gamelogWatchingUI(dir) {
+  $("gl-refresh").style.display = "";
+  $("gl-setup").innerHTML = `<span id="gl-live" class="gl-live" title="Reading new log entries automatically">● live</span> `
+    + `Watching <b>${escHtml(dir)}</b> `
+    + `<button class="linkbtn quiet" onclick="gamelogPick()">change account</button>`;
+}
+
+// Live reader: while an account is watched and the Play Log is on screen, poll for new
+// log entries so the cards fill in as you play (the ingest reads the file even while the
+// game holds it open). Paused when the tab is hidden (browsers throttle it anyway).
+let GAMELOG_TIMER = null;
+function gamelogStartLive() {
+  if (GAMELOG_TIMER) clearInterval(GAMELOG_TIMER);
+  GAMELOG_TIMER = setInterval(() => {
+    if (!document.hidden && localStorage.getItem("hc_playlog") === "on") gamelogIngest(true);
+  }, 20000);   // every 20s — the game flushes the log periodically
+}
+function gamelogStopLive() {
+  if (GAMELOG_TIMER) { clearInterval(GAMELOG_TIMER); GAMELOG_TIMER = null; }
 }
 
 function renderGamelogPicker(accounts) {
@@ -1310,10 +1327,29 @@ window.playlogConsent = function (v) {
   initGamelog();
 };
 
-window.gamelogPick = async function () {
-  const scan = await api("/gamelog/scan", postJson({}));
-  if (scan && scan.ok) renderGamelogPicker(scan.accounts);
-};
+// One-time in-game setup, framed so the user only has to think about ONE thing:
+// turn on the chat log. The tab details are spelled out so they never have to fuss.
+function gamelogSetupHelp() {
+  return `<details class="gl-help"><summary>First time? How to turn on your chat log (2 minutes)</summary>
+    <ol>
+      <li><b>Turn on logging</b> — in game, type <code>/logchat</code> in the chat box and press Enter.
+          You'll see "Your chat is now being logged." <b>Then log out to character select and back in</b>
+          — logging only starts on a fresh login.</li>
+      <li><b>Make a channel tab that captures everything</b> (so nothing is missed):
+        <ul>
+          <li>Right-click the chat tab bar → <i>Add Tab</i>. Name it <b>Companion</b>.</li>
+          <li>In the tab's channel list, add <b>all</b> the channels (tick everything —
+              System, Rewards, Combat, and the rest).</li>
+          <li>Drag the Companion tab up with your other tabs. It can sit in the background —
+              it just needs to exist so its channels get logged.</li>
+        </ul>
+      </li>
+      <li>That's it. Play normally, then come back here — your stats fill in on their own.</li>
+    </ol>
+    <span class="muted">Note: the game shows the log file as 0&nbsp;KB while you're playing (it's holding
+    the file open); the contents are really there and appear when you zone or log out.</span>
+  </details>`;
+}
 
 window.gamelogWatch = async function (logDir) {
   const r = await api("/gamelog/watch", postJson({ log_dir: logDir }));
@@ -1322,15 +1358,20 @@ window.gamelogWatch = async function (logDir) {
     $("gl-coverage").textContent = (r && r.response) || "Couldn't watch that folder.";
     return;
   }
-  $("gl-refresh").style.display = "";
-  $("gl-setup").innerHTML = `Watching <b>${escHtml(logDir)}</b> `
-    + `<button class="linkbtn quiet" onclick="gamelogPick()">change account</button>`;
+  gamelogWatchingUI(logDir);
   gamelogIngest();
 };
 
-window.gamelogIngest = async function () {
+window.gamelogPick = async function () {
+  gamelogStopLive();
+  const scan = await api("/gamelog/scan", postJson({}));
+  if (scan && scan.ok) renderGamelogPicker(scan.accounts);
+};
+
+window.gamelogIngest = async function (isPoll) {
   const r = await api("/gamelog/ingest", postJson({}));
   if (!r || !r.ok) {
+    if (isPoll) return;              // a background poll failing is silent
     // Never a dead end (field report: the error text replaced the picker, leaving no
     // way forward) — bring the account choices back with the guidance attached.
     await gamelogPick();
@@ -1338,13 +1379,29 @@ window.gamelogIngest = async function () {
       `<b>First pick the account to watch</b> — click its name above, then ⟳.`;
     return;
   }
-  renderGamelog(r.insights, r.report);
+  renderGamelog(r.insights, r.report, r.status);
+  gamelogStartLive();               // (re)arm the live poll now that we're watching
 };
 
-function renderGamelog(ins, report) {
+function renderGamelog(ins, report, status) {
   const s = (ins || {}).summary || {};
   const haul = (ins || {}).haul || [];
   const fmt = (n) => (n || 0).toLocaleString();
+  // Logging-off nudge: we can't see whether the game is running, so only nudge on a
+  // clear signal — no chat log for today at all (they likely haven't turned /logchat on).
+  const hint = $("gl-hint") || (() => {
+    const d = document.createElement("div"); d.id = "gl-hint"; d.className = "gl-hint";
+    $("gl-cards").before(d); return d;
+  })();
+  if (status && status.has_files === false) {
+    hint.innerHTML = `⚠ No chat log file found for this account yet. In game, type `
+      + `<code>/logchat</code>, then log out to character select and back in.`;
+    hint.style.display = "";
+  } else if (status && status.today_log === false) {
+    hint.innerHTML = `⚠ No chat log for today — if you're playing now, type <code>/logchat</code> `
+      + `in game (and relog once) to start today's log.`;
+    hint.style.display = "";
+  } else { hint.style.display = "none"; }
   const cards = [];
   cards.push(`<div class="gl-card"><div class="glc-head">SESSION TOTALS</div>
     <div class="glc-line">XP gained <b>${fmt(s.xp)}</b></div>
@@ -1370,9 +1427,12 @@ function renderGamelog(ins, report) {
       ? `Read ${fmt(report.new_lines)} new line(s) from ${report.files} file(s) — parsed ${fmt(report.parsed)} event(s), `
         + `${fmt(report.unparsed_interesting)} data-looking line(s) not recognized.`
       : "No new log lines since last read.";
-    $("gl-coverage").innerHTML = `${cov} <span class="muted">Formats are provisional until confirmed against a real log.</span>`
+    $("gl-coverage").innerHTML = cov
       + ((report.unparsed_samples || []).length
-        ? `<details><summary>unrecognized samples (help improve the parser)</summary><pre class="gl-pre">${escHtml(report.unparsed_samples.join("\n"))}</pre></details>` : "");
+        ? ` <span class="muted">A few lines weren't recognized — <button class="linkbtn quiet" `
+          + `onclick="reportBug()">report them</button> to improve the parser.</span>`
+          + `<details><summary>show unrecognized samples</summary><pre class="gl-pre">${escHtml(report.unparsed_samples.join("\n"))}</pre></details>`
+        : "");
   }
 }
 

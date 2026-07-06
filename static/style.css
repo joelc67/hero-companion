@@ -959,3 +959,13 @@ body { overflow: hidden; }
   background: var(--panel2); border: 1px solid var(--accent); border-radius: 6px;
   color: var(--ink); cursor: pointer; font-size: 12.5px; }
 .gl-acct-btn:hover { filter: brightness(1.15); }
+.gl-live { color: var(--def); font-size: 11px; font-weight: 600; margin-right: 4px;
+  animation: gl-pulse 2s ease-in-out infinite; }
+@keyframes gl-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.gl-hint { background: rgba(217, 182, 74, 0.12); border: 1px solid #b9932e; border-radius: 6px;
+  padding: 7px 10px; margin: 8px 0; font-size: 12.5px; }
+.gl-help { margin-top: 10px; font-size: 12.5px; }
+.gl-help summary { cursor: pointer; color: var(--accent); }
+.gl-help ol { margin: 8px 0 4px 18px; line-height: 1.7; }
+.gl-help ul { margin: 4px 0 4px 4px; line-height: 1.6; }
+.gl-help code { background: var(--bg); padding: 1px 5px; border-radius: 4px; }

@@ -97,6 +97,24 @@ check("ingest coverage clean (no false unknowns)", rep1["unparsed_interesting"] 
 ev2, rep2 = gamelog.ingest(logdir, st)
 check("incremental: second pass reads nothing", not ev2 and rep2["new_lines"] == 0)
 
+# live-tail robustness: append a COMPLETE line + a PARTIAL (no newline) — only the
+# complete one ingests; the partial waits for its newline next poll.
+logfile = os.path.join(logdir, "chatlog 2026-07-05.txt")
+with open(logfile, "a", encoding="utf-8") as f:
+    f.write("2026-07-05 20:00:00 You gain 999 experience and 111 influence.\n")
+    f.write("2026-07-05 20:00:01 You gain 42 experience")   # no newline yet
+ev3, rep3 = gamelog.ingest(logdir, st)
+check("live: complete appended line ingested", any(e.get("xp") == 999 for e in ev3))
+check("live: partial trailing line NOT yet ingested", not any(e.get("xp") == 42 for e in ev3))
+with open(logfile, "a", encoding="utf-8") as f:
+    f.write(" and 7 influence.\n")                          # completes the partial
+ev4, _ = gamelog.ingest(logdir, st)
+check("live: partial line ingested once completed", any(e.get("xp") == 42 for e in ev4))
+
+# log status
+stat = gamelog.log_status(logdir, 10_000_000_000)
+check("log_status reports the newest file", stat.get("has_files") and stat.get("newest"))
+
 s = gamelog.summarize(gamelog.load_events())
 check("summary kills counted", s["kills"] == 3, s["kills"])
 check("summary influence includes AH sale", s["inf_gained"] >= 15000000)
