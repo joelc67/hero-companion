@@ -24,6 +24,15 @@ the installed client. The snapshots in this folder are current as of **2026-06-1
   (from `bin/conversionsets.bin`; `type` 2 = category pool @ 2 converters, 3 = rarity
   pool @ 1 converter; in-set conversion is not a pool — the game's tooltip states its
   cost of 3 directly)
+- `critter_classes.json` — the 56 critter/pet class tables (from `villain_classes.bin`,
+  legacy CoV filename, both factions) + 827 pet entity→class mappings (from
+  `villaindef.bin`). This answers henchman damage from the source: at level 50 vs a
+  Blaster's ranged 62.56, MM henchmen scale Minion 11.63 ranged / 14.95 melee (~19%),
+  Lt 20.30/24.81 (~32%), Boss 30.63/36.20 (~49%); controller pets 44.46/55.66 (~71%).
+  All `MastermindPets_*` entities map to `Class_Henchman_{Minion,Minion_Small,Lt,Boss}`.
+  Damage tables use the game's negative-HP convention (magnitude = scale); arrays are
+  per-level (index 49 = level 50). Henchman spawn-level offsets live in the summon
+  power effects, not these tables.
 
 ## Refresh after a game patch
 
