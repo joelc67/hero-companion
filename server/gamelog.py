@@ -119,6 +119,10 @@ _PATTERNS = [
      lambda m: {"badge": m.group(1).strip()}),
     ("drop", re.compile(r"^You received (.+?)\.?$", re.I),
      lambda m: {"item": m.group(1).strip(), "kind": _drop_kind(m.group(1).strip())}),
+    # The game announces the active character on each fresh login — this is how we know
+    # WHO is playing, and it marks a character switch within an account's log.
+    ("char", re.compile(r"^Welcome to City of Heroes, (.+?)!\s*$"),
+     lambda m: {"character": m.group(1).strip()}),
 ]
 
 # Known-NOISE lines (combat, buffs, status, MOTD, chat) — recognized so the coverage
@@ -174,6 +178,7 @@ def ingest(log_dir, state):
     if not (log_dir and os.path.isdir(log_dir)):
         return events, report
     offsets = state.setdefault("offsets", {})
+    account = os.path.basename(os.path.dirname(log_dir))   # <game>\accounts\<acct>\Logs
     for fname in sorted(os.listdir(log_dir)):
         if not fname.lower().endswith(".txt"):
             continue
@@ -200,8 +205,12 @@ def ingest(log_dir, state):
                 ev, interesting = parse_line(line)
                 if ev:
                     ev["file"] = fname
+                    ev["account"] = account
                     events.append(ev)
                     report["parsed"] += 1
+                    if ev["type"] == "char":
+                        # The watched account's CURRENT character = the last Welcome seen.
+                        state["character"] = ev["character"]
                 elif interesting:
                     report["unparsed_interesting"] += 1
                     if len(report["unparsed_samples"]) < 20:
@@ -247,37 +256,73 @@ def load_events(limit=20000):
     return out[-limit:]
 
 
-def summarize(events):
-    """Aggregate events into the insight card's numbers (all-time within the store)."""
-    s = {"xp": 0, "inf_gained": 0, "inf_spent": 0, "merits": 0, "levels": [],
-         "badges": [], "kills": 0, "deaths": 0, "drops": [], "ah_sold": 0,
-         "drop_kinds": {}, "days": set()}
-    for ev in events:
-        s["days"].add((ev.get("ts") or "")[:10])
+def _blank_summary():
+    return {"xp": 0, "inf_gained": 0, "inf_spent": 0, "merits": 0, "levels": [],
+            "badges": [], "kills": 0, "deaths": 0, "drops": [], "ah_sold": 0,
+            "drop_kinds": {}, "days": set()}
+
+
+def summarize(events, account=None):
+    """Aggregate events into the insight card's numbers. If `account` is given, only that
+    account's events count (each account is watched separately). Also attributes events to
+    the CHARACTER active at the time (from 'Welcome to City of Heroes, X!' markers) so the
+    Play Log can break stats out per character — key by account so simultaneous dual-boxed
+    characters never cross-attribute."""
+    evs = [e for e in events if account is None or e.get("account") == account]
+    evs.sort(key=lambda e: (e.get("ts") or "", e.get("account") or ""))
+    s = _blank_summary()
+    by_char, cur = {}, {}          # by_char[name] -> summary ; cur[account] -> character
+    characters = []                # order-of-appearance list of names seen
+    for ev in evs:
         t = ev["type"]
-        if t == "xp":
-            s["xp"] += ev.get("xp", 0)
-            s["inf_gained"] += ev.get("inf", 0)
-        elif t == "influence_ah":
-            s["inf_gained"] += ev.get("inf", 0)
-        elif t == "spent":
-            s["inf_spent"] += ev.get("inf", 0)
-        elif t == "level":
-            s["levels"].append(ev.get("level"))
-        elif t == "merits":
-            s["merits"] += ev.get("merits", 0)
-        elif t == "badge":
-            s["badges"].append(ev.get("badge"))
-        elif t == "kill":
-            s["kills"] += 1
-        elif t == "death":
-            s["deaths"] += 1
-        elif t == "ah_sold":
-            s["ah_sold"] += 1
-        elif t == "drop":
-            s["drops"].append(ev)
-            k = ev.get("kind", "salvage")
-            s["drop_kinds"][k] = s["drop_kinds"].get(k, 0) + 1
+        acct = ev.get("account")
+        if t == "char":
+            cur[acct] = ev["character"]
+            if ev["character"] not in by_char:
+                by_char[ev["character"]] = _blank_summary()
+                characters.append(ev["character"])
+            continue
+        who = cur.get(acct)
+        targets = [s] + ([by_char[who]] if who and who in by_char else [])
+        for tgt in targets:
+            _tally(tgt, ev)
     s["days"] = sorted(s["days"])
     s["max_level"] = max([x for x in s["levels"] if x], default=None)
+    per = {}
+    for name, cs in by_char.items():
+        cs["days"] = sorted(cs["days"])
+        cs["max_level"] = max([x for x in cs["levels"] if x], default=None)
+        per[name] = {k: v for k, v in cs.items() if k != "drops"}
+    s["by_character"] = per
+    s["characters"] = characters
     return s
+
+
+def _tally(s, ev):
+    """Fold ONE reward event into a running summary dict (used for both the overall and
+    the per-character totals)."""
+    t = ev["type"]
+    s["days"].add((ev.get("ts") or "")[:10])
+    if t == "xp":
+        s["xp"] += ev.get("xp", 0)
+        s["inf_gained"] += ev.get("inf", 0)
+    elif t == "influence_ah":
+        s["inf_gained"] += ev.get("inf", 0)
+    elif t == "spent":
+        s["inf_spent"] += ev.get("inf", 0)
+    elif t == "level":
+        s["levels"].append(ev.get("level"))
+    elif t == "merits":
+        s["merits"] += ev.get("merits", 0)
+    elif t == "badge":
+        s["badges"].append(ev.get("badge"))
+    elif t == "kill":
+        s["kills"] += 1
+    elif t == "death":
+        s["deaths"] += 1
+    elif t == "ah_sold":
+        s["ah_sold"] += 1
+    elif t == "drop":
+        s["drops"].append(ev)
+        k = ev.get("kind", "salvage")
+        s["drop_kinds"][k] = s["drop_kinds"].get(k, 0) + 1

@@ -1,4 +1,5 @@
 2026-07-05 17:16:26 Your chat is now being logged.
+2026-07-05 17:16:30 Welcome to City of Heroes, Rattle!
 2026-07-05 17:16:43 You are healed by your Power Transfer: Chance to Heal Self for 50.87 health points.
 2026-07-05 17:16:43 Rattle hits you with their Performance Shifter: Chance for +Endurance granting you 10.23 points of endurance.
 2026-07-05 17:16:36 [Looking For Group] Bunny Emerald: <color #010101>forming +2 numina, level 35+, lf4m

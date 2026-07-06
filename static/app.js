@@ -1305,11 +1305,31 @@ function gamelogWatchingUI(dir) {
   }).join(" ");
   $("gl-setup").innerHTML =
     `<span id="gl-live" class="gl-live" title="Reading new log entries automatically">● live</span> `
-    + `<b>Watching:</b> ${chips}`
+    + `<b>Watching:</b> ${chips} <span id="gl-who"></span>`
     + ((GAMELOG_ACCOUNTS || []).length > 1
         ? ` <span class="muted small">— click another account to switch. `
           + `Dual-boxing? Each account is its own log; watch each to see that character.</span>`
         : "");
+}
+
+// "Playing as <character>" + a one-click link to that character's saved fit — this is
+// what connects the log (who's active) to the builds (their fit). The character comes
+// from the log's "Welcome to City of Heroes, X!" marker.
+function gamelogWhoUI(character, fit) {
+  const who = $("gl-who");
+  if (!who) return;
+  if (!character) {
+    who.innerHTML = `<span class="muted small">· character not detected yet `
+      + `<span title="The game only names your character on a fresh login. Log out to `
+      + `character select and back in, and it'll show here.">ⓘ</span></span>`;
+    return;
+  }
+  const loaded = fit && typeof CURRENT_SAVE !== "undefined" && CURRENT_SAVE && CURRENT_SAVE.id === fit.id;
+  who.innerHTML = `· <b>playing ${escHtml(character)}</b>`
+    + (fit
+        ? (loaded ? ` <span class="muted small">(their fit is loaded)</span>`
+                  : ` <button class="linkbtn" onclick="loadSave('${escHtml(fit.id)}')">▶ load ${escHtml(character)}'s fit</button>`)
+        : ` <span class="muted small">— no saved fit for this character yet</span>`);
 }
 
 // Live reader: while an account is watched and the Play Log is on screen, poll for new
@@ -1408,6 +1428,7 @@ function renderGamelog(ins, report, status) {
   const s = (ins || {}).summary || {};
   const haul = (ins || {}).haul || [];
   const fmt = (n) => (n || 0).toLocaleString();
+  gamelogWhoUI((ins || {}).character, (ins || {}).fit);   // "playing X" + fit link
   // Logging-off nudge: we can't see whether the game is running, so only nudge on a
   // clear signal — no chat log for today at all (they likely haven't turned /logchat on).
   const hint = $("gl-hint") || (() => {

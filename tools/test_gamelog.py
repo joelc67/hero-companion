@@ -69,7 +69,8 @@ check("combat/buff/chat noise ignored", interesting == 0,
       f"{interesting} noise lines wrongly flagged")
 check("heals/procs/LFG produced no events",
       not any(e["type"] not in ("xp", "influence_ah", "spent", "ah_sold", "ah_listed",
-                                "collect", "kill", "death", "drop", "merits", "level", "badge")
+                                "collect", "kill", "death", "drop", "merits", "level",
+                                "badge", "char")
               for e in events))
 
 # ── coverage report surfaces a GENUINELY unknown reward line ─────────────────
@@ -114,6 +115,19 @@ check("live: partial line ingested once completed", any(e.get("xp") == 42 for e 
 # log status
 stat = gamelog.log_status(logdir, 10_000_000_000)
 check("log_status reports the newest file", stat.get("has_files") and stat.get("newest"))
+
+# character detection + per-character attribution
+print("\n── character identity ──")
+check("Welcome line -> current character in state", st.get("character") == "Rattle",
+      st.get("character"))
+allev = gamelog.load_events()
+summ = gamelog.summarize(allev, account="filofinfain")
+check("per-character breakdown names Rattle", "Rattle" in (summ.get("by_character") or {}),
+      list((summ.get("by_character") or {}).keys()))
+rattle = (summ.get("by_character") or {}).get("Rattle", {})
+check("Rattle's kills attributed", rattle.get("kills") == 3, rattle.get("kills"))
+check("events before Welcome NOT mis-attributed to Rattle",
+      rattle.get("kills") == summ.get("kills"))   # all kills here are post-Welcome
 
 s = gamelog.summarize(gamelog.load_events())
 check("summary kills counted", s["kills"] == 3, s["kills"])

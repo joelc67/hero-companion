@@ -2,6 +2,15 @@
 
 ## 0.12.8 — unreleased
 
+- **The Play Log now knows who you're playing — and links to their fit.** It reads
+  the character name from the log ("playing Rattle") instead of only showing the
+  account, tracks it across character switches, and attributes your stats to the
+  right character. If that character has a saved build in Hero Companion, a
+  one-click **"load their fit"** link appears — so switching from Rattle to Lime
+  Juice brings up Lime Juice's build, not whoever you had open. (The game only names
+  your character on a fresh login, so if it says "not detected yet," log out to
+  character select and back in.)
+
 - **The Play Log's account switch is now obvious.** Which account you're watching
   shows as a row of chips (the active one highlighted with ●), and switching is one
   click on another chip — no more hunting for a "change account" link. For

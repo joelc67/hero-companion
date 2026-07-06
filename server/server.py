@@ -2728,6 +2728,8 @@ def gamelog_watch():
         return jsonify({"ok": False, "response": "That folder isn't under a known accounts "
                         "directory."}), 400
     st = gamelog.load_state()
+    if st.get("log_dir") != path:
+        st["character"] = None          # new account — re-detect who's logged in
     st["log_dir"] = path
     gamelog.save_state(st)
     return jsonify({"ok": True, "watching": path})
@@ -2752,12 +2754,26 @@ def gamelog_insights():
     return jsonify({"ok": True, "insights": _gamelog_insights()})
 
 
+def _saved_fit_for(character):
+    """A saved build whose name matches the logged-in character (so switching to a
+    character can offer 'load their fit'). Exact name match first, then contains."""
+    if not character:
+        return None
+    saves = json.loads(saves_list().get_data())["saves"]
+    low = character.lower()
+    return (next((v for v in saves if (v.get("name") or "").lower() == low), None)
+            or next((v for v in saves if low in (v.get("name") or "").lower()), None))
+
+
 def _gamelog_insights():
-    """Summarized events + haul verdicts. A recipe drop maps to its enhancement set by
-    the name before the ':' (e.g. 'Kinetic Combat: Damage/…'); the verdict is the
-    converter doctrine by rarity — premium pools keep, standard pieces are convert fodder.
-    Non-recipe drops (salvage, incarnate, crafting mats) get a category verdict."""
-    s = gamelog.summarize(gamelog.load_events())
+    """Summarized events + haul verdicts + WHO is logged in. A recipe drop maps to its
+    enhancement set by the name before the ':'; the verdict follows the converter doctrine
+    by rarity. Events are attributed to the character active at the time (Welcome markers),
+    so stats break out per character and the active character links to its saved fit."""
+    st = gamelog.load_state()
+    account = os.path.basename(os.path.dirname(st["log_dir"])) if st.get("log_dir") else None
+    character = st.get("character")
+    s = gamelog.summarize(gamelog.load_events(), account=account)
     haul = []
     for d in s["drops"][-80:]:
         item = d.get("item") or ""
@@ -2788,8 +2804,10 @@ def _gamelog_insights():
             verdict, why = "SELL", "salvage — sell the surplus, keep what your recipes need"
         haul.append({"ts": d.get("ts"), "item": item, "kind": kind,
                      "set": setname, "verdict": verdict, "why": why})
+    fit = _saved_fit_for(character)
     return {"summary": {k: v for k, v in s.items() if k not in ("drops",)},
-            "haul": haul}
+            "haul": haul, "character": character,
+            "fit": {"id": fit["id"], "name": fit["name"]} if fit else None}
 
 
 @app.route("/build/import", methods=["POST"])
