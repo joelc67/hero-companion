@@ -108,6 +108,9 @@ window.loadSave = async function (id) {
   await applyImportedBuild(res.save.build || {});
   CURRENT_SAVE = { id, name: res.save.name };
   build._mode = (res.save.plan && res.save.plan.mode) || build._mode;
+  // Restore an in-progress respec worksheet (applyImportedBuild cleared it) so a respec
+  // being worked over days picks up exactly where it left off — checkboxes and all.
+  restoreWorksheet(res.save.respec_worksheet || null);
   applyIdentityLock();          // lock archetype/powersets if this is a real (imported/respec'd) character
   _lastSavedSnapshot = buildSnapshot();   // just loaded — already clean
   hideEntry();
@@ -1662,12 +1665,15 @@ function chosenPowersets() {
   return list;
 }
 
-// A respec card: on a loaded build with slots not earning bonuses, it surfaces the
-// suggestion, then (on request) the concrete respec plan + grocery list. Never judges;
-// dismissable; a fresh load re-evaluates (setRespecHintFresh on load/import).
+// ── RESPEC WORKSHEET ────────────────────────────────────────────────────────
+// A loaded build with slots not earning bonuses gets a suggestion card; on request it
+// becomes a persistent WORKSHEET: before/after per power, a grocery list with checkboxes
+// to track crafting + selling, apply-to-build, undo, and "respec completed". The worksheet
+// is saved to the character (survives closing the app) so a respec can be worked over days.
 let RESPEC_HINT_DISMISSED = false;
-let RESPEC_SOLVED = null;          // the optimized powers, stashed for Apply
-function setRespecHintFresh() { RESPEC_HINT_DISMISSED = false; RESPEC_SOLVED = null; }
+let RESPEC_WORKSHEET = null;   // {character, plan, optimized, before, applied, checks, ts}
+function setRespecHintFresh() { RESPEC_HINT_DISMISSED = false; RESPEC_WORKSHEET = null; }
+function restoreWorksheet(ws) { RESPEC_WORKSHEET = ws || null; }
 function _respecCardEl() {
   let el = $("respec-hint");
   if (!el) {
@@ -1680,15 +1686,28 @@ function _respecCardEl() {
   return el;
 }
 function _who() { return (build.name || "").trim() || "this character"; }
+function _persistWorksheet() {
+  if (!RESPEC_WORKSHEET || !CURRENT_SAVE || !CURRENT_SAVE.id) return;
+  fetch(`/saves/${encodeURIComponent(CURRENT_SAVE.id)}/respec`,
+    { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ worksheet: RESPEC_WORKSHEET }) }).catch(() => {});
+}
+function _clearPersistedWorksheet() {
+  if (!CURRENT_SAVE || !CURRENT_SAVE.id) return;
+  fetch(`/saves/${encodeURIComponent(CURRENT_SAVE.id)}/respec`, { method: "DELETE" }).catch(() => {});
+}
+
+// Entry point called each recompute: show the active worksheet if there is one, else the hint.
+function renderRespecUI(hint) {
+  if (RESPEC_WORKSHEET) { renderWorksheet(); return; }
+  renderRespecHint(hint);
+}
 function renderRespecHint(hint) {
   const el = $("respec-hint");
   if (!hint || RESPEC_HINT_DISMISSED) { if (el) el.remove(); return; }
-  // Don't clobber an already-expanded plan on a routine recompute.
-  if (el && el.dataset.expanded === "1") return;
   const card = _respecCardEl();
   const names = (hint.powers || []).slice(0, 3).map(escHtml).join(", ");
   const more = hint.count > 3 ? "…" : "";
-  card.dataset.expanded = "0";
   card.innerHTML = `<div class="rc-head"><span class="rc-ico">💡</span>`
     + `<span class="rc-title">Based on ${escHtml(_who())}, the builder suggests changes</span>`
     + helpIcon('respec')
@@ -1703,7 +1722,7 @@ window.dismissRespecHint = function () {
   const el = $("respec-hint"); if (el) el.remove();
 };
 
-// Fetch a FULL respec (preserve:false) and render the concrete plan into the card.
+// Fetch a FULL respec (preserve:false), turn it into a worksheet, persist + render it.
 async function buildRespecPlan() {
   const card = _respecCardEl();
   const go = card.querySelector(".rc-go");
@@ -1724,54 +1743,120 @@ async function buildRespecPlan() {
     if (b) b.innerHTML = "Couldn't build the plan just now — try Solve directly.";
     return;
   }
-  if (!res.respec_plan) {   // solver found nothing worth changing
-    card.dataset.expanded = "1";
+  if (!res.respec_plan) {
     card.innerHTML = `<div class="rc-head"><span class="rc-ico">✓</span>`
       + `<span class="rc-title">${escHtml(_who())} is already well slotted</span>`
       + `<button class="rc-x" onclick="dismissRespecHint()" title="Dismiss">✕</button></div>`
       + `<div class="rc-body">A full respec wouldn't meaningfully improve this build — keep what you have.</div>`;
     return;
   }
-  RESPEC_SOLVED = res.powers;
-  renderRespecPlanCard(res.respec_plan);
+  RESPEC_WORKSHEET = {
+    character: _who(), plan: res.respec_plan, optimized: res.powers,
+    before: JSON.parse(JSON.stringify(build.powers)), applied: false, checks: {},
+  };
+  _persistWorksheet();
+  renderWorksheet();
 }
 
-function renderRespecPlanCard(plan) {
+function _fmtSets(arr, commons) {
+  const parts = (arr || []).map(x => `${x.n}× ${escHtml(x.set)}`);
+  if (commons) parts.push(`${commons} common IO${commons > 1 ? "s" : ""}`);
+  return parts.length ? parts.join(" + ") : "unslotted";
+}
+function _respecProgress() {
+  const ws = RESPEC_WORKSHEET; if (!ws) return { done: 0, total: 0 };
+  const p = ws.plan;
+  const total = (p.changes || []).length + (p.acquire || []).length + (p.sell || []).length;
+  const done = Object.values(ws.checks || {}).filter(Boolean).length;
+  return { done, total };
+}
+
+function renderWorksheet() {
+  const ws = RESPEC_WORKSHEET; if (!ws) return;
   const card = _respecCardEl();
-  card.dataset.expanded = "1";
-  const gains = (plan.gains || []).map(g =>
+  const p = ws.plan, ck = ws.checks || {};
+  const prog = _respecProgress();
+  const gains = (p.gains || []).map(g =>
     `<span class="rc-gain">${escHtml(g.stat)} <b>+${g.delta}</b> <span class="muted">(${g.from}→${g.to})</span></span>`).join("");
-  const changes = (plan.changes || []).map(ch => {
-    const rem = (ch.remove || []).map(r => `<span class="rc-rem">−${r.n} ${escHtml(r.set)}</span>`).join(" ");
-    const add = (ch.add || []).map(a => `<span class="rc-add">+${a.n} ${escHtml(a.set)}</span>`).join(" ");
-    return `<div class="rc-change"><b>${escHtml(ch.power)}</b> ${rem}${rem && add ? " → " : ""}${add}</div>`;
+  // before → after per power, with a done checkbox and struck-through old slotting
+  const changes = (p.changes || []).map((ch, i) => {
+    const key = "c" + i, on = !!ck[key];
+    return `<div class="rc-change ${on ? "rc-done" : ""}">`
+      + `<label class="rc-ck"><input type="checkbox" ${on ? "checked" : ""} onchange="toggleRespecCheck('${key}')">`
+      + `<b>${escHtml(ch.power)}</b></label>`
+      + `<div class="rc-ba"><span class="rc-old">${_fmtSets(ch.before, ch.before_commons)}</span>`
+      + `<span class="rc-arrow">→</span><span class="rc-new">${_fmtSets(ch.after, 0)}</span></div></div>`;
   }).join("");
-  const acquire = (plan.acquire || []).map(a =>
-    `<li>${escHtml(a.set)} <b>×${a.pieces}</b>${a.rarity ? ` <span class="rc-tag rc-${escHtml(a.rarity)}">${escHtml(a.rarity)}</span>` : ""}</li>`).join("");
-  const sell = (plan.sell || []).map(s =>
-    `<li>${escHtml(s.set)} <b>×${s.pieces}</b> <span class="muted small">— ${escHtml(s.advice || "")}</span></li>`).join("");
+  const acquire = (p.acquire || []).map((a, i) => {
+    const key = "a" + i, on = !!ck[key];
+    return `<li class="${on ? "rc-checked" : ""}"><label><input type="checkbox" ${on ? "checked" : ""} `
+      + `onchange="toggleRespecCheck('${key}')"> ${escHtml(a.set)} <b>×${a.pieces}</b>`
+      + `${a.rarity ? ` <span class="rc-tag rc-${escHtml(a.rarity)}">${escHtml(a.rarity)}</span>` : ""}</label></li>`;
+  }).join("");
+  const sell = (p.sell || []).map((s, i) => {
+    const key = "s" + i, on = !!ck[key];
+    return `<li class="${on ? "rc-checked" : ""}"><label><input type="checkbox" ${on ? "checked" : ""} `
+      + `onchange="toggleRespecCheck('${key}')"> ${escHtml(s.set)} <b>×${s.pieces}</b> `
+      + `<span class="muted small">— ${escHtml(s.advice || "")}</span></label></li>`;
+  }).join("");
+  const actions = ws.applied
+    ? `<button class="rc-apply" onclick="completeRespec()">✓ Respec completed</button>`
+      + `<button class="rc-cancel" onclick="undoRespec()">Undo respec</button>`
+    : `<button class="rc-apply" onclick="applyRespecWorksheet()">Apply to build</button>`
+      + `<button class="rc-cancel" onclick="discardRespecPlan()">Discard plan</button>`;
   card.innerHTML = `<div class="rc-head"><span class="rc-ico">🛠️</span>`
-    + `<span class="rc-title">Respec plan for ${escHtml(_who())}</span>`
+    + `<span class="rc-title">Respec plan for ${escHtml(ws.character || _who())}</span>`
     + helpIcon('respec')
-    + `<button class="rc-x" onclick="dismissRespecHint()" title="Dismiss">✕</button></div>`
+    + `<span class="rc-progress">${prog.done}/${prog.total} done</span>`
+    + `<button class="rc-x" onclick="hideRespecCard()" title="Hide (kept on this character)">✕</button></div>`
+    + (ws.applied ? `<div class="rc-applied">✓ Applied to your build — work the grocery list in-game, then mark it completed (or Undo to revert).</div>` : "")
     + (gains ? `<div class="rc-gains">${gains}</div>` : "")
-    + `<div class="rc-section"><div class="rc-label">What changes (${plan.power_count} power${plan.power_count > 1 ? "s" : ""})</div>${changes}</div>`
+    + `<div class="rc-section"><div class="rc-label">What changes (${p.power_count} power${p.power_count > 1 ? "s" : ""})</div>${changes}</div>`
     + `<div class="rc-groceries">`
-    + `<div class="rc-col"><div class="rc-label">🛒 Craft / buy</div><ul class="rc-list">${acquire || "<li class='muted'>nothing new</li>"}</ul></div>`
-    + `<div class="rc-col"><div class="rc-label">💰 Unslot &amp; sell</div><ul class="rc-list">${sell || "<li class='muted'>nothing to remove</li>"}</ul></div>`
+    + `<div class="rc-col"><div class="rc-label">🛒 Craft / buy</div><ul class="rc-list rc-checklist">${acquire || "<li class='muted'>nothing new</li>"}</ul></div>`
+    + `<div class="rc-col"><div class="rc-label">💰 Unslot &amp; sell</div><ul class="rc-list rc-checklist">${sell || "<li class='muted'>nothing to remove</li>"}</ul></div>`
     + `</div>`
-    + `<div class="rc-actions"><button class="rc-apply" onclick="applyRespec()">Apply this respec</button>`
-    + `<button class="rc-cancel" onclick="dismissRespecHint()">Not now</button></div>`;
+    + `<div class="rc-actions">${actions}</div>`;
 }
 
-window.applyRespec = function () {
-  if (!RESPEC_SOLVED) return;
-  build.powers = RESPEC_SOLVED;
-  RESPEC_SOLVED = null;
-  RESPEC_HINT_DISMISSED = true;
-  const el = $("respec-hint"); if (el) el.remove();
+window.toggleRespecCheck = function (key) {
+  if (!RESPEC_WORKSHEET) return;
+  RESPEC_WORKSHEET.checks[key] = !RESPEC_WORKSHEET.checks[key];
+  _persistWorksheet();
+  renderWorksheet();
+};
+window.applyRespecWorksheet = function () {
+  const ws = RESPEC_WORKSHEET; if (!ws || !ws.optimized) return;
+  ws.applied = true;
+  build.powers = JSON.parse(JSON.stringify(ws.optimized));
+  _persistWorksheet();
+  renderPowers();
+  recompute();          // re-renders the worksheet (now in applied state) + stats
+};
+window.undoRespec = function () {
+  const ws = RESPEC_WORKSHEET; if (!ws || !ws.before) return;
+  ws.applied = false;
+  build.powers = JSON.parse(JSON.stringify(ws.before));
+  _persistWorksheet();
   renderPowers();
   recompute();
+};
+window.completeRespec = function () {
+  RESPEC_WORKSHEET = null;
+  RESPEC_HINT_DISMISSED = true;   // don't immediately re-nudge the build we just fixed
+  _clearPersistedWorksheet();
+  const el = $("respec-hint"); if (el) el.remove();
+};
+window.discardRespecPlan = function () {
+  // drop the plan WITHOUT applying (build unchanged)
+  RESPEC_WORKSHEET = null;
+  RESPEC_HINT_DISMISSED = true;
+  _clearPersistedWorksheet();
+  const el = $("respec-hint"); if (el) el.remove();
+};
+window.hideRespecCard = function () {
+  // collapse for now; the worksheet stays on the character and returns next load/recompute
+  const el = $("respec-hint"); if (el) el.remove();
 };
 window.buildRespecPlan = buildRespecPlan;
 
@@ -2608,9 +2693,8 @@ async function recompute() {
     });
   }
   if (repaint) renderPowers();
-  // Respec suggestion: a factual, dismissable nudge when a loaded build has slots that
-  // aren't earning set bonuses — points at Solve, never passes judgment.
-  renderRespecHint(totals && totals.respec_hint);
+  // Respec: show the active worksheet if there is one, else a factual under-investment nudge.
+  renderRespecUI(totals && totals.respec_hint);
   refreshBuildViews();   // keep the always-visible respec-order + tray sections live
 }
 

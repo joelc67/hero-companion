@@ -2337,7 +2337,15 @@ def _respec_plan(powers_in, optimized, cur_totals, opt_totals, res_cap):
             continue
         pname = (POWER_BY_FULL.get(fn, {}).get("display_name")
                  or (fn or "").split(".")[-1].replace("_", " "))
-        changes.append({"power": pname,
+        # full BEFORE/AFTER set composition (for the strike-through old → new display),
+        # plus the deltas (for the grocery aggregation).
+        commons_before = sum(1 for s in (p.get("slots") or [])
+                             if s and (not s.get("set_name")
+                                       or not SET_BY_NAME.get((s.get("set_name") or "").lower())))
+        changes.append({"power": pname, "full_name": fn,
+                        "before": [{"set": s, "n": n} for s, n in before.items()],
+                        "after": [{"set": s, "n": n} for s, n in after.items()],
+                        "before_commons": commons_before,
                         "add": [{"set": s, "n": n} for s, n in adds.items()],
                         "remove": [{"set": s, "n": n} for s, n in drops.items()]})
         for s, n in adds.items():
@@ -5481,6 +5489,28 @@ def saves_delete(sid):
     path = os.path.join(_saves_dir(), _save_slug(sid) + ".json")
     if os.path.exists(path):
         os.remove(path)
+    return jsonify({"ok": True})
+
+
+@app.route("/saves/<sid>/respec", methods=["POST", "DELETE"])
+def saves_respec(sid):
+    """Persist (or clear) the RESPEC WORKSHEET on a saved character — the plan plus the
+    player's check-off progress and applied/undo state — so it survives closing the app and
+    can be tracked over days of crafting. Patches only this field, so a checkbox toggle
+    doesn't rewrite the whole build."""
+    path = os.path.join(_saves_dir(), _save_slug(sid) + ".json")
+    if not os.path.exists(path):
+        return jsonify({"ok": False, "error": "Save not found."}), 404
+    try:
+        data = json.load(open(path, encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return jsonify({"ok": False, "error": "Save unreadable."}), 500
+    if request.method == "DELETE":
+        data.pop("respec_worksheet", None)
+    else:
+        data["respec_worksheet"] = (request.get_json(force=True) or {}).get("worksheet")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=1)
     return jsonify({"ok": True})
 
 

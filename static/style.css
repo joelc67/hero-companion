@@ -744,9 +744,26 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .respec-card .rc-section { margin: 8px 0; }
 .respec-card .rc-label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em;
   color: var(--muted); margin-bottom: 4px; font-weight: 600; }
-.respec-card .rc-change { padding: 2px 0; }
+.respec-card .rc-change { padding: 3px 0; border-bottom: 1px solid rgba(127,127,127,.12); }
 .respec-card .rc-rem { color: #c15b5b; }
 .respec-card .rc-add { color: #2f8a53; }
+.respec-card .rc-progress { flex: none; font-size: 11px; color: var(--muted); margin-left: 6px;
+  white-space: nowrap; }
+.respec-card .rc-applied { margin: 6px 0; padding: 5px 9px; border-radius: 6px; font-size: 12px;
+  background: rgba(60,160,90,.12); border: 1px solid rgba(60,160,90,.35); color: var(--ink); }
+.respec-card .rc-ck { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+.respec-card .rc-ck input { width: auto; margin: 0; }
+.respec-card .rc-ba { margin: 1px 0 0 20px; font-size: 12px; }
+.respec-card .rc-old { color: var(--muted); text-decoration: line-through; }
+.respec-card .rc-arrow { color: var(--muted); margin: 0 5px; }
+.respec-card .rc-new { color: #2f8a53; font-weight: 600; }
+.respec-card .rc-done .rc-new { opacity: .7; }
+.respec-card .rc-done > .rc-ck b { text-decoration: line-through; opacity: .7; }
+.respec-card .rc-checklist { list-style: none; padding-left: 0; }
+.respec-card .rc-checklist li label { display: inline-flex; align-items: baseline; gap: 5px; cursor: pointer; }
+.respec-card .rc-checklist li input { width: auto; margin: 0; position: relative; top: 2px; }
+.respec-card .rc-checked { opacity: .55; }
+.respec-card .rc-checked label { text-decoration: line-through; }
 .respec-card .rc-groceries { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
 .respec-card .rc-col { flex: 1 1 200px; min-width: 0; }
 .respec-card .rc-list { margin: 0; padding-left: 16px; }
