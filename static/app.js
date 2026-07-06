@@ -1691,6 +1691,7 @@ function renderRespecHint(hint) {
   card.dataset.expanded = "0";
   card.innerHTML = `<div class="rc-head"><span class="rc-ico">💡</span>`
     + `<span class="rc-title">Based on ${escHtml(_who())}, the builder suggests changes</span>`
+    + helpIcon('respec')
     + `<button class="rc-x" onclick="dismissRespecHint()" title="Dismiss">✕</button></div>`
     + `<div class="rc-body"><b>${hint.count} power${hint.count > 1 ? "s" : ""}</b> have slots that `
     + `aren't earning set bonuses (${names}${more}). Build a full respec plan to see exactly what to `
@@ -1751,6 +1752,7 @@ function renderRespecPlanCard(plan) {
     `<li>${escHtml(s.set)} <b>×${s.pieces}</b> <span class="muted small">— ${escHtml(s.advice || "")}</span></li>`).join("");
   card.innerHTML = `<div class="rc-head"><span class="rc-ico">🛠️</span>`
     + `<span class="rc-title">Respec plan for ${escHtml(_who())}</span>`
+    + helpIcon('respec')
     + `<button class="rc-x" onclick="dismissRespecHint()" title="Dismiss">✕</button></div>`
     + (gains ? `<div class="rc-gains">${gains}</div>` : "")
     + `<div class="rc-section"><div class="rc-label">What changes (${plan.power_count} power${plan.power_count > 1 ? "s" : ""})</div>${changes}</div>`
@@ -1969,23 +1971,74 @@ function setSummaryHtml(pw) {
   return `<div class="set-summary" title="sets: ${escHtml(plain)}"><span class="muted small">sets:</span> ${parts.join(" · ")}</div>`;
 }
 
+// ── HELP SYSTEM ─────────────────────────────────────────────────────────────
+// Reusable "?" icons that open a plain-language explanation of anything that isn't
+// obvious — the slotting nomenclature, WHY a pattern beats the alternative, and the
+// user's options. Content is a glossary keyed by topic; helpIcon(topic) drops a "?"
+// anywhere and showHelp() pops the card.
+const HELP = {
+  "proc-bomb": { title: "💥 Proc bomb",
+    what: "Instead of a matched set, the power holds several “chance for damage” procs, each from a different set.",
+    why: "A proc rolls a fixed chance to fire every time you use the power (a procs-per-minute formula) and that chance does NOT grow with enhancement. On a fast-recharging or wide-area power, several procs add more damage than the ~95% a full damage set's slots would give. And because set BONUSES are build-wide, you still collect those by slotting sets in your other powers — so a proc bomb trades this one power's set bonuses (which you harvest elsewhere) for a big, enhancement-independent damage spike.",
+    options: "Prefer set bonuses here instead? Slot a full set in this power and re-solve — the tool rebalances the rest of the build around it." },
+  "committed": { title: "🎯 Full set",
+    what: "Five or six pieces of a single enhancement set in one power.",
+    why: "Reaching 5–6 pieces unlocks that set's higher bonuses (recharge, defense, HP…). Those bonuses are permanent and count toward your WHOLE character, not just this power — and you still strongly enhance the power itself. This is the backbone of most builds.",
+    options: "Short on the rarer pieces? A 5-piece set still gives most of the bonuses; the last piece is often the smallest step." },
+  "frankenslot": { title: "🧩 Frankenslot",
+    what: "Mixing pieces from two or more different sets in one power, instead of committing to a single set.",
+    why: "The FIRST two or three bonuses of most sets are the cheap, high-value ones — a little recovery here, some ranged defense there. A set's 5th and 6th bonuses are usually marginal by comparison. So two 3-piece sets in one power can grab the strong EARLY bonuses of BOTH sets, which often beats one 6-piece set whose top bonuses barely move the needle. Same six slots, more total set bonus.",
+    options: "Want a single set's top-tier bonus (e.g. a full set's big recharge) here instead? Pick that set and re-solve." },
+  "global-mules": { title: "🌐 Global mules",
+    what: "A power holding several unique “global” IOs (Luck of the Gambler: +recharge, Steadfast: +3% defense, Numina: +regen…), one per slot.",
+    why: "These uniques give a build-wide effect from a SINGLE slot — they are not set bonuses and need no matching pieces, and each can only be slotted once on your character. So the smart move is to park them in a low-priority power (Health, a defense toggle, Combat Jumping) where they cost you nothing, freeing your important powers for real sets.",
+    options: "Nothing to change here usually — this is already an efficient use of an otherwise low-value power." },
+  "respec": { title: "🛠️ Respec plan",
+    what: "A concrete plan to re-slot this character: exactly which sets change in which powers, the stat gains, and a grocery list of what to craft/buy and what to unslot & sell.",
+    why: "When a build has slots that aren't earning set bonuses, a full respec can convert that wasted investment into real defense, recharge, or damage. The plan shows the trade-off up front so you can decide before spending influence.",
+    options: "Apply it now, or note the grocery list and do it later in-game — nothing is committed until you say so, and you can undo an applied respec." },
+};
+function helpIcon(topic) {
+  return `<button class="help-i" onclick="showHelp('${topic}',event)" title="What's this?" aria-label="Explain">?</button>`;
+}
+window.showHelp = function (topic, ev) {
+  if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+  const h = HELP[topic]; if (!h) return;
+  let ov = $("help-overlay");
+  if (!ov) {
+    ov = document.createElement("div"); ov.id = "help-overlay"; ov.className = "help-overlay";
+    ov.addEventListener("click", (e) => { if (e.target === ov) closeHelp(); });
+    document.body.appendChild(ov);
+  }
+  ov.innerHTML = `<div class="help-card"><button class="help-x" onclick="closeHelp()" aria-label="Close">✕</button>`
+    + `<h3>${escHtml(h.title)}</h3>`
+    + (h.what ? `<p><b>What it is.</b> ${escHtml(h.what)}</p>` : "")
+    + (h.why ? `<p><b>Why it's used.</b> ${escHtml(h.why)}</p>` : "")
+    + (h.options ? `<p class="help-opt"><b>Your options.</b> ${escHtml(h.options)}</p>` : "")
+    + `</div>`;
+  ov.classList.remove("hidden");
+};
+window.closeHelp = function () { const ov = $("help-overlay"); if (ov) ov.classList.add("hidden"); };
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeHelp(); });
+
 // The WHY behind a power's slotting — proc-bomb / committed set / global mules — so the
 // plan reads as deliberate, not as random scatter (Maelwys review, 2026-07-06). A compact
-// chip keeps the brick wall uniform; the full sentence lives in the hover tooltip.
+// chip keeps the brick wall uniform; the full sentence lives in the hover tooltip, and the
+// "?" opens the full explanation of the pattern and why it beats the alternative.
 const _PLAN_META = {
-  "proc-bomb":    ["💥", "Proc bomb"],
-  "committed":    ["🎯", "Full set"],
-  "frankenslot":  ["🧩", "Frankenslot"],
-  "global-mules": ["🌐", "Global mules"],
-  "mixed":        ["🌐", "Globals"],
+  "proc-bomb":    ["💥", "Proc bomb", "proc-bomb"],
+  "committed":    ["🎯", "Full set", "committed"],
+  "frankenslot":  ["🧩", "Frankenslot", "frankenslot"],
+  "global-mules": ["🌐", "Global mules", "global-mules"],
+  "mixed":        ["🌐", "Globals", "global-mules"],
 };
 function slotPlanHtml(pw) {
   const plan = pw.slot_plan;
   if (!plan || !plan.text) return "";
-  const [ico, label] = _PLAN_META[plan.kind] || ["🔧", "Slotting"];
+  const [ico, label, topic] = _PLAN_META[plan.kind] || ["🔧", "Slotting", null];
   return `<div class="slot-plan slot-plan-${escHtml(plan.kind)}" title="${escHtml(plan.text)}">`
     + `<span class="sp-ico">${ico}</span> <span class="sp-label">${label}</span>`
-    + `<span class="sp-why">ⓘ</span></div>`;
+    + (topic ? helpIcon(topic) : "") + `</div>`;
 }
 
 const enhIconUrl = (img) => img ? `/static/icons/enh/${img}` : "";
