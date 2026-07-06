@@ -1662,6 +1662,33 @@ function chosenPowersets() {
   return list;
 }
 
+// A factual respec nudge: N powers hold slots that earn no set bonuses. Points at Solve,
+// never judges. Dismissable; a fresh load re-evaluates (setRespecHintFresh on load/import).
+let RESPEC_HINT_DISMISSED = false;
+function setRespecHintFresh() { RESPEC_HINT_DISMISSED = false; }
+function renderRespecHint(hint) {
+  let el = $("respec-hint");
+  if (!hint || RESPEC_HINT_DISMISSED) { if (el) el.remove(); return; }
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "respec-hint";
+    el.className = "respec-hint";
+    const host = $("powers-list");
+    if (host && host.parentNode) host.parentNode.insertBefore(el, host);
+  }
+  const names = (hint.powers || []).slice(0, 3).map(escHtml).join(", ");
+  const more = hint.count > 3 ? "…" : "";
+  el.innerHTML = `<span class="rh-ico">💡</span><span class="rh-text">`
+    + `<b>${hint.count} power${hint.count > 1 ? "s" : ""}</b> have slots that aren't earning set `
+    + `bonuses (${names}${more}). <b>Solve</b> can show what a full respec would gain versus keeping `
+    + `your current sets.</span>`
+    + `<button class="rh-x" onclick="dismissRespecHint()" title="Dismiss">✕</button>`;
+}
+window.dismissRespecHint = function () {
+  RESPEC_HINT_DISMISSED = true;
+  const el = $("respec-hint"); if (el) el.remove();
+};
+
 function renderPowers() {
   applyIdentityLock();          // keep archetype/powerset lock in sync (onArchetypeChange re-enables them)
   const host = $("powers-list");
@@ -2444,6 +2471,9 @@ async function recompute() {
     });
   }
   if (repaint) renderPowers();
+  // Respec suggestion: a factual, dismissable nudge when a loaded build has slots that
+  // aren't earning set bonuses — points at Solve, never passes judgment.
+  renderRespecHint(totals && totals.respec_hint);
   refreshBuildViews();   // keep the always-visible respec-order + tray sections live
 }
 
@@ -2893,6 +2923,7 @@ async function syncPoolsEpicFromPowers(powers, fallbackPools, fallbackEpic) {
 
 async function applyImportedBuild(b) {
   resetTrayPanels();          // swapping in a new build → drop the prior tray/order panels
+  setRespecHintFresh();       // a new build gets a fresh respec evaluation (undo any dismiss)
   // archetype cascade (loads powerset options)
   $("sel-archetype").value = b.archetype || "";
   await onArchetypeChange({ target: { value: b.archetype || "" } });

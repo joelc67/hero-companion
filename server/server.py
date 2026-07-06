@@ -993,6 +993,23 @@ def _slot_plan(power):
     return None
 
 
+def _under_invested(power):
+    """A power that COULD earn set bonuses but doesn't: it accepts set categories, carries
+    3+ enhancement slots, yet its slotting has no committed set, proc bomb, or global mule
+    (_slot_plan is None) — i.e. it's filled with common IOs or a lone fragment. Powers that
+    can't hold a set at all (Hasten, Sprint) are excluded, so this never false-flags them."""
+    if (power.get("full_name") or "").startswith("Inherent"):
+        return False
+    filled = sum(1 for s in (power.get("slots") or [])
+                 if s and (s.get("set_name") or s.get("piece_uid")))
+    if filled < 3:
+        return False
+    rec = POWER_BY_FULL.get(power.get("full_name")) or {}
+    if not rec.get("accepted_set_categories"):
+        return False                      # can't hold a set — nothing a respec would change
+    return _slot_plan(power) is None
+
+
 # ---------------------------------------------------------------------------
 # Build endpoints
 # ---------------------------------------------------------------------------
@@ -1101,6 +1118,7 @@ def build_calculate():
     # RESUMED or IMPORTED build shows them too — not only a freshly solved one (field report:
     # chips missing after Resume, which read as the update being ignored).
     plans = {}
+    under = []
     for p in pw:
         fn = p.get("full_name")
         if not fn:
@@ -1108,7 +1126,16 @@ def build_calculate():
         plan = _slot_plan(p)
         if plan:
             plans[fn] = plan
+        elif _under_invested(p):
+            rec = POWER_BY_FULL.get(fn) or {}
+            under.append(rec.get("display_name") or fn.split(".")[-1].replace("_", " "))
     res["slot_plans"] = plans
+    # RESPEC HINT: powers that CAN hold a set and have the slots for one, but earn no set
+    # bonus (just commons / a lone fragment). Purely factual — same signal the chips show —
+    # so the tool can honestly say "a respec could put these slots to work" without judging.
+    # Never fires on a well-slotted build (every real power is committed / proc / global).
+    if len(under) >= 2:
+        res["respec_hint"] = {"count": len(under), "powers": under[:6]}
     return jsonify(res)
 
 

@@ -701,6 +701,16 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .slot-plan-global-mules,
 .slot-plan-mixed       { background: rgba(70, 140, 200, .13);  border-color: rgba(70,140,200,.45); color: #2f76ad; }
 .powers-wall .slot-plan { margin-top: auto; }   /* sit at the brick's bottom edge */
+/* Respec suggestion: factual, dismissable nudge above the build wall. */
+.respec-hint { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 10px;
+  padding: 9px 12px; border-radius: 8px; font-size: 12.5px; line-height: 1.45;
+  background: rgba(90, 150, 220, .10); border: 1px solid rgba(90, 150, 220, .35);
+  color: var(--ink); }
+.respec-hint .rh-ico { flex: none; }
+.respec-hint .rh-text { flex: 1 1 auto; min-width: 0; }
+.respec-hint .rh-x { flex: none; width: auto; background: none; border: none; color: var(--muted);
+  cursor: pointer; font-size: 13px; padding: 0 2px; line-height: 1; }
+.respec-hint .rh-x:hover { color: var(--ink); }
 /* Power tray layout (in-game-style 4 rows) */
 .tray-row { margin-bottom: 12px; }
 .tray-label { font-size: 12px; color: var(--muted); margin-bottom: 5px; }

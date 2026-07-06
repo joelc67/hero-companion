@@ -74,6 +74,7 @@ def audit():
     committed_powers = 0
     per_at = {}
     examples = []
+    respec_misfires = []
     c = srv.app.test_client()
 
     for at, groups in srv.POWERSETS["by_archetype"].items():
@@ -89,6 +90,11 @@ def audit():
         sol = c.post("/build/solve", json={"archetype": at, "powers": ap["powers"],
                                            "content": "general", "role": "damage"}).get_json()
         powers = sol.get("powers") or ap["powers"]
+        # NO-MISFIRE GUARD: a freshly solved build is fully optimized, so the respec hint
+        # (meant for under-invested loaded builds) must NEVER fire on it. Prove it every AT.
+        calc = c.post("/build/calculate", json={"archetype": at, "powers": powers}).get_json()
+        if calc.get("respec_hint"):
+            respec_misfires.append(f"{at.split('_')[-1]}: {calc['respec_hint']}")
         at_frag = at_fill = 0
         for p in powers:
             slots = p.get("slots") or []
@@ -134,6 +140,10 @@ def audit():
     print(f"  scatter powers (>=3 sets, 0 bonus earned):    {scatter_powers}")
     print(f"  deliberate proc-bomb powers:                  {procbomb_powers}")
     print(f"  committed powers (>=1 set at >=2 pieces):     {committed_powers}")
+    print(f"  respec-hint MISFIRES on solved builds:        {len(respec_misfires)}"
+          + ("  <— BUG" if respec_misfires else "  (good: the hint never nags an optimized build)"))
+    for m in respec_misfires:
+        print("   ", m)
     if examples:
         print("\n  scatter examples:")
         for e in examples:
