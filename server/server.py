@@ -467,6 +467,33 @@ def update_check():
         return jsonify({"ok": False, "reason": "offline", "error": str(e)[:200]})
 
 
+# Set by the packaged launcher (run_app) to a callable that stops the tray icon and exits.
+# A clean stop is what removes the Windows tray icon — a force-kill orphans it as a "ghost"
+# that lingers until you hover the notification area. None in dev/source mode.
+SHUTDOWN_HOOK = None
+
+
+@app.route("/app/shutdown", methods=["POST"])
+def app_shutdown():
+    """Ask THIS instance to exit cleanly. A self-update calls this on the old copy so it
+    removes its own tray icon before making way for the new one — instead of being force-
+    killed (which leaves the ghost icon the user reported). No-op in dev (no tray to close)."""
+    hook = SHUTDOWN_HOOK
+    if not hook:
+        return jsonify({"ok": False, "reason": "not_packaged"})
+
+    def _later():
+        import time
+        time.sleep(0.3)          # let the HTTP response flush first
+        try:
+            hook()
+        except Exception:  # noqa: BLE001
+            os._exit(0)
+    import threading
+    threading.Thread(target=_later, daemon=True).start()
+    return jsonify({"ok": True, "stopping": True})
+
+
 @app.route("/update/install", methods=["POST"])
 def update_install():
     """One-click self-update, packaged builds only: download the latest release's
@@ -2921,6 +2948,29 @@ def gamelog_insights():
     return jsonify({"ok": True, "insights": _gamelog_insights()})
 
 
+def _fit_set_index(fit_id):
+    """set_name (lower) -> [power display names] for every enhancement set slotted in a
+    saved build. Lets the Play Log tell a player a drop is FOR THEIR build, and exactly
+    which power wants it. Empty dict if the save can't be read."""
+    if not fit_id:
+        return {}
+    path = os.path.join(_saves_dir(), _save_slug(fit_id) + ".json")
+    try:
+        data = json.load(open(path, encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return {}
+    idx = {}
+    for p in ((data.get("build") or {}).get("powers") or []):
+        pname = p.get("display_name") or (p.get("full_name") or "?").split(".")[-1].replace("_", " ")
+        for sl in (p.get("slots") or []):
+            nm = (sl or {}).get("set_name")
+            if nm:
+                idx.setdefault(nm.lower(), [])
+                if pname not in idx[nm.lower()]:
+                    idx[nm.lower()].append(pname)
+    return idx
+
+
 def _saved_fit_for(character):
     """The saved build to associate with a logged-in character, and how confident we are.
     An EXPLICIT link (character -> save id, set by the user) wins and survives renames /
@@ -2969,16 +3019,27 @@ def _gamelog_insights():
     accounts = [os.path.basename(os.path.dirname(d)) for d in dirs]
     chars_by_acct = st.get("characters") or {}
     s = gamelog.summarize(gamelog.load_events(), accounts=accounts)
-    haul = []
+    # Per-account fit set-index: what sets each watched character's saved build actually
+    # uses, so a drop that fits the plan is flagged KEEP-FOR-YOU no matter its generic rarity
+    # verdict. Keyed by account so a dual-boxer's two characters never cross-match.
+    fit_idx_by_acct = {}
+    for acct in accounts:
+        ch = chars_by_acct.get(acct)
+        fit, _lk = _saved_fit_for(ch)
+        fit_idx_by_acct[acct] = (ch, _fit_set_index(fit["id"]) if fit else {})
+    haul, fit_haul = [], 0
     for d in s["drops"][-80:]:
         item = d.get("item") or ""
         kind = d.get("kind", "salvage")
+        acct = d.get("account")
         verdict, why, setname = "—", "", None
-        if kind == "recipe":
-            base = re.sub(r"\s*\(Recipe\)$", "", item)
-            base = re.sub(r"^Invention:\s*", "", base)
-            rec = SET_BY_NAME.get(base.split(":")[0].strip().lower())
-            setname = rec.get("name") if rec else None
+        # Resolve the enhancement SET this item belongs to (recipes AND crafted IO drops),
+        # so fit-matching works regardless of drop kind.
+        base = re.sub(r"\s*\(Recipe\)$", "", item)
+        base = re.sub(r"^Invention:\s*", "", base)
+        rec = SET_BY_NAME.get(base.split(":")[0].strip().lower())
+        setname = rec.get("name") if rec else None
+        if kind == "recipe" or rec:
             if rec:
                 r = converter.rarity_of(rec)
                 if r in ("purple", "pvp", "winter"):
@@ -2997,8 +3058,19 @@ def _gamelog_insights():
             verdict, why = "—", "crafting material (catalyst/converter) — bank it; useful later or sellable"
         else:
             verdict, why = "SELL", "salvage — sell the surplus, keep what your recipes need"
-        haul.append({"ts": d.get("ts"), "item": item, "kind": kind,
-                     "set": setname, "verdict": verdict, "why": why})
+        # FIT-AWARE HAUL: does the watched character's build actually slot this set? If so it's
+        # a KEEP for THEM — a standard set you'd normally vendor is an upgrade when it's your plan.
+        ch, fidx = fit_idx_by_acct.get(acct, (None, {}))
+        uses = fidx.get(setname.lower()) if setname else None
+        for_build = None
+        if uses:
+            for_build = {"character": ch, "powers": uses}
+            verdict = "KEEP"
+            why = (f"in {ch}'s build — slotted in {', '.join(uses[:2])}"
+                   + ("…" if len(uses) > 2 else ""))
+            fit_haul += 1
+        haul.append({"ts": d.get("ts"), "item": item, "kind": kind, "account": acct,
+                     "set": setname, "verdict": verdict, "why": why, "for_build": for_build})
     # Per-watched-account "who is playing" + that character's fit link. For a dual-boxer
     # this is one entry per client (Rattle on one account, the farmer on the other).
     who = []
@@ -3010,7 +3082,7 @@ def _gamelog_insights():
     # keep single-character fields for back-compat (first watched account)
     first = who[0] if who else {"character": None, "fit": None}
     return {"summary": {k: v for k, v in s.items() if k not in ("drops",)},
-            "haul": haul, "who": who,
+            "haul": haul, "fit_haul": fit_haul, "who": who,
             "character": first.get("character"), "fit": first.get("fit")}
 
 

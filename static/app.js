@@ -1465,10 +1465,22 @@ function renderGamelog(ins, report, status) {
   } else {
     cards.push(statCard(null, s, null));   // no Welcome marker yet — combined totals
   }
-  const rows = haul.slice(-15).reverse().map(h =>
-    `<tr title="${escHtml(h.why || "")}"><td>${escHtml(h.item)}</td><td class="muted">${escHtml(h.kind || "")}</td>
-     <td class="${h.verdict === "KEEP" ? "gl-keep" : "gl-sell"}">${escHtml(h.verdict)}</td></tr>`).join("");
-  cards.push(`<div class="gl-card gl-wide"><div class="glc-head">RECENT HAUL <span class="muted small">(hover a row for the why)</span></div>
+  // Fit-matched drops (a set the watched character's build actually slots) float to the top
+  // and get a ★ — a standard set you'd normally vendor is a KEEP when it's YOUR plan.
+  const fitHaul = (ins || {}).fit_haul || 0;
+  const recent = haul.slice(-40).reverse();
+  recent.sort((a, b) => (b.for_build ? 1 : 0) - (a.for_build ? 1 : 0));
+  const rows = recent.slice(0, 18).map(h => {
+    const fb = h.for_build;
+    const star = fb ? `<span class="gl-star" title="${escHtml(h.why)}">★</span> ` : "";
+    return `<tr class="${fb ? "gl-fit-row" : ""}" title="${escHtml(h.why || "")}">`
+      + `<td>${star}${escHtml(h.item)}</td><td class="muted">${escHtml(h.kind || "")}</td>`
+      + `<td class="${h.verdict === "KEEP" ? "gl-keep" : "gl-sell"}">${escHtml(h.verdict)}</td></tr>`;
+  }).join("");
+  const fitNote = fitHaul
+    ? ` <span class="gl-fit-count" title="Drops that fit a watched character's saved build">★ ${fitHaul} for your build</span>`
+    : "";
+  cards.push(`<div class="gl-card gl-wide"><div class="glc-head">RECENT HAUL <span class="muted small">(hover a row for the why)</span>${fitNote}</div>
     ${rows ? `<table class="gl-table">${rows}</table>` : `<div class="glc-line muted">No drops logged yet — play a session with /logchat on, then hit ⟳.</div>`}</div>`);
   $("gl-cards").innerHTML = cards.join("");
   if (report) {

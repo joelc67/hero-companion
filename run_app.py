@@ -80,8 +80,23 @@ def _clear_lock():
 
 def _kill_other_copies():
     """After a self-update, any straggler process still serves the PRE-upgrade code
-    (Windows keeps the old image alive) — remove them so the fresh copy owns port 5000."""
+    (Windows keeps the old image alive) — remove them so the fresh copy owns port 5000.
+
+    Ask the old copy to quit CLEANLY first (POST /app/shutdown) so it removes its own tray
+    icon — a force-kill orphans that icon as a "ghost" that only clears when you mouse over
+    the tray (the exact bug field-reported). Force-kill is the fallback for a copy that
+    ignores the polite request."""
     import subprocess
+    import time
+    try:
+        port = _live_instance_port()      # the OLD copy's port, from its lockfile
+        if port:
+            import urllib.request
+            req = urllib.request.Request(f"http://127.0.0.1:{port}/app/shutdown", method="POST")
+            urllib.request.urlopen(req, timeout=3).read()
+            time.sleep(1.5)               # let it drop its tray icon and release the port
+    except Exception:  # noqa: BLE001 — no live copy / already gone
+        pass
     try:
         subprocess.run(["taskkill", "/F", "/IM", "HeroCompanion.exe",
                         "/FI", f"PID ne {os.getpid()}"], capture_output=True, timeout=15)
@@ -104,8 +119,12 @@ def _pick_port(start):
 
 
 def _run_tray(port):
-    """Tray icon with Open / Quit. Returns False if the tray can't start (then the
-    caller just blocks so the server stays up)."""
+    """Tray icon with Open / Check for updates / Quit. Returns False if the tray can't
+    start (then the caller just blocks so the server stays up).
+
+    The tray is the app's handle: Hero Companion keeps serving after you close the browser
+    tab (so re-opening is instant), and this menu is how you drive it — reopen the browser,
+    check for a new version, or quit for real."""
     try:
         import pystray
         from PIL import Image
@@ -114,8 +133,32 @@ def _run_tray(port):
         def _open(icon, item):
             webbrowser.open(f"http://localhost:{port}")
 
+        def _check_updates(icon, item):
+            """Query our own local endpoint, report via a tray balloon, and open the app
+            (where the one-click updater lives) when a new version exists."""
+            try:
+                import urllib.request
+                with urllib.request.urlopen(
+                        f"http://127.0.0.1:{port}/meta/update-check", timeout=8) as r:
+                    d = json.load(r)
+            except Exception:  # noqa: BLE001
+                d = None
+            try:
+                if d and d.get("ok") and d.get("update_available"):
+                    icon.notify(f"Version {d.get('latest')} is available "
+                                f"(you have {d.get('current')}). Opening Hero Companion to update.",
+                                "Hero Companion")
+                    webbrowser.open(f"http://localhost:{port}")
+                elif d and d.get("ok"):
+                    icon.notify(f"You're up to date (v{d.get('current')}).", "Hero Companion")
+                else:
+                    icon.notify("Couldn't check right now — offline, or updates aren't "
+                                "configured in this copy.", "Hero Companion")
+            except Exception:  # noqa: BLE001 — notifications are best-effort
+                pass
+
         def _quit(icon, item):
-            icon.stop()
+            icon.stop()            # stop() is what removes the tray icon (no ghost)
             _clear_lock()          # os._exit skips atexit — release the instance lock here
             os._exit(0)
 
@@ -123,7 +166,20 @@ def _run_tray(port):
             "HeroCompanion", img, f"Hero Companion — running at localhost:{port}",
             menu=pystray.Menu(
                 pystray.MenuItem("Open Hero Companion", _open, default=True),
-                pystray.MenuItem("Quit", _quit)))
+                pystray.MenuItem("Check for updates…", _check_updates),
+                pystray.MenuItem("Quit Hero Companion", _quit)))
+
+        # Let a self-update (or any other instance) retire THIS copy cleanly via
+        # POST /app/shutdown — a clean stop drops the tray icon instead of ghosting it.
+        def _graceful_quit():
+            try:
+                icon.stop()
+            except Exception:  # noqa: BLE001
+                pass
+            _clear_lock()
+            os._exit(0)
+        server.SHUTDOWN_HOOK = _graceful_quit
+
         icon.run()          # blocks until Quit
         return True
     except Exception as e:  # noqa: BLE001 — no tray support → fall back to blocking

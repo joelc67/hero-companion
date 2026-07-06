@@ -187,6 +187,42 @@ rec = next((h for h in ins["haul"] if h["kind"] == "recipe"), None)
 check("insights: recipe still gets a real keep/sell verdict",
       rec and rec["verdict"] in ("KEEP", "SELL", "CONVERT/SELL"), str(rec and rec["verdict"]))
 
+# ── fit-aware haul: a drop the watched character's build slots is KEEP-for-YOU ──
+print("\n── fit-aware haul ──")
+_savedir = os.path.join(tmp, "fitsaves")
+os.makedirs(_savedir, exist_ok=True)
+# a build that slots Positron's Blast (a STANDARD set — normally CONVERT/SELL) in Fire Ball
+json.dump({"name": "Lime Juice", "archetype": "Class_Blaster",
+           "build": {"powers": [{"display_name": "Fire Ball",
+                                  "slots": [{"set_name": "Positron's Blast"},
+                                            {"set_name": "Positron's Blast"}]}]}},
+          open(os.path.join(_savedir, "limefit.json"), "w", encoding="utf-8"))
+_orig = (srv._saves_dir, srv._all_saves, srv._watch_dirs, gamelog.load_state, gamelog.load_events)
+srv._saves_dir = lambda: _savedir
+srv._all_saves = lambda: [{"id": "limefit", "name": "Lime Juice", "archetype": "Class_Blaster"}]
+srv._watch_dirs = lambda st: [os.path.join(tmp, "accounts", "kalicous", "Logs")]
+gamelog.load_state = lambda: {"characters": {"kalicous": "Lime Juice"},
+                              "fit_links": {"Lime Juice": "limefit"}}
+gamelog.load_events = lambda limit=100000: [
+    {"type": "char", "account": "kalicous", "character": "Lime Juice", "ts": "2026-07-06 10:00:00"},
+    {"type": "drop", "account": "kalicous", "ts": "2026-07-06 10:01:00",
+     "item": "Positron's Blast: Damage (Recipe)", "kind": "recipe"},
+    {"type": "drop", "account": "kalicous", "ts": "2026-07-06 10:02:00",
+     "item": "Kinetic Combat: Damage (Recipe)", "kind": "recipe"},
+]
+_ins = srv._gamelog_insights()
+_pos = next((h for h in _ins["haul"] if h["item"].startswith("Positron")), None)
+_kin = next((h for h in _ins["haul"] if h["item"].startswith("Kinetic")), None)
+check("fit haul: in-build standard set flips to KEEP",
+      _pos and _pos["verdict"] == "KEEP" and _pos.get("for_build"), str(_pos and _pos.get("verdict")))
+check("fit haul: names the character + power",
+      _pos and _pos["for_build"]["character"] == "Lime Juice"
+      and "Fire Ball" in _pos["for_build"]["powers"], str(_pos and _pos.get("for_build")))
+check("fit haul: a set NOT in the build stays generic (not KEEP-for-you)",
+      _kin and not _kin.get("for_build"), str(_kin and _kin.get("for_build")))
+check("fit haul: count reported", _ins.get("fit_haul") == 1, str(_ins.get("fit_haul")))
+(srv._saves_dir, srv._all_saves, srv._watch_dirs, gamelog.load_state, gamelog.load_events) = _orig
+
 shutil.rmtree(tmp, ignore_errors=True)
 print(f"\n══ {'ALL PASS' if not fails else f'{len(fails)} FAILURE(S): ' + ', '.join(fails)} ══")
 sys.exit(1 if fails else 0)
