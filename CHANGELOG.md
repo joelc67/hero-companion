@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## 0.12.8 — unreleased
+## 0.12.8 — July 6, 2026
 
 - **Watch multiple accounts at once — per-character stat cards.** Dual-boxers can now
   tick more than one account, and the Play Log shows a card per character side by side
@@ -35,6 +35,37 @@
   click on another chip — no more hunting for a "change account" link. For
   dual-boxers this matters: each account is its own log, so you flip between your
   two characters' stats instantly, and a note says so.
+
+- **Your farm haul now knows your build.** When the Play Log is watching a character
+  that has a saved fit, any drop whose set your build actually uses gets starred and
+  floated to the top of the haul as a **"keep — for your build,"** naming the power
+  that wants it. A standard set you would normally vendor becomes a keep when it is in
+  your plan. Drops that do not fit still get the usual keep-or-sell advice.
+
+- **Every power now explains how it is slotted.** Each power in a generated or solved
+  build wears a small tag saying *why* it is slotted the way it is — 🎯 a full set for
+  its bonuses, 💥 a proc bomb (more AoE damage than a set here), 🌐 global mules
+  (uniques that each work from one slot), or a deliberate frankenslot. Hover it for the
+  full reasoning. High-end slotting can look like scatter until you know the plan; now
+  the build tells you the plan.
+
+- **Fixed some warnings that were plain wrong.** The off-role check used to tell a Brute
+  or Mastermind its powers "do not extend to damage dealer," which is nonsense — those
+  are damage dealers and are now recognized as such. The "no damage enhancement" warning
+  no longer fires on a power that is carrying a real set or damage procs. And Physical
+  Perfection (and the epic-pool tier rules around it) now require the correct number of
+  prerequisite powers, verified against a large corpus of real builds.
+
+- **Better proc choices.** When the optimizer proc-bombs a power, it now ranks the
+  available procs by actual expected damage, so the strongest procs land instead of
+  whichever the data happened to list first.
+
+- **The tray icon behaves.** Updating no longer leaves a "ghost" tray icon that only
+  clears when you mouse over it — the old copy now shuts down cleanly and removes its own
+  icon before the new one takes over. The tray menu also gains **Check for updates…**
+  (it tells you right there whether a new version is out) alongside Open and Quit. Hero
+  Companion keeps running in the tray after you close the browser tab so reopening is
+  instant; the tray menu is how you drive or quit it.
 
 ## 0.12.7 — July 5, 2026
 
