@@ -5481,7 +5481,14 @@ def saves_get(sid):
     path = os.path.join(_saves_dir(), _save_slug(sid) + ".json")
     if not os.path.exists(path):
         return jsonify({"ok": False, "error": "Save not found."}), 404
-    return jsonify({"ok": True, "save": json.load(open(path, encoding="utf-8"))})
+    data = json.load(open(path, encoding="utf-8"))
+    # Heal the save at serve time: older saves stored slots without io_level/image
+    # (field report: resumed builds showed set pieces with no level badge while
+    # common IOs showed 50). Enriching on GET fixes every save on disk, not just
+    # ones written after the fix — the same pass solve/import already run.
+    if isinstance(data.get("build"), dict):
+        _fill_slot_images(data["build"])
+    return jsonify({"ok": True, "save": data})
 
 
 @app.route("/saves/<sid>", methods=["DELETE"])

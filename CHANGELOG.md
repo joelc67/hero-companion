@@ -1,5 +1,12 @@
 # Hero Companion — What's New
 
+## Unreleased (0.12.11)
+
+- **IO levels show on resumed builds again.** Resuming a saved character could show set
+  pieces without the level badge under their icons (while common IOs still showed 50).
+  Saves are now healed as they load, so every existing save gets its levels and icons
+  back without re-saving.
+
 ## 0.12.10 — July 6, 2026
 
 - **Pet summons are slotted for the pet now.** A summon power — Mastermind henchmen, a
