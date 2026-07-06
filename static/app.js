@@ -1738,6 +1738,7 @@ function powerCardHtml(pw, idx, icon, lv) {
       </div>
       <div class="slot-row">${pw.slots.map((s, si) => slotHtml(idx, si, s)).join("")}</div>
       ${setSummaryHtml(pw)}
+      ${slotPlanHtml(pw)}
     </div>`;
   }
   const lvl = pw.pick_level || lv;
@@ -1759,6 +1760,7 @@ function powerCardHtml(pw, idx, icon, lv) {
     </div>
     <div class="slot-row">${pw.slots.map((s, si) => slotHtml(idx, si, s)).join("")}</div>
     ${setSummaryHtml(pw)}
+    ${slotPlanHtml(pw)}
   </div>`;
 }
 
@@ -1842,6 +1844,25 @@ function setSummaryHtml(pw) {
   const parts = order.map(n => `${escHtml(n)}${count[n] > 1 ? ` ×${count[n]}` : ""}`);
   const plain = order.map(n => `${n}${count[n] > 1 ? ` ×${count[n]}` : ""}`).join(" · ");
   return `<div class="set-summary" title="sets: ${escHtml(plain)}"><span class="muted small">sets:</span> ${parts.join(" · ")}</div>`;
+}
+
+// The WHY behind a power's slotting — proc-bomb / committed set / global mules — so the
+// plan reads as deliberate, not as random scatter (Maelwys review, 2026-07-06). A compact
+// chip keeps the brick wall uniform; the full sentence lives in the hover tooltip.
+const _PLAN_META = {
+  "proc-bomb":    ["💥", "Proc bomb"],
+  "committed":    ["🎯", "Full set"],
+  "frankenslot":  ["🧩", "Frankenslot"],
+  "global-mules": ["🌐", "Global mules"],
+  "mixed":        ["🌐", "Globals"],
+};
+function slotPlanHtml(pw) {
+  const plan = pw.slot_plan;
+  if (!plan || !plan.text) return "";
+  const [ico, label] = _PLAN_META[plan.kind] || ["🔧", "Slotting"];
+  return `<div class="slot-plan slot-plan-${escHtml(plan.kind)}" title="${escHtml(plan.text)}">`
+    + `<span class="sp-ico">${ico}</span> <span class="sp-label">${label}</span>`
+    + `<span class="sp-why">ⓘ</span></div>`;
 }
 
 const enhIconUrl = (img) => img ? `/static/icons/enh/${img}` : "";

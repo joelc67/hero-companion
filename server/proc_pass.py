@@ -77,8 +77,16 @@ def _pick_procs(cats, nslots, used, prefer_res=True):
     if prefer_res:
         for c in cats:
             order += [("res", c, p) for p in cat["res_procs"].get(c, [])]
+    # RANK damage procs by expected contribution (ppm × dmg-at-50), strongest first, so when a
+    # power accepts more proc categories than it has slots the best procs win — not whichever
+    # category the data happens to list first. Without this the pass could seat a weak single
+    # proc (e.g. Cupid's Crush / Explosive Strike) over a stronger one and read as "random"
+    # scatter to an expert. -Res procs stay ahead of all of them (spawn-wide force multipliers).
+    dmg = []
     for c in cats:
-        order += [("dmg", c, p) for p in cat["damage_procs"].get(c, []) if not p.get("premium")]
+        dmg += [("dmg", c, p) for p in cat["damage_procs"].get(c, []) if not p.get("premium")]
+    dmg.sort(key=lambda t: -((t[2].get("ppm") or 0) * (t[2].get("dmg50") or 0)))
+    order += dmg
     for _kind, c, p in order:
         if len(out) >= nslots:
             break

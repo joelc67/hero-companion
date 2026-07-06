@@ -54,7 +54,7 @@ for at, eps in at_epics.items():
         tiers = srv._pool_tiers(ps)
         top = max(allp, key=lambda p: tiers.get(p["full_name"], 0))
         t = tiers.get(top["full_name"], 0)
-        need = 0 if t <= 1 else (1 if t == 2 else 2)
+        need = srv._epic_prereq_count(t)
         if need < 2:
             continue                      # no 2-prereq tier in this set (tiny set)
         lows = [p for p in allp if p["full_name"] != top["full_name"]]
@@ -93,8 +93,7 @@ for at, groups in srv.POWERSETS["by_archetype"].items():
         ps = epics[0].rsplit(".", 1)[0]
         tr = srv._pool_tiers(ps)
         for fn in epics:
-            t = tr.get(fn, 0)
-            need = 0 if t <= 1 else (1 if t == 2 else 2)
+            need = srv._epic_prereq_count(tr.get(fn, 0))
             if len(epics) - 1 < need:
                 vio += 1
                 problems.append(f"AUTOPICK {at}/{content}: {fn} needs {need}, has {len(epics)-1}")

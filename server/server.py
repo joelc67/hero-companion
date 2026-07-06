@@ -12,7 +12,7 @@ import os
 import time
 import re
 import sys
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
@@ -567,18 +567,24 @@ def doc_page(page):
 # keys (Support ⇒ buffer/debuffer/healer; both Damage columns ⇒ damage). Epic ATs count for
 # multiple roles, per the page. Sharp edges faithfully kept: officially Brute fills TANK
 # (not damage), Corruptor fills RANGED DAMAGE (not support), Controller fills CONTROL.
+    # NOTE: the official Role-Diversity table is about TEAM SLOTS (who fills the "tank" a
+    # team needs), not whether an AT can deal damage. For a BUILD optimizer, damage is a
+    # legit goal for any AT with full attack sets or damage pets — so Brute/Tanker/
+    # Mastermind carry "damage" too (a damage Brute is the norm, not an off-role oddity;
+    # field feedback 2026-07-06). Genuinely off-role stays flagged (a support Defender
+    # built for "damage" = the Offender warning; a Controller as "tank"; etc.).
 _AT_NATURAL_ROLES = {
     "Class_Defender":         ["buffer", "debuffer", "healer"],           # Support
-    "Class_Mastermind":       ["buffer", "debuffer", "healer"],           # Support
+    "Class_Mastermind":       ["buffer", "debuffer", "healer", "damage"],  # Support + pet damage
     "Class_Corruptor":        ["damage"],                                 # Ranged Damage
     "Class_Blaster":          ["damage"],                                 # Ranged Damage
     "Class_Sentinel":         ["damage"],                                 # Ranged Damage
     "Class_Scrapper":         ["damage"],                                 # Melee Damage
     "Class_Stalker":          ["damage"],                                 # Melee Damage
     "Class_Controller":       ["controller"],                             # Control
-    "Class_Dominator":        ["controller"],                             # Control
-    "Class_Brute":            ["tank"],                                   # Tank
-    "Class_Tanker":           ["tank"],                                   # Tank
+    "Class_Dominator":        ["controller", "damage"],                  # Control + real damage
+    "Class_Brute":            ["tank", "damage"],                         # Tank + Fury damage
+    "Class_Tanker":           ["tank", "damage"],                         # Tank + real damage
     "Class_Peacebringer":     ["tank", "damage"],                         # Tank + both Damage
     "Class_Warshade":         ["tank", "damage", "controller"],           # Tank + Ranged + Control
     "Class_Arachnos_Soldier": ["damage", "buffer", "debuffer", "healer"],  # Melee+Ranged + Support
@@ -827,12 +833,132 @@ def get_setbonuses(setname):
     })
 
 
+# ── SLOTTING RATIONALE ──────────────────────────────────────────────────────
+# Every power's slotting follows one of a few master patterns; without a label an
+# expert reads a proc-bombed nuke or a global-mule Health as "spaghetti thrown at a
+# wall" (Maelwys, 2026-07-06) when it's the intended high-end plan. _slot_plan makes
+# the intent visible: it says WHY a power is slotted the way it is.
+_GLOBAL_DESC = {
+    "luck of the gambler": "+7.5% global recharge",
+    "steadfast protection": "+3% defense (all)",
+    "gladiator's armor": "+3% defense (all)",
+    "shield wall": "+5% resistance (all)",
+    "reactive defenses": "scaling resist proc",
+    "unbreakable guard": "+7.5% max HP",
+    "preventive medicine": "absorb proc",
+    "kismet": "+6% to-hit",
+    "numina": "+regen / +recovery",
+    "miracle": "+recovery",
+    "regenerative tissue": "+regen",
+    "performance shifter": "+recovery proc",
+    "power transfer": "heal-on-use proc",
+    "panacea": "+HP / +recovery proc",
+}
+# effect -> short label for naming the set bonuses a committed set actually earns
+_EFFECT_LABEL = [
+    ("RechargeTime", "recharge"), ("Defense", "defense"), ("Resistance", "resistance"),
+    ("DamageBuff", "damage"), ("Recovery", "recovery"), ("Regeneration", "regen"),
+    ("HitPoints", "max HP"), ("ToHit", "to-hit"),
+]
+_EFFECT_LABEL_MAP = dict(_EFFECT_LABEL)
+
+
+def _piece_is_proc(s):
+    return bool(s and (s.get("_proc")
+                       or (s.get("piece_uid") and proc_pass._is_proc_uid(s["piece_uid"]))))
+
+
+def _global_key(set_name):
+    n = (set_name or "").lower()
+    return next((k for k in _GLOBAL_DESC if k in n), None)
+
+
+def _earned_bonus_kinds(set_name, n):
+    """The distinct set-bonus KINDS a set earns at `n` pieces (bonuses stack cumulatively
+    up to the piece count), ordered recharge/defense/resistance first — what an expert
+    slots the set FOR. Names the kinds, not the exact percentages (the totals panel has
+    those); the point here is intent."""
+    s = SET_BY_NAME.get((set_name or "").lower())
+    if not s:
+        return []
+    seen = set()
+    for b in s.get("bonuses", []):
+        if (b.get("pieces_required") or 99) > n or b.get("pv_mode") == 2:
+            continue
+        for e in b.get("effects", []):
+            lab = _EFFECT_LABEL_MAP.get(e.get("effect"))
+            if lab and (e.get("value") or 0) > 0:
+                seen.add(lab)
+    return [lab for _eff, lab in _EFFECT_LABEL if lab in seen][:3]
+
+
+def _slot_plan(power):
+    """A one-line rationale for a power's slotting: proc-bomb / committed set / franken /
+    global mules. Returns {"kind","text"} or None when there's nothing worth explaining."""
+    slots = [s for s in (power.get("slots") or []) if s]
+    if len(slots) < 2:
+        return None
+    procs = [s for s in slots if _piece_is_proc(s)]
+    nonproc = [s for s in slots if not _piece_is_proc(s)]
+    hist = Counter(s.get("set_name") or "?" for s in nonproc if s.get("set_name"))
+    # Only a REAL enhancement set (in the set index) earns bonuses — a stack of common IOs
+    # is plain enhancement, never "a full set", so it must not masquerade as one.
+    committed = sorted([(nm, n) for nm, n in hist.items()
+                        if n >= 2 and SET_BY_NAME.get(nm.lower())], key=lambda x: -x[1])
+    glob = [nm for nm in hist if hist[nm] == 1 and _global_key(nm)]
+
+    def _glist(names):
+        return ", ".join(f"{g} ({_GLOBAL_DESC[_global_key(g)]})" for g in names)
+
+    # 1) PROC BOMB — (nearly) every slot is a proc
+    if len(procs) >= 2 and len(nonproc) <= 1:
+        res = any(k in (s.get("set_name") or "").lower()
+                  for s in procs for k in ("annihilation", "achilles", "fury of the gladiator",
+                                            "touch of lady grey", "shield breaker"))
+        lead = (f"Proc bomb: {len(procs)} procs, one a -resistance proc that multiplies the whole "
+                "team's damage spawn-wide." if res else f"Proc bomb: {len(procs)} damage procs.")
+        return {"kind": "proc-bomb",
+                "text": lead + " On a big-radius power these out-damage a slotted set, so set "
+                        "bonuses are given up here on purpose."}
+    # 2) COMMITTED SET(S) / FRANKENSLOT
+    if committed:
+        parts = []
+        for nm, n in committed:
+            kinds = _earned_bonus_kinds(nm, n)
+            parts.append(f"{n}x {nm}" + (f" ({', '.join(kinds)} bonuses)" if kinds else ""))
+        tail = f" plus global{'s' if len(glob) > 1 else ''}: {_glist(glob)}" if glob else ""
+        if len(committed) > 1:
+            return {"kind": "frankenslot",
+                    "text": "Frankenslot: " + " + ".join(parts) + " — stacked for their set bonuses." + tail}
+        return {"kind": "committed", "text": parts[0] + " — a full set for its bonuses." + tail}
+    # 3) GLOBAL MULES — a power carrying only build-wide unique globals
+    if glob and len(glob) == len(nonproc):
+        return {"kind": "global-mules",
+                "text": "Global mules: " + _glist(glob) + ". Each piece is a build-wide "
+                        "unique that works from a single slot — no set bonus intended."}
+    # 4) globals + filler
+    if glob:
+        return {"kind": "mixed", "text": "Globals + enhancement: " + _glist(glob) + "."}
+    return None
+
+
 # ---------------------------------------------------------------------------
 # Build endpoints
 # ---------------------------------------------------------------------------
 _AT_SUFFIX_RE = re.compile(r"_(TankBrute|Tank|Brute|ScrapStalk|Scrapper|Stalker|Sentinel|Blaster|"
                            r"DefCorr|Defender|Corruptor|Controller|Dominator|Mastermind|Arachnos|"
                            r"Epic|Villain|Hero)$", re.IGNORECASE)
+
+
+def _epic_prereq_count(tier):
+    """How many OTHER powers from an epic/ancillary pool you must already have to take a
+    power at this data-tier. The ONE authority for the rule (used by the validator, slot
+    schedule, autopick gateway, and legality check). Corpus-validated — Guyver's 2,255
+    builds + Maelwys's field report (2026-07-06): the first two (level 35) are free, the
+    next two (level 38/41 — Physical Perfection is level 41) need ONE, and only the top
+    power (level 44) needs TWO. (The power data carries no per-power prereq, so tier is
+    our proxy; the corpus confirms this mapping across every ancillary pool.)"""
+    return 0 if tier <= 1 else (1 if tier <= 3 else 2)
 
 
 def _epic_prereq_errors(powers):
@@ -852,7 +978,7 @@ def _epic_prereq_errors(powers):
         n_others = len(recs) - 1
         for r in recs:
             t = tiers.get(r.get("full_name"), 0)
-            need = 0 if t <= 1 else (1 if t == 2 else 2)
+            need = _epic_prereq_count(t)
             if n_others < need:
                 short = need - n_others
                 out.append(
@@ -1186,8 +1312,7 @@ def _tier_need(full_name):
     ps = (full_name or "").rsplit(".", 1)[0]
     if not ps.startswith(("Pool.", "Epic.")):
         return 0
-    t = _pool_tiers(ps).get(full_name, 0)
-    return 0 if t <= 1 else (1 if t == 2 else 2)
+    return _epic_prereq_count(_pool_tiers(ps).get(full_name, 0))
 
 
 def _pick_order_legal(seq):
@@ -1532,8 +1657,7 @@ def _picks_legal(fns, primary, secondary):
     for ps, members in tiered.items():
         tiers = _pool_tiers(ps)
         for fn in members:
-            t = tiers.get(fn, 0)
-            need = 0 if t <= 1 else (1 if t == 2 else 2)
+            need = _epic_prereq_count(tiers.get(fn, 0))
             if len(members) - 1 < need:
                 return False
     for want in (primary, secondary):
@@ -2264,6 +2388,12 @@ def build_solve():
     # per-content loadouts (incarnates are swappable per encounter) — fire-farm vs
     # iTrial/league vs AV picks for THIS build, so the right set is one click away.
     incarnate_loadouts = ai_build.incarnate_loadouts(archetype, inc_role, final, res_cap)
+    # Attach a plain-language slotting rationale to each power so the build explains its own
+    # intent (proc-bomb / committed set / global mules) instead of reading as random scatter.
+    for _p in sol["powers"]:
+        _plan = _slot_plan(_p)
+        if _plan:
+            _p["slot_plan"] = _plan
     return jsonify({"ok": True, "powers": sol["powers"],
                     "warnings": _build_warnings(sol["powers"], archetype, final, content, role, exposure),
                     "slots_used": sol["slots_used"],
@@ -2469,6 +2599,7 @@ def _attack_enh_rows(powers, ctx):
                     or (s.get("piece_uid") and proc_pass._is_proc_uid(s["piece_uid"])))
         if nproc >= len(slots) - 1:
             continue                      # a proc bomb is intentional — never flag it as weak
+        nset = sum(1 for s in slots if s.get("set_uid"))   # slotted with a real IO set?
         dmg = acc = 0.0
         for s in slots:
             if s and s.get("piece_uid"):
@@ -2478,7 +2609,12 @@ def _attack_enh_rows(powers, ctx):
                     elif asp == "Accuracy":
                         acc += val
         base = _power_base_damage(rec, ctx)
-        rows.append((rec.get("display_name"), base, dmg, acc))
+        # nset/nproc let the warning stay quiet on invested attacks. Field report
+        # (Maelwys 2026-07-06): an IMPORTED attack with a full damage set + procs (71.5%
+        # damage) was mis-flagged "BASE damage only" because our per-piece boost read
+        # came up short on unfamiliar imported piece data. A power carrying a real set
+        # (>=2 set pieces) or any proc is invested — never "base damage only".
+        rows.append((rec.get("display_name"), base, dmg, acc, nset, nproc))
     return rows
 
 
@@ -2493,8 +2629,13 @@ def _build_warnings(powers, archetype, totals, content, role, exposure=None):
         rows = _attack_enh_rows(powers, ctx)
         if rows:
             mx = max(r[1] for r in rows) or 1.0
-            weak = [n for n, b, d, a in rows if b >= 0.35 * mx and d < 0.25]
-            miss = [n for n, b, d, a in rows if b >= 0.35 * mx and d >= 0.25 and a < 0.2]
+            # "base damage only" ONLY for a truly bare attack: big base hit, ~no damage
+            # enhancement, AND no real set (< 2 set pieces) AND no procs. A set or procs =
+            # investment we don't second-guess (avoids false positives on imports).
+            weak = [n for n, b, d, a, nset, nproc in rows
+                    if b >= 0.35 * mx and d < 0.25 and nset < 2 and nproc == 0]
+            miss = [n for n, b, d, a, nset, nproc in rows
+                    if b >= 0.35 * mx and d >= 0.25 and a < 0.2 and nset < 2 and nproc == 0]
             if weak:
                 out.append({"kind": "warn", "text": "⚔️ No damage enhancement on " +
                             ", ".join(weak[:5]) + " — these hit for BASE damage only. "
@@ -3641,17 +3782,16 @@ def _pick_epic(archetype, content, role="damage", exposure="flex"):
         if p["full_name"] not in seen:
             seen.add(p["full_name"]); uniq.append(p)
     take = uniq
-    # LEGALITY: epic/ancillary pools are a tier ladder — T1-2 free, T3 needs ONE other
-    # power from the pool, T4-5 (the pets: Ice Elemental, Summon Spiderlings…) need TWO.
-    # Keep prepending the best still-legal lower-tier power until every pick's
+    # LEGALITY: epic/ancillary pools are a tier ladder — T1-2 free, T3-4 need ONE other
+    # power from the pool, only the top T5 (the pets: Ice Elemental, Summon Spiderlings…)
+    # needs TWO. Keep prepending the best still-legal lower-tier power until every pick's
     # prerequisite count is satisfied.
     allp = POWERS.get(ps) or []
     if allp and take:
         tiers = _pool_tiers(ps)
 
         def _needs(fn):
-            t = tiers.get(fn, 0)
-            return 0 if t <= 1 else (1 if t == 2 else 2)
+            return _epic_prereq_count(tiers.get(fn, 0))
 
         for _ in range(4):                    # at most a few gateways ever needed
             max_need = max((_needs(q["full_name"]) for q in take), default=0)
@@ -3815,6 +3955,13 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
     # Front-load the FIGHTING survival chain (Boxing→Tough→Weave) so it clusters early for
     # exemplaring — using the chain's effective levels keeps Boxing ahead of Tough/Weave.
     early += [(fn, pool_lvl[fn]) for fn in pool_lvl if _pool_of(fn) == "Fighting"]
+    # PROTECT THE EPIC/PATRON PICKS from downstream truncation. _pick_epic returns a set that
+    # is legal AS A WHOLE (each power's tier prerequisite satisfied by its siblings). On a
+    # power-dense AT (VEATs carry many inherent/branch powers) the greedy level-ordered fill
+    # below can run out of high pick-slots before a high-tier epic (e.g. Widow Arctic_Breath at
+    # L41) is seated — orphaning a lower-tier sibling that then fails its own prereq. Seating
+    # epics with the early batch guarantees the legal set survives intact.
+    early += [(fn, lvl) for (fn, lvl) in epic]
     early_set = {fn for fn, _ in early}
     rest = [(fn, lvl) for (fn, lvl) in allp if fn not in early_set]
 
