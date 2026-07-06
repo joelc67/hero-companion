@@ -143,7 +143,72 @@ _NOISE = re.compile(
     r"\[|.+: <(color|bgcolor))", re.I)
 
 
-def parse_line(line):
+# ── pulse capture: recruitment facts from public channels (the Lite-in-full core) ────
+# Format PROVEN by a real log line:
+#   2026-07-05 17:16:36 [Looking For Group] Bunny Emerald: <color #010101>forming +2 numina...
+# Only STRUCTURED recruitment facts become events (channel, speaker, content, spots,
+# difficulty) — general conversation is never stored, even locally. Gated by the
+# pulse_capture state flag: channel capture is its own consent, per the choice doctrine.
+_LEXICON = None
+
+
+def _lexicon():
+    global _LEXICON
+    if _LEXICON is None:
+        import sys as _s
+        if getattr(_s, "frozen", False):
+            base = os.path.join(getattr(_s, "_MEIPASS", os.path.dirname(_s.executable)), "data")
+        else:
+            base = os.path.join(os.path.dirname(__file__), "..", "data")
+        try:
+            with open(os.path.join(base, "chat_lexicon.json"), encoding="utf-8") as f:
+                _LEXICON = json.load(f)
+        except Exception:  # noqa: BLE001
+            _LEXICON = {"channels": [], "content_aliases": {}, "patterns": {}}
+    return _LEXICON
+
+
+_CHAN_RX = re.compile(r"^\[([^\]]+)\]\s+([^:]{1,40}):\s*(.*)$")
+_TAG_RX = re.compile(r"<[^>]{1,40}>")
+
+
+def parse_channel_line(msg):
+    """A recruitment EVENT from a public-channel line, or None. Never keeps raw chat:
+    only the structured fields leave this function."""
+    lx = _lexicon()
+    h = _CHAN_RX.match(msg)
+    if not h:
+        return None
+    channel, speaker, text = h.group(1), h.group(2).strip(), _TAG_RX.sub("", h.group(3))
+    if channel not in lx.get("channels", []):
+        return None
+    low = " " + text.lower() + " "
+    pats = lx.get("patterns", {})
+    forming = bool(re.search(pats.get("forming", r"\bforming\b"), low))
+    content = None
+    for alias, full in (lx.get("content_aliases") or {}).items():
+        if re.search(rf"\b{re.escape(alias)}\b", low):
+            content = full
+            if re.search(rf"\b{lx.get('master_prefix', 'mo')}\s*{re.escape(alias)}\b", low):
+                content = "Master of " + full
+            break
+    m_spots = re.search(pats.get("spots_needed", r"$^"), low)
+    m_slash = re.search(pats.get("spots_slash", r"$^"), low)
+    m_diff = re.search(pats.get("difficulty", r"$^"), low)
+    if not (content or (forming and (m_spots or m_slash))):
+        return None                      # not recruitment — never store it
+    ev = {"type": "recruit", "channel": channel, "speaker": speaker,
+          "content": content, "forming": forming}
+    if m_spots:
+        ev["spots_needed"] = int(m_spots.group(1))
+    if m_slash:
+        ev["spots_filled"], ev["spots_total"] = int(m_slash.group(1)), int(m_slash.group(2))
+    if m_diff:
+        ev["difficulty"] = int(m_diff.group(1))
+    return ev
+
+
+def parse_line(line, pulse=False):
     """(event dict | None, interesting). `interesting` flags an UNPARSED line that looks
     like it carries reward data but matched no pattern AND isn't known noise — those are
     the samples the coverage report surfaces so real logs keep improving the parser."""
@@ -151,6 +216,19 @@ def parse_line(line):
     if not m:
         return None, False
     msg = m.group("msg")
+    if pulse:
+        if msg.startswith("["):
+            ev = parse_channel_line(msg)
+            if ev:
+                ev["ts"] = m.group(1)
+                return ev, True
+        # FORMAT HUNTER: league/team lifecycle lines (joins, leader changes) have no
+        # validated format yet — surface candidates (bracketed or not, in either word
+        # order, before the noise gate can swallow them) so the first real sighting
+        # teaches the parser.
+        if (re.search(r"\b(league|team)\b", msg, re.I)
+                and re.search(r"\b(join(?:ed)?|quit|left|lead(?:er|ing)?)\b", msg, re.I)):
+            return None, True
     for etype, rex, extract in _PATTERNS:
         h = rex.match(msg)
         if h:
@@ -177,6 +255,7 @@ def ingest(log_dir, state):
                           "unparsed_interesting": 0, "unparsed_samples": []}
     if not (log_dir and os.path.isdir(log_dir)):
         return events, report
+    pulse = bool(state.get("pulse_capture"))    # channel capture is its own consent
     offsets = state.setdefault("offsets", {})
     account = os.path.basename(os.path.dirname(log_dir))   # <game>\accounts\<acct>\Logs
     for fname in sorted(os.listdir(log_dir)):
@@ -202,7 +281,7 @@ def ingest(log_dir, state):
             report["files"] += 1
             for line in complete.decode("utf-8", "replace").splitlines():
                 report["new_lines"] += 1
-                ev, interesting = parse_line(line)
+                ev, interesting = parse_line(line, pulse=pulse)
                 if ev:
                     ev["file"] = fname
                     ev["account"] = account
@@ -260,7 +339,8 @@ def load_events(limit=20000):
 def _blank_summary():
     return {"xp": 0, "inf_gained": 0, "inf_spent": 0, "merits": 0, "levels": [],
             "badges": [], "kills": 0, "deaths": 0, "drops": [], "ah_sold": 0,
-            "drop_kinds": {}, "days": set()}
+            "drop_kinds": {}, "days": set(),
+            "pulse": {"recruit_seen": 0, "by_content": {}, "recent": []}}
 
 
 def summarize(events, accounts=None):
@@ -328,3 +408,12 @@ def _tally(s, ev):
         s["drops"].append(ev)
         k = ev.get("kind", "salvage")
         s["drop_kinds"][k] = s["drop_kinds"].get(k, 0) + 1
+    elif t == "recruit":
+        pu = s["pulse"]
+        pu["recruit_seen"] += 1
+        key = ev.get("content") or "(unrecognized content)"
+        pu["by_content"][key] = pu["by_content"].get(key, 0) + 1
+        if len(pu["recent"]) < 12:
+            pu["recent"].append({k: ev.get(k) for k in
+                                 ("ts", "channel", "content", "spots_needed",
+                                  "spots_filled", "spots_total", "difficulty")})

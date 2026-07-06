@@ -3101,6 +3101,20 @@ def gamelog_watch():
     return jsonify({"ok": True, "watching": dirs})
 
 
+@app.route("/gamelog/pulse", methods=["POST"])
+def gamelog_pulse():
+    """Turn pulse capture (public-channel recruitment facts) on or off. Its OWN consent,
+    separate from log capture, per the choice doctrine: channel lines contain other
+    players' text, so even local structured capture is an explicit, reversible opt-in.
+    Only structured facts (channel/speaker/content/spots/difficulty) are ever stored;
+    raw chat lines never are."""
+    body = request.get_json(force=True) or {}
+    st = gamelog.load_state()
+    st["pulse_capture"] = bool(body.get("enabled"))
+    gamelog.save_state(st)
+    return jsonify({"ok": True, "pulse_capture": st["pulse_capture"]})
+
+
 @app.route("/gamelog/ingest", methods=["POST"])
 def gamelog_ingest():
     """Incrementally read every watched account's log files and return fresh insights.
