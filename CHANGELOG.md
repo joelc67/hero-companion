@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## 0.12.7 — unreleased
+## 0.12.7 — July 5, 2026
 
 - **The Play Log parser is now built on real logs.** The first cut guessed at line
   formats; this version is validated against tens of thousands of lines of actual
