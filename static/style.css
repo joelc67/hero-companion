@@ -107,7 +107,8 @@ main.has-info {
     "rail  build info";
 }
 #setup { grid-area: setup; }
-#builder { grid-area: build; }
+/* The wide column = powers grid + Play Log stacked; the Log fills the space when empty. */
+.build-col { grid-area: build; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 #power-info { grid-area: info; position: sticky; top: 84px; }
 #power-info.hidden { display: none; }
 .rail { grid-area: rail; display: flex; flex-direction: column; gap: 10px; }
@@ -936,8 +937,8 @@ body { overflow: hidden; }
   margin-top: 18px; line-height: 1.8; }
 .app-credits a { color: var(--accent); text-decoration: none; }
 
-/* ── PLAY LOG: full-width insight course at the very bottom, grows downward ── */
-#gamelog { margin: 12px 14px 0; }
+/* ── PLAY LOG: a card at the bottom of the wide build column (fills empty space) ── */
+#gamelog { margin: 0; }
 #gamelog h2 { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 #gl-refresh { width: auto; margin-left: auto; font-size: 12px; padding: 2px 10px; }
 .gl-cards { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; margin-top: 8px; }

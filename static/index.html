@@ -208,7 +208,9 @@
     <!-- RIGHT: Power Info — Sidekick-style detail panel for the selected power -->
     <aside id="power-info" class="panel pinfo hidden"></aside>
 
-    <!-- WIDE: the powers grid — the main event -->
+    <!-- WIDE column: the powers grid + the Play Log stacked beneath it, so when there's
+         no build yet the Play Log rises up to fill the wide right area (no dead space). -->
+    <div class="build-col">
     <section id="builder" class="panel">
       <h2>Powers &amp; Slots</h2>
       <div id="edit-bar" class="edit-bar">
@@ -264,6 +266,18 @@
       </details>
 
     </section>
+
+    <!-- PLAY LOG: docked at the bottom of the wide build column — rises to fill the space
+         when no build is loaded, sits under the build when one is. Insights only. -->
+    <section id="gamelog" class="panel hidden">
+      <h2>📜 Play Log <span class="muted small">— insights from your game sessions</span>
+        <button id="gl-refresh" class="ghost-btn" type="button" onclick="gamelogIngest()">⟳ Read new log entries</button>
+      </h2>
+      <div id="gl-setup" class="muted small"></div>
+      <div id="gl-cards" class="gl-cards"></div>
+      <div id="gl-coverage" class="muted small"></div>
+    </section>
+    </div><!-- /build-col -->
 
     <!-- RIGHT RAIL: live stats + AI controls in ONE sticky column; the page scrolls under it -->
     <aside class="rail">
@@ -390,17 +404,6 @@
     </section>
     </aside>
   </main>
-
-  <!-- PLAY LOG: full-width insight course at the very bottom — grows downward as the
-       user's /logchat sessions accumulate. Raw log stays invisible; insights only. -->
-  <section id="gamelog" class="panel hidden">
-    <h2>📜 Play Log <span class="muted small">— insights from your game sessions</span>
-      <button id="gl-refresh" class="ghost-btn" type="button" onclick="gamelogIngest()">⟳ Read new log entries</button>
-    </h2>
-    <div id="gl-setup" class="muted small"></div>
-    <div id="gl-cards" class="gl-cards"></div>
-    <div id="gl-coverage" class="muted small"></div>
-  </section>
 
   <!-- Enhancement picker modal -->
   <div id="modal" class="modal hidden">

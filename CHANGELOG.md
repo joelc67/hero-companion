@@ -2,6 +2,11 @@
 
 ## 0.12.8 — unreleased
 
+- **The Play Log moved up into the main workspace.** Instead of a detached strip far
+  below everything, it now docks in the wide build column — filling that space when no
+  build is loaded, and sitting neatly under the build when one is. On narrow screens it
+  still stacks full-width like the rest.
+
 - **Cleaner haul advice.** Incarnate salvage and crafting materials no longer get a
   "KEEP" tag — there's no decision to make (you bank them and spend later), so the
   haul now saves its keep/sell verdicts for the drops that actually warrant one
