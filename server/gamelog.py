@@ -41,6 +41,48 @@ def save_state(st):
         json.dump(st, f)
 
 
+# ── single-ingester lock: full app and Companion Lite share ONE capture store ─────────
+# Both processes tail the same log files with the same byte offsets; two ingesters would
+# race the offsets and duplicate or drop events. Whoever holds this heartbeat lock ingests;
+# the other reads events.jsonl freely (reading needs no lock). Stale after 90s, so a
+# crashed owner never wedges capture.
+_OWNER_TTL = 90
+
+
+def _owner_path():
+    return os.path.join(STATE_DIR, "ingest_owner.json")
+
+
+def acquire_ingest(tag):
+    """True if this process may ingest (it becomes/refreshes the owner). `tag` names the
+    owner for status display ('full' | 'lite')."""
+    os.makedirs(STATE_DIR, exist_ok=True)
+    now = time.time()
+    me = {"pid": os.getpid(), "tag": tag, "ts": now}
+    try:
+        with open(_owner_path(), encoding="utf-8") as f:
+            cur = json.load(f)
+        if cur.get("pid") != me["pid"] and (now - float(cur.get("ts", 0))) < _OWNER_TTL:
+            return False                 # someone else holds it, and their heartbeat is fresh
+    except Exception:  # noqa: BLE001 — no owner file yet
+        pass
+    with open(_owner_path(), "w", encoding="utf-8") as f:
+        json.dump(me, f)
+    return True
+
+
+def ingest_owner():
+    """Current owner record, or None — for status display ('captured by Companion Lite')."""
+    try:
+        with open(_owner_path(), encoding="utf-8") as f:
+            cur = json.load(f)
+        if (time.time() - float(cur.get("ts", 0))) < _OWNER_TTL:
+            return cur
+    except Exception:  # noqa: BLE001
+        pass
+    return None
+
+
 # ── discovery ────────────────────────────────────────────────────────────────
 def find_log_accounts(accounts_dirs):
     """Every account folder with (or without) a Logs dir, so the UI can offer the

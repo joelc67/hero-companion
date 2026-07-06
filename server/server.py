@@ -3124,6 +3124,13 @@ def gamelog_ingest():
     dirs = _watch_dirs(st)
     if not dirs:
         return jsonify({"ok": False, "response": "Pick an account to watch first."}), 400
+    # Companion Lite may be running as the capture daemon — if it holds the ingest lock,
+    # don't race it: its events land in the same store, so insights stay fresh anyway.
+    if not gamelog.acquire_ingest("full"):
+        owner = gamelog.ingest_owner() or {}
+        return jsonify({"ok": True, "report": {"captured_by": owner.get("tag", "other")},
+                        "insights": _gamelog_insights(),
+                        "status": {"has_files": True, "external_capture": True}})
     agg = {"files": 0, "new_lines": 0, "parsed": 0, "unparsed_interesting": 0,
            "unparsed_samples": []}
     newest = None
