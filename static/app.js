@@ -2425,14 +2425,25 @@ async function recompute() {
   updateInfoCards(LAST_TOTALS);
   // Server-corrected pick levels (older saves carry naive assignments — e.g. both
   // Poison powers badged level 1). Adopt them and repaint the wall once.
+  let repaint = false;
   if (totals && totals.pick_levels) {
-    let changed = false;
     build.powers.forEach(p => {
       const lv = totals.pick_levels[p.full_name];
-      if (lv && p.pick_level !== lv) { p.pick_level = lv; changed = true; }
+      if (lv && p.pick_level !== lv) { p.pick_level = lv; repaint = true; }
     });
-    if (changed) renderPowers();
   }
+  // Slotting rationale (transparency chips) for whatever is on screen — so a Resumed or
+  // Imported build shows them, not just a freshly-solved one.
+  if (totals) {
+    const plans = totals.slot_plans || {};
+    build.powers.forEach(p => {
+      const plan = plans[p.full_name] || null;
+      if (JSON.stringify(p.slot_plan || null) !== JSON.stringify(plan)) {
+        p.slot_plan = plan; repaint = true;
+      }
+    });
+  }
+  if (repaint) renderPowers();
   refreshBuildViews();   // keep the always-visible respec-order + tray sections live
 }
 

@@ -1097,6 +1097,18 @@ def build_calculate():
         _assign_pick_levels(pw, build.get("archetype"))
         res["pick_levels"] = {p["full_name"]: p["pick_level"]
                               for p in pw if p.get("pick_level")}
+    # Slotting rationale per power (the transparency chips), attached on EVERY recompute so a
+    # RESUMED or IMPORTED build shows them too — not only a freshly solved one (field report:
+    # chips missing after Resume, which read as the update being ignored).
+    plans = {}
+    for p in pw:
+        fn = p.get("full_name")
+        if not fn:
+            continue
+        plan = _slot_plan(p)
+        if plan:
+            plans[fn] = plan
+    res["slot_plans"] = plans
     return jsonify(res)
 
 
