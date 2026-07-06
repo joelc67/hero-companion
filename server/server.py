@@ -2707,46 +2707,72 @@ else:
         os.path.dirname(os.path.abspath(__file__)), "..", "gamelog"))
 
 
+def _watch_dirs(st):
+    """The set of watched Logs folders, migrating the old single-account state."""
+    dirs = st.get("watch_dirs")
+    if dirs is None and st.get("log_dir"):
+        dirs = [st["log_dir"]]
+    return list(dirs or [])
+
+
 @app.route("/gamelog/scan", methods=["POST"])
 def gamelog_scan():
-    """Accounts (with/without Logs folders) so the user picks which to watch —
-    multi-account players monitor the one they actually play."""
+    """Accounts (with/without Logs folders) so the user picks which to watch — a
+    dual-boxer can watch more than one at once."""
     body = request.get_json(force=True) or {}
     accounts = gamelog.find_log_accounts(_find_accounts_dirs(body.get("root")))
     st = gamelog.load_state()
-    return jsonify({"ok": True, "accounts": accounts, "watching": st.get("log_dir")})
+    return jsonify({"ok": True, "accounts": accounts, "watching": _watch_dirs(st)})
 
 
 @app.route("/gamelog/watch", methods=["POST"])
 def gamelog_watch():
-    """Remember which account's Logs folder to ingest. Path must live under a known
-    accounts directory — same containment rule as /ingame/read."""
+    """Set the watched Logs folders (dual-box = more than one). Each path must live under
+    a known accounts directory — same containment rule as /ingame/read. Accepts `log_dirs`
+    (list) or `log_dir` (single, back-compat)."""
     body = request.get_json(force=True) or {}
-    path = os.path.abspath(body.get("log_dir") or "")
+    raw = body.get("log_dirs") or ([body["log_dir"]] if body.get("log_dir") else [])
     allowed = [os.path.normcase(a) for a in _find_accounts_dirs(body.get("root"))]
-    if not any(os.path.normcase(path).startswith(a + os.sep) for a in allowed):
+    dirs = []
+    for d in raw:
+        p = os.path.abspath(d or "")
+        if any(os.path.normcase(p).startswith(a + os.sep) for a in allowed):
+            dirs.append(p)
+    if raw and not dirs:
         return jsonify({"ok": False, "response": "That folder isn't under a known accounts "
                         "directory."}), 400
     st = gamelog.load_state()
-    if st.get("log_dir") != path:
-        st["character"] = None          # new account — re-detect who's logged in
-    st["log_dir"] = path
+    st["watch_dirs"] = dirs
+    st.pop("log_dir", None)             # fully migrated to the list
     gamelog.save_state(st)
-    return jsonify({"ok": True, "watching": path})
+    return jsonify({"ok": True, "watching": dirs})
 
 
 @app.route("/gamelog/ingest", methods=["POST"])
 def gamelog_ingest():
-    """Incrementally read the watched account's log files and return fresh insights.
-    The report is honest about coverage: pattern formats are PROVISIONAL until a real
-    log validates them, so unparsed 'You …' lines are counted and sampled."""
+    """Incrementally read every watched account's log files and return fresh insights.
+    The report is honest about coverage: unrecognized reward-shaped lines are counted and
+    sampled so real logs keep improving the parser."""
     st = gamelog.load_state()
-    if not st.get("log_dir"):
+    dirs = _watch_dirs(st)
+    if not dirs:
         return jsonify({"ok": False, "response": "Pick an account to watch first."}), 400
-    _, report = gamelog.ingest(st["log_dir"], st)
+    agg = {"files": 0, "new_lines": 0, "parsed": 0, "unparsed_interesting": 0,
+           "unparsed_samples": []}
+    newest = None
+    for d in dirs:
+        _, rep = gamelog.ingest(d, st)
+        for k in ("files", "new_lines", "parsed", "unparsed_interesting"):
+            agg[k] += rep.get(k, 0)
+        for s in rep.get("unparsed_samples", []):
+            if len(agg["unparsed_samples"]) < 20:
+                agg["unparsed_samples"].append(s)
+        stt = gamelog.log_status(d, time.time())
+        if stt.get("has_files"):
+            newest = stt
     gamelog.save_state(st)
-    return jsonify({"ok": True, "report": report, "insights": _gamelog_insights(),
-                    "status": gamelog.log_status(st["log_dir"], time.time())})
+    return jsonify({"ok": True, "report": agg, "insights": _gamelog_insights(),
+                    "status": newest or {"has_files": False}})
 
 
 @app.route("/gamelog/insights", methods=["GET"])
@@ -2798,9 +2824,10 @@ def _gamelog_insights():
     by rarity. Events are attributed to the character active at the time (Welcome markers),
     so stats break out per character and the active character links to its saved fit."""
     st = gamelog.load_state()
-    account = os.path.basename(os.path.dirname(st["log_dir"])) if st.get("log_dir") else None
-    character = st.get("character")
-    s = gamelog.summarize(gamelog.load_events(), account=account)
+    dirs = _watch_dirs(st)
+    accounts = [os.path.basename(os.path.dirname(d)) for d in dirs]
+    chars_by_acct = st.get("characters") or {}
+    s = gamelog.summarize(gamelog.load_events(), accounts=accounts)
     haul = []
     for d in s["drops"][-80:]:
         item = d.get("item") or ""
@@ -2831,10 +2858,19 @@ def _gamelog_insights():
             verdict, why = "SELL", "salvage — sell the surplus, keep what your recipes need"
         haul.append({"ts": d.get("ts"), "item": item, "kind": kind,
                      "set": setname, "verdict": verdict, "why": why})
-    fit, linked = _saved_fit_for(character)
+    # Per-watched-account "who is playing" + that character's fit link. For a dual-boxer
+    # this is one entry per client (Rattle on one account, the farmer on the other).
+    who = []
+    for acct in accounts:
+        ch = chars_by_acct.get(acct)
+        fit, linked = _saved_fit_for(ch)
+        who.append({"account": acct, "character": ch,
+                    "fit": {"id": fit["id"], "name": fit["name"], "linked": linked} if fit else None})
+    # keep single-character fields for back-compat (first watched account)
+    first = who[0] if who else {"character": None, "fit": None}
     return {"summary": {k: v for k, v in s.items() if k not in ("drops",)},
-            "haul": haul, "character": character,
-            "fit": {"id": fit["id"], "name": fit["name"], "linked": linked} if fit else None}
+            "haul": haul, "who": who,
+            "character": first.get("character"), "fit": first.get("fit")}
 
 
 @app.route("/build/import", methods=["POST"])

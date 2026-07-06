@@ -118,10 +118,10 @@ check("log_status reports the newest file", stat.get("has_files") and stat.get("
 
 # character detection + per-character attribution
 print("\n── character identity ──")
-check("Welcome line -> current character in state", st.get("character") == "Rattle",
-      st.get("character"))
+check("Welcome line -> current character in state (per account)",
+      (st.get("characters") or {}).get("filofinfain") == "Rattle", str(st.get("characters")))
 allev = gamelog.load_events()
-summ = gamelog.summarize(allev, account="filofinfain")
+summ = gamelog.summarize(allev, accounts=["filofinfain"])
 check("per-character breakdown names Rattle", "Rattle" in (summ.get("by_character") or {}),
       list((summ.get("by_character") or {}).keys()))
 rattle = (summ.get("by_character") or {}).get("Rattle", {})
@@ -152,9 +152,33 @@ check("summary kills counted", s["kills"] == 3, s["kills"])
 check("summary influence includes AH sale", s["inf_gained"] >= 15000000)
 check("summary drop kinds populated", bool(s["drop_kinds"]), str(s["drop_kinds"]))
 
+# multi-account watch: a second synthetic account, watch BOTH, per-character both present
+print("\n── multi-account watch ──")
+logdir2 = os.path.join(tmp, "accounts", "kalicous", "Logs")
+os.makedirs(logdir2)
+with open(os.path.join(logdir2, "chatlog 2026-07-05.txt"), "w", encoding="utf-8") as f:
+    f.write("2026-07-05 18:00:00 Your chat is now being logged.\n")
+    f.write("2026-07-05 18:00:05 Welcome to City of Heroes, Lime Juice!\n")
+    f.write("2026-07-05 18:00:10 You have defeated Malifiend Fragment\n")
+    f.write("2026-07-05 18:00:11 You gain 5,000 experience and 12,000 influence.\n")
+st2 = {"watch_dirs": [logdir, logdir2], "offsets": {}}
+gamelog.ingest(logdir, st2)
+gamelog.ingest(logdir2, st2)
+allev2 = gamelog.load_events()
+both = gamelog.summarize(allev2, accounts=["filofinfain", "kalicous"])
+bc = both.get("by_character") or {}
+check("both characters attributed across accounts", "Rattle" in bc and "Lime Juice" in bc,
+      list(bc.keys()))
+check("per-account current characters tracked",
+      (st2.get("characters") or {}).get("kalicous") == "Lime Juice",
+      str(st2.get("characters")))
+
 c = srv.app.test_client()
+r = c.post("/gamelog/watch", json={"log_dirs": [logdir, logdir2], "root": tmp}).get_json()
+check("watch accepts multiple in-tree dirs", r.get("ok") and len(r.get("watching", [])) == 2,
+      str(r.get("watching")))
 r = c.post("/gamelog/watch", json={"log_dir": logdir, "root": tmp}).get_json()
-check("watch accepts in-tree dir", r.get("ok"))
+check("watch back-compat single log_dir", r.get("ok") and len(r.get("watching", [])) == 1)
 ins = c.get("/gamelog/insights").get_json()["insights"]
 inc = next((h for h in ins["haul"] if h["item"] == "Incarnate Thread"), None)
 check("insights: incarnate drop has NO keep/sell verdict (just bank it)",

@@ -946,6 +946,10 @@ body { overflow: hidden; }
   border-radius: 8px; padding: 10px 12px; min-width: 0; }
 .gl-card.gl-wide { flex: 2 1 420px; }
 .glc-head { font-size: 11px; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 6px; }
+.glc-head.glc-char { font-size: 13px; letter-spacing: 0; color: var(--ink);
+  display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+  border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+.glc-fit { font-size: 11px; font-weight: 400; }
 .glc-line { font-size: 12.5px; line-height: 1.7; }
 .glc-line .up { color: var(--def); }
 .glc-line .dn { color: var(--bad); }

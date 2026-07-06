@@ -1281,97 +1281,90 @@ async function initGamelog() {
     if (!scan || !scan.ok || !(scan.accounts || []).length) return;   // no game install found
     sec.classList.remove("hidden");
     GAMELOG_ACCOUNTS = scan.accounts;
-    if (scan.watching) {
-      gamelogWatchingUI(scan.watching);
-      gamelogIngest();                 // first read + starts the live poll
-    } else {
-      renderGamelogPicker(scan.accounts);
-    }
+    GAMELOG_WATCHING = scan.watching || [];   // list of watched log dirs (dual-box = >1)
+    renderGamelogControls();
+    if (GAMELOG_WATCHING.length) gamelogIngest();
   } catch { /* section stays hidden on any failure */ }
 }
 
-// All discovered accounts, cached so the watching UI can show them as switch chips —
-// a dual-boxer flips between their two accounts in one obvious click.
+// All discovered accounts + the subset currently watched. A dual-boxer ticks BOTH so
+// the Play Log shows each character (each account is its own log).
 let GAMELOG_ACCOUNTS = [];
+let GAMELOG_WATCHING = [];
 
-function gamelogWatchingUI(dir) {
-  $("gl-refresh").style.display = "";
+function renderGamelogControls() {
   const nd = (p) => (p || "").replace(/\\/g, "\\\\");
   const chips = (GAMELOG_ACCOUNTS || []).map(a => {
-    const active = a.log_dir === dir;
-    return `<button class="gl-chip${active ? " active" : ""}"`
-      + (active ? " disabled" : ` onclick="gamelogWatch('${nd(escHtml(a.log_dir))}')"`)
-      + `>${active ? "● " : ""}${escHtml(a.account)}</button>`;
+    const on = GAMELOG_WATCHING.includes(a.log_dir);
+    return `<button class="gl-chip${on ? " active" : ""}" onclick="gamelogToggle('${nd(escHtml(a.log_dir))}')">`
+      + `${on ? "● " : ""}${escHtml(a.account)}`
+      + (a.has_logs ? "" : ` <span class="muted">(no logs)</span>`) + `</button>`;
   }).join(" ");
+  const watching = GAMELOG_WATCHING.length;
   $("gl-setup").innerHTML =
-    `<span id="gl-live" class="gl-live" title="Reading new log entries automatically">● live</span> `
-    + `<b>Watching:</b> ${chips} <span id="gl-who"></span>`
-    + ((GAMELOG_ACCOUNTS || []).length > 1
-        ? ` <span class="muted small">— click another account to switch. `
-          + `Dual-boxing? Each account is its own log; watch each to see that character.</span>`
-        : "");
+    (watching ? `<span class="gl-live" title="Reading new log entries automatically">● live</span> ` : "")
+    + `<b>Watch account${GAMELOG_ACCOUNTS.length > 1 ? "s" : ""}:</b> ${chips} `
+    + `<span class="muted small">— ${watching ? "click to add/remove. " : "pick the one(s) you play. "}`
+    + `Dual-boxing? Watch both to see each character side by side.</span>`
+    + (watching ? "" : gamelogSetupHelp());
+  $("gl-refresh").style.display = watching ? "" : "none";
+  if (!watching) { $("gl-cards").innerHTML = ""; $("gl-coverage").innerHTML = ""; gamelogStopLive(); }
+}
+
+window.gamelogToggle = async function (dir) {
+  const i = GAMELOG_WATCHING.indexOf(dir);
+  if (i >= 0) GAMELOG_WATCHING.splice(i, 1); else GAMELOG_WATCHING.push(dir);
+  const r = await api("/gamelog/watch", postJson({ log_dirs: GAMELOG_WATCHING }));
+  if (r && r.ok) GAMELOG_WATCHING = r.watching || GAMELOG_WATCHING;
+  renderGamelogControls();
+  if (GAMELOG_WATCHING.length) gamelogIngest(); else gamelogStopLive();
+};
+
+// Per-character fit link (used inside each character's stat card). Returns HTML for the
+// "load their fit / import / link" action, based on the character + its matched fit.
+let GAMELOG_LINK_CHAR = null;   // character whose link action is currently in flight
+function gamelogFitActionHtml(character, fit) {
+  const c = escHtml(character);
+  const saveOpen = typeof CURRENT_SAVE !== "undefined" && CURRENT_SAVE;
+  const loaded = fit && saveOpen && CURRENT_SAVE.id === fit.id;
+  const nm = (v) => escHtml(v || "");
+  if (fit && fit.linked) {
+    return loaded ? `<span class="muted small">fit loaded</span>`
+      : `<button class="linkbtn" onclick="loadSave('${nm(fit.id)}')">▶ load fit</button>`;
+  }
+  if (fit) {
+    return `<button class="linkbtn" onclick="gamelogLink('${nm(character)}','${nm(fit.id)}')">▶ load ${nm(fit.name)}</button>`
+      + ` <button class="linkbtn quiet" onclick="gamelogNotThis('${nm(character)}')" title="Matched by name — clear if wrong">not ${c}'s?</button>`;
+  }
+  return `<button class="linkbtn" onclick="gamelogImportFit('${nm(character)}')">📥 import fit</button>`
+    + (saveOpen ? ` <button class="linkbtn" onclick="gamelogLink('${nm(character)}')">link open fit</button>` : "");
 }
 
 // "Playing as <character>" + a one-click link to that character's saved fit — this is
 // what connects the log (who's active) to the builds (their fit). The character comes
 // from the log's "Welcome to City of Heroes, X!" marker.
-let GAMELOG_CHARACTER = null;
-function gamelogWhoUI(character, fit) {
-  GAMELOG_CHARACTER = character || null;
-  const who = $("gl-who");
-  if (!who) return;
-  if (!character) {
-    who.innerHTML = `<span class="muted small">· character not detected yet `
-      + `<span title="The game only names your character on a fresh login. Log out to `
-      + `character select and back in, and it'll show here.">ⓘ</span></span>`;
-    return;
-  }
-  const c = escHtml(character);
-  const saveOpen = typeof CURRENT_SAVE !== "undefined" && CURRENT_SAVE;
-  const loaded = fit && saveOpen && CURRENT_SAVE.id === fit.id;
-  let tail;
-  if (fit && fit.linked) {
-    tail = loaded ? `<span class="muted small">(their fit is loaded)</span>`
-                  : `<button class="linkbtn" onclick="loadSave('${escHtml(fit.id)}')">▶ load ${c}'s fit</button>`;
-  } else if (fit) {
-    // a name GUESS — offer it, but let the user correct it (names can change / collide)
-    tail = `<button class="linkbtn" onclick="gamelogLink('${escHtml(fit.id)}')">▶ load ${escHtml(fit.name)}'s fit</button>`
-      + ` <span class="muted small">(matched by name · `
-      + `<button class="linkbtn quiet" onclick="gamelogNotThis()">not ${c}'s?</button>)</span>`;
-  } else {
-    // no fit — recommend importing this character's build, with the loaded-fit shortcut
-    tail = `<span class="muted small">— no fit yet.</span> `
-      + `<button class="linkbtn" onclick="gamelogImportFit()">📥 import ${c}'s build</button>`
-      + (saveOpen ? ` <span class="muted small">or </span><button class="linkbtn" onclick="gamelogLink()">link the open fit to ${c}</button>` : "");
-  }
-  who.innerHTML = `· <b>playing ${c}</b> ${tail}`;
-}
-
-// Explicitly tie the active character to a fit (rename-proof) and load it. With no id,
-// links whatever fit is currently open (CURRENT_SAVE).
-window.gamelogLink = async function (saveId) {
-  if (!GAMELOG_CHARACTER) return;
+// Explicitly tie a character to a fit (rename-proof). Args: (character, [saveId]). With
+// no saveId, links whatever fit is currently open (CURRENT_SAVE). Re-renders from the
+// fresh insights the link endpoint returns.
+window.gamelogLink = async function (character, saveId) {
+  if (!character) return;
   const id = saveId || (typeof CURRENT_SAVE !== "undefined" && CURRENT_SAVE && CURRENT_SAVE.id);
   if (!id) return;
-  await api("/gamelog/link", postJson({ character: GAMELOG_CHARACTER, save_id: id }));
-  if (saveId) loadSave(saveId);           // loading a named-guess: open it too
-  else gamelogIngest(true);               // just re-render the who-line
+  const r = await api("/gamelog/link", postJson({ character, save_id: id }));
+  if (saveId) loadSave(saveId);           // loading a named guess: open it too
+  if (r && r.ok) renderGamelog(r.insights, null, null);
 };
-window.gamelogNotThis = async function () {
-  if (!GAMELOG_CHARACTER) return;
-  // clear any link and tell the user how to point it at the right fit
-  await api("/gamelog/link", postJson({ character: GAMELOG_CHARACTER, save_id: "" }));
-  $("gl-who").innerHTML = `· <b>playing ${escHtml(GAMELOG_CHARACTER)}</b> `
-    + `<span class="muted small">— open ${escHtml(GAMELOG_CHARACTER)}'s fit (Resume, or import it), `
-    + `then click "link the open fit".</span> `
-    + `<button class="linkbtn" onclick="gamelogImportFit()">📥 import their build</button>`;
+window.gamelogNotThis = async function (character) {
+  if (!character) return;
+  const r = await api("/gamelog/link", postJson({ character, save_id: "" }));
+  if (r && r.ok) renderGamelog(r.insights, null, null);
+  $("gl-coverage").innerHTML = `<span class="muted small">Cleared the guess for `
+    + `<b>${escHtml(character)}</b>. Open their fit (Resume or import), then click "link open fit".</span>`;
 };
-// Point the user at the in-game import for this character, with the steps.
-window.gamelogImportFit = function () {
-  $("gl-who").innerHTML = `<span class="muted small">To import `
-    + `<b>${escHtml(GAMELOG_CHARACTER || "this character")}</b>'s build: in game type `
-    + `<code>/build_save_file</code>, then</span> `
-    + `<button class="linkbtn" onclick="resyncFromGame()">pick the exported file →</button>`;
+window.gamelogImportFit = function (character) {
+  $("gl-coverage").innerHTML = `<span class="muted small">To import <b>${escHtml(character || "this character")}</b>'s `
+    + `build: in game type <code>/build_save_file</code>, then pick the exported file →</span>`;
+  resyncFromGame();
 };
 
 // Live reader: while an account is watched and the Play Log is on screen, poll for new
@@ -1386,23 +1379,6 @@ function gamelogStartLive() {
 }
 function gamelogStopLive() {
   if (GAMELOG_TIMER) { clearInterval(GAMELOG_TIMER); GAMELOG_TIMER = null; }
-}
-
-function renderGamelogPicker(accounts) {
-  GAMELOG_ACCOUNTS = accounts;
-  // The read button can't do anything until an account is watched (field report:
-  // clicking it pre-pick was a trap) — it simply doesn't exist until then.
-  $("gl-refresh").style.display = "none";
-  $("gl-cards").innerHTML = "";
-  $("gl-coverage").innerHTML = "";
-  $("gl-setup").innerHTML =
-    `Which account do you want to watch? `
-    + accounts.map(a =>
-        `<button class="gl-acct-btn" onclick="gamelogWatch('${escHtml(a.log_dir).replace(/\\/g, "\\\\")}')">`
-        + `▶ Watch ${escHtml(a.account)}${a.has_logs ? ` <span class="muted">(${a.log_files} log file${a.log_files > 1 ? "s" : ""})</span>`
-                                                     : ` <span class="muted">(no logs yet)</span>`}</button>`).join(" ")
-    + `<br><span class="muted">No logs yet? In game, type <code>/logchat</code> once (it stays on) — `
-    + `the game then writes a day file to that account's Logs folder every session.</span>`;
 }
 
 window.playlogConsent = function (v) {
@@ -1434,32 +1410,11 @@ function gamelogSetupHelp() {
   </details>`;
 }
 
-window.gamelogWatch = async function (logDir) {
-  const r = await api("/gamelog/watch", postJson({ log_dir: logDir }));
-  if (!r || !r.ok) {
-    await gamelogPick();
-    $("gl-coverage").textContent = (r && r.response) || "Couldn't watch that folder.";
-    return;
-  }
-  gamelogWatchingUI(logDir);
-  gamelogIngest();
-};
-
-window.gamelogPick = async function () {
-  gamelogStopLive();
-  const scan = await api("/gamelog/scan", postJson({}));
-  if (scan && scan.ok) renderGamelogPicker(scan.accounts);
-};
-
 window.gamelogIngest = async function (isPoll) {
   const r = await api("/gamelog/ingest", postJson({}));
   if (!r || !r.ok) {
     if (isPoll) return;              // a background poll failing is silent
-    // Never a dead end (field report: the error text replaced the picker, leaving no
-    // way forward) — bring the account choices back with the guidance attached.
-    await gamelogPick();
-    $("gl-coverage").innerHTML =
-      `<b>First pick the account to watch</b> — click its name above, then ⟳.`;
+    renderGamelogControls();        // no watched account → back to the account chips
     return;
   }
   renderGamelog(r.insights, r.report, r.status);
@@ -1470,7 +1425,6 @@ function renderGamelog(ins, report, status) {
   const s = (ins || {}).summary || {};
   const haul = (ins || {}).haul || [];
   const fmt = (n) => (n || 0).toLocaleString();
-  gamelogWhoUI((ins || {}).character, (ins || {}).fit);   // "playing X" + fit link
   // Logging-off nudge: we can't see whether the game is running, so only nudge on a
   // clear signal — no chat log for today at all (they likely haven't turned /logchat on).
   const hint = $("gl-hint") || (() => {
@@ -1486,20 +1440,31 @@ function renderGamelog(ins, report, status) {
       + `in game (and relog once) to start today's log.`;
     hint.style.display = "";
   } else { hint.style.display = "none"; }
+  // Per-character stat cards: one per character the log names (a dual-boxer sees Rattle
+  // and the farmer side by side). Falls back to a combined card if no character is named.
+  const fitOf = {};
+  ((ins || {}).who || []).forEach(w => { if (w.character) fitOf[w.character] = w; });
+  const kindsLine = (dk) => Object.keys(dk || {}).length
+    ? Object.entries(dk).map(([k, n]) => `${n} ${escHtml(k)}`).join(" · ") : "none yet";
+  const statCard = (name, cs, w) => {
+    const head = name
+      ? `<b>${escHtml(name)}</b> <span class="glc-fit">${w ? gamelogFitActionHtml(name, w.fit) : ""}</span>`
+      : "THIS SESSION";
+    return `<div class="gl-card"><div class="glc-head glc-char">${head}</div>
+      <div class="glc-line">Influence <b class="up">+${fmt(cs.inf_gained)}</b>${cs.inf_spent ? ` / <b class="dn">-${fmt(cs.inf_spent)}</b>` : ""}</div>
+      <div class="glc-line">Enemies defeated <b>${fmt(cs.kills)}</b>${cs.deaths ? ` · <span class="dn">${fmt(cs.deaths)} faceplant${cs.deaths > 1 ? "s" : ""}</span>` : ""}</div>
+      <div class="glc-line">XP <b>${fmt(cs.xp)}</b>${cs.merits ? ` · merits <b>${fmt(cs.merits)}</b>` : ""}</div>
+      <div class="glc-line muted">drops: ${kindsLine(cs.drop_kinds)}</div>
+      ${(cs.badges || []).length ? `<div class="glc-line">Badges: <b>${cs.badges.slice(-4).map(escHtml).join(", ")}</b></div>` : ""}</div>`;
+  };
   const cards = [];
-  cards.push(`<div class="gl-card"><div class="glc-head">SESSION TOTALS</div>
-    <div class="glc-line">XP gained <b>${fmt(s.xp)}</b></div>
-    <div class="glc-line">Influence <b class="up">+${fmt(s.inf_gained)}</b>${s.inf_spent ? ` / <b class="dn">-${fmt(s.inf_spent)}</b> spent` : ""}</div>
-    <div class="glc-line">Reward merits <b>${fmt(s.merits)}</b></div>
-    <div class="glc-line">Enemies defeated <b>${fmt(s.kills)}</b>${s.deaths ? ` · <span class="dn">${fmt(s.deaths)} faceplant${s.deaths > 1 ? "s" : ""}</span>` : ""}</div>
-    ${s.days && s.days.length ? `<div class="glc-line muted">across ${s.days.length} day(s) of logs</div>` : ""}</div>`);
-  const kinds = s.drop_kinds || {};
-  const kindLine = Object.keys(kinds).length
-    ? Object.entries(kinds).map(([k, n]) => `${n} ${escHtml(k)}`).join(" · ") : "none yet";
-  cards.push(`<div class="gl-card"><div class="glc-head">PROGRESS &amp; LOOT</div>
-    <div class="glc-line">${s.max_level ? `Reached <b>level ${s.max_level}</b>` : "Level 50 (no level-ups logged this session)"}</div>
-    <div class="glc-line">Drops: <b>${kindLine}</b></div>
-    <div class="glc-line">${(s.badges || []).length ? `Badges: <b>${s.badges.slice(-5).map(escHtml).join(", ")}</b>${s.badges.length > 5 ? ` +${s.badges.length - 5} more` : ""}` : "No badges logged this session"}</div></div>`);
+  const byChar = s.by_character || {};
+  const names = Object.keys(byChar);
+  if (names.length) {
+    names.forEach(n => cards.push(statCard(n, byChar[n], fitOf[n])));
+  } else {
+    cards.push(statCard(null, s, null));   // no Welcome marker yet — combined totals
+  }
   const rows = haul.slice(-15).reverse().map(h =>
     `<tr title="${escHtml(h.why || "")}"><td>${escHtml(h.item)}</td><td class="muted">${escHtml(h.kind || "")}</td>
      <td class="${h.verdict === "KEEP" ? "gl-keep" : "gl-sell"}">${escHtml(h.verdict)}</td></tr>`).join("");

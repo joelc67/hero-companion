@@ -209,8 +209,9 @@ def ingest(log_dir, state):
                     events.append(ev)
                     report["parsed"] += 1
                     if ev["type"] == "char":
-                        # The watched account's CURRENT character = the last Welcome seen.
-                        state["character"] = ev["character"]
+                        # This account's CURRENT character = the last Welcome seen. Kept
+                        # per account so a dual-boxer's two clients don't overwrite each other.
+                        state.setdefault("characters", {})[account] = ev["character"]
                 elif interesting:
                     report["unparsed_interesting"] += 1
                     if len(report["unparsed_samples"]) < 20:
@@ -262,13 +263,14 @@ def _blank_summary():
             "drop_kinds": {}, "days": set()}
 
 
-def summarize(events, account=None):
-    """Aggregate events into the insight card's numbers. If `account` is given, only that
-    account's events count (each account is watched separately). Also attributes events to
-    the CHARACTER active at the time (from 'Welcome to City of Heroes, X!' markers) so the
-    Play Log can break stats out per character — key by account so simultaneous dual-boxed
-    characters never cross-attribute."""
-    evs = [e for e in events if account is None or e.get("account") == account]
+def summarize(events, accounts=None):
+    """Aggregate events into the insight card's numbers. If `accounts` (a set/list) is
+    given, only those accounts' events count. Attributes events to the CHARACTER active at
+    the time (from 'Welcome to City of Heroes, X!' markers) so the Play Log can break stats
+    out per character — keyed by account so simultaneous dual-boxed characters never
+    cross-attribute."""
+    acc = set(accounts) if accounts else None
+    evs = [e for e in events if acc is None or e.get("account") in acc]
     evs.sort(key=lambda e: (e.get("ts") or "", e.get("account") or ""))
     s = _blank_summary()
     by_char, cur = {}, {}          # by_char[name] -> summary ; cur[account] -> character

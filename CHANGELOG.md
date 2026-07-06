@@ -2,6 +2,11 @@
 
 ## 0.12.8 — unreleased
 
+- **Watch multiple accounts at once — per-character stat cards.** Dual-boxers can now
+  tick more than one account, and the Play Log shows a card per character side by side
+  (Rattle's kills and haul next to your farmer's), each with its own fit link. Accounts
+  are toggle chips — click to add or remove one from what's watched.
+
 - **The Play Log moved up into the main workspace.** Instead of a detached strip far
   below everything, it now docks in the wide build column — filling that space when no
   build is loaded, and sitting neatly under the build when one is. On narrow screens it
