@@ -2,6 +2,16 @@
 
 ## Unreleased (0.12.11)
 
+- **Long-recharge attacks and holds now get the proc treatment (model v25).** A
+  single-target power like Seismic Smash or Dominate keeps a 2-3 piece accuracy/damage
+  core and fills its remaining slots with damage procs when the proc math favors it —
+  the classic expert pattern. The kept core avoids recharge pieces on purpose (slotted
+  recharge lowers proc rates). Pet summons are never raided; their slots stay the pet's.
+
+- **Proc rates corrected from the game itself.** Every damage proc's rate now comes
+  straight from the current game data; 11 were wrong, including the archetype set procs,
+  which were undervalued by up to 43%.
+
 - **The respec suggestion now notices when the optimizer has learned.** Resuming a build
   made under an older version offers "Built under an older optimizer — see what's
   improved?" even when nothing is structurally wrong with the slotting. Build the plan to

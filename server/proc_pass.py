@@ -115,9 +115,43 @@ def _vehicle_rank(rec):
         return 3                          # damage aura — the premier proc home
     if has_aoe:
         return 2                          # AoE attack OR AoE control — both proc vehicles
+    if _st_hybrid_chance(rec) >= _ST_CHANCE_GATE:
+        return 4                          # ST proc-hybrid candidate (keep acc/dam core + procs)
     if cats & {"Defense Debuff", "Accurate Defense Debuff", "Holds", "Immobilize", "Stuns"}:
         return 1                          # single-target control / debuff (left as a set home)
     return 0
+
+
+# --- Single-target proc HYBRID (the Dominate / Seismic Smash master pattern) ---------------
+# A long-recharge ST attack or hold rolls each proc at PPM × (base_recharge + cast) / 60
+# (area factor 1) — using UNSLOTTED recharge, because local recharge enhancement divides the
+# chance (the PPM rule; global recharge doesn't count). Once each roll clears ~50%, procs
+# out-damage a set's tail pieces (Dominate at 8s base ≈ 53% is the community's canonical
+# hybrid), so the master pattern keeps a 2-3 piece accuracy/damage core and fills the rest
+# with procs — and deliberately slots NO local recharge in these powers.
+_ST_CHANCE_GATE = 0.50
+_ST_TYPICAL_PPM = 3.5
+
+
+def _st_hybrid_chance(rec):
+    """Per-roll chance of a typical 3.5-PPM proc in this power with no local recharge."""
+    if rec.get("power_type") != 0:        # clicks only — auras are already rank 3
+        return 0.0
+    cats0 = set(rec.get("accepted_set_categories") or [])
+    if cats0 & {"Pet Damage", "Recharge Intensive Pets"}:
+        return 0.0                        # pet summons are the PET's home (0.12.10 rule);
+                                          # henchman proc logic is its own model (task #33)
+    rech = rec.get("base_recharge") or 0
+    if not (6 < rech <= 90):              # short = weak chance; >90s = fires too rarely
+        return 0.0
+    # The one-proc-per-SET rule is the real capacity limit — a Holds-only power still fits
+    # three distinct hold-set procs. Count available non-premium proc SETS, not categories.
+    nsets = len({p["set"] for c in (rec.get("accepted_set_categories") or [])
+                 for p in _catalog()["damage_procs"].get(c, []) if not p.get("premium")})
+    if nsets < 2:                         # a real hybrid needs 2+ distinct procs to seat
+        return 0.0
+    cast = rec.get("cast_time") or 1.0
+    return min(0.90, _ST_TYPICAL_PPM * (rech + cast) / 60.0)
 
 
 def apply_proc_pass(powers, power_by_full, role="damage", content="general"):
@@ -152,6 +186,8 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general"):
         auras = [(p, rec) for r, p, rec in ranked if r == 3]
         aoes = sorted([(p, rec) for r, p, rec in ranked if r == 2],
                       key=lambda pr: -_ncats(pr[1]))
+        st_hybrids = sorted([(p, rec) for r, p, rec in ranked if r == 4],
+                            key=lambda pr: -_st_hybrid_chance(pr[1]))
 
         def _is_premium(p):
             cs = " ".join(s.get("set_name", "") for s in (p.get("slots") or []) if s)
@@ -184,6 +220,32 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general"):
             if len(procs) >= 2:           # only convert if we can land a real proc bomb
                 cid = (slots[0] or {}).get("category_id")
                 p["slots"] = [_proc_slot(sn, uid, cid) for sn, uid, _c in procs]
+        # ST proc HYBRIDS (offense + control roles): keep the set's acc/dam core — the first
+        # 3 pieces of a premium home (its bonuses are build-defining), 2 of a filler set —
+        # and fill the tail slots with damage procs. Only fires when the PPM math clears the
+        # gate, so short attacks keep their full sets untouched.
+        if role != "debuffer":
+            for p, rec in st_hybrids:
+                slots = p.get("slots") or []
+                if len(slots) < 4:        # need at least 2 tail slots for procs to matter
+                    continue
+                keep = 3 if _is_premium(p) else 2
+                tail = len(slots) - keep
+                cats = rec.get("accepted_set_categories") or []
+                procs = _pick_procs(cats, tail, used)
+                if len(procs) >= 2:       # a lone proc isn't worth breaking the set
+                    # Keep the pieces WITHOUT local recharge first — recharge enhancement in
+                    # the power divides every proc's chance (the PPM rule), so the kept core
+                    # is acc/dam, never dam/rech, when the set offers the choice.
+                    ordered = sorted(slots, key=lambda s: (
+                        "recharge" in ((s or {}).get("piece_name") or "").lower(),))
+                    cid = (slots[0] or {}).get("category_id")
+                    # Budget-safe: same slot count — if fewer procs seat than tail slots,
+                    # the remaining original pieces stay.
+                    pad = len(slots) - keep - len(procs)
+                    p["slots"] = (ordered[:keep]
+                                  + [_proc_slot(sn, uid, cid) for sn, uid, _c in procs]
+                                  + ordered[keep:keep + pad])
         # DEBUFF ANCHOR: a def-debuff power carries the Achilles' Heel "Chance for Res Debuff"
         # — ~−20% res at high uptime beats any top set-bonus tier for a debuff role. Home
         # ranking follows proc mechanics, not slot count: a debuff TOGGLE aura rolls PPM
