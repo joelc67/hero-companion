@@ -219,6 +219,23 @@ def _is_dmg_cat(cat):
     return cat in _DMG_SET_CATS or (isinstance(cat, str) and cat.endswith("Archetype Sets"))
 
 
+# A pet summon (Mastermind henchmen, controller/VEAT pets, Gang War, Phantom Army) is enhanced
+# for the PET: accuracy + damage + the pet-set procs, plus the pet ATOs. It is NOT a parking
+# spot for the player's own self-heal globals (Numina/Miracle/Panacea) — those buff the CASTER
+# and belong in Health. Reserve these powers for pet-enhancing sets and force one to land.
+_PET_ENHANCE_CATS = {"Pet Damage", "Recharge Intensive Pets"}
+
+
+def _is_pet_cat(cat):
+    return cat in _PET_ENHANCE_CATS or (isinstance(cat, str) and cat.endswith("Archetype Sets"))
+
+
+def _is_pet_summon(p):
+    """True for a summon whose slots enhance the PET (it accepts Pet Damage sets). Such a
+    power is reserved for pet sets, never used as a home for the player's self-heal globals."""
+    return "Pet Damage" in set(p.get("accepted_set_categories") or [])
+
+
 # Bonus KINDS a non-damage role is happy to HARVEST from a damage set. The masters slot Winter sets
 # (Frozen Blast / Winter's Bite) and ATOs on the control powers BECAUSE those "damage" sets carry
 # defense + recharge + recovery bonuses — the controller's whole survival/uptime engine from one
@@ -288,9 +305,23 @@ def _options_for_power(p, sets_by_category, targets, perks, piece_choices,
     introduces premium sets. Prunes to sets that contribute to a target/perk;
     attacks always keep a few options so they get a real set. `pvp` selects the
     PvP set-bonus set."""
-    cand = _candidate_sets(sets_by_category, p["_cats"], p["_is_attack"],
-                           allow_premium=allow_premium)
-    must_set = p.get("_must_set")
+    pet = p.get("_is_pet_summon")
+    pet_cids = set()
+    if pet:
+        # Reserve the summon for pet-enhancing sets only (Pet Damage / Recharge Intensive
+        # Pets / the pet ATOs) — never a self-heal or debuff mule set that just farms bonuses
+        # off the henchmen's slots. If the data exposes no pet set (shouldn't happen), fall
+        # back to normal handling rather than force an empty option.
+        pet_cids = {cid for cid in p["_cats"]
+                    if any(_is_pet_cat(s.get("category"))
+                           for s in sets_by_category.get(cid, []))}
+    if pet and pet_cids:
+        cand = _candidate_sets(sets_by_category, pet_cids, False, allow_premium=allow_premium)
+    else:
+        pet = False
+        cand = _candidate_sets(sets_by_category, p["_cats"], p["_is_attack"],
+                               allow_premium=allow_premium)
+    must_set = p.get("_must_set") or pet
     armor = p.get("_armor_res") or p.get("_armor_def")
     base_rd = p.get("_base_rd") or {}
     armor_kind = "Resistance" if p.get("_armor_res") else "Defense"
@@ -303,7 +334,9 @@ def _options_for_power(p, sets_by_category, targets, perks, piece_choices,
         if not touches and not p["_is_attack"] and not must_set and not armor:
             continue
         for n in piece_choices:
-            if n > 6 or (must_set and not armor and n > 4):  # buff must-sets stay small; armor sizes up
+            # buff must-sets stay small (≤4); armor toggles and pet summons size up to a full
+            # set (the strong pet-set bonuses live in the 5th/6th piece).
+            if n > 6 or (must_set and not armor and not pet and n > 4):
                 continue
             contrib, sigs = _set_bonus_contrib(srec, n, {}, pvp)
             # Credit the res/def this set ENHANCES in the host armor toggle (base ×
@@ -581,6 +614,9 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
                 and p.get("full_name") in _FIGHTING_PREREQS):
             p["_slot_budget"] = 1
         p["_is_attack"] = bool(p.get("is_attack")) or any(c in ATTACK_CATS for c in cats)
+        # Pet summon: enhanced for the pet, reserved for pet sets (see _is_pet_summon). Kept
+        # off the global-mule pass and forced to take a functional pet set by _options_for_power.
+        p["_is_pet_summon"] = _is_pet_summon(p)
         # support: a signature buff CLICK that accepts sets must end up functionally
         # slotted with one (its bonuses serve recharge/recovery + the power works) even
         # when the survival objective wouldn't pick it — same "must take a set" rule as
@@ -1154,7 +1190,7 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
             prob += pulp.lpSum(povars) <= remaining_sets
             prob += pulp.lpSum(o["n"] * x[(pi, oi)]
                                for oi, o in enumerate(opts)) <= free
-            if (p["_is_attack"] or p.get("_must_set")) and not perk_pass:
+            if (p["_is_attack"] or p.get("_must_set") or p.get("_is_pet_summon")) and not perk_pass:
                 prob += pulp.lpSum(povars) >= 1
             # A SQUISHY's armor toggle (epic shield) must be functionally ENHANCED, not a 1-slot
             # global mule — no master buys Scorpion Shield with a patron arc and leaves its defense
@@ -1306,6 +1342,8 @@ def _place_globals(powers, piece_globals, sets_by_category, totals, seed_unique=
         nonunique = not g.get("unique", True)
         placed = 0
         for p in powers:
+            if p.get("_is_pet_summon"):
+                continue     # reserved for its pet set — never a self-heal-global mule
             if len(p["_slots"]) >= p.get("_slot_budget", 6):
                 continue
             if not _find_set(sets_by_category, p["_cats"], g["set"]):

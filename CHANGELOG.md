@@ -1,5 +1,17 @@
 # Hero Companion — What's New
 
+## 0.12.10 — July 6, 2026
+
+- **Pet summons are slotted for the pet now.** A summon power — Mastermind henchmen, a
+  controller or Arachnos pet, Gang War, Phantom Army — was sometimes being used as a parking
+  spot for the player's own always-on healing IOs (Numina, Miracle, Panacea) instead of a set
+  that actually helps the pet. Those healing IOs belong in Health, where they buff you, so
+  that's where they go now. Every pet summon is reserved for a real pet set — its accuracy,
+  damage, and the pet enhancement bonuses (and the Mastermind archetype IOs) — and is forced
+  to take one rather than sitting on filler. Thanks again to Maelwys for the example. Deeper
+  slotting quality (procs versus full sets by attack, minus-resistance procs, when recharge in
+  a summon actually matters) is still being tuned.
+
 ## 0.12.9 — July 6, 2026
 
 - **Game data brought current.** Our numbers came from a Mids database that turned out to be

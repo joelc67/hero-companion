@@ -1,0 +1,345 @@
+{
+ "_source": "bin/conversionsets.bin from the game client (see README); type: 2=category 3=rarity (1=in-set, hard-coded cost 3 per the game UI text)",
+ "sets": {
+  "ECUncommon": {
+   "type": 3,
+   "cost": 1,
+   "enabled": 1
+  },
+  "ECRare": {
+   "type": 3,
+   "cost": 1,
+   "enabled": 1
+  },
+  "ECVeryRare": {
+   "type": 3,
+   "cost": 1,
+   "enabled": 1
+  },
+  "ECPvP": {
+   "type": 3,
+   "cost": 1,
+   "enabled": 1
+  },
+  "ECMelee": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECRanged": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECTargetedAoE": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECMeleeAoE": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSniper": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECPetDamage": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECRechargeIntensivePets": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECDefense": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECResist": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECHealing": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECAccurateHealing": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECHold": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECStun": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECImmobilize": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSlow": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSleep": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECFear": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECConfuse": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECFlight": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECLeaping": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECRunning": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECTeleport": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECUniversalTravel": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECTaunt": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECKnockback": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECEnduranceModification": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECToHitBuff": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECToHitDebuff": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECDefenseDebuff": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECAccurateDefenseDebuff": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECAccurateToHitDebuff": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECATO": {
+   "type": 3,
+   "cost": 1,
+   "enabled": 1
+  },
+  "ECSATO": {
+   "type": 3,
+   "cost": 1,
+   "enabled": 1
+  },
+  "ECATO2": {
+   "type": 3,
+   "cost": 1,
+   "enabled": 1
+  },
+  "ECSATO2": {
+   "type": 3,
+   "cost": 1,
+   "enabled": 1
+  },
+  "ECWinter": {
+   "type": 3,
+   "cost": 1,
+   "enabled": 1
+  },
+  "ECSWinter": {
+   "type": 3,
+   "cost": 1,
+   "enabled": 1
+  },
+  "ECUniversalDamage": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECBlaster": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSentinel": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECController": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECDefender": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECScrapper": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECTanker": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECKheldian": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECBrute": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECCorruptor": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECDominator": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECMastermind": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECStalker": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECArachnos": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSBlaster": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSSentinel": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSController": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSDefender": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSScrapper": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSTanker": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSKheldian": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSBrute": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSCorruptor": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSDominator": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSMastermind": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSStalker": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  },
+  "ECSArachnos": {
+   "type": 2,
+   "cost": 2,
+   "enabled": 1
+  }
+ }
+}

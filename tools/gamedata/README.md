@@ -20,6 +20,10 @@ the installed client. The snapshots in this folder are current as of **2026-06-1
 - `tables/` — per-archetype modifier tables (15 playable ATs)
 - `power_values.json` — every power's recharge / endurance / cast / range / set categories
 - `setbonuses.json` — all 227 IO sets' bonus tiers and values
+- `conversionsets.json` — the 68 enhancement-conversion pools with converter costs
+  (from `bin/conversionsets.bin`; `type` 2 = category pool @ 2 converters, 3 = rarity
+  pool @ 1 converter; in-set conversion is not a pool — the game's tooltip states its
+  cost of 3 directly)
 
 ## Refresh after a game patch
 
@@ -38,6 +42,7 @@ powers -> effect values). Then run the reality checks:
 python tools/reality_check_gamedata.py      # archetype modifiers
 python tools/reality_check_powers.py        # power values + set slotting
 python tools/reality_check_setbonuses.py    # IO set bonuses
+python tools/reality_check_converter.py     # enhancement-converter costs
 ```
 
 Each is report-only; review the drift, then apply it back into `data/*.json`.
@@ -49,6 +54,8 @@ Each is report-only; review the drift, then apply it back into `data/*.json`.
 - **Set slotting:** category-name map built; game-allowed categories added (incl. Mastermind ATO).
 - **Set bonuses:** verified current (defense/HP/recovery/recharge/regen match exactly; damage-buff
   is a known ×2.5 representation convention, left as-is).
+- **Converter costs:** 0 drift — the planner's By-Set 3 / By-Category 2 / By-Rarity 1 match
+  `conversionsets.bin` + the game's own UI text.
 
 ## Representation conventions (differ from the raw game values on purpose — do NOT "fix")
 
