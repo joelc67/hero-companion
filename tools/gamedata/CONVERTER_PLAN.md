@@ -52,6 +52,30 @@ Reality-checking surfaced exactly where a naive sync would corrupt data:
   input, keep Mids only as a cross-check, and surface "game data updated — N values
   drifted" from the reality-check.
 
+## Outcome (2026-07-06)
+
+- **Phase 1 (slotting) — DONE.** Category-name map built + verified; 86 powers gained the
+  set categories the game allows (add-only). 31 cases where we're *more* permissive than
+  the game are left conservatively (removing could wrongly invalidate a build if it's a
+  match quirk) — `reality_check_powers.py` flags them for manual review.
+- **Phase 2 (power values) — DONE.** Recharge/endurance/range synced (same representation,
+  4800+/5659 already matched); cast-time synced for small diffs, 48 snipe-conditional casts
+  held aside. All audits pass; 0 value drift remaining.
+- **Phase 3 (set bonuses) — DONE, verified current.** (First read said "blocked" off a stale
+  parser docstring; wrong.) The parser DOES yield each set's bonus tiers (piece thresholds +
+  `auto_powers` -> `Set_Bonus.*` powers), and those powers' effects hold the values. Extracted
+  all 227 sets' bonuses and reality-checked: **defense (per damage type), HP, recovery,
+  recharge, regeneration all match the live game exactly** — our set bonuses are current. The
+  only difference is a systematic **×2.5 on damage-buff bonuses** (a representation convention,
+  corpus-validated, left as-is). Snapshot: `tools/gamedata/setbonuses.json`; check:
+  `reality_check_setbonuses.py`.
+- **Phase 4 (update signal) — DONE for what's extractable.** `tools/gamedata/power_values.json`
+  (compact snapshot of all powers' recharge/end/cast/range/categories) +
+  `reality_check_powers.py`, alongside `reality_check_gamedata.py` for AT modifiers. After a
+  patch: refresh the snapshots, run both checks, review, apply. A full "flip the primary
+  source" isn't done (and isn't needed) because set bonuses aren't extractable — instead the
+  reality-checks keep every extractable category honest.
+
 ## Validation gate (every phase)
 1. Structural: converted file loads, same keys/shape our engine expects.
 2. Diff vs current data: enumerate every change; a human-readable report.

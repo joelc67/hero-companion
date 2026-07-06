@@ -1,10 +1,10 @@
 """Reality-check our archetype modifier data against AUTHORITATIVE game data.
 
-Source of truth: the game client's own bins (the same origin the established
-community data projects derive from), NOT Mids (which we found frozen ~6 months
-stale). A snapshot of the per-archetype tables lives in tools/gamedata/tables/,
-current as of 2026-06-19. The extraction procedure is deliberately kept out of
-this repo — see tools/gamedata/README.md.
+Source of truth: the game client's own bins, extracted with Bin Crawler + Pigg
+Wrangler (github.com/wednesdaywoe/CoH-Planner) — the same origin City of Data is
+built from — NOT Mids (which we found frozen ~6 months stale). A snapshot of the
+per-archetype tables lives in tools/gamedata/tables/, current as of 2026-06-19.
+See tools/gamedata/README.md for the refresh procedure.
 
 Comparison: our modifier_tables store one value per archetype = the LEVEL-50
 value, which aligns to index 49 of the game's per-level arrays. So we compare
