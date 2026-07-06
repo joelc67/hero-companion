@@ -2755,14 +2755,41 @@ def gamelog_insights():
 
 
 def _saved_fit_for(character):
-    """A saved build whose name matches the logged-in character (so switching to a
-    character can offer 'load their fit'). Exact name match first, then contains."""
+    """The saved build to associate with a logged-in character, and how confident we are.
+    An EXPLICIT link (character -> save id, set by the user) wins and survives renames /
+    fixes wrong guesses; otherwise we GUESS by name (exact, then contains). Returns
+    (fit_dict, linked_bool) or (None, False). Field note: players sometimes rename, which
+    breaks name-matching — that's exactly why the explicit link exists."""
     if not character:
-        return None
-    saves = json.loads(saves_list().get_data())["saves"]
+        return None, False
+    saves = _all_saves()
+    links = gamelog.load_state().get("fit_links") or {}
+    linked_id = links.get(character)
+    if linked_id:
+        hit = next((v for v in saves if v.get("id") == linked_id), None)
+        if hit:
+            return hit, True
     low = character.lower()
-    return (next((v for v in saves if (v.get("name") or "").lower() == low), None)
-            or next((v for v in saves if low in (v.get("name") or "").lower()), None))
+    guess = (next((v for v in saves if (v.get("name") or "").lower() == low), None)
+             or next((v for v in saves if low in (v.get("name") or "").lower()), None))
+    return guess, False
+
+
+@app.route("/gamelog/link", methods=["POST"])
+def gamelog_link():
+    """Explicitly tie a character to a saved fit (rename-proof), or clear the tie."""
+    body = request.get_json(force=True) or {}
+    character = (body.get("character") or "").strip()
+    if not character:
+        return jsonify({"ok": False, "response": "No character."}), 400
+    st = gamelog.load_state()
+    links = st.setdefault("fit_links", {})
+    if body.get("save_id"):
+        links[character] = body["save_id"]
+    else:
+        links.pop(character, None)
+    gamelog.save_state(st)
+    return jsonify({"ok": True, "insights": _gamelog_insights()})
 
 
 def _gamelog_insights():
@@ -2804,10 +2831,10 @@ def _gamelog_insights():
             verdict, why = "SELL", "salvage — sell the surplus, keep what your recipes need"
         haul.append({"ts": d.get("ts"), "item": item, "kind": kind,
                      "set": setname, "verdict": verdict, "why": why})
-    fit = _saved_fit_for(character)
+    fit, linked = _saved_fit_for(character)
     return {"summary": {k: v for k, v in s.items() if k not in ("drops",)},
             "haul": haul, "character": character,
-            "fit": {"id": fit["id"], "name": fit["name"]} if fit else None}
+            "fit": {"id": fit["id"], "name": fit["name"], "linked": linked} if fit else None}
 
 
 @app.route("/build/import", methods=["POST"])
@@ -4961,8 +4988,7 @@ def _save_slug(name):
     return s or "untitled"
 
 
-@app.route("/saves", methods=["GET"])
-def saves_list():
+def _all_saves():
     out = []
     d = _saves_dir()
     for fn in os.listdir(d):
@@ -4984,7 +5010,12 @@ def saves_list():
                     "mode": (data.get("plan") or {}).get("mode"),
                     "updated": os.path.getmtime(path)})
     out.sort(key=lambda x: x["updated"], reverse=True)
-    return jsonify({"saves": out})
+    return out
+
+
+@app.route("/saves", methods=["GET"])
+def saves_list():
+    return jsonify({"saves": _all_saves()})
 
 
 @app.route("/saves", methods=["POST"])

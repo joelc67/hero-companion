@@ -1315,7 +1315,9 @@ function gamelogWatchingUI(dir) {
 // "Playing as <character>" + a one-click link to that character's saved fit — this is
 // what connects the log (who's active) to the builds (their fit). The character comes
 // from the log's "Welcome to City of Heroes, X!" marker.
+let GAMELOG_CHARACTER = null;
 function gamelogWhoUI(character, fit) {
+  GAMELOG_CHARACTER = character || null;
   const who = $("gl-who");
   if (!who) return;
   if (!character) {
@@ -1324,13 +1326,53 @@ function gamelogWhoUI(character, fit) {
       + `character select and back in, and it'll show here.">ⓘ</span></span>`;
     return;
   }
-  const loaded = fit && typeof CURRENT_SAVE !== "undefined" && CURRENT_SAVE && CURRENT_SAVE.id === fit.id;
-  who.innerHTML = `· <b>playing ${escHtml(character)}</b>`
-    + (fit
-        ? (loaded ? ` <span class="muted small">(their fit is loaded)</span>`
-                  : ` <button class="linkbtn" onclick="loadSave('${escHtml(fit.id)}')">▶ load ${escHtml(character)}'s fit</button>`)
-        : ` <span class="muted small">— no saved fit for this character yet</span>`);
+  const c = escHtml(character);
+  const saveOpen = typeof CURRENT_SAVE !== "undefined" && CURRENT_SAVE;
+  const loaded = fit && saveOpen && CURRENT_SAVE.id === fit.id;
+  let tail;
+  if (fit && fit.linked) {
+    tail = loaded ? `<span class="muted small">(their fit is loaded)</span>`
+                  : `<button class="linkbtn" onclick="loadSave('${escHtml(fit.id)}')">▶ load ${c}'s fit</button>`;
+  } else if (fit) {
+    // a name GUESS — offer it, but let the user correct it (names can change / collide)
+    tail = `<button class="linkbtn" onclick="gamelogLink('${escHtml(fit.id)}')">▶ load ${escHtml(fit.name)}'s fit</button>`
+      + ` <span class="muted small">(matched by name · `
+      + `<button class="linkbtn quiet" onclick="gamelogNotThis()">not ${c}'s?</button>)</span>`;
+  } else {
+    // no fit — recommend importing this character's build, with the loaded-fit shortcut
+    tail = `<span class="muted small">— no fit yet.</span> `
+      + `<button class="linkbtn" onclick="gamelogImportFit()">📥 import ${c}'s build</button>`
+      + (saveOpen ? ` <span class="muted small">or </span><button class="linkbtn" onclick="gamelogLink()">link the open fit to ${c}</button>` : "");
+  }
+  who.innerHTML = `· <b>playing ${c}</b> ${tail}`;
 }
+
+// Explicitly tie the active character to a fit (rename-proof) and load it. With no id,
+// links whatever fit is currently open (CURRENT_SAVE).
+window.gamelogLink = async function (saveId) {
+  if (!GAMELOG_CHARACTER) return;
+  const id = saveId || (typeof CURRENT_SAVE !== "undefined" && CURRENT_SAVE && CURRENT_SAVE.id);
+  if (!id) return;
+  await api("/gamelog/link", postJson({ character: GAMELOG_CHARACTER, save_id: id }));
+  if (saveId) loadSave(saveId);           // loading a named-guess: open it too
+  else gamelogIngest(true);               // just re-render the who-line
+};
+window.gamelogNotThis = async function () {
+  if (!GAMELOG_CHARACTER) return;
+  // clear any link and tell the user how to point it at the right fit
+  await api("/gamelog/link", postJson({ character: GAMELOG_CHARACTER, save_id: "" }));
+  $("gl-who").innerHTML = `· <b>playing ${escHtml(GAMELOG_CHARACTER)}</b> `
+    + `<span class="muted small">— open ${escHtml(GAMELOG_CHARACTER)}'s fit (Resume, or import it), `
+    + `then click "link the open fit".</span> `
+    + `<button class="linkbtn" onclick="gamelogImportFit()">📥 import their build</button>`;
+};
+// Point the user at the in-game import for this character, with the steps.
+window.gamelogImportFit = function () {
+  $("gl-who").innerHTML = `<span class="muted small">To import `
+    + `<b>${escHtml(GAMELOG_CHARACTER || "this character")}</b>'s build: in game type `
+    + `<code>/build_save_file</code>, then</span> `
+    + `<button class="linkbtn" onclick="resyncFromGame()">pick the exported file →</button>`;
+};
 
 // Live reader: while an account is watched and the Play Log is on screen, poll for new
 // log entries so the cards fill in as you play (the ingest reads the file even while the

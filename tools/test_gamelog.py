@@ -129,6 +129,24 @@ check("Rattle's kills attributed", rattle.get("kills") == 3, rattle.get("kills")
 check("events before Welcome NOT mis-attributed to Rattle",
       rattle.get("kills") == summ.get("kills"))   # all kills here are post-Welcome
 
+# character -> fit link (rename-proof): explicit link beats name guess and survives rename
+print("\n── character↔fit linking (rename-proof) ──")
+srv._all_saves = lambda: [{"id": "rattle-fit", "name": "Rattle"},
+                          {"id": "poison-sonic", "name": "Rattle Poison Build"}]
+fit, linked = srv._saved_fit_for("Rattle")
+check("name guess when no explicit link", fit and not linked and fit["id"] == "rattle-fit",
+      f"{fit and fit['id']}, linked={linked}")
+gs = gamelog.load_state(); gs["fit_links"] = {"Rattle": "poison-sonic"}; gamelog.save_state(gs)
+fit, linked = srv._saved_fit_for("Rattle")
+check("explicit link overrides the name guess", fit and linked and fit["id"] == "poison-sonic",
+      f"{fit and fit['id']}, linked={linked}")
+# rename: character now "Rattle Prime"; explicit link keyed to the NEW name still works
+gs = gamelog.load_state(); gs["fit_links"] = {"Rattle Prime": "poison-sonic"}; gamelog.save_state(gs)
+fit, linked = srv._saved_fit_for("Rattle Prime")
+check("renamed character keeps its linked fit", fit and linked and fit["id"] == "poison-sonic")
+check("no-name-match, no-link -> no fit (recommend import)",
+      srv._saved_fit_for("Totally New Name")[0] is None)
+
 s = gamelog.summarize(gamelog.load_events())
 check("summary kills counted", s["kills"] == 3, s["kills"])
 check("summary influence includes AH sale", s["inf_gained"] >= 15000000)

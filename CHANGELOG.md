@@ -9,7 +9,10 @@
   one-click **"load their fit"** link appears — so switching from Rattle to Lime
   Juice brings up Lime Juice's build, not whoever you had open. (The game only names
   your character on a fresh login, so if it says "not detected yet," log out to
-  character select and back in.)
+  character select and back in.) Because players sometimes rename characters,
+  the fit link is one you can set explicitly — "link the open fit to this
+  character" — so it sticks through a rename and fixes any wrong name-guess. No
+  fit for a character yet? It offers to import their build straight from the game.
 
 - **The Play Log's account switch is now obvious.** Which account you're watching
   shows as a row of chips (the active one highlighted with ●), and switching is one
