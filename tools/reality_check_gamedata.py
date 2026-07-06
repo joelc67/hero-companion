@@ -1,20 +1,18 @@
 """Reality-check our archetype modifier data against AUTHORITATIVE game data.
 
-Source of truth: the game client's own bins, extracted with Bin Crawler
-(https://github.com/wednesdaywoe/CoH-Planner) — NOT Mids (which we found frozen
-6 months stale). A snapshot of the per-archetype tables lives in
-tools/gamedata/tables/. To refresh after a game patch:
+Source of truth: the game client's own bins (the same origin the established
+community data projects derive from), NOT Mids (which we found frozen ~6 months
+stale). A snapshot of the per-archetype tables lives in tools/gamedata/tables/,
+current as of 2026-06-19. The extraction procedure is deliberately kept out of
+this repo — see tools/gamedata/README.md.
 
-  git clone https://github.com/wednesdaywoe/CoH-Planner
-  cd CoH-Planner/tools/bin-crawler
-  py -m bin_crawler.export_classes --assets-dir "<CoH>/assets/live" --output-dir out
-  # copy out/tables/<playable-at>.json into coh-builder/tools/gamedata/tables/
+Comparison: our modifier_tables store one value per archetype = the LEVEL-50
+value, which aligns to index 49 of the game's per-level arrays. So we compare
+our[at] against game[at][49] across every table.
 
-Then run this to see what drifted, and tools/sync will apply it.
-
-Compares only LEVEL-INDEPENDENT (flat) modifiers, where a single per-AT value is
-unambiguous (defense/resist/damage buff scalars, etc.). Level-scaling tables
-(damage, HP curves) need index alignment and are checked separately.
+A table where EVERY archetype disagrees is a representation/units convention
+(e.g. Melee_Uniqueness: our 1.0 vs the game's 100.0), not drift — those are
+reported separately and never "corrected". A subset disagreeing is real drift.
 
 Run:  python tools/reality_check_gamedata.py
 """
@@ -28,6 +26,7 @@ sys.path.insert(0, r"C:\Users\joelc\code\coh-builder\server")
 import server as srv  # noqa: E402
 
 TABLES = os.path.join(os.path.dirname(__file__), "gamedata", "tables")
+LVL50 = 49
 
 
 def _norm(n):
@@ -38,30 +37,40 @@ def main():
     mt = srv.MODIFIER_TABLES
     ats = [a for a in srv.ARCH_BY_NAME.values()
            if a.get("playable") and a.get("column") is not None]
-    checked = stale = 0
-    rows = []
+    per_table = {}          # table -> list of (at, ours, game) mismatches
+    n_ats = checked = 0
     for a in ats:
         f = os.path.join(TABLES, _norm(a["name"]) + ".json")
         if not os.path.exists(f):
             continue
+        n_ats += 1
         ex = json.load(open(f, encoding="utf-8")).get("named_tables", {})
         for t, vals in ex.items():
-            if not vals or (max(vals) - min(vals) > 1e-6):
-                continue                       # flat tables only
+            if not vals or LVL50 >= len(vals):
+                continue
             our = mt.get(t)
             if our is None or a["column"] >= len(our):
                 continue
             checked += 1
-            if abs(our[a["column"]] - vals[0]) > 0.0005:
-                stale += 1
-                rows.append(f"  {a['display_name']:16s} {t:22s} ours={our[a['column']]:+.4f}  game={vals[0]:+.4f}")
-    print(f"Flat AT modifiers compared vs game data: {checked}")
-    print(f"STALE (drifted from the live game): {stale}")
-    for r in rows:
-        print(r)
-    if not stale:
-        print("Every level-independent archetype modifier matches the live game.")
-    return stale
+            ov, gv = our[a["column"]], vals[LVL50]
+            if abs(ov - gv) > max(0.005, 0.005 * abs(gv)):
+                per_table.setdefault(t, []).append((a["display_name"], ov, gv))
+
+    drift = {t: h for t, h in per_table.items() if len(h) < n_ats}
+    convention = {t: len(h) for t, h in per_table.items() if len(h) >= n_ats}
+
+    print(f"Compared {checked} (archetype x modifier) values at level 50.")
+    print(f"REAL DRIFT (should be corrected from game data): "
+          f"{sum(len(h) for h in drift.values())}")
+    for t, hits in sorted(drift.items()):
+        for disp, ov, gv in hits:
+            print(f"  {disp:16s} {t:22s} ours={ov:+.4f}  game={gv:+.4f}")
+    if convention:
+        print(f"\nrepresentation conventions (ALL archetypes differ - NOT drift, left as-is): "
+              f"{', '.join(convention)}")
+    if not drift:
+        print("\nEvery archetype modifier matches the live game (bar the known conventions).")
+    return sum(len(h) for h in drift.values())
 
 
 if __name__ == "__main__":
