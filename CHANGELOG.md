@@ -7,14 +7,15 @@
   mules) right away — previously those tags only appeared right after solving, which made a
   loaded build look like the update hadn't taken.
 
-- **Respec worksheet.** When you resume a build with slots not earning set bonuses, a card
-  offers to build a full respec plan for that character. It shows every change power by
-  power — the old slotting struck through, the new below it — the stat gains, and a grocery
-  list split two ways: what to craft or buy, and what to unslot and sell (with a note on
-  each item's worth). Every line has a checkbox so you can track your progress, and the plan
-  is saved to the character, so you can work it over several sessions of crafting. Apply it
-  to your build when ready, Undo to revert, or mark the whole thing completed. It never
-  appears on a build that's already well slotted.
+- **Respec worksheet.** When you resume a build with slots not earning set bonuses, a small
+  bar appears at the top of the build — "Ready for respec?" — that opens the full plan as a
+  pop-up (so it's there when you want it, out of the way when you don't). The plan shows
+  every change power by power — the old slotting struck through, the new below it — the stat
+  gains, and a grocery list split two ways: what to craft or buy, and what to unslot and sell
+  (with a note on each item's worth). Every line has a checkbox to track your progress, and
+  the whole thing is saved to the character, so you can work it over several sessions of
+  crafting (the bar shows "N/M done"). Apply it to your build when ready, Undo to revert, or
+  mark it completed. It never appears on a build that's already well slotted.
 
 - **Explanations everywhere.** The slotting tags (proc bomb, full set, frankenslot, global
   mules) and the respec card now have a **?** that opens a plain-language explanation of what
