@@ -213,34 +213,68 @@ def _lexicon():
 _CHAN_RX = re.compile(r"^\[([^\]]+)\]\s+([^:]{1,40}):\s*(.*)$")
 _TAG_RX = re.compile(r"<[^>]{1,40}>")
 
+# PUBLIC recruitment channels — a line here IS recruitment activity (that's the channel's
+# job), so we capture it generously and LEARN the content rather than demanding it match a
+# pre-baked pattern. Matched case-insensitively and by substring so "Looking For Group",
+# "LFG", "Help", global recruiting channels etc. all count.
+_PUBLIC_RECRUIT = ("looking for group", "lfg", "broadcast", "request", "help",
+                   "coalition", "supergroup")
+# PRIVATE channels — NEVER captured, even locally. A tell/whisper is between two people.
+_PRIVATE_CHANS = ("tell", "whisper", "private", "friend")
+# Words that mean "a group is forming / needs people" — the signal that a line is active
+# recruitment (vs. someone just chatting in the channel).
+_RECRUIT_HINT = re.compile(
+    r"\b(lf\d*m?|forming|starting|need\s|needs\s|spots?|lfg|lft|lf\b|"
+    r"\d+\s*/\s*\d+|\+\d|inv\b|invite|join|join up|@)\b", re.I)
+_STOPWORDS = frozenset(
+    "the a an to for of and or in on at is are be we you your my me it this that with "
+    "any all get got new lvl level lfm lf2m lf3m lf4m lf5m lf6m lf7m lf8m lf lfg lft lfm "
+    "up now run go come please pst tell inv invite join star".split())
+
 
 def parse_channel_line(msg):
-    """A recruitment EVENT from a public-channel line, or None. Never keeps raw chat:
-    only the structured fields leave this function."""
+    """A recruitment EVENT from a PUBLIC channel, or None. Never keeps raw chat — only
+    structured facts leave here. Private messages (tells/whispers) are excluded outright."""
     lx = _lexicon()
     h = _CHAN_RX.match(msg)
     if not h:
         return None
     channel, speaker, text = h.group(1), h.group(2).strip(), _TAG_RX.sub("", h.group(3))
-    if channel not in lx.get("channels", []):
-        return None
+    clow = channel.lower()
+    if any(p in clow for p in _PRIVATE_CHANS):
+        return None                                  # private — never captured
+    if not any(p in clow for p in _PUBLIC_RECRUIT):
+        return None                                  # not a recruitment channel
     low = " " + text.lower() + " "
-    pats = lx.get("patterns", {})
-    forming = bool(re.search(pats.get("forming", r"\bforming\b"), low))
-    content = None
+    if not _RECRUIT_HINT.search(low):
+        return None                                  # channel chatter, not a group forming
+
+    # LEARN the content: prefer a known lexicon alias; else derive a label from the line's
+    # own salient words so unknown trials/TFs still classify AND grow the discovered list.
+    content, master = None, False
     for alias, full in (lx.get("content_aliases") or {}).items():
         if re.search(rf"\b{re.escape(alias)}\b", low):
             content = full
-            if re.search(rf"\b{lx.get('master_prefix', 'mo')}\s*{re.escape(alias)}\b", low):
-                content = "Master of " + full
+            master = bool(re.search(
+                rf"\b{lx.get('master_prefix', 'mo')}\s*{re.escape(alias)}\b", low))
             break
-    m_spots = re.search(pats.get("spots_needed", r"$^"), low)
-    m_slash = re.search(pats.get("spots_slash", r"$^"), low)
-    m_diff = re.search(pats.get("difficulty", r"$^"), low)
-    if not (content or (forming and (m_spots or m_slash))):
-        return None                      # not recruitment — never store it
-    ev = {"type": "recruit", "channel": channel, "speaker": speaker,
-          "content": content, "forming": forming}
+    if content and master:
+        content = "Master of " + content
+    learned = None
+    if not content:
+        # discovered nomenclature: the longest non-stopword token(s) — what people call it
+        toks = [t for t in re.findall(r"[a-z][a-z'&+-]{2,}", text.lower())
+                if t not in _STOPWORDS]
+        learned = toks[0] if toks else None
+        content = ("recruiting: " + learned) if learned else "recruiting (general)"
+
+    pats = lx.get("patterns", {})
+    ev = {"type": "recruit", "channel": channel, "speaker": speaker, "content": content,
+          "forming": bool(re.search(r"\bforming|starting\b", low)),
+          "learned_term": learned}                   # feeds the discovered-nomenclature tally
+    m_spots = re.search(pats.get("spots_needed", r"\blf\s*(\d+)\s*m"), low)
+    m_slash = re.search(pats.get("spots_slash", r"\b(\d{1,2})\s*/\s*(\d{1,2})\b"), low)
+    m_diff = re.search(pats.get("difficulty", r"\+(\d)\b"), low)
     if m_spots:
         ev["spots_needed"] = int(m_spots.group(1))
     if m_slash:
@@ -385,7 +419,8 @@ def _blank_summary():
     return {"xp": 0, "inf_gained": 0, "inf_spent": 0, "merits": 0, "levels": [],
             "badges": [], "kills": 0, "deaths": 0, "drops": [], "ah_sold": 0,
             "drop_kinds": {}, "days": set(),
-            "pulse": {"recruit_seen": 0, "by_content": {}, "recent": []}}
+            "pulse": {"recruit_seen": 0, "by_content": {}, "recent": [],
+                      "by_channel": {}, "learned_terms": {}}}
 
 
 def summarize(events, accounts=None):
@@ -458,7 +493,12 @@ def _tally(s, ev):
         pu["recruit_seen"] += 1
         key = ev.get("content") or "(unrecognized content)"
         pu["by_content"][key] = pu["by_content"].get(key, 0) + 1
-        if len(pu["recent"]) < 12:
+        ch = ev.get("channel") or "?"
+        pu["by_channel"][ch] = pu["by_channel"].get(ch, 0) + 1
+        lt = ev.get("learned_term")
+        if lt:                                        # discovered nomenclature, tallied
+            pu["learned_terms"][lt] = pu["learned_terms"].get(lt, 0) + 1
+        if len(pu["recent"]) < 20:
             pu["recent"].append({k: ev.get(k) for k in
                                  ("ts", "channel", "content", "spots_needed",
                                   "spots_filled", "spots_total", "difficulty")})
