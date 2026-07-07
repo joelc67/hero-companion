@@ -478,10 +478,9 @@ def build(state_dir=None, public=False):
                "Lite</a>. Uploads are private and pseudonymized — no account names, no "
                "money, no machine details ever appear here; only these rendered boards "
                "are public.")
-        foot = ("Published by Companion Lite from the board owner's own game log. Sections "
+        foot = ("Built from game logs captured by players running Companion Lite. Sections "
                 "marked \"collecting\" fill in as capture learns the line formats from real "
-                "sessions. When the community layer opens, sharing stays a separate, "
-                "per-stat choice for every player.")
+                "sessions.")
     else:
         mock = "Your LOCAL board · built from your own game log · nothing uploaded"
         logo_note = "(your machine)"
