@@ -74,6 +74,12 @@ border-radius:3px;padding:2px 9px;font-size:.78rem;margin:2px 3px 2px 0}
 footer{color:var(--dim);font-size:.8rem;border-top:1px solid var(--line);
 padding-top:14px;margin-top:24px}
 a{color:var(--pulse)}
+.banner{display:block;width:calc(100% + 36px);height:56px;margin:-16px -18px 14px}
+.hours{display:flex;gap:2px;align-items:flex-end;height:92px;margin-top:10px}
+.hours div{flex:1;background:linear-gradient(180deg,#7fe3ff,var(--pulse));
+border-radius:2px 2px 0 0;min-height:2px}
+.hourlbl{display:flex;gap:2px;color:var(--faint);font-size:.62rem;margin-top:4px}
+.hourlbl span{flex:1;text-align:center}
 """
 
 
@@ -125,6 +131,107 @@ def _scorecard(label, cs, public=False):
     return _card(label, None, kpi + tbl + tail)
 
 
+# ── event categories (Joel's board design): the content→category map ships in the
+# hub-updatable lexicon pack; unmapped/learned content falls back to name heuristics ──
+CATEGORIES = [
+    ("itrial", "Incarnate Trials"),
+    ("hero_tf", "Hero & Co-op Task Forces"),
+    ("villain_sf", "Villain Strike Forces"),
+    ("raid", "Raids & Giant Monsters"),
+    ("trial", "Trials & Special Events"),
+    ("team", "Teams, Radios & Farms"),
+    ("other", "Other Recruiting"),
+]
+
+
+def _categorize(content, lx_map):
+    c = lx_map.get(content)
+    if c:
+        return c
+    low = (content or "").lower()
+    if "(itrial)" in low:
+        return "itrial"
+    if "strike force" in low:
+        return "villain_sf"
+    if "task force" in low:
+        return "hero_tf"
+    if "raid" in low or "giant monster" in low:
+        return "raid"
+    if "trial" in low or "event" in low:
+        return "trial"
+    if any(w in low for w in ("radio", "scanner", "farm", "mission", "team")):
+        return "team"
+    return "other"
+
+
+def _banner(key, label):
+    """A familiar-feeling graphic banner per category — self-contained inline SVG
+    (the page must load with zero external assets)."""
+    grad = {"itrial": ("#2a1548", "#7b4fe0"), "hero_tf": ("#14335e", "#2e7fd6"),
+            "villain_sf": ("#3d0a12", "#b3202e"), "raid": ("#0f3018", "#3fae6e"),
+            "trial": ("#0a333c", "#26a6a0"), "team": ("#3d2c08", "#c79a2e"),
+            "other": ("#242c3c", "#5b6c8c")}[key]
+    motifs = {
+        # incarnate radiance: a ten-point star burst
+        "itrial": ("<g fill='#ffffff22'><path d='M700 28 l6 16 16 6 -16 6 -6 16 -6 -16"
+                   " -16 -6 16 -6z'/><circle cx='700' cy='50' r='7' fill='#ffffff55'/>"
+                   "<path d='M640 10 l3 9 9 3 -9 3 -3 9 -3 -9 -9 -3 9 -3z'/>"
+                   "<path d='M755 16 l3 9 9 3 -9 3 -3 9 -3 -9 -9 -3 9 -3z'/></g>"),
+        # hero shield
+        "hero_tf": ("<g fill='#ffffff22'><path d='M690 8 l26 8 v18 c0 14 -12 24 -26 30"
+                    " c-14 -6 -26 -16 -26 -30 v-18 z'/>"
+                    "<path d='M745 14 l18 6 v12 c0 10 -8 17 -18 21 c-10 -4 -18 -11 -18"
+                    " -21 v-12 z' fill='#ffffff15'/></g>"),
+        # arachnos spikes
+        "villain_sf": ("<g stroke='#ffffff22' stroke-width='5' fill='none'>"
+                       "<path d='M660 62 q20 -34 44 -46'/><path d='M690 64 q16 -26 36"
+                       " -34'/><path d='M720 64 q14 -18 30 -22'/>"
+                       "<path d='M786 62 q-20 -34 -44 -46'/></g>"
+                       "<circle cx='726' cy='18' r='8' fill='#ffffff2a'/>"),
+        # hamidon blob + mitos
+        "raid": ("<g><circle cx='700' cy='36' r='22' fill='#ffffff1d'/>"
+                 "<circle cx='700' cy='36' r='11' fill='#ffffff2a'/>"
+                 "<circle cx='745' cy='20' r='5' fill='#ffffff30'/>"
+                 "<circle cx='752' cy='48' r='4' fill='#ffffff30'/>"
+                 "<circle cx='660' cy='14' r='4' fill='#ffffff30'/></g>"),
+        # sewer waves
+        "trial": ("<g stroke='#ffffff22' stroke-width='5' fill='none'>"
+                  "<path d='M620 44 q20 -14 40 0 t40 0 t40 0 t40 0'/>"
+                  "<path d='M640 24 q20 -14 40 0 t40 0 t40 0'/></g>"),
+        # radio arcs
+        "team": ("<g stroke='#ffffff22' stroke-width='5' fill='none'>"
+                 "<circle cx='716' cy='40' r='10'/><path d='M732 24 a24 24 0 0 1 0 32'/>"
+                 "<path d='M744 12 a40 40 0 0 1 0 56'/></g>"
+                 "<circle cx='716' cy='40' r='4' fill='#ffffff40'/>"),
+        # chat bubble
+        "other": ("<g fill='#ffffff1d'><rect x='680' y='14' rx='8' width='70' height='30'/>"
+                  "<path d='M694 44 l0 12 14 -12z'/></g>"),
+    }[key]
+    return (f"<svg class='banner' viewBox='0 0 800 56' preserveAspectRatio='xMidYMid"
+            f" slice' xmlns='http://www.w3.org/2000/svg'>"
+            f"<defs><linearGradient id='g_{key}' x1='0' y1='0' x2='1' y2='0'>"
+            f"<stop offset='0' stop-color='{grad[0]}'/>"
+            f"<stop offset='1' stop-color='{grad[1]}'/></linearGradient></defs>"
+            f"<rect width='800' height='56' fill='url(#g_{key})'/>{motifs}"
+            f"<text x='18' y='37' fill='#fff' font-family='Bahnschrift SemiCondensed,"
+            f"Arial Narrow,sans-serif' font-size='24' font-weight='700'"
+            f" letter-spacing='2' style='text-transform:uppercase'>"
+            f"{_esc(label.upper())}</text></svg>")
+
+
+def _hour_chart(by_hour):
+    """24-bar busiest-times histogram (hours are the players' local log clocks)."""
+    counts = [int(by_hour.get(h) or by_hour.get(str(h)) or 0) for h in range(24)]
+    peak = max(counts) or 1
+    bars = "".join(
+        f"<div style='height:{max(2, int(100 * c / peak))}%' "
+        f"title='{(h % 12 or 12)}{'a' if h < 12 else 'p'}m — {c} formations'></div>"
+        for h, c in enumerate(counts))
+    lbls = "".join(f"<span>{((h % 12) or 12)}{'a' if h < 12 else 'p'}</span>"
+                   if h % 3 == 0 else "<span></span>" for h in range(24))
+    return (f"<div class='hours'>{bars}</div><div class='hourlbl'>{lbls}</div>")
+
+
 def build(state_dir=None, public=False):
     if state_dir:
         gamelog.STATE_DIR = state_dir
@@ -136,24 +243,38 @@ def build(state_dir=None, public=False):
     state = gamelog.load_state()
     known_char = state.get("characters") or {}       # account -> last character seen
 
-    # ---- Server pulse: what's forming on the shard, as a bar chart by content ----------
+    # ---- Server pulse: busiest times + activity broken out by event category -----------
     by_content = pulse.get("by_content") or {}
-    top = sorted(by_content.items(), key=lambda kv: -kv[1])
-    peak = top[0][1] if top else 1
-    pulse_rows = "".join(
-        f"<tr class='chartrow'><td>{_esc(k)}</td>"
-        f"<td><div class='bar'><i style='width:{max(6, int(100 * v / peak))}%'></i></div></td>"
-        f"<td class='num'>{v}</td></tr>" for k, v in top[:16])
-    if not pulse_rows:
-        pulse_rows = ("<tr><td class='dim' colspan='3'>No recruitment captured yet. This "
-                      "fills as your shard's LFG / Broadcast / Coalition channels scroll by "
-                      "while logging is on.</td></tr>")
     pulse_card = _card(
         "Server pulse — what's forming",
         f"formations witnessed on public channels · {pulse.get('recruit_seen', 0)} "
         "(a recruiter's repeated asks for the same run count once)",
-        f"<table><tr><th>Content</th><th>Activity</th><th class='num'>Seen</th></tr>{pulse_rows}</table>",
+        ("<div class='dim' style='font-size:.78rem'>Busiest times of day "
+         "(players' local clocks)</div>" + _hour_chart(pulse.get("by_hour") or {}))
+        if by_content else
+        "<div class='dim'>No recruitment captured yet. This fills as the shard's "
+        "LFG / Broadcast / Coalition channels scroll by while logging is on.</div>",
         cls="full")
+
+    lx_map = (gamelog._lexicon() or {}).get("categories") or {}
+    groups = {}
+    for content, n in by_content.items():
+        groups.setdefault(_categorize(content, lx_map), []).append((content, n))
+    cat_cards = ""
+    for key, label in CATEGORIES:
+        rows = sorted(groups.get(key) or [], key=lambda kv: -kv[1])
+        if not rows:
+            continue
+        peak = rows[0][1]
+        body = "".join(
+            f"<tr class='chartrow'><td>{_esc(k)}</td>"
+            f"<td><div class='bar'><i style='width:{max(6, int(100 * v / peak))}%'></i></div></td>"
+            f"<td class='num'>{v}</td></tr>" for k, v in rows[:12])
+        cat_cards += (f"<div class='card full'>{_banner(key, label)}"
+                      f"<p class='sub'>{sum(v for _k, v in rows)} formations · "
+                      f"{len(rows)} distinct</p>"
+                      f"<table><tr><th>Content</th><th>Activity</th>"
+                      f"<th class='num'>Seen</th></tr>{body}</table></div>")
 
     def _spots(r):
         if r.get("spots_filled") is not None and r.get("spots_total"):
@@ -278,6 +399,7 @@ def build(state_dir=None, public=False):
 <div class='tag'>{tag}</div>
 {diag}
 {pulse_card}
+{cat_cards}
 {recent_card}
 <h2 style='margin-top:24px'>Your characters</h2>
 {scorecards}
