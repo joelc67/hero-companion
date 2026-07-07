@@ -36,7 +36,7 @@ import gamelog  # noqa: E402
 APPDIR = os.path.join(os.environ.get("APPDATA", _HERE), "HeroCompanion")
 gamelog.STATE_DIR = os.path.join(APPDIR, "gamelog")
 
-LITE_VERSION = "0.1.0"
+LITE_VERSION = "0.1.1"
 _UPDATE_VERSION_URL = ("https://raw.githubusercontent.com/joelc67/hero-companion/"
                        "master/lite_version.txt")
 _RELEASES_URL = "https://github.com/joelc67/hero-companion/releases"
@@ -62,6 +62,15 @@ conflicts, no duplicate data, whichever order you start them in.
 Blue P = Lite.  Green P = the full Hero Companion."""
 
 POLL_SECONDS = 15
+
+
+def _already_running():
+    """Named-mutex single-instance guard — double-clicking the exe twice was spawning a
+    SECOND tray icon (field report: 'cannot get rid of it'; Quit only killed one copy)."""
+    import ctypes
+    ctypes.windll.kernel32.CreateMutexW(None, False, "Global\\CompanionLiteSingleton")
+    return ctypes.windll.kernel32.GetLastError() == 183   # ERROR_ALREADY_EXISTS
+
 
 _stats = {"started": time.time(), "polls": 0, "owned": 0, "events": 0,
           "recruit": 0, "last_error": None}
@@ -204,7 +213,33 @@ def install_ingame_menu():
     human status string."""
     paths = _game_menu_paths()
     if not paths:
-        return "No game install found (no accounts folder discovered)."
+        # Auto-discovery failed (game lives somewhere unusual) — ask, don't give up.
+        try:
+            import tkinter as tk
+            from tkinter import filedialog
+            root = tk.Tk(); root.withdraw(); root.attributes("-topmost", True)
+            picked = filedialog.askdirectory(
+                title="Companion Lite — pick your City of Heroes game folder "
+                      "(the one containing 'accounts')")
+            root.destroy()
+        except Exception:  # noqa: BLE001
+            picked = None
+        if picked and os.path.isdir(os.path.join(picked, "accounts")):
+            # remember it in the SHARED settings so capture discovery gains it too
+            sp = os.path.join(APPDIR, "settings.json")
+            try:
+                with open(sp, encoding="utf-8") as f:
+                    settings = json.load(f) or {}
+            except Exception:  # noqa: BLE001
+                settings = {}
+            settings["game_root"] = picked
+            os.makedirs(APPDIR, exist_ok=True)
+            with open(sp, "w", encoding="utf-8") as f:
+                json.dump(settings, f)
+            paths = _game_menu_paths()
+        if not paths:
+            return ("No game install found. Expected a folder containing 'accounts' "
+                    "(e.g. C:\\Games\\HC2). Use Install again to retry with the picker.")
     listing = "\n".join(f"  {p}" for p in paths)
     if not _msgbox_yesno(
             "Companion Lite — install in-game menu?",
@@ -269,6 +304,17 @@ def _run_tray():
     import pystray
     img = _make_icon_image()
 
+    def _safe(fn):
+        """pystray swallows handler exceptions (field report: clicks 'did nothing') —
+        every menu action reports its failure in a dialog instead."""
+        def wrapped(icon, item):
+            try:
+                fn(icon, item)
+            except Exception as e:  # noqa: BLE001
+                _msgbox_info("Companion Lite — error",
+                             f"That action failed:\n{type(e).__name__}: {e}")
+        return wrapped
+
     def _quit(icon, _item):
         _stop.set()
         icon.stop()
@@ -318,12 +364,12 @@ def _run_tray():
         else:
             _msgbox_info("Companion Lite — updates", f"You're up to date (v{LITE_VERSION}).")
 
-    menu = pystray.Menu(pystray.MenuItem("Open Pulse Boards (alpha)", _open_boards),
-                        pystray.MenuItem("Install in-game menu…", _install_menu),
-                        pystray.MenuItem("Remove in-game menu", _remove_menu),
-                        pystray.MenuItem("Status", _show_status),
-                        pystray.MenuItem("About Companion Lite", _about),
-                        pystray.MenuItem("Check for updates", _check_updates),
+    menu = pystray.Menu(pystray.MenuItem("Open Pulse Boards (alpha)", _safe(_open_boards)),
+                        pystray.MenuItem("Install in-game menu…", _safe(_install_menu)),
+                        pystray.MenuItem("Remove in-game menu", _safe(_remove_menu)),
+                        pystray.MenuItem("Status", _safe(_show_status)),
+                        pystray.MenuItem("About Companion Lite", _safe(_about)),
+                        pystray.MenuItem("Check for updates", _safe(_check_updates)),
                         pystray.MenuItem("Quit", _quit))
     icon = pystray.Icon("CompanionLite", img, f"Companion Lite v{LITE_VERSION}", menu)
     t = threading.Thread(target=_capture_loop, daemon=True)
@@ -349,6 +395,12 @@ def main():
                 print(_status_text().replace("\n", " | "))
         except KeyboardInterrupt:
             _stop.set()
+        return
+    if _already_running():
+        _msgbox_info("Companion Lite",
+                     "Companion Lite is already running.\n\nLook for the blue P in "
+                     "your tray (it may be behind the ^ overflow arrow). Use its Quit "
+                     "to stop it.")
         return
     try:
         _run_tray()

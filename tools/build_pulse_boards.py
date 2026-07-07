@@ -105,7 +105,7 @@ def build():
 <div class='logo'>CoH <b>Pulse</b> Boards</div>
 <div class='tag'>community intel for City of Heroes: Homecoming — single-member alpha ·
 <a href='../' style='color:#3fd2ff'>about</a> ·
-<a href='https://github.com/joelc67/hero-companion/releases/tag/lite-v0.1.0' style='color:#3fd2ff'>get Companion Lite</a> ·
+<a href='https://github.com/joelc67/hero-companion/releases' style='color:#3fd2ff'>get Companion Lite</a> ·
 <a href='https://github.com/joelc67/hero-companion/discussions' style='color:#3fd2ff'>discuss</a></div>
 <div class='card'><h2>Server pulse — recruitment seen</h2>
 <table><tr><th>Content</th><th style='text-align:right'>Sightings</th></tr>{rows_pulse}</table>
