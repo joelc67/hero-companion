@@ -242,8 +242,11 @@ def parse_channel_line(msg):
     channel, speaker, text = h.group(1), h.group(2).strip(), _TAG_RX.sub("", h.group(3))
     clow = channel.lower()
     if any(p in clow for p in _PRIVATE_CHANS):
-        return None                                  # private — never captured
-    if not any(p in clow for p in _PUBLIC_RECRUIT):
+        return None                                  # private — never captured, always wins
+    # public recruitment channels = the built-in list PLUS the lexicon pack's channels
+    # (hub-updatable: shard globals where raids/iTrials organize get added there)
+    pubs = _PUBLIC_RECRUIT + tuple(c.lower() for c in (lx.get("channels") or []))
+    if not any(p in clow for p in pubs):
         return None                                  # not a recruitment channel
     low = " " + text.lower() + " "
     if re.search(r"\bfull\b", low):
