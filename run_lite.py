@@ -39,7 +39,7 @@ gamelog.STATE_DIR = os.path.join(APPDIR, "gamelog")
 LITE_VERSION = "0.1.0"
 _UPDATE_VERSION_URL = ("https://raw.githubusercontent.com/joelc67/hero-companion/"
                        "master/lite_version.txt")
-_RELEASES_URL = "https://github.com/joelc67/hero-companion/releases/latest"
+_RELEASES_URL = "https://github.com/joelc67/hero-companion/releases"
 
 ABOUT = f"""Companion Lite v{LITE_VERSION}
 
@@ -189,6 +189,16 @@ def _msgbox_yesno(title, text):
         None, text, title, MB_YESNO | MB_ICONQUESTION | MB_TOPMOST) == IDYES
 
 
+def _msgbox_info(title, text):
+    """Native dialog — tray balloon toasts are suppressed on many Windows setups
+    (field report: every menu choice looked like it did nothing), so anything the
+    user explicitly asked to see gets a real window."""
+    import ctypes
+    MB_OK, MB_ICONINFORMATION, MB_TOPMOST = 0x0, 0x40, 0x40000
+    ctypes.windll.user32.MessageBoxW(None, text, title,
+                                     MB_OK | MB_ICONINFORMATION | MB_TOPMOST)
+
+
 def install_ingame_menu():
     """Ask permission, then write companion.mnu into each game install. Returns a
     human status string."""
@@ -264,7 +274,7 @@ def _run_tray():
         icon.stop()
 
     def _show_status(icon, _item):
-        icon.notify(_status_text(), "Companion Lite")
+        _msgbox_info("Companion Lite — status", _status_text())
 
     def _open_boards(_icon, _item):
         # regenerate from the current store, then open — the alpha Pulse Boards,
@@ -278,13 +288,13 @@ def _run_tray():
         webbrowser.open("file:///" + os.path.join(APPDIR, "pulse_boards.html").replace("\\", "/"))
 
     def _install_menu(icon, _item):
-        icon.notify(install_ingame_menu(), "Companion Lite")
+        _msgbox_info("Companion Lite — in-game menu", install_ingame_menu())
 
     def _remove_menu(icon, _item):
-        icon.notify(remove_ingame_menu(), "Companion Lite")
+        _msgbox_info("Companion Lite — in-game menu", remove_ingame_menu())
 
     def _about(icon, _item):
-        icon.notify(ABOUT, "Companion Lite")
+        _msgbox_info("About Companion Lite", ABOUT)
 
     def _check_updates(icon, _item):
         # A user CLICK, never automatic — same policy as the full app. Compares the
@@ -295,17 +305,18 @@ def _run_tray():
             latest = urllib.request.urlopen(
                 _UPDATE_VERSION_URL, timeout=6).read().decode().strip()
         except Exception:  # noqa: BLE001
-            icon.notify("Couldn't reach the update server — try again later.",
-                        "Companion Lite")
+            _msgbox_info("Companion Lite — updates",
+                         "Couldn't reach the update server — try again later.")
             return
         def _t(v):
             return tuple(int(x) for x in v.split(".") if x.isdigit())
         if _t(latest) > _t(LITE_VERSION):
-            icon.notify(f"Update available: v{latest} (you have v{LITE_VERSION}). "
-                        "Opening the download page…", "Companion Lite")
+            _msgbox_info("Companion Lite — updates",
+                         f"Update available: v{latest} (you have v{LITE_VERSION}). "
+                         "Opening the download page…")
             webbrowser.open(_RELEASES_URL)
         else:
-            icon.notify(f"You're up to date (v{LITE_VERSION}).", "Companion Lite")
+            _msgbox_info("Companion Lite — updates", f"You're up to date (v{LITE_VERSION}).")
 
     menu = pystray.Menu(pystray.MenuItem("Open Pulse Boards (alpha)", _open_boards),
                         pystray.MenuItem("Install in-game menu…", _install_menu),
