@@ -92,6 +92,10 @@ padding:0 8px}
 .hourlbl span{flex:1;text-align:center}
 .tzline{color:var(--dim);font-size:.78rem}
 #nowstrip td{vertical-align:top}
+.week{display:grid;grid-template-columns:34px repeat(24,1fr);gap:2px;margin-top:10px;
+background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:8px}
+.week span{font-size:.62rem;color:var(--dim);align-self:center}
+.week i{display:block;height:13px;border-radius:2px;background:#232f4a}
 #catlegend{margin-top:8px}
 #catlegend .pill{cursor:default}
 #catlegend .pill i{display:inline-block;width:10px;height:10px;border-radius:2px;
@@ -272,13 +276,35 @@ function drawMain(hot){
    "%' title='"+lab(h)+" \\u2014 "+tot[h]+" formations'>"+segs+"</div>";}
  main.innerHTML=cells;}
 drawMain(null);
+var DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+var wk=document.getElementById('weekmap');
+function localWeek(g){var o=[],d,h;for(d=0;d<7;d++){o[d]=[];for(h=0;h<24;h++){
+ var uh=h-s,carry=Math.floor(uh/24);uh=((uh%24)+24)%24;
+ o[d][h]=(g[((d+carry)%7+7)%7]||[])[uh]||0;}}return o;}
+function hexA(hex,a){var n=parseInt(hex.slice(1),16);
+ return 'rgba('+(n>>16)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
+function drawWeek(hot){
+ if(!wk||!(D.week||{}).all)return;
+ var g=localWeek(hot?((D.week.cats||{})[hot]||D.week.all):D.week.all);
+ var p=1,d,h;for(d=0;d<7;d++)for(h=0;h<24;h++)p=Math.max(p,g[d][h]);
+ var col=hot?COL[hot]:'#5fdcff',cells='';
+ for(d=0;d<7;d++){cells+='<span>'+DAYS[d]+'</span>';
+  for(h=0;h<24;h++){var c=g[d][h];
+   var bg=c?';background:'+hexA(col,Math.round((0.12+0.88*c/p)*100)/100):'';
+   cells+="<i style='display:block"+bg+"' title='"+DAYS[d]+' '+lab(h)+" \\u2014 "+c+
+    "'></i>";}}
+ cells+='<span></span>';
+ for(h=0;h<24;h++){cells+="<span style='text-align:center'>"+(h%3?'':lab(h))+"</span>";}
+ wk.innerHTML=cells;}
+drawWeek(null);
 var leg=document.getElementById('catlegend');
 if(leg){leg.innerHTML=ORDER.filter(function(k){return CATS[k];}).map(function(k){
   return "<span class='pill' data-cat='"+k+"'><i style='background:"+COL[k]+
    "'></i>"+NAME[k]+"</span>";}).join(' ');
  leg.querySelectorAll('[data-cat]').forEach(function(ch){
-  ch.addEventListener('mouseenter',function(){drawMain(ch.getAttribute('data-cat'));});
-  ch.addEventListener('mouseleave',function(){drawMain(null);});});}
+  ch.addEventListener('mouseenter',function(){var k=ch.getAttribute('data-cat');
+   drawMain(k);drawWeek(k);});
+  ch.addEventListener('mouseleave',function(){drawMain(null);drawWeek(null);});});}
 function drawMini(el,key,hotContent){
  var cat=CATS[key]||rot((D.cats||{})[key]),p=Math.max.apply(null,cat)||1,cells='';
  var hc=hotContent?rot((D.contents||{})[hotContent]):null;
@@ -322,6 +348,43 @@ if(host){var now=Date.now()/1e3,prev=0,rows='';
 
 def _hour_counts(by_hour):
     return [int(by_hour.get(h) or by_hour.get(str(h)) or 0) for h in range(24)]
+
+
+_WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+
+def _week_grid(content_day_hours, contents, window):
+    """7×24 weekday-by-hour counts over the last-7-days window (UTC)."""
+    g = [[0] * 24 for _ in range(7)]
+    for content in contents:
+        for day, hrs in (content_day_hours.get(content) or {}).items():
+            if day not in window:
+                continue
+            try:
+                wd = datetime.date.fromisoformat(day).weekday()
+            except ValueError:
+                continue
+            for h, c in hrs.items():
+                if str(h).isdigit() and 0 <= int(h) < 24:
+                    g[wd][int(h)] += int(c)
+    return g
+
+
+def _week_html(grid):
+    """Server-rendered heatmap (UTC fallback; the page script re-renders local)."""
+    peak = max((c for row in grid for c in row), default=0) or 1
+    cells = ""
+    for wd, row in enumerate(grid):
+        cells += f"<span>{_WEEKDAYS[wd]}</span>"
+        for h, c in enumerate(row):
+            a = round(0.12 + 0.88 * c / peak, 2) if c else 0
+            bg = f";background:rgba(95,220,255,{a})" if c else ""
+            cells += (f"<i style='display:block{bg}' title='{_WEEKDAYS[wd]} "
+                      f"{(h % 12 or 12)}{'a' if h < 12 else 'p'} — {c}'></i>")
+    lbls = "<span></span>" + "".join(
+        f"<span style='text-align:center'>{((h % 12) or 12)}{'a' if h < 12 else 'p'}"
+        "</span>" if h % 3 == 0 else "<span></span>" for h in range(24))
+    return f"<div class='week' id='weekmap'>{cells}{lbls}</div>"
 
 
 def _hour_chart(by_hour, key="all", mini=False):
@@ -382,6 +445,7 @@ def build(state_dir=None, public=False):
 
     lx_map = (gamelog._lexicon() or {}).get("categories") or {}
     content_hours = pulse.get("content_hours") or {}
+    content_day_hours = pulse.get("content_day_hours") or {}
     groups, cat_hours = {}, {}
     for content, n in by_content.items():
         key = _categorize(content, lx_map)
@@ -389,6 +453,24 @@ def build(state_dir=None, public=False):
         agg = cat_hours.setdefault(key, {})
         for h, c in (content_hours.get(content) or {}).items():
             agg[int(h)] = agg.get(int(h), 0) + c
+
+    # ---- The last 7 days: weekday × hour heatmap (Joel's week-at-a-glance) -------------
+    week_card, week_all, week_cats = "", None, {}
+    all_days = sorted({d for cd in content_day_hours.values() for d in cd})
+    if all_days:
+        end = datetime.date.fromisoformat(all_days[-1])
+        window = {(end - datetime.timedelta(days=i)).isoformat() for i in range(7)}
+        week_all = _week_grid(content_day_hours, list(content_day_hours), window)
+        for key, rows in groups.items():
+            week_cats[key] = _week_grid(content_day_hours,
+                                        [c for c, _n in rows], window)
+        wk_tz = ("shown in your time zone (<span class='tzname'>UTC</span>)"
+                 if public else "this machine's clock")
+        week_card = _card(
+            "The last 7 days",
+            f"when the shard plays — day of week × time of day · {wk_tz}"
+            + (" · hover a color in the legend below to filter" if public else ""),
+            _week_html(week_all), cls="full")
     cat_cards = ""
     for key, label in CATEGORIES:
         rows = sorted(groups.get(key) or [], key=lambda kv: -kv[1])
@@ -523,6 +605,7 @@ def build(state_dir=None, public=False):
         data = {"hours": _hour_counts(pulse.get("by_hour") or {}),
                 "cats": {k: _hour_counts(v) for k, v in cat_hours.items()},
                 "contents": {k: _hour_counts(v) for k, v in content_hours.items()},
+                "week": {"all": week_all, "cats": week_cats},
                 "recent": recent_entries}
         script = ("<script>window.PULSE=" + json.dumps(data) + ";\n"
                   + _PULSE_JS + "</script>")
@@ -559,6 +642,7 @@ def build(state_dir=None, public=False):
 <div class='tag'>{tag}</div>
 {diag}
 {now_card}
+{week_card}
 {pulse_card}
 {cat_cards}
 {recent_card}

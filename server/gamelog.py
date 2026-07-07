@@ -465,7 +465,7 @@ def _blank_summary():
             "drop_kinds": {}, "days": set(),
             "pulse": {"recruit_seen": 0, "by_content": {}, "recent": [],
                       "by_channel": {}, "learned_terms": {}, "by_hour": {},
-                      "content_hours": {}}}
+                      "content_hours": {}, "content_day_hours": {}}}
 
 
 def _ts_epoch(ts):
@@ -594,6 +594,10 @@ def _tally(s, ev):
             pu["by_hour"][int(hr)] = pu["by_hour"].get(int(hr), 0) + 1
             ch_hours = pu["content_hours"].setdefault(key, {})
             ch_hours[int(hr)] = ch_hours.get(int(hr), 0) + 1
+            # day-granular (feeds the last-7-days weekday × hour heatmap)
+            dh = pu["content_day_hours"].setdefault(key, {}).setdefault(
+                (ev.get("ts") or "")[:10], {})
+            dh[int(hr)] = dh.get(int(hr), 0) + 1
         lt = ev.get("learned_term")
         if lt:                                        # discovered nomenclature, tallied
             pu["learned_terms"][lt] = pu["learned_terms"].get(lt, 0) + 1
