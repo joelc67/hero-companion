@@ -182,13 +182,21 @@ def _maybe_autopublish():
 # reversible. publish_token.txt remains a dormant power-user path.
 UPLOAD_SECONDS = 300
 _INBOX_REPO = "joelc67/hero-companion-inbox"
-_INBOX_K = b""          # inbox-scoped upload key, obfuscated at release build time
 
 
 def _inbox_token():
-    if not _INBOX_K:
+    """The product's upload key — scoped to the private inbox repo ONLY (it cannot
+    write the public site). Bundled OBFUSCATED at release build time as
+    data/inbox_key.bin, which is gitignored: the key lives in release builds, never in
+    the repo. Absent (source runs, forks) the feed is simply inert."""
+    try:
+        base = os.path.join(getattr(sys, "_MEIPASS", _HERE), "data") if _FROZEN \
+            else os.path.join(_HERE, "data")
+        with open(os.path.join(base, "inbox_key.bin"), "rb") as f:
+            raw = f.read()
+        return bytes(b ^ 0x5A for b in raw).decode("ascii").strip() or None
+    except Exception:  # noqa: BLE001
         return None
-    return bytes(b ^ 0x5A for b in _INBOX_K).decode("ascii")
 
 
 def _install_id(st):
@@ -834,6 +842,22 @@ def main():
                       encoding="utf-8") as f:
                 f.write(f"FAIL {type(e).__name__}: {e}")
             sys.exit(1)
+    if "--feed-once" in args:
+        # Release-smoke/field diagnostic: attempt ONE upload cycle NOW and record the
+        # outcome (windowed exe has no stdout). Exercises key load, terms gate,
+        # anonymization, and the real inbox round-trip — the product's core promise.
+        os.makedirs(APPDIR, exist_ok=True)
+        st = gamelog.load_state()
+        _stats["uploaded_ts"] = 0
+        _maybe_upload()
+        st2 = gamelog.load_state()
+        msg = (f"v{LITE_VERSION} key={'ok' if _inbox_token() else 'MISSING'} "
+               f"terms={st.get('terms_version', 0)} "
+               f"offset={st2.get('upload_offset', 0)} "
+               f"err={_stats.get('last_error')}")
+        with open(os.path.join(APPDIR, "feed_result.txt"), "w", encoding="utf-8") as f:
+            f.write(msg)
+        sys.exit(1 if _stats.get("last_error") else 0)
     if "--pulse" in args:
         val = args[args.index("--pulse") + 1].lower() in ("on", "1", "true")
         st = gamelog.load_state()

@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## Unreleased — Companion Lite 0.1.13
+## Companion Lite 0.1.13 — July 7, 2026
 
 - **Companion Lite now feeds the live Pulse Boards directly.** No accounts, no tokens,
   no setup, no publish button: while it runs, captured play uploads over HTTPS to the

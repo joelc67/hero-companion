@@ -1,11 +1,21 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 
+import os
+
+# the inbox upload key is gitignored and BUILD-TIME only — a release build without it
+# would ship an inert feed, so fail loudly rather than package a broken product
+_datas = [('data/chat_lexicon.json', 'data')]
+if os.path.exists('data/inbox_key.bin'):
+    _datas.append(('data/inbox_key.bin', 'data'))
+else:
+    raise SystemExit('data/inbox_key.bin missing - bake the inbox upload key first')
+
 a = Analysis(
     ['run_lite.py'],
     pathex=['server', 'tools'],
     binaries=[],
-    datas=[('data/chat_lexicon.json', 'data')],
+    datas=_datas,
     hiddenimports=['build_pulse_boards', 'gamelog'],
     hookspath=[],
     hooksconfig={},
