@@ -24,10 +24,13 @@ Modes:
 Raw uploads never leave the private inbox; only the rendered page is pushed public.
 The growth guard never publishes a board built from fewer events than the last one.
 """
+import calendar
 import json
 import os
 import re
+import subprocess
 import sys
+import time
 
 INBOX = os.getcwd()
 SITE = os.path.join(INBOX, "site")
@@ -62,6 +65,51 @@ def _source_dirs():
             if os.path.isdir(os.path.join(root, n))]
 
 
+def _ts_epoch(ts):
+    try:
+        return calendar.timegm(time.strptime(ts, "%Y-%m-%d %H:%M:%S"))
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _infer_offset_min(d, cached):
+    """A source's UTC offset (minutes), inferred with no client support: chunk commit
+    times are UTC and land within minutes of the newest event in the chunk, so
+    (commit time − event clock) exposes the capturer's offset. Rounded to 30 min;
+    falls back to the cached value when no chunk with events remains."""
+    for _off, name in reversed(_chunks(d)):
+        lines = _read_lines(os.path.join(d, name))
+        if not lines:
+            continue
+        try:
+            local = _ts_epoch(json.loads(lines[-1]).get("ts"))
+            rel = os.path.relpath(os.path.join(d, name), INBOX).replace(os.sep, "/")
+            out = subprocess.run(["git", "-C", INBOX, "log", "-1", "--format=%ct",
+                                  "--", rel], capture_output=True, text=True, timeout=30)
+            commit_utc = int(out.stdout.strip())
+            if local is None:
+                continue
+            return -int(round((commit_utc - local) / 60.0 / 30.0)) * 30
+        except Exception:  # noqa: BLE001
+            continue
+    return cached
+
+
+def _shift_line(line, off_min):
+    """Rewrite one event line's ts from the capturer's local clock to UTC."""
+    if not off_min:
+        return line
+    try:
+        ev = json.loads(line)
+        t = _ts_epoch(ev.get("ts") or "")
+        if t is None:
+            return line
+        ev["ts"] = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(t - off_min * 60))
+        return json.dumps(ev)
+    except Exception:  # noqa: BLE001
+        return line
+
+
 def _set_output(published):
     out = os.environ.get("GITHUB_OUTPUT")
     if out:
@@ -91,15 +139,28 @@ def render():
     # merged scratch lives OUTSIDE the checkout so no commit step can ever pick it up
     merged_dir = os.path.join(os.environ.get("RUNNER_TEMP") or INBOX + "-tmp", "_merged")
     os.makedirs(merged_dir, exist_ok=True)
+    try:
+        with open(os.path.join(INBOX, "last_count.json"), encoding="utf-8") as f:
+            cached_off = (json.load(f) or {}).get("offsets") or {}
+    except Exception:  # noqa: BLE001
+        cached_off = {}
+    offsets = {}
     total, chars, nsrc = 0, {}, 0
     with open(os.path.join(merged_dir, "events.jsonl"), "w", encoding="utf-8") as out:
         for d in _source_dirs():
             nsrc += 1
+            iid = os.path.basename(d)
+            off = _infer_offset_min(d, cached_off.get(iid))
+            offsets[iid] = off if off is not None else 0
             lines = _read_lines(os.path.join(d, "compacted.jsonl"))
             for _off, name in _chunks(d):
                 lines += _read_lines(os.path.join(d, name))
             total += len(lines)
+            # every merged timestamp becomes UTC so the board can render in the
+            # VIEWER's time zone (offset inferred per source, cached across collects)
+            lines = [_shift_line(ln, offsets[iid]) for ln in lines]
             out.write("\n".join(lines) + ("\n" if lines else ""))
+            print(f"source {iid}: {len(lines)} events, utc offset {offsets[iid]} min")
             try:
                 with open(os.path.join(d, "state.json"), encoding="utf-8") as f:
                     chars.update((json.load(f) or {}).get("characters") or {})
@@ -124,7 +185,7 @@ def render():
     out_path, n = build_pulse_boards.build(state_dir=merged_dir, public=True)
     print(f"built {out_path} from {n:,} events across {nsrc} source(s)")
     with open(os.path.join(INBOX, "last_count.json"), "w", encoding="utf-8") as f:
-        json.dump({"events": n}, f)
+        json.dump({"events": n, "offsets": offsets}, f)
     _set_output(True)
 
 

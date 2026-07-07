@@ -427,7 +427,8 @@ def _blank_summary():
             "badges": [], "kills": 0, "deaths": 0, "drops": [], "ah_sold": 0,
             "drop_kinds": {}, "days": set(),
             "pulse": {"recruit_seen": 0, "by_content": {}, "recent": [],
-                      "by_channel": {}, "learned_terms": {}, "by_hour": {}}}
+                      "by_channel": {}, "learned_terms": {}, "by_hour": {},
+                      "content_hours": {}}}
 
 
 def _ts_epoch(ts):
@@ -552,15 +553,17 @@ def _tally(s, ev):
         ch = ev.get("channel") or "?"
         pu["by_channel"][ch] = pu["by_channel"].get(ch, 0) + 1
         hr = (ev.get("ts") or "")[11:13]
-        if hr.isdigit():                              # busiest-times histogram
+        if hr.isdigit():                              # busiest-times histograms
             pu["by_hour"][int(hr)] = pu["by_hour"].get(int(hr), 0) + 1
+            ch_hours = pu["content_hours"].setdefault(key, {})
+            ch_hours[int(hr)] = ch_hours.get(int(hr), 0) + 1
         lt = ev.get("learned_term")
         if lt:                                        # discovered nomenclature, tallied
             pu["learned_terms"][lt] = pu["learned_terms"].get(lt, 0) + 1
-        # keep the LATEST 20 (events arrive ts-sorted; capping at the first 20 froze the
+        # keep the LATEST 60 (events arrive ts-sorted; capping at the first N froze the
         # card on the oldest sightings ever captured — the opposite of "recent")
         pu["recent"].append({k: ev.get(k) for k in
                              ("ts", "channel", "content", "spots_needed",
                               "spots_filled", "spots_total", "difficulty")})
-        if len(pu["recent"]) > 20:
+        if len(pu["recent"]) > 60:
             pu["recent"].pop(0)

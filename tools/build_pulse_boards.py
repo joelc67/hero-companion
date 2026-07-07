@@ -15,11 +15,13 @@ Run:  py tools\\build_pulse_boards.py            (writes %APPDATA%\\HeroCompanio
       py tools\\build_pulse_boards.py --open     (build then open)
       py tools\\build_pulse_boards.py --publish   (public variant into docs/pulse for the live site)
 """
+import calendar
 import datetime
 import html
 import json
 import os
 import sys
+import time
 import webbrowser
 
 if sys.stdout is not None:                    # None in a windowed (--noconsole) exe
@@ -75,11 +77,18 @@ footer{color:var(--dim);font-size:.8rem;border-top:1px solid var(--line);
 padding-top:14px;margin-top:24px}
 a{color:var(--pulse)}
 .banner{display:block;width:calc(100% + 36px);height:56px;margin:-16px -18px 14px}
-.hours{display:flex;gap:2px;align-items:flex-end;height:92px;margin-top:10px}
-.hours div{flex:1;background:linear-gradient(180deg,#7fe3ff,var(--pulse));
+.hours{display:flex;gap:2px;align-items:flex-end;height:96px;margin-top:10px;
+background:var(--panel2);border:1px solid var(--line);border-radius:6px;
+padding:8px 8px 4px}
+.hours div{flex:1;background:linear-gradient(180deg,#d8f6ff,#5fdcff);
 border-radius:2px 2px 0 0;min-height:2px}
-.hourlbl{display:flex;gap:2px;color:var(--faint);font-size:.62rem;margin-top:4px}
+.hours div.z{background:#2c3b5c}
+.hours.mini{height:52px;margin-top:6px;padding:5px 6px 3px}
+.hourlbl{display:flex;gap:2px;color:var(--dim);font-size:.66rem;margin-top:4px;
+padding:0 8px}
 .hourlbl span{flex:1;text-align:center}
+.tzline{color:var(--dim);font-size:.78rem}
+#nowstrip td{vertical-align:top}
 """
 
 
@@ -219,17 +228,62 @@ def _banner(key, label):
             f"{_esc(label.upper())}</text></svg>")
 
 
-def _hour_chart(by_hour):
-    """24-bar busiest-times histogram (hours are the players' local log clocks)."""
-    counts = [int(by_hour.get(h) or by_hour.get(str(h)) or 0) for h in range(24)]
+# Viewer-time-zone renderer for the PUBLIC board: all embedded data is UTC; this
+# shifts every hour chart into the browser's zone (named in the header line) and fills
+# the "happening right now" strip against the browser's own clock, so it stays honest
+# between pipeline publishes. Plain vanilla JS, zero external assets.
+_PULSE_JS = """
+(function(){
+var D=window.PULSE||{};var tz='UTC',s=0;
+try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC';
+s=Math.round(-new Date().getTimezoneOffset()/60);}catch(e){}
+function lab(h){return (h%12||12)+(h<12?'a':'p');}
+function esc(x){return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+function rot(a){var o=[];for(var h=0;h<24;h++){o[(h+s+24)%24]=a[h]||0;}return o;}
+document.querySelectorAll('[data-hours]').forEach(function(el){
+ var k=el.getAttribute('data-hours');
+ var a=k==='all'?(D.hours||[]):((D.cats||{})[k]||[]);
+ a=rot(a);var p=Math.max.apply(null,a)||1;
+ el.innerHTML=a.map(function(c,h){
+  return "<div style='height:"+Math.max(2,Math.round(100*c/p))+"%'"+(c?'':' class=z')+
+   " title='"+lab(h)+" \\u2014 "+c+" formations'></div>";}).join('');
+});
+document.querySelectorAll('.tzname').forEach(function(e){e.textContent=tz;});
+var host=document.getElementById('nowstrip');
+if(host){var now=Date.now()/1e3,prev=0,rows='';
+ [[5,'last 5 min'],[15,'5\\u201315 min ago'],[30,'15\\u201330 min ago'],
+  [60,'30\\u201360 min ago']].forEach(function(b){
+  var seen={};(D.recent||[]).forEach(function(r){var age=now-r.t;
+   if(age>prev*60&&age<=b[0]*60){seen[r.c]=(seen[r.c]||0)+1;}});
+  var chips=Object.keys(seen).map(function(k){
+   return "<span class='pill'>"+esc(k)+(seen[k]>1?' \\u00d7'+seen[k]:'')+"</span>";
+  }).join('')||"<span class='dim'>\\u2014</span>";
+  rows+="<tr><td class='dim' style='white-space:nowrap'>"+b[1]+"</td><td>"+chips+
+   "</td></tr>";prev=b[0];});
+ host.innerHTML=rows;}
+})();
+"""
+
+
+def _hour_counts(by_hour):
+    return [int(by_hour.get(h) or by_hour.get(str(h)) or 0) for h in range(24)]
+
+
+def _hour_chart(by_hour, key="all", mini=False):
+    """24-bar busiest-times histogram. The server-rendered bars are the no-JS fallback;
+    on the public board a small script re-renders every [data-hours] chart shifted to
+    the VIEWER's time zone (the pipeline normalized all timestamps to UTC)."""
+    counts = _hour_counts(by_hour)
     peak = max(counts) or 1
     bars = "".join(
-        f"<div style='height:{max(2, int(100 * c / peak))}%' "
-        f"title='{(h % 12 or 12)}{'a' if h < 12 else 'p'}m — {c} formations'></div>"
+        f"<div style='height:{max(2, int(100 * c / peak))}%'"
+        f"{' class=z' if not c else ''} "
+        f"title='{(h % 12 or 12)}{'a' if h < 12 else 'p'} — {c} formations'></div>"
         for h, c in enumerate(counts))
     lbls = "".join(f"<span>{((h % 12) or 12)}{'a' if h < 12 else 'p'}</span>"
                    if h % 3 == 0 else "<span></span>" for h in range(24))
-    return (f"<div class='hours'>{bars}</div><div class='hourlbl'>{lbls}</div>")
+    return (f"<div class='hours{' mini' if mini else ''}' data-hours='{_esc(key)}'>"
+            f"{bars}</div><div class='hourlbl'>{lbls}</div>")
 
 
 def build(state_dir=None, public=False):
@@ -244,22 +298,41 @@ def build(state_dir=None, public=False):
     known_char = state.get("characters") or {}       # account -> last character seen
 
     # ---- Server pulse: busiest times + activity broken out by event category -----------
+    # Public data is UTC (the pipeline normalizes every source); the page script shifts
+    # every chart and timestamp into the VIEWER's browser time zone and says so.
     by_content = pulse.get("by_content") or {}
+    tzline = ("<div class='tzline'>Busiest times of day — shown in your time zone "
+              "(<span class='tzname'>UTC</span>)</div>" if public else
+              "<div class='tzline'>Busiest times of day (this machine's clock)</div>")
     pulse_card = _card(
         "Server pulse — what's forming",
         f"formations witnessed on public channels · {pulse.get('recruit_seen', 0)} "
         "(a recruiter's repeated asks for the same run count once)",
-        ("<div class='dim' style='font-size:.78rem'>Busiest times of day "
-         "(players' local clocks)</div>" + _hour_chart(pulse.get("by_hour") or {}))
+        (tzline + _hour_chart(pulse.get("by_hour") or {}))
         if by_content else
         "<div class='dim'>No recruitment captured yet. This fills as the shard's "
         "LFG / Broadcast / Coalition channels scroll by while logging is on.</div>",
         cls="full")
 
+    # happening right now — the browser computes the 5/15/30/60-minute windows against
+    # its own clock, so the strip stays honest between pipeline publishes
+    now_card = ""
+    if public and by_content:
+        now_card = _card(
+            "Happening right now", "recruiting seen in the last hour, freshest first",
+            "<table id='nowstrip'><tr><td class='dim'>This view needs JavaScript — "
+            "see the category boards below for the full picture.</td></tr></table>",
+            cls="full")
+
     lx_map = (gamelog._lexicon() or {}).get("categories") or {}
-    groups = {}
+    content_hours = pulse.get("content_hours") or {}
+    groups, cat_hours = {}, {}
     for content, n in by_content.items():
-        groups.setdefault(_categorize(content, lx_map), []).append((content, n))
+        key = _categorize(content, lx_map)
+        groups.setdefault(key, []).append((content, n))
+        agg = cat_hours.setdefault(key, {})
+        for h, c in (content_hours.get(content) or {}).items():
+            agg[int(h)] = agg.get(int(h), 0) + c
     cat_cards = ""
     for key, label in CATEGORIES:
         rows = sorted(groups.get(key) or [], key=lambda kv: -kv[1])
@@ -272,8 +345,9 @@ def build(state_dir=None, public=False):
             f"<td class='num'>{v}</td></tr>" for k, v in rows[:12])
         cat_cards += (f"<div class='card full'>{_banner(key, label)}"
                       f"<p class='sub'>{sum(v for _k, v in rows)} formations · "
-                      f"{len(rows)} distinct</p>"
-                      f"<table><tr><th>Content</th><th>Activity</th>"
+                      f"{len(rows)} distinct · when to look for these:</p>"
+                      f"{_hour_chart(cat_hours.get(key) or {}, key=key, mini=True)}"
+                      f"<table style='margin-top:10px'><tr><th>Content</th><th>Activity</th>"
                       f"<th class='num'>Seen</th></tr>{body}</table></div>")
 
     def _spots(r):
@@ -367,6 +441,31 @@ def build(state_dir=None, public=False):
                    f"<div class='dim' style='margin-top:6px'>{len(accounts)} account(s): "
                    f"{_esc(', '.join(accounts))}</div>") + "</div>")
 
+    # characters + haul are LOCAL ONLY for now (Joel: pointless on the public board
+    # until the one-time character sync can bring characters over whole, task #38)
+    if public:
+        tail_sections = ""
+    else:
+        tail_sections = ("<h2 style='margin-top:24px'>Your characters</h2>"
+                         + scorecards
+                         + f"<div class='grid'>{haul_card}{market_card}</div>")
+
+    script = ""
+    if public:
+        recent_entries = []
+        for r in (pulse.get("recent") or []):
+            try:
+                t = calendar.timegm(time.strptime(r.get("ts") or "",
+                                                  "%Y-%m-%d %H:%M:%S"))
+            except Exception:  # noqa: BLE001
+                continue
+            recent_entries.append({"c": r.get("content") or "?", "t": t})
+        data = {"hours": _hour_counts(pulse.get("by_hour") or {}),
+                "cats": {k: _hour_counts(v) for k, v in cat_hours.items()},
+                "recent": recent_entries}
+        script = ("<script>window.PULSE=" + json.dumps(data) + ";\n"
+                  + _PULSE_JS + "</script>")
+
     if public:
         mock = "Alpha · published by the board owner from their own game log"
         logo_note = "(live)"
@@ -398,16 +497,15 @@ def build(state_dir=None, public=False):
 <div class='logo'>CoH <b>Pulse</b> Boards <span style='font-size:.9rem;color:#8fa0bd'>{logo_note}</span></div>
 <div class='tag'>{tag}</div>
 {diag}
+{now_card}
 {pulse_card}
 {cat_cards}
 {recent_card}
-<h2 style='margin-top:24px'>Your characters</h2>
-{scorecards}
-<div class='grid'>{haul_card}{market_card}</div>
+{tail_sections}
 {badge_card}
 {soon}
 <footer>{foot}</footer>
-</div></body></html>"""
+</div>{script}</body></html>"""
     os.makedirs(APPDIR, exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as f:
         f.write(page)
