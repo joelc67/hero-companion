@@ -153,7 +153,7 @@ def _status_text():
             f"capture owner: {who}\n"
             f"events captured this run: {_stats['events']} "
             f"({_stats['recruit']} recruitment)\n"
-            f"pulse capture (channels): {'ON' if st.get('pulse_capture') else 'off'}\n"
+            f"pulse capture (channels): {'ON' if st.get('pulse_capture', True) is not False else 'off'}\n"
             f"watching {len(watching)} log folder(s): {', '.join(accounts) or 'none — run /logchat 1 in game'}"
             + (f"\nlast error: {_stats['last_error']}" if _stats["last_error"] else ""))
 
@@ -544,7 +544,7 @@ def _run_tray():
         # Channel/recruitment capture — its OWN consent (contains other players' text),
         # so it's a deliberate toggle, default off. Flips the shared state flag.
         st = gamelog.load_state()
-        now = not st.get("pulse_capture")
+        now = not (st.get("pulse_capture", True) is not False)   # flip the EFFECTIVE state
         st["pulse_capture"] = now
         gamelog.save_state(st)
         _result_page("Companion Lite — pulse capture",
@@ -633,7 +633,7 @@ def _run_tray():
         pystray.MenuItem("Yes, install it", _safe(_install_confirm)),
         pystray.MenuItem("Remove it", _safe(_remove_menu)))
     def _pulse_on(_i=None):
-        return bool(gamelog.load_state().get("pulse_capture"))
+        return gamelog.load_state().get("pulse_capture", True) is not False
 
     items = [pystray.MenuItem("Open Pulse Boards (alpha)", _safe(_open_boards)),
              pystray.MenuItem("Publish my board to the live site", _safe(_publish_boards)),

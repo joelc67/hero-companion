@@ -297,7 +297,10 @@ def ingest(log_dir, state):
                           "unparsed_interesting": 0, "unparsed_samples": []}
     if not (log_dir and os.path.isdir(log_dir)):
         return events, report
-    pulse = bool(state.get("pulse_capture"))    # channel capture is its own consent
+    # Public broadcast channels (LFG/Broadcast/Request/Coalition/SG) captured LOCALLY as
+    # structured facts default ON — the meaningful consent is SHARING (a separate manual
+    # publish), not local capture. The toggle still lets anyone opt out (remembered).
+    pulse = state.get("pulse_capture", True) is not False
     offsets = state.setdefault("offsets", {})
     account = os.path.basename(os.path.dirname(log_dir))   # <game>\accounts\<acct>\Logs
     for fname in sorted(os.listdir(log_dir)):
