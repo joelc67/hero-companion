@@ -425,6 +425,37 @@ def _blank_summary():
                       "by_channel": {}, "learned_terms": {}}}
 
 
+def _ts_epoch(ts):
+    """Event timestamp string -> epoch seconds, or None if unparseable."""
+    try:
+        import calendar
+        return calendar.timegm(time.strptime(ts, "%Y-%m-%d %H:%M:%S"))
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _dedup_recruits(evs):
+    """Dual-box fix: two clients on the same machine each log the SAME public broadcast,
+    so one shout was counted as two sightings (Joel's board showed every formation
+    twice). One shout = one sighting no matter how many of your own clients heard it:
+    drop a recruit copy when an identical (channel, speaker, content) was already
+    accepted from a DIFFERENT account within a few seconds. Same-account repeats are
+    real re-posts and always stay. Expects evs sorted by ts."""
+    out, last = [], {}
+    for e in evs:
+        if e.get("type") != "recruit":
+            out.append(e)
+            continue
+        key = (e.get("channel"), e.get("speaker"), e.get("content"))
+        ts, prev = _ts_epoch(e.get("ts") or ""), last.get(key)
+        if (prev is not None and ts is not None and prev[0] is not None
+                and 0 <= ts - prev[0] <= 3 and e.get("account") != prev[1]):
+            continue                     # another client's copy of the same shout
+        last[key] = (ts, e.get("account"))       # skips don't update: 3-boxing drops all copies
+        out.append(e)
+    return out
+
+
 def summarize(events, accounts=None):
     """Aggregate events into the insight card's numbers. If `accounts` (a set/list) is
     given, only those accounts' events count. Attributes events to the CHARACTER active at
@@ -434,6 +465,7 @@ def summarize(events, accounts=None):
     acc = set(accounts) if accounts else None
     evs = [e for e in events if acc is None or e.get("account") in acc]
     evs.sort(key=lambda e: (e.get("ts") or "", e.get("account") or ""))
+    evs = _dedup_recruits(evs)
     s = _blank_summary()
     by_char, cur = {}, {}          # by_char[name] -> summary ; cur[account] -> character
     characters = []                # order-of-appearance list of names seen
@@ -500,7 +532,10 @@ def _tally(s, ev):
         lt = ev.get("learned_term")
         if lt:                                        # discovered nomenclature, tallied
             pu["learned_terms"][lt] = pu["learned_terms"].get(lt, 0) + 1
-        if len(pu["recent"]) < 20:
-            pu["recent"].append({k: ev.get(k) for k in
-                                 ("ts", "channel", "content", "spots_needed",
-                                  "spots_filled", "spots_total", "difficulty")})
+        # keep the LATEST 20 (events arrive ts-sorted; capping at the first 20 froze the
+        # card on the oldest sightings ever captured — the opposite of "recent")
+        pu["recent"].append({k: ev.get(k) for k in
+                             ("ts", "channel", "content", "spots_needed",
+                              "spots_filled", "spots_total", "difficulty")})
+        if len(pu["recent"]) > 20:
+            pu["recent"].pop(0)

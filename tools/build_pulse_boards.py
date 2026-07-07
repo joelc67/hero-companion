@@ -90,9 +90,24 @@ def _card(title, sub, body, cls=""):
     return f"<div class='card {cls}'><h2>{_esc(title)}</h2>{subhtml}{body}</div>"
 
 
-def _scorecard(label, cs):
+def _scorecard(label, cs, public=False):
+    """A character/account card. public=True shows FLOW since capture began only —
+    achievement STATE (level, badges, merits) and money stay off the public page:
+    partial badge/level counts misrepresent a multi-year character (until the one-time
+    character sync exists), and how much influence someone makes is nobody's business."""
     badges = cs.get("badges") or []
     lvl = cs.get("max_level")
+    if public:
+        kpi = (f"<div class='kpi'>"
+               f"<div><div class='v'>{len(cs.get('days') or [])}</div><div class='k'>Days seen</div></div>"
+               f"<div><div class='v'>{cs.get('kills', 0)}</div><div class='k'>Defeats</div></div>"
+               f"</div>")
+        tbl = (f"<table>"
+               f"<tr><td>XP earned</td><td class='num'>{_n(cs.get('xp', 0))}</td></tr>"
+               f"<tr><td>Drops</td><td class='num'>{len(cs.get('drops') or [])}</td></tr>"
+               f"<tr><td>Defeats dealt / taken</td><td class='num'>{cs.get('kills', 0)} / {cs.get('deaths', 0)}</td></tr>"
+               f"</table>")
+        return _card(label, "since capture began", kpi + tbl)
     kpi = (f"<div class='kpi'>"
            f"<div><div class='v'>{len(cs.get('days') or [])}</div><div class='k'>Days</div></div>"
            f"<div><div class='v'>{('L' + str(lvl)) if lvl else '—'}</div><div class='k'>Top level</div></div>"
@@ -162,11 +177,11 @@ def build(state_dir=None, public=False):
         # — but an account LOGIN name never goes on the public page, only an anon label.
         if per:
             for nm, cs in sorted(per.items()):
-                cards.append(_scorecard(nm, cs))
+                cards.append(_scorecard(nm, cs, public=public))
         else:
             label = known_char.get(acct) or (
                 f"Unnamed character #{i}" if public else f"Account: {acct}")
-            cards.append(_scorecard(label, asum))
+            cards.append(_scorecard(label, asum, public=public))
     if not cards:
         cards = ["<div class='card'><h2>Characters</h2><div class='dim'>Nothing captured "
                  "yet.</div></div>"]
@@ -181,7 +196,9 @@ def build(state_dir=None, public=False):
     haul_card = _card(
         "Haul", "everything picked up, by kind",
         f"<table><tr><th>Kind</th><th class='num'>Count</th></tr>{haul_rows}</table>")
-    market_card = _card(
+    # Money is LOCAL ONLY (Joel: how much people make is not for the public board — the
+    # future price board needs per-item prices, never personal wealth).
+    market_card = "" if public else _card(
         "Market activity", "your own auction-house flow (a seed for the price board)",
         f"<table>"
         f"<tr><td>Influence earned</td><td class='num'>{_n(overall.get('inf_gained', 0))}</td></tr>"
@@ -189,21 +206,27 @@ def build(state_dir=None, public=False):
         f"<tr><td>Items sold</td><td class='num'>{overall.get('ah_sold', 0)}</td></tr>"
         f"</table>")
 
-    # ---- Badges ------------------------------------------------------------------------
+    # ---- Badges (LOCAL ONLY — a partial badge count misrepresents a veteran character;
+    # badges/levels/accolades go public only via the one-time character sync, task #38) ---
     badges = overall.get("badges") or []
     badge_pills = "".join(f"<span class='pill'>{_esc(b)}</span>" for b in badges[-40:]) or \
         "<div class='dim'>No badge lines captured yet. Badge earns show here as they land " \
         "(the exact in-game line format is still being confirmed from real logs).</div>"
-    badge_card = _card("Badges earned", f"{len(badges)} captured", badge_pills, cls="full")
+    badge_card = "" if public else _card(
+        "Badges earned", f"{len(badges)} captured", badge_pills, cls="full")
 
     # ---- Boards still collecting (the vision pieces that need more log parsing) ---------
+    sync_note = ("<p class='dim'>Character pages (level, badges, accolades, vet levels) "
+                 "join the boards when the one-time character sync ships — so a "
+                 "multi-year character arrives whole, not as the sliver a fresh capture "
+                 "happens to see.</p>" if public else "")
     soon = _card(
         "iTrials · Task Forces · League runs", None,
         "<p class='dim'>Per-run pages (leader, participants, time, badges earned, ranked "
         "against every recorded run) appear here once the run start/finish and league "
         "join/leader line formats are confirmed from real logs. Capture is watching for "
-        "them now — the format hunter flags each new shape it sees.</p>"
-        "<p class='tagline'>collecting from your sessions</p>", cls="full soon")
+        "them now — the format hunter flags each new shape it sees.</p>" + sync_note
+        + "<p class='tagline'>collecting</p>", cls="full soon")
 
     # ---- Diagnostic banner (public: no machine path, no account login names) ------------
     if public:

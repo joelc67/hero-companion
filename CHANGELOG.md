@@ -14,6 +14,23 @@
   appears as "Unnamed character #1" until capture learns its name. Character names
   (which are public in game) are kept.
 
+- **Dual-boxing no longer double-counts the server pulse.** When two of your clients
+  both log the same public recruitment shout, it counts as ONE sighting. Same-speaker
+  re-posts minutes apart still count separately (that's real recruiting effort).
+
+- **Money stays off the public board.** Influence earned/spent and market flow show
+  only on your private local board — how much anyone makes is not community data. The
+  future price board will use per-item prices, never personal wealth.
+
+- **Levels, badges, and merits wait for the character sync.** A fresh capture only sees
+  a sliver of a multi-year character, so achievement state stays off the public board
+  until a one-time in-game character sync (level, badges, accolades, vet levels) can
+  bring a character over whole. Public character cards show play since capture began:
+  days seen, XP, drops, defeats.
+
+- **"Recent formations" actually shows recent ones.** The card was frozen on the first
+  20 sightings ever captured; it now rolls with the latest 20.
+
 ## 0.12.11 — July 6, 2026
 
 - **Sharper end-game builds from a fully re-converged optimizer.** The best-known build
