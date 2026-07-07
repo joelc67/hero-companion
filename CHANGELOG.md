@@ -2,17 +2,22 @@
 
 ## Unreleased — Companion Lite 0.1.13
 
-- **Your board feeds the live site by itself — no accounts, no tokens, no setup.**
-  Say yes once (tray → Online board → "Yes — put my board online") and Companion Lite
-  uploads its capture over HTTPS to the project's private inbox, where the board
-  pipeline imports it into the live page within minutes. Uploads are incremental
-  (only new play), tagged by an anonymous install id — never your account name or
-  machine name — and land in locked storage the general public cannot read. The only
-  thing that ever becomes public is the rendered board itself.
+- **Companion Lite now feeds the live Pulse Boards directly.** No accounts, no tokens,
+  no setup, no publish button: while it runs, captured play uploads over HTTPS to the
+  project's locked storage and the board pipeline imports it into the live page within
+  minutes. Uploads are incremental (only new play), tagged by an anonymous install
+  id — account login names are replaced with meaningless codes before anything leaves
+  the machine, and machine names or paths are never read at all. The only thing that
+  ever becomes public is the rendered board itself.
 
-- **The "Publish" menu entry is gone.** The board was never supposed to need a publish
-  button. The tray's "Online board" menu holds the one-time yes, an explanation of
-  exactly what leaves your machine, and Disconnect.
+- **The terms are the consent.** First start shows the terms (also under About):
+  using Companion Lite means you accept that your captured play feeds the live board.
+  If you don't accept, quit and uninstall. Turning game logging off (/logchat) stops
+  capture any time.
+
+- **A simpler tray.** Open the live Pulse Board, the in-game logging setup, Status,
+  About (terms), Check for updates, Quit. The local board page and every publish or
+  connect control are gone — Lite captures and feeds, the live board is the board.
 
 ## Companion Lite 0.1.12 — July 7, 2026
 

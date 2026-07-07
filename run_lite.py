@@ -41,19 +41,38 @@ _UPDATE_VERSION_URL = ("https://raw.githubusercontent.com/joelc67/hero-companion
                        "master/lite_version.txt")
 _RELEASES_URL = "https://github.com/joelc67/hero-companion/releases"
 
+TERMS_VERSION = 1
+
+TERMS = """Companion Lite feeds the live CoH Pulse Boards. Using it means you
+accept these terms; if you do not accept them, quit and uninstall it.
+
+WHAT IT CAPTURES (from your game chat log, only while logging is on):
+  - your own rewards: XP, influence, drops, merits, badges, defeats
+  - recruitment facts from public channels (what's forming, never raw
+    chat). Private messages (tells, whispers) are never captured.
+
+WHAT IT UPLOADS: that captured play data, and nothing else. Uploads are
+tagged with an anonymous install id. Your account login names never
+leave this machine (they are replaced with meaningless codes first).
+Machine names, file paths, and anything outside the game log are never
+read or sent.
+
+WHERE IT GOES: into the project's locked storage that the general
+public cannot read. The only thing made public is the rendered board
+page itself, which never shows account names, money totals, or
+machine details.
+
+YOUR CONTROLS: turn game logging off any time (/logchat in game) and
+nothing is captured; quit Companion Lite and nothing is uploaded;
+uninstall and it is gone. That is the whole agreement."""
+
 ABOUT = f"""Companion Lite v{LITE_VERSION}
 
-The little brother of Hero Companion. The FULL app plans, optimizes, and
-levels builds; Lite does exactly ONE job: quietly capture your game logs
-into local intel that feeds your Pulse Boards page.
+The little brother of Hero Companion. The FULL app plans, optimizes,
+and levels builds; Lite does exactly ONE job: capture your game logs
+and feed the live Pulse Boards.
 
-What it captures (only with logging on and your consent):
-  - your own rewards: XP, influence, drops, merits, badges, defeats
-  - recruitment facts from public channels (what's forming, never raw chat)
-
-What it shares: NOTHING. Everything stays on this machine. When the
-community boards open, sharing will be a separate per-stat opt-in and
-this app will ask you again, item by item.
+{TERMS}
 
 Runs safely beside the full Hero Companion: whichever is active captures
 (a lock guarantees exactly one at a time), the other reads - no
@@ -239,19 +258,21 @@ def _maybe_upload():
     (rebuilt), a reset chunk replaces the source's history. Account login names are
     pseudonymized BEFORE upload — they never leave the machine."""
     st = gamelog.load_state()
-    if st.get("board_feed") is not True or not _inbox_token():
+    # Consent model (Joel's): the TERMS are the consent — using the app IS agreeing to
+    # feed the live board. Uploads never start before the terms have been shown once.
+    if not _inbox_token() or st.get("terms_version", 0) < TERMS_VERSION:
         return
     if time.time() - _stats.get("uploaded_ts", 0) < UPLOAD_SECONDS:
         return
     src = os.path.join(gamelog.STATE_DIR, "events.jsonl")
     size = os.path.getsize(src) if os.path.isfile(src) else 0
-    offset = int(st.get("board_feed_offset", 0))
+    offset = int(st.get("upload_offset", 0))
     if offset > size:
         # store rebuilt (rare): start over under a FRESH install id so the pipeline
         # can never mix pre- and post-rebuild history; the stale source ages out.
         import uuid
         st["install_id"] = uuid.uuid4().hex[:16]
-        st["board_feed_offset"] = offset = 0
+        st["upload_offset"] = offset = 0
         gamelog.save_state(st)
     if size == 0 or size == offset:
         return
@@ -280,7 +301,7 @@ def _maybe_upload():
                    json.dumps({"characters": chars}).encode(),
                    f"state from {iid}", need_sha=True)
         st = gamelog.load_state()                       # re-load: capture may have run
-        st["board_feed_offset"] = offset + sent
+        st["upload_offset"] = offset + sent
         gamelog.save_state(st)
         _stats["uploaded_bytes"] = _stats.get("uploaded_bytes", 0) + len(chunk)
         _stats["uploaded_last"] = time.strftime("%H:%M:%S")
@@ -315,16 +336,16 @@ def _status_text():
         "full app" if owner.get("tag") == "full" else "idle")
     watching = _watch_dirs(st)
     accounts = sorted({os.path.basename(os.path.dirname(d)) for d in watching})
+    up = _stats.get("uploaded_last")
     if _publish_token():
         board = f"ONLINE (auto-publish every {AUTOPUBLISH_SECONDS // 60} min) — {_PUBLISH_LIVE_URL}"
-    elif st.get("board_feed") is True:
-        up = _stats.get("uploaded_last")
-        board = ("ONLINE — feeding the board"
-                 + (f" (last upload {up}, {_stats.get('uploaded_bytes', 0):,} bytes "
-                    f"this run)" if up else " (first upload within "
-                    f"{UPLOAD_SECONDS // 60} min of new play)"))
+    elif not _inbox_token():
+        board = "feed inert (no upload key in this build)"
     else:
-        board = "local page (this machine)"
+        board = ("feeding the live board"
+                 + (f" (last upload {up}, {_stats.get('uploaded_bytes', 0):,} bytes "
+                    f"this run)" if up else
+                    f" (uploads within {UPLOAD_SECONDS // 60} min of new play)"))
     return (f"Companion Lite — up {up} min\n"
             f"capture owner: {who}\n"
             f"events captured this run: {_stats['events']} "
@@ -352,7 +373,7 @@ Menu "Companion"
 \tOption "Toggle chat logging (on / off)" "logchat"
 \tOption "Save this build for Hero Companion" "build_save_file"
 \tDivider
-\tOption "What is this? (logging feeds your local Pulse Boards)" "nop"
+\tOption "What is this? (logging feeds the live Pulse Boards)" "nop"
 }
 """
 
@@ -676,60 +697,9 @@ def _run_tray():
                      "<pre style='font-size:15px;white-space:pre-wrap'>"
                      + _status_text() + "</pre>")
 
-    def _open_boards(_icon, _item):
+    def _open_live_board(_icon, _item):
         import webbrowser
-        # The board LIVES ONLINE for anyone feeding it (or the token power-user path);
-        # everyone else gets their private local board, same as before.
-        if _publish_token() or gamelog.load_state().get("board_feed") is True:
-            webbrowser.open(_PUBLISH_LIVE_URL)
-            return
-        # regenerate from THIS machine's store (pass the resolved path so the frozen
-        # build can never read the wrong events.jsonl), then open the local page.
-        out = os.path.join(APPDIR, "pulse_boards.html")
-        try:
-            import build_pulse_boards
-            build_pulse_boards.OUT = out
-            build_pulse_boards.APPDIR = APPDIR
-            build_pulse_boards.build(state_dir=gamelog.STATE_DIR)
-        except Exception as e:  # noqa: BLE001
-            _result_page("Companion Lite — boards",
-                         f"<p>Couldn't build the board:</p><pre>{type(e).__name__}: {e}</pre>")
-            return
-        webbrowser.open("file:///" + out.replace("\\", "/"))
-
-    def _feed_explain(_icon, _item):
-        _result_page("How your board gets online",
-                     "<p>No accounts, no tokens, no setup. With your OK, Companion Lite "
-                     "uploads its captured play data over HTTPS to the project's "
-                     "<b>private inbox</b> (a locked storage area the general public "
-                     "cannot read), where the board pipeline imports it into the live "
-                     "page within minutes.</p>"
-                     "<p>Only captured game events are uploaded — under an anonymous "
-                     "install id, never your account name, machine name, or anything "
-                     "else. What becomes public is ONLY the rendered board: no account "
-                     "names, no money, no machine details.</p>"
-                     "<p>Disconnect any time; the choice is remembered either way.</p>")
-
-    def _feed_connect(_icon, _item):
-        st = gamelog.load_state()
-        st["board_feed"] = True
-        gamelog.save_state(st)
-        _stats["uploaded_ts"] = 0            # feed on the very next poll
-        _result_page("Companion Lite — online board connected",
-                     "<p>Done. Your capture now feeds the live board as you play — "
-                     "nothing more to do, ever.</p>"
-                     f"<p>Your board: <a href='{_PUBLISH_LIVE_URL}'>"
-                     f"{_PUBLISH_LIVE_URL}</a></p>"
-                     "<p style='color:#8fa0bd'>First appearance can take a few minutes "
-                     "(upload + the pipeline's next import).</p>")
-
-    def _feed_disconnect(_icon, _item):
-        st = gamelog.load_state()
-        st["board_feed"] = False
-        gamelog.save_state(st)
-        _result_page("Companion Lite — online board disconnected",
-                     "<p>The feed is off — nothing leaves this machine. Your board is "
-                     "local-only again; reconnect any time from the tray.</p>")
+        webbrowser.open(_PUBLISH_LIVE_URL)
 
     def _install_confirm(_icon, _item):
         # Consent is the native submenu click "Yes, install it" — no modal to hang.
@@ -765,8 +735,8 @@ def _run_tray():
                      "folder so you can turn chat logging on from inside the game:</p>"
                      f"<ul>{listing}</ul>"
                      "<p>In game after a client restart: <code>/popmenu Companion</code>. "
-                     "Logging feeds your <b>local</b> Pulse Boards only — nothing is "
-                     "uploaded. It changes nothing else and is fully reversible.</p>")
+                     "Logging feeds the live Pulse Boards (see the terms under About). "
+                     "It changes nothing else and is fully reversible.</p>")
 
     def _remove_menu(icon, _item):
         _result_page("Companion Lite — in-game menu", f"<p>{remove_ingame_menu()}</p>")
@@ -808,15 +778,10 @@ def _run_tray():
         pystray.MenuItem("What this does / where", _safe(_install_explain)),
         pystray.MenuItem("Yes, install it", _safe(_install_confirm)),
         pystray.MenuItem("Remove it", _safe(_remove_menu)))
-    feed_sub = pystray.Menu(
-        pystray.MenuItem("How your board gets online", _safe(_feed_explain)),
-        pystray.MenuItem("Yes — put my board online", _safe(_feed_connect)),
-        pystray.MenuItem("Disconnect (stop the feed)", _safe(_feed_disconnect)))
-    items = [pystray.MenuItem("Open Pulse Boards (alpha)", _safe(_open_boards)),
-             pystray.MenuItem("Online board", feed_sub),
+    items = [pystray.MenuItem("Open the live Pulse Board", _safe(_open_live_board)),
              pystray.MenuItem("In-game logging menu", install_sub),
              pystray.MenuItem("Status", _safe(_show_status)),
-             pystray.MenuItem("About Companion Lite", _safe(_about)),
+             pystray.MenuItem("About Companion Lite (terms)", _safe(_about)),
              pystray.MenuItem("Check for updates", _safe(_check_updates)),
              pystray.MenuItem("Quit", _quit)]
     menu = pystray.Menu(*items)
@@ -827,22 +792,19 @@ def _run_tray():
     if _st.get("pulse_capture") is not True:
         _st["pulse_capture"] = True
         gamelog.save_state(_st)
-    # One-time nudge (per Joel's choice doctrine: informed opt-in, asked ONCE, remembered
-    # either way): if the user has never decided on the online feed, explain it once —
-    # connecting stays a deliberate click in the tray's Online board menu.
-    if "board_feed" not in _st and not _st.get("board_feed_nudged") and _inbox_token():
-        _st["board_feed_nudged"] = True
+    # THE TERMS ARE THE CONSENT (Joel's model): accept them by using the app, or quit
+    # and uninstall. Shown once per terms version; uploading never starts before the
+    # terms have been shown (enforced in _maybe_upload).
+    if _st.get("terms_version", 0) < TERMS_VERSION:
+        _st["terms_version"] = TERMS_VERSION
         gamelog.save_state(_st)
         try:
-            _result_page("Companion Lite — your board can live online",
-                         "<p>New in this version: your Pulse Board can feed the live "
-                         "site with no accounts, tokens, or setup — Lite uploads "
-                         "capture to the project's private inbox and the board "
-                         "pipeline does the rest. Only the rendered board is public; "
-                         "your uploads are not.</p>"
-                         "<p>To turn it on: tray (blue P) → <b>Online board</b> → "
-                         "<b>Yes — put my board online</b>. To never think about it "
-                         "again, do nothing — this note won't repeat.</p>")
+            _result_page("Companion Lite — terms",
+                         "<pre style='font-size:15px;white-space:pre-wrap'>" + TERMS
+                         + "</pre><p><b>Keep running Companion Lite and you accept "
+                         "these terms.</b> If you do not accept them: tray (blue P) → "
+                         "Quit, then uninstall. These terms stay available under "
+                         "About Companion Lite.</p>")
         except Exception:  # noqa: BLE001
             pass
     _stats["started"] = time.time()          # anchor uptime at tray start, not import
