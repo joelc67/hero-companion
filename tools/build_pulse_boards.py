@@ -16,7 +16,8 @@ import os
 import sys
 import webbrowser
 
-sys.stdout.reconfigure(encoding="utf-8")
+if sys.stdout is not None:                    # None in a windowed (--noconsole) exe
+    sys.stdout.reconfigure(encoding="utf-8")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "server"))
 import gamelog  # noqa: E402
