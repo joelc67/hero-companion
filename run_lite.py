@@ -36,7 +36,7 @@ import gamelog  # noqa: E402
 APPDIR = os.path.join(os.environ.get("APPDATA", _HERE), "HeroCompanion")
 gamelog.STATE_DIR = os.path.join(APPDIR, "gamelog")
 
-LITE_VERSION = "0.1.3"
+LITE_VERSION = "0.1.4"
 _UPDATE_VERSION_URL = ("https://raw.githubusercontent.com/joelc67/hero-companion/"
                        "master/lite_version.txt")
 _RELEASES_URL = "https://github.com/joelc67/hero-companion/releases"
@@ -363,6 +363,21 @@ def _run_tray():
             pass
         webbrowser.open("file:///" + os.path.join(APPDIR, "pulse_boards.html").replace("\\", "/"))
 
+    def _toggle_pulse(_icon, _item):
+        # Channel/recruitment capture — its OWN consent (contains other players' text),
+        # so it's a deliberate toggle, default off. Flips the shared state flag.
+        st = gamelog.load_state()
+        now = not st.get("pulse_capture")
+        st["pulse_capture"] = now
+        gamelog.save_state(st)
+        _result_page("Companion Lite — pulse capture",
+                     f"<p>Recruitment capture is now <b>{'ON' if now else 'off'}</b>.</p>"
+                     + ("<p>Companion Lite will now note what's forming on your server "
+                        "(LFG / Broadcast / Request / Coalition / SG) as structured facts "
+                        "— what and how many spots, never the raw chat. Feeds the "
+                        "'server pulse' on your boards.</p>" if now else
+                        "<p>Only your own rewards and drops are captured now.</p>"))
+
     def _install_confirm(_icon, _item):
         # Consent is the native submenu click "Yes, install it" — no modal to hang.
         # The write path is the same install_ingame_menu; its yes/no prompt is bypassed
@@ -417,13 +432,19 @@ def _run_tray():
         pystray.MenuItem("What this does / where", _safe(_install_explain)),
         pystray.MenuItem("Yes, install it", _safe(_install_confirm)),
         pystray.MenuItem("Remove it", _safe(_remove_menu)))
+    def _pulse_on(_i=None):
+        return bool(gamelog.load_state().get("pulse_capture"))
+
     menu = pystray.Menu(pystray.MenuItem("Open Pulse Boards (alpha)", _safe(_open_boards)),
                         pystray.MenuItem("In-game logging menu", install_sub),
+                        pystray.MenuItem("Capture server chatter (recruitment)",
+                                         _safe(_toggle_pulse), checked=_pulse_on),
                         pystray.MenuItem("Status", _safe(_show_status)),
                         pystray.MenuItem("About Companion Lite", _safe(_about)),
                         pystray.MenuItem("Check for updates", _safe(_check_updates)),
                         pystray.MenuItem("Quit", _quit))
     icon = pystray.Icon("CompanionLite", img, f"Companion Lite v{LITE_VERSION}", menu)
+    _stats["started"] = time.time()          # anchor uptime at tray start, not import
     t = threading.Thread(target=_capture_loop, daemon=True)
     t.start()
     icon.run()
