@@ -168,17 +168,21 @@ def render():
             except Exception:  # noqa: BLE001
                 pass
             chars.update(st.get("characters") or {})
-            # which server this source plays on: the client declares it (state.json,
-            # Lite 0.1.14+) or a pipeline-side shard.json records it for older clients
-            shard = st.get("shard")
-            if not shard:
+            # which server(s) this source plays on: the client auto-detects them from
+            # the game's playerslot.txt (state.json "shards", Lite 0.1.14+); a
+            # pipeline-side shard.json covers older clients
+            src_shards = [str(s) for s in (st.get("shards") or []) if s]
+            if not src_shards and st.get("shard"):
+                src_shards = [str(st["shard"])]
+            if not src_shards:
                 try:
                     with open(os.path.join(d, "shard.json"), encoding="utf-8") as f:
-                        shard = (json.load(f) or {}).get("shard")
+                        sj = (json.load(f) or {}).get("shard")
+                    if sj:
+                        src_shards = [str(sj)]
                 except Exception:  # noqa: BLE001
                     pass
-            if shard:
-                shards.add(str(shard))
+            shards.update(src_shards)
     with open(os.path.join(merged_dir, "state.json"), "w", encoding="utf-8") as f:
         json.dump({"characters": chars, "shards": sorted(shards)}, f)
 

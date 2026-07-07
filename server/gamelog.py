@@ -383,12 +383,49 @@ def ingest(log_dir, state):
                         report["unparsed_samples"].append(line.strip()[:160])
         except Exception:  # noqa: BLE001 — one unreadable file never blocks the rest
             continue
+    # SHARD AUTO-DETECT (Joel's insight): the client maintains playerslot.txt beside
+    # Logs — `"account" "Shard" "Character" "slot"` per character. Look up this
+    # account's current character and remember its shard: capture becomes server-
+    # attributable with zero configuration. Only WITNESSED characters are recorded —
+    # the roster itself is never stored or uploaded.
+    cur = (state.get("characters") or {}).get(account)
+    if cur and cur not in (state.get("char_shards") or {}):
+        shard = _playerslots(log_dir).get(cur)
+        if shard:
+            state.setdefault("char_shards", {})[cur] = shard
     if events:
         os.makedirs(STATE_DIR, exist_ok=True)
         with open(_events_path(), "a", encoding="utf-8") as f:
             for ev in events:
                 f.write(json.dumps(ev) + "\n")
     return events, report
+
+
+_SLOT_CACHE = {}
+
+
+def _playerslots(log_dir):
+    """character -> shard from the account's playerslot.txt (the client-maintained
+    roster living beside Logs). Cached by mtime; missing/unreadable = empty map."""
+    path = os.path.join(os.path.dirname(log_dir), "playerslot.txt")
+    try:
+        mt = os.path.getmtime(path)
+    except OSError:
+        return {}
+    cached = _SLOT_CACHE.get(path)
+    if cached and cached[0] == mt:
+        return cached[1]
+    roster = {}
+    try:
+        with open(path, encoding="utf-8", errors="replace") as f:
+            for line in f:
+                fields = re.findall(r'"([^"]*)"', line)
+                if len(fields) >= 3 and fields[1] and fields[2]:
+                    roster[fields[2]] = fields[1]
+    except Exception:  # noqa: BLE001
+        roster = {}
+    _SLOT_CACHE[path] = (mt, roster)
+    return roster
 
 
 def log_status(log_dir, now):

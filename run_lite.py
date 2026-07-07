@@ -36,7 +36,7 @@ import gamelog  # noqa: E402
 APPDIR = os.path.join(os.environ.get("APPDATA", _HERE), "HeroCompanion")
 gamelog.STATE_DIR = os.path.join(APPDIR, "gamelog")
 
-LITE_VERSION = "0.1.13"
+LITE_VERSION = "0.1.14"
 _UPDATE_VERSION_URL = ("https://raw.githubusercontent.com/joelc67/hero-companion/"
                        "master/lite_version.txt")
 _RELEASES_URL = "https://github.com/joelc67/hero-companion/releases"
@@ -305,8 +305,13 @@ def _maybe_upload():
                    f"capture from {iid}", need_sha=True)
         chars = {_pseudonym(iid, a): c
                  for a, c in (st.get("characters") or {}).items()}
+        # char_shards holds only WITNESSED characters (auto-detected from the game's
+        # own playerslot.txt) — character names are public in game; the roster is not
+        # read beyond lookups and never uploaded.
+        char_shards = st.get("char_shards") or {}
         _inbox_put(f"sources/{iid}/state.json",
-                   json.dumps({"characters": chars}).encode(),
+                   json.dumps({"characters": chars, "char_shards": char_shards,
+                               "shards": sorted(set(char_shards.values()))}).encode(),
                    f"state from {iid}", need_sha=True)
         st = gamelog.load_state()                       # re-load: capture may have run
         st["upload_offset"] = offset + sent
@@ -843,11 +848,16 @@ def main():
                 f.write(f"FAIL {type(e).__name__}: {e}")
             sys.exit(1)
     if "--feed-once" in args:
-        # Release-smoke/field diagnostic: attempt ONE upload cycle NOW and record the
-        # outcome (windowed exe has no stdout). Exercises key load, terms gate,
-        # anonymization, and the real inbox round-trip — the product's core promise.
+        # Release-smoke/field diagnostic: run ONE capture+upload cycle NOW and record
+        # the outcome (windowed exe has no stdout). Exercises log ingest, shard
+        # auto-detect, key load, terms gate, anonymization, and the real inbox
+        # round-trip — the product's core promises, end to end.
         os.makedirs(APPDIR, exist_ok=True)
         st = gamelog.load_state()
+        if gamelog.acquire_ingest("lite"):
+            for d in _watch_dirs(st):
+                gamelog.ingest(d, st)
+            gamelog.save_state(st)
         _stats["uploaded_ts"] = 0
         _maybe_upload()
         st2 = gamelog.load_state()

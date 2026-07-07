@@ -1,5 +1,13 @@
 # Hero Companion — What's New
 
+## Unreleased — Companion Lite 0.1.14
+
+- **Your server shows on the board — detected automatically.** The game itself keeps a
+  roster file (playerslot.txt) naming each character's server; Lite looks your
+  characters up there the moment they appear in the log, so the live board's "Servers
+  reporting" line fills in with zero configuration. Only the characters actually seen
+  in your logs are recorded — the roster itself is never stored or uploaded.
+
 ## Companion Lite 0.1.13 — July 7, 2026
 
 - **Companion Lite now feeds the live Pulse Boards directly.** No accounts, no tokens,

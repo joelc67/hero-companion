@@ -161,9 +161,18 @@ with open(os.path.join(logdir2, "chatlog 2026-07-05.txt"), "w", encoding="utf-8"
     f.write("2026-07-05 18:00:05 Welcome to City of Heroes, Lime Juice!\n")
     f.write("2026-07-05 18:00:10 You have defeated Malifiend Fragment\n")
     f.write("2026-07-05 18:00:11 You gain 5,000 experience and 12,000 influence.\n")
+with open(os.path.join(tmp, "accounts", "kalicous", "playerslot.txt"), "w",
+          encoding="utf-8") as f:
+    f.write('"kalicous" "Excelsior" "Lime Juice" "3"\n')
+    f.write('"kalicous" "Excelsior" "Johnny Nictus" "4"\n')
 st2 = {"watch_dirs": [logdir, logdir2], "offsets": {}}
 gamelog.ingest(logdir, st2)
 gamelog.ingest(logdir2, st2)
+check("shard auto-detected from playerslot.txt",
+      (st2.get("char_shards") or {}).get("Lime Juice") == "Excelsior",
+      str(st2.get("char_shards")))
+check("no shard invented without a roster file",
+      "Rattle" not in (st2.get("char_shards") or {}), str(st2.get("char_shards")))
 allev2 = gamelog.load_events()
 both = gamelog.summarize(allev2, accounts=["filofinfain", "kalicous"])
 bc = both.get("by_character") or {}
