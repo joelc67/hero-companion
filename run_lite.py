@@ -376,7 +376,13 @@ def _latest_lite_asset():
 
 def _self_update(url):
     """Download the new exe and swap it in via a detached updater script (a running exe
-    can't overwrite itself). Only works on the FROZEN build. Returns a status string."""
+    can't overwrite itself). Only works on the FROZEN build. Returns a status string.
+
+    SAFETY (0.1.8 regression: an update left the user with nothing running): the new exe
+    is fully downloaded AND validated (real Windows PE, sane size) BEFORE anything is
+    stopped. Only THIS process (by exact PID) is ever waited on — no kill-by-name, so it
+    can never touch the full Hero Companion or anything else. If the swap fails, the batch
+    still relaunches the existing exe, so Lite always comes back."""
     import subprocess
     import urllib.request
     if not _FROZEN:
@@ -387,21 +393,32 @@ def _self_update(url):
         with urllib.request.urlopen(url, timeout=120) as r, open(newexe, "wb") as f:
             f.write(r.read())
     except Exception as e:  # noqa: BLE001
-        return f"Download failed: {e}"
+        return f"Download failed (nothing was changed): {e}"
+    # VALIDATE before we stop anything: a real onefile exe is a PE ("MZ") and megabytes.
+    try:
+        ok = os.path.getsize(newexe) > 1_000_000
+        with open(newexe, "rb") as f:
+            ok = ok and f.read(2) == b"MZ"
+    except Exception:  # noqa: BLE001
+        ok = False
+    if not ok:
+        try:
+            os.remove(newexe)
+        except OSError:
+            pass
+        return "The downloaded update looked corrupt, so nothing was changed. Try again."
     bat = os.path.join(os.path.dirname(target), "_lite_update.bat")
     pid = os.getpid()
-    exe_name = os.path.basename(target)
-    # Like the full app's self-update: wait for THIS process to die, force-kill any
-    # straggler CompanionLite copies (so no ghost tray icon and no file lock), swap the
-    # exe, relaunch. The mutex releases automatically when the old process exits.
+    # Wait for THIS exact process (by PID) to exit, then swap and relaunch. No taskkill by
+    # image name — only our own PID is ever involved. If the move fails, still relaunch
+    # what's there so Lite is never left down.
     with open(bat, "w", encoding="utf-8") as f:
         f.write("@echo off\r\n"
                 ":wait\r\n"
                 f'tasklist /FI "PID eq {pid}" | find "{pid}" >nul '
                 "&& (ping -n 2 127.0.0.1 >nul & goto wait)\r\n"
-                f'taskkill /F /IM "{exe_name}" >nul 2>&1\r\n'
                 "ping -n 2 127.0.0.1 >nul\r\n"
-                f'move /Y "{newexe}" "{target}" >nul\r\n'
+                f'move /Y "{newexe}" "{target}" >nul 2>&1\r\n'
                 f'start "" "{target}"\r\n'
                 'del "%~f0"\r\n')
     subprocess.Popen(["cmd", "/c", bat], creationflags=0x00000008)   # DETACHED_PROCESS
