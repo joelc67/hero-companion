@@ -57,7 +57,12 @@ def _esc(s):
     return html.escape(str(s if s is not None else ""))
 
 
-def build():
+def build(state_dir=None):
+    # Frozen Lite passes its resolved store explicitly so there's never any doubt which
+    # events.jsonl is read (the "empty board" confusion was partly not knowing the source).
+    if state_dir:
+        gamelog.STATE_DIR = state_dir
+    src_path = gamelog._events_path()
     events = gamelog.load_events(limit=200000)
     s = gamelog.summarize(events)
     overall = s.get("overall") or s
@@ -122,13 +127,17 @@ def build():
 
     page = f"""<!doctype html><html><head><meta charset='utf-8'>
 <title>CoH Pulse Boards — alpha (local)</title><style>{CSS}</style></head><body>
-<div class='mock'>Alpha · fed by one member's eyes (yours) · everything local, nothing uploaded</div>
+<div class='mock'>Your LOCAL board · built from your own game log · nothing uploaded</div>
 <div class='wrap'>
-<div class='logo'>CoH <b>Pulse</b> Boards</div>
-<div class='tag'>community intel for City of Heroes: Homecoming — single-member alpha ·
-<a href='../' style='color:#3fd2ff'>about</a> ·
-<a href='https://github.com/joelc67/hero-companion/releases' style='color:#3fd2ff'>get Companion Lite</a> ·
-<a href='https://github.com/joelc67/hero-companion/discussions' style='color:#3fd2ff'>discuss</a></div>
+<div class='logo'>CoH <b>Pulse</b> Boards <span style='font-size:.9rem;color:#8fa0bd'>(your machine)</span></div>
+<div class='tag'>This page is generated on YOUR PC from YOUR game log — it is not the shared
+community site (that one lives at
+<a href='https://joelc67.github.io/hero-companion/pulse/' style='color:#3fd2ff'>joelc67.github.io/hero-companion/pulse</a>
+and is empty until community sharing opens). During the alpha your data stays here.</div>
+<div class='card' style='border-color:#3fd2ff'>
+<b>Read {len(events)} events</b> from<br><code style='color:#8fa0bd;font-size:.8rem'>{_esc(src_path)}</code>
+{"<div class='dim' style='margin-top:6px'>0 events means logging has not written anything yet — run <b>/logchat 1</b> in game (each account) and play a little.</div>" if not events else ""}
+</div>
 <div class='card'><h2>Server pulse — recruitment seen</h2>
 <table><tr><th>Content</th><th style='text-align:right'>Sightings</th></tr>{rows_pulse}</table>
 <div class='dim' style='margin-top:8px'>total sightings: {pulse['recruit_seen']}</div></div>

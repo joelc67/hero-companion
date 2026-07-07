@@ -36,7 +36,7 @@ import gamelog  # noqa: E402
 APPDIR = os.path.join(os.environ.get("APPDATA", _HERE), "HeroCompanion")
 gamelog.STATE_DIR = os.path.join(APPDIR, "gamelog")
 
-LITE_VERSION = "0.1.5"
+LITE_VERSION = "0.1.6"
 _UPDATE_VERSION_URL = ("https://raw.githubusercontent.com/joelc67/hero-companion/"
                        "master/lite_version.txt")
 _RELEASES_URL = "https://github.com/joelc67/hero-companion/releases"
@@ -400,15 +400,20 @@ def _run_tray():
                      + _status_text() + "</pre>")
 
     def _open_boards(_icon, _item):
-        # regenerate from the current store, then open — the alpha Pulse Boards,
-        # fed by this machine's eyes only
+        # regenerate from THIS machine's store (pass the resolved path so the frozen
+        # build can never read the wrong events.jsonl), then open the local page.
         import webbrowser
+        out = os.path.join(APPDIR, "pulse_boards.html")
         try:
             import build_pulse_boards
-            build_pulse_boards.build()
-        except Exception:  # noqa: BLE001 — open whatever the last build produced
-            pass
-        webbrowser.open("file:///" + os.path.join(APPDIR, "pulse_boards.html").replace("\\", "/"))
+            build_pulse_boards.OUT = out
+            build_pulse_boards.APPDIR = APPDIR
+            build_pulse_boards.build(state_dir=gamelog.STATE_DIR)
+        except Exception as e:  # noqa: BLE001
+            _result_page("Companion Lite — boards",
+                         f"<p>Couldn't build the board:</p><pre>{type(e).__name__}: {e}</pre>")
+            return
+        webbrowser.open("file:///" + out.replace("\\", "/"))
 
     def _toggle_pulse(_icon, _item):
         # Channel/recruitment capture — its OWN consent (contains other players' text),
