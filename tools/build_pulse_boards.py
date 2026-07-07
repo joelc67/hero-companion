@@ -150,7 +150,8 @@ def build(state_dir=None, public=False):
                       "while logging is on.</td></tr>")
     pulse_card = _card(
         "Server pulse — what's forming",
-        f"live recruitment activity across public channels · {pulse.get('recruit_seen', 0)} sightings",
+        f"formations witnessed on public channels · {pulse.get('recruit_seen', 0)} "
+        "(a recruiter's repeated asks for the same run count once)",
         f"<table><tr><th>Content</th><th>Activity</th><th class='num'>Seen</th></tr>{pulse_rows}</table>",
         cls="full")
 

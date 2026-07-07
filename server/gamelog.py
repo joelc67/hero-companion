@@ -246,6 +246,11 @@ def parse_channel_line(msg):
     if not any(p in clow for p in _PUBLIC_RECRUIT):
         return None                                  # not a recruitment channel
     low = " " + text.lower() + " "
+    if re.search(r"\bfull\b", low):
+        # The speaker saying "full" CLOSES their open recruitment (Joel's rule) — their
+        # next ask is a NEW formation (e.g. back-to-back DFB runs). Structured fact only;
+        # the marker is consumed by episode-collapsing and never counted itself.
+        return {"type": "recruit_full", "channel": channel, "speaker": speaker}
     if not _RECRUIT_HINT.search(low):
         return None                                  # channel chatter, not a group forming
 
@@ -434,24 +439,41 @@ def _ts_epoch(ts):
         return None
 
 
-def _dedup_recruits(evs):
-    """Dual-box fix: two clients on the same machine each log the SAME public broadcast,
-    so one shout was counted as two sightings (Joel's board showed every formation
-    twice). One shout = one sighting no matter how many of your own clients heard it:
-    drop a recruit copy when an identical (channel, speaker, content) was already
-    accepted from a DIFFERENT account within a few seconds. Same-account repeats are
-    real re-posts and always stay. Expects evs sorted by ts."""
-    out, last = [], {}
+RECRUIT_EPISODE_GAP = 600     # 10 min of silence = the next ask is a NEW formation
+
+
+def _collapse_recruits(evs):
+    """ONE FORMATION = ONE SIGHTING (Joel's rules, from watching real LFG):
+
+    - Spam collapse: a recruiter re-asking for the same content ("lf2m dfb" every 40s
+      until filled) is ONE formation, not one per shout. An episode is keyed by
+      (speaker, content) — channel ignored, so cross-posting LFG+Broadcast is still one
+      formation — and each repeat EXTENDS it.
+    - "full" closes: the speaker saying full means the team filled; their next ask is a
+      NEW formation (back-to-back DFB runs). The marker itself is never counted.
+    - 10-minute silence closes: no re-ask for RECRUIT_EPISODE_GAP = they're done or
+      running it again — the next ask counts fresh.
+    - Dual-box falls out for free: your second client's copy of the same shout lands
+      inside the episode (same speaker+content, seconds apart) and is absorbed.
+
+    Expects evs sorted by ts."""
+    out, open_ep = [], {}          # (speaker, content) -> epoch of the last ask
     for e in evs:
-        if e.get("type") != "recruit":
+        t = e.get("type")
+        if t == "recruit_full":
+            for k in [k for k in open_ep if k[0] == e.get("speaker")]:
+                open_ep.pop(k)
+            continue                                 # marker consumed, never counted
+        if t != "recruit":
             out.append(e)
             continue
-        key = (e.get("channel"), e.get("speaker"), e.get("content"))
-        ts, prev = _ts_epoch(e.get("ts") or ""), last.get(key)
-        if (prev is not None and ts is not None and prev[0] is not None
-                and 0 <= ts - prev[0] <= 3 and e.get("account") != prev[1]):
-            continue                     # another client's copy of the same shout
-        last[key] = (ts, e.get("account"))       # skips don't update: 3-boxing drops all copies
+        key = (e.get("speaker"), e.get("content"))
+        ts, last = _ts_epoch(e.get("ts") or ""), open_ep.get(key)
+        if (last is not None and ts is not None
+                and 0 <= ts - last < RECRUIT_EPISODE_GAP):
+            open_ep[key] = ts                        # spam extends, never re-counts
+            continue
+        open_ep[key] = ts
         out.append(e)
     return out
 
@@ -465,7 +487,7 @@ def summarize(events, accounts=None):
     acc = set(accounts) if accounts else None
     evs = [e for e in events if acc is None or e.get("account") in acc]
     evs.sort(key=lambda e: (e.get("ts") or "", e.get("account") or ""))
-    evs = _dedup_recruits(evs)
+    evs = _collapse_recruits(evs)
     s = _blank_summary()
     by_char, cur = {}, {}          # by_char[name] -> summary ; cur[account] -> character
     characters = []                # order-of-appearance list of names seen

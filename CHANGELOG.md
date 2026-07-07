@@ -14,9 +14,11 @@
   appears as "Unnamed character #1" until capture learns its name. Character names
   (which are public in game) are kept.
 
-- **Dual-boxing no longer double-counts the server pulse.** When two of your clients
-  both log the same public recruitment shout, it counts as ONE sighting. Same-speaker
-  re-posts minutes apart still count separately (that's real recruiting effort).
+- **The server pulse counts formations, not shouts.** A recruiter repeating "lf2m dfb"
+  until the team fills is one formation, not a sighting per shout: repeated asks for
+  the same content collapse into one, the recruiter saying "full" closes it (their next
+  ask is a new run), and 10 minutes of silence does too. Dual-boxing is covered by the
+  same rule — two of your clients logging the same shout count it once.
 
 - **Money stays off the public board.** Influence earned/spent and market flow show
   only on your private local board — how much anyone makes is not community data. The

@@ -223,6 +223,58 @@ check("fit haul: a set NOT in the build stays generic (not KEEP-for-you)",
 check("fit haul: count reported", _ins.get("fit_haul") == 1, str(_ins.get("fit_haul")))
 (srv._saves_dir, srv._all_saves, srv._watch_dirs, gamelog.load_state, gamelog.load_events) = _orig
 
+# ── recruit episodes: one formation = one sighting (Joel's LFG rules) ─────────
+print("\n── recruit episode collapsing ──")
+
+
+def _rec(ts, speaker, content, account="kalicous"):
+    return {"type": "recruit", "ts": ts, "account": account, "speaker": speaker,
+            "channel": "Looking For Group", "content": content}
+
+
+def _pulse_count(evs):
+    return gamelog.summarize(evs)["pulse"]["recruit_seen"]
+
+
+spam = [_rec("2026-07-07 10:00:00", "Leader", "DFB"),
+        _rec("2026-07-07 10:01:30", "Leader", "DFB"),
+        _rec("2026-07-07 10:04:00", "Leader", "DFB"),
+        _rec("2026-07-07 10:09:00", "Leader", "DFB")]
+check("LFG spam collapses to ONE formation", _pulse_count(spam) == 1,
+      str(_pulse_count(spam)))
+
+reask = spam + [_rec("2026-07-07 10:25:00", "Leader", "DFB")]
+check("re-ask after 10+ min of silence = NEW formation", _pulse_count(reask) == 2,
+      str(_pulse_count(reask)))
+
+filled = [_rec("2026-07-07 10:00:00", "Leader", "DFB"),
+          {"type": "recruit_full", "ts": "2026-07-07 10:02:00", "account": "kalicous",
+           "speaker": "Leader", "channel": "Looking For Group"},
+          _rec("2026-07-07 10:03:00", "Leader", "DFB")]
+check("'full' closes the episode: quick re-ask = NEW run", _pulse_count(filled) == 2,
+      str(_pulse_count(filled)))
+
+dual = [_rec("2026-07-07 10:00:00", "Leader", "DFB", account="kalicous"),
+        _rec("2026-07-07 10:00:00", "Leader", "DFB", account="filofinfain")]
+check("dual-box twin absorbed into the same formation", _pulse_count(dual) == 1,
+      str(_pulse_count(dual)))
+
+two = [_rec("2026-07-07 10:00:00", "Leader", "DFB"),
+       _rec("2026-07-07 10:01:00", "Leader", "Positron Task Force")]
+check("same speaker, different content = separate formations", _pulse_count(two) == 2,
+      str(_pulse_count(two)))
+
+ev_full, _ = gamelog.parse_line(
+    "2026-07-07 10:02:00 [Looking For Group] Leader: dfb full ty all", pulse=True)
+check("parser emits recruit_full marker (never raw chat)",
+      ev_full and ev_full["type"] == "recruit_full" and ev_full["speaker"] == "Leader"
+      and "content" not in ev_full, str(ev_full))
+
+ev_ask, _ = gamelog.parse_line(
+    "2026-07-07 10:00:00 [Looking For Group] Leader: lf2m dfb", pulse=True)
+check("plain ask still parses as recruit", ev_ask and ev_ask["type"] == "recruit",
+      str(ev_ask and ev_ask["type"]))
+
 shutil.rmtree(tmp, ignore_errors=True)
 print(f"\n══ {'ALL PASS' if not fails else f'{len(fails)} FAILURE(S): ' + ', '.join(fails)} ══")
 sys.exit(1 if fails else 0)
