@@ -125,5 +125,15 @@ this is per-stat opt-in — this alpha page never leaves your machine.</footer>
 if __name__ == "__main__":
     out, n = build()
     print(f"built {out} from {n} events")
+    if "--publish" in sys.argv:
+        # Copy into the repo's GitHub Pages tree — committing + pushing docs/pulse/
+        # updates the LIVE boards at https://joelc67.github.io/hero-companion/pulse/.
+        # Publishing is a deliberate, owner-driven act (Joel's data, Joel's push) —
+        # the community submission gate is unaffected: no one else's data exists here.
+        pub = os.path.join(ROOT, "docs", "pulse", "index.html")
+        os.makedirs(os.path.dirname(pub), exist_ok=True)
+        with open(out, encoding="utf-8") as src, open(pub, "w", encoding="utf-8") as dst:
+            dst.write(src.read())
+        print(f"published copy -> {pub}  (commit + push to update the live site)")
     if "--open" in sys.argv:
         webbrowser.open("file:///" + out.replace("\\", "/"))
