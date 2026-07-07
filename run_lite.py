@@ -36,6 +36,31 @@ import gamelog  # noqa: E402
 APPDIR = os.path.join(os.environ.get("APPDATA", _HERE), "HeroCompanion")
 gamelog.STATE_DIR = os.path.join(APPDIR, "gamelog")
 
+LITE_VERSION = "0.1.0"
+_UPDATE_VERSION_URL = ("https://raw.githubusercontent.com/joelc67/hero-companion/"
+                       "master/lite_version.txt")
+_RELEASES_URL = "https://github.com/joelc67/hero-companion/releases/latest"
+
+ABOUT = f"""Companion Lite v{LITE_VERSION}
+
+The little brother of Hero Companion. The FULL app plans, optimizes, and
+levels builds; Lite does exactly ONE job: quietly capture your game logs
+into local intel that feeds your Pulse Boards page.
+
+What it captures (only with logging on and your consent):
+  - your own rewards: XP, influence, drops, merits, badges, defeats
+  - recruitment facts from public channels (what's forming, never raw chat)
+
+What it shares: NOTHING. Everything stays on this machine. When the
+community boards open, sharing will be a separate per-stat opt-in and
+this app will ask you again, item by item.
+
+Runs safely beside the full Hero Companion: whichever is active captures
+(a lock guarantees exactly one at a time), the other reads - no
+conflicts, no duplicate data, whichever order you start them in.
+
+Blue P = Lite.  Green P = the full Hero Companion."""
+
 POLL_SECONDS = 15
 
 _stats = {"started": time.time(), "polls": 0, "owned": 0, "events": 0,
@@ -175,7 +200,11 @@ def install_ingame_menu():
             "Companion Lite — install in-game menu?",
             "This writes ONE small text file (a popmenu) into your game's data folder "
             "so you can enable chat logging from inside the game:\n\n" + listing +
-            "\n\nIt changes nothing else, and 'Remove in-game menu' deletes it again. "
+            "\n\nWHAT LOGGING FEEDS: your local Pulse Boards page only — rewards, "
+            "badges, and what's forming on your server. Everything stays on this "
+            "machine; NOTHING is shared or uploaded. If community boards open later, "
+            "sharing will be a separate per-stat question, asked then.\n\n"
+            "It changes nothing else, and 'Remove in-game menu' deletes it again. "
             "Install?"):
         return "Not installed (you said no — remembered until you choose Install again)."
     done = []
@@ -254,12 +283,38 @@ def _run_tray():
     def _remove_menu(icon, _item):
         icon.notify(remove_ingame_menu(), "Companion Lite")
 
+    def _about(icon, _item):
+        icon.notify(ABOUT, "Companion Lite")
+
+    def _check_updates(icon, _item):
+        # A user CLICK, never automatic — same policy as the full app. Compares the
+        # published lite version marker; if newer, opens the releases page.
+        import urllib.request
+        import webbrowser
+        try:
+            latest = urllib.request.urlopen(
+                _UPDATE_VERSION_URL, timeout=6).read().decode().strip()
+        except Exception:  # noqa: BLE001
+            icon.notify("Couldn't reach the update server — try again later.",
+                        "Companion Lite")
+            return
+        def _t(v):
+            return tuple(int(x) for x in v.split(".") if x.isdigit())
+        if _t(latest) > _t(LITE_VERSION):
+            icon.notify(f"Update available: v{latest} (you have v{LITE_VERSION}). "
+                        "Opening the download page…", "Companion Lite")
+            webbrowser.open(_RELEASES_URL)
+        else:
+            icon.notify(f"You're up to date (v{LITE_VERSION}).", "Companion Lite")
+
     menu = pystray.Menu(pystray.MenuItem("Open Pulse Boards (alpha)", _open_boards),
                         pystray.MenuItem("Install in-game menu…", _install_menu),
                         pystray.MenuItem("Remove in-game menu", _remove_menu),
                         pystray.MenuItem("Status", _show_status),
+                        pystray.MenuItem("About Companion Lite", _about),
+                        pystray.MenuItem("Check for updates", _check_updates),
                         pystray.MenuItem("Quit", _quit))
-    icon = pystray.Icon("CompanionLite", img, "Companion Lite", menu)
+    icon = pystray.Icon("CompanionLite", img, f"Companion Lite v{LITE_VERSION}", menu)
     t = threading.Thread(target=_capture_loop, daemon=True)
     t.start()
     icon.run()
