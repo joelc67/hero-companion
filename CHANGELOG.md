@@ -1,5 +1,30 @@
 # Hero Companion — What's New
 
+## 0.12.13 — July 7, 2026
+
+- **−Resistance procs for every role that can carry them.** Achilles' Heel,
+  Annihilation, and Fury of the Gladiator multiply the whole spawn's incoming damage —
+  and a damage role owns the biggest share of that damage. The optimizer now hunts a
+  home for each −res proc in every build (debuff toggles first, then the biggest
+  eligible power), not just on debuffers and controllers. Annihilation's proc rate was
+  also corrected against the game's own data.
+
+- **Force Feedback: Chance for +Recharge finally counts.** The famous knockback proc is
+  seated in your spammiest knockback attack and honestly valued: the average recharge
+  it sustains (chance per cast × 5 seconds ÷ how often you actually fire) flows into
+  everything recharge touches — attack chains, Hasten uptime, debuff cycling, pet
+  resummons. The build totals show exactly how much of your recharge it carries.
+
+- **Hamidon Origin enhancements modeled.** All 62 special enhancements are now priced
+  correctly when slotted, and the optimizer uses the master pattern: a proc-hybrid
+  attack's filler core trades up to two Nucleolus Exposures (about 66% accuracy and
+  66% damage in two slots, with no recharge to depress the proc rates). Premium set
+  cores are left intact — those bonuses are build-defining.
+
+- **Champion builds re-converged** under the corrected model and shipping in this
+  update, plus a fix to pet resummon timing that slightly undercredited global
+  recharge on timed summons.
+
 ## 0.12.12 — July 7, 2026
 
 - **Henchmen and pets priced like the live game (the big Mastermind fix).** Pet damage
