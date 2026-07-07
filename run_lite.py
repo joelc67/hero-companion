@@ -36,7 +36,7 @@ import gamelog  # noqa: E402
 APPDIR = os.path.join(os.environ.get("APPDATA", _HERE), "HeroCompanion")
 gamelog.STATE_DIR = os.path.join(APPDIR, "gamelog")
 
-LITE_VERSION = "0.1.6"
+LITE_VERSION = "0.1.7"
 _UPDATE_VERSION_URL = ("https://raw.githubusercontent.com/joelc67/hero-companion/"
                        "master/lite_version.txt")
 _RELEASES_URL = "https://github.com/joelc67/hero-companion/releases"
@@ -285,6 +285,57 @@ def remove_ingame_menu():
     return f"Removed {removed} menu file(s)."
 
 
+_PUBLISH_REPO = "joelc67/hero-companion"
+_PUBLISH_PATH = "docs/pulse/index.html"
+_PUBLISH_LIVE_URL = "https://joelc67.github.io/hero-companion/pulse/"
+
+
+def _publish_token():
+    """The owner's GitHub token, read from a LOCAL file only (never bundled, never in the
+    repo). Absent for everyone but the owner, so the publish feature is inert by default."""
+    p = os.path.join(APPDIR, "publish_token.txt")
+    try:
+        with open(p, encoding="utf-8") as f:
+            t = f.read().strip()
+        return t or None
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _publish_live(html):
+    """Owner-sync: PUT the generated board HTML to the Pages file via the GitHub contents
+    API, so joelc67.github.io/.../pulse shows THIS machine's data. Publishing your own
+    data to your own public site — one explicit click per publish. Returns a status str."""
+    import base64
+    import urllib.request
+    token = _publish_token()
+    if not token:
+        return "no-token"
+    api = f"https://api.github.com/repos/{_PUBLISH_REPO}/contents/{_PUBLISH_PATH}"
+    hdr = {"Authorization": f"token {token}", "Accept": "application/vnd.github+json",
+           "User-Agent": "CompanionLite"}
+    sha = None
+    try:                                             # current file SHA (needed to update)
+        cur = json.load(urllib.request.urlopen(
+            urllib.request.Request(api + "?ref=master", headers=hdr), timeout=15))
+        sha = cur.get("sha")
+    except Exception:  # noqa: BLE001 — file may not exist yet; create it
+        sha = None
+    payload = {"message": "Publish Pulse Boards from Companion Lite",
+               "content": base64.b64encode(html.encode("utf-8")).decode("ascii"),
+               "branch": "master"}
+    if sha:
+        payload["sha"] = sha
+    try:
+        req = urllib.request.Request(api, data=json.dumps(payload).encode(),
+                                     headers={**hdr, "Content-Type": "application/json"},
+                                     method="PUT")
+        urllib.request.urlopen(req, timeout=30).read()
+        return "ok"
+    except Exception as e:  # noqa: BLE001
+        return f"failed: {e}"
+
+
 def _latest_lite_asset():
     """(version, exe_download_url) for the newest lite-v* release, or (None, None).
     Lite releases are pre-releases, so /releases/latest won't find them — query the list."""
@@ -415,6 +466,37 @@ def _run_tray():
             return
         webbrowser.open("file:///" + out.replace("\\", "/"))
 
+    def _publish_boards(_icon, _item):
+        import build_pulse_boards
+        build_pulse_boards.OUT = os.path.join(APPDIR, "pulse_boards.html")
+        build_pulse_boards.APPDIR = APPDIR
+        out, n = build_pulse_boards.build(state_dir=gamelog.STATE_DIR)
+        html = open(out, encoding="utf-8").read()
+        status = _publish_live(html)
+        if status == "ok":
+            _result_page("Companion Lite — published",
+                         f"<p>Published <b>{n} events</b> to your live board:</p>"
+                         f"<p><a href='{_PUBLISH_LIVE_URL}'>{_PUBLISH_LIVE_URL}</a></p>"
+                         "<p style='color:#8fa0bd'>GitHub Pages takes a minute to "
+                         "refresh. This is YOUR data on YOUR public site — only what you "
+                         "just published, nothing more.</p>")
+        elif status == "no-token":
+            _result_page("Companion Lite — set up publishing",
+                         "<p>To publish your board to the live site, this machine needs a "
+                         "GitHub token (created by you, stored only here):</p><ol>"
+                         "<li>On GitHub: Settings → Developer settings → Fine-grained "
+                         "tokens → Generate. Repository access: <code>hero-companion</code>. "
+                         "Permission: <b>Contents → Read and write</b>.</li>"
+                         "<li>Save the token text into this file:<br>"
+                         f"<code>{os.path.join(APPDIR, 'publish_token.txt')}</code></li>"
+                         "<li>Click Publish again.</li></ol>"
+                         "<p style='color:#8fa0bd'>The token stays on this machine — it is "
+                         "never in the app or the repo.</p>")
+        else:
+            _result_page("Companion Lite — publish failed",
+                         f"<p>Couldn't publish:</p><pre>{status}</pre>"
+                         "<p>Check the token has Contents write on hero-companion.</p>")
+
     def _toggle_pulse(_icon, _item):
         # Channel/recruitment capture — its OWN consent (contains other players' text),
         # so it's a deliberate toggle, default off. Flips the shared state flag.
@@ -495,14 +577,16 @@ def _run_tray():
     def _pulse_on(_i=None):
         return bool(gamelog.load_state().get("pulse_capture"))
 
-    menu = pystray.Menu(pystray.MenuItem("Open Pulse Boards (alpha)", _safe(_open_boards)),
-                        pystray.MenuItem("In-game logging menu", install_sub),
-                        pystray.MenuItem("Capture server chatter (recruitment)",
-                                         _safe(_toggle_pulse), checked=_pulse_on),
-                        pystray.MenuItem("Status", _safe(_show_status)),
-                        pystray.MenuItem("About Companion Lite", _safe(_about)),
-                        pystray.MenuItem("Check for updates", _safe(_check_updates)),
-                        pystray.MenuItem("Quit", _quit))
+    items = [pystray.MenuItem("Open Pulse Boards (alpha)", _safe(_open_boards)),
+             pystray.MenuItem("Publish my board to the live site", _safe(_publish_boards)),
+             pystray.MenuItem("In-game logging menu", install_sub),
+             pystray.MenuItem("Capture server chatter (recruitment)",
+                              _safe(_toggle_pulse), checked=_pulse_on),
+             pystray.MenuItem("Status", _safe(_show_status)),
+             pystray.MenuItem("About Companion Lite", _safe(_about)),
+             pystray.MenuItem("Check for updates", _safe(_check_updates)),
+             pystray.MenuItem("Quit", _quit)]
+    menu = pystray.Menu(*items)
     icon = pystray.Icon("CompanionLite", img, f"Companion Lite v{LITE_VERSION}", menu)
     _stats["started"] = time.time()          # anchor uptime at tray start, not import
     t = threading.Thread(target=_capture_loop, daemon=True)
