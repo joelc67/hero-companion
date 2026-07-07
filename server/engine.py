@@ -645,11 +645,14 @@ def _pet_damage_for_powerset(ps_full, ctx, pet_col, dmg_boost, pvp=False):
 
 
 def _pet_offense(build, totals, ctx):
-    """Pet damage shown on its own: resolve each summon power to its pet entity
-    -> pet powersets -> pet attacks, and estimate per-pet single-target DPS using
-    the pet's AT column. The summon power's slotted Damage enhancement (pet-damage
-    IO sets) boosts the pets. Squad size (e.g. 3/2/1 Mastermind henchmen per tier)
-    is NOT multiplied in — DPS is shown PER pet. Returns {} if no pets."""
+    """Pet damage: resolve each summon power to its pet entities -> pet powersets ->
+    pet attacks, priced with the pet's own class column. The reconciled summon specs
+    (data/summons.json 'powers', straight from the game's EntCreate templates) supply
+    what the Mids snapshot never had: SQUAD counts (Soldiers = 2xSoldier+1xMedic),
+    per-power class (a Controller pet and a Dominator pet can share an entity uid),
+    duration (timed summons earn only their UPTIME), and copy_boosts (whether the
+    summon's slotting reaches the pets at all). dps_each stays per-pet for display;
+    dps_total = each x count x uptime is what the optimizer eats. Returns {} if none."""
     if not ctx:
         return {}
     entities = ctx.get("entities") or {}
@@ -659,26 +662,46 @@ def _pet_offense(build, totals, ctx):
     piece_boosts = ctx["piece_boosts"]
     mult_ed = ctx["mult_ed"]
     class_cols = ctx.get("class_columns") or {}
+    specs = ctx.get("summon_powers") or {}
+    global_rech = (totals or {}).get("recharge", 0.0) / 100.0
     pvp = bool(build.get("pvp"))
     pets = []
     for power in build.get("powers", []):
         p = power_by_full.get(power.get("full_name"))
         if not p or not (p.get("summons") or p.get("pet_powersets")):
             continue
-        # summon power's slotted damage enhancement boosts its pets
-        dmg_enh = 0.0
+        # summon power's slotted enhancement: Damage boosts the pets (when the game
+        # copies boosts), Recharge shortens the resummon cycle for timed pets
+        dmg_enh = rech_enh = 0.0
         for slot in power.get("slots", []) or []:
             if slot and slot.get("piece_uid"):
                 for asp, val in _scaled_boosts(slot, ctx):
                     if asp == "Damage":
                         dmg_enh += val
+                    elif asp == "Recharge":
+                        rech_enh += val
         dmg_boost = apply_ed_sched(ED_SCHEDULE.get("Damage", 0), dmg_enh, mult_ed)
+        spec = specs.get(p.get("full_name"))
+        if spec is not None and not spec.get("copy_boosts", True):
+            dmg_boost = 0.0                  # the game does not copy slotting to these
+        uptime = 1.0
+        if spec is not None and not spec.get("permanent"):
+            dur = float(spec.get("duration") or 0.0)
+            if dur > 0:
+                rech_boost = apply_ed_sched(ED_SCHEDULE.get("Recharge", 0),
+                                            rech_enh, mult_ed)
+                rech_eff = (p.get("base_recharge") or 0.0) / (1.0 + rech_boost
+                                                              + global_rech)
+                cycle = max(dur, rech_eff + (p.get("cast_time") or 0.0))
+                uptime = max(0.05, min(1.0, dur / cycle))
+        spec_by_uid = {e.get("uid"): e for e in (spec or {}).get("pets", [])}
         seen_ps = set()
         for uid in p["summons"]:
             ent = entities.get(uid)
             if not ent:
                 continue
-            pet_col = class_cols.get(ent.get("class_name"))
+            se = spec_by_uid.get(uid) or {}
+            pet_col = class_cols.get(se.get("class") or ent.get("class_name"))
             if pet_col is None or pet_col < 0:
                 continue
             dps = 0.0
@@ -690,9 +713,12 @@ def _pet_offense(build, totals, ctx):
                 natk += n
             if natk == 0 or dps <= 0:    # support/heal pets have no damage
                 continue
+            count = max(1, int(se.get("count") or 1))
             pets.append({"name": ent.get("display_name") or uid,
                          "from_power": p.get("display_name"),
-                         "dps_each": round(dps, 1), "attack_count": natk})
+                         "dps_each": round(dps, 1), "attack_count": natk,
+                         "count": count, "uptime": round(uptime, 2),
+                         "dps_total": round(dps * count * uptime, 1)})
         # POWER-redirect pseudo-pets (Carrion Creepers' vines): the summon points at pet POWERS,
         # not an entity — their powersets arrive via `pet_powersets` (parse_mids). Price their
         # damage with the standard minion-pet column so the optimizer finally SEES the patch's
@@ -705,11 +731,15 @@ def _pet_offense(build, totals, ctx):
             if n and d > 0:
                 pets.append({"name": ps_full.split(".")[-1].replace("_", " "),
                              "from_power": p.get("display_name"),
-                             "dps_each": round(d, 1), "attack_count": n})
+                             "dps_each": round(d, 1), "attack_count": n,
+                             "count": 1, "uptime": round(uptime, 2),
+                             "dps_total": round(d * uptime, 1)})
     if not pets:
         return {}
-    pets.sort(key=lambda x: x["dps_each"], reverse=True)
-    return {"pets": pets, "total_each": round(sum(p["dps_each"] for p in pets), 1)}
+    pets.sort(key=lambda x: x["dps_total"], reverse=True)
+    return {"pets": pets,
+            "total_each": round(sum(p["dps_each"] for p in pets), 1),
+            "total_squad": round(sum(p["dps_total"] for p in pets), 1)}
 
 
 def _debuff_buff_summary(build, ctx):
@@ -866,6 +896,7 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
         if pets:
             offense["pets"] = pets["pets"]
             offense["pet_dps_each"] = pets["total_each"]
+            offense["pet_dps_squad"] = pets.get("total_squad")
         display["offense"] = offense
     display["endurance"] = _endurance_balance(build, display, offense, ctx)
     return display

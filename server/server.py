@@ -76,6 +76,9 @@ SET_CATEGORIES = _load("set_categories.json")
 INCARNATES = _load("incarnates.json")
 COMMON_IOS = _load("common_ios.json")
 SUMMONS = _load("summons.json")["entities"]   # entity UID -> pet powersets
+# summon power full_name -> {pets:[{uid,count,class}],duration,permanent,copy_boosts}
+# (reconciled from the game client's EntCreate templates — squads, uptime, live classes)
+SUMMON_POWERS = _load("summons.json").get("powers") or {}
 
 # keyword -> common IO uid (for resolving generic "Accuracy IO" etc.)
 COMMON_IO_MAP = {}
@@ -369,6 +372,7 @@ def _stat_ctx(archetype):
         "at_recovery_cap": at.get("recovery_cap"),
         "incarnate_fx": INCARNATE_FX,
         "entities": SUMMONS,           # summon UID -> pet powersets (for pet dmg)
+        "summon_powers": SUMMON_POWERS,  # power -> squad spec (counts/uptime/class)
         "class_columns": AT_COLUMN,    # any class name -> AttribMod column (incl pets)
         "powers_by_set": POWERS,       # powerset full_name -> [power recs] (pet attacks)
     }
