@@ -24,7 +24,7 @@ try:
         return json.load(urllib.request.urlopen(req, timeout=120))
     meta = json.load(urllib.request.urlopen(base+"/meta", timeout=5))
     print("version:", meta["app_version"], "model:", meta["model_version"], "packaged:", meta["packaged"])
-    ok_all = meta["app_version"] == "0.12.13" and meta["model_version"] == 27
+    ok_all = meta["app_version"] == "0.12.14" and meta["model_version"] == 27
     # THE GOLD TEST: every champion context, served to a frozen END USER via autopick
     for key, entry in CHAMPS.items():
         at, prim, sec, content = key.split("|")

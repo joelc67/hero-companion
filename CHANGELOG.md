@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## Unreleased — 0.12.14
+## 0.12.14 — July 7, 2026
 
 - **Synced with the game's July 7 update (Issue 28, Page 3).** The patch normalized
   Dark Armor's Obscure Sustenance to a 60 second recharge for every archetype; our
