@@ -83,12 +83,21 @@ padding:8px 8px 4px}
 .hours div{flex:1;background:linear-gradient(180deg,#d8f6ff,#5fdcff);
 border-radius:2px 2px 0 0;min-height:2px}
 .hours div.z{background:#2c3b5c}
+.hours div.hb{display:flex;flex-direction:column-reverse;overflow:hidden;
+background:none}
+.hours .hb b{display:block;min-height:1px}
 .hours.mini{height:52px;margin-top:6px;padding:5px 6px 3px}
 .hourlbl{display:flex;gap:2px;color:var(--dim);font-size:.66rem;margin-top:4px;
 padding:0 8px}
 .hourlbl span{flex:1;text-align:center}
 .tzline{color:var(--dim);font-size:.78rem}
 #nowstrip td{vertical-align:top}
+#catlegend{margin-top:8px}
+#catlegend .pill{cursor:default}
+#catlegend .pill i{display:inline-block;width:10px;height:10px;border-radius:2px;
+margin-right:6px;vertical-align:-1px}
+tr[data-content]{cursor:default}
+tr[data-content]:hover td{background:#1b2740}
 """
 
 
@@ -230,24 +239,70 @@ def _banner(key, label):
 
 # Viewer-time-zone renderer for the PUBLIC board: all embedded data is UTC; this
 # shifts every hour chart into the browser's zone (named in the header line) and fills
-# the "happening right now" strip against the browser's own clock, so it stays honest
-# between pipeline publishes. Plain vanilla JS, zero external assets.
+# the "happening right now" strip against the browser's own clock. The main chart is
+# STACKED by category color (legend hover brightens a category); hovering any content
+# row lights up exactly where that content lives in the chart above it (Joel's design).
+# Plain vanilla JS, zero external assets.
 _PULSE_JS = """
 (function(){
 var D=window.PULSE||{};var tz='UTC',s=0;
 try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC';
 s=Math.round(-new Date().getTimezoneOffset()/60);}catch(e){}
+var COL={itrial:'#8e5bff',hero_tf:'#3fa0ff',villain_sf:'#e04a56',raid:'#4cc38a',
+trial:'#2ec4b6',team:'#f0b93b',other:'#8fa0bd'};
+var ORDER=['itrial','hero_tf','villain_sf','raid','trial','team','other'];
+var NAME={itrial:'Incarnate Trials',hero_tf:'Hero & Co-op TFs',
+villain_sf:'Villain SFs',raid:'Raids & Events',trial:'Trials & Specials',
+team:'Teams & Farms',other:'Other'};
 function lab(h){return (h%12||12)+(h<12?'a':'p');}
 function esc(x){return String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
-function rot(a){var o=[];for(var h=0;h<24;h++){o[(h+s+24)%24]=a[h]||0;}return o;}
-document.querySelectorAll('[data-hours]').forEach(function(el){
- var k=el.getAttribute('data-hours');
- var a=k==='all'?(D.hours||[]):((D.cats||{})[k]||[]);
- a=rot(a);var p=Math.max.apply(null,a)||1;
- el.innerHTML=a.map(function(c,h){
-  return "<div style='height:"+Math.max(2,Math.round(100*c/p))+"%'"+(c?'':' class=z')+
-   " title='"+lab(h)+" \\u2014 "+c+" formations'></div>";}).join('');
-});
+function rot(a){var o=[];for(var h=0;h<24;h++){o[(h+s+24)%24]=(a||[])[h]||0;}return o;}
+var CATS={};ORDER.forEach(function(k){if((D.cats||{})[k])CATS[k]=rot(D.cats[k]);});
+var main=document.querySelector("[data-hours='all']");
+function drawMain(hot){
+ if(!main)return;var tot=[],h;
+ for(h=0;h<24;h++){tot[h]=0;for(var k in CATS){tot[h]+=CATS[k][h];}}
+ var p=Math.max.apply(null,tot)||1,cells='';
+ for(h=0;h<24;h++){
+  if(!tot[h]){cells+="<div class='z' title='"+lab(h)+" \\u2014 0'></div>";continue;}
+  var segs='';ORDER.forEach(function(k){var c=(CATS[k]||[])[h]||0;if(!c)return;
+   var col=COL[k],dim=hot&&hot!==k;
+   segs+="<b style='flex:"+c+";background:"+col+(dim?";opacity:.25":"")+"'></b>";});
+  cells+="<div class='hb' style='height:"+Math.max(3,Math.round(100*tot[h]/p))+
+   "%' title='"+lab(h)+" \\u2014 "+tot[h]+" formations'>"+segs+"</div>";}
+ main.innerHTML=cells;}
+drawMain(null);
+var leg=document.getElementById('catlegend');
+if(leg){leg.innerHTML=ORDER.filter(function(k){return CATS[k];}).map(function(k){
+  return "<span class='pill' data-cat='"+k+"'><i style='background:"+COL[k]+
+   "'></i>"+NAME[k]+"</span>";}).join(' ');
+ leg.querySelectorAll('[data-cat]').forEach(function(ch){
+  ch.addEventListener('mouseenter',function(){drawMain(ch.getAttribute('data-cat'));});
+  ch.addEventListener('mouseleave',function(){drawMain(null);});});}
+function drawMini(el,key,hotContent){
+ var cat=CATS[key]||rot((D.cats||{})[key]),p=Math.max.apply(null,cat)||1,cells='';
+ var hc=hotContent?rot((D.contents||{})[hotContent]):null;
+ for(var h=0;h<24;h++){var ct=cat[h];
+  if(!ct){cells+="<div class='z' title='"+lab(h)+" \\u2014 0'></div>";continue;}
+  var col=COL[key]||'#5fdcff',hh=Math.max(3,Math.round(100*ct/p));
+  if(hc){var c=Math.min(hc[h]||0,ct);
+   cells+="<div class='hb' style='height:"+hh+"%' title='"+lab(h)+" \\u2014 "+
+    (hc[h]||0)+" of "+ct+"'>"+
+    (c?"<b style='flex:"+c+";background:#ffffff'></b>":"")+
+    ((ct-c)?"<b style='flex:"+(ct-c)+";background:"+col+";opacity:.25'></b>":"")+
+    "</div>";}
+  else{cells+="<div style='height:"+hh+"%;background:"+col+
+   "' title='"+lab(h)+" \\u2014 "+ct+" formations'></div>";}}
+ el.innerHTML=cells;}
+document.querySelectorAll('.hours.mini[data-hours]').forEach(function(el){
+ drawMini(el,el.getAttribute('data-hours'),null);});
+document.querySelectorAll('tr[data-content]').forEach(function(row){
+ var card=row.closest('.card');if(!card)return;
+ var mini=card.querySelector('.hours.mini[data-hours]');if(!mini)return;
+ var key=mini.getAttribute('data-hours');
+ row.addEventListener('mouseenter',function(){
+  drawMini(mini,key,row.getAttribute('data-content'));});
+ row.addEventListener('mouseleave',function(){drawMini(mini,key,null);});});
 document.querySelectorAll('.tzname').forEach(function(e){e.textContent=tz;});
 var host=document.getElementById('nowstrip');
 if(host){var now=Date.now()/1e3,prev=0,rows='';
@@ -304,11 +359,12 @@ def build(state_dir=None, public=False):
     tzline = ("<div class='tzline'>Busiest times of day — shown in your time zone "
               "(<span class='tzname'>UTC</span>)</div>" if public else
               "<div class='tzline'>Busiest times of day (this machine's clock)</div>")
+    legend = "<div id='catlegend'></div>" if public else ""
     pulse_card = _card(
         "Server pulse — what's forming",
         f"formations witnessed on public channels · {pulse.get('recruit_seen', 0)} "
         "(a recruiter's repeated asks for the same run count once)",
-        (tzline + _hour_chart(pulse.get("by_hour") or {}))
+        (tzline + _hour_chart(pulse.get("by_hour") or {}) + legend)
         if by_content else
         "<div class='dim'>No recruitment captured yet. This fills as the shard's "
         "LFG / Broadcast / Coalition channels scroll by while logging is on.</div>",
@@ -340,7 +396,7 @@ def build(state_dir=None, public=False):
             continue
         peak = rows[0][1]
         body = "".join(
-            f"<tr class='chartrow'><td>{_esc(k)}</td>"
+            f"<tr class='chartrow' data-content=\"{_esc(k)}\"><td>{_esc(k)}</td>"
             f"<td><div class='bar'><i style='width:{max(6, int(100 * v / peak))}%'></i></div></td>"
             f"<td class='num'>{v}</td></tr>" for k, v in rows[:12])
         cat_cards += (f"<div class='card full'>{_banner(key, label)}"
@@ -426,7 +482,7 @@ def build(state_dir=None, public=False):
 
     # ---- Diagnostic banner (public: no machine path, no account login names) ------------
     if public:
-        stamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+        stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M")
         shards = state.get("shards") or []
         servers = (f"Servers reporting: <b>{_esc(', '.join(shards))}</b>" if shards
                    else "server reporting arrives with the next client update")
@@ -466,6 +522,7 @@ def build(state_dir=None, public=False):
             recent_entries.append({"c": r.get("content") or "?", "t": t})
         data = {"hours": _hour_counts(pulse.get("by_hour") or {}),
                 "cats": {k: _hour_counts(v) for k, v in cat_hours.items()},
+                "contents": {k: _hour_counts(v) for k, v in content_hours.items()},
                 "recent": recent_entries}
         script = ("<script>window.PULSE=" + json.dumps(data) + ";\n"
                   + _PULSE_JS + "</script>")
