@@ -36,7 +36,7 @@ import gamelog  # noqa: E402
 APPDIR = os.path.join(os.environ.get("APPDATA", _HERE), "HeroCompanion")
 gamelog.STATE_DIR = os.path.join(APPDIR, "gamelog")
 
-LITE_VERSION = "0.1.8"
+LITE_VERSION = "0.1.9"
 _UPDATE_VERSION_URL = ("https://raw.githubusercontent.com/joelc67/hero-companion/"
                        "master/lite_version.txt")
 _RELEASES_URL = "https://github.com/joelc67/hero-companion/releases"
@@ -654,6 +654,25 @@ def _run_tray():
 
 def main():
     args = sys.argv[1:]
+    if "--build-board" in args:
+        # Smoke-test hook: build the board in the SAME frozen/windowed conditions the tray
+        # uses (stdout=None), write a marker with the event count, exit 0/1. Lets a release
+        # be verified as the actual exe before publishing.
+        try:
+            import build_pulse_boards
+            build_pulse_boards.OUT = os.path.join(APPDIR, "pulse_boards.html")
+            build_pulse_boards.APPDIR = APPDIR
+            _out, n = build_pulse_boards.build(state_dir=gamelog.STATE_DIR)
+            with open(os.path.join(APPDIR, "board_build_result.txt"), "w",
+                      encoding="utf-8") as f:
+                f.write(f"OK {n}")
+            sys.exit(0)
+        except Exception as e:  # noqa: BLE001
+            os.makedirs(APPDIR, exist_ok=True)
+            with open(os.path.join(APPDIR, "board_build_result.txt"), "w",
+                      encoding="utf-8") as f:
+                f.write(f"FAIL {type(e).__name__}: {e}")
+            sys.exit(1)
     if "--pulse" in args:
         val = args[args.index("--pulse") + 1].lower() in ("on", "1", "true")
         st = gamelog.load_state()
