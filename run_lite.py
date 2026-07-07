@@ -36,7 +36,7 @@ import gamelog  # noqa: E402
 APPDIR = os.path.join(os.environ.get("APPDATA", _HERE), "HeroCompanion")
 gamelog.STATE_DIR = os.path.join(APPDIR, "gamelog")
 
-LITE_VERSION = "0.1.1"
+LITE_VERSION = "0.1.2"
 _UPDATE_VERSION_URL = ("https://raw.githubusercontent.com/joelc67/hero-companion/"
                        "master/lite_version.txt")
 _RELEASES_URL = "https://github.com/joelc67/hero-companion/releases"
@@ -192,25 +192,34 @@ def _game_menu_paths():
 
 
 def _msgbox_yesno(title, text):
-    import ctypes
-    MB_YESNO, MB_ICONQUESTION, MB_TOPMOST, IDYES = 0x4, 0x20, 0x40000, 6
-    return ctypes.windll.user32.MessageBoxW(
-        None, text, title, MB_YESNO | MB_ICONQUESTION | MB_TOPMOST) == IDYES
+    return _messagebox(title, text, yesno=True)
 
 
 def _msgbox_info(title, text):
-    """Native dialog — tray balloon toasts are suppressed on many Windows setups
-    (field report: every menu choice looked like it did nothing), so anything the
-    user explicitly asked to see gets a real window."""
+    """Native dialog — tray balloon toasts are suppressed on many Windows setups."""
+    _messagebox(title, text, yesno=False)
+
+
+def _messagebox(title, text, yesno=False):
+    """Native MessageBox. MUST be called from a NON-tray-callback thread (see _safe) so
+    the tray menu's mouse capture is already released — otherwise the dialog appears but
+    button clicks never reach it (field report: Yes/No did nothing, fullscreen game,
+    Task-Manager-only kill). MB_SETFOREGROUND pulls it above the game."""
     import ctypes
-    MB_OK, MB_ICONINFORMATION, MB_TOPMOST = 0x0, 0x40, 0x40000
-    ctypes.windll.user32.MessageBoxW(None, text, title,
-                                     MB_OK | MB_ICONINFORMATION | MB_TOPMOST)
+    MB_YESNO, MB_OK = 0x4, 0x0
+    MB_ICONQUESTION, MB_ICONINFO = 0x20, 0x40
+    MB_TOPMOST, MB_SETFOREGROUND = 0x40000, 0x10000
+    IDYES = 6
+    flags = ((MB_YESNO | MB_ICONQUESTION) if yesno else (MB_OK | MB_ICONINFO)) \
+        | MB_TOPMOST | MB_SETFOREGROUND
+    return ctypes.windll.user32.MessageBoxW(0, text, title, flags) == IDYES
 
 
-def install_ingame_menu():
-    """Ask permission, then write companion.mnu into each game install. Returns a
-    human status string."""
+def install_ingame_menu(assume_yes=False):
+    """Write companion.mnu into each game install. Returns a human status string.
+    assume_yes=True: the caller already got consent (the native submenu 'Yes, install
+    it' click), so skip the modal — only the folder picker may still appear if no game
+    is found. This is the reliable path; the modal path is a legacy fallback."""
     paths = _game_menu_paths()
     if not paths:
         # Auto-discovery failed (game lives somewhere unusual) — ask, don't give up.
@@ -240,18 +249,15 @@ def install_ingame_menu():
         if not paths:
             return ("No game install found. Expected a folder containing 'accounts' "
                     "(e.g. C:\\Games\\HC2). Use Install again to retry with the picker.")
-    listing = "\n".join(f"  {p}" for p in paths)
-    if not _msgbox_yesno(
-            "Companion Lite — install in-game menu?",
-            "This writes ONE small text file (a popmenu) into your game's data folder "
-            "so you can enable chat logging from inside the game:\n\n" + listing +
-            "\n\nWHAT LOGGING FEEDS: your local Pulse Boards page only — rewards, "
-            "badges, and what's forming on your server. Everything stays on this "
-            "machine; NOTHING is shared or uploaded. If community boards open later, "
-            "sharing will be a separate per-stat question, asked then.\n\n"
-            "It changes nothing else, and 'Remove in-game menu' deletes it again. "
-            "Install?"):
-        return "Not installed (you said no — remembered until you choose Install again)."
+    if not assume_yes:
+        listing = "\n".join(f"  {p}" for p in paths)
+        if not _msgbox_yesno(
+                "Companion Lite — install in-game menu?",
+                "This writes ONE small text file (a popmenu) into your game's data "
+                "folder so you can enable chat logging from inside the game:\n\n"
+                + listing + "\n\nEverything stays on this machine; NOTHING is shared. "
+                "'Remove' deletes it again. Install?"):
+            return "Not installed."
     done = []
     for p in paths:
         os.makedirs(os.path.dirname(p), exist_ok=True)
@@ -277,6 +283,22 @@ def remove_ingame_menu():
     st.pop("ingame_menu", None)
     gamelog.save_state(st)
     return f"Removed {removed} menu file(s)."
+
+
+def _result_page(title, body_html):
+    """Show a result in the BROWSER instead of a modal dialog. A browser window is a
+    normal top-level app the user can always alt-tab to and click — unlike a modal
+    popped from a tray menu, which can lose input to the fullscreen game (field report)."""
+    import webbrowser
+    p = os.path.join(APPDIR, "lite_message.html")
+    os.makedirs(APPDIR, exist_ok=True)
+    html = (f"<!doctype html><meta charset='utf-8'><title>{title}</title>"
+            "<body style='background:#0c1220;color:#dbe4f5;font-family:Segoe UI,sans-serif;"
+            "max-width:640px;margin:40px auto;padding:0 20px;line-height:1.6'>"
+            f"<h2 style='color:#5abeff'>{title}</h2>{body_html}</body>")
+    with open(p, "w", encoding="utf-8") as f:
+        f.write(html)
+    webbrowser.open("file:///" + p.replace("\\", "/"))
 
 
 def _make_icon_image():
@@ -305,14 +327,20 @@ def _run_tray():
     img = _make_icon_image()
 
     def _safe(fn):
-        """pystray swallows handler exceptions (field report: clicks 'did nothing') —
-        every menu action reports its failure in a dialog instead."""
-        def wrapped(icon, item):
+        """Run each menu action on its OWN thread so the pystray callback returns
+        instantly — the tray menu then closes and releases its mouse capture BEFORE any
+        dialog appears (the fix for 'Yes/No did nothing'). A short settle covers the
+        menu teardown. Exceptions surface as a dialog instead of vanishing."""
+        def _body(icon, item):
+            time.sleep(0.2)                  # let the tray menu finish closing
             try:
                 fn(icon, item)
             except Exception as e:  # noqa: BLE001
                 _msgbox_info("Companion Lite — error",
                              f"That action failed:\n{type(e).__name__}: {e}")
+
+        def wrapped(icon, item):
+            threading.Thread(target=_body, args=(icon, item), daemon=True).start()
         return wrapped
 
     def _quit(icon, _item):
@@ -333,11 +361,30 @@ def _run_tray():
             pass
         webbrowser.open("file:///" + os.path.join(APPDIR, "pulse_boards.html").replace("\\", "/"))
 
-    def _install_menu(icon, _item):
-        _msgbox_info("Companion Lite — in-game menu", install_ingame_menu())
+    def _install_confirm(_icon, _item):
+        # Consent is the native submenu click "Yes, install it" — no modal to hang.
+        # The write path is the same install_ingame_menu; its yes/no prompt is bypassed
+        # because choosing this item IS the yes. Result shown in the browser.
+        msg = install_ingame_menu(assume_yes=True)
+        _result_page("Companion Lite — in-game menu",
+                     f"<p>{msg.replace(chr(10), '<br>')}</p>"
+                     "<p style='color:#8fa0bd'>Remove any time from the tray menu → "
+                     "Remove in-game menu.</p>")
+
+    def _install_explain(_icon, _item):
+        paths = _game_menu_paths() or ["(no game folder found yet — choosing "
+                                       "'Yes, install it' will let you pick it)"]
+        listing = "".join(f"<li><code>{p}</code></li>" for p in paths)
+        _result_page("What the in-game menu does",
+                     "<p>It writes ONE small text file (a popmenu) into your game's data "
+                     "folder so you can turn chat logging on from inside the game:</p>"
+                     f"<ul>{listing}</ul>"
+                     "<p>In game after a client restart: <code>/popmenu Companion</code>. "
+                     "Logging feeds your <b>local</b> Pulse Boards only — nothing is "
+                     "uploaded. It changes nothing else and is fully reversible.</p>")
 
     def _remove_menu(icon, _item):
-        _msgbox_info("Companion Lite — in-game menu", remove_ingame_menu())
+        _result_page("Companion Lite — in-game menu", f"<p>{remove_ingame_menu()}</p>")
 
     def _about(icon, _item):
         _msgbox_info("About Companion Lite", ABOUT)
@@ -364,9 +411,12 @@ def _run_tray():
         else:
             _msgbox_info("Companion Lite — updates", f"You're up to date (v{LITE_VERSION}).")
 
+    install_sub = pystray.Menu(
+        pystray.MenuItem("What this does / where", _safe(_install_explain)),
+        pystray.MenuItem("Yes, install it", _safe(_install_confirm)),
+        pystray.MenuItem("Remove it", _safe(_remove_menu)))
     menu = pystray.Menu(pystray.MenuItem("Open Pulse Boards (alpha)", _safe(_open_boards)),
-                        pystray.MenuItem("Install in-game menu…", _safe(_install_menu)),
-                        pystray.MenuItem("Remove in-game menu", _safe(_remove_menu)),
+                        pystray.MenuItem("In-game logging menu", install_sub),
                         pystray.MenuItem("Status", _safe(_show_status)),
                         pystray.MenuItem("About Companion Lite", _safe(_about)),
                         pystray.MenuItem("Check for updates", _safe(_check_updates)),
