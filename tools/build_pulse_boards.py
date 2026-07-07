@@ -81,6 +81,27 @@ def build():
         f"<td class='num'>{_esc(_spots(r))}</td></tr>"
         for r in pulse["recent"]) or "<tr><td class='dim' colspan='4'>—</td></tr>"
 
+    # OVERALL captured card — ALWAYS shown when anything was captured, even before any
+    # character can be attributed (a log started mid-session has no "Welcome" marker, so
+    # every event lands here, not in a per-character bucket). Without this the page looked
+    # empty despite hundreds of captured events.
+    dk = overall.get("drop_kinds") or {}
+    total_events = (overall.get("kills", 0) + overall.get("deaths", 0)
+                    + len(overall.get("drops") or []) + overall.get("merits", 0)
+                    + len(overall.get("badges") or []))
+    drops_line = ", ".join(f"{v} {k}" for k, v in sorted(dk.items(), key=lambda x: -x[1])) or "—"
+    overall_card = f"""
+<div class='card'><h2>Captured so far — all characters</h2><table>
+<tr><td>Days seen</td><td class='num'>{len(overall.get('days') or [])}</td></tr>
+<tr><td>XP earned</td><td class='num'>{overall.get('xp', 0):,}</td></tr>
+<tr><td>Influence gained</td><td class='num'>{overall.get('inf_gained', 0):,}</td></tr>
+<tr><td>Influence spent</td><td class='num'>{overall.get('inf_spent', 0):,}</td></tr>
+<tr><td>Reward merits</td><td class='num'>{overall.get('merits', 0)}</td></tr>
+<tr><td>Drops</td><td class='num'>{len(overall.get('drops') or [])}</td></tr>
+<tr><td>Defeats dealt / taken</td><td class='num'>{overall.get('kills', 0)} / {overall.get('deaths', 0)}</td></tr>
+<tr><td>Badges earned (captured)</td><td class='num'>{len(overall.get('badges') or [])}</td></tr>
+</table><div class='dim' style='margin-top:8px'>drop mix: {_esc(drops_line)}</div></div>"""
+
     char_cards = ""
     for name, cs in sorted(by_char.items()):
         badges = cs.get("badges") or []
@@ -94,9 +115,10 @@ def build():
 <tr><td>Defeats dealt / taken</td><td class='num'>{cs.get('kills', 0)} / {cs.get('deaths', 0)}</td></tr>
 </table>{('<div class=dim>latest badges: ' + _esc(', '.join(badges[-5:])) + '</div>') if badges else ''}</div>"""
     if not char_cards:
-        char_cards = ("<div class='card'><h2>Your characters</h2><div class='dim'>No "
-                      "character events captured yet. Run /logchat 1 in game, keep "
-                      "Companion Lite running, and this fills in as you play.</div></div>")
+        char_cards = ("<div class='card'><h2>Per character</h2><div class='dim'>Events "
+                      "are attributed to a character once the log shows a \"Welcome to "
+                      "City of Heroes\" line — that appears when you next log in with "
+                      "logging on. Until then everything counts in the card above.</div></div>")
 
     page = f"""<!doctype html><html><head><meta charset='utf-8'>
 <title>CoH Pulse Boards — alpha (local)</title><style>{CSS}</style></head><body>
@@ -113,6 +135,7 @@ def build():
 <div class='card'><h2>Recent formations witnessed</h2>
 <table><tr><th>When</th><th>Content</th><th>Channel</th><th style='text-align:right'>Spots</th></tr>
 {rows_recent}</table></div>
+{overall_card}
 {char_cards}
 <footer>Generated locally by Hero Companion from your own game log. Market pulse arrives
 with the price book; league run pages arrive when the league/leader line formats are

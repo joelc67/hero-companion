@@ -36,7 +36,7 @@ import gamelog  # noqa: E402
 APPDIR = os.path.join(os.environ.get("APPDATA", _HERE), "HeroCompanion")
 gamelog.STATE_DIR = os.path.join(APPDIR, "gamelog")
 
-LITE_VERSION = "0.1.4"
+LITE_VERSION = "0.1.5"
 _UPDATE_VERSION_URL = ("https://raw.githubusercontent.com/joelc67/hero-companion/"
                        "master/lite_version.txt")
 _RELEASES_URL = "https://github.com/joelc67/hero-companion/releases"
@@ -285,6 +285,53 @@ def remove_ingame_menu():
     return f"Removed {removed} menu file(s)."
 
 
+def _latest_lite_asset():
+    """(version, exe_download_url) for the newest lite-v* release, or (None, None).
+    Lite releases are pre-releases, so /releases/latest won't find them — query the list."""
+    import urllib.request
+    try:
+        data = json.load(urllib.request.urlopen(
+            "https://api.github.com/repos/joelc67/hero-companion/releases", timeout=8))
+    except Exception:  # noqa: BLE001
+        return None, None
+    for rel in data:
+        tag = rel.get("tag_name", "")
+        if tag.startswith("lite-v"):
+            for a in rel.get("assets", []):
+                if a.get("name", "").lower().endswith(".exe"):
+                    return tag.replace("lite-v", ""), a.get("browser_download_url")
+    return None, None
+
+
+def _self_update(url):
+    """Download the new exe and swap it in via a detached updater script (a running exe
+    can't overwrite itself). Only works on the FROZEN build. Returns a status string."""
+    import subprocess
+    import urllib.request
+    if not _FROZEN:
+        return "Self-update only works in the packaged app (running from source)."
+    target = os.path.abspath(sys.executable)
+    newexe = target + ".new"
+    try:
+        with urllib.request.urlopen(url, timeout=120) as r, open(newexe, "wb") as f:
+            f.write(r.read())
+    except Exception as e:  # noqa: BLE001
+        return f"Download failed: {e}"
+    bat = os.path.join(os.path.dirname(target), "_lite_update.bat")
+    pid = os.getpid()
+    with open(bat, "w", encoding="utf-8") as f:
+        f.write("@echo off\r\n"
+                ":wait\r\n"
+                f'tasklist /FI "PID eq {pid}" | find "{pid}" >nul '
+                "&& (ping -n 2 127.0.0.1 >nul & goto wait)\r\n"
+                f'move /Y "{newexe}" "{target}" >nul\r\n'
+                f'start "" "{target}"\r\n'
+                'del "%~f0"\r\n')
+    subprocess.Popen(["cmd", "/c", bat], creationflags=0x00000008)   # DETACHED_PROCESS
+    _stop.set()
+    return "updating"
+
+
 def _result_page(title, body_html):
     """Show a result in the BROWSER instead of a modal dialog. A browser window is a
     normal top-level app the user can always alt-tab to and click — unlike a modal
@@ -408,25 +455,33 @@ def _run_tray():
                      "<pre style='font-size:15px;white-space:pre-wrap'>" + ABOUT + "</pre>")
 
     def _check_updates(icon, _item):
-        # A user CLICK, never automatic — same policy as the full app. Compares the
-        # published lite version marker; if newer, links the download page.
-        import urllib.request
-        try:
-            latest = urllib.request.urlopen(
-                _UPDATE_VERSION_URL, timeout=6).read().decode().strip()
-        except Exception:  # noqa: BLE001
+        # A user CLICK, never automatic — same policy as the full app. If a newer Lite
+        # exists, download + swap it in place (no more manual redownload). Falls back to
+        # the download link if self-update can't run (e.g. running from source).
+        def _t(v):
+            return tuple(int(x) for x in v.split(".") if x.isdigit())
+        latest, url = _latest_lite_asset()
+        if not latest:
             _result_page("Companion Lite — updates",
                          "<p>Couldn't reach the update server — try again later.</p>")
             return
-        def _t(v):
-            return tuple(int(x) for x in v.split(".") if x.isdigit())
-        if _t(latest) > _t(LITE_VERSION):
-            _result_page("Companion Lite — updates",
-                         f"<p>Update available: <b>v{latest}</b> (you have v{LITE_VERSION}).</p>"
-                         f"<p><a href='{_RELEASES_URL}'>Download the latest release →</a></p>")
-        else:
+        if _t(latest) <= _t(LITE_VERSION):
             _result_page("Companion Lite — updates",
                          f"<p>You're up to date (v{LITE_VERSION}).</p>")
+            return
+        status = _self_update(url) if url else "no-asset"
+        if status == "updating":
+            _result_page("Companion Lite — updating",
+                         f"<p>Downloading <b>v{latest}</b> and restarting Companion "
+                         "Lite…</p><p style='color:#8fa0bd'>The blue P will reappear in "
+                         "your tray in a few seconds.</p>")
+            time.sleep(1.0)
+            icon.stop()
+        else:
+            _result_page("Companion Lite — updates",
+                         f"<p>Update available: <b>v{latest}</b> (you have v{LITE_VERSION}).</p>"
+                         f"<p>Auto-update: {status}</p>"
+                         f"<p><a href='{_RELEASES_URL}'>Download it manually →</a></p>")
 
     install_sub = pystray.Menu(
         pystray.MenuItem("What this does / where", _safe(_install_explain)),
