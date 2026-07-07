@@ -240,19 +240,40 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general"):
                     ordered = sorted(slots, key=lambda s: (
                         "recharge" in ((s or {}).get("piece_name") or "").lower(),))
                     cid = (slots[0] or {}).get("category_id")
+                    core = ordered[:keep]
+                    # v27 HO CORE (the Dominate master pattern, completed): a FILLER set's
+                    # 2-piece core trades up to two Hamidon Origins — dual-aspect 33.3%
+                    # each (≈66% acc + 66% dam in two slots), zero recharge to depress the
+                    # proc rates, and the lost 2-piece bonus is filler-tier by definition.
+                    # Premium homes (keep=3) keep their set core — those bonuses are
+                    # build-defining. Damaging powers take Nucleolus (Acc/Dam); pure
+                    # holds take Endoplasm (Acc/Mez).
+                    if keep == 2:
+                        ho_uid, ho_name = (("Hamidon_Damage_Accuracy",
+                                            "Nucleolus Exposure")
+                                           if rec.get("damage_effects") else
+                                           ("Hamidon_Accuracy_Mez",
+                                            "Endoplasm Exposure"))
+                        core = [{"set_uid": "Hamidon_Origin",
+                                 "set_name": "Hamidon Origin",
+                                 "piece_name": ho_name, "piece_uid": ho_uid,
+                                 "category_id": cid, "_ho": True}
+                                for _ in range(2)]
                     # Budget-safe: same slot count — if fewer procs seat than tail slots,
                     # the remaining original pieces stay.
                     pad = len(slots) - keep - len(procs)
-                    p["slots"] = (ordered[:keep]
+                    p["slots"] = (core
                                   + [_proc_slot(sn, uid, cid) for sn, uid, _c in procs]
                                   + ordered[keep:keep + pad])
-        # DEBUFF ANCHOR: a def-debuff power carries the Achilles' Heel "Chance for Res Debuff"
-        # — ~−20% res at high uptime beats any top set-bonus tier for a debuff role. Home
-        # ranking follows proc mechanics, not slot count: a debuff TOGGLE aura rolls PPM
-        # against every enemy inside it each 10s pulse (spawn-wide, the Venomous Gas
-        # standard) > a spammed click (the Envenom standard). Pet summons are excluded —
-        # the swap would break their pet set, and the pet, not the player, owns the rolls.
-        if role in _CONTROL_ROLES:
+        # −RES ANCHOR (v27: ALL roles, not just control/debuff — Maelwys's point): a −res
+        # proc multiplies the whole spawn's incoming damage, and a DAMAGE role owns the
+        # biggest single share of that damage, so Achilles/Annihilation/Fury belong in
+        # every build that can host them. Home ranking follows proc mechanics, not slot
+        # count: a debuff TOGGLE aura rolls PPM against every enemy inside it each 10s
+        # pulse (spawn-wide, the Venomous Gas standard) > a spammed click (the Envenom
+        # standard). Pet summons are excluded — the swap would break their pet set, and
+        # the pet, not the player, owns the rolls.
+        if role in _CONTROL_ROLES or role in _OFFENSE_ROLES or content == "fire_farm":
             _PET_CATS = {"Pet Damage", "Recharge Intensive Pets"}
             # EVERY −res proc is a team amplifier (Achilles/Annihilation/Fury of the
             # Gladiator): each goes into the best host accepting its category — debuff
@@ -280,6 +301,36 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general"):
                 if cand:
                     cand.sort(key=lambda x: (-x[0][0], -x[0][1]))
                     _k, p, slots = cand[0]
+                    cid = (slots[0] or {}).get("category_id")
+                    slots[-1] = _proc_slot(proc["set"], proc["uid"], cid)
+                    used.add(proc["uid"])
+        # FORCE FEEDBACK +RECHARGE (v27): for roles that ATTACK, a Force Feedback proc in
+        # a frequently-cycled knockback attack sustains a real average global-recharge
+        # uplift (the engine prices it: chance × 5s ÷ cycle). Best host = the SPAMMED
+        # attack (shortest cycle = most rolls per minute), non-premium, last-piece swap.
+        if role in _OFFENSE_ROLES or role in _CONTROL_ROLES or content == "fire_farm":
+            for pcat, procs in (cat.get("rech_procs") or {}).items():
+                proc = next((x for x in procs if x.get("uid")
+                             and x["uid"] not in used), None)
+                if not proc:
+                    continue
+                cand = []
+                for p in powers:
+                    rec = power_by_full.get(p.get("full_name"))
+                    if not rec or not rec.get("is_attack"):
+                        continue
+                    cats = set(rec.get("accepted_set_categories") or [])
+                    if pcat not in cats or _is_premium(p):
+                        continue
+                    slots = p.get("slots") or []
+                    if len(slots) >= 2 and not any(
+                            s and s.get("piece_uid") == proc["uid"] for s in slots):
+                        cycle = (rec.get("base_recharge") or 8.0) + (rec.get("cast_time")
+                                                                     or 1.0)
+                        cand.append((cycle, p, slots))
+                if cand:
+                    cand.sort(key=lambda x: x[0])     # shortest cycle = most FF rolls
+                    _c, p, slots = cand[0]
                     cid = (slots[0] or {}).get("category_id")
                     slots[-1] = _proc_slot(proc["set"], proc["uid"], cid)
                     used.add(proc["uid"])

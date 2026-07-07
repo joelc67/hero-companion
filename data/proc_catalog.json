@@ -449,8 +449,7 @@
     "set": "Achilles' Heel",
     "uid": "Crafted_Achilles_Heel_C",
     "premium": false,
-    "ppm": 3.5,
-    "provisional": true
+    "ppm": 3.5
    }
   ],
   "PBAoE Damage": [
@@ -458,8 +457,7 @@
     "set": "Fury of the Gladiator",
     "uid": "Crafted_Fury_of_the_Gladiator_F",
     "premium": false,
-    "ppm": 3.5,
-    "provisional": true
+    "ppm": 3.5
    }
   ],
   "Targeted AoE Damage": [
@@ -467,8 +465,18 @@
     "set": "Annihilation",
     "uid": "Crafted_Annihilation_F",
     "premium": false,
-    "ppm": 3.5,
-    "provisional": true
+    "ppm": 3.0
+   }
+  ]
+ },
+ "rech_procs": {
+  "Knockback": [
+   {
+    "set": "Force Feedback",
+    "uid": "Crafted_Force_Feedback_F",
+    "ppm": 2.0,
+    "buff_pct": 100.0,
+    "duration": 5.0
    }
   ]
  }

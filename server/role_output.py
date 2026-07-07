@@ -243,7 +243,7 @@ BUFF_W = {"Damage": 1.3, "RechargeTime": 1.1, "Defense": 1.0, "Resistance": 1.0,
 # time-averaged −res on a cycled debuff power (PROVISIONAL constants: Achilles' Heel −20% at
 # ~75% effective uptime ≈ 15; Annihilation/Fury-class −12.5% ≈ 10). Detection by piece UID from
 # the proc catalog (proc_pass names its pieces just "proc") plus the piece-name fallback.
-_RES_PROC_VALUES = {"achilles": 15.0, "annihilation": 10.0}
+_RES_PROC_VALUES = {"achilles": 15.0, "annihilation": 8.0, "fury": 15.0}
 _RES_PROC_UIDS = None
 
 
@@ -261,7 +261,11 @@ def _res_proc_uids():
                 for p in plist or []:
                     nm = (p.get("set") or "").lower()
                     val = next((v for k, v in _RES_PROC_VALUES.items() if k in nm), 10.0)
-                    _RES_PROC_UIDS[p.get("uid")] = val
+                    uid = p.get("uid")
+                    _RES_PROC_UIDS[uid] = val
+                    if uid and uid.startswith("Crafted_"):
+                        # hand-slotted attuned copies price identically
+                        _RES_PROC_UIDS["Attuned_" + uid[len("Crafted_"):]] = val
         except Exception:  # noqa: BLE001
             _RES_PROC_UIDS = {}
     return _RES_PROC_UIDS

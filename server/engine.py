@@ -663,7 +663,7 @@ def _pet_offense(build, totals, ctx):
     mult_ed = ctx["mult_ed"]
     class_cols = ctx.get("class_columns") or {}
     specs = ctx.get("summon_powers") or {}
-    global_rech = (totals or {}).get("recharge", 0.0) / 100.0
+    global_rech = (totals or {}).get("recharge", 0.0)   # totals stores a FRACTION
     pvp = bool(build.get("pvp"))
     pets = []
     for power in build.get("powers", []):
@@ -799,6 +799,32 @@ def _debuff_buff_summary(build, ctx):
     return fmt(deb), fmt(buf)
 
 
+# Force Feedback: Chance for +Recharge — +100% recharge for 5s, PPM 2.0 (client data).
+_FF_UIDS = {"Crafted_Force_Feedback_F", "Attuned_Force_Feedback_F"}
+_FF_PPM, _FF_BUFF, _FF_DUR = 2.0, 100.0, 5.0
+
+
+def _ff_recharge_avg(build, totals, ctx):
+    """Average +recharge sustained by slotted Force Feedback procs, as a FRACTION
+    (totals['recharge'] units — the display layer multiplies by 100)."""
+    if not ctx:
+        return 0.0
+    power_by_full = ctx.get("power_by_full") or {}
+    gr = 1.0 + (totals.get("recharge") or 0.0)      # totals stores a fraction
+    total = 0.0
+    for power in build.get("powers", []):
+        if not any(s and s.get("piece_uid") in _FF_UIDS
+                   for s in (power.get("slots") or [])):
+            continue
+        rec = power_by_full.get(power.get("full_name")) or {}
+        rech = rec.get("base_recharge") or 8.0
+        cast = rec.get("cast_time") or 1.0
+        chance = min(0.90, _FF_PPM * (rech + cast) / 60.0)
+        cycle = max(rech / gr + cast, 2.0)
+        total += (_FF_BUFF / 100.0) * chance * _FF_DUR / cycle
+    return round(min(total, 0.75), 4)
+
+
 def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=None):
     """Aggregate the build's defense/resistance/etc.
 
@@ -853,6 +879,15 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
                 for eff in bonus.get("effects", []):
                     _apply_effect(totals, eff)
 
+    # FORCE FEEDBACK average recharge (v27): a slotted "Chance for +Recharge" in a cycled
+    # attack sustains a real average global-recharge uplift — chance/roll = PPM × (base
+    # recharge + cast) / 60 (local recharge divides it; FF hosts carry none), value =
+    # chance × 5s ÷ the attack's actual cycle at the build's global recharge. Multiple
+    # copies don't stack the buff, they add uptime — capped well short of permanent.
+    ff = _ff_recharge_avg(build, totals, ctx)
+    if ff:
+        totals["recharge"] += ff
+
     # Per-AT bonus caps for HP / regen / recovery (resistance handled separately).
     # hp_cap is ABSOLUTE max HP -> convert to a +%MaxHP ceiling off the AT's base HP;
     # regen/recovery caps are bonus fractions (20.0 => +2000%), as for damage/recharge.
@@ -866,6 +901,9 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
             sec_caps["recovery"] = ctx["at_recovery_cap"] * 100.0
     # Convert fractions -> percentages for display
     display = _to_display(totals, res_cap, sec_caps)
+    if ff:
+        # transparency: how much of the global recharge FF is carrying (shown in %)
+        display["ff_recharge_avg"] = round(ff * 100.0, 1)
     display["incarnates_included"] = bool(build.get("include_incarnates"))
     display["external_included"] = bool(build.get("include_external"))
     extras = []
