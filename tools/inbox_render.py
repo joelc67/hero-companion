@@ -144,7 +144,7 @@ def render():
             cached_off = (json.load(f) or {}).get("offsets") or {}
     except Exception:  # noqa: BLE001
         cached_off = {}
-    offsets = {}
+    offsets, shards = {}, set()
     total, chars, nsrc = 0, {}, 0
     with open(os.path.join(merged_dir, "events.jsonl"), "w", encoding="utf-8") as out:
         for d in _source_dirs():
@@ -161,13 +161,26 @@ def render():
             lines = [_shift_line(ln, offsets[iid]) for ln in lines]
             out.write("\n".join(lines) + ("\n" if lines else ""))
             print(f"source {iid}: {len(lines)} events, utc offset {offsets[iid]} min")
+            st = {}
             try:
                 with open(os.path.join(d, "state.json"), encoding="utf-8") as f:
-                    chars.update((json.load(f) or {}).get("characters") or {})
+                    st = json.load(f) or {}
             except Exception:  # noqa: BLE001
                 pass
+            chars.update(st.get("characters") or {})
+            # which server this source plays on: the client declares it (state.json,
+            # Lite 0.1.14+) or a pipeline-side shard.json records it for older clients
+            shard = st.get("shard")
+            if not shard:
+                try:
+                    with open(os.path.join(d, "shard.json"), encoding="utf-8") as f:
+                        shard = (json.load(f) or {}).get("shard")
+                except Exception:  # noqa: BLE001
+                    pass
+            if shard:
+                shards.add(str(shard))
     with open(os.path.join(merged_dir, "state.json"), "w", encoding="utf-8") as f:
-        json.dump({"characters": chars}, f)
+        json.dump({"characters": chars, "shards": sorted(shards)}, f)
 
     try:
         with open(os.path.join(INBOX, "last_count.json"), encoding="utf-8") as f:

@@ -427,10 +427,14 @@ def build(state_dir=None, public=False):
     # ---- Diagnostic banner (public: no machine path, no account login names) ------------
     if public:
         stamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+        shards = state.get("shards") or []
+        servers = (f"Servers reporting: <b>{_esc(', '.join(shards))}</b>" if shards
+                   else "server reporting arrives with the next client update")
         diag = (f"<div class='card' style='border-color:var(--pulse)'>"
                 f"<b>Built from {len(events):,} captured events</b>"
-                f"<div class='dim' style='margin-top:6px'>{len(accounts)} account(s) · "
-                f"published {stamp}</div></div>")
+                f"<div class='dim' style='margin-top:6px'>{servers}</div>"
+                f"<div class='dim' style='margin-top:2px'>published {stamp} UTC</div>"
+                f"</div>")
     else:
         diag = (f"<div class='card' style='border-color:var(--pulse)'>"
                 f"<b>Read {len(events):,} events</b> from "
@@ -467,12 +471,13 @@ def build(state_dir=None, public=False):
                   + _PULSE_JS + "</script>")
 
     if public:
-        mock = "Alpha · published by the board owner from their own game log"
+        mock = "Alpha · built from live player capture · times shown in your time zone"
         logo_note = "(live)"
-        tag = ("This is the owner's own capture, published to their own page — no one "
-               "else's data is collected here. Want a board of your own? "
+        tag = ("Built from game logs captured by players running "
                "<a href='https://github.com/joelc67/hero-companion/releases'>Companion "
-               "Lite</a> builds one privately from your game logs.")
+               "Lite</a>. Uploads are private and pseudonymized — no account names, no "
+               "money, no machine details ever appear here; only these rendered boards "
+               "are public.")
         foot = ("Published by Companion Lite from the board owner's own game log. Sections "
                 "marked \"collecting\" fill in as capture learns the line formats from real "
                 "sessions. When the community layer opens, sharing stays a separate, "
