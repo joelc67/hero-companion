@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## Unreleased — Companion Lite 0.1.12
+## Companion Lite 0.1.12 — July 7, 2026
 
 - **Your Pulse Board now lives online, not on the game machine.** On the owner's machine
   (the one with a publish token), Companion Lite keeps the live web page current
