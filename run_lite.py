@@ -208,12 +208,36 @@ def _inbox_put(path, data, message, need_sha=False):
     _gh_request("PUT", f"contents/{path}", body)
 
 
+def _pseudonym(iid, account):
+    """Account LOGIN names never leave the machine — the board only needs a stable
+    GROUPING key per account, so uploads carry an unlinkable per-install pseudonym."""
+    import hashlib
+    return "a" + hashlib.sha256(f"{iid}|{account}".encode("utf-8")).hexdigest()[:12]
+
+
+def _anonymize_chunk(chunk, iid):
+    """Rewrite the 'account' field of every event line to its pseudonym."""
+    out = []
+    for line in chunk.decode("utf-8", "replace").splitlines():
+        if not line.strip():
+            continue
+        try:
+            ev = json.loads(line)
+            if ev.get("account"):
+                ev["account"] = _pseudonym(iid, ev["account"])
+            out.append(json.dumps(ev))
+        except Exception:  # noqa: BLE001 — an unparseable line is dropped, never leaked
+            continue
+    return ("\n".join(out) + "\n").encode("utf-8") if out else b""
+
+
 def _maybe_upload():
     """Send NEW capture bytes to the inbox — only with consent, only when the store
     grew, at most once per UPLOAD_SECONDS. Incremental: each upload is a small chunk
     file of just the new lines (the renderer stitches chunks in order); the sent byte
     offset persists in state, so restarts never re-send. If the store ever shrinks
-    (rebuilt), a reset chunk replaces the source's history."""
+    (rebuilt), a reset chunk replaces the source's history. Account login names are
+    pseudonymized BEFORE upload — they never leave the machine."""
     st = gamelog.load_state()
     if st.get("board_feed") is not True or not _inbox_token():
         return
@@ -235,15 +259,21 @@ def _maybe_upload():
             if cut < 0:
                 return
             chunk = chunk[:cut + 1]
+        sent = len(chunk)                               # local bytes consumed
         iid = _install_id(st)
+        chunk = _anonymize_chunk(chunk, iid)
+        if not chunk:
+            return
         kind = "r" if reset else "c"
         _inbox_put(f"sources/{iid}/{kind}{int(time.time())}.jsonl", chunk,
                    f"capture from {iid}")
+        chars = {_pseudonym(iid, a): c
+                 for a, c in (st.get("characters") or {}).items()}
         _inbox_put(f"sources/{iid}/state.json",
-                   json.dumps({"characters": st.get("characters") or {}}).encode(),
+                   json.dumps({"characters": chars}).encode(),
                    f"state from {iid}", need_sha=True)
         st = gamelog.load_state()                       # re-load: capture may have run
-        st["board_feed_offset"] = (0 if reset else offset) + len(chunk)
+        st["board_feed_offset"] = (0 if reset else offset) + sent
         gamelog.save_state(st)
         _stats["uploaded_bytes"] = _stats.get("uploaded_bytes", 0) + len(chunk)
         _stats["uploaded_last"] = time.strftime("%H:%M:%S")
