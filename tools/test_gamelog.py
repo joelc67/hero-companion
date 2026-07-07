@@ -284,6 +284,17 @@ ev_ask, _ = gamelog.parse_line(
 check("plain ask still parses as recruit", ev_ask and ev_ask["type"] == "recruit",
       str(ev_ask and ev_ask["type"]))
 
+ev_p2, _ = gamelog.parse_line(
+    "2026-07-07 10:03:00 [Looking For Group] Leader: posi 2 lf3m", pulse=True)
+check("longest alias wins: 'posi 2' is Part 2, not generic Positron",
+      ev_p2 and ev_p2.get("content") == "Positron Task Force Part 2",
+      str(ev_p2 and ev_p2.get("content")))
+ev_p, _ = gamelog.parse_line(
+    "2026-07-07 10:04:00 [Looking For Group] Leader: posi lfm all welcome", pulse=True)
+check("bare 'posi' still generic Positron",
+      ev_p and ev_p.get("content") == "Positron Task Force",
+      str(ev_p and ev_p.get("content")))
+
 shutil.rmtree(tmp, ignore_errors=True)
 print(f"\n══ {'ALL PASS' if not fails else f'{len(fails)} FAILURE(S): ' + ', '.join(fails)} ══")
 sys.exit(1 if fails else 0)

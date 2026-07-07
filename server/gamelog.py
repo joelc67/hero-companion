@@ -256,8 +256,13 @@ def parse_channel_line(msg):
 
     # LEARN the content: prefer a known lexicon alias; else derive a label from the line's
     # own salient words so unknown trials/TFs still classify AND grow the discovered list.
+    # LONGEST alias first — "posi 2" must win over "posi", "ice mistral" over "ice"
+    # (file order once let the short alias eat every Part 1/Part 2 ask).
+    if "_alias_order" not in lx:
+        lx["_alias_order"] = sorted((lx.get("content_aliases") or {}).items(),
+                                    key=lambda kv: -len(kv[0]))
     content, master = None, False
-    for alias, full in (lx.get("content_aliases") or {}).items():
+    for alias, full in lx["_alias_order"]:
         if re.search(rf"\b{re.escape(alias)}\b", low):
             content = full
             master = bool(re.search(

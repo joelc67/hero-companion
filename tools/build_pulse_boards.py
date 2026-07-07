@@ -96,6 +96,12 @@ padding:0 8px}
 background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:8px}
 .week span{font-size:.62rem;color:var(--dim);align-self:center}
 .week i{display:block;height:13px;border-radius:2px;background:#232f4a}
+.week .dlbl{cursor:pointer}
+.week .dlbl:hover{color:var(--pulse);text-decoration:underline}
+#daydetail{display:none;margin-top:10px;background:var(--panel2);
+border:1px solid var(--line);border-radius:6px;padding:10px 12px;font-size:.88rem}
+#daydetail .pill i{display:inline-block;width:9px;height:9px;border-radius:2px;
+margin-right:6px;vertical-align:-1px}
 #catlegend{margin-top:8px}
 #catlegend .pill{cursor:default}
 #catlegend .pill i{display:inline-block;width:10px;height:10px;border-radius:2px;
@@ -288,14 +294,33 @@ function drawWeek(hot){
  var g=localWeek(hot?((D.week.cats||{})[hot]||D.week.all):D.week.all);
  var p=1,d,h;for(d=0;d<7;d++)for(h=0;h<24;h++)p=Math.max(p,g[d][h]);
  var col=hot?COL[hot]:'#5fdcff',cells='';
- for(d=0;d<7;d++){cells+='<span>'+DAYS[d]+'</span>';
+ for(d=0;d<7;d++){cells+="<span class='dlbl' data-d='"+d+"' title='click for "+
+   DAYS[d]+"\\u2019s breakdown'>"+DAYS[d]+"</span>";
   for(h=0;h<24;h++){var c=g[d][h];
-   var bg=c?';background:'+hexA(col,Math.round((0.12+0.88*c/p)*100)/100):'';
+   var bg=c?';background:'+hexA(col,Math.round((0.18+0.82*c/p)*100)/100):'';
    cells+="<i style='display:block"+bg+"' title='"+DAYS[d]+' '+lab(h)+" \\u2014 "+c+
     "'></i>";}}
  cells+='<span></span>';
  for(h=0;h<24;h++){cells+="<span style='text-align:center'>"+(h%3?'':lab(h))+"</span>";}
- wk.innerHTML=cells;}
+ wk.innerHTML=cells;
+ wk.querySelectorAll('.dlbl').forEach(function(el){
+  el.addEventListener('click',function(){dayBreak(+el.getAttribute('data-d'));});});}
+var dd=document.getElementById('daydetail'),curDay=null;
+function dayBreak(d){
+ if(!dd)return;
+ if(curDay===d){dd.style.display='none';curDay=null;return;}
+ curDay=d;var tot={},sum=0,sp=(D.week||{}).sparse||{};
+ for(var c in sp){sp[c].forEach(function(t){
+  var lh=t[1]+s,carry=Math.floor(lh/24);
+  if((((t[0]+carry)%7)+7)%7===d){tot[c]=(tot[c]||0)+t[2];sum+=t[2];}});}
+ var items=Object.keys(tot).sort(function(a,b){return tot[b]-tot[a];});
+ dd.innerHTML="<b>"+DAYS[d]+"</b> \\u00b7 "+sum+" formations in the last 7 days"+
+  (items.length?"<div style='margin-top:6px'>"+items.map(function(c){
+    var k=(D.catOf||{})[c]||'other';
+    return "<span class='pill'><i style='background:"+COL[k]+"'></i>"+esc(c)+
+     " \\u00d7"+tot[c]+"</span>";}).join(' ')+"</div>"
+   :" <span class='dim'>\\u2014 nothing captured yet</span>");
+ dd.style.display='block';}
 drawWeek(null);
 var leg=document.getElementById('catlegend');
 if(leg){leg.innerHTML=ORDER.filter(function(k){return CATS[k];}).map(function(k){
@@ -469,8 +494,10 @@ def build(state_dir=None, public=False):
         week_card = _card(
             "The last 7 days",
             f"when the shard plays — day of week × time of day · {wk_tz}"
-            + (" · hover a color in the legend below to filter" if public else ""),
-            _week_html(week_all), cls="full")
+            + (" · <b>click a day</b> for its full breakdown · hover a legend color "
+               "below to filter" if public else ""),
+            _week_html(week_all) + ("<div id='daydetail'></div>" if public else ""),
+            cls="full")
     cat_cards = ""
     for key, label in CATEGORIES:
         rows = sorted(groups.get(key) or [], key=lambda kv: -kv[1])
@@ -602,10 +629,28 @@ def build(state_dir=None, public=False):
             except Exception:  # noqa: BLE001
                 continue
             recent_entries.append({"c": r.get("content") or "?", "t": t})
+        # sparse per-content (weekday, hour, count) tuples for the click-a-day
+        # breakdown — sparse because bounded by actual formations, not the grid
+        sparse = {}
+        if all_days:
+            for content, days in content_day_hours.items():
+                tuples = []
+                for day, hrs in days.items():
+                    if day not in window:
+                        continue
+                    try:
+                        wd = datetime.date.fromisoformat(day).weekday()
+                    except ValueError:
+                        continue
+                    tuples += [[wd, int(h), int(c)] for h, c in hrs.items()
+                               if str(h).isdigit()]
+                if tuples:
+                    sparse[content] = tuples
         data = {"hours": _hour_counts(pulse.get("by_hour") or {}),
                 "cats": {k: _hour_counts(v) for k, v in cat_hours.items()},
                 "contents": {k: _hour_counts(v) for k, v in content_hours.items()},
-                "week": {"all": week_all, "cats": week_cats},
+                "week": {"all": week_all, "cats": week_cats, "sparse": sparse},
+                "catOf": {c: _categorize(c, lx_map) for c in by_content},
                 "recent": recent_entries}
         script = ("<script>window.PULSE=" + json.dumps(data) + ";\n"
                   + _PULSE_JS + "</script>")
