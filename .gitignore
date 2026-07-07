@@ -39,3 +39,5 @@ Thumbs.db
 *.swp
 settings.json
 gamelog/
+champions_refresh_log.txt
+champions_refresh_err.txt
