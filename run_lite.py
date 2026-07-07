@@ -410,8 +410,14 @@ def _self_update(url):
     bat = os.path.join(os.path.dirname(target), "_lite_update.bat")
     pid = os.getpid()
     # Wait for THIS exact process (by PID) to exit, then swap and relaunch. No taskkill by
-    # image name — only our own PID is ever involved. If the move fails, still relaunch
-    # what's there so Lite is never left down.
+    # image name — only our own PID is ever involved. RELAUNCH VIA EXPLORER: the previous
+    # `start` from a windowless helper silently no-op'd (a detached script has no console
+    # session for `start`), so the swap completed but the app never came back (field
+    # report: "stalled at the same spot"). explorer.exe launches the exe in the user's
+    # shell session — has a console, runs de-elevated, and antivirus (Bitdefender here)
+    # treats an Explorer-initiated launch far more kindly than a script spawning a fresh
+    # download. CREATE_NO_WINDOW (not DETACHED) gives the helper a hidden console so its
+    # own commands run reliably.
     with open(bat, "w", encoding="utf-8") as f:
         f.write("@echo off\r\n"
                 ":wait\r\n"
@@ -419,9 +425,9 @@ def _self_update(url):
                 "&& (ping -n 2 127.0.0.1 >nul & goto wait)\r\n"
                 "ping -n 2 127.0.0.1 >nul\r\n"
                 f'move /Y "{newexe}" "{target}" >nul 2>&1\r\n'
-                f'start "" "{target}"\r\n'
+                f'explorer.exe "{target}"\r\n'
                 'del "%~f0"\r\n')
-    subprocess.Popen(["cmd", "/c", bat], creationflags=0x00000008)   # DETACHED_PROCESS
+    subprocess.Popen(["cmd", "/c", bat], creationflags=0x08000000)   # CREATE_NO_WINDOW
     _stop.set()
     return "updating"
 
