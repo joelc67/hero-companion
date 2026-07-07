@@ -103,7 +103,10 @@ def build():
 <div class='mock'>Alpha · fed by one member's eyes (yours) · everything local, nothing uploaded</div>
 <div class='wrap'>
 <div class='logo'>CoH <b>Pulse</b> Boards</div>
-<div class='tag'>community intel for City of Heroes: Homecoming — single-member alpha</div>
+<div class='tag'>community intel for City of Heroes: Homecoming — single-member alpha ·
+<a href='../' style='color:#3fd2ff'>about</a> ·
+<a href='https://github.com/joelc67/hero-companion/releases/tag/lite-v0.1.0' style='color:#3fd2ff'>get Companion Lite</a> ·
+<a href='https://github.com/joelc67/hero-companion/discussions' style='color:#3fd2ff'>discuss</a></div>
 <div class='card'><h2>Server pulse — recruitment seen</h2>
 <table><tr><th>Content</th><th style='text-align:right'>Sightings</th></tr>{rows_pulse}</table>
 <div class='dim' style='margin-top:8px'>total sightings: {pulse['recruit_seen']}</div></div>
