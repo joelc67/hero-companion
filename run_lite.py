@@ -553,38 +553,29 @@ def _run_tray():
             return
         webbrowser.open("file:///" + out.replace("\\", "/"))
 
-    def _publish_boards(_icon, _item):
-        # Publishes the PUBLIC variant (no machine path, no account login names) — the
-        # local pulse_boards.html keeps the full diagnostics for this machine only.
-        import build_pulse_boards
-        build_pulse_boards.OUT = os.path.join(APPDIR, "pulse_boards_public.html")
-        build_pulse_boards.APPDIR = APPDIR
-        out, n = build_pulse_boards.build(state_dir=gamelog.STATE_DIR, public=True)
-        html = open(out, encoding="utf-8").read()
-        status = _publish_live(html)
-        if status == "ok":
-            _result_page("Companion Lite — published",
-                         f"<p>Published <b>{n} events</b> to your live board:</p>"
-                         f"<p><a href='{_PUBLISH_LIVE_URL}'>{_PUBLISH_LIVE_URL}</a></p>"
-                         "<p style='color:#8fa0bd'>GitHub Pages takes a minute to "
-                         "refresh. This is YOUR data on YOUR public site — only what you "
-                         "just published, nothing more.</p>")
-        elif status == "no-token":
-            _result_page("Companion Lite — set up publishing",
-                         "<p>To publish your board to the live site, this machine needs a "
-                         "GitHub token (created by you, stored only here):</p><ol>"
-                         "<li>On GitHub: Settings → Developer settings → Fine-grained "
-                         "tokens → Generate. Repository access: <code>hero-companion</code>. "
-                         "Permission: <b>Contents → Read and write</b>.</li>"
-                         "<li>Save the token text into this file:<br>"
-                         f"<code>{os.path.join(APPDIR, 'publish_token.txt')}</code></li>"
-                         "<li>Click Publish again.</li></ol>"
-                         "<p style='color:#8fa0bd'>The token stays on this machine — it is "
-                         "never in the app or the repo.</p>")
-        else:
-            _result_page("Companion Lite — publish failed",
-                         f"<p>Couldn't publish:</p><pre>{status}</pre>"
-                         "<p>Check the token has Contents write on hero-companion.</p>")
+    def _setup_publish(_icon, _item):
+        # Joel: "We always want it on the live site" — publishing is NOT a user action.
+        # The board publishes ITSELF (auto-publish in the capture loop); this item only
+        # exists to set up the owner token, and it isn't shown once one is in place.
+        if _publish_token():
+            _result_page("Companion Lite — online board",
+                         "<p>Already set up. Your board publishes itself while you play "
+                         "(at most every 15 minutes, whenever new play was captured):</p>"
+                         f"<p><a href='{_PUBLISH_LIVE_URL}'>{_PUBLISH_LIVE_URL}</a></p>")
+            return
+        _result_page("Companion Lite — set up your online board",
+                     "<p>One-time setup. Once a token is in place, Companion Lite keeps "
+                     "the live page current by itself while you play — no publish "
+                     "button, nothing to remember:</p><ol>"
+                     "<li>On GitHub: Settings → Developer settings → Fine-grained "
+                     "tokens → Generate. Repository access: <code>hero-companion</code>. "
+                     "Permission: <b>Contents → Read and write</b>.</li>"
+                     "<li>Save the token text into this file:<br>"
+                     f"<code>{os.path.join(APPDIR, 'publish_token.txt')}</code></li>"
+                     "</ol><p>That's it — publishing starts on its own within a minute "
+                     "and this menu entry goes away on the next start.</p>"
+                     "<p style='color:#8fa0bd'>The token stays on this machine — it is "
+                     "never in the app or the repo.</p>")
 
     def _install_confirm(_icon, _item):
         # Consent is the native submenu click "Yes, install it" — no modal to hang.
@@ -663,9 +654,11 @@ def _run_tray():
         pystray.MenuItem("What this does / where", _safe(_install_explain)),
         pystray.MenuItem("Yes, install it", _safe(_install_confirm)),
         pystray.MenuItem("Remove it", _safe(_remove_menu)))
-    items = [pystray.MenuItem("Open Pulse Boards (alpha)", _safe(_open_boards)),
-             pystray.MenuItem("Publish my board to the live site", _safe(_publish_boards)),
-             pystray.MenuItem("In-game logging menu", install_sub),
+    items = [pystray.MenuItem("Open Pulse Boards (alpha)", _safe(_open_boards))]
+    if not _publish_token():
+        # setup-only entry — with a token the board publishes itself and this vanishes
+        items.append(pystray.MenuItem("Set up online board (owner)", _safe(_setup_publish)))
+    items += [pystray.MenuItem("In-game logging menu", install_sub),
              pystray.MenuItem("Status", _safe(_show_status)),
              pystray.MenuItem("About Companion Lite", _safe(_about)),
              pystray.MenuItem("Check for updates", _safe(_check_updates)),

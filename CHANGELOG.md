@@ -1,5 +1,12 @@
 # Hero Companion — What's New
 
+## Unreleased — Companion Lite 0.1.13
+
+- **The "Publish" menu entry is gone.** The board was never supposed to need a publish
+  button — it lives online and keeps itself current. What remains is a one-time "Set up
+  online board (owner)" entry that only appears until a token is in place, then
+  disappears.
+
 ## Companion Lite 0.1.12 — July 7, 2026
 
 - **Your Pulse Board now lives online, not on the game machine.** On the owner's machine
