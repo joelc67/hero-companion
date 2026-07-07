@@ -96,8 +96,10 @@ for at, groups in srv.POWERSETS["by_archetype"].items():
                 break
 
 # ── Pinned field case: the exact combo from the report, WITHOUT champions ────
-# The standalone app ships no champions.json, so end users always get the
-# heuristic picker — audit that path explicitly (champions masked this once).
+# Champions ALWAYS ship with the client (docs/architecture.md — bundled in the
+# PyInstaller spec since 0.12.11; before that a packaging defect dropped them).
+# This case still forces the HEURISTIC path explicitly: it must stay correct for
+# any context that has no champion yet (champions masked a heuristic bug once).
 print("\n── pinned: Defender Poison/Sonic debuffer (heuristic path, no champion) ──")
 _orig_champ = srv._champion_picks
 srv._champion_picks = lambda *a, **k: None
