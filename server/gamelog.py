@@ -262,9 +262,11 @@ def parse_channel_line(msg):
         content = "Master of " + content
     learned = None
     if not content:
-        # discovered nomenclature: the longest non-stopword token(s) — what people call it
+        # discovered nomenclature: the first salient token that ISN'T a stopword or an
+        # archetype/role word (the AT someone SEEKS is not the content of the run).
+        at_words = set(lx.get("at_words") or [])
         toks = [t for t in re.findall(r"[a-z][a-z'&+-]{2,}", text.lower())
-                if t not in _STOPWORDS]
+                if t not in _STOPWORDS and t not in at_words]
         learned = toks[0] if toks else None
         content = ("recruiting: " + learned) if learned else "recruiting (general)"
 
