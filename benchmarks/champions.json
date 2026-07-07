@@ -8,6 +8,7 @@
    "Controller_Buff.Poison.Neurotoxic_Breath",
    "Controller_Buff.Poison.Poison_Trap",
    "Controller_Buff.Poison.Venomous_Gas",
+   "Controller_Buff.Poison.Weaken",
    "Controller_Control.Plant_Control.Fly_Trap",
    "Controller_Control.Plant_Control.Roots",
    "Controller_Control.Plant_Control.Seeds_of_Confusion",
@@ -24,13 +25,12 @@
    "Pool.Flight.Combat_Flight",
    "Pool.Flight.Evasive_Maneuvers",
    "Pool.Flight.Fly",
-   "Pool.Leadership.Defense",
-   "Pool.Leadership.Vengeance",
+   "Pool.Leaping.Combat_Jumping",
    "Pool.Speed.Hasten"
   ],
-  "score": 2151.7331000000004,
+  "score": 2222.443025,
   "certificate": {
-   "sweeps": 22,
+   "sweeps": 23,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
@@ -47,10 +47,9 @@
    "Defender_Buff.Poison.Neurotoxic_Breath",
    "Defender_Buff.Poison.Poison_Trap",
    "Defender_Buff.Poison.Venomous_Gas",
+   "Defender_Buff.Poison.Weaken",
    "Defender_Ranged.Sonic_Attack.Dreadful_Wail",
    "Defender_Ranged.Sonic_Attack.Scream",
-   "Defender_Ranged.Sonic_Attack.Shockwave",
-   "Defender_Ranged.Sonic_Attack.Shriek",
    "Defender_Ranged.Sonic_Attack.Sirens_Song",
    "Epic.Ice_Mastery_DefCorr.Flash_Freeze",
    "Epic.Ice_Mastery_DefCorr.Frozen_Armor",
@@ -59,28 +58,27 @@
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
    "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Kick",
    "Pool.Fighting.Tough",
-   "Pool.Fighting.Weave",
-   "Pool.Flight.Combat_Flight",
    "Pool.Flight.Fly",
+   "Pool.Flight.Group_Fly",
+   "Pool.Medicine.Aid_Other",
    "Pool.Medicine.Aid_Self",
-   "Pool.Medicine.Stimulant",
+   "Pool.Medicine.Resuscitate",
    "Pool.Speed.Hasten"
   ],
-  "score": 2537.941875,
+  "score": 2598.8379,
   "certificate": {
-   "sweeps": 30,
+   "sweeps": 23,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
    "primary_converged": true,
-   "picks_filled": 2
+   "picks_filled": 0
   }
  },
  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Sonic_Attack|itrial": {
   "picks": [
-   "Defender_Buff.Radiation_Emission.Accelerate_Metabolism",
-   "Defender_Buff.Radiation_Emission.Choking_Cloud",
    "Defender_Buff.Radiation_Emission.EMP_Pulse",
    "Defender_Buff.Radiation_Emission.Enervating__Field",
    "Defender_Buff.Radiation_Emission.Fallout",
@@ -88,8 +86,8 @@
    "Defender_Buff.Radiation_Emission.Mutation",
    "Defender_Buff.Radiation_Emission.Radiation_Emission",
    "Defender_Buff.Radiation_Emission.Radiation_Infection",
+   "Defender_Ranged.Sonic_Attack.Amplify",
    "Defender_Ranged.Sonic_Attack.Dreadful_Wail",
-   "Defender_Ranged.Sonic_Attack.Howl",
    "Defender_Ranged.Sonic_Attack.Scream",
    "Defender_Ranged.Sonic_Attack.Sirens_Song",
    "Epic.Ice_Mastery_DefCorr.Frozen_Armor",
@@ -99,16 +97,18 @@
    "Inherent.Fitness.Stamina",
    "Pool.Fighting.Boxing",
    "Pool.Fighting.Tough",
-   "Pool.Flight.Combat_Flight",
    "Pool.Flight.Fly",
+   "Pool.Flight.Group_Fly",
    "Pool.Manipulation.Challenge",
    "Pool.Manipulation.Invoke_Panic",
    "Pool.Manipulation.Unrelenting",
-   "Pool.Speed.Hasten"
+   "Pool.Speed.Hasten",
+   "Pool.Speed.Super_Speed",
+   "Pool.Speed.Whirlwind"
   ],
-  "score": 2280.53552,
+  "score": 2308.2550400000005,
   "certificate": {
-   "sweeps": 25,
+   "sweeps": 28,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
@@ -118,7 +118,7 @@
  },
  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|itrial": {
   "picks": [
-   "Defender_Buff.Radiation_Emission.Accelerate_Metabolism",
+   "Defender_Buff.Radiation_Emission.Choking_Cloud",
    "Defender_Buff.Radiation_Emission.EMP_Pulse",
    "Defender_Buff.Radiation_Emission.Enervating__Field",
    "Defender_Buff.Radiation_Emission.Fallout",
@@ -126,7 +126,6 @@
    "Defender_Buff.Radiation_Emission.Mutation",
    "Defender_Buff.Radiation_Emission.Radiation_Emission",
    "Defender_Buff.Radiation_Emission.Radiation_Infection",
-   "Defender_Ranged.Radiation_Blast.Aim",
    "Defender_Ranged.Radiation_Blast.Atomic_Blast",
    "Defender_Ranged.Radiation_Blast.X-Ray_Beam",
    "Epic.Ice_Mastery_DefCorr.Build_Up",
@@ -135,17 +134,18 @@
    "Epic.Ice_Mastery_DefCorr.Ice_Elemental",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
-   "Pool.Flight.Combat_Flight",
    "Pool.Flight.Evasive_Maneuvers",
    "Pool.Flight.Fly",
+   "Pool.Flight.Group_Fly",
+   "Pool.Invisibility.Grant_Invisibility",
    "Pool.Invisibility.Stealth",
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed",
    "Pool.Speed.Whirlwind"
   ],
-  "score": 1968.2873400000003,
+  "score": 1948.13955,
   "certificate": {
-   "sweeps": 28,
+   "sweeps": 22,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
@@ -156,6 +156,7 @@
  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Radiation_Emission|itrial": {
   "picks": [
    "Epic.Mastermind_Mace_Mastery.Scorpion_Shield",
+   "Epic.Mastermind_Mace_Mastery.Web_Cocoon",
    "Epic.Mastermind_Mace_Mastery.Web_Envelope",
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
@@ -163,7 +164,6 @@
    "Mastermind_Buff.Radiation_Emission.EMP_Pulse",
    "Mastermind_Buff.Radiation_Emission.Enervating__Field",
    "Mastermind_Buff.Radiation_Emission.Fallout",
-   "Mastermind_Buff.Radiation_Emission.Lingering_radiation",
    "Mastermind_Buff.Radiation_Emission.Mutation",
    "Mastermind_Buff.Radiation_Emission.Radiation_Emission",
    "Mastermind_Buff.Radiation_Emission.Radiation_Infection",
@@ -172,8 +172,8 @@
    "Mastermind_Summon.Demon_Summoning.Summon_Demon_Prince",
    "Mastermind_Summon.Demon_Summoning.Summon_Demonlings",
    "Mastermind_Summon.Demon_Summoning.Summon_Demons",
+   "Pool.Fighting.Boxing",
    "Pool.Fighting.Tough",
-   "Pool.Fighting.Weave",
    "Pool.Force_of_Will.Weaken_Resolve",
    "Pool.Medicine.Aid_Other",
    "Pool.Medicine.Aid_Self",
@@ -182,14 +182,14 @@
    "Pool.Speed.Super_Speed",
    "Pool.Speed.Whirlwind"
   ],
-  "score": 2093.3976,
+  "score": 2099.912355,
   "certificate": {
-   "sweeps": 26,
+   "sweeps": 25,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
    "primary_converged": true,
-   "picks_filled": 1
+   "picks_filled": 0
   }
  }
 }
