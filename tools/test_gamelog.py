@@ -295,6 +295,18 @@ check("bare 'posi' still generic Positron",
       ev_p and ev_p.get("content") == "Positron Task Force",
       str(ev_p and ev_p.get("content")))
 
+# formats LEARNED from real logs 2026-07-07
+ev_lv, _ = gamelog.parse_line(
+    "2026-07-05 18:20:53 Your combat improves to level 50! "
+    "Seek a trainer to further your abilities.")
+check("real level-up line parses (combat improves)",
+      ev_lv and ev_lv["type"] == "level" and ev_lv["level"] == 50, str(ev_lv))
+ev_ah, _ = gamelog.parse_line(
+    "2026-07-05 19:39:09 You have 0 bought and 1 sold items in the Consignment House.")
+check("AH pending summary parses (bought/sold counts)",
+      ev_ah and ev_ah["type"] == "ah_status" and ev_ah["sold"] == 1
+      and ev_ah["bought"] == 0, str(ev_ah))
+
 shutil.rmtree(tmp, ignore_errors=True)
 print(f"\n══ {'ALL PASS' if not fails else f'{len(fails)} FAILURE(S): ' + ', '.join(fails)} ══")
 sys.exit(1 if fails else 0)

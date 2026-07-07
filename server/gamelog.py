@@ -155,8 +155,17 @@ _PATTERNS = [
      lambda m: {"by": (m.group(1) or "").strip() or None}),
     ("merits", re.compile(rf"^You (?:have been awarded|are awarded|receive) {_N} (?:reward )?merits?\.?$", re.I),
      lambda m: {"merits": _num(m.group(1))}),
-    ("level", re.compile(r"^(?:Welcome to level|You are now level|You have reached level) (\d+)", re.I),
+    # real Homecoming format LEARNED from Joel's logs 2026-07-07 ("Your combat improves
+    # to level 50! Seek a trainer..."); the earlier alternatives were guesses kept as
+    # fallbacks for other message paths
+    ("level", re.compile(r"^(?:Your combat improves to level|Welcome to level"
+                         r"|You are now level|You have reached level) (\d+)", re.I),
      lambda m: {"level": int(m.group(1))}),
+    # AH-open pending summary ("You have 0 bought and 1 sold items in the Consignment
+    # House.") — sales that completed while offline announce themselves here
+    ("ah_status", re.compile(r"^You have (\d+) bought and (\d+) sold items? in the "
+                             r"Consignment House", re.I),
+     lambda m: {"bought": int(m.group(1)), "sold": int(m.group(2))}),
     ("badge", re.compile(r"^(?:Congratulations! )?You (?:have )?(?:earned|received) the (.+?) [Bb]adge", re.I),
      lambda m: {"badge": m.group(1).strip()}),
     ("drop", re.compile(r"^You received (.+?)\.?$", re.I),
