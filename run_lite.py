@@ -36,7 +36,7 @@ import gamelog  # noqa: E402
 APPDIR = os.path.join(os.environ.get("APPDATA", _HERE), "HeroCompanion")
 gamelog.STATE_DIR = os.path.join(APPDIR, "gamelog")
 
-LITE_VERSION = "0.1.12"
+LITE_VERSION = "0.1.13"
 _UPDATE_VERSION_URL = ("https://raw.githubusercontent.com/joelc67/hero-companion/"
                        "master/lite_version.txt")
 _RELEASES_URL = "https://github.com/joelc67/hero-companion/releases"
@@ -152,6 +152,105 @@ def _maybe_autopublish():
         _stats["last_error"] = f"autopublish {status}"
 
 
+# ── Board feed: capture → GitHub inbox (private) → rendered live board ───────────────
+# Joel's architecture: ANY player's Lite uploads its capture over HTTPS to the
+# project's PRIVATE inbox repo (the "secure database") — no accounts, tokens, or setup
+# for the user, and nothing in an upload is readable by the general public (the inbox
+# is private; only the rendered, scrubbed board page ever becomes public). A GitHub
+# Action imports fresh uploads into the live board within minutes. The upload key
+# baked below is scoped to the inbox ONLY — it cannot write the public site.
+# Consent is Joel-doctrine: informed opt-in in the tray, asked once, remembered,
+# reversible. publish_token.txt remains a dormant power-user path.
+UPLOAD_SECONDS = 300
+_INBOX_REPO = "joelc67/hero-companion-inbox"
+_INBOX_K = b""          # inbox-scoped upload key, obfuscated at release build time
+
+
+def _inbox_token():
+    if not _INBOX_K:
+        return None
+    return bytes(b ^ 0x5A for b in _INBOX_K).decode("ascii")
+
+
+def _install_id(st):
+    """Anonymous per-install id — never a hostname or username."""
+    iid = st.get("install_id")
+    if not iid:
+        import uuid
+        iid = uuid.uuid4().hex[:16]
+        st["install_id"] = iid
+        gamelog.save_state(st)
+    return iid
+
+
+def _gh_request(method, path, body=None):
+    import urllib.request
+    req = urllib.request.Request(
+        f"https://api.github.com/repos/{_INBOX_REPO}/{path}",
+        data=json.dumps(body).encode("utf-8") if body is not None else None,
+        headers={"Authorization": f"token {_inbox_token()}",
+                 "Accept": "application/vnd.github+json",
+                 "User-Agent": "CompanionLite"},
+        method=method)
+    with urllib.request.urlopen(req, timeout=20) as r:
+        return json.loads(r.read().decode("utf-8") or "{}")
+
+
+def _inbox_put(path, data, message, need_sha=False):
+    import base64
+    body = {"message": message,
+            "content": base64.b64encode(data).decode("ascii")}
+    if need_sha:
+        try:
+            body["sha"] = _gh_request("GET", f"contents/{path}").get("sha")
+        except Exception:  # noqa: BLE001 — file doesn't exist yet: create it
+            pass
+    _gh_request("PUT", f"contents/{path}", body)
+
+
+def _maybe_upload():
+    """Send NEW capture bytes to the inbox — only with consent, only when the store
+    grew, at most once per UPLOAD_SECONDS. Incremental: each upload is a small chunk
+    file of just the new lines (the renderer stitches chunks in order); the sent byte
+    offset persists in state, so restarts never re-send. If the store ever shrinks
+    (rebuilt), a reset chunk replaces the source's history."""
+    st = gamelog.load_state()
+    if st.get("board_feed") is not True or not _inbox_token():
+        return
+    if time.time() - _stats.get("uploaded_ts", 0) < UPLOAD_SECONDS:
+        return
+    src = os.path.join(gamelog.STATE_DIR, "events.jsonl")
+    size = os.path.getsize(src) if os.path.isfile(src) else 0
+    offset = int(st.get("board_feed_offset", 0))
+    reset = offset > size                # store rebuilt — resend all, supersede history
+    if size == 0 or (size == offset and not reset):
+        return
+    _stats["uploaded_ts"] = time.time()
+    try:
+        with open(src, "rb") as f:
+            f.seek(0 if reset else offset)
+            chunk = f.read()
+        if not chunk.endswith(b"\n"):                  # never ship a torn last line
+            cut = chunk.rfind(b"\n")
+            if cut < 0:
+                return
+            chunk = chunk[:cut + 1]
+        iid = _install_id(st)
+        kind = "r" if reset else "c"
+        _inbox_put(f"sources/{iid}/{kind}{int(time.time())}.jsonl", chunk,
+                   f"capture from {iid}")
+        _inbox_put(f"sources/{iid}/state.json",
+                   json.dumps({"characters": st.get("characters") or {}}).encode(),
+                   f"state from {iid}", need_sha=True)
+        st = gamelog.load_state()                       # re-load: capture may have run
+        st["board_feed_offset"] = (0 if reset else offset) + len(chunk)
+        gamelog.save_state(st)
+        _stats["uploaded_bytes"] = _stats.get("uploaded_bytes", 0) + len(chunk)
+        _stats["uploaded_last"] = time.strftime("%H:%M:%S")
+    except Exception as e:  # noqa: BLE001
+        _stats["last_error"] = f"board feed {type(e).__name__}: {e}"
+
+
 def _capture_loop():
     while not _stop.is_set():
         try:
@@ -164,6 +263,7 @@ def _capture_loop():
                     _stats["events"] += len(events)
                     _stats["recruit"] += sum(1 for e in events if e.get("type") == "recruit")
                 gamelog.save_state(st)
+            _maybe_upload()
             _maybe_autopublish()
         except Exception as e:  # noqa: BLE001 — the daemon never dies on one bad poll
             _stats["last_error"] = f"{type(e).__name__}: {e}"
@@ -178,8 +278,16 @@ def _status_text():
         "full app" if owner.get("tag") == "full" else "idle")
     watching = _watch_dirs(st)
     accounts = sorted({os.path.basename(os.path.dirname(d)) for d in watching})
-    board = (f"ONLINE (auto-publish every {AUTOPUBLISH_SECONDS // 60} min) — "
-             f"{_PUBLISH_LIVE_URL}" if _publish_token() else "local page (this machine)")
+    if _publish_token():
+        board = f"ONLINE (auto-publish every {AUTOPUBLISH_SECONDS // 60} min) — {_PUBLISH_LIVE_URL}"
+    elif st.get("board_feed") is True:
+        up = _stats.get("uploaded_last")
+        board = ("ONLINE — feeding the board"
+                 + (f" (last upload {up}, {_stats.get('uploaded_bytes', 0):,} bytes "
+                    f"this run)" if up else " (first upload within "
+                    f"{UPLOAD_SECONDS // 60} min of new play)"))
+    else:
+        board = "local page (this machine)"
     return (f"Companion Lite — up {up} min\n"
             f"capture owner: {who}\n"
             f"events captured this run: {_stats['events']} "
@@ -533,10 +641,9 @@ def _run_tray():
 
     def _open_boards(_icon, _item):
         import webbrowser
-        # The owner's board LIVES ONLINE (a publish token makes this the owner machine):
-        # the local file is just the publish source, so open the real page. Everyone else
-        # gets their private local board, same as before.
-        if _publish_token():
+        # The board LIVES ONLINE for anyone feeding it (or the token power-user path);
+        # everyone else gets their private local board, same as before.
+        if _publish_token() or gamelog.load_state().get("board_feed") is True:
             webbrowser.open(_PUBLISH_LIVE_URL)
             return
         # regenerate from THIS machine's store (pass the resolved path so the frozen
@@ -553,29 +660,39 @@ def _run_tray():
             return
         webbrowser.open("file:///" + out.replace("\\", "/"))
 
-    def _setup_publish(_icon, _item):
-        # Joel: "We always want it on the live site" — publishing is NOT a user action.
-        # The board publishes ITSELF (auto-publish in the capture loop); this item only
-        # exists to set up the owner token, and it isn't shown once one is in place.
-        if _publish_token():
-            _result_page("Companion Lite — online board",
-                         "<p>Already set up. Your board publishes itself while you play "
-                         "(at most every 15 minutes, whenever new play was captured):</p>"
-                         f"<p><a href='{_PUBLISH_LIVE_URL}'>{_PUBLISH_LIVE_URL}</a></p>")
-            return
-        _result_page("Companion Lite — set up your online board",
-                     "<p>One-time setup. Once a token is in place, Companion Lite keeps "
-                     "the live page current by itself while you play — no publish "
-                     "button, nothing to remember:</p><ol>"
-                     "<li>On GitHub: Settings → Developer settings → Fine-grained "
-                     "tokens → Generate. Repository access: <code>hero-companion</code>. "
-                     "Permission: <b>Contents → Read and write</b>.</li>"
-                     "<li>Save the token text into this file:<br>"
-                     f"<code>{os.path.join(APPDIR, 'publish_token.txt')}</code></li>"
-                     "</ol><p>That's it — publishing starts on its own within a minute "
-                     "and this menu entry goes away on the next start.</p>"
-                     "<p style='color:#8fa0bd'>The token stays on this machine — it is "
-                     "never in the app or the repo.</p>")
+    def _feed_explain(_icon, _item):
+        _result_page("How your board gets online",
+                     "<p>No accounts, no tokens, no setup. With your OK, Companion Lite "
+                     "uploads its captured play data over HTTPS to the project's "
+                     "<b>private inbox</b> (a locked storage area the general public "
+                     "cannot read), where the board pipeline imports it into the live "
+                     "page within minutes.</p>"
+                     "<p>Only captured game events are uploaded — under an anonymous "
+                     "install id, never your account name, machine name, or anything "
+                     "else. What becomes public is ONLY the rendered board: no account "
+                     "names, no money, no machine details.</p>"
+                     "<p>Disconnect any time; the choice is remembered either way.</p>")
+
+    def _feed_connect(_icon, _item):
+        st = gamelog.load_state()
+        st["board_feed"] = True
+        gamelog.save_state(st)
+        _stats["uploaded_ts"] = 0            # feed on the very next poll
+        _result_page("Companion Lite — online board connected",
+                     "<p>Done. Your capture now feeds the live board as you play — "
+                     "nothing more to do, ever.</p>"
+                     f"<p>Your board: <a href='{_PUBLISH_LIVE_URL}'>"
+                     f"{_PUBLISH_LIVE_URL}</a></p>"
+                     "<p style='color:#8fa0bd'>First appearance can take a few minutes "
+                     "(upload + the pipeline's next import).</p>")
+
+    def _feed_disconnect(_icon, _item):
+        st = gamelog.load_state()
+        st["board_feed"] = False
+        gamelog.save_state(st)
+        _result_page("Companion Lite — online board disconnected",
+                     "<p>The feed is off — nothing leaves this machine. Your board is "
+                     "local-only again; reconnect any time from the tray.</p>")
 
     def _install_confirm(_icon, _item):
         # Consent is the native submenu click "Yes, install it" — no modal to hang.
@@ -654,11 +771,13 @@ def _run_tray():
         pystray.MenuItem("What this does / where", _safe(_install_explain)),
         pystray.MenuItem("Yes, install it", _safe(_install_confirm)),
         pystray.MenuItem("Remove it", _safe(_remove_menu)))
-    items = [pystray.MenuItem("Open Pulse Boards (alpha)", _safe(_open_boards))]
-    if not _publish_token():
-        # setup-only entry — with a token the board publishes itself and this vanishes
-        items.append(pystray.MenuItem("Set up online board (owner)", _safe(_setup_publish)))
-    items += [pystray.MenuItem("In-game logging menu", install_sub),
+    feed_sub = pystray.Menu(
+        pystray.MenuItem("How your board gets online", _safe(_feed_explain)),
+        pystray.MenuItem("Yes — put my board online", _safe(_feed_connect)),
+        pystray.MenuItem("Disconnect (stop the feed)", _safe(_feed_disconnect)))
+    items = [pystray.MenuItem("Open Pulse Boards (alpha)", _safe(_open_boards)),
+             pystray.MenuItem("Online board", feed_sub),
+             pystray.MenuItem("In-game logging menu", install_sub),
              pystray.MenuItem("Status", _safe(_show_status)),
              pystray.MenuItem("About Companion Lite", _safe(_about)),
              pystray.MenuItem("Check for updates", _safe(_check_updates)),
@@ -671,6 +790,24 @@ def _run_tray():
     if _st.get("pulse_capture") is not True:
         _st["pulse_capture"] = True
         gamelog.save_state(_st)
+    # One-time nudge (per Joel's choice doctrine: informed opt-in, asked ONCE, remembered
+    # either way): if the user has never decided on the online feed, explain it once —
+    # connecting stays a deliberate click in the tray's Online board menu.
+    if "board_feed" not in _st and not _st.get("board_feed_nudged") and _inbox_token():
+        _st["board_feed_nudged"] = True
+        gamelog.save_state(_st)
+        try:
+            _result_page("Companion Lite — your board can live online",
+                         "<p>New in this version: your Pulse Board can feed the live "
+                         "site with no accounts, tokens, or setup — Lite uploads "
+                         "capture to the project's private inbox and the board "
+                         "pipeline does the rest. Only the rendered board is public; "
+                         "your uploads are not.</p>"
+                         "<p>To turn it on: tray (blue P) → <b>Online board</b> → "
+                         "<b>Yes — put my board online</b>. To never think about it "
+                         "again, do nothing — this note won't repeat.</p>")
+        except Exception:  # noqa: BLE001
+            pass
     _stats["started"] = time.time()          # anchor uptime at tray start, not import
     t = threading.Thread(target=_capture_loop, daemon=True)
     t.start()

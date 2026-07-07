@@ -2,10 +2,17 @@
 
 ## Unreleased — Companion Lite 0.1.13
 
+- **Your board feeds the live site by itself — no accounts, no tokens, no setup.**
+  Say yes once (tray → Online board → "Yes — put my board online") and Companion Lite
+  uploads its capture over HTTPS to the project's private inbox, where the board
+  pipeline imports it into the live page within minutes. Uploads are incremental
+  (only new play), tagged by an anonymous install id — never your account name or
+  machine name — and land in locked storage the general public cannot read. The only
+  thing that ever becomes public is the rendered board itself.
+
 - **The "Publish" menu entry is gone.** The board was never supposed to need a publish
-  button — it lives online and keeps itself current. What remains is a one-time "Set up
-  online board (owner)" entry that only appears until a token is in place, then
-  disappears.
+  button. The tray's "Online board" menu holds the one-time yes, an explanation of
+  exactly what leaves your machine, and Disconnect.
 
 ## Companion Lite 0.1.12 — July 7, 2026
 
