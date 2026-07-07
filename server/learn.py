@@ -18,9 +18,18 @@ ordering only, never pruning: every legal move still gets evaluated before conve
 """
 import json
 import os
+import sys
 
-_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-LOG_PATH = os.path.join(_ROOT, "benchmarks", "exploration_log.jsonl")
+if getattr(sys, "frozen", False):
+    # Packaged app: the gold-standard champions SHIP in the bundle (read-only) so end
+    # users get the converged builds instead of the heuristic fallback. Anything the
+    # learning stack writes goes to the user's writable app dir, never the bundle.
+    _ROOT = getattr(sys, "_MEIPASS", os.path.dirname(sys.executable))
+    _WRITE = os.path.join(os.environ.get("APPDATA", _ROOT), "HeroCompanion")
+    LOG_PATH = os.path.join(_WRITE, "exploration_log.jsonl")
+else:
+    _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    LOG_PATH = os.path.join(_ROOT, "benchmarks", "exploration_log.jsonl")
 CHAMPIONS_PATH = os.path.join(_ROOT, "benchmarks", "champions.json")
 
 

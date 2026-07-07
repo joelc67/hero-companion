@@ -13,6 +13,9 @@ datas = [
     ("LICENSE", "."),
     ("CREDITS.md", "."),
     ("TERMS.md", "."),
+    # The gold-standard champions: converged best-known builds per context, so END USERS
+    # get the 3-hour convergence run's results, not the heuristic fallback.
+    ("benchmarks/champions.json", "benchmarks"),
 ]
 # "Add Shortcuts.bat" belongs NEXT TO the exe (dist root), not inside _internal —
 # COLLECT datas land in _internal, so it's copied post-build by tools/finish_dist.py

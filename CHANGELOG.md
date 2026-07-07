@@ -1,6 +1,16 @@
 # Hero Companion — What's New
 
-## Unreleased (0.12.11)
+## 0.12.11 — July 6, 2026
+
+- **Sharper end-game builds from a fully re-converged optimizer.** The best-known build
+  for each context was re-solved to true convergence under the current model and the
+  corrected proc data, so the head start the tool builds from is stronger.
+
+- **Live play capture (opt-in, private messages excluded).** With chat logging on, the
+  app turns your sessions into insight — your own rewards and drops, plus what's forming
+  on your shard from the public recruitment channels. It learns your server's shorthand
+  as it reads. Private messages (tells and whispers) are never captured, and nothing
+  leaves your machine.
 
 - **Long-recharge attacks and holds now get the proc treatment (model v25).** A
   single-target power like Seismic Smash or Dominate keeps a 2-3 piece accuracy/damage
