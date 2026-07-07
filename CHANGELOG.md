@@ -1,12 +1,21 @@
 # Hero Companion — What's New
 
-## Unreleased — Companion Lite 0.1.14
+## Companion Lite 0.1.14 — July 7, 2026
 
 - **Your server shows on the board — detected automatically.** The game itself keeps a
   roster file (playerslot.txt) naming each character's server; Lite looks your
   characters up there the moment they appear in the log, so the live board's "Servers
   reporting" line fills in with zero configuration. Only the characters actually seen
   in your logs are recorded — the roster itself is never stored or uploaded.
+
+- **Positron Parts 1 and 2 finally count separately.** Recruiting-alias matching is
+  now longest-first, so "posi 2" no longer collapses into generic Positron — in every
+  spelling recruiters use (posi2, pos 1, 1st posi, ...). The same fix protects every
+  multi-word alias (ice mistral, mort kal, kmitf).
+
+- **The recruitment-channel list ships in the content pack**, so shard global channels
+  (where iTrials and raids organize) can be added as data. Private channels (tells,
+  whispers) remain excluded unconditionally.
 
 ## Companion Lite 0.1.13 — July 7, 2026
 
