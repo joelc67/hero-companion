@@ -656,13 +656,25 @@ def build(state_dir=None, public=False):
                   + _PULSE_JS + "</script>")
 
     if public:
+        # direct download of the CURRENT Lite build — the pipeline renders from a fresh
+        # site checkout, so this link self-updates with every Lite release
+        try:
+            with open(os.path.join(ROOT, "lite_version.txt"), encoding="utf-8") as f:
+                _lv = f.read().strip()
+            dl = ("https://github.com/joelc67/hero-companion/releases/download/"
+                  f"lite-v{_lv}/CompanionLite.exe")
+            dl_label = f"Companion Lite {_lv}"
+        except Exception:  # noqa: BLE001 — frozen/odd layouts fall back to the list
+            dl = "https://github.com/joelc67/hero-companion/releases"
+            dl_label = "Companion Lite"
         mock = "Alpha · built from live player capture · times shown in your time zone"
         logo_note = "(live)"
-        tag = ("Built from game logs captured by players running "
-               "<a href='https://github.com/joelc67/hero-companion/releases'>Companion "
-               "Lite</a>. Uploads are private and pseudonymized — no account names, no "
-               "money, no machine details ever appear here; only these rendered boards "
-               "are public.")
+        tag = ("Built from game logs captured by players running Companion Lite "
+               f"(<a href='{dl}'>download {dl_label}</a> · "
+               "<a href='https://github.com/joelc67/hero-companion/releases'>all "
+               "releases</a>). Uploads are private and pseudonymized — no account "
+               "names, no money, no machine details ever appear here; only these "
+               "rendered boards are public.")
         foot = ("Built from game logs captured by players running Companion Lite. Sections "
                 "marked \"collecting\" fill in as capture learns the line formats from real "
                 "sessions.")
