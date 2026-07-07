@@ -1,6 +1,27 @@
 # Hero Companion — What's New
 
-## Companion Lite 0.1.14 — July 7, 2026
+## 0.12.12 — July 7, 2026
+
+- **Henchmen and pets priced like the live game (the big Mastermind fix).** Pet damage
+  was built on a stale snapshot that rated henchmen more than twice as hard-hitting as
+  the real game, counted a single pet where the game spawns a squad, and treated every
+  summon as permanent. All three are fixed from the game's own data: henchman damage
+  now uses the live tables, Soldiers count as 2 Soldiers + 1 Medic (tier squads of
+  3/2/1 across all six Mastermind primaries), timed summons like Spiderlings earn only
+  the share of a fight they're actually up (recharge slotting shortens the resummon
+  wait), and powers whose pets don't inherit slotting no longer get phantom
+  enhancement. The optimizer values pets on the squad's real, uptime-weighted output —
+  the "healing mule" Mastermind builds die here.
+
+- **Champion builds re-converged under the corrected model.** Every gold-standard
+  champion was re-solved to full convergence with the accurate pet math and ships in
+  this update.
+
+- **Live play capture improvements** (shared with Companion Lite): the server pulse
+  counts formations rather than repeated recruiting shouts, Positron Parts 1 and 2
+  are distinguished in every spelling, your characters' servers are detected
+  automatically from the game's roster file, and the recruitment-channel list ships
+  in the updatable content pack.
 
 - **Your server shows on the board — detected automatically.** The game itself keeps a
   roster file (playerslot.txt) naming each character's server; Lite looks your
