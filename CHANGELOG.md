@@ -1,5 +1,19 @@
 # Hero Companion — What's New
 
+## Unreleased — Companion Lite 0.1.12
+
+- **Your Pulse Board now lives online, not on the game machine.** On the owner's machine
+  (the one with a publish token), Companion Lite keeps the live web page current
+  automatically — publishing at most every 15 minutes and only when new play was
+  captured — and "Open Pulse Boards" opens the online page directly. Machines without a
+  token are untouched: their board stays a private local page and Lite never talks to
+  the network.
+
+- **Published boards are scrubbed before they leave the machine.** The public variant
+  drops the local file path and never shows account login names — an unnamed character
+  appears as "Unnamed character #1" until capture learns its name. Character names
+  (which are public in game) are kept.
+
 ## 0.12.11 — July 6, 2026
 
 - **Sharper end-game builds from a fully re-converged optimizer.** The best-known build

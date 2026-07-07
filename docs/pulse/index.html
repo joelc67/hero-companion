@@ -1,61 +1,59 @@
 <!doctype html><html><head><meta charset='utf-8'>
-<title>CoH Pulse Boards — alpha (local)</title><style>
-:root{--ground:#0c1220;--panel:#131c2e;--line:#22304a;--pulse:#3fd2ff;--gold:#f0b93b;
---ink:#dbe4f5;--dim:#8fa0bd;--faint:#5b6c8c}
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>CoH Pulse Boards</title><style>
+:root{--ground:#0c1220;--panel:#131c2e;--panel2:#182338;--line:#22304a;--pulse:#3fd2ff;
+--gold:#f0b93b;--green:#4cc38a;--ink:#dbe4f5;--dim:#8fa0bd;--faint:#5b6c8c}
+*{box-sizing:border-box}
 body{background:var(--ground);color:var(--ink);font-family:'Segoe UI',system-ui,sans-serif;
 margin:0;line-height:1.5}
-.wrap{max-width:980px;margin:0 auto;padding:0 18px 48px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px 52px}
 .mock{background:var(--gold);color:#20180a;text-align:center;font-size:.72rem;
 letter-spacing:.12em;text-transform:uppercase;padding:5px}
 .logo{font-family:'Bahnschrift SemiCondensed','Arial Narrow',sans-serif;font-weight:700;
 font-size:2.2rem;text-transform:uppercase;margin:26px 0 2px}
 .logo b{color:var(--pulse)}
-.tag{color:var(--dim);margin-bottom:22px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;
+.tag{color:var(--dim);margin-bottom:18px;font-size:.92rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:7px;
 padding:16px 18px;margin:14px 0}
+.card.full{grid-column:1/-1}
 h2{font-family:'Bahnschrift SemiCondensed','Arial Narrow',sans-serif;text-transform:uppercase;
-letter-spacing:.08em;font-size:1rem;margin:0 0 10px}
+letter-spacing:.07em;font-size:1.02rem;margin:0 0 4px}
+.sub{color:var(--faint);font-size:.78rem;margin:0 0 12px}
 table{width:100%;border-collapse:collapse;font-size:.88rem}
-th{font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);
+th{font-size:.64rem;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);
 text-align:left;padding:5px 8px;border-bottom:1px solid var(--line)}
 td{padding:6px 8px;border-bottom:1px solid var(--line)}
 tr:last-child td{border-bottom:none}
 .num{font-family:Consolas,monospace;font-variant-numeric:tabular-nums;text-align:right}
-.dim{color:var(--faint);font-size:.78rem}
+.dim{color:var(--faint);font-size:.8rem}
+.bar{height:7px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:3px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pulse),#7fe3ff)}
+.pill{display:inline-block;background:var(--panel2);border:1px solid var(--line);
+border-radius:3px;padding:2px 9px;font-size:.78rem;margin:2px 3px 2px 0}
+.chartrow td:first-child{width:44%}
+.soon{border-style:dashed;opacity:.85}
+.soon .tagline{color:var(--gold);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em}
+.kpi{display:flex;gap:22px;flex-wrap:wrap;margin:4px 0 2px}
+.kpi div{min-width:70px}
+.kpi .v{font-family:Consolas,monospace;font-size:1.35rem}
+.kpi .k{color:var(--faint);font-size:.66rem;text-transform:uppercase;letter-spacing:.09em}
 footer{color:var(--dim);font-size:.8rem;border-top:1px solid var(--line);
-padding-top:14px;margin-top:22px}
+padding-top:14px;margin-top:24px}
+a{color:var(--pulse)}
 </style></head><body>
-<div class='mock'>Your LOCAL board · built from your own game log · nothing uploaded</div>
+<div class='mock'>Alpha · published by the board owner from their own game log</div>
 <div class='wrap'>
-<div class='logo'>CoH <b>Pulse</b> Boards <span style='font-size:.9rem;color:#8fa0bd'>(your machine)</span></div>
-<div class='tag'>This page is generated on YOUR PC from YOUR game log — it is not the shared
-community site (that one lives at
-<a href='https://joelc67.github.io/hero-companion/pulse/' style='color:#3fd2ff'>joelc67.github.io/hero-companion/pulse</a>
-and is empty until community sharing opens). During the alpha your data stays here.</div>
-<div class='card' style='border-color:#3fd2ff'>
-<b>Read 0 events</b> from<br><code style='color:#8fa0bd;font-size:.8rem'>C:\Users\joelc\AppData\Roaming\HeroCompanion\gamelog\events.jsonl</code>
-<div class='dim' style='margin-top:6px'>0 events means logging has not written anything yet — run <b>/logchat 1</b> in game (each account) and play a little.</div>
-</div>
-<div class='card'><h2>Server pulse — recruitment seen</h2>
-<table><tr><th>Content</th><th style='text-align:right'>Sightings</th></tr><tr><td class='dim' colspan='2'>No recruitment sightings yet — play with /logchat on and pulse capture enabled.</td></tr></table>
-<div class='dim' style='margin-top:8px'>total sightings: 0</div></div>
-<div class='card'><h2>Recent formations witnessed</h2>
-<table><tr><th>When</th><th>Content</th><th>Channel</th><th style='text-align:right'>Spots</th></tr>
-<tr><td class='dim' colspan='4'>—</td></tr></table></div>
-
-<div class='card'><h2>Captured so far — all characters</h2><table>
-<tr><td>Days seen</td><td class='num'>0</td></tr>
-<tr><td>XP earned</td><td class='num'>0</td></tr>
-<tr><td>Influence gained</td><td class='num'>0</td></tr>
-<tr><td>Influence spent</td><td class='num'>0</td></tr>
-<tr><td>Reward merits</td><td class='num'>0</td></tr>
-<tr><td>Drops</td><td class='num'>0</td></tr>
-<tr><td>Defeats dealt / taken</td><td class='num'>0 / 0</td></tr>
-<tr><td>Badges earned (captured)</td><td class='num'>0</td></tr>
-</table><div class='dim' style='margin-top:8px'>drop mix: —</div></div>
-<div class='card'><h2>Per character</h2><div class='dim'>Events are attributed to a character once the log shows a "Welcome to City of Heroes" line — that appears when you next log in with logging on. Until then everything counts in the card above.</div></div>
-<footer>Generated locally by Hero Companion from your own game log. Market pulse arrives
-with the price book; league run pages arrive when the league/leader line formats are
-learned (the format hunter is watching). When the community layer opens, sharing any of
-this is per-stat opt-in — this alpha page never leaves your machine.</footer>
+<div class='logo'>CoH <b>Pulse</b> Boards <span style='font-size:.9rem;color:#8fa0bd'>(live)</span></div>
+<div class='tag'>This is the owner's own capture, published to their own page — no one else's data is collected here. Want a board of your own? <a href='https://github.com/joelc67/hero-companion/releases'>Companion Lite</a> builds one privately from your game logs.</div>
+<div class='card' style='border-color:var(--pulse)'><b>Built from 11,948 captured events</b><div class='dim' style='margin-top:6px'>2 account(s) · published 2026-07-07 07:13</div></div>
+<div class='card full'><h2>Server pulse — what&#x27;s forming</h2><p class='sub'>live recruitment activity across public channels · 735 sightings</p><table><tr><th>Content</th><th>Activity</th><th class='num'>Seen</th></tr><tr class='chartrow'><td>Death From Below (sewer trial)</td><td><div class='bar'><i style='width:100%'></i></div></td><td class='num'>91</td></tr><tr class='chartrow'><td>Mission / story-arc team</td><td><div class='bar'><i style='width:70%'></i></div></td><td class='num'>64</td></tr><tr class='chartrow'><td>recruiting (general)</td><td><div class='bar'><i style='width:49%'></i></div></td><td class='num'>45</td></tr><tr class='chartrow'><td>Penelope Yin Task Force</td><td><div class='bar'><i style='width:45%'></i></div></td><td class='num'>41</td></tr><tr class='chartrow'><td>Radio / scanner mission team</td><td><div class='bar'><i style='width:45%'></i></div></td><td class='num'>41</td></tr><tr class='chartrow'><td>Imperious Task Force</td><td><div class='bar'><i style='width:41%'></i></div></td><td class='num'>38</td></tr><tr class='chartrow'><td>recruiting: posi</td><td><div class='bar'><i style='width:38%'></i></div></td><td class='num'>35</td></tr><tr class='chartrow'><td>Summer Blockbuster</td><td><div class='bar'><i style='width:37%'></i></div></td><td class='num'>34</td></tr><tr class='chartrow'><td>AE / mission farm</td><td><div class='bar'><i style='width:35%'></i></div></td><td class='num'>32</td></tr><tr class='chartrow'><td>Synapse&#x27;s Task Force</td><td><div class='bar'><i style='width:26%'></i></div></td><td class='num'>24</td></tr><tr class='chartrow'><td>Positron Task Force</td><td><div class='bar'><i style='width:25%'></i></div></td><td class='num'>23</td></tr><tr class='chartrow'><td>Drowning in Blood (sewer trial)</td><td><div class='bar'><i style='width:21%'></i></div></td><td class='num'>20</td></tr><tr class='chartrow'><td>Tin Mage + Apex Task Forces</td><td><div class='bar'><i style='width:17%'></i></div></td><td class='num'>16</td></tr><tr class='chartrow'><td>recruiting: team</td><td><div class='bar'><i style='width:17%'></i></div></td><td class='num'>16</td></tr><tr class='chartrow'><td>Moonfire Task Force</td><td><div class='bar'><i style='width:16%'></i></div></td><td class='num'>15</td></tr><tr class='chartrow'><td>Hamidon Raid</td><td><div class='bar'><i style='width:15%'></i></div></td><td class='num'>14</td></tr></table></div>
+<div class='card '><h2>Recent formations witnessed</h2><table><tr><th>Time</th><th>Content</th><th>Channel</th><th class='num'>Spots</th></tr><tr><td class='dim'>21:50</td><td>Death From Below (sewer trial)</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:50</td><td>Death From Below (sewer trial)</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:50</td><td>Hamidon Raid</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:50</td><td>Hamidon Raid</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:50</td><td>Positron Task Force</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:50</td><td>Positron Task Force</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:50</td><td>Synapse&#x27;s Task Force</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:50</td><td>Synapse&#x27;s Task Force</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:51</td><td>Positron Task Force</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:51</td><td>Positron Task Force</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:51</td><td>Hamidon Raid</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:51</td><td>Hamidon Raid</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:51</td><td>Death From Below (sewer trial)</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:51</td><td>Death From Below (sewer trial)</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:52</td><td>Death From Below (sewer trial)</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:52</td><td>Death From Below (sewer trial)</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:52</td><td>Hamidon Raid</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:52</td><td>Hamidon Raid</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:53</td><td>Penelope Yin Task Force</td><td>Looking For Group</td><td class='num'></td></tr><tr><td class='dim'>21:53</td><td>Penelope Yin Task Force</td><td>Looking For Group</td><td class='num'></td></tr></table></div>
+<h2 style='margin-top:24px'>Your characters</h2>
+<div class='grid'><div class='card '><h2>Unnamed character #1</h2><div class='kpi'><div><div class='v'>1</div><div class='k'>Days</div></div><div><div class='v'>—</div><div class='k'>Top level</div></div><div><div class='v'>1</div><div class='k'>Badges</div></div><div><div class='v'>0</div><div class='k'>Merits</div></div></div><table><tr><td>XP earned</td><td class='num'>11,512,264</td></tr><tr><td>Influence in / out</td><td class='num'>25,121,901 / 0</td></tr><tr><td>Drops</td><td class='num'>232</td></tr><tr><td>Defeats dealt / taken</td><td class='num'>0 / 0</td></tr></table><div class='dim' style='margin-top:8px'>latest badges: Faithful</div></div><div class='card '><h2>Lime Juice</h2><div class='kpi'><div><div class='v'>2</div><div class='k'>Days</div></div><div><div class='v'>—</div><div class='k'>Top level</div></div><div><div class='v'>0</div><div class='k'>Badges</div></div><div><div class='v'>0</div><div class='k'>Merits</div></div></div><table><tr><td>XP earned</td><td class='num'>11,508,478</td></tr><tr><td>Influence in / out</td><td class='num'>25,121,901 / 0</td></tr><tr><td>Drops</td><td class='num'>0</td></tr><tr><td>Defeats dealt / taken</td><td class='num'>1838 / 0</td></tr></table></div></div>
+<div class='grid'><div class='card '><h2>Haul</h2><p class='sub'>everything picked up, by kind</p><table><tr><th>Kind</th><th class='num'>Count</th></tr><tr><td>salvage</td><td class='num'>625</td></tr><tr><td>incarnate</td><td class='num'>187</td></tr><tr><td>recipe</td><td class='num'>137</td></tr><tr><td>enhancement</td><td class='num'>47</td></tr><tr><td>crafting</td><td class='num'>26</td></tr><tr><td>incarnate_merit</td><td class='num'>1</td></tr></table></div><div class='card '><h2>Market activity</h2><p class='sub'>your own auction-house flow (a seed for the price board)</p><table><tr><td>Influence earned</td><td class='num'>107,595,675</td></tr><tr><td>Influence spent</td><td class='num'>1,078,111</td></tr><tr><td>Items sold</td><td class='num'>5</td></tr></table></div></div>
+<div class='card full'><h2>Badges earned</h2><p class='sub'>1 captured</p><span class='pill'>Faithful</span></div>
+<div class='card full soon'><h2>iTrials · Task Forces · League runs</h2><p class='dim'>Per-run pages (leader, participants, time, badges earned, ranked against every recorded run) appear here once the run start/finish and league join/leader line formats are confirmed from real logs. Capture is watching for them now — the format hunter flags each new shape it sees.</p><p class='tagline'>collecting from your sessions</p></div>
+<footer>Published by Companion Lite from the board owner's own game log. Sections marked "collecting" fill in as capture learns the line formats from real sessions. When the community layer opens, sharing stays a separate, per-stat choice for every player.</footer>
 </div></body></html>

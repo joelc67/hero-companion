@@ -7,10 +7,15 @@ badges, and honest "collecting" placeholders for the boards that need line forma
 capture is still learning (iTrial/TF runs). Everything came from the local store; nothing
 is uploaded. When the community layer ships, this same page is fed by hub data packs.
 
+public=True builds the PUBLISH variant — the same boards, minus anything that has no
+business on a public page: the machine path to events.jsonl and account LOGIN names
+(half of a game login; only character names and anonymous labels go online).
+
 Run:  py tools\\build_pulse_boards.py            (writes %APPDATA%\\HeroCompanion\\pulse_boards.html)
       py tools\\build_pulse_boards.py --open     (build then open)
-      py tools\\build_pulse_boards.py --publish   (copy into docs/pulse for the live site)
+      py tools\\build_pulse_boards.py --publish   (public variant into docs/pulse for the live site)
 """
+import datetime
 import html
 import json
 import os
@@ -105,7 +110,7 @@ def _scorecard(label, cs):
     return _card(label, None, kpi + tbl + tail)
 
 
-def build(state_dir=None):
+def build(state_dir=None, public=False):
     if state_dir:
         gamelog.STATE_DIR = state_dir
     src_path = gamelog._events_path()
@@ -150,15 +155,17 @@ def build(state_dir=None):
     # ---- Scorecards: ONE per account (fixes "only Lime Juice") -------------------------
     accounts = sorted({e.get("account") for e in events if e.get("account")})
     cards = []
-    for acct in accounts:
+    for i, acct in enumerate(accounts, 1):
         asum = gamelog.summarize(events, accounts=[acct])
         per = asum.get("by_character") or {}
         # prefer the named character; else the account's known character; else the account
+        # — but an account LOGIN name never goes on the public page, only an anon label.
         if per:
             for nm, cs in sorted(per.items()):
                 cards.append(_scorecard(nm, cs))
         else:
-            label = known_char.get(acct) or f"Account: {acct}"
+            label = known_char.get(acct) or (
+                f"Unnamed character #{i}" if public else f"Account: {acct}")
             cards.append(_scorecard(label, asum))
     if not cards:
         cards = ["<div class='card'><h2>Characters</h2><div class='dim'>Nothing captured "
@@ -198,25 +205,53 @@ def build(state_dir=None):
         "them now — the format hunter flags each new shape it sees.</p>"
         "<p class='tagline'>collecting from your sessions</p>", cls="full soon")
 
-    # ---- Diagnostic banner -------------------------------------------------------------
-    diag = (f"<div class='card' style='border-color:var(--pulse)'>"
-            f"<b>Read {len(events):,} events</b> from "
-            f"<code style='color:#8fa0bd;font-size:.8rem'>{_esc(src_path)}</code>"
-            + ("<div class='dim' style='margin-top:6px'>0 events — logging hasn't written "
-               "anything yet. Run <b>/logchat 1</b> in game (each account) and play a "
-               "little.</div>" if not events else
-               f"<div class='dim' style='margin-top:6px'>{len(accounts)} account(s): "
-               f"{_esc(', '.join(accounts))}</div>") + "</div>")
+    # ---- Diagnostic banner (public: no machine path, no account login names) ------------
+    if public:
+        stamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+        diag = (f"<div class='card' style='border-color:var(--pulse)'>"
+                f"<b>Built from {len(events):,} captured events</b>"
+                f"<div class='dim' style='margin-top:6px'>{len(accounts)} account(s) · "
+                f"published {stamp}</div></div>")
+    else:
+        diag = (f"<div class='card' style='border-color:var(--pulse)'>"
+                f"<b>Read {len(events):,} events</b> from "
+                f"<code style='color:#8fa0bd;font-size:.8rem'>{_esc(src_path)}</code>"
+                + ("<div class='dim' style='margin-top:6px'>0 events — logging hasn't written "
+                   "anything yet. Run <b>/logchat 1</b> in game (each account) and play a "
+                   "little.</div>" if not events else
+                   f"<div class='dim' style='margin-top:6px'>{len(accounts)} account(s): "
+                   f"{_esc(', '.join(accounts))}</div>") + "</div>")
+
+    if public:
+        mock = "Alpha · published by the board owner from their own game log"
+        logo_note = "(live)"
+        tag = ("This is the owner's own capture, published to their own page — no one "
+               "else's data is collected here. Want a board of your own? "
+               "<a href='https://github.com/joelc67/hero-companion/releases'>Companion "
+               "Lite</a> builds one privately from your game logs.")
+        foot = ("Published by Companion Lite from the board owner's own game log. Sections "
+                "marked \"collecting\" fill in as capture learns the line formats from real "
+                "sessions. When the community layer opens, sharing stays a separate, "
+                "per-stat choice for every player.")
+    else:
+        mock = "Your LOCAL board · built from your own game log · nothing uploaded"
+        logo_note = "(your machine)"
+        tag = ("Generated on your PC from your game log — not the shared community site "
+               "(<a href='https://joelc67.github.io/hero-companion/pulse/'>the online "
+               "board</a> shows what its owner last published). Publish your own with the "
+               "tray → \"Publish my board\".")
+        foot = ("Companion Lite built this from your own game log. Sections marked "
+                "\"collecting\" fill in as capture learns the line formats from your real "
+                "sessions. When the community layer opens, sharing any of this stays a "
+                "separate, per-stat choice.")
 
     page = f"""<!doctype html><html><head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <title>CoH Pulse Boards</title><style>{CSS}</style></head><body>
-<div class='mock'>Your LOCAL board · built from your own game log · nothing uploaded</div>
+<div class='mock'>{mock}</div>
 <div class='wrap'>
-<div class='logo'>CoH <b>Pulse</b> Boards <span style='font-size:.9rem;color:#8fa0bd'>(your machine)</span></div>
-<div class='tag'>Generated on your PC from your game log — not the shared community site
-(<a href='https://joelc67.github.io/hero-companion/pulse/'>the online board</a> is empty
-until sharing opens). Publish your own with the tray → "Publish my board".</div>
+<div class='logo'>CoH <b>Pulse</b> Boards <span style='font-size:.9rem;color:#8fa0bd'>{logo_note}</span></div>
+<div class='tag'>{tag}</div>
 {diag}
 {pulse_card}
 {recent_card}
@@ -225,9 +260,7 @@ until sharing opens). Publish your own with the tray → "Publish my board".</di
 <div class='grid'>{haul_card}{market_card}</div>
 {badge_card}
 {soon}
-<footer>Companion Lite built this from your own game log. Sections marked "collecting" fill
-in as capture learns the line formats from your real sessions. When the community layer
-opens, sharing any of this stays a separate, per-stat choice.</footer>
+<footer>{foot}</footer>
 </div></body></html>"""
     os.makedirs(APPDIR, exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as f:
@@ -241,8 +274,8 @@ if __name__ == "__main__":
     if "--publish" in sys.argv:
         pub = os.path.join(ROOT, "docs", "pulse", "index.html")
         os.makedirs(os.path.dirname(pub), exist_ok=True)
-        with open(out, encoding="utf-8") as src, open(pub, "w", encoding="utf-8") as dst:
-            dst.write(src.read())
+        OUT = pub
+        build(public=True)
         print(f"published copy -> {pub}  (commit + push to update the live site)")
     if "--open" in sys.argv:
         webbrowser.open("file:///" + out.replace("\\", "/"))

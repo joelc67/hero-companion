@@ -124,6 +124,34 @@ def _watch_dirs(state):
     return list(dirs.values())
 
 
+AUTOPUBLISH_SECONDS = 15 * 60
+
+
+def _maybe_autopublish():
+    """The owner's board lives ONLINE, not on the game machine: when a publish token is
+    present (owner machines only — everyone else never touches the network), keep the
+    live page current automatically. At most one publish per AUTOPUBLISH_SECONDS, and
+    only when capture has ingested something since the last one (plus one catch-up
+    publish shortly after launch, so a reboot never leaves the live board stale)."""
+    if _stats["events"] <= _stats.get("published_events", -1):
+        return
+    if time.time() - _stats.get("published_ts", 0) < AUTOPUBLISH_SECONDS:
+        return
+    if not _publish_token():                  # defined below; resolved at call time
+        return
+    _stats["published_ts"] = time.time()      # set even on failure: never hammer the API
+    import build_pulse_boards
+    build_pulse_boards.OUT = os.path.join(APPDIR, "pulse_boards_public.html")
+    build_pulse_boards.APPDIR = APPDIR
+    out, _n = build_pulse_boards.build(state_dir=gamelog.STATE_DIR, public=True)
+    with open(out, encoding="utf-8") as f:
+        status = _publish_live(f.read())
+    if status == "ok":
+        _stats["published_events"] = _stats["events"]
+    else:
+        _stats["last_error"] = f"autopublish {status}"
+
+
 def _capture_loop():
     while not _stop.is_set():
         try:
@@ -136,6 +164,7 @@ def _capture_loop():
                     _stats["events"] += len(events)
                     _stats["recruit"] += sum(1 for e in events if e.get("type") == "recruit")
                 gamelog.save_state(st)
+            _maybe_autopublish()
         except Exception as e:  # noqa: BLE001 — the daemon never dies on one bad poll
             _stats["last_error"] = f"{type(e).__name__}: {e}"
         _stop.wait(POLL_SECONDS)
@@ -149,11 +178,14 @@ def _status_text():
         "full app" if owner.get("tag") == "full" else "idle")
     watching = _watch_dirs(st)
     accounts = sorted({os.path.basename(os.path.dirname(d)) for d in watching})
+    board = (f"ONLINE (auto-publish every {AUTOPUBLISH_SECONDS // 60} min) — "
+             f"{_PUBLISH_LIVE_URL}" if _publish_token() else "local page (this machine)")
     return (f"Companion Lite — up {up} min\n"
             f"capture owner: {who}\n"
             f"events captured this run: {_stats['events']} "
             f"({_stats['recruit']} recruitment)\n"
             f"pulse capture (channels): {'ON' if st.get('pulse_capture', True) is not False else 'off'}\n"
+            f"board home: {board}\n"
             f"watching {len(watching)} log folder(s): {', '.join(accounts) or 'none — run /logchat 1 in game'}"
             + (f"\nlast error: {_stats['last_error']}" if _stats["last_error"] else ""))
 
@@ -500,9 +532,15 @@ def _run_tray():
                      + _status_text() + "</pre>")
 
     def _open_boards(_icon, _item):
+        import webbrowser
+        # The owner's board LIVES ONLINE (a publish token makes this the owner machine):
+        # the local file is just the publish source, so open the real page. Everyone else
+        # gets their private local board, same as before.
+        if _publish_token():
+            webbrowser.open(_PUBLISH_LIVE_URL)
+            return
         # regenerate from THIS machine's store (pass the resolved path so the frozen
         # build can never read the wrong events.jsonl), then open the local page.
-        import webbrowser
         out = os.path.join(APPDIR, "pulse_boards.html")
         try:
             import build_pulse_boards
@@ -516,10 +554,12 @@ def _run_tray():
         webbrowser.open("file:///" + out.replace("\\", "/"))
 
     def _publish_boards(_icon, _item):
+        # Publishes the PUBLIC variant (no machine path, no account login names) — the
+        # local pulse_boards.html keeps the full diagnostics for this machine only.
         import build_pulse_boards
-        build_pulse_boards.OUT = os.path.join(APPDIR, "pulse_boards.html")
+        build_pulse_boards.OUT = os.path.join(APPDIR, "pulse_boards_public.html")
         build_pulse_boards.APPDIR = APPDIR
-        out, n = build_pulse_boards.build(state_dir=gamelog.STATE_DIR)
+        out, n = build_pulse_boards.build(state_dir=gamelog.STATE_DIR, public=True)
         html = open(out, encoding="utf-8").read()
         status = _publish_live(html)
         if status == "ok":
