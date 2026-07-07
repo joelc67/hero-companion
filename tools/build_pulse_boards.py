@@ -137,7 +137,7 @@ CATEGORIES = [
     ("itrial", "Incarnate Trials"),
     ("hero_tf", "Hero & Co-op Task Forces"),
     ("villain_sf", "Villain Strike Forces"),
-    ("raid", "Raids & Giant Monsters"),
+    ("raid", "Raids, Monsters & Zone Events"),
     ("trial", "Trials & Special Events"),
     ("team", "Teams, Radios & Farms"),
     ("other", "Other Recruiting"),
