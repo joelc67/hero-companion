@@ -476,12 +476,17 @@ def _proc_table():
 
 
 def _area_factor(rec):
+    """Bopper's canonical PPM area factor (the HC forums PPM guide, corroborated by the
+    Homecoming wiki): AF = [1 + 0.15·R − 0.011·R·(360−Arc)/30] × 0.75 + 0.25, with
+    Arc=360 for spheres/PBAoE (our data stores arc=0 when a power isn't a cone).
+    Replaces the provisional reconstruction, which over-discounted spheres ~20% and
+    priced narrow cones at roughly a THIRD of their real proc chance."""
     r = rec.get("radius") or 0
     if r <= 0:
         return 1.0
-    arc = rec.get("arc") or 0
-    k = 0.15 * ((0.75 + 0.25 * (arc / 360.0)) if arc else 1.0)
-    return 1.0 + r * k
+    arc = rec.get("arc") or 360.0
+    inner = 1.0 + 0.15 * r - 0.011 * r * (360.0 - arc) / 30.0
+    return max(1.0, inner * 0.75 + 0.25)
 
 
 def proc_damage_per_activation(power, rec, local_rech_boost):
@@ -819,7 +824,7 @@ def _ff_recharge_avg(build, totals, ctx):
         rec = power_by_full.get(power.get("full_name")) or {}
         rech = rec.get("base_recharge") or 8.0
         cast = rec.get("cast_time") or 1.0
-        chance = min(0.90, _FF_PPM * (rech + cast) / 60.0)
+        chance = min(0.90, _FF_PPM * (rech + cast) / 60.0 / _area_factor(rec))
         cycle = max(rech / gr + cast, 2.0)
         total += (_FF_BUFF / 100.0) * chance * _FF_DUR / cycle
     return round(min(total, 0.75), 4)
