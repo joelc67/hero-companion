@@ -36,7 +36,7 @@ import gamelog  # noqa: E402
 APPDIR = os.path.join(os.environ.get("APPDATA", _HERE), "HeroCompanion")
 gamelog.STATE_DIR = os.path.join(APPDIR, "gamelog")
 
-LITE_VERSION = "0.1.2"
+LITE_VERSION = "0.1.3"
 _UPDATE_VERSION_URL = ("https://raw.githubusercontent.com/joelc67/hero-companion/"
                        "master/lite_version.txt")
 _RELEASES_URL = "https://github.com/joelc67/hero-companion/releases"
@@ -336,8 +336,8 @@ def _run_tray():
             try:
                 fn(icon, item)
             except Exception as e:  # noqa: BLE001
-                _msgbox_info("Companion Lite — error",
-                             f"That action failed:\n{type(e).__name__}: {e}")
+                _result_page("Companion Lite — error",
+                             f"<p>That action failed:</p><pre>{type(e).__name__}: {e}</pre>")
 
         def wrapped(icon, item):
             threading.Thread(target=_body, args=(icon, item), daemon=True).start()
@@ -348,7 +348,9 @@ def _run_tray():
         icon.stop()
 
     def _show_status(icon, _item):
-        _msgbox_info("Companion Lite — status", _status_text())
+        _result_page("Companion Lite — status",
+                     "<pre style='font-size:15px;white-space:pre-wrap'>"
+                     + _status_text() + "</pre>")
 
     def _open_boards(_icon, _item):
         # regenerate from the current store, then open — the alpha Pulse Boards,
@@ -387,29 +389,29 @@ def _run_tray():
         _result_page("Companion Lite — in-game menu", f"<p>{remove_ingame_menu()}</p>")
 
     def _about(icon, _item):
-        _msgbox_info("About Companion Lite", ABOUT)
+        _result_page("About Companion Lite",
+                     "<pre style='font-size:15px;white-space:pre-wrap'>" + ABOUT + "</pre>")
 
     def _check_updates(icon, _item):
         # A user CLICK, never automatic — same policy as the full app. Compares the
-        # published lite version marker; if newer, opens the releases page.
+        # published lite version marker; if newer, links the download page.
         import urllib.request
-        import webbrowser
         try:
             latest = urllib.request.urlopen(
                 _UPDATE_VERSION_URL, timeout=6).read().decode().strip()
         except Exception:  # noqa: BLE001
-            _msgbox_info("Companion Lite — updates",
-                         "Couldn't reach the update server — try again later.")
+            _result_page("Companion Lite — updates",
+                         "<p>Couldn't reach the update server — try again later.</p>")
             return
         def _t(v):
             return tuple(int(x) for x in v.split(".") if x.isdigit())
         if _t(latest) > _t(LITE_VERSION):
-            _msgbox_info("Companion Lite — updates",
-                         f"Update available: v{latest} (you have v{LITE_VERSION}). "
-                         "Opening the download page…")
-            webbrowser.open(_RELEASES_URL)
+            _result_page("Companion Lite — updates",
+                         f"<p>Update available: <b>v{latest}</b> (you have v{LITE_VERSION}).</p>"
+                         f"<p><a href='{_RELEASES_URL}'>Download the latest release →</a></p>")
         else:
-            _msgbox_info("Companion Lite — updates", f"You're up to date (v{LITE_VERSION}).")
+            _result_page("Companion Lite — updates",
+                         f"<p>You're up to date (v{LITE_VERSION}).</p>")
 
     install_sub = pystray.Menu(
         pystray.MenuItem("What this does / where", _safe(_install_explain)),
@@ -447,10 +449,10 @@ def main():
             _stop.set()
         return
     if _already_running():
-        _msgbox_info("Companion Lite",
-                     "Companion Lite is already running.\n\nLook for the blue P in "
+        _result_page("Companion Lite",
+                     "<p>Companion Lite is already running.</p><p>Look for the blue P in "
                      "your tray (it may be behind the ^ overflow arrow). Use its Quit "
-                     "to stop it.")
+                     "to stop it.</p>")
         return
     try:
         _run_tray()
