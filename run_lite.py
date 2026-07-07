@@ -246,13 +246,19 @@ def _maybe_upload():
     src = os.path.join(gamelog.STATE_DIR, "events.jsonl")
     size = os.path.getsize(src) if os.path.isfile(src) else 0
     offset = int(st.get("board_feed_offset", 0))
-    reset = offset > size                # store rebuilt — resend all, supersede history
-    if size == 0 or (size == offset and not reset):
+    if offset > size:
+        # store rebuilt (rare): start over under a FRESH install id so the pipeline
+        # can never mix pre- and post-rebuild history; the stale source ages out.
+        import uuid
+        st["install_id"] = uuid.uuid4().hex[:16]
+        st["board_feed_offset"] = offset = 0
+        gamelog.save_state(st)
+    if size == 0 or size == offset:
         return
     _stats["uploaded_ts"] = time.time()
     try:
         with open(src, "rb") as f:
-            f.seek(0 if reset else offset)
+            f.seek(offset)
             chunk = f.read()
         if not chunk.endswith(b"\n"):                  # never ship a torn last line
             cut = chunk.rfind(b"\n")
@@ -264,16 +270,17 @@ def _maybe_upload():
         chunk = _anonymize_chunk(chunk, iid)
         if not chunk:
             return
-        kind = "r" if reset else "c"
-        _inbox_put(f"sources/{iid}/{kind}{int(time.time())}.jsonl", chunk,
-                   f"capture from {iid}")
+        # chunk named by its LOCAL byte offset: a retried upload overwrites the same
+        # file instead of creating a duplicate — events can never double-count.
+        _inbox_put(f"sources/{iid}/c{offset:012d}.jsonl", chunk,
+                   f"capture from {iid}", need_sha=True)
         chars = {_pseudonym(iid, a): c
                  for a, c in (st.get("characters") or {}).items()}
         _inbox_put(f"sources/{iid}/state.json",
                    json.dumps({"characters": chars}).encode(),
                    f"state from {iid}", need_sha=True)
         st = gamelog.load_state()                       # re-load: capture may have run
-        st["board_feed_offset"] = (0 if reset else offset) + sent
+        st["board_feed_offset"] = offset + sent
         gamelog.save_state(st)
         _stats["uploaded_bytes"] = _stats.get("uploaded_bytes", 0) + len(chunk)
         _stats["uploaded_last"] = time.strftime("%H:%M:%S")
