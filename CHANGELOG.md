@@ -1,5 +1,14 @@
 # Hero Companion — What's New
 
+## Unreleased — 0.12.14
+
+- **Synced with the game's July 7 update (Issue 28, Page 3).** The patch normalized
+  Dark Armor's Obscure Sustenance to a 60 second recharge for every archetype; our
+  data carried the old 180 seconds for Brute, Scrapper, Stalker, and Tanker. A full
+  diff of all 10,708 powers against the patched client confirmed these four values
+  were the patch's only data change — archetype tables, pet classes, and proc rates
+  all verified unchanged.
+
 ## 0.12.13 — July 7, 2026
 
 - **−Resistance procs for every role that can carry them.** Achilles' Heel,
