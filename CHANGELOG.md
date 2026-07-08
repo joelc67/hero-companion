@@ -2,6 +2,17 @@
 
 ## Unreleased (staged for 0.12.15 — awaiting Joel's review of the single-build tests)
 
+- **Global Accuracy set bonuses now exist — and are valued.** A parser gap had
+  dropped every global-accuracy set bonus in the game (Luck of the Gambler's
+  4-piece +9%, Adjusted Targeting, the archetype sets' +15%…) — 65 bonuses,
+  invisible to the totals and the optimizer alike. All 65 are restored straight
+  from the game client's own data, the totals panel shows your +% Accuracy, and
+  the optimizer now prices accuracy by the game's to-hit math: against +3/+4
+  enemies (iTrials, hard content) accuracy multiplies your real damage until you
+  reach the 95% hit ceiling, so builds for that content chase it — and builds for
+  even-level content don't waste slots on it. The data reality-check now verifies
+  282 set-bonus values against the live game (a name-matching bug had silently
+  limited it to 43), all matching.
 - **The "How do you play?" questions now explain themselves.** Every choice in the
   build wizard pops a detailed explanation written for YOUR character — a
   Mastermind's "Damage dealer" talks about henchmen and pet sets, a Super Reflexes

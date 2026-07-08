@@ -1,4 +1,4 @@
-# User data — never commit someone's saved characters-in-progress
+﻿# User data â€” never commit someone's saved characters-in-progress
 saves/
 
 # Python
@@ -6,20 +6,20 @@ __pycache__/
 *.pyc
 *.pyo
 
-# Windows .exe packaging (PyInstaller) — output only; HeroCompanion.spec IS the
+# Windows .exe packaging (PyInstaller) â€” output only; HeroCompanion.spec IS the
 # committed build recipe
 build/
 dist/
 HeroCompanion-*.zip
 
-# Not ours to publish — other players' hand-made master builds stay a private,
+# Not ours to publish â€” other players' hand-made master builds stay a private,
 # local-only calibration corpus (see docs/architecture.md)
 benchmarks/masters/
 
 # Regenerable hub artifacts (sweep results are large and machine-specific)
 benchmarks/*.jsonl
 benchmarks/*.v1.jsonl
-# Derived from the private masters corpus — stays local like the corpus itself
+# Derived from the private masters corpus â€” stays local like the corpus itself
 benchmarks/guyver_analysis.json
 benchmarks/guyver_mxd_analysis.json
 
@@ -43,3 +43,4 @@ champions_refresh_log.txt
 champions_refresh_err.txt
 
 data/inbox_key.bin
+champions_refresh_*.txt

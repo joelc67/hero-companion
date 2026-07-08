@@ -33,7 +33,8 @@ DEF_TYPES = ["Smashing", "Lethal", "Fire", "Cold", "Energy", "Negative",
              "Toxic", "Psionic", "Melee", "Ranged", "AoE"]
 RES_TYPES = ["Smashing", "Lethal", "Fire", "Cold", "Energy", "Negative",
              "Toxic", "Psionic"]
-GLOBAL_STATS = {"RechargeTime", "Recovery", "Regeneration", "HitPoints", "ToHit"}
+GLOBAL_STATS = {"RechargeTime", "Recovery", "Regeneration", "HitPoints", "ToHit",
+                "Accuracy"}
 
 # Categories that hold "attack" sets (need functionality) vs defensive/utility.
 ATTACK_CATS = {"Melee Damage", "Ranged Damage", "PBAoE Damage",
@@ -846,6 +847,38 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
         # Healers live on recharge too (recast heals/buffs), but keep heal/regen for the team.
         priority[("RechargeTime", None)] = max(priority.get(("RechargeTime", None), 0.0), 10.0)
 
+    # ACCURACY-VALUATION TERM (v28, derived — no magic weights): global Accuracy
+    # multiplies OUTSIDE the to-hit clamp (first_principles.outgoing_hit: hit =
+    # clamp(ACC_ENH × (1+acc) × clamp(base+tohit))), so below the 95% ceiling every
+    # point of global accuracy is worth 1/(1+acc0) of itself in real DPS — and past
+    # the ceiling it is worth exactly nothing. Everything here is a linearization of
+    # the scorer's own hit function at the solve's baseline, against the scenario's
+    # player-vs-+N base-hit table (the content dial: ~4% headroom vs +1s, ~41% vs
+    # iTrial +3s, ~74% vs +4s — accuracy is near-worthless solo and huge in trials):
+    #   TARGET = the accuracy that reaches the ceiling (hard saturation bound — the
+    #            ILP can never overbuy past the 95% cap), and
+    #   WEIGHT = the recharge term's own per-fraction weight × the ratio of the
+    #            scorer's marginals: dlnDPS/dacc = 1/(1+acc0) against the model's
+    #            recharge-bound damage share dlnDPS/drech = 0.5/(1+rech0) — so both
+    #            DPS globals are priced in the currency the objective already uses.
+    # ToHit buffs from powers (Tactics) aren't in the baseline totals, so the
+    # headroom is a slight over-estimate on those builds; the scorer's clamp stays
+    # the ground truth and deep_optimize arbitrates.
+    import first_principles as fp
+    _sc = fp.SCENARIOS.get(targets_pct.get("scenario") or "")
+    if _sc is not None:
+        _inner = min(0.95, max(0.05, fp._PLAYER_BASE_VS.get(_sc.get("shift", 0), 0.39)))
+        _acc0 = totals.get(("Accuracy", None), 0.0)
+        _acc_cap = 0.95 / (fp._ATTACK_ACC_ENH * _inner) - 1.0
+        if _acc_cap - _acc0 > 0.01:
+            _rt = targets.get(("RechargeTime", None))
+            _w_rech = (priority.get(("RechargeTime", None), 4.0) / _rt) if _rt else 4.0
+            _rech0 = totals.get(("RechargeTime", None), 0.0)
+            _marginal_ratio = (1.0 / (1.0 + _acc0)) / (0.5 / (1.0 + _rech0))
+            targets[("Accuracy", None)] = _acc_cap
+            priority[("Accuracy", None)] = _w_rech * _marginal_ratio * _acc_cap
+            perks[("Accuracy", None)] = _acc_cap
+
     # PHASE 1: solve the targets. PHASE 2: fill remaining slots with perks. Both
     # honor the tier's premium policy (premium upgrades fall out of the solve).
     _ilp_pass(powers, targets, totals, sets_by_category, slot_cap,
@@ -867,9 +900,13 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
             for pk in list(perks):
                 if pk[0] == kind:
                     perks[pk] = max(perks[pk], 2.0)
+    # The perk pass keeps the accuracy term's derived weight (all other perk keys
+    # stay at their default 1.0 priority — the perk cap ÷ target does the work).
+    _perk_priority = ({("Accuracy", None): priority[("Accuracy", None)]}
+                      if ("Accuracy", None) in priority else None)
     _ilp_pass(powers, targets, totals, sets_by_category, slot_cap,
               piece_choices=(6, 5, 4, 3, 2), objective_targets=perks, perk_pass=True,
-              allow_premium=allow_premium, cost_w=cost_w,
+              allow_premium=allow_premium, cost_w=cost_w, priority=_perk_priority,
               kind_mult=perk_kind_mult, pref_cats=pref_cats, pvp=pvp, piece_meta=piece_meta)
 
     # DEFAULT: never drop a cheap IO for an empty slot — restore any the solve

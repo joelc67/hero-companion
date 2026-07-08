@@ -14,6 +14,7 @@ Report-only.  Run:  python tools/reality_check_setbonuses.py
 """
 import json
 import os
+import re
 import sys
 from collections import defaultdict
 
@@ -30,6 +31,14 @@ DEFRES = {"smashing", "lethal", "fire", "cold", "energy", "negative", "negative_
 DAMAGE_BUFF_FACTOR = 2.5   # known representation convention (game Strength -> our DamageBuff)
 
 
+def _norm(s):
+    """Set-name normalizer matching the snapshot's snake_case keys (apostrophes
+    dropped). Without this only single-word set names ever matched — the check
+    silently covered 43 values instead of the full data (found 2026-07-08)."""
+    s = (s or "").strip().lower().replace("'", "").replace("’", "")
+    return re.sub(r"[^a-z0-9]+", "_", s).strip("_")
+
+
 def _gkind(attribs, aspect):
     a0 = (attribs[0] if attribs else "").lower()
     asp = (aspect or "").lower()
@@ -39,6 +48,7 @@ def _gkind(attribs, aspect):
     if a0 == "rechargetime": return "RechargeTime", None
     if a0 == "hitpoints": return "HitPoints", None
     if a0 == "tohit": return "ToHit", None
+    if a0 == "accuracy" and asp == "strength": return "Accuracy", None
     if a0 in DMG or ("_dmg" in a0 and asp == "strength"): return "DamageBuff", dt
     if a0 in DEFRES and asp == "current": return "Defense", dt
     if a0 in DEFRES and asp == "resistance": return "Resistance", dt
@@ -50,7 +60,7 @@ def main():
     # our bonuses: {(set, pieces, kind, dtype): value}
     ours = {}
     for rec in srv.SET_BONUSES.values():
-        nm = rec["name"].lower()
+        nm = _norm(rec["name"])
         for b in rec.get("bonuses", []):
             pc = b.get("pieces_required")
             for e in b.get("effects", []):

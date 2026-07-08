@@ -799,7 +799,7 @@ def main():
             eff = et
             if et == "Enhancement":
                 if modifies in ("RechargeTime", "Recovery", "Regeneration",
-                                "ToHit", "HitPoints"):
+                                "ToHit", "HitPoints", "Accuracy"):
                     eff = modifies
                 else:
                     continue   # enhancement of an untracked aspect (Range, EndDisc…)

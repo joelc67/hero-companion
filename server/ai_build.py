@@ -449,6 +449,13 @@ def preset_targets(content, role, res_cap=75, exposure=None,
         del out["defense"]
     if not out["resistance"]:
         del out["resistance"]
+    # The solver's accuracy-valuation term needs to know WHAT it fights (the
+    # +N base-hit table lives in first_principles.SCENARIOS, keyed like the
+    # content presets). Ride along in the targets dict so every solve path —
+    # /build/solve, autopick, champions refresh — gets it without new plumbing;
+    # normalize_targets ignores unknown fields.
+    if content in CONTENT_PRESETS:
+        out["scenario"] = content
     return {"targets": out, "roles": rolespec.get("roles", ["survival"]),
             "perk_focus": rolespec.get("perk_focus")}
 

@@ -1194,7 +1194,16 @@
     "bonuses": [
      "Moderate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.07,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -2206,7 +2215,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -2416,7 +2434,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -3642,7 +3669,16 @@
     "bonuses": [
      "Moderate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.07,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -4369,7 +4405,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -4514,7 +4559,16 @@
     "bonuses": [
      "Moderate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.07,
+      "to_who": 2
+     }
+    ]
    }
   ]
  },
@@ -4578,7 +4632,16 @@
     "bonuses": [
      "Small Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.05,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -6515,7 +6578,16 @@
     "bonuses": [
      "Tiny Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.03,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -7203,7 +7275,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -9459,7 +9540,16 @@
     "bonuses": [
      "Moderate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.07,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -11302,7 +11392,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -12004,7 +12103,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -13014,7 +13122,16 @@
     "bonuses": [
      "Small Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.05,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -13199,7 +13316,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -13619,7 +13745,16 @@
     "bonuses": [
      "Small Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.05,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -14307,7 +14442,16 @@
     "bonuses": [
      "Tiny Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.03,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -14556,7 +14700,16 @@
     "bonuses": [
      "Moderate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.07,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -14744,7 +14897,16 @@
     "bonuses": [
      "Huge Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.11,
+      "to_who": 2
+     }
+    ]
    }
   ]
  },
@@ -16140,7 +16302,16 @@
     "bonuses": [
      "Small Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.05,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -16429,7 +16600,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -16849,7 +17029,16 @@
     "bonuses": [
      "Tiny Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.03,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -17488,7 +17677,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -17682,7 +17880,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -18023,7 +18230,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -18420,7 +18636,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -18614,7 +18839,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -18808,7 +19042,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -19002,7 +19245,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -19853,7 +20105,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -20247,7 +20508,16 @@
     "bonuses": [
      "Huge Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.11,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -20457,7 +20727,16 @@
     "bonuses": [
      "Huge Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.11,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -20723,7 +21002,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -21123,7 +21411,16 @@
     "bonuses": [
      "Moderate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.07,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -21456,7 +21753,16 @@
     "bonuses": [
      "Moderate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.07,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -21789,7 +22095,16 @@
     "bonuses": [
      "Moderate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.07,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -22799,7 +23114,16 @@
     "bonuses": [
      "Moderate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.07,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -23393,7 +23717,16 @@
     "bonuses": [
      "Moderate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.07,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -23587,7 +23920,16 @@
     "bonuses": [
      "Moderate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.07,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -24037,7 +24379,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -24430,7 +24781,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -24972,7 +25332,16 @@
     "bonuses": [
      "Moderate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.07,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -25441,7 +25810,16 @@
     "bonuses": [
      "Moderate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.07,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -25691,7 +26069,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -25885,7 +26272,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -26335,7 +26731,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -26728,7 +27133,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -26792,7 +27206,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -27520,7 +27943,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -30327,7 +30759,16 @@
     "bonuses": [
      "Huge Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.11,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -30425,7 +30866,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -30523,7 +30973,16 @@
     "bonuses": [
      "Huge Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.11,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -30677,7 +31136,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -31378,7 +31846,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -31662,7 +32139,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -31946,7 +32432,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -32100,7 +32595,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -32580,7 +33084,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -32734,7 +33247,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -35139,7 +35661,16 @@
     "bonuses": [
      "Moderate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.07,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -35228,7 +35759,16 @@
     "bonuses": [
      "Ultimate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.15,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -36229,7 +36769,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -36504,7 +37053,16 @@
     "bonuses": [
      "Moderate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.07,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -36731,7 +37289,16 @@
     "bonuses": [
      "Large Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.09,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -36795,7 +37362,16 @@
     "bonuses": [
      "Moderate Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.07,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -37308,7 +37884,16 @@
     "bonuses": [
      "Huge Accuracy Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Accuracy",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Accuracy",
+      "value": 0.11,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
