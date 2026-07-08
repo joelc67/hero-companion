@@ -1310,7 +1310,41 @@ def _earned_bonus_values(set_name, n, archetype=None):
 _SPECIAL_PIECE_PREFIXES = ("Hamidon_", "Titan_", "Hydra_", "DSync_", "Dsync_")
 
 
-def _slot_plan(power, archetype=None):
+def _res_job_note(power, all_powers):
+    """Field report (Joel, Melt Armor): a base-slotted −res power's note said
+    'budget went elsewhere' when the honest answer is WHERE the −res job went —
+    the −res procs anchored in another host at better PPM uptime. Universal rule:
+    any 1-slot power that carries an innate −res debuff or accepts a −res proc
+    category names the power actually holding the proc(s)."""
+    if not all_powers:
+        return None
+    rec = POWER_BY_FULL.get(power.get("full_name")) or {}
+    innate_res = any((d.get("effect") == "Resistance")
+                     for d in rec.get("debuff_effects") or [])
+    res_cats = set((proc_pass._catalog().get("res_procs") or {}))
+    could_host = bool(res_cats & set(rec.get("accepted_set_categories") or []))
+    if not (innate_res or could_host):
+        return None
+    res_uids = {p["uid"] for procs in (proc_pass._catalog().get("res_procs") or {}).values()
+                for p in procs if p.get("uid")}
+    hosts = []
+    for p in all_powers:
+        if p is power:
+            continue
+        if any(s and s.get("piece_uid") in res_uids for s in p.get("slots") or []):
+            nm = p.get("display_name") or (p.get("full_name") or "?").split(".")[-1]
+            if nm not in hosts:
+                hosts.append(nm)
+    if not hosts:
+        return None
+    where = " and ".join(hosts[:2])
+    job = "Its −resistance job" if innate_res else "The −resistance proc it could host"
+    return (f" {job} is anchored in {where} — the −res procs roll there at better "
+            f"uptime, so slots here would buy debuff uptime the optimizer prices "
+            f"below your other sets.")
+
+
+def _slot_plan(power, archetype=None, all_powers=None):
     """A one-line rationale for a power's slotting: proc bomb / proc hybrid / committed
     set / franken / global mules. Returns {"kind","text"} or None when there's nothing
     worth explaining. Field report (Maelwys round 2): the note must describe the ACTUAL
@@ -1331,7 +1365,8 @@ def _slot_plan(power, archetype=None):
             return {"kind": "placeholder",
                     "text": f"Base slot only — a generic {s.get('piece_name') or 'IO'}. "
                             "The solve spent the 67-slot budget elsewhere; move slots "
-                            "here if you want more from this power."}
+                            "here if you want more from this power."
+                            + (_res_job_note(power, all_powers) or "")}
         return None
     if len(slots) < 2:
         return None
@@ -1549,7 +1584,7 @@ def build_calculate():
         fn = p.get("full_name")
         if not fn:
             continue
-        plan = _slot_plan(p, build.get("archetype"))
+        plan = _slot_plan(p, build.get("archetype"), pw)
         if plan:
             plans[fn] = plan
         elif _under_invested(p):
@@ -3032,7 +3067,7 @@ def build_solve():
     # Attach a plain-language slotting rationale to each power so the build explains its own
     # intent (proc-bomb / committed set / global mules) instead of reading as random scatter.
     for _p in sol["powers"]:
-        _plan = _slot_plan(_p, archetype)
+        _plan = _slot_plan(_p, archetype, sol["powers"])
         if _plan:
             _p["slot_plan"] = _plan
     # RESPEC PLAN: on a FULL respec, diff the loaded build against the optimized one into a

@@ -851,6 +851,21 @@ def main():
         reqs = [c for c in p["requires"]["class_name"] if c in valid_classes]
         if reqs:
             epic_eligibility.setdefault(psf, set()).update(reqs)
+    # CLIENT-VERIFIED eligibility subtractions (2026-07-08, powers.bin requires
+    # expressions): the frozen Mids DB's Requires.ClassName lists extra classes
+    # on three epic pools, which put duplicate same-display pools in the wrong
+    # dropdowns (Joel's field report: Stalker showed two "Fire Mastery"). The
+    # game's own requires say: Sentinel_Fire_Mastery = Sentinel only;
+    # Dark_Mastery_TankBrute (client Tank_Dark_Mastery) = Tanker/Brute only;
+    # Sentinel_Psi_Mastery (client Sentinel_Psionic_Mastery) = Sentinel only.
+    # All-AT audit vs the client: these 3 are the only wrong grants, and no
+    # rightful grant is missing (116 client (set, AT) pairs checked).
+    _EPIC_NOT = {"Epic.Sentinel_Fire_Mastery": {"Class_Stalker"},
+                 "Epic.Dark_Mastery_TankBrute": {"Class_Dominator"},
+                 "Epic.Sentinel_Psi_Mastery": {"Class_Dominator"}}
+    for psf, drop in _EPIC_NOT.items():
+        if psf in epic_eligibility:
+            epic_eligibility[psf] -= drop
 
     powerset_out = {}      # archetype class_name -> {primary, secondary, epic}
     universal_pools = []   # set_type == Pool

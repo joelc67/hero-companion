@@ -1531,12 +1531,6 @@
      "archetype_index": 11
     },
     {
-     "full_name": "Epic.Dark_Mastery_TankBrute",
-     "display_name": "Dark Mastery",
-     "set_type": "Ancillary",
-     "archetype_index": -1
-    },
-    {
      "full_name": "Epic.Primal_Forces_Mastery_Dominator",
      "display_name": "Energy Mastery",
      "set_type": "Ancillary",
@@ -1571,12 +1565,6 @@
      "display_name": "Mu Mastery",
      "set_type": "Ancillary",
      "archetype_index": -1
-    },
-    {
-     "full_name": "Epic.Sentinel_Psi_Mastery",
-     "display_name": "Psionic Mastery",
-     "set_type": "Ancillary",
-     "archetype_index": 7
     },
     {
      "full_name": "Epic.Psionic_Mastery_Domingator",
@@ -2641,12 +2629,6 @@
      "display_name": "Fire Mastery",
      "set_type": "Ancillary",
      "archetype_index": -1
-    },
-    {
-     "full_name": "Epic.Sentinel_Fire_Mastery",
-     "display_name": "Fire Mastery",
-     "set_type": "Ancillary",
-     "archetype_index": 7
     },
     {
      "full_name": "Epic.Ice_Mastery_ScrapStalk",
