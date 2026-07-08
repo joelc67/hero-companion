@@ -18,6 +18,14 @@
   level; a 53 HO is worth 38.3%, not 33.3%). Fixed a one-off: Mids stores
   levels 0-based, so every imported IO used to read one level low. Exports to
   Mids now carry boosters back too.
+- **Cards say where the −res job went.** A base-slotted power that carries its
+  own −resistance debuff (Melt Armor and friends) now names the power actually
+  holding the −res procs and why it won the job, instead of a vague "budget
+  went elsewhere."
+- **No more duplicate epic pools.** Three pools leaked into the wrong
+  archetypes' dropdowns by stale upstream data (Stalkers and Dominators each
+  saw two same-named "Mastery" pools). The game client's own eligibility rules
+  say who gets what; the extra entries are gone.
 
 ## 0.12.15 — 2026-07-08
 
