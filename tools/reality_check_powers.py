@@ -104,17 +104,14 @@ def main():
     by_set = {}
     for p in unverified:
         by_set[p.rsplit(".", 1)[0]] = by_set.get(p.rsplit(".", 1)[0], 0) + 1
-    # Pinned register (2026-07-08, after the alias map + value-fingerprint pass):
-    # 40 inherents the snapshot omits + 26 ROSTER DIFFS — ours-only powers whose
-    # strict value fingerprint matches NO unclaimed client power in the set (true
-    # reworks/removals: Ice Mastery Build_Up vs the client's Ice_Slick, Scrapper
-    # Mace Mastery entirely…). Renames-in-disguise were fingerprint-aliased instead
-    # (Power_of_the_Depths = Call_Depths, Phantom_Army = Decoy; Evasive_Maneuvers =
-    # the client's Afterburner record, pinned). 9 relaxed-fingerprint pairs await
-    # Joel's adjudication in power_aliases.json. The roster reconciliation is the
-    # open data workstream; refresh_champions bans register powers from
-    # certification builds (harden-before-certify).
-    KNOWN_UNVERIFIED_TOTAL = 66
+    # Pinned register (2026-07-08, final for the day): 40 inherents the snapshot
+    # omits + 17 ROSTER DIFFS — ours-only powers with no client counterpart by
+    # strict OR adjudicated matching (Scrapper Mace Mastery entirely, a few
+    # scattered strays). Renames were fingerprint-aliased or Joel-adjudicated
+    # ("confirm all nine", 2026-07-08 — incl. Build_Up = the client's Ice_Slick
+    # record). The residual roster reconciliation is the open data workstream;
+    # refresh_champions bans register powers from certification builds.
+    KNOWN_UNVERIFIED_TOTAL = 57
     print(f"Coverage: {len(player) - len(unverified)} of {len(player)} player-facing "
           f"powers verifiable against the client snapshot ({len(aliases)} via the "
           f"alias map; {len(unverified)} unverified; pinned register {KNOWN_UNVERIFIED_TOTAL}).")

@@ -45,9 +45,34 @@ OUT = os.path.join(os.path.dirname(__file__), "gamedata", "power_aliases.json")
 #   pool.flight.afterburner): rosters are congruent (ours lacks Afterburner,
 #   the client lacks Evasive_Maneuvers), rech/cast/range identical, end cost
 #   rebalanced 0.13 -> 0.052 (flows to sync_power_values as ordinary drift).
+# * The nine pairs below were relaxed-fingerprint CANDIDATES adjudicated by Joel
+#   ("confirm all nine", 2026-07-08). Evidence per pair in session-report.md:
+#   identical client set-categories (functional identity) + identical rech/cast/
+#   range with only endurance rebalanced; two were proven by our own records'
+#   display names (our Chum_Spray displays "Arctic Breath", our Kinetic_Transfer
+#   displays "Fulcrum Shift"). Includes Build_Up = the client's "Ice_Slick"
+#   record (still a To-Hit-Buff self click — internal name is misleading).
 RENAMES = {"Mastermind_Buff.Radiation_Emission.Radiation_Emission":
            "Mastermind_Buff.Radiation_Emission.Radiant_Aura",
-           "Pool.Flight.Evasive_Maneuvers": "Pool.Flight.Afterburner"}
+           "Pool.Flight.Evasive_Maneuvers": "Pool.Flight.Afterburner",
+           "Controller_Control.Pyrotechnic_Control.Sparkling_Chain":
+           "Controller_Control.Pyrotechnic_Control.Sparkling_Field",
+           "Dominator_Control.Pyrotechnic_Control.Sparkling_Chain":
+           "Dominator_Control.Pyrotechnic_Control.Sparkling_Field",
+           "Epic.Dark_Mastery_Controller.Midnight_Grasp":
+           "Epic.Controller_Dark_Mastery.Gather_Shadows",
+           "Epic.Dark_Mastery_Controller.Umbral_Torrent":
+           "Epic.Controller_Dark_Mastery.Torrent",
+           "Epic.Dark_Mastery_Dominator.Umbral_Torrent":
+           "Epic.Dominator_Dark_Mastery.Torrent",
+           "Epic.Ice_Mastery_DefCorr.Build_Up":
+           "Epic.Defender_Ice_Mastery.Ice_Slick",
+           "Epic.Sentinel_Lev_Mastery.Chum_Spray":
+           "Epic.Sentinel_Leviathan_Mastery.Arctic_Breath",
+           "Mastermind_Buff.Kinetics.Kinetic_Transfer":
+           "Mastermind_Buff.Kinetics.Fulcrum_Shift",
+           "Peacebringer_Defensive.Luminous_Aura.Quantum_Maneuvers":
+           "Peacebringer_Defensive.Luminous_Aura.Quantum_Acceleration"}
 
 
 def squash(s):
