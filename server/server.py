@@ -1168,15 +1168,65 @@ def _earned_bonus_kinds(set_name, n):
     return [lab for _eff, lab in _EFFECT_LABEL if lab in seen][:3]
 
 
-def _slot_plan(power):
-    """A one-line rationale for a power's slotting: proc-bomb / committed set / franken /
-    global mules. Returns {"kind","text"} or None when there's nothing worth explaining."""
+def _hp_bonus_ctx(archetype):
+    """Minimal ctx for engine.hp_bonus_fraction — the HitPoints unit conversion."""
+    at = ARCH_BY_NAME.get(archetype) or {}
+    return {"modifier_tables": MODIFIER_TABLES, "at_column": AT_COLUMN.get(archetype),
+            "at_base_hp": at.get("hitpoints")}
+
+
+def _earned_bonus_values(set_name, n, archetype=None):
+    """The top set bonuses a set ACTUALLY earns at `n` pieces, with magnitudes —
+    '+7.5% recharge', '+1.88% melee defense'. Field report (Maelwys round 2): a card
+    note must state what the slotting DOES, not a vague kind list."""
+    s = SET_BY_NAME.get((set_name or "").lower())
+    if not s:
+        return []
+    hp_ctx = _hp_bonus_ctx(archetype)
+    agg = {}
+    for b in s.get("bonuses", []):
+        if (b.get("pieces_required") or 99) > n or b.get("pv_mode") == 2:
+            continue
+        for e in b.get("effects", []):
+            lab = _EFFECT_LABEL_MAP.get(e.get("effect"))
+            v = e.get("value") or 0
+            if not lab or v <= 0:
+                continue
+            if e.get("effect") == "HitPoints":
+                v = engine.hp_bonus_fraction(v, hp_ctx)   # HealSelf scale → fraction
+            dt = e.get("damage_type")
+            key = (lab, dt if dt not in (None, "None", "Special") else None)
+            agg[key] = agg.get(key, 0.0) + v
+    order = {lab: i for i, (_e, lab) in enumerate(_EFFECT_LABEL)}
+    out = []
+    for (lab, dt), v in sorted(agg.items(), key=lambda kv: (order.get(kv[0][0], 99),
+                                                            kv[0][1] or "")):
+        pct = round(v * 100.0, 2)
+        pct = int(pct) if float(pct).is_integer() else pct
+        out.append(f"+{pct}% {(dt.lower() + ' ') if dt else ''}{lab}")
+    return out[:3]
+
+
+# Special multi-aspect enhancements (Hamidon/Titan/Hydra Origins, D-Syncs): stack freely,
+# earn no set bonuses — a card note must name them, never count them toward a "set".
+_SPECIAL_PIECE_PREFIXES = ("Hamidon_", "Titan_", "Hydra_", "DSync_", "Dsync_")
+
+
+def _slot_plan(power, archetype=None):
+    """A one-line rationale for a power's slotting: proc bomb / proc hybrid / committed
+    set / franken / global mules. Returns {"kind","text"} or None when there's nothing
+    worth explaining. Field report (Maelwys round 2): the note must describe the ACTUAL
+    slotting decision on the card — real piece counts ('4 of 6', never '4x ... a full
+    set'), real bonus magnitudes, and no 'Proc bomb' badge on a 2-slot power."""
     slots = [s for s in (power.get("slots") or []) if s]
     if len(slots) < 2:
         return None
     procs = [s for s in slots if _piece_is_proc(s)]
     nonproc = [s for s in slots if not _piece_is_proc(s)]
-    hist = Counter(s.get("set_name") or "?" for s in nonproc if s.get("set_name"))
+    hos = [s for s in nonproc
+           if str(s.get("piece_uid") or "").startswith(_SPECIAL_PIECE_PREFIXES)]
+    setters = [s for s in nonproc if s not in hos]
+    hist = Counter(s.get("set_name") or "?" for s in setters if s.get("set_name"))
     # Only a REAL enhancement set (in the set index) earns bonuses — a stack of common IOs
     # is plain enhancement, never "a full set", so it must not masquerade as one.
     committed = sorted([(nm, n) for nm, n in hist.items()
@@ -1186,33 +1236,59 @@ def _slot_plan(power):
     def _glist(names):
         return ", ".join(f"{g} ({_GLOBAL_DESC[_global_key(g)]})" for g in names)
 
-    # 1) PROC BOMB — (nearly) every slot is a proc
-    if len(procs) >= 2 and len(nonproc) <= 1:
-        res = any(k in (s.get("set_name") or "").lower()
-                  for s in procs for k in ("annihilation", "achilles", "fury of the gladiator",
+    def _res_note():
+        return any(k in (s.get("set_name") or "").lower()
+                   for s in procs for k in ("annihilation", "achilles",
+                                            "fury of the gladiator",
                                             "touch of lady grey", "shield breaker"))
-        lead = (f"Proc bomb: {len(procs)} procs, one a -resistance proc that multiplies the whole "
-                "team's damage spawn-wide." if res else f"Proc bomb: {len(procs)} damage procs.")
+
+    ho_txt = (f"{len(hos)}x Acc/Dam Hamidon Origin{'s' if len(hos) > 1 else ''}"
+              if hos else "")
+    # 1) HO PROC HYBRID — an Acc/Dam Hamidon Origin core + procs (the Dominate pattern)
+    if len(hos) >= 2 and len(procs) >= 2 and len(setters) <= 1:
+        return {"kind": "ho-hybrid",
+                "text": f"Proc hybrid: {ho_txt} as the accuracy/damage core + {len(procs)} "
+                        "procs. A long-recharge power rolls each proc at high odds, and the "
+                        "HOs add no recharge, so every proc keeps its full chance (the "
+                        "Dominate master pattern). Identical HOs stack legally."}
+    # 2) PROC BOMB — 4+ procs, (nearly) every other slot an HO or lone piece
+    if len(procs) >= 4 and len(setters) <= 1:
+        lead = (f"Proc bomb: {len(procs)} procs, one a -resistance proc that multiplies the "
+                "whole team's damage spawn-wide." if _res_note()
+                else f"Proc bomb: {len(procs)} damage procs.")
+        acc = (" An Acc/Dam Hamidon Origin rides along so the procs actually hit."
+               if hos else "")
         return {"kind": "proc-bomb",
-                "text": lead + " On a big-radius power these out-damage a slotted set, so set "
-                        "bonuses are given up here on purpose."}
-    # 2) COMMITTED SET(S) / FRANKENSLOT
+                "text": lead + " On a big-radius power these out-damage a slotted set, so "
+                        "set bonuses are given up here on purpose." + acc}
+    # 3) A FEW PROCS — 2-3 procs is a rider, not a bomb (a 2-slot aura is not a 'Proc bomb')
+    if len(procs) >= 2 and len(setters) <= 1:
+        res = " (one a spawn-wide -resistance proc)" if _res_note() else ""
+        return {"kind": "procs",
+                "text": f"{len(procs)} damage procs{res}"
+                        + (f" + {ho_txt} for accuracy" if hos else "")
+                        + " — extra damage in the spare slots, no set bonus intended."}
+    # 4) COMMITTED SET(S) / FRANKENSLOT — honest piece counts + the bonuses actually earned
     if committed:
         parts = []
         for nm, n in committed:
-            kinds = _earned_bonus_kinds(nm, n)
-            parts.append(f"{n}x {nm}" + (f" ({', '.join(kinds)} bonuses)" if kinds else ""))
-        tail = f" plus global{'s' if len(glob) > 1 else ''}: {_glist(glob)}" if glob else ""
+            srec = SET_BY_NAME.get(nm.lower()) or {}
+            total = len(srec.get("pieces") or []) or 6
+            frame = (f"full {n}-piece {nm}" if n >= total else f"{n} of {total} {nm}")
+            vals = _earned_bonus_values(nm, n, archetype)
+            parts.append(frame + (f" — earns {', '.join(vals)}" if vals else ""))
+        tail = f". Plus global{'s' if len(glob) > 1 else ''}: {_glist(glob)}" if glob else ""
         if len(committed) > 1:
             return {"kind": "frankenslot",
-                    "text": "Frankenslot: " + " + ".join(parts) + " — stacked for their set bonuses." + tail}
-        return {"kind": "committed", "text": parts[0] + " — a full set for its bonuses." + tail}
-    # 3) GLOBAL MULES — a power carrying only build-wide unique globals
+                    "text": "Frankenslot: " + "; ".join(parts)
+                            + " — stacked for their set bonuses" + tail + "."}
+        return {"kind": "committed", "text": parts[0] + tail + "."}
+    # 5) GLOBAL MULES — a power carrying only build-wide unique globals
     if glob and len(glob) == len(nonproc):
         return {"kind": "global-mules",
                 "text": "Global mules: " + _glist(glob) + ". Each piece is a build-wide "
                         "unique that works from a single slot — no set bonus intended."}
-    # 4) globals + filler
+    # 6) globals + filler
     if glob:
         return {"kind": "mixed", "text": "Globals + enhancement: " + _glist(glob) + "."}
     return None
@@ -1348,7 +1424,7 @@ def build_calculate():
         fn = p.get("full_name")
         if not fn:
             continue
-        plan = _slot_plan(p)
+        plan = _slot_plan(p, build.get("archetype"))
         if plan:
             plans[fn] = plan
         elif _under_invested(p):
@@ -2824,7 +2900,7 @@ def build_solve():
     # Attach a plain-language slotting rationale to each power so the build explains its own
     # intent (proc-bomb / committed set / global mules) instead of reading as random scatter.
     for _p in sol["powers"]:
-        _plan = _slot_plan(_p)
+        _plan = _slot_plan(_p, archetype)
         if _plan:
             _p["slot_plan"] = _plan
     # RESPEC PLAN: on a FULL respec, diff the loaded build against the optimized one into a

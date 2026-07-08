@@ -2246,6 +2246,8 @@ const _PLAN_META = {
   "frankenslot":  ["🧩", "Frankenslot", "frankenslot"],
   "global-mules": ["🌐", "Global mules", "global-mules"],
   "mixed":        ["🌐", "Globals", "global-mules"],
+  "procs":        ["💥", "Procs", "proc-bomb"],
+  "ho-hybrid":    ["🧬", "Proc hybrid", "proc-bomb"],
 };
 function slotPlanHtml(pw) {
   const plan = pw.slot_plan;

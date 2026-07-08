@@ -900,6 +900,14 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
                     "text": bonus.get("bonuses"),
                 })
                 for eff in bonus.get("effects", []):
+                    if eff.get("effect") == "HitPoints":
+                        # GAME-VERIFIED unit fix: a HitPoints set-bonus value is a
+                        # Melee_HealSelf SCALE, not a fraction (Set_Bonus.*.Increased_
+                        # Health_* → scale × Melee_HealSelf table = FLAT hit points;
+                        # the table is ~base_hp/10 per AT, so 'Large' 0.1875 = ~1.88%
+                        # of base HP). Adding it raw inflated every HP bonus ~10x.
+                        eff = dict(eff, value=hp_bonus_fraction(
+                            eff.get("value", 0.0), ctx))
                     _apply_effect(totals, eff)
 
     # FORCE FEEDBACK average recharge (v27): a slotted "Chance for +Recharge" in a cycled
@@ -995,6 +1003,23 @@ def _endurance_balance(build, display, offense, ctx):
     if recovery - drain < -0.05:                  # seconds of nonstop attacking before empty
         out["empty_after_sec"] = round(100.0 / (drain - recovery))
     return out
+
+
+def hp_bonus_fraction(val, ctx):
+    """Convert a HitPoints SET-BONUS value to a fraction of the AT's base HP.
+    GAME-VERIFIED (Set_Bonus.*.Increased_Health_* powers): the stored value is a
+    Melee_HealSelf SCALE — flat HP = value × Melee_HealSelf[AT@50], and that table
+    is ~base_hp/10 for every AT (Brute deliberately a touch higher). So 'Large'
+    0.1875 = ~1.88% of base HP, never 18.75%. Fallback ×0.1 when ctx is missing."""
+    try:
+        hs = (ctx or {}).get("modifier_tables", {}).get("Melee_HealSelf")
+        col = (ctx or {}).get("at_column")
+        base = (ctx or {}).get("at_base_hp")
+        if hs and col is not None and 0 <= col < len(hs) and base:
+            return val * hs[col] / base
+    except Exception:  # noqa: BLE001
+        pass
+    return val * 0.1
 
 
 def _apply_effect(totals, eff):

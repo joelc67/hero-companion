@@ -135,7 +135,14 @@ def _set_bonus_contrib(set_rec, n_pieces, used_sig, pvp=False):
             k = _stat_key(eff)
             if not k:
                 continue
-            for ek, ev in _expand(k, eff.get("value", 0.0)):
+            v = eff.get("value", 0.0)
+            # GAME-VERIFIED unit fix: HitPoints set-bonus values are Melee_HealSelf
+            # SCALES (flat HP = value × table, table ≈ base_hp/10 per AT) — 'Large'
+            # 0.1875 is ~1.88% of base HP, not 18.75%. Without the ×0.1 the ILP
+            # overvalued every +HP bonus ~10x toward HitPoints targets.
+            if eff.get("effect") == "HitPoints":
+                v *= 0.1
+            for ek, ev in _expand(k, v):
                 contrib[ek] += ev
     return contrib, sigs
 

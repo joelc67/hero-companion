@@ -382,7 +382,10 @@ ROLE_PRESETS = {
                # damage dealer pushes recharge hard — that's the dominant AoE lever.
                "perk_focus": "recharge", "floors": {"recharge": 100}},
     "tank":   {"label": "Tank / Survivor", "roles": ["survival"],
-               "perk_focus": "resistance", "floors": {"max_hp": 0.30},
+               # floors are PERCENT like every sibling (recharge 100 = +100%):
+               # +30% max HP was written as 0.30 and normalized to +0.3% — a
+               # latent units bug surfaced by the HitPoints bonus-unit fix.
+               "perk_focus": "resistance", "floors": {"max_hp": 30},
                "res_to_cap": True},
     # A Controller's lifeblood is RECHARGE (perma-control + debuff uptime), NOT regen/heal —
     # locked-down enemies are the survival. Control + debuff IO sets, high recharge.
