@@ -161,5 +161,7 @@ Use, License, and Credits links at the bottom of the app.
 Built on the work of the City of Heroes community: NCSoft (the game, all rights
 theirs), Homecoming Servers, Mids Reborn (all game data, parsed from your own
 install), the Unofficial Homecoming Wiki, City of Data v2, the Homecoming Forums, the
-Paragon Wiki Archive — and Guyver [SoV] of the Sovereign supergroup, whose openly
-shared master builds were the standard this tool's optimizer had to honestly beat.
+Paragon Wiki Archive — Guyver [SoV] of the Sovereign supergroup, whose openly
+shared master builds were the standard this tool's optimizer had to honestly beat —
+and Maelwys, whose expert forum reviews caught what our own tests missed, round
+after round.

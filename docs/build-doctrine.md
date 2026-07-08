@@ -5,6 +5,15 @@ planner builds *correctly* instead of experimentally. This is the spec the solve
 autopicker, and incarnate recommender must satisfy. Implement against this — don't
 patch ad hoc.
 
+**GOVERNING PRINCIPLE (Joel, 2026-07-08): every build is unique unto itself.**
+All builds draw from one shared pool of game-engineered rules — the physics, the
+slot schedule, ED, PPM, the rule of five never bend. But within that scope the
+planner must treat each archetype + powerset + play-style combination as its own
+problem with its own perfect answer: what a Bots/Marine team Mastermind's slots
+serve is not what a Katana/Regen soloist's serve. One-size-fits-all templates
+(fixed pool picks, uniform slot shapes, role-blind targets) are the enemy; the
+rules are universal, the build is not.
+
 **Confidence tags** — please audit these, Joel:
 - `[✓TW]` proven by your TW/Fire master · `[✓RAD]` proven by your Rad/Fire master
 - `[THEORY]` established CoH knowledge, NOT yet seen in your builds — **confirm or correct**

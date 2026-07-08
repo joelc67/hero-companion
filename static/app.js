@@ -718,6 +718,48 @@ function wizUpdateHint() {
   if (h) h.textContent = wizInterpret($("wiz-role").value, $("wiz-content").value, $("wiz-exposure").value);
 }
 
+// "How do you play" explainer (ideas.md 2026-07-08): every choice pops a DETAILED,
+// TAILORED explanation (specific to the chosen AT + primary + secondary), and a
+// summary panel shows what the combined answers make the planner actually chase.
+// Server-derived from the same presets the solve uses, so it never drifts.
+let WIZ_POP_KEY = null;      // which choice's pop-up is open (refreshes on char change)
+let WIZ_EXPLAIN_SEQ = 0;     // stale-response guard
+async function wizExplain(changedKey) {
+  const at = $("wiz-at") && $("wiz-at").value;
+  const seq = ++WIZ_EXPLAIN_SEQ;
+  const r = await api("/build/explain_intent", postJson({
+    archetype: at || null,
+    primary: ($("wiz-primary") && $("wiz-primary").value) || null,
+    secondary: ($("wiz-secondary") && $("wiz-secondary").value) || null,
+    role: ($("wiz-role") && $("wiz-role").value) || "damage",
+    content: ($("wiz-content") && $("wiz-content").value) || "general",
+    exposure: ($("wiz-exposure") && $("wiz-exposure").value) || "flex",
+    travel: ($("wiz-travel") && $("wiz-travel").value) || "none",
+  })).catch(() => null);
+  if (!r || !r.ok || seq !== WIZ_EXPLAIN_SEQ) return;
+  if (changedKey) WIZ_POP_KEY = changedKey;
+  const pop = $("wiz-pop");
+  const d = WIZ_POP_KEY && r[WIZ_POP_KEY];
+  if (pop && d) {
+    const tailorNote = (at && $("wiz-primary").value && $("wiz-secondary").value)
+      ? "" : `<div class="muted small" style="margin-top:6px">Pick your archetype and
+              powersets in step 1 and this explanation tailors itself to them.</div>`;
+    pop.innerHTML = `<button class="wiz-pop-x" title="dismiss"
+        onclick="WIZ_POP_KEY=null;this.parentElement.classList.add('hidden')">✕</button>`
+      + `<div class="wiz-pop-title">${escHtml(d.title || "")}</div>`
+      + `<div class="wiz-pop-text">${escHtml(d.text || "")}</div>` + tailorNote;
+    pop.classList.remove("hidden");
+  }
+  const sum = $("wiz-summary"), s = r.summary || {};
+  if (sum) {
+    sum.innerHTML = `<div class="wiz-sum-title">📋 Your play style — what the planner will chase</div>`
+      + `<div class="wiz-sum-text">${escHtml(s.text || "")}</div>`
+      + `<div class="wiz-sum-tgts">${(s.targets || [])
+            .map(t => `<span class="wiz-tgt">${escHtml(t)}</span>`).join("")}</div>`;
+    sum.classList.toggle("hidden", !s.text);
+  }
+}
+
 async function wizLoadPowersets() {
   const at = $("wiz-at").value, pri = $("wiz-primary"), sec = $("wiz-secondary");
   pri.innerHTML = "<option value=''>— primary set —</option>";
@@ -1197,11 +1239,16 @@ async function init() {
   if ($("update-check")) $("update-check").addEventListener("click", checkUpdates);
   if ($("update-btn")) $("update-btn").addEventListener("click", manualUpdateCheck);
   $("wiz-close").addEventListener("click", closeRespecWizard);
-  $("wiz-at").addEventListener("change", wizLoadPowersets);
+  $("wiz-at").addEventListener("change", () => { wizLoadPowersets(); wizExplain(null); });
   $("wiz-build").addEventListener("click", buildRespec);
   $("disc-find").addEventListener("click", runDiscovery);
-  ["wiz-role", "wiz-content", "wiz-exposure"].forEach((id) =>
-    $(id).addEventListener("change", wizUpdateHint));
+  // Each "How do you play" choice pops its tailored explanation; the summary panel
+  // refreshes on every change (including character changes — the text re-tailors).
+  [["wiz-role", "role"], ["wiz-content", "content"], ["wiz-exposure", "exposure"],
+   ["wiz-travel", "travel"]].forEach(([id, key]) =>
+    $(id).addEventListener("change", () => { wizUpdateHint(); wizExplain(key); }));
+  ["wiz-primary", "wiz-secondary"].forEach((id) =>
+    $(id).addEventListener("change", () => wizExplain(null)));
   $("start-over-btn").addEventListener("click", showEntry);
   refreshContinueCard();   // overlay shows on load — reveal Continue if saves exist
   setInterval(autoSaveTick, 120000);   // background auto-save every 2 min (only if changed)

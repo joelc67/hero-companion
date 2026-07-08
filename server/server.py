@@ -724,6 +724,224 @@ def _off_role_notice(archetype, role, primary=None, secondary=None):
             f"deliberate off-role character, not the archetype's standard job.")
 
 
+# ── "HOW DO YOU PLAY" EXPLAINER (ideas.md 2026-07-08) ─────────────────────────────
+# Every wizard choice gets a DETAILED, TAILORED explanation (specific to the chosen
+# archetype + primary + secondary), plus a combined summary of what the choices make
+# the solver actually chase. Deterministic by design: the text is derived from the
+# SAME preset machinery the solve uses (ai_build.preset_targets / ROLE_PRESETS /
+# CONTENT_PRESETS), so it can never drift from what the build really does.
+
+def _ps_label(ps_full):
+    return (ps_full or "").rsplit(".", 1)[-1].replace("_", " ")
+
+
+def _explain_role(archetype, role, primary, secondary, at_name):
+    spec = ai_build.ROLE_PRESETS.get(role) or {}
+    label = spec.get("label") or role
+    is_mm = archetype == "Class_Mastermind"
+    support_sets = [_ps_label(ps) for ps in (primary, secondary)
+                    if ps and _is_support_powerset(ps)]
+    parts = []
+    if role == "damage":
+        if is_mm:
+            parts.append(f"On a {at_name}, damage means your HENCHMEN: the planner "
+                         "prices pet sets, squad size and uptime, and the pet aura "
+                         "IOs — your personal attacks serve as proc carriers, not "
+                         "the main event.")
+        else:
+            parts.append("Your attacks get full damage sets; the biggest AoE becomes "
+                         "a deliberate proc bomb (procs + a Nucleolus for accuracy).")
+        parts.append("−Resistance procs (Achilles' Heel class) are hunted into their "
+                     "best hosts — they multiply the whole team's damage. Recharge is "
+                     "pushed hard (at least +100%): cycling AoEs faster is the "
+                     "biggest damage lever.")
+    elif role in ("buffer", "support"):
+        which = " / ".join(support_sets) or "your support set"
+        parts.append(f"Your signature buffs from {which} always get working sets — "
+                     "the build's job is keeping them strong and available. Recharge "
+                     "(at least +90%) and recovery floors keep them cycling.")
+    elif role == "healer":
+        which = " / ".join(support_sets) or "your set"
+        parts.append(f"Heals from {which} get heal sets and the regen/recovery floors "
+                     "(+150% regen) that keep you casting through long fights.")
+    elif role == "tank":
+        parts.append(f"Every resistance is pushed toward your archetype's hard cap, "
+                     f"with a +30% max-HP floor — a {at_name} built to hold the line. "
+                     "Spare slots chase more resistance, not damage.")
+    elif role in ("controller", "control"):
+        parts.append("Control powers get control sets, and recharge (at least +100%) "
+                     "is the lifeblood: perma-control IS the survival plan — a locked "
+                     "spawn deals no damage.")
+    elif role == "debuffer":
+        which = " / ".join(support_sets) or "your debuff set"
+        parts.append(f"Debuff powers from {which} are fully slotted for magnitude and "
+                     "uptime — the goal is being FELT on the team. The Achilles' Heel "
+                     "−res proc gets its anchor home, and recharge (+90%) keeps the "
+                     "debuffs stacked.")
+    notice = _off_role_notice(archetype, role, primary, secondary)
+    if notice:
+        parts.append(notice)
+    return {"label": label, "title": f"Role: {label}", "text": " ".join(parts)}
+
+
+def _explain_content(archetype, content, primary, secondary, res_cap):
+    base = ai_build.CONTENT_PRESETS.get(content) or {}
+    label = base.get("label") or content
+    positional = ai_build.positional_build(primary, secondary)
+    pos_set = next((_ps_label(ps) for ps in (primary, secondary)
+                    if ps and (ps.split(".")[-1]).lower()
+                    in ai_build.POSITIONAL_ARMOR_SETS), None)
+    parts = []
+    if content == "fire_farm":
+        parts.append("Fire-farm enemies deal fire plus smashing/lethal damage only, "
+                     "so the survival floor is non-negotiable even for a pure damage "
+                     f"dealer: 45% Fire/S/L defense AND Fire/S/L resistance at your "
+                     f"archetype's cap ({res_cap:.0f}%). You tank the spawn first, "
+                     "then clear it.")
+    elif content == "itrial":
+        parts.append("League and iTrial enemies run +3/+4 with heavy energy/negative "
+                     "damage and defense-stripping spikes: the baseline is 35% typed "
+                     "defense, 50% S/L + 40% E/N resistance, and +90% recharge so "
+                     "your part of the league's output never idles.")
+    elif content == "team":
+        parts.append("On a steady team the group covers part of your survival — what "
+                     "you bring is UPTIME. The baseline keeps 35% typed defense as a "
+                     "cushion and pushes +80% recharge so your contribution cycles.")
+    elif content == "av":
+        parts.append("Hard single targets (EBs/AVs) mean long fights against mixed "
+                     "damage: 35% typed defense plus an energy/negative cushion, and "
+                     "+95% recharge to sustain your best single-target chain.")
+    else:
+        parts.append("Everyday content, solo or casual teams: a balanced 35% typed "
+                     "defense, 50% S/L resistance, and +70% recharge — sturdy "
+                     "everywhere without over-committing to one enemy type.")
+    if positional and pos_set and content != "fire_farm":
+        parts.append(f"Because {pos_set} is POSITIONAL armor, the planner chases "
+                     "Melee/Ranged/AoE defense instead of typed — building typed "
+                     "defense would fight your own armor's geometry.")
+    return {"label": label, "title": f"Content: {label}", "text": " ".join(parts)}
+
+
+def _explain_exposure(exposure, primary, secondary):
+    positional = ai_build.positional_build(primary, secondary)
+    if exposure == "front":
+        text = ("Front line: you are hit in MELEE, so the defense vector adds a 45% "
+                "Melee defense target — the soft cap against the hits you actually "
+                "take up close.")
+    elif exposure == "back":
+        text = ("Backline: what reaches you is RANGED fire and stray AoE, so the "
+                "defense vector adds 45% Ranged and AoE defense targets instead of "
+                "melee — cap what actually hits you.")
+    else:
+        text = ("Flexible range: no positional lean — the content baseline stays "
+                "balanced so you're covered wherever the fight drifts.")
+    if positional and exposure != "flex":
+        text += (" This stacks naturally with your positional armor — the same "
+                 "Melee/Ranged/AoE bonuses serve both.")
+    labels = {"front": "the front line (melee)", "back": "long range (backline)",
+              "flex": "flexible range"}
+    return {"label": labels.get(exposure, exposure or "flexible range"),
+            "title": "You fight from: " + labels.get(exposure, "flexible range"),
+            "text": text}
+
+
+def _explain_travel(travel, content, archetype):
+    innate = archetype in ("Class_Peacebringer", "Class_Warshade")
+    texts = {
+        "none": "No travel pool spent — a P2W jet pack covers the gaps, and the "
+                "freed pool pick goes to the build.",
+        "super_speed": "Super Speed shares the Speed pool with Hasten, which the "
+                       "build wants anyway — so travel costs you no extra pool.",
+        "fly": "Fly takes its own pool, but it's the most forgiving travel and "
+               "iTrial-friendly: BAF and Lambda can only be ENTERED by Flight or "
+               "Teleport.",
+        "teleport": "Teleport takes its own pool; fastest point-to-point, and "
+                    "iTrial-friendly: BAF and Lambda can only be ENTERED by Flight "
+                    "or Teleport.",
+        "super_jump": "Super Jump comes from the Leaping pool — which the build "
+                      "often visits anyway for Combat Jumping (immobilize "
+                      "protection + a cheap defense mule).",
+    }
+    text = texts.get(travel, texts["none"])
+    if innate:
+        text = ("Kheldians fly (and Warshades teleport) natively — no travel pool "
+                "needed. " + text if travel != "none" else
+                "Kheldians fly (and Warshades teleport) natively — no travel pool "
+                "needed.")
+    if content == "itrial" and travel in ("super_speed", "super_jump"):
+        text += (" ⚠ For iTrials note BAF/Lambda entry requires Flight or Teleport — "
+                 "keep a P2W jet pack on hand.")
+    labels = {"none": "No extra travel power", "super_speed": "Super Speed",
+              "fly": "Fly", "teleport": "Teleport", "super_jump": "Super Jump"}
+    return {"label": labels.get(travel, travel), "title": f"Travel: {labels.get(travel, travel)}",
+            "text": text}
+
+
+def _summarize_intent(archetype, primary, secondary, role, content, exposure,
+                      travel, res_cap, at_name):
+    """The combined picture: what these choices make the solver actually chase."""
+    tgt = ai_build.preset_targets(content, role, res_cap=res_cap, exposure=exposure,
+                                  primary=primary, secondary=secondary) or {}
+    targets = tgt.get("targets") or {}
+    items = []
+    dfs = targets.get("defense") or {}
+    if dfs:
+        items.append("Defense targets: " + ", ".join(
+            f"{t} {v:.0f}%" for t, v in sorted(dfs.items(), key=lambda kv: -kv[1])))
+    rss = targets.get("resistance") or {}
+    if rss:
+        items.append("Resistance targets: " + ", ".join(
+            f"{t} {v:.0f}%" for t, v in sorted(rss.items(), key=lambda kv: -kv[1])))
+    for fld, name in (("recharge", "Recharge"), ("recovery", "Recovery"),
+                      ("regen", "Regeneration"), ("max_hp", "Max HP"),
+                      ("tohit", "ToHit")):
+        v = targets.get(fld)
+        if v:
+            items.append(f"{name} +{v * 100:.0f}%" if fld == "max_hp"
+                         else f"{name} +{v:.0f}%")
+    spec = ai_build.ROLE_PRESETS.get(role) or {}
+    pf = tgt.get("perk_focus") or spec.get("perk_focus")
+    if pf:
+        items.append(f"Spare slots chase: {pf}")
+    lead = (f"A {at_name} — {_ps_label(primary)} / {_ps_label(secondary)} — built as "
+            f"{spec.get('label') or role} for "
+            f"{(ai_build.CONTENT_PRESETS.get(content) or {}).get('label') or content}, "
+            f"fighting from {_explain_exposure(exposure, primary, secondary)['label']}, "
+            f"traveling by {_explain_travel(travel, content, archetype)['label'].lower()}.")
+    return {"text": lead, "targets": items}
+
+
+@app.route("/build/explain_intent", methods=["POST"])
+def explain_intent():
+    """Tailored plain-language explanations for the wizard's 'How do you play?'
+    choices + a combined summary of what they make the solver chase. Deterministic:
+    derived from the same presets the solve itself uses."""
+    body = request.get_json(force=True, silent=True) or {}
+    archetype = body.get("archetype")
+    primary, secondary = body.get("primary"), body.get("secondary")
+    role = body.get("role") or "damage"
+    content = body.get("content") or "general"
+    exposure = body.get("exposure") or "flex"
+    travel = body.get("travel") or "none"
+    at = ARCH_BY_NAME.get(archetype) or {}
+    at_name = at.get("display_name") or (archetype or "?").replace("Class_", "")
+    res_cap = round((at.get("res_cap") or 0.75) * 100, 1)
+    try:
+        return jsonify({
+            "ok": True,
+            "role": _explain_role(archetype, role, primary, secondary, at_name),
+            "content": _explain_content(archetype, content, primary, secondary,
+                                        res_cap),
+            "exposure": _explain_exposure(exposure, primary, secondary),
+            "travel": _explain_travel(travel, content, archetype),
+            "summary": _summarize_intent(archetype, primary, secondary, role,
+                                         content, exposure, travel, res_cap,
+                                         at_name),
+        })
+    except Exception as e:  # noqa: BLE001 — explainer must never block the wizard
+        return jsonify({"ok": False, "error": str(e)})
+
+
 @app.route("/archetypes")
 def get_archetypes():
     return jsonify({

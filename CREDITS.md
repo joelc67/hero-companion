@@ -37,4 +37,12 @@ tool understands was learned from, or verified against, these sources:
   flaws in its math along the way. Never copied, always learned from. Sovereign's
   reputation for skill and generosity is well earned.
 
+## The Reviewer
+- **Maelwys** (https://forums.homecomingservers.com/profile/30623-maelwys/) — whose
+  public expert reviews on the Homecoming forums, round after round, caught what our
+  own tests missed: proc and Hamidon Origin mechanics, slotting quality, slot budgets,
+  and display accuracy. Many of this tool's fixes exist because Maelwys took the time
+  to generate builds, compare them against the real game, and write up exactly what
+  was wrong. Feedback of that quality is a gift.
+
 This tool is free and noncommercial, forever. See LICENSE.
