@@ -68,6 +68,24 @@ def _proc_slot(setname, uid, cat_id):
             "piece_uid": uid, "category_id": cat_id, "_proc": True}
 
 
+def _last_swap_safe(slots):
+    """True when replacing slots[-1] does no collateral damage. The anchor/FF sweeps
+    swap only the LAST piece of a host to keep its set bonuses — but that's only safe
+    if the last piece isn't itself a proc/HO/global/unique doing standalone work, and
+    if removing it wouldn't orphan a 2-piece set into a dead 1-piece fragment."""
+    last = slots[-1]
+    if not last:
+        return True                       # an EMPTY tail slot — the swap only fills it
+    if (last.get("_proc") or last.get("_ho") or last.get("_global")
+            or last.get("unique")):
+        return False
+    sname = last.get("set_name")
+    if sname and sum(1 for s in slots
+                     if s and s.get("set_name") == sname) == 2:
+        return False                      # would leave a lone piece: 0 bonuses, pure spaghetti
+    return True
+
+
 def _pick_procs(cats, nslots, used, prefer_res=True):
     """Choose up to nslots procs for a power accepting `cats`: -Res procs first (force
     multipliers), then %Damage procs, one per set, skipping globals already on the build."""
@@ -260,11 +278,17 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general"):
                                  "category_id": cid, "_ho": True}
                                 for _ in range(2)]
                     # Budget-safe: same slot count — if fewer procs seat than tail slots,
-                    # the remaining original pieces stay.
+                    # the leftovers are filled. With an HO core the original set is GONE,
+                    # so a kept original piece would be a dead 1-piece fragment — stack
+                    # more HOs instead (identical copies are legal, acc/dam always works).
+                    # With a premium core (keep=3) the set survives, so its pieces stay.
                     pad = len(slots) - keep - len(procs)
+                    tail = ([dict(core[0]) for _ in range(max(0, pad))]
+                            if core and core[0].get("_ho")
+                            else ordered[keep:keep + pad])
                     p["slots"] = (core
                                   + [_proc_slot(sn, uid, cid) for sn, uid, _c in procs]
-                                  + ordered[keep:keep + pad])
+                                  + tail)
         # −RES ANCHOR (v27: ALL roles, not just control/debuff — Maelwys's point): a −res
         # proc multiplies the whole spawn's incoming damage, and a DAMAGE role owns the
         # biggest single share of that damage, so Achilles/Annihilation/Fury belong in
@@ -294,8 +318,8 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general"):
                     if pcat not in cats or cats & _PET_CATS or _is_premium(p):
                         continue
                     slots = p.get("slots") or []
-                    if len(slots) >= 2 and not any(
-                            s and s.get("piece_uid") == proc["uid"] for s in slots):
+                    if (len(slots) >= 2 and _last_swap_safe(slots) and not any(
+                            s and s.get("piece_uid") == proc["uid"] for s in slots)):
                         is_toggle = 1 if rec.get("power_type") == 2 else 0
                         cand.append(((is_toggle, len(slots)), p, slots))
                 if cand:
@@ -323,8 +347,8 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general"):
                     if pcat not in cats or _is_premium(p):
                         continue
                     slots = p.get("slots") or []
-                    if len(slots) >= 2 and not any(
-                            s and s.get("piece_uid") == proc["uid"] for s in slots):
+                    if (len(slots) >= 2 and _last_swap_safe(slots) and not any(
+                            s and s.get("piece_uid") == proc["uid"] for s in slots)):
                         cycle = (rec.get("base_recharge") or 8.0) + (rec.get("cast_time")
                                                                      or 1.0)
                         cand.append((cycle, p, slots))

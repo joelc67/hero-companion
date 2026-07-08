@@ -182,19 +182,15 @@ for s in ENH_SETS:
 for c in COMMON_IOS["common_ios"]:
     if c.get("uid") and c.get("boosts"):
         PIECE_BOOSTS[c["uid"]] = c["boosts"]
-# Hamidon Origin / special enhancements (v27): 62 dual/triple-aspect pieces (Nucleolus =
-# Acc+Dam 33.3% each). Fixed magnitude — no ref level, so _scaled_boosts uses the stored
-# values as-is. Registering them makes hand-slotted AND generated HOs price correctly.
-for c in COMMON_IOS.get("special_ios") or []:
-    if c.get("uid") and c.get("boosts"):
-        PIECE_BOOSTS[c["uid"]] = c["boosts"]
-        PIECE_IMAGE[c["uid"]] = c.get("image") or ""
     if c.get("uid"):
         PIECE_IMAGE[c["uid"]] = c.get("image") or ""
         PIECE_REF_LEVEL[c["uid"]] = 50
 # Hamidon/Titan/Hydra Origin enhancements (multi-aspect, grade-priced). Deliberately NO
 # PIECE_REF_LEVEL entry: HO values are grade-flat, never IO-level-scaled — _scaled_boosts
 # uses the stored value as-is (a master's Enzyme at "IoLevel 1" must not scale to zero).
+# (0.12.13 shipped a duplicate of this loop spliced INTO the common-IO loop above: common
+# IOs lost their icons — slots looked EMPTY in the UI — and HOs gained a ref level that
+# scaled low-level imports toward zero. One loop each, and the coherence audit now pins it.)
 for c in COMMON_IOS.get("special_ios", []):
     if c.get("uid") and c.get("boosts"):
         PIECE_BOOSTS[c["uid"]] = c["boosts"]

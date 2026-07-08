@@ -31,6 +31,10 @@ RESISTANCE_TYPES = ["Smashing", "Lethal", "Fire", "Cold", "Energy", "Negative",
 # (Luck of the Gambler: Def/Increased Global Recharge Speed - allow multiples.)
 NON_UNIQUE_OVERRIDES = {"luck of the gambler: defense/increased global recharge speed"}
 
+# Hamidon/Titan/Hydra Origins + D-Syncs: NOT set pieces — identical copies stack
+# freely in one power, so the per-power duplicate-piece rule never applies to them.
+_SPECIAL_IO_PREFIXES = ("Hamidon_", "Titan_", "Hydra_", "DSync_", "Dsync_")
+
 # Special-IO PIECE globals: always-on buffs the IO itself grants (distinct from
 # set bonuses). Their values aren't in the parseable enhancement data (the FX is
 # a placeholder), so these are the known Homecoming constants, matched by
@@ -189,11 +193,17 @@ def validate_build(build):
             if set_uid:
                 set_pieces[set_uid].append(slot)
 
-        # within one power, a given set's piece should not be duplicated
+        # within one power, a given set's piece should not be duplicated.
+        # Hamidon/Titan/Hydra Origins and D-Syncs are EXEMPT: they aren't set pieces —
+        # the game lets you stack as many identical ones in a power as you like
+        # (field report: HO x2 cores were warned as "duplicate piece" — wrongly).
         for set_uid, slots in set_pieces.items():
             seen_pieces = defaultdict(int)
             for s in slots:
-                seen_pieces[s.get("piece_uid") or s.get("piece_name")] += 1
+                pid = s.get("piece_uid") or s.get("piece_name") or ""
+                if str(pid).startswith(_SPECIAL_IO_PREFIXES):
+                    continue
+                seen_pieces[pid] += 1
             for pid, c in seen_pieces.items():
                 if c > 1:
                     warnings.append(

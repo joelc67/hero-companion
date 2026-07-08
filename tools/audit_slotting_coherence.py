@@ -77,6 +77,17 @@ def audit():
     respec_misfires = []
     c = srv.app.test_client()
 
+    # 0.12.15 REGRESSION PINS (Joel + Maelwys field reports, 2026-07-08). The audit's old
+    # "coherent" definition was too loose — it missed a release where every common IO
+    # rendered as an EMPTY slot and HO cores warned as duplicates. New hard-fail checks:
+    #   * EMPTY-MIX: a solved power holding real pieces AND empty (None) slots
+    #   * ICON-LESS: a slotted piece whose uid has no icon in PIECE_IMAGE (looks empty)
+    #   * VALIDATION: /full validate on every solved build — 0 errors, 0 duplicate-piece
+    #     warnings (HOs stack legally and must not warn)
+    empty_mix = []
+    iconless = {}
+    validation_noise = []
+
     for at, groups in srv.POWERSETS["by_archetype"].items():
         prim = (groups.get("primary") or [{}])[0].get("full_name")
         sec = (groups.get("secondary") or [{}])[0].get("full_name")
@@ -84,12 +95,38 @@ def audit():
             continue
         ap = c.post("/build/autopick", json={"archetype": at, "primary": prim,
                                              "secondary": sec, "role": "damage",
-                                             "content": "general"}).get_json()
+                                             "content": "general", "exposure": "flex",
+                                             "travel": "speed"}).get_json()
         if not ap.get("powers"):
             continue
-        sol = c.post("/build/solve", json={"archetype": at, "powers": ap["powers"],
+        # Mirror the APP's solve payload (wizard/solve button), not a bare minimal one:
+        # slots + earned_slot_count ride along, exposure/tier set — the path users hit.
+        presolve = [{"full_name": p["full_name"], "slots": p.get("slots"),
+                     "earned_slot_count": p.get("earned_slot_count")}
+                    for p in ap["powers"]]
+        sol = c.post("/build/solve", json={"archetype": at, "powers": presolve,
+                                           "goal": "", "tier": "premium",
+                                           "exposure": "flex", "preserve": False,
+                                           "keep_layout": False,
                                            "content": "general", "role": "damage"}).get_json()
         powers = sol.get("powers") or ap["powers"]
+        for p in powers:
+            slots = p.get("slots") or []
+            filled = [s for s in slots if s]
+            if filled and len(filled) < len(slots):
+                empty_mix.append(f"{at.split('_')[-1]}: {p.get('display_name')} "
+                                 f"({len(slots) - len(filled)} empty of {len(slots)})")
+            for s in filled:
+                uid = s.get("piece_uid")
+                if uid and not srv.PIECE_IMAGE.get(uid):
+                    iconless.setdefault(uid, f"{at.split('_')[-1]}: "
+                                        f"{p.get('display_name')} — {s.get('set_name')}")
+        val = engine.validate_build({"powers": powers})
+        for e in val.get("errors") or []:
+            validation_noise.append(f"{at.split('_')[-1]} ERROR: {e}")
+        for w in val.get("warnings") or []:
+            if "duplicate piece" in w:
+                validation_noise.append(f"{at.split('_')[-1]} DUP-WARN: {w}")
         # NO-MISFIRE GUARD: a freshly solved build is fully optimized, so the respec hint
         # (meant for under-invested loaded builds) must NEVER fire on it. Prove it every AT.
         calc = c.post("/build/calculate", json={"archetype": at, "powers": powers}).get_json()
@@ -148,6 +185,24 @@ def audit():
         print("\n  scatter examples:")
         for e in examples:
             print("   ", e)
+
+    print(f"\n══ REGRESSION PINS (0.12.15) ══")
+    print(f"  EMPTY-MIX powers (pieces + empty slots):      {len(empty_mix)}"
+          + ("  <— BUG" if empty_mix else ""))
+    for e in empty_mix[:10]:
+        print("   ", e)
+    print(f"  ICON-LESS pieces (render as empty slots):     {len(iconless)}"
+          + ("  <— BUG" if iconless else ""))
+    for uid, where in list(iconless.items())[:10]:
+        print(f"    {uid}  ({where})")
+    print(f"  validation errors / duplicate-piece warnings: {len(validation_noise)}"
+          + ("  <— BUG" if validation_noise else ""))
+    for v in validation_noise[:10]:
+        print("   ", v)
+    hard_fail = bool(empty_mix or iconless or validation_noise)
+    print("\n  PINS:", "FAIL" if hard_fail else "PASS")
+    if hard_fail:
+        sys.exit(1)
     return frag_total, scatter_powers
 
 
