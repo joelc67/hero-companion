@@ -34,6 +34,21 @@ def main():
     client = srv.app.test_client()
     champs = json.load(open(os.path.join(ROOT, "benchmarks", "champions.json"),
                             encoding="utf-8"))
+    # HARDEN-BEFORE-CERTIFY GUARD (standing rule, 2026-07-08): a gold-standard
+    # certificate must not be issued for a build that picks a power in the
+    # stale-roster register (tools/gamedata/power_aliases.json "roster_diffs" —
+    # ours-only powers whose value fingerprint matches nothing in the client's set
+    # roster, e.g. our Ice Mastery still offers Build_Up where the live set holds
+    # Ice_Slick). Those powers ride deep_optimize's BAN mechanism — the same hard
+    # game-legality veto users get — so the context still converges honestly with
+    # only live-game powers. This is a data-validity constraint, not an optimizer
+    # ban list: a power we cannot confirm exists cannot anchor a gold standard.
+    try:
+        _reg = json.load(open(os.path.join(os.path.dirname(__file__), "gamedata",
+                                           "power_aliases.json"), encoding="utf-8"))
+        stale_roster = set(_reg.get("roster_diffs") or [])
+    except Exception:  # noqa: BLE001
+        stale_roster = set()
     t0 = time.time()
     results = []
     for key in list(champs.keys()):
@@ -46,11 +61,17 @@ def main():
         if not (ap_res and ap_res.get("powers")):
             results.append((key, "AUTOPICK FAILED", None))
             continue
+        stale_picks = sorted({p.get("full_name") for p in ap_res["powers"]}
+                             & stale_roster)
+        if stale_picks:
+            print(f"   seed picked stale-roster powers {stale_picks} — banned from "
+                  f"the certification build (harden-before-certify)", flush=True)
         try:
             _, info = srv.deep_optimize(at, prim, sec, None, content,
                                         ap_res["powers"],
                                         max_solves=args.max_solves,
-                                        restarts=args.restarts)
+                                        restarts=args.restarts,
+                                        ban=stale_roster)
             cert = info.get("certificate")
             results.append((key, f"score {info.get('score'):.1f}", cert))
             print(f"   -> score {info.get('score'):.1f}  certificate: {cert}", flush=True)

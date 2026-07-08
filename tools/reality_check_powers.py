@@ -31,6 +31,7 @@ sys.path.insert(0, r"C:\Users\joelc\code\coh-builder\server")
 import server as srv  # noqa: E402
 
 SNAP = os.path.join(os.path.dirname(__file__), "gamedata", "power_values.json")
+ALIASES = os.path.join(os.path.dirname(__file__), "gamedata", "power_aliases.json")
 CATMAP = {"Universal Damage Sets": "Universal Damage", "Universal Travel": "Travel",
           "Melee AoE Damage": "PBAoE Damage", "Ranged AoE Damage": "Targeted AoE Damage"}
 TRAVEL = {"Travel", "Run (No Sprint)", "Jump (No Sprint)", "Flight (No Sprint)",
@@ -45,12 +46,17 @@ def _cats(cats):
 
 def main():
     snap = json.load(open(SNAP, encoding="utf-8"))
+    amap = json.load(open(ALIASES, encoding="utf-8"))
+    # our-name -> client-name reconciliation (tools/build_power_aliases.py): lets the
+    # check reach the 118 powers whose internal names diverged from the client bins.
+    aliases = amap.get("aliases") or {}
+    rev_aliases = {v: k for k, v in aliases.items()}
     val_drift = {f[0]: 0 for f in FIELDS}
     val_drift["cast_time"] = 0
     snipe_cond = slot_add = slot_rem = matched = 0
     samples = []
     for fn, g in snap.items():
-        p = srv.POWER_BY_FULL.get(fn)
+        p = srv.POWER_BY_FULL.get(fn) or srv.POWER_BY_FULL.get(rev_aliases.get(fn, ""))
         if not p:
             continue      # NPC/object/pet powers — the snapshot is a superset of ours
         matched += 1
@@ -93,14 +99,23 @@ def main():
         if ps.startswith(("Pool.", "Inherent.")):
             for p in plist:
                 player.add(p["full_name"])
-    unverified = sorted(p for p in player if p not in snap)
+    unverified = sorted(p for p in player
+                        if p not in snap and aliases.get(p) not in snap)
     by_set = {}
     for p in unverified:
         by_set[p.rsplit(".", 1)[0]] = by_set.get(p.rsplit(".", 1)[0], 0) + 1
-    KNOWN_UNVERIFIED_TOTAL = 221          # pinned 2026-07-08 (alias-map work queued)
+    # Pinned register (2026-07-08, after the alias map + value-fingerprint pass):
+    # 40 inherents the snapshot omits + 27 ROSTER DIFFS — ours-only powers whose
+    # value fingerprint matches NO unclaimed client power in the set (true reworks/
+    # removals: Ice Mastery Build_Up vs the client's Ice_Slick, Scrapper Mace
+    # Mastery entirely…). Renames-in-disguise were fingerprint-aliased instead
+    # (Power_of_the_Depths = Call_Depths, Phantom_Army = Decoy). The roster
+    # reconciliation is the open data workstream; refresh_champions bans register
+    # powers from certification builds (harden-before-certify).
+    KNOWN_UNVERIFIED_TOTAL = 67
     print(f"Coverage: {len(player) - len(unverified)} of {len(player)} player-facing "
-          f"powers verifiable against the client snapshot "
-          f"({len(unverified)} unverified; pinned known gap {KNOWN_UNVERIFIED_TOTAL}).")
+          f"powers verifiable against the client snapshot ({len(aliases)} via the "
+          f"alias map; {len(unverified)} unverified; pinned register {KNOWN_UNVERIFIED_TOTAL}).")
     coverage_fail = 0
     if len(unverified) != KNOWN_UNVERIFIED_TOTAL:
         coverage_fail = 1
