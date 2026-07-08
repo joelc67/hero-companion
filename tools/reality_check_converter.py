@@ -59,6 +59,11 @@ def main():
     if ours.get("by_rarity") is not None and ours.get("by_rarity_text") not in (None, ours["by_rarity"]):
         drift.append(f"by_rarity text/plan disagree: plan={ours['by_rarity']} text={ours['by_rarity_text']}")
 
+    # COVERAGE DENOMINATOR (standing rule 2026-07-08): all 4 cost constants must
+    # parse out of converter.py — a regex gone stale must fail, not skip.
+    print(f"Coverage: {len(ours)} of 4 converter cost constants parsed from source.")
+    if len(ours) < 4:
+        drift.append(f"COVERAGE: only parsed {sorted(ours)} — regexes stale vs converter.py")
     print(f"Ours (server/converter.py): {ours}")
     print(f"REAL DRIFT: {len(drift)}")
     for d in drift:

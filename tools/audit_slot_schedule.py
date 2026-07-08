@@ -18,6 +18,15 @@ import server as srv
 c = srv.app.test_client()
 problems, runs = [], 0
 
+# COVERAGE DENOMINATOR (standing rule 2026-07-08): every eligible AT must actually
+# solve — 15 is the pinned playable-archetype count, independent of the loop below.
+EXPECTED_ATS = 15
+eligible = [at for at, g in srv.POWERSETS["by_archetype"].items()
+            if (g.get("primary") or [{}])[0].get("full_name")
+            and (g.get("secondary") or [{}])[0].get("full_name")]
+if len(eligible) != EXPECTED_ATS:
+    problems.append(f"eligible archetypes {len(eligible)} != pinned {EXPECTED_ATS}")
+
 for at, groups in srv.POWERSETS["by_archetype"].items():
     prim = (groups.get("primary") or [{}])[0].get("full_name")
     sec = (groups.get("secondary") or [{}])[0].get("full_name")
@@ -122,7 +131,9 @@ try:
 finally:
     srv._champion_picks = _orig_champ
 
-print(f"\n══ {runs} archetypes solved, {len(problems)} problem(s) ══")
+if runs < EXPECTED_ATS:
+    problems.append(f"COVERAGE: only {runs} of {EXPECTED_ATS} expected archetypes solved")
+print(f"\n══ {runs} of {EXPECTED_ATS} expected archetypes solved, {len(problems)} problem(s) ══")
 for p in problems:
     print(" ", p)
 if not problems:

@@ -39,9 +39,13 @@ def main():
            if a.get("playable") and a.get("column") is not None]
     per_table = {}          # table -> list of (at, ours, game) mismatches
     n_ats = checked = 0
+    missing_tables = []
     for a in ats:
         f = os.path.join(TABLES, _norm(a["name"]) + ".json")
         if not os.path.exists(f):
+            # COVERAGE (standing rule 2026-07-08): a missing table file silently
+            # shrank the check — every playable AT must have its snapshot.
+            missing_tables.append(a["name"])
             continue
         n_ats += 1
         ex = json.load(open(f, encoding="utf-8")).get("named_tables", {})
@@ -59,6 +63,8 @@ def main():
     drift = {t: h for t, h in per_table.items() if len(h) < n_ats}
     convention = {t: len(h) for t, h in per_table.items() if len(h) >= n_ats}
 
+    print(f"Coverage: {n_ats} of {len(ats)} playable archetypes have game-table snapshots"
+          + (f" — MISSING: {missing_tables}" if missing_tables else "") + ".")
     print(f"Compared {checked} (archetype x modifier) values at level 50.")
     print(f"REAL DRIFT (should be corrected from game data): "
           f"{sum(len(h) for h in drift.values())}")
@@ -68,9 +74,9 @@ def main():
     if convention:
         print(f"\nrepresentation conventions (ALL archetypes differ - NOT drift, left as-is): "
               f"{', '.join(convention)}")
-    if not drift:
+    if not drift and not missing_tables:
         print("\nEvery archetype modifier matches the live game (bar the known conventions).")
-    return sum(len(h) for h in drift.values())
+    return sum(len(h) for h in drift.values()) + len(missing_tables)
 
 
 if __name__ == "__main__":

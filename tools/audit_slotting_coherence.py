@@ -88,6 +88,14 @@ def audit():
     iconless = {}
     validation_noise = []
 
+    # COVERAGE DENOMINATOR (standing rule 2026-07-08): every eligible AT must be
+    # SOLVED and audited — 15 is the pinned playable count. The old loop silently
+    # skipped failed autopicks and fell back to UNSOLVED autopick powers when the
+    # solve failed, so the audit could 'pass' while examining nothing real.
+    EXPECTED_ATS = 15
+    coverage_failures = []
+    solved_ats = 0
+
     for at, groups in srv.POWERSETS["by_archetype"].items():
         prim = (groups.get("primary") or [{}])[0].get("full_name")
         sec = (groups.get("secondary") or [{}])[0].get("full_name")
@@ -98,6 +106,7 @@ def audit():
                                              "content": "general", "exposure": "flex",
                                              "travel": "speed"}).get_json()
         if not ap.get("powers"):
+            coverage_failures.append(f"{at}: autopick returned no powers")
             continue
         # Mirror the APP's solve payload (wizard/solve button), not a bare minimal one:
         # slots + earned_slot_count ride along, exposure/tier set — the path users hit.
@@ -109,7 +118,11 @@ def audit():
                                            "exposure": "flex", "preserve": False,
                                            "keep_layout": False,
                                            "content": "general", "role": "damage"}).get_json()
-        powers = sol.get("powers") or ap["powers"]
+        if not sol.get("powers"):
+            coverage_failures.append(f"{at}: solve failed — nothing audited for this AT")
+            continue
+        powers = sol["powers"]
+        solved_ats += 1
         for p in powers:
             slots = p.get("slots") or []
             filled = [s for s in slots if s]
@@ -199,7 +212,11 @@ def audit():
           + ("  <— BUG" if validation_noise else ""))
     for v in validation_noise[:10]:
         print("   ", v)
-    hard_fail = bool(empty_mix or iconless or validation_noise)
+    print(f"\n  COVERAGE: {solved_ats} of {EXPECTED_ATS} expected archetypes solved+audited")
+    for cf in coverage_failures:
+        print("   ", cf)
+    hard_fail = bool(empty_mix or iconless or validation_noise
+                     or solved_ats < EXPECTED_ATS)
     print("\n  PINS:", "FAIL" if hard_fail else "PASS")
     if hard_fail:
         sys.exit(1)

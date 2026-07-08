@@ -209,6 +209,14 @@ noteless = [p.get("display_name") for p in sol2["powers"]
 check("every 1-slot set-capable card carries an honest note",
       not noteless, noteless or "all 1-slot cards explain themselves")
 
+# COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
+# check — a crash or skipped section that silently shrinks the list must fail, not
+# pass by absence. Bump EXPECTED_CHECKS when adding a check.
+EXPECTED_CHECKS = 13
 fails = [n for n, ok, _ in results if not ok]
-print(f"\n══ {'ALL ' + str(len(results)) + ' CHECKS PASS' if not fails else 'FAILURES: ' + ', '.join(fails)} ══")
+print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
+if len(results) != EXPECTED_CHECKS:
+    print(f"══ COVERAGE FAILURE: {len(results)} checks ran, {EXPECTED_CHECKS} pinned ══")
+    sys.exit(1)
+print(f"══ {'ALL ' + str(len(results)) + ' CHECKS PASS' if not fails else 'FAILURES: ' + ', '.join(fails)} ══")
 sys.exit(1 if fails else 0)

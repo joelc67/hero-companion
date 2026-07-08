@@ -24,28 +24,36 @@ SNAP = os.path.join(os.path.dirname(__file__), "gamedata", "proc_ppm.json")
 def main():
     cat = json.load(open(CATALOG, encoding="utf-8"))
     game = json.load(open(SNAP, encoding="utf-8"))["ppm"]
-    matched = drift = missing = provisional = 0
+    matched = drift = missing = provisional = multi = expected = 0
     for procs in cat.get("damage_procs", {}).values():
         for p in procs:
+            expected += 1
             uid = p.get("uid")
             gv = game.get(f"Boosts.{uid}.{uid}")
             if p.get("provisional"):
                 provisional += 1
             if gv is None:
                 missing += 1
+                print(f"  NOT IN SNAPSHOT: {p.get('set')} ({uid})")
                 continue
             if isinstance(gv, list):
-                continue                      # multi-effect boost — review by hand
+                multi += 1                    # multi-effect boost — review by hand
+                continue
             if abs((p.get("ppm") or 0) - gv) > 0.01:
                 drift += 1
                 print(f"  DRIFT {p.get('set')}: catalog={p.get('ppm')} game={gv}")
             else:
                 matched += 1
+    # COVERAGE DENOMINATOR (standing rule 2026-07-08): every catalog proc must be
+    # accounted for against the game snapshot — a proc missing from the snapshot
+    # is unverified data, not a skip.
+    print(f"Coverage: {matched + drift + multi} of {expected} catalog procs checked "
+          f"({multi} multi-effect, reviewed by hand).")
     print(f"Proc PPM values matched to the live game: {matched}.")
     print(f"REAL DRIFT: {drift}  (not in game snapshot: {missing}, still provisional: {provisional})")
-    if not drift:
+    if not drift and not missing:
         print("Every catalog proc's PPM matches the game client.")
-    return drift
+    return drift + missing
 
 
 if __name__ == "__main__":

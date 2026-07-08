@@ -22,7 +22,7 @@ COMBOS = [
 ]
 
 c = srv.app.test_client()
-total_slots = violations = 0
+total_slots = violations = solved = 0
 vio_list = []
 for at, pri, sec in COMBOS:
     ap = c.post("/build/autopick", json={"archetype": at, "primary": pri, "secondary": sec,
@@ -37,6 +37,7 @@ for at, pri, sec in COMBOS:
     if not sv.get("ok"):
         print(f"  ! solve failed for {at}: {str(sv)[:120]}")
         continue
+    solved += 1
     for p in sv["powers"]:
         rec = srv.POWER_BY_FULL.get(p.get("full_name"))
         if not rec:
@@ -54,9 +55,16 @@ for at, pri, sec in COMBOS:
                                  s.get("set_name"), cat, sorted(accepted)))
     print(f"  {at.replace('Class_', ''):12} audited")
 
-print(f"\nset-slotted pieces audited: {total_slots}")
+# COVERAGE DENOMINATOR (standing rule 2026-07-08): a failed autopick/solve used to
+# just print '!' and shrink the audit — it could pass on ZERO builds.
+print(f"\n{solved} of {len(COMBOS)} expected builds solved; "
+      f"set-slotted pieces audited: {total_slots}")
 print(f"LEGALITY VIOLATIONS: {violations}")
 for at, pw, sn, cat, acc in vio_list[:20]:
     print(f"  ✗ {at}: {pw} ← {sn} (cat {cat}, accepts {acc})")
+if solved < len(COMBOS):
+    print(f"COVERAGE FAILURE: only {solved} of {len(COMBOS)} builds audited.")
+    sys.exit(1)
 if not violations:
     print("Every placement respects the game's set-category rules — including inherents.")
+sys.exit(1 if violations else 0)
