@@ -1,7 +1,27 @@
 # Hero Companion — What's New
 
-## Unreleased (staged for 0.12.15 — awaiting Joel's review of the single-build tests)
+## 0.12.15 — 2026-07-08
 
+- **Fresh gold-standard champions, certified on verified game data.** All five
+  champion builds were re-converged from scratch under this release's corrected
+  model and data — every value they stand on now checks against the game client
+  itself. Old champion scores looked bigger; these are the honest numbers.
+- **The wizard never chooses for you.** All four "How do you play?" questions
+  start unanswered and the Build button waits until you've answered them — the
+  planner never invents your playstyle. Each answer is tagged with where it came
+  from ("your pick" / "from your setup"), and reopening the wizard restores what
+  you chose — including your travel power. Travel is never auto-picked: endgame
+  content entry can require specific travel (BAF and Lambda admit only Flight or
+  Teleport), so that call is always yours.
+- **New Role option: Mixed role / Generalist.** The honest choice when you don't
+  specialize — balanced targets for your content, judged by overall contribution
+  instead of one role's lens. Its pop-up explains the trade plainly.
+- **Slotting notes are easier to find and use.** The whole note chip on a power
+  card is now the button (hover for the bonus summary, click for the reasoning),
+  with a one-time hint on your first build. Power-card tooltips lead with the
+  full power name, so truncated names are readable. The − / + slot buttons
+  explain the shared 67-slot pool, and the slot counter tells you when you have
+  free slots to spend. The power-info panel closes on Esc or a click outside.
 - **Global Accuracy set bonuses now exist — and are valued.** A parser gap had
   dropped every global-accuracy set bonus in the game (Luck of the Gambler's
   4-piece +9%, Adjusted Targeting, the archetype sets' +15%…) — 65 bonuses,

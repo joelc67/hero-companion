@@ -24,8 +24,12 @@ try:
         return json.load(urllib.request.urlopen(req, timeout=120))
     meta = json.load(urllib.request.urlopen(base+"/meta", timeout=5))
     print("version:", meta["app_version"], "model:", meta["model_version"], "packaged:", meta["packaged"])
-    ok_all = meta["app_version"] == "0.12.14" and meta["model_version"] == 27
+    # Update these pins per release (like smoke_release's version expectation).
+    ok_all = meta["app_version"] == "0.12.15" and meta["model_version"] == 28
+    if not ok_all:
+        print("  VERSION/MODEL PIN MISMATCH — update the pins for this release")
     # THE GOLD TEST: every champion context, served to a frozen END USER via autopick
+    checked = 0
     for key, entry in CHAMPS.items():
         at, prim, sec, content = key.split("|")
         ap = post("/build/autopick", {"archetype":at,"primary":prim,"secondary":sec,"content":content})
@@ -34,8 +38,14 @@ try:
         overlap = len(got & champ) / max(1, len(champ))
         served = overlap > 0.9
         ok_all = ok_all and served
+        checked += 1
         print(f"  {'GOLD SERVED' if served else 'HEURISTIC (FAIL)':18s} {prim.split('.')[-1]}/{sec.split('.')[-1]}  overlap={overlap:.0%}")
+    # Coverage denominator (standing rule): every bundled champion context checked.
+    print(f"  {checked} of {len(CHAMPS)} champion contexts checked")
+    ok_all = ok_all and checked == len(CHAMPS)
     print("GOLD SMOKE:", "PASS" if ok_all else "FAIL")
+    # A gate that prints FAIL must also EXIT nonzero (it used to exit 0 regardless).
+    sys.exit(0 if ok_all else 1)
 finally:
     proc.terminate(); time.sleep(2)
     subprocess.run(["taskkill","/F","/IM","HeroCompanion.exe"], capture_output=True)
