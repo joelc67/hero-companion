@@ -2,6 +2,16 @@
 
 ## Unreleased (staged for 0.12.15 — awaiting Joel's review of the single-build tests)
 
+- **The "How do you play?" questions now explain themselves.** Every choice in the
+  build wizard pops a detailed explanation written for YOUR character — a
+  Mastermind's "Damage dealer" talks about henchmen and pet sets, a Super Reflexes
+  scrapper's iTrial preset explains why it chases positional instead of typed
+  defense. A new summary panel shows exactly what your combined answers make the
+  planner chase (the real defense, resistance, and recharge targets), so nothing
+  about the build's direction is a mystery before you hit Build.
+- **Credits: Maelwys.** His expert reviews on the Homecoming forums caught what our
+  own tests missed, round after round. Added to the in-app credits and CREDITS.md.
+
 - **Common IO icons are back.** 0.12.13 accidentally dropped every common IO's icon,
   so a generated build's Accuracy/Damage/Endurance IOs rendered as empty-looking
   slots next to expensive globals. The same defect gave Hamidon Origins a level they
