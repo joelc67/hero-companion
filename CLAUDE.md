@@ -73,6 +73,7 @@ Joel's session context is a limited resource. Do not spend it on prose.
 - Joel's gaming machine is a SEPARATE box (Windows user "Joel Chambers"); shares files via OneDrive → `C:\Users\joelc\OneDrive\Desktop\temp` (one-time imports only — Joel vetoed OneDrive as infrastructure). Raw game logs archive: `C:\Users\joelc\code\game_logs`.
 - Python: `C:\Users\joelc\AppData\Local\Programs\Python\Python313\python.exe`. gh CLI: `C:\Program Files\GitHub CLI\gh.exe`.
 - ⚠ NO agent fan-outs / deep-research without Joel's explicit opt-in AND stated cost (a 106-agent run once produced ~50 permission popups and forced a reboot). "Research" = existing knowledge + local data + a few direct fetches in the main loop.
+- ⚠ While a champion refresh runs, **benchmarks/champions.json belongs to the refresh process**: never `git add -A`, `git checkout --`, or otherwise touch it (near-miss 2026-07-08: a blanket add-A committed a mid-refresh save, the checkout-revert then erased it from disk — recovered byte-exact from the reflog blob). Commit champions.json once, complete, after validate_champions. deep_optimize re-reads the file per write, so a restored file merges cleanly with the running process.
 
 ## Session history & retention
 
