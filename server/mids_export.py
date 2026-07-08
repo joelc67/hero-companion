@@ -52,9 +52,23 @@ _UNIVERSAL_INHERENTS = [
 ]
 
 
-def _enh(uid, io_level=50):
-    return {"Uid": uid, "Grade": "None", "IoLevel": int(io_level or 50),
-            "RelativeLevel": "Even", "Obtained": False}
+# booster offset -> Mids RelativeLevel enum name (see mids_import._REL_TO_BOOST)
+_BOOST_TO_REL = {-3: "MinusThree", -2: "MinusTwo", -1: "MinusOne",
+                 1: "PlusOne", 2: "PlusTwo", 3: "PlusThree",
+                 4: "PlusFour", 5: "PlusFive"}
+
+
+def _enh(uid, io_level=50, boost=0):
+    """Mids' IoLevel is 0-based (49 = level 50); ours is the human level. An
+    over-level single enhancement (io_level 53 = a +3 HO) travels as the boost
+    convention, which is how Mids models it."""
+    io = int(io_level or 50)
+    if io > 50:
+        boost = boost or (io - 50)
+        io = 50
+    rel = _BOOST_TO_REL.get(max(-3, min(5, int(boost or 0))), "Even")
+    return {"Uid": uid, "Grade": "None", "IoLevel": max(0, io - 1),
+            "RelativeLevel": rel, "Obtained": False}
 
 
 def build_mbd(payload, db_name, db_version, level_lookup, app_version="3.7.7.7"):
@@ -113,7 +127,7 @@ def build_mbd(payload, db_name, db_version, level_lookup, app_version="3.7.7.7")
             # Hamidon O we can't model) carries its original uid in piece_name —
             # write that back so it round-trips instead of being dropped.
             uid = (s.get("piece_uid") or s.get("piece_name")) if s else None
-            enh = _enh(uid, io) if uid else None
+            enh = _enh(uid, io, (s.get("boost") if s else 0) or 0) if uid else None
             slot_entries.append({
                 "Level": plevel, "IsInherent": False,
                 "Enhancement": enh, "FlippedEnhancement": None,

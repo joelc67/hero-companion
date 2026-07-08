@@ -1107,9 +1107,60 @@ def get_sets(category):
     })
 
 
+# ── Manual slotting (#7): single enhancements — common crafted IOs, Hamidon/
+# Titan/Hydra Origins, D-Syncs — a power can host by hand. The game's rule: a
+# piece may be slotted when the power accepts at least one enhancement type the
+# piece boosts (aspects the power can't use simply do nothing), and identical
+# copies stack freely. The tables translate the pieces' aspect vocabulary into
+# the powers' accepted-enhancement-type vocabulary.
+_ASPECT_ACCEPTS = {
+    "accuracy": ("accuracy",), "damage": ("damage increase",),
+    "rechargetime": ("recharge reduction",),
+    "endurancediscount": ("endurance reduction",),
+    "endurance": ("endurance modification",),
+    "recovery": ("endurance modification",),
+    "heal": ("healing",), "absorb": ("healing",), "hitpoints": ("healing",),
+    "regeneration": ("healing",),
+    "range": ("range",), "slow": ("slow",), "interrupt": ("activation decrease",),
+    "speedflying": ("flight speed",), "speedrunning": ("run speed",),
+    "speedjumping": ("jumping",), "jumpheight": ("jumping",),
+}
+_MEZ_ACCEPTS = ("hold duration", "immobilisation duration", "disorient duration",
+                "confuse duration", "fear duration", "sleep duration",
+                "taunt duration", "knockback distance", "intangibility duration")
+# Common IOs are single-purpose: the display name IS the accepted type, bar two.
+_COMMON_ACCEPTS = {"threat duration": "taunt duration",
+                   "interrupt reduction": "activation decrease"}
+_SPECIAL_FAMILY = (("hamidon_", "Hamidon Origin"), ("titan_", "Titan Origin"),
+                   ("hydra_", "Hydra Origin"), ("dsync_", "D-Sync"))
+
+
+def _special_accepts(uid, enhances):
+    """Accepted-enhancement-types that admit a multi-aspect special IO. The
+    Defense/ToHit aspects mean buff OR debuff depending on the piece (the uid
+    carries the marker: Cytoskeleton is Buff_, Enzyme is DeBuff_); a Threat
+    piece's Mez aspect is taunt only, any other Mez piece covers the whole
+    mez family (the game lets Endoplasm enhance whatever mez the power does)."""
+    u = (uid or "").lower()
+    debuff = "debuff" in u
+    out = set()
+    for a in enhances or []:
+        al = a.lower()
+        if al == "defense":
+            out.add("defense debuff" if debuff else "defense buff")
+        elif al == "tohit":
+            out.add("to hit debuff" if debuff else "to hit buff")
+        elif al == "mez":
+            out.update(("taunt duration",) if "threat" in u else _MEZ_ACCEPTS)
+        else:
+            out.update(_ASPECT_ACCEPTS.get(al, ()))
+    return out
+
+
 @app.route("/sets/for-power", methods=["POST"])
 def sets_for_power():
-    """Given a power's accepted category ids, return ONLY the matching sets.
+    """Given a power's accepted category ids, return ONLY the matching sets —
+    plus the single enhancements (common IOs, HOs/D-Syncs) the power accepts.
     This is the slot-enforcement endpoint used by the UI."""
     body = request.get_json(force=True) or {}
     cat_ids = body.get("accepted_set_category_ids", [])
@@ -1122,8 +1173,26 @@ def sets_for_power():
             seen.add(s["uid"])
             result.append(s)
     result.sort(key=lambda s: (s["category"], s["name"]))
+    rec = POWER_BY_FULL.get(body.get("full_name") or "") or {}
+    ptypes = {t.lower() for t in rec.get("accepted_enhancement_types") or []}
+    commons, specials = [], []
+    for c in COMMON_IOS["common_ios"]:
+        n = c["name"].lower()
+        if _COMMON_ACCEPTS.get(n, n) in ptypes:
+            commons.append({"uid": c["uid"], "name": c["name"],
+                            "enhances": c["enhances"],
+                            "image": c.get("image") or ""})
+    for c in COMMON_IOS.get("special_ios", []):
+        if _special_accepts(c["uid"], c["enhances"]) & ptypes:
+            u = c["uid"].lower()
+            fam = next((f for pre, f in _SPECIAL_FAMILY if u.startswith(pre)),
+                       "Special")
+            specials.append({"uid": c["uid"], "name": c["name"], "family": fam,
+                             "enhances": c["enhances"],
+                             "image": c.get("image") or ""})
     return jsonify({"accepted_set_category_ids": cat_ids,
-                    "set_count": len(result), "sets": result})
+                    "set_count": len(result), "sets": result,
+                    "commons": commons, "specials": specials})
 
 
 @app.route("/setbonuses/<path:setname>")

@@ -260,7 +260,7 @@ def read_effect(r: Reader):
     r.int32()                                   # Ticks
     r.int32()                                   # Stacking
     e["base_probability"] = r.single()
-    r.int32()                                   # Suppression
+    e["suppression"] = r.int32()                # eSuppress bitmask (combat suppression)
     r.boolean()                                 # Buffable
     r.boolean()                                 # Resistible
     r.int32()                                   # SpecialCase
@@ -934,7 +934,7 @@ def main():
             if mt is None:
                 continue
             aspect = EFFECT_TO_ENHANCE.get(eff_stat, eff_stat)
-            out.append({
+            entry = {
                 "effect": eff_stat,
                 "damage_type": (EDAMAGE[ef["damage_type"]]
                                 if 0 <= ef["damage_type"] < len(EDAMAGE) else "None"),
@@ -944,7 +944,13 @@ def main():
                 "enhance_aspect": aspect,
                 "ed_schedule": ed_schedule_for_aspect(aspect),
                 "pv_mode": ef["pv_mode"],
-            })
+            }
+            # Combat suppression (eSuppress bitmask): kept only when set, so the
+            # display layer can subtract suppressed contributions (Mids' Options >
+            # Effects and Maths > Suppression). Zero = never suppresses = omitted.
+            if ef.get("suppression"):
+                entry["suppression"] = ef["suppression"]
+            out.append(entry)
         return out
 
     def power_combat_effects(p):

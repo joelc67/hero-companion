@@ -6,9 +6,23 @@ Mids serializes each slotted enhancement either as:
   {"Uid": "<enh uid>", ...}                         (newer / our own exports)
   {"Enhancement": "Set Name: Piece Name", ...}      (name form; resolved by name)
 so we resolve by name first ("Set: Piece" or "Invention: <aspect>"), then by uid.
-Unresolved enhancements (e.g. Hamidon Os) keep the slot but carry no set/piece,
-and are reported back so the critique can mention them.
+Unresolved enhancements keep the slot but carry no set/piece, and are reported
+back so the critique can mention them.
+
+Level fidelity (#6): Mids' IoLevel is 0-BASED (an index into its MultIO table:
+49 = level 50) — our io_level is the human level, so imports add 1. Mids'
+RelativeLevel carries boosters ("PlusFive" = a 50+5 IO) and the over-level HO
+convention ("PlusThree" = a level-53 HO); both land in slot["boost"] so the
+engine prices them (+5%/level) and the UI can show "50+5" / "53".
 """
+
+# RelativeLevel enum name -> signed booster offset (Mids eEnhRelative).
+_REL_TO_BOOST = {"MinusThree": -3, "MinusTwo": -2, "MinusOne": -1,
+                 "PlusOne": 1, "PlusTwo": 2, "PlusThree": 3,
+                 "PlusFour": 4, "PlusFive": 5}
+# Grade-flat single enhancements: no meaningful IO level of their own — their
+# display level is 50 + boost (a "PlusThree" Nucleolus is the level-53 drop).
+_SPECIAL_PREFIXES = ("Hamidon_", "Titan_", "Hydra_", "DSync_", "Dsync_")
 
 
 def _resolve_enh(enh, lk):
@@ -102,9 +116,18 @@ def parse_build(data, lk):
             if not enh:
                 continue                 # earned-but-empty slot
             slot = _resolve_enh(enh, lk)
-            io_level = enh.get("IoLevel")
+            io_raw = enh.get("IoLevel")
+            io_level = (io_raw + 1) if isinstance(io_raw, int) else None
+            boost = _REL_TO_BOOST.get(enh.get("RelativeLevel"), 0)
             if slot:
+                if str(slot.get("piece_uid") or "").startswith(_SPECIAL_PREFIXES):
+                    # HOs/D-Syncs: Mids parks IoLevel at a dummy value — the real
+                    # level is the boost convention (53 = +3 over 50). The level
+                    # alone carries it; the engine derives the +3 from > 50.
+                    io_level, boost = ((50 + boost) if boost > 0 else None), 0
                 slot["io_level"] = io_level
+                if boost:
+                    slot["boost"] = boost
                 slot["attuned"] = "Attuned" in (enh.get("Uid") or "") \
                     or str(enh.get("Uid") or "").startswith("Superior_")
                 slots.append(slot)

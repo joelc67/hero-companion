@@ -85,6 +85,11 @@ ED_SCHEDULE = {"Defense": 1, "Resistance": 1, "ToHit": 1, "Range": 1,
                "Interrupt": 2, "Mez": 0}
 # Power types that are "always on" and counted in passive totals.
 ACTIVE_POWER_TYPES = {1, 2}   # Auto, Toggle
+
+# eSuppress events that fire the moment you fight (Mids' combat-suppression
+# checkboxes): Attacked(64) | HitByFoe(128) | ActivateAttackClick(512) |
+# Damaged(1024). An effect suppresses when its bitmask intersects these.
+SUPPRESS_IN_COMBAT = 64 | 128 | 512 | 1024
 # Situational powers that the data marks as toggle/auto but are NOT always-on in
 # combat (their effects apply only under a special condition). Rest, e.g., gives
 # a huge self-defense/resistance penalty that only applies while actually resting
@@ -139,24 +144,33 @@ def _scale_io(value, sched, eff_level, ref_level, mult_io):
 
 def _scaled_boosts(slot, ctx):
     """Yield (aspect, value) for a slot's enhancement, scaling the stored max-level
-    magnitude down to the IO's actual level. Attuned/Superior IOs scale to the
-    character level (capped at the set's max). Unknown level -> stored value as-is
+    magnitude down to the IO's actual level, then applying the booster/over-level
+    multiplier (#6, Mids' GetRelativeLevelMultiplier: +5% per level above even,
+    −10% per level below even; a level-53 HO is +3 over its 50 baseline). Attuned
+    IOs scale to the character level (capped at the set's max) and can't take
+    boosters, so their boost is ignored. Unknown level -> stored value as-is
     (so generated builds, which carry no level, are unaffected)."""
     boosts = ctx["piece_boosts"].get(slot.get("piece_uid"))
     if not boosts:
         return
     mult_io = ctx.get("mult_io")
     ref = (ctx.get("piece_ref_level") or {}).get(slot.get("piece_uid"))
+    b = slot.get("boost")
+    if b is None and not ref and (slot.get("io_level") or 0) > 50:
+        b = int(slot["io_level"]) - 50   # in-game "(53)" HO/D-Sync imports
+    b = 0 if slot.get("attuned") else max(-3, min(5, int(b or 0)))
+    relmult = (1.0 + 0.05 * b) if b >= 0 else (1.0 + 0.10 * b)
     if not (mult_io and ref):
-        for b in boosts:
-            yield b["aspect"], b["value"]
+        for bo in boosts:                # grade-flat specials (HOs/D-Syncs)
+            yield bo["aspect"], bo["value"] * relmult
         return
     if slot.get("attuned"):
         eff = min(int(ctx.get("char_level") or 50), ref)
     else:                          # an IO can't exceed its set's max level
         eff = min(slot.get("io_level") or ref, ref)
-    for b in boosts:
-        yield b["aspect"], _scale_io(b["value"], b.get("schedule"), eff, ref, mult_io)
+    for bo in boosts:
+        yield bo["aspect"], _scale_io(bo["value"], bo.get("schedule"),
+                                      eff, ref, mult_io) * relmult
 
 
 # ---------------------------------------------------------------------------
@@ -254,6 +268,12 @@ def _power_totals(build, totals, ctx):
     if col is None or col < 0:
         return
     pvp = bool(build.get("pvp"))
+    # Display-time combat suppression (#9, mirrors Mids' Effects and Maths >
+    # Suppression): with the in-combat view on, any self effect whose eSuppress
+    # bitmask intersects the attacked/hit/attacking/damaged events is dropped —
+    # Stealth's suppressible defense layer goes, its mez-only layer stays.
+    # DISPLAY ONLY: the solver/scorer never sets the flag.
+    suppress_mask = SUPPRESS_IN_COMBAT if build.get("suppression") else 0
 
     for power in build.get("powers", []):
         full = power.get("full_name")
@@ -285,6 +305,8 @@ def _power_totals(build, totals, ctx):
         # apply each self effect: base x (1 + enhancement)
         for fx in self_fx:
             if not _pv_ok(fx.get("pv_mode", 0), pvp):
+                continue
+            if suppress_mask & (fx.get("suppression") or 0):
                 continue
             row = mod_tables.get(fx["modifier_table"])
             if not row or col >= len(row):

@@ -1,5 +1,24 @@
 # Hero Companion — What's New
 
+## Unreleased
+
+- **Slot anything by hand.** The enhancement picker now offers the single
+  enhancements a power accepts alongside its sets: common crafted IOs, Hamidon
+  / Titan / Hydra Origins, and D-Syncs. Identical copies stack freely (that's
+  the game's rule for these), totals price them exactly, and they round-trip
+  through Mids export/import.
+- **In-combat view (suppression).** A new Stats toggle shows your totals as
+  they are mid-fight: powers like Stealth lose their suppressible defense the
+  moment you attack or get hit, exactly per each effect's own suppression
+  flags — same as Mids' Options > Effects and Maths > Suppression. Display
+  only: builds are optimized on the same numbers either way.
+- **Real enhancement levels from imports.** Boosted IOs (50+5) and level-53
+  Hamidon Origins now import with their true levels, show as "50+5" / "53" on
+  the slot, and count in the totals at the game's real math (+5% per boost
+  level; a 53 HO is worth 38.3%, not 33.3%). Fixed a one-off: Mids stores
+  levels 0-based, so every imported IO used to read one level low. Exports to
+  Mids now carry boosters back too.
+
 ## 0.12.15 — 2026-07-08
 
 - **Fresh gold-standard champions, certified on verified game data.** All five

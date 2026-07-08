@@ -36,7 +36,11 @@ _SKIP_POWERS = {"Pool.Speed.SpeedPhase"}
 
 _HEADER_RE = re.compile(r"^(.*?):\s*Level\s+(\d+)\s+(\w+)\s+(Class_\w+)\s*$")
 _POWER_RE = re.compile(r"^Level\s+(\d+):\s+(.+?)\s*$")
-_SLOT_RE = re.compile(r"^(.+?)\s+\((\d+)\)\s*$")
+# "(50)" = the enhancement's level (human, unlike Mids' 0-based IoLevel). An
+# optional "+N" tolerates a boosted notation ("(50+5)") — unverified against a
+# real boosted save (none on hand); a plain "(53)" HO carries its boost in the
+# level itself and the engine derives +3 from it.
+_SLOT_RE = re.compile(r"^(.+?)\s+\((\d+)(?:\+(\d+))?\)\s*$")
 
 
 def looks_like_ingame(text):
@@ -82,9 +86,10 @@ def _parse_blocks(text):
             else:
                 sm = _SLOT_RE.match(stripped)
                 if sm:
-                    cur["slots"].append((sm.group(1), int(sm.group(2))))
+                    cur["slots"].append((sm.group(1), int(sm.group(2)),
+                                         int(sm.group(3)) if sm.group(3) else 0))
                 else:
-                    cur["slots"].append((stripped, None))
+                    cur["slots"].append((stripped, None, 0))
     return name, char_level, archetype, blocks
 
 
@@ -194,9 +199,11 @@ def parse_ingame_build(text, lk):
             if entry is None:
                 slots.append(None)       # EMPTY slot: keep it in the layout, not dropped
                 continue
-            uid, io_level = entry
+            uid, io_level, boost = entry
             slot = _resolve_slot(uid, io_level, lk)
             if slot:
+                if boost:
+                    slot["boost"] = boost
                 slots.append(slot)
             else:
                 unresolved_enh.append(uid)

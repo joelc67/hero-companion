@@ -1356,6 +1356,13 @@ async function init() {
     build.pvp = e.target.checked;
     recompute();
   });
+  // #9 combat suppression — a VIEW of the totals, never a build property: not
+  // saved, not exported, never sent on solve paths (buildPayload adds it only
+  // for calculate/validate so the engine can drop suppressed effect layers).
+  $("suppression-toggle").addEventListener("change", (e) => {
+    build.suppression = e.target.checked;
+    recompute();
+  });
 
   // AI availability. Standalone builds ship AI-OFF (ai_enabled false): the whole
   // assistant seam disappears — no dead chip, no "Ask Claude" that can't answer.
@@ -2399,8 +2406,11 @@ function slotHtml(powerIdx, slotIdx, slot) {
       ? `<img src="${url}" alt="${slot.piece_name}" loading="lazy"
            onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'slot-abbr',textContent:this.alt.slice(0,2)}))">`
       : `<span class="slot-abbr">${slot.piece_name.slice(0,2)}</span>`;
-    const lvl = slot.io_level ? ` · level ${slot.io_level}${slot.attuned ? " (attuned)" : ""}` : "";
-    const tag = slot.attuned ? "A" : (slot.io_level || "");
+    // #6 level fidelity: "50+5" = a boosted IO; a level-53 HO shows plain "53".
+    const plus = (!slot.attuned && slot.boost > 0) ? `+${slot.boost}` : "";
+    const lvl = slot.io_level ? ` · level ${slot.io_level}${plus}${slot.attuned ? " (attuned)" : ""}`
+                              : (plus ? ` · boosted ${plus}` : "");
+    const tag = slot.attuned ? "A" : (slot.io_level ? `${slot.io_level}${plus}` : "");
     return `<div class="slot filled${slot.unique?' unique':''}" title="${slot.set_name}: ${slot.piece_name}${lvl}\n(click to change, right-click to clear)"
       onclick="openSlot(${powerIdx},${slotIdx})"
       oncontextmenu="clearSlot(event,${powerIdx},${slotIdx})">${inner}${tag ? `<span class="slot-lvl">${tag}</span>` : ""}</div>`;
@@ -2819,6 +2829,8 @@ window.rerollCharacter = function () {
 // Enhancement picker modal (SLOT ENFORCEMENT happens here)
 // ---------------------------------------------------------------------------
 let MODAL_SETS = [];
+let MODAL_COMMONS = [];
+let MODAL_SPECIALS = [];
 
 window.openSlot = async function (powerIdx, slotIdx) {
   activeSlot = { powerIdx, slotIdx };
@@ -2826,26 +2838,93 @@ window.openSlot = async function (powerIdx, slotIdx) {
   $("modal-title").textContent = `Enhancement for: ${pw.display_name}`;
   $("modal-sub").textContent =
     `Showing ONLY sets matching this power's categories: ` +
-    (pw.accepted_set_categories.join(", ") || "none");
+    (pw.accepted_set_categories.join(", ") || "none") +
+    ` — plus the single enhancements (common IOs, Hamidon Origins, D-Syncs) it accepts.`;
   $("modal-search").value = "";
   $("modal").classList.remove("hidden");
 
-  // Ask backend for ONLY the sets whose category fits this power.
+  // Ask backend for ONLY the sets whose category fits this power (full_name
+  // lets it also work out which single enhancements the power accepts).
   const res = await api("/sets/for-power", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ accepted_set_category_ids: pw.accepted_set_category_ids }),
+    body: JSON.stringify({ accepted_set_category_ids: pw.accepted_set_category_ids,
+                           full_name: pw.full_name }),
   });
   MODAL_SETS = res.sets || [];
+  MODAL_COMMONS = res.commons || [];
+  MODAL_SPECIALS = res.specials || [];
   renderModalSets();
 };
+
+// The "single enhancements" block: common crafted IOs + HO/Titan/Hydra/D-Sync
+// specials the power accepts. Rendered as collapsible rows in the same style as
+// sets — identical copies stack freely, so no per-set piece rules apply here.
+function singlesHtml(q) {
+  const rows = [];
+  const commons = MODAL_COMMONS.filter(c => !q || c.name.toLowerCase().includes(q));
+  if (commons.length) {
+    rows.push({
+      head: "Common IOs", meta: `${commons.length} kinds · crafted, level 50 · no set bonuses`,
+      icon: commons[0].image,
+      pieces: commons.map(c => ({ fn: `pickCommon(${JSON.stringify(c.uid)})`,
+        image: c.image, name: `${c.name} IO`, sub: (c.enhances || []).join("/") })),
+    });
+  }
+  const fams = {};
+  for (const s of MODAL_SPECIALS) {
+    if (q && !s.name.toLowerCase().includes(q)) continue;
+    (fams[s.family] = fams[s.family] || []).push(s);
+  }
+  for (const fam of Object.keys(fams).sort()) {
+    const list = fams[fam];
+    rows.push({
+      head: fam, meta: `${list.length} kinds · multi-aspect · identical copies stack freely`,
+      icon: list[0].image,
+      pieces: list.map(s => ({ fn: `pickSpecial(${JSON.stringify(s.uid)})`,
+        image: s.image, name: s.name, sub: (s.enhances || []).join("/") })),
+    });
+  }
+  if (!rows.length) return "";
+  let html = `<div class="set-group"><h4>Single enhancements (no set)</h4>`;
+  for (const r of rows) {
+    const icon = enhIconUrl(r.icon);
+    html += `<div class="set-item">
+      <div class="si-head" onclick="this.nextElementSibling.classList.toggle('open')">
+        ${icon ? `<img class="si-icon" src="${icon}" alt="" loading="lazy">` : ""}
+        <div>
+          <span class="si-name">${r.head}</span>
+          <div class="si-meta">${r.meta}</div>
+        </div>
+      </div>
+      <div class="piece-list">
+        ${r.pieces.map(p => {
+          const pIcon = enhIconUrl(p.image);
+          return `
+          <div class="piece" onclick='${p.fn}'>
+            ${pIcon ? `<img class="piece-icon" src="${pIcon}" alt="" loading="lazy">` : ""}
+            <span>${p.name}</span>
+            <span class="muted">${p.sub}</span>
+          </div>`;
+        }).join("")}
+      </div>
+    </div>`;
+  }
+  return html + `</div>`;
+}
 
 function renderModalSets() {
   const q = ($("modal-search").value || "").toLowerCase();
   const host = $("modal-sets");
-  if (!MODAL_SETS.length) {
+  const singles = singlesHtml(q);
+  if (!MODAL_SETS.length && !singles) {
     host.innerHTML = `<p class="muted">No enhancement sets fit this power's
-      categories. (Standard IOs/SOs would go here in a full slotting model.)</p>`;
+      categories, and it accepts no single enhancements we know.</p>`;
+    return;
+  }
+  if (!MODAL_SETS.length) {
+    host.innerHTML = singles + `<p class="muted">No enhancement sets fit this
+      power's categories — the single enhancements above are what it takes.</p>`;
     return;
   }
   const groups = {};
@@ -2882,8 +2961,45 @@ function renderModalSets() {
     }
     html += `</div>`;
   }
-  host.innerHTML = html || `<p class="muted">No sets match "${q}".</p>`;
+  host.innerHTML = (singles + html) || `<p class="muted">Nothing matches "${q}".</p>`;
 }
+
+// Manual single-enhancement picks (#7). Slot shapes mirror what imports and the
+// optimizer already produce, so every downstream consumer (engine totals,
+// validation, Mids export, trims) treats hand picks identically.
+window.pickCommon = function (uid) {
+  const c = MODAL_COMMONS.find(x => x.uid === uid);
+  if (!c || !activeSlot) return;
+  const { powerIdx, slotIdx } = activeSlot;
+  recordEdit();
+  build.powers[powerIdx].slots[slotIdx] = {
+    set_uid: null, set_name: "Common IO",
+    piece_uid: c.uid, piece_name: `${c.name} IO`,
+    category_id: null, enhances: c.enhances, unique: false,
+    image: c.image || "",
+    io_level: 50,             // crafted commons are built at 50; boosts store at 50
+  };
+  closeModal();
+  renderPowers();
+  recompute();
+};
+
+window.pickSpecial = function (uid) {
+  const s = MODAL_SPECIALS.find(x => x.uid === uid);
+  if (!s || !activeSlot) return;
+  const { powerIdx, slotIdx } = activeSlot;
+  recordEdit();
+  build.powers[powerIdx].slots[slotIdx] = {
+    set_uid: null, set_name: s.family,
+    piece_uid: s.uid, piece_name: s.name,
+    category_id: null, enhances: s.enhances, unique: false,
+    image: s.image || "",
+    _ho: true,                // grade-flat value — never level-scaled, never swapped out
+  };
+  closeModal();
+  renderPowers();
+  recompute();
+};
 
 window.pickPiece = function (setUid, setName, pieceIdx) {
   const s = MODAL_SETS.find(x => x.uid === setUid);
@@ -3082,6 +3198,7 @@ function buildPayload() {
     include_incarnates: build.include_incarnates,
     include_external: build.include_external,
     pvp: build.pvp,
+    suppression: build.suppression,
     powers: build.powers.map(p => ({
       full_name: p.full_name,
       display_name: p.display_name,
