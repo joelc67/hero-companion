@@ -39,6 +39,17 @@
   hit points summed as a percent). Totals now show the real number — "+79.9% =
   2410 HP (capped; 3286 uncapped)" — plus regeneration in HP/sec and recovery in
   end/sec, the way the game reports them.
+- **+HP set bonuses were 10x too big.** Verified against the game client's own
+  set-bonus powers: a "Large Increased Health Bonus" is ~1.88% of base HP, not
+  18.75%. Every +HP set bonus was inflated tenfold in the totals and in the
+  optimizer's HP math. Two Touch of the Nictus pieces now read +1.87%, a third
+  Luck of the Gambler +1.12% — matching the live game exactly.
+- **Card notes now describe the actual decision.** Slotting chips say "5 of 6 Red
+  Fortune — earns +5% recharge, +1.5% fire resistance" instead of a vague "full
+  set for its bonuses"; a couple of procs is labeled "Procs", not "Proc bomb";
+  and Hamidon-Origin proc hybrids get their own "Proc hybrid" note explaining
+  the pattern (these cards previously showed nothing and could wrongly trigger
+  the respec nag — that misfire is gone).
 
 ## 0.12.14 — July 7, 2026
 
