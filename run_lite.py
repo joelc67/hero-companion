@@ -643,11 +643,36 @@ def _self_update(url):
     return "updating"
 
 
+def _open_in_default_browser(path):
+    """Open a local HTML file in the user's DEFAULT HTTP BROWSER — not whatever
+    app owns the .html FILE association. webbrowser.open("file:///…") routes
+    through ShellExecute and the .html association, so on a machine where a text
+    editor has claimed .html the page opens as raw source in the editor (field
+    report, 2026-07-08: the update-check result opened "in a text file"). The
+    browser that handles http links is what the user means by "my browser"."""
+    import subprocess
+    import webbrowser
+    url = "file:///" + path.replace("\\", "/")
+    try:
+        import winreg
+        with winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER,
+                r"Software\Microsoft\Windows\Shell\Associations"
+                r"\UrlAssociations\http\UserChoice") as k:
+            progid = winreg.QueryValueEx(k, "ProgId")[0]
+        with winreg.OpenKey(winreg.HKEY_CLASSES_ROOT,
+                            progid + r"\shell\open\command") as k:
+            cmd = winreg.QueryValueEx(k, None)[0]
+        exe = cmd.split('"')[1] if cmd.startswith('"') else cmd.split()[0]
+        subprocess.Popen([exe, url])
+    except Exception:  # noqa: BLE001 — any registry surprise: old behavior
+        webbrowser.open(url)
+
+
 def _result_page(title, body_html):
     """Show a result in the BROWSER instead of a modal dialog. A browser window is a
     normal top-level app the user can always alt-tab to and click — unlike a modal
     popped from a tray menu, which can lose input to the fullscreen game (field report)."""
-    import webbrowser
     p = os.path.join(APPDIR, "lite_message.html")
     os.makedirs(APPDIR, exist_ok=True)
     html = (f"<!doctype html><meta charset='utf-8'><title>{title}</title>"
@@ -656,7 +681,7 @@ def _result_page(title, body_html):
             f"<h2 style='color:#5abeff'>{title}</h2>{body_html}</body>")
     with open(p, "w", encoding="utf-8") as f:
         f.write(html)
-    webbrowser.open("file:///" + p.replace("\\", "/"))
+    _open_in_default_browser(p)
 
 
 def _make_icon_image():
