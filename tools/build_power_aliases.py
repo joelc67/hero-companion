@@ -38,10 +38,16 @@ SNAP = os.path.join(os.path.dirname(__file__), "gamedata", "power_values.json")
 OUT = os.path.join(os.path.dirname(__file__), "gamedata", "power_aliases.json")
 
 # Documented one-off renames (same power, name too different for fuzzy):
-# Mids named MM Radiation Emission's heal after the SET; the client calls it
-# Radiant_Aura (matches every other Rad Emission AT variant).
+# * Mids named MM Radiation Emission's heal after the SET; the client calls it
+#   Radiant_Aura (matches every other Rad Emission AT variant).
+# * Evasive Maneuvers lives at the client's internal "Afterburner" record (the
+#   i27 flight-pool rework reused the record — City of Data keeps the power at
+#   pool.flight.afterburner): rosters are congruent (ours lacks Afterburner,
+#   the client lacks Evasive_Maneuvers), rech/cast/range identical, end cost
+#   rebalanced 0.13 -> 0.052 (flows to sync_power_values as ordinary drift).
 RENAMES = {"Mastermind_Buff.Radiation_Emission.Radiation_Emission":
-           "Mastermind_Buff.Radiation_Emission.Radiant_Aura"}
+           "Mastermind_Buff.Radiation_Emission.Radiant_Aura",
+           "Pool.Flight.Evasive_Maneuvers": "Pool.Flight.Afterburner"}
 
 
 def squash(s):
@@ -73,6 +79,7 @@ def main():
         snap_sets[s].add(base)
 
     aliases, inherents, roster_diffs = {}, [], []
+    rename_candidates = {}
     for ours_set, bases in sorted(unverified.items()):
         if ours_set.startswith("Inherent."):
             inherents.extend(f"{ours_set}.{b}" for b in sorted(bases))
@@ -116,37 +123,54 @@ def main():
                 print(f"    fuzzy: {b} -> {best_set}.{best}  (r={best_r:.2f})")
                 continue
             # VALUE FINGERPRINT: an internal-name rename keeps the power's numbers
-            # (Power_of_the_Depths = client Call_Depths). If exactly ONE unclaimed
-            # client power in the candidate sets shares rech/end/cast/range, treat
-            # it as the same power renamed. A REWORK (our Ice Mastery Build_Up vs
-            # the client's Ice_Slick) fingerprints differently and stays a roster
-            # diff — those must never be silently aliased.
+            # (Power_of_the_Depths = client Call_Depths). STRICT tier only for
+            # auto-aliasing — rech/end/cast/range ALL equal + a unique hit.
+            # A relaxed tier (end free — a rename + endurance rebalance looks like
+            # this) proved able to pair UNRELATED powers on timing coincidences, so
+            # it only nominates CANDIDATES for human adjudication (Joel knows the
+            # live game; confirmed pairs graduate to the pinned RENAMES table).
+            # A REWORK (our Ice Mastery Build_Up vs the client's Ice_Slick) matches
+            # neither and stays a roster diff — never silently aliased.
             ours_rec = srv.POWER_BY_FULL.get(ours_full) or {}
-            fp_hits = []
-            for c in cand_names:
-                claimed = {a.rsplit(".", 1)[1] for o, a in aliases.items()
-                           if a.rsplit(".", 1)[0] == c}
-                for cb in snap_sets[c] - ours_roster - claimed:
-                    g = snap.get(f"{c}.{cb}") or {}
-                    same = all(
-                        abs(float(ours_rec.get(of) or 0) - float(g.get(gf) or 0))
-                        <= max(0.01, 0.02 * abs(float(g.get(gf) or 0)))
-                        for of, gf in (("base_recharge", "rech"), ("end_cost", "end"),
-                                       ("cast_time", "cast"), ("range", "range")))
-                    if same:
-                        fp_hits.append(f"{c}.{cb}")
-            if len(fp_hits) == 1:
-                aliases[ours_full] = fp_hits[0]
-                print(f"    fingerprint: {b} -> {fp_hits[0]}")
-            else:
-                roster_diffs.append(ours_full)
+
+            def _match(g, fields):
+                return all(abs(float(ours_rec.get(of) or 0) - float(g.get(gf) or 0))
+                           <= max(0.01, 0.02 * abs(float(g.get(gf) or 0)))
+                           for of, gf in fields)
+
+            STRICT = (("base_recharge", "rech"), ("end_cost", "end"),
+                      ("cast_time", "cast"), ("range", "range"))
+            RELAXED = (("base_recharge", "rech"), ("cast_time", "cast"),
+                       ("range", "range"))
+
+            def _unique_hit(fields):
+                hits = []
+                for c in cand_names:
+                    claimed = {a.rsplit(".", 1)[1] for o, a in aliases.items()
+                               if a.rsplit(".", 1)[0] == c}
+                    for cb in snap_sets[c] - ours_roster - claimed:
+                        if _match(snap.get(f"{c}.{cb}") or {}, fields):
+                            hits.append(f"{c}.{cb}")
+                return hits[0] if len(hits) == 1 else None
+
+            hit = _unique_hit(STRICT)
+            if hit:
+                aliases[ours_full] = hit
+                print(f"    fingerprint: {b} -> {hit}")
+                continue
+            cand = _unique_hit(RELAXED)
+            if cand:
+                rename_candidates[ours_full] = cand
+                print(f"    CANDIDATE (needs adjudication): {b} -> {cand}")
+            roster_diffs.append(ours_full)
 
     total = sum(len(v) for v in unverified.values())
     print(f"\naliased: {len(aliases)}  inherents: {len(inherents)}  "
           f"roster diffs: {len(roster_diffs)}  (classified {len(aliases) + len(inherents) + len(roster_diffs)} of {total})")
     json.dump({"aliases": aliases,
                "inherents_not_in_snapshot": sorted(inherents),
-               "roster_diffs": sorted(roster_diffs)},
+               "roster_diffs": sorted(roster_diffs),
+               "rename_candidates_awaiting_adjudication": rename_candidates},
               open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"wrote {OUT}")
 
