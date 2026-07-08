@@ -177,6 +177,38 @@ check("HOs grade-flat (no ref level), common IOs ref level 50",
       f"HO uids wrongly ref-leveled: {ho_ref[:3] or 'none'}; "
       f"common IOs ref-leveled correctly: {common_ok}")
 
+# ── FIELD REPORT 2 (Joel, 2026-07-08): Stalker Rad/Dark — pool armor toggles must be
+# real set hosts (the old toggle-recharge gate silently excluded Tough/Weave/Maneuvers
+# from the enhancement credit), Hasten keeps its 2 slots, and 1-slot cards carry notes.
+print("\nField report 2 — Stalker Radiation/Dark Armor (itrial, front line, teleport):")
+ap2 = c.post("/build/autopick", json={"archetype": "Class_Stalker",
+    "primary": "Stalker_Melee.Radiation_Melee", "secondary": "Stalker_Defense.Dark_Armor",
+    "role": "damage", "content": "itrial", "exposure": "front",
+    "travel": "teleport"}).get_json()
+pre2 = [{"full_name": p["full_name"], "slots": p.get("slots"),
+         "earned_slot_count": p.get("earned_slot_count")} for p in ap2["powers"]]
+sol2 = c.post("/build/solve", json={"archetype": "Class_Stalker", "goal": "",
+    "tier": "premium", "content": "itrial", "role": "damage", "exposure": "front",
+    "preserve": False, "keep_layout": False, "powers": pre2}).get_json()
+by_name = {p.get("display_name"): p for p in sol2["powers"]}
+
+tw_pieces = sum(1 for nm in ("Tough", "Weave")
+                for s in (by_name.get(nm, {}).get("slots") or [])
+                if s and s.get("set_uid"))
+check("Fighting-pool toggles are real set hosts (Tough+Weave >= 4 set pieces)",
+      tw_pieces >= 4, f"Tough+Weave set pieces: {tw_pieces}")
+
+h2 = len([s for s in (by_name.get("Hasten", {}).get("slots") or []) if s])
+check("Hasten keeps its standard 2 slots on the Stalker too", h2 >= 2,
+      f"Hasten slots: {h2}")
+
+noteless = [p.get("display_name") for p in sol2["powers"]
+            if len([s for s in (p.get("slots") or []) if s]) == 1
+            and (p.get("accepted_set_category_ids") or p.get("accepted_set_categories"))
+            and not srv._slot_plan(p, "Class_Stalker")]
+check("every 1-slot set-capable card carries an honest note",
+      not noteless, noteless or "all 1-slot cards explain themselves")
+
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n══ {'ALL ' + str(len(results)) + ' CHECKS PASS' if not fails else 'FAILURES: ' + ', '.join(fails)} ══")
 sys.exit(1 if fails else 0)

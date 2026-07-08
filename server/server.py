@@ -1219,6 +1219,22 @@ def _slot_plan(power, archetype=None):
     slotting decision on the card — real piece counts ('4 of 6', never '4x ... a full
     set'), real bonus magnitudes, and no 'Proc bomb' badge on a 2-slot power."""
     slots = [s for s in (power.get("slots") or []) if s]
+    if len(slots) == 1:
+        # Field report (Joel's Stalker): 1-slot toggles showed NO note, so the card
+        # couldn't defend itself. Be honest about what the single slot is doing.
+        s = slots[0]
+        gk = _global_key(s.get("set_name"))
+        if gk:
+            return {"kind": "global-mules",
+                    "text": f"Global mule: {s.get('set_name')} ({_GLOBAL_DESC[gk]}) — "
+                            "a build-wide unique that works from this single slot."}
+        if not s.get("set_uid") and (power.get("accepted_set_category_ids")
+                                     or power.get("accepted_set_categories")):
+            return {"kind": "placeholder",
+                    "text": f"Base slot only — a generic {s.get('piece_name') or 'IO'}. "
+                            "The solve spent the 67-slot budget elsewhere; move slots "
+                            "here if you want more from this power."}
+        return None
     if len(slots) < 2:
         return None
     procs = [s for s in slots if _piece_is_proc(s)]
@@ -1291,6 +1307,17 @@ def _slot_plan(power, archetype=None):
     # 6) globals + filler
     if glob:
         return {"kind": "mixed", "text": "Globals + enhancement: " + _glist(glob) + "."}
+    # 7) set-less power slotted with commons (Hasten's 2x Recharge) — say so plainly
+    if (not power.get("accepted_set_category_ids")
+            and not power.get("accepted_set_categories")
+            and slots and all(not s.get("set_uid") for s in slots)):
+        names = Counter((s.get("piece_name") or "IO") for s in slots)
+        return {"kind": "placeholder",
+                "text": "Generic slotting: "
+                        + ", ".join(f"{n}x {nm}" if n > 1 else nm
+                                    for nm, n in names.items())
+                        + " — this power takes no enhancement sets, so plain IOs are "
+                          "the right (and only) investment."}
     return None
 
 

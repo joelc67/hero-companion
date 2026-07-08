@@ -2248,6 +2248,7 @@ const _PLAN_META = {
   "mixed":        ["🌐", "Globals", "global-mules"],
   "procs":        ["💥", "Procs", "proc-bomb"],
   "ho-hybrid":    ["🧬", "Proc hybrid", "proc-bomb"],
+  "placeholder":  ["▫", "Base slot", null],
 };
 function slotPlanHtml(pw) {
   const plan = pw.slot_plan;

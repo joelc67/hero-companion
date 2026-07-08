@@ -681,15 +681,18 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
         # _options_for_power credits the res/def each set ENHANCES in it — making the
         # ILP size that set up to actually cap the survival floor.
         _types = {t.lower() for t in (p.get("accepted_enhancement_types") or [])}
-        # Recharge gate: native armor toggles store ~0-4s (< 8 as always), but SQUISHIES' epic
-        # shields (Scorpion/Frozen/Charged Armor) store exactly 8.0 — `< 8` silently excluded them,
-        # so the patron shield never got the armor-enhancement credit and sat at 1 slot, unenhanced.
-        # Widened to <= 10 for squishies ONLY — armored ATs keep their tuned behavior untouched.
-        _arm_rt = 10.5 if archetype not in _ARMOR_NATIVE_ATS else 8
+        # NO recharge gate: a TOGGLE (power_type 2) is always-on by definition — the
+        # old `< 8` (armor-native) / `<= 10.5` (squishy) gates silently excluded the
+        # POOL armor toggles (Tough/Weave store 10.0s, Maneuvers 15.0s!) from the
+        # enhancement credit AND the end-cost term. Field-verified (Joel's Stalker
+        # Rad/Dark: Weave 1-slot with the melee-def target UNMET; Maelwys's MM:
+        # Maneuvers 1-slot): Maneuvers had NEVER earned the credit on any AT. The
+        # long-recharge click armors this gate feared are power_type 0 — already
+        # excluded by the toggle check.
         p["_armor_res"] = (p.get("power_type") == 2 and not p["_is_attack"]
-                           and (p.get("base_recharge") or 0) < _arm_rt and "resist damage" in _types)
+                           and "resist damage" in _types)
         p["_armor_def"] = (p.get("power_type") == 2 and not p["_is_attack"]
-                           and (p.get("base_recharge") or 0) < _arm_rt and "defense buff" in _types
+                           and "defense buff" in _types
                            and not p["_armor_res"])
         # Squishy AT + armor toggle (the epic shield case): floor it at 2 enhanced pieces — no
         # master buys a patron shield and leaves it raw. Native-armor ATs are exempt: forcing 2pc
@@ -1062,9 +1065,17 @@ def _enforce_added_cap(powers, budget):
         return 2
 
     def _pop_one():
-        # 1) junk common-IO fills beyond a power's base slot
+        # 1) junk common-IO fills beyond a power's base slot. EXCEPT: a set-less
+        # long-recharge click's standard 2-slot fill (Hasten's two Recharge IOs —
+        # the Guyver rule) is protected; trimming it first was field-reported
+        # (Stalker Rad/Dark shipped Hasten at 1 slot while set tails survived).
         for p in powers:
             if len(p["_slots"]) > 1:
+                setless_std2 = (not p.get("accepted_set_category_ids")
+                                and (p.get("base_recharge") or 0) >= 60
+                                and len(p["_slots"]) <= 2)
+                if setless_std2:
+                    continue
                 for i in range(len(p["_slots"]) - 1, 0, -1):
                     s = p["_slots"][i]
                     if s.get("_fill") and not s.get("_locked"):
