@@ -834,6 +834,10 @@ def _explain_content(archetype, content, primary, secondary, res_cap):
 
 
 def _explain_exposure(exposure, primary, secondary):
+    # No invented answers (no-defaults ruling): unanswered = no explanation. The
+    # old fallthrough narrated "flexible range" for a question nobody answered.
+    if not exposure:
+        return None
     positional = ai_build.positional_build(primary, secondary)
     if exposure == "front":
         text = ("Front line: you are hit in MELEE, so the defense vector adds a 45% "
@@ -857,6 +861,10 @@ def _explain_exposure(exposure, primary, secondary):
 
 
 def _explain_travel(travel, content, archetype):
+    # No invented answers (no-defaults ruling): an unanswered travel question has
+    # no explanation — and never the old "P2W jet pack covers it" assertion.
+    if not travel:
+        return None
     innate = archetype in ("Class_Peacebringer", "Class_Warshade")
     texts = {
         "none": "No travel pool spent — a P2W jet pack covers the gaps, and the "
@@ -914,11 +922,18 @@ def _summarize_intent(archetype, primary, secondary, role, content, exposure,
     pf = tgt.get("perk_focus") or spec.get("perk_focus")
     if pf:
         items.append(f"Spare slots chase: {pf}")
+    # Unanswered questions are SAID to be unanswered — never asserted (the
+    # travel-carryover field report caught the summary claiming "no extra travel
+    # power" for a question nobody had answered yet).
+    exp_part = (f"fighting from {_explain_exposure(exposure, primary, secondary)['label']}"
+                if exposure else "fighting range not chosen yet")
+    trav_d = _explain_travel(travel, content, archetype)
+    trav_part = (f"traveling by {trav_d['label'].lower()}" if trav_d
+                 else "travel not chosen yet")
     lead = (f"A {at_name} — {_ps_label(primary)} / {_ps_label(secondary)} — built as "
             f"{spec.get('label') or role} for "
             f"{(ai_build.CONTENT_PRESETS.get(content) or {}).get('label') or content}, "
-            f"fighting from {_explain_exposure(exposure, primary, secondary)['label']}, "
-            f"traveling by {_explain_travel(travel, content, archetype)['label'].lower()}.")
+            f"{exp_part}, {trav_part}.")
     return {"text": lead, "targets": items}
 
 
@@ -930,10 +945,13 @@ def explain_intent():
     body = request.get_json(force=True, silent=True) or {}
     archetype = body.get("archetype")
     primary, secondary = body.get("primary"), body.get("secondary")
+    # No server-side inventions either (no-defaults ruling): role/content keep a
+    # fallback only because the client never calls without them; exposure and
+    # travel pass through as-is and unanswered ones explain nothing.
     role = body.get("role") or "damage"
     content = body.get("content") or "general"
-    exposure = body.get("exposure") or "flex"
-    travel = body.get("travel") or "none"
+    exposure = body.get("exposure") or None
+    travel = body.get("travel") or None
     at = ARCH_BY_NAME.get(archetype) or {}
     at_name = at.get("display_name") or (archetype or "?").replace("Class_", "")
     res_cap = round((at.get("res_cap") or 0.75) * 100, 1)

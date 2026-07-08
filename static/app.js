@@ -275,7 +275,16 @@ async function openWizard(mode) {
   else { $("wiz-exposure").value = ""; wizSetSrc("exposure", ""); }
   // Travel is ALWAYS the user's pick — endgame entry can REQUIRE specific travel
   // (BAF/Lambda enter only by Flight or Teleport), so the tool never chooses it.
-  $("wiz-travel").value = ""; wizSetSrc("travel", "");
+  // But a pick you ALREADY made restores: the stored wizard answer, else the
+  // travel power the build demonstrably contains (field-report bug: Teleport
+  // was in the build yet reopen reset travel to unanswered). Absence is never
+  // inferred as "none" — that's only restorable from an explicit prior answer.
+  const TRAVEL_POWERS = { "Pool.Teleportation.Teleport": "teleport", "Pool.Flight.Fly": "fly",
+                          "Pool.Speed.Super_Speed": "super_speed", "Pool.Leaping.Super_Jump": "super_jump" };
+  let trav = (build && build._travel) || null;
+  if (!trav && build) trav = (build.powers || []).map(p => TRAVEL_POWERS[p.full_name]).find(Boolean) || null;
+  $("wiz-travel").value = trav || "";
+  wizSetSrc("travel", trav ? "setup" : "");
   $("wiz-primary").innerHTML = "<option value=''>— primary set —</option>";
   $("wiz-secondary").innerHTML = "<option value=''>— secondary set —</option>";
   $("wiz-primary").disabled = $("wiz-secondary").disabled = true;
@@ -798,10 +807,13 @@ async function wizExplain(changedKey) {
     archetype: at || null,
     primary: ($("wiz-primary") && $("wiz-primary").value) || null,
     secondary: ($("wiz-secondary") && $("wiz-secondary").value) || null,
-    role: ($("wiz-role") && $("wiz-role").value) || "damage",
-    content: ($("wiz-content") && $("wiz-content").value) || "general",
-    exposure: ($("wiz-exposure") && $("wiz-exposure").value) || "flex",
-    travel: ($("wiz-travel") && $("wiz-travel").value) || "none",
+    // RAW values only — inventing "none"/"flex" here made the pop-up and summary
+    // assert answers nobody gave (the travel-carryover field report). The server
+    // says "not chosen yet" for whatever is missing.
+    role: ($("wiz-role") && $("wiz-role").value) || null,
+    content: ($("wiz-content") && $("wiz-content").value) || null,
+    exposure: ($("wiz-exposure") && $("wiz-exposure").value) || null,
+    travel: ($("wiz-travel") && $("wiz-travel").value) || null,
   })).catch(() => null);
   if (!r || !r.ok || seq !== WIZ_EXPLAIN_SEQ) return;
   if (changedKey) WIZ_POP_KEY = changedKey;
@@ -862,6 +874,7 @@ async function buildRespec() {
   const content = $("wiz-content").value;
   const exposure = $("wiz-exposure").value, travel = $("wiz-travel").value;
   build._exposure = exposure;   // carries into the solve so the def vector matches
+  build._travel = travel;       // remembered so reopening restores YOUR answer
   $("wiz-build").disabled = true;
   $("wiz-status").textContent = "Choosing powers + solving the slotting…";
   try {
@@ -2153,8 +2166,8 @@ function powerCardHtml(pw, idx, icon, lv) {
           <label class="include-toggle" title="Count this power's stats in the totals">
             <input type="checkbox" ${pw.include_in_totals ? "checked" : ""}
               onchange="toggleInclude(${idx}, this.checked)">Σ</label>
-          <button class="mini" onclick="changeSlots(${idx}, -1)" title="remove a slot">−</button>
-          <button class="mini" onclick="changeSlots(${idx}, 1)" title="add a slot">+</button>
+          <button class="mini" onclick="changeSlots(${idx}, -1)" title="return this power's last slot to the shared pool (67 added slots for the whole build)">−</button>
+          <button class="mini" onclick="changeSlots(${idx}, 1)" title="spend a free slot from the shared pool here (67 added slots for the whole build)">+</button>
         </span>
       </div>
       <div class="slot-row">${pw.slots.map((s, si) => slotHtml(idx, si, s)).join("")}</div>
@@ -2174,8 +2187,8 @@ function powerCardHtml(pw, idx, icon, lv) {
         <label class="include-toggle" title="Count this power's stats in the totals">
           <input type="checkbox" ${pw.include_in_totals ? "checked" : ""}
             onchange="toggleInclude(${idx}, this.checked)">Σ</label>
-        <button class="mini" onclick="changeSlots(${idx}, -1)" title="remove a slot">−</button>
-        <button class="mini" onclick="changeSlots(${idx}, 1)" title="add a slot">+</button>
+        <button class="mini" onclick="changeSlots(${idx}, -1)" title="return this power's last slot to the shared pool (67 added slots for the whole build)">−</button>
+        <button class="mini" onclick="changeSlots(${idx}, 1)" title="spend a free slot from the shared pool here (67 added slots for the whole build)">+</button>
         <button class="remove-power" onclick="removePower(${idx})" title="remove this power">✕</button>
       </span>
     </div>
@@ -2201,6 +2214,19 @@ window.closePowerInfo = function () {
   if (panel) panel.classList.add("hidden");
   document.querySelector("main").classList.remove("has-info");
 };
+// The panel closes on Esc and outside-click, not only via its ✕ (the steady-
+// mouse tax, UX note 5). Undo (Ctrl+Z) stays edits-only and ignores the panel.
+document.addEventListener("keydown", (ev) => {
+  if (ev.key === "Escape" && SELECTED_POWER) closePowerInfo();
+});
+document.addEventListener("click", (ev) => {
+  if (!SELECTED_POWER) return;
+  const panel = $("power-info");
+  if (panel && !panel.classList.contains("hidden")
+      && !panel.contains(ev.target) && !ev.target.closest(".pc-title")) {
+    closePowerInfo();
+  }
+});
 
 function renderPowerInfo() {
   const panel = $("power-info");
@@ -2467,7 +2493,12 @@ function updateEditBar() {
   const tally = $("slot-tally");
   if (tally) {
     const used = _addedSlots();
-    tally.textContent = `${used} / ${SLOT_BUDGET} slots`;
+    // Teach the shared-pool model at the moment it matters: whenever slots are
+    // free, say so and say what to do with them (field-report UX note 5).
+    const free = SLOT_BUDGET - used;
+    tally.textContent = `${used} / ${SLOT_BUDGET} slots`
+      + (free > 0 && (build.powers || []).length
+         ? ` — ${free} free: click + on a power to spend` : "");
     tally.classList.toggle("over", used > SLOT_BUDGET);
   }
 }
