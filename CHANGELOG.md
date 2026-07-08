@@ -1,5 +1,35 @@
 # Hero Companion — What's New
 
+## Unreleased (staged for 0.12.15 — awaiting Joel's review of the single-build tests)
+
+- **Common IO icons are back.** 0.12.13 accidentally dropped every common IO's icon,
+  so a generated build's Accuracy/Damage/Endurance IOs rendered as empty-looking
+  slots next to expensive globals. The same defect gave Hamidon Origins a level they
+  don't have, which scaled imported low-level HOs toward zero. Both fixed, and the
+  audit now fails hard if any slotted piece ever ships icon-less again.
+- **Hamidon Origins stack legally.** The validator warned "duplicate piece slotted
+  2x" on double-Nucleolus cores. HOs, Titan/Hydra Origins, and D-Syncs are not set
+  pieces — the game lets you slot as many identical copies as you like, and the
+  planner now agrees.
+- **Real attacks reach 6 slots.** The optimizer always wanted six, but a budget
+  accounting gap plus an order-blind trim kept every real attack at exactly five
+  while filler powers kept six. Attacks now get their sixth slot; any trimming falls
+  on junk fills and filler powers first, never the rotation.
+- **Proc bombs carry accuracy.** Big proc bombs reserve a slot for a Nucleolus
+  Exposure (Accuracy/Damage, recharge-free so every proc keeps its full chance) —
+  and bombs no longer shrink a 6-slot power down to the proc count.
+- **No more orphaned set pieces.** The −res anchor, Force Feedback seating, and the
+  endurance-relief pass all refuse swaps that would strand a lone set piece with no
+  bonus, eat a global, or overwrite a proc. Force Feedback now lands in a spammed
+  knockback attack's spare slot instead of cannibalizing a proc bomb.
+- **Signature support buffs always work.** A damage-role Mastermind's Barrier Reef
+  shipped as a bare 1-slot mule; signature buff clicks from a support set now always
+  carry a working set, whatever role the build solves for.
+- **Max HP totals are honest.** A /Regen build displayed "+58913% Max HP" (flat
+  hit points summed as a percent). Totals now show the real number — "+79.9% =
+  2410 HP (capped; 3286 uncapped)" — plus regeneration in HP/sec and recovery in
+  end/sec, the way the game reports them.
+
 ## 0.12.14 — July 7, 2026
 
 - **Synced with the game's July 7 update (Issue 28, Page 3).** The patch normalized
