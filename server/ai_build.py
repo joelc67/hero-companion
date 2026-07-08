@@ -395,6 +395,15 @@ ROLE_PRESETS = {
                    "perk_focus": "recharge", "floors": {"recharge": 100, "recovery": 40}},  # alias (discovery uses "control")
     "debuffer":   {"label": "Debuffer", "roles": ["debuffing", "controlling", "survival"],
                    "perk_focus": "recharge", "floors": {"recharge": 90, "recovery": 40}},
+    # MIXED ROLE (Joel's design ruling, 2026-07-08): the honest choice for players
+    # who don't specialize — the players the old silent "damage dealer" default
+    # used to absorb. Content-baseline ("balanced") targets with moderate uptime
+    # floors and no role tilt beyond survival; the scorer's role lens falls
+    # through to raw physics (first_principles.role_contribution's no-weight
+    # fallback = the whole-team-in-one-character generalist objective). Rides the
+    # existing v23 focus-split machinery — no champion or model dependency.
+    "mixed": {"label": "Mixed role / Generalist", "roles": ["survival"],
+              "perk_focus": None, "floors": {"recharge": 70, "recovery": 40}},
 }
 
 

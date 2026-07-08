@@ -233,18 +233,32 @@ function startNew50() { build._mode = "new50"; build.level_reached = 50; openWiz
 // the user's pick (it then defaulted to "general").
 const cloneOptions = (dst, src) => { if (dst && src) { dst.innerHTML = src.innerHTML; dst.value = src.value; } };
 
-// Provenance of every "How do you play" answer — "default" | "setup" (carried
-// from your current character/presets) | "you" (picked this visit). Field-report
-// invariant: the UI must always be honest about which answers the user gave vs.
-// which were defaulted — no fake "— choose —" next to silently-made choices.
-let WIZ_SRC = { role: "default", content: "default", exposure: "default", travel: "default" };
+// Provenance of every "How do you play" answer — "" (unanswered) | "setup"
+// (carried from your current character/presets — a choice you made earlier) |
+// "you" (picked this visit). Joel's design ruling (2026-07-08, supersedes the
+// tagged-defaults fix): there are NO defaults — the planner never invents an
+// answer to "how do you play"; all four must be answered before building.
+let WIZ_SRC = { role: "", content: "", exposure: "", travel: "" };
 function wizSetSrc(key, src) {
   WIZ_SRC[key] = src;
   const el = $("wiz-src-" + key);
   if (el) {
-    el.textContent = src === "you" ? "your pick" : (src === "setup" ? "from your setup" : "default");
-    el.className = "wiz-src wiz-src-" + src;
+    el.textContent = src === "you" ? "your pick" : (src === "setup" ? "from your setup" : "");
+    el.className = "wiz-src" + (src ? " wiz-src-" + src : "");
   }
+}
+const wizAnswered = () => ["wiz-role", "wiz-content", "wiz-exposure", "wiz-travel"]
+  .every(id => $(id) && $(id).value);
+// Build-my-kit stays disabled until all four questions are answered.
+function wizGateBuild() {
+  const ok = wizAnswered();
+  const btn = $("wiz-build");
+  if (btn) {
+    btn.disabled = !ok;
+    btn.title = ok ? "" : "Answer the four questions above first.";
+  }
+  if (!ok) $("wiz-status").textContent = "Answer the four “How do you play?” questions first — the planner never chooses for you.";
+  else if ($("wiz-status").textContent.startsWith("Answer the four")) $("wiz-status").textContent = "";
 }
 
 async function openWizard(mode) {
@@ -252,16 +266,16 @@ async function openWizard(mode) {
   cloneOptions($("wiz-content"), $("preset-content"));
   cloneOptions($("wiz-role"), $("preset-role"));
   cloneOptions($("disc-content"), $("preset-content"));
-  // Honest answers: every dropdown holds a REAL value, tagged with where it came
-  // from. No placeholder "— choose —" pretending nothing is chosen while the
-  // summary already asserts a playstyle (field report, 2026-07-08).
-  wizSetSrc("role", $("wiz-role").value ? "setup" : "default");
-  if (!$("wiz-role").value) $("wiz-role").value = "damage";
-  wizSetSrc("content", $("wiz-content").value ? "setup" : "default");
-  if (!$("wiz-content").value) $("wiz-content").value = "general";
+  // NO DEFAULTS: unanswered questions show a real "— choose —" and block the
+  // build. Values carried from your current character/presets stay (they ARE
+  // your choices) and are tagged "from your setup".
+  wizSetSrc("role", $("wiz-role").value ? "setup" : "");
+  wizSetSrc("content", $("wiz-content").value ? "setup" : "");
   if (build && build._exposure) { $("wiz-exposure").value = build._exposure; wizSetSrc("exposure", "setup"); }
-  else { $("wiz-exposure").value = "flex"; wizSetSrc("exposure", "default"); }
-  $("wiz-travel").value = "super_speed"; wizSetSrc("travel", "default");
+  else { $("wiz-exposure").value = ""; wizSetSrc("exposure", ""); }
+  // Travel is ALWAYS the user's pick — endgame entry can REQUIRE specific travel
+  // (BAF/Lambda enter only by Flight or Teleport), so the tool never chooses it.
+  $("wiz-travel").value = ""; wizSetSrc("travel", "");
   $("wiz-primary").innerHTML = "<option value=''>— primary set —</option>";
   $("wiz-secondary").innerHTML = "<option value=''>— secondary set —</option>";
   $("wiz-primary").disabled = $("wiz-secondary").disabled = true;
@@ -286,7 +300,8 @@ async function openWizard(mode) {
     if (build && build.primary) $("wiz-primary").value = build.primary;
     if (build && build.secondary) $("wiz-secondary").value = build.secondary;
   }
-  wizExplain(null);   // summary reflects the tagged defaults right away
+  wizGateBuild();
+  wizExplain(null);   // renders only what's actually been answered
 }
 function closeRespecWizard() { $("respec-wizard").classList.add("hidden"); }
 
@@ -721,10 +736,14 @@ window.levelStep = (d) => {
 window.pickDiscovery = async function (at) {
   $("wiz-at").value = at;
   await wizLoadPowersets();
-  $("wiz-role").value = $("disc-role").value;
-  $("wiz-content").value = $("disc-content").value;
-  $("wiz-exposure").value = $("disc-exposure").value;
+  // Discovery answers ARE the user's choices — tag them so, and gate the build
+  // (travel stays unanswered on purpose: it is always an explicit pick).
+  $("wiz-role").value = $("disc-role").value; wizSetSrc("role", $("disc-role").value ? "you" : "");
+  $("wiz-content").value = $("disc-content").value; wizSetSrc("content", $("disc-content").value ? "you" : "");
+  $("wiz-exposure").value = $("disc-exposure").value; wizSetSrc("exposure", $("disc-exposure").value ? "you" : "");
+  wizGateBuild();
   wizUpdateHint();
+  wizExplain(null);
   $("wiz-discover").classList.add("hidden");   // collapse discovery, reveal the picked character in step 1
   $("wiz-at").scrollIntoView({ behavior: "smooth", block: "center" });
 };
@@ -750,7 +769,11 @@ function wizInterpret(role, content, exposure) {
 }
 function wizUpdateHint() {
   const h = $("wiz-hint");
-  if (h) h.textContent = wizInterpret($("wiz-role").value, $("wiz-content").value, $("wiz-exposure").value);
+  if (!h) return;
+  // No invented reading of unanswered questions (no-defaults ruling).
+  h.textContent = ($("wiz-role").value && $("wiz-content").value)
+    ? wizInterpret($("wiz-role").value, $("wiz-content").value, $("wiz-exposure").value)
+    : "";
 }
 
 // "How do you play" explainer (ideas.md 2026-07-08): every choice pops a DETAILED,
@@ -761,6 +784,15 @@ let WIZ_POP_KEY = null;      // which choice's pop-up is open (refreshes on char
 let WIZ_EXPLAIN_SEQ = 0;     // stale-response guard
 async function wizExplain(changedKey) {
   const at = $("wiz-at") && $("wiz-at").value;
+  // NO DEFAULTS: nothing is explained or summarized until Role AND Content are
+  // actually chosen — the server tailors by them, and inventing them here would
+  // reintroduce the silent default through the back door.
+  if (!($("wiz-role") && $("wiz-role").value) || !($("wiz-content") && $("wiz-content").value)) {
+    const pop = $("wiz-pop"), sum = $("wiz-summary");
+    if (pop) pop.classList.add("hidden");
+    if (sum) sum.classList.add("hidden");
+    return;
+  }
   const seq = ++WIZ_EXPLAIN_SEQ;
   const r = await api("/build/explain_intent", postJson({
     archetype: at || null,
@@ -787,12 +819,11 @@ async function wizExplain(changedKey) {
   }
   const sum = $("wiz-summary"), s = r.summary || {};
   if (sum) {
-    // Honest header: until the user actually picks something, this is a preview of
-    // DEFAULTS, not "your play style" (field-report invariant).
-    const untouched = Object.values(WIZ_SRC).every(v => v !== "you");
-    const sumTitle = untouched
-      ? "📋 Current defaults — nothing chosen yet; your picks below steer this"
-      : "📋 Your play style — what the planner will chase";
+    // The summary asserts a playstyle only once all four questions are answered;
+    // partial answers get a progress line instead of an invented plan.
+    const sumTitle = wizAnswered()
+      ? "📋 Your play style — what the planner will chase"
+      : "📋 Partial answers — finish the four questions to lock in the plan";
     sum.innerHTML = `<div class="wiz-sum-title">${sumTitle}</div>`
       + `<div class="wiz-sum-text">${escHtml(s.text || "")}</div>`
       + `<div class="wiz-sum-tgts">${(s.targets || [])
@@ -816,18 +847,19 @@ async function wizLoadPowersets() {
   if ((ps.secondary || []).length === 1) sec.selectedIndex = 1;
   pri.onchange = () => pairVeatSets(pri, sec, VEAT_PAIR);
   sec.onchange = () => pairVeatSets(sec, pri, VEAT_PAIR_REV);
-  const wt = $("wiz-travel");
-  if (wt) wt.value = (at === "Class_Peacebringer" || at === "Class_Warshade")
-    ? "none" : (wt.value === "none" ? "super_speed" : wt.value);
+  // Travel is never auto-set (design ruling: endgame entry can REQUIRE specific
+  // travel — BAF/Lambda enter only by Flight or Teleport). The tailored pop-up
+  // teaches Kheldians their innate flight/TP; the pick stays theirs.
 }
 
 async function buildRespec() {
   const at = $("wiz-at").value, pri = $("wiz-primary").value, sec = $("wiz-secondary").value;
   if (!at || !pri || !sec) { $("wiz-status").textContent = "Pick an archetype, primary, and secondary first."; return; }
-  // Fall back to the main-builder selection before the generic default, so an empty
-  // wizard field never silently downgrades the user's Content/Role to general/damage.
-  const role = $("wiz-role").value || ($("preset-role") && $("preset-role").value) || "damage";
-  const content = $("wiz-content").value || ($("preset-content") && $("preset-content").value) || "general";
+  // NO DEFAULTS (design ruling): the button is gated, and this guard backs it up —
+  // the planner never invents an answer to "how do you play."
+  if (!wizAnswered()) { wizGateBuild(); return; }
+  const role = $("wiz-role").value;
+  const content = $("wiz-content").value;
   const exposure = $("wiz-exposure").value, travel = $("wiz-travel").value;
   build._exposure = exposure;   // carries into the solve so the def vector matches
   $("wiz-build").disabled = true;
@@ -1287,7 +1319,10 @@ async function init() {
   // refreshes on every change (including character changes — the text re-tailors).
   [["wiz-role", "role"], ["wiz-content", "content"], ["wiz-exposure", "exposure"],
    ["wiz-travel", "travel"]].forEach(([id, key]) =>
-    $(id).addEventListener("change", () => { wizSetSrc(key, "you"); wizUpdateHint(); wizExplain(key); }));
+    $(id).addEventListener("change", () => {
+      wizSetSrc(key, $(id).value ? "you" : "");
+      wizGateBuild(); wizUpdateHint(); wizExplain(key);
+    }));
   ["wiz-primary", "wiz-secondary"].forEach((id) =>
     $(id).addEventListener("change", () => wizExplain(null)));
   $("start-over-btn").addEventListener("click", showEntry);
@@ -2314,9 +2349,11 @@ function slotPlanHtml(pw) {
   const clickAttrs = topic
     ? ` role="button" tabindex="0" onclick="noteHintDone();showHelp('${topic}',event)"`
     : "";
+  // No "?" glyph: the whole chip is the one control (hover = summary, click =
+  // reasoning). A second click target with its own tooltip was a duplicate
+  // control with a mystery label (Joel's trim, 2026-07-08).
   return `<div class="slot-plan slot-plan-${escHtml(plan.kind)}${extraCls}"${clickAttrs} title="${escHtml(plan.text)}">`
-    + `<span class="sp-ico">${ico}</span> <span class="sp-label">${label}</span>`
-    + (topic ? helpIcon(topic) : "") + `</div>`;
+    + `<span class="sp-ico">${ico}</span> <span class="sp-label">${label}</span></div>`;
 }
 
 // One-time discoverability hint for the note chips (dismisses forever on any

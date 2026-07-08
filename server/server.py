@@ -704,6 +704,10 @@ def _off_role_notice(archetype, role, primary=None, secondary=None):
     on-role or unknown. 'control'/'support' alias 'controller'/'buffer'."""
     nat = _AT_NATURAL_ROLES.get(archetype)
     r = {"control": "controller", "support": "buffer"}.get(role, role)
+    # A declared generalist is never off-role on ANY archetype — "mixed" is the
+    # absence of specialization, not a job the AT could be unsuited for.
+    if r == "mixed":
+        return None
     if not (nat and r) or r in nat:
         return None
     at = (ARCH_BY_NAME.get(archetype) or {}).get("display_name") or archetype
@@ -778,6 +782,13 @@ def _explain_role(archetype, role, primary, secondary, at_name):
                      "uptime — the goal is being FELT on the team. The Achilles' Heel "
                      "−res proc gets its anchor home, and recharge (+90%) keeps the "
                      "debuffs stacked.")
+    elif role == "mixed":
+        parts.append("A deliberate generalist — no single job is favored. The planner "
+                     "chases the content's balanced baseline (solid defense and "
+                     "resistance, moderate recharge and recovery) and judges every "
+                     "slot by raw contribution instead of one role's lens. Pick this "
+                     "when you genuinely play a bit of everything; a specialized role "
+                     "will always beat it at that one specialty.")
     notice = _off_role_notice(archetype, role, primary, secondary)
     if notice:
         parts.append(notice)
