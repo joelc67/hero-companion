@@ -2931,10 +2931,23 @@ function renderStats(t) {
   ];
   // HP / regen / recovery carry a per-AT hard cap: show the capped value + a CAP
   // badge and the wasted overage, so the build doesn't silently overstate.
+  // Field report (Maelwys): "+% Max HP" alone answers nothing — show the RESULTANT
+  // hit points (capped), regen in HP/sec, and recovery in end/sec, like the game does.
   $("other-stats").innerHTML = other.map(([k, d]) => {
     const badge = d.at_cap ? ' <span class="aoe-tag">CAP</span>' : "";
     const over = (d.over_cap > 0) ? ` <span class="over">(+${d.over_cap} over)</span>` : "";
-    return `<div class="o-row"><span>${k}${badge}</span><span>+${d.value}%${over}</span></div>`;
+    let abs = "";
+    if (k === "Max HP" && d.hp_final) {
+      abs = ` <span class="muted small">= ${Math.round(d.hp_final)} HP`
+        + (d.hp_at_cap && d.hp_uncapped > d.hp_final
+            ? ` (capped; ${Math.round(d.hp_uncapped)} uncapped)` : "")
+        + `</span>`;
+    } else if (k === "Regeneration" && d.hp_per_sec) {
+      abs = ` <span class="muted small">= ${d.hp_per_sec} HP/s</span>`;
+    } else if (k === "Recovery" && t.endurance && t.endurance.recovery_per_sec) {
+      abs = ` <span class="muted small">= ${t.endurance.recovery_per_sec} end/s</span>`;
+    }
+    return `<div class="o-row"><span>${k}${badge}</span><span>+${d.value}%${over}${abs}</span></div>`;
   }).join("");
   renderOffense(t.offense);
   $("stats-note").textContent = t.note || "";

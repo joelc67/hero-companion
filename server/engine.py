@@ -286,10 +286,11 @@ def _power_totals(build, totals, ctx):
             base = fx["scale"] * fx.get("nmag", 1.0) * row[col]
             boost = ed_by_aspect.get(fx["enhance_aspect"], 0.0)
             val = base * (1.0 + boost)
-            _add_power_effect(totals, fx["effect"], fx["damage_type"], val)
+            _add_power_effect(totals, fx["effect"], fx["damage_type"], val,
+                              base_hp=ctx.get("at_base_hp"))
 
 
-def _add_power_effect(totals, et, dt, val):
+def _add_power_effect(totals, et, dt, val, base_hp=None):
     if et == "Defense":
         if dt in totals["defense"]:
             totals["defense"][dt] += val
@@ -303,6 +304,13 @@ def _add_power_effect(totals, et, dt, val):
     elif et == "Regeneration":
         totals["regeneration"] += val
     elif et == "HitPoints":
+        # A POWER's MaxHP effect comes out of the AT's HP modifier table as FLAT
+        # hit points (Dull Pain-class: +540 HP), but totals["max_hp"] is a FRACTION
+        # of base HP (set bonuses add 0.015-style values). Convert flat -> fraction,
+        # or the display explodes (field report: '+58913.12%' on a /Regen Scrapper).
+        # Values <= 3 are already fractions (percent-style HP buffs).
+        if base_hp and abs(val) > 3.0:
+            val = val / base_hp
         totals["max_hp"] += val
     elif et == "ToHit":
         totals["tohit"] += val
@@ -915,7 +923,7 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
         if ctx.get("at_recovery_cap") is not None:
             sec_caps["recovery"] = ctx["at_recovery_cap"] * 100.0
     # Convert fractions -> percentages for display
-    display = _to_display(totals, res_cap, sec_caps)
+    display = _to_display(totals, res_cap, sec_caps, ctx=ctx)
     if ff:
         # transparency: how much of the global recharge FF is carrying (shown in %)
         display["ff_recharge_avg"] = round(ff * 100.0, 1)
@@ -1019,7 +1027,7 @@ def _apply_effect(totals, eff):
         totals["accuracy"] += val
 
 
-def _to_display(totals, res_cap=RESISTANCE_HARD_CAP, sec_caps=None):
+def _to_display(totals, res_cap=RESISTANCE_HARD_CAP, sec_caps=None, ctx=None):
     sec_caps = sec_caps or {}
 
     def pct(x):
@@ -1055,13 +1063,34 @@ def _to_display(totals, res_cap=RESISTANCE_HARD_CAP, sec_caps=None):
                          "at_cap": raw >= res_cap,
                          "over_cap": round(max(0.0, raw - res_cap), 2),
                          "pct_to_cap": round(min(raw / res_cap * 100, 100), 1) if res_cap else 0}
+    # RESULTANT readouts (field report: '+% Max HP' alone answers nothing — show the
+    # actual hit points, capped, and the regen in HP/sec). Regen: 100% = full HP over
+    # 240s (5% of MaxHP per 12s tick), so HP/sec = MaxHP_final x regen_frac / 240.
+    max_hp_abs = {}
+    regen_hps = None
+    base_hp = (ctx or {}).get("at_base_hp")
+    if base_hp:
+        hp_cap_abs = (ctx or {}).get("at_hp_cap")
+        uncapped = base_hp * (1.0 + totals["max_hp"])
+        final = min(uncapped, hp_cap_abs) if hp_cap_abs else uncapped
+        max_hp_abs = {"hp_base": round(base_hp, 1), "hp_final": round(final, 1),
+                      "hp_uncapped": round(uncapped, 1),
+                      "hp_cap_abs": round(hp_cap_abs, 1) if hp_cap_abs else None,
+                      "hp_at_cap": bool(hp_cap_abs) and uncapped >= hp_cap_abs}
+        regen_frac = 1.0 + totals["regeneration"]
+        rc = sec_caps.get("regeneration")
+        if rc is not None:
+            regen_frac = min(regen_frac, 1.0 + rc / 100.0)
+        regen_hps = round(final * regen_frac / 240.0, 2)
+
     return {
         "defense": defense,
         "resistance": resistance,
         "recharge": {"value": pct(totals["recharge"]), "label": "+% Recharge (global)"},
         "recovery": capped("recovery", "+% Recovery"),
-        "regeneration": capped("regeneration", "+% Regeneration"),
-        "max_hp": capped("max_hp", "+% Max HP"),
+        "regeneration": dict(capped("regeneration", "+% Regeneration"),
+                             **({"hp_per_sec": regen_hps} if regen_hps is not None else {})),
+        "max_hp": dict(capped("max_hp", "+% Max HP"), **max_hp_abs),
         "tohit": {"value": pct(totals["tohit"]), "label": "+% ToHit"},
         "accuracy": {"value": pct(totals["accuracy"]), "label": "+% Accuracy"},
         "caps": {"defense_soft_cap": DEFENSE_SOFT_CAP,
