@@ -89,7 +89,7 @@ Joel's session context is a limited resource. Do not spend it on prose.
 
 ⚠ Push discipline: the Pulse Boards pipeline pushes to this repo's master (~230 commits found 2026-07-08); 12 local commits had never been pushed. After every commit: push; on rejection, `git pull --no-rebase` (merge, never rebase — session reports quote hashes) then push.
 
-Excluded from the batch (post-refresh, documented): #4 Fighting-pool autopick scoped to content=team (itrial champions unaffected), enhancement levels/+5 boosters (#6), manual HO slotting (#7), suppression toggle (#9), henchman +MaxHP inheritance (UNVERIFIED — bins pass or wiki paste is the gate). Queued design (ideas.md, no code yet): "Champion build" wizard checkbox — mechanics answers in session-report.md 2026-07-08 fresh-session entry.
+Excluded from the batch (post-refresh, documented): #4 Fighting-pool autopick scoped to content=team (itrial champions unaffected), enhancement levels/+5 boosters (#6), manual HO slotting (#7), suppression toggle (#9), henchman +MaxHP inheritance (UNVERIFIED — bins pass or wiki paste is the gate). Queued design (ideas.md + chat, no code yet): "Champion build" wizard checkbox (fill-and-lock, NOT gray-out) — mechanics answers in session-report.md, PLUS the 2026-07-08 chat addendum: (1) "Mixed role" dropdown option = honest generalist objective via the v23 role_mix focus split; (2) **champion-as-starting-point** — editing any answer from champion mode runs PRESERVE mode seeded with the champion's build (picks+slotting kept, margins re-solved), per Joel: otherwise every how-you-play variation is an untested from-scratch variant never based on the actual champion. Certified quality must propagate into personal variants.
 
 ## Open work queue (as of 2026-07-08)
 
