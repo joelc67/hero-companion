@@ -78,6 +78,17 @@ Joel's session context is a limited resource. Do not spend it on prose.
 - Claude Code transcripts live under `~/.claude/projects/` (`C--Users-joelc-code` = main; `C--Users-joelc-code-coh-builder` = the app's own June-16/17 headless AI calls). Distilled memory files: `~/.claude/projects/C--Users-joelc-code/memory/` (MEMORY.md index + per-topic files) — richest cross-session source.
 - **Transcript retention was the silent history-killer**: `cleanupPeriodDays` was unset → 30-day default deletion. Set to **3650** in `~/.claude/settings.json` on 2026-07-08. Anything older than ~June 16 2026 was already lost (unverifiable; earliest surviving transcript is 2026-06-16).
 
+## ⭐ NEXT SESSION — accuracy term (Joel's GO, 2026-07-08 night)
+
+**One batch, one refresh, one release.** Joel approved including the ILP accuracy-valuation term in the v28 stability batch. Fresh session starts here:
+
+1. **Build the accuracy term** — honest derivation, no magic weights: linearize the scorer's own hit function (first_principles.outgoing_hit) — marginal DPS per +1% global accuracy at the build's baseline hit chance vs the scenario's +3/+4 tables. Wire Accuracy set-bonus effects into solver `_stat_key`/`_set_bonus_contrib` + an ("Accuracy", None)-style objective term whose weight comes from that linearization. Test case: Maelwys's LotG x4 prescription (4pc = +9% global accuracy) should become competitive in CJ/defense toggles on iTrial content.
+2. **Battery** — demo_single_build_fixes (13 checks), audit_slotting_coherence (pins), legality/schedule/epic, reality checks. Extend the v28 changelog constant in first_principles.py with the accuracy term.
+3. **Champion refresh** — `python tools/refresh_champions.py > champions_refresh_postfix_log.txt 2>&1` in background (~2h; gold defaults). Both prior runs were STOPPED; champions.json is CLEAN (verified: no partial saves) — the refresh has no resumable state and needs none; just launch fresh. Validate (validate_champions 5/5) after.
+4. **Then 0.12.15 staging is complete** — awaits Joel's green light + his 5080 eyeball (wizard explainers, new card notes). NEVER release without his word.
+
+State at handoff: MODEL_VERSION 28 committed (changelog constant lists the batch); all stability-batch fixes committed through "Field report (Stalker Rad/Dark)…"; session-report.md carries the full trade-off analysis. Excluded from batch (post-refresh, documented): #4 Fighting-pool autopick scoped to content=team (itrial champions unaffected), enhancement levels/+5 boosters (#6), manual HO slotting (#7), suppression toggle (#9), henchman +MaxHP inheritance (UNVERIFIED — bins pass or wiki paste is the gate).
+
 ## Open work queue (as of 2026-07-08)
 
 - ✅ "How do you play" section (done 2026-07-08, unreleased): `/build/explain_intent` endpoint
