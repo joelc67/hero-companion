@@ -1461,6 +1461,13 @@ def _attach_base_resdef(powers, archetype, ctx, res_cap):
             if v > 0.001:
                 rd[(kind, t)] = v
         p["_base_rd"] = rd
+        # The toggle's REAL drain (end/sec) — the solver's end-cost term (Maelwys
+        # round 2): a set's endurance aspect relieves this drain, so an expensive
+        # toggle (Weave 0.325/s, Maneuvers 0.39/s) is a strictly better set host
+        # than a near-free one (Combat Jumping 0.065/s).
+        rec = POWER_BY_FULL.get(p.get("full_name")) or {}
+        ec, ap2 = rec.get("end_cost") or 0.0, rec.get("activate_period") or 0.0
+        p["_end_drain"] = (ec / ap2) if (ec and ap2) else 0.0
 
 
 def _add_typed_def_route(powers, targets, archetype=None):

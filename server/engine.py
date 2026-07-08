@@ -49,6 +49,12 @@ PIECE_GLOBALS = [
      "effects": [{"effect": "Defense", "damage_type": "None", "value": 0.03}]},
     {"set": "shield wall", "piece": "+5% res", "unique": True,
      "effects": [{"effect": "Resistance", "damage_type": "None", "value": 0.05}]},
+    # Reactive Defenses: Scaling Resist Damage — +3% res(all) always-on, scaling up
+    # to +13% as HP falls. Priced at the CONSERVATIVE +3% floor (the always-on part);
+    # the scaling tail is situational. Was entirely INVISIBLE to the solver (Maelwys
+    # round 2: 'fitting in the Reactive Defences Unique... would have been better').
+    {"set": "reactive defenses", "piece": "scaling resist", "unique": True,
+     "effects": [{"effect": "Resistance", "damage_type": "None", "value": 0.03}]},
     {"set": "kismet", "piece": "accuracy +6", "unique": True,
      "effects": [{"effect": "ToHit", "value": 0.06}]},
     # Regen/recovery uniques (verified vs MidsReborn data + Homecoming wiki; the

@@ -377,6 +377,17 @@ def _options_for_power(p, sets_by_category, targets, perks, piece_choices,
                 for (kk, t), base in base_rd.items():
                     if kk == armor_kind:
                         contrib[(kk, t)] += base * f
+                # END-COST term (Maelwys round 2, hypothesis verified): the def/res
+                # credit SATURATES once targets are met, leaving host choice between
+                # toggles arbitrary — but the same set's endurance aspect relieves the
+                # host's REAL drain. Credit that relief as recovery-equivalent
+                # coverage (base recovery 1.667 end/s = +100%), so an expensive
+                # toggle (Weave 0.325 end/s, Maneuvers 0.39) is a strictly better
+                # set host than a near-free one (Combat Jumping 0.065).
+                drain = p.get("_end_drain") or 0.0
+                if drain > 0:
+                    relief = drain * (1.0 - 1.0 / (1.0 + f))
+                    contrib[("Recovery", None)] += relief / 1.667
             opts.append({"set": srec, "n": n, "contrib": contrib, "sigs": sigs})
     if p["_is_attack"] and not any(o["n"] >= 5 for o in opts):
         # ensure attacks have at least one full functional set option
