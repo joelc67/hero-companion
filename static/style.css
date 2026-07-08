@@ -719,6 +719,21 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .slot-plan-global-mules,
 .slot-plan-mixed       { background: rgba(70, 140, 200, .13);  border-color: rgba(70,140,200,.45); color: #2f76ad; }
 .powers-wall .slot-plan { margin-top: auto; }   /* sit at the brick's bottom edge */
+/* The whole chip is the click target (not just the "?") — real affordance. */
+.slot-plan-click { cursor: pointer; }
+.slot-plan-click:hover { filter: brightness(1.12); box-shadow: 0 0 0 1px rgba(127,127,127,.35); }
+/* One-time discoverability hint above the powers wall. */
+.note-hint { grid-column: 1 / -1; font-size: 12px; padding: 6px 10px; border-radius: 8px;
+  background: rgba(127,127,127,.10); border: 1px dashed var(--border); color: var(--muted);
+  display: flex; align-items: center; gap: 8px; }
+.note-hint button { margin-left: auto; }
+/* Provenance tag on each "How do you play" answer: default / from your setup / your pick. */
+.wiz-src { font-size: 10px; font-weight: 600; padding: 0 6px; border-radius: 8px;
+  vertical-align: 1px; border: 1px solid var(--border); color: var(--muted);
+  background: rgba(127,127,127,.10); }
+.wiz-src:empty { display: none; }
+.wiz-src-setup { background: rgba(70,140,200,.13); border-color: rgba(70,140,200,.45); color: #2f76ad; }
+.wiz-src-you   { background: rgba(60,160,90,.13);  border-color: rgba(60,160,90,.45);  color: #2f8a53; }
 /* Reusable help "?" icon + explanation popover. */
 .help-i { width: 15px; height: 15px; min-width: 15px; padding: 0; margin-left: 3px; border-radius: 50%;
   border: 1px solid currentColor; background: none; color: inherit; opacity: .65; cursor: pointer;

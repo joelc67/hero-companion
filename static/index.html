@@ -110,14 +110,17 @@
         <div class="wiz-q">2 · How do you play?</div>
         <p class="muted small">This steers survival, power picks, and the incarnate plan.</p>
         <div class="wiz-row wiz-grid">
-          <label>Role<select id="wiz-role"></select></label>
-          <label>You fight from<select id="wiz-exposure">
+          <!-- Each answer carries a provenance tag (default / from your setup /
+               your pick) — the wizard never presents a defaulted answer as a
+               choice the user made. -->
+          <label>Role <span id="wiz-src-role" class="wiz-src"></span><select id="wiz-role"></select></label>
+          <label>You fight from <span id="wiz-src-exposure" class="wiz-src"></span><select id="wiz-exposure">
             <option value="flex">flexible range</option>
             <option value="front">the front line (melee)</option>
             <option value="back">long range (backline)</option>
           </select></label>
-          <label>Mostly in<select id="wiz-content"></select></label>
-          <label>Travel by<select id="wiz-travel">
+          <label>Mostly in <span id="wiz-src-content" class="wiz-src"></span><select id="wiz-content"></select></label>
+          <label>Travel by <span id="wiz-src-travel" class="wiz-src"></span><select id="wiz-travel">
             <option value="none">No extra travel power</option>
             <option value="super_speed" selected>Super Speed</option>
             <option value="fly">Fly</option>

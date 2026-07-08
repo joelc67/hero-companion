@@ -233,11 +233,35 @@ function startNew50() { build._mode = "new50"; build.level_reached = 50; openWiz
 // the user's pick (it then defaulted to "general").
 const cloneOptions = (dst, src) => { if (dst && src) { dst.innerHTML = src.innerHTML; dst.value = src.value; } };
 
-function openWizard(mode) {
+// Provenance of every "How do you play" answer — "default" | "setup" (carried
+// from your current character/presets) | "you" (picked this visit). Field-report
+// invariant: the UI must always be honest about which answers the user gave vs.
+// which were defaulted — no fake "— choose —" next to silently-made choices.
+let WIZ_SRC = { role: "default", content: "default", exposure: "default", travel: "default" };
+function wizSetSrc(key, src) {
+  WIZ_SRC[key] = src;
+  const el = $("wiz-src-" + key);
+  if (el) {
+    el.textContent = src === "you" ? "your pick" : (src === "setup" ? "from your setup" : "default");
+    el.className = "wiz-src wiz-src-" + src;
+  }
+}
+
+async function openWizard(mode) {
   if ($("wiz-at").options.length <= 1) $("wiz-at").innerHTML = $("sel-archetype").innerHTML;
   cloneOptions($("wiz-content"), $("preset-content"));
   cloneOptions($("wiz-role"), $("preset-role"));
   cloneOptions($("disc-content"), $("preset-content"));
+  // Honest answers: every dropdown holds a REAL value, tagged with where it came
+  // from. No placeholder "— choose —" pretending nothing is chosen while the
+  // summary already asserts a playstyle (field report, 2026-07-08).
+  wizSetSrc("role", $("wiz-role").value ? "setup" : "default");
+  if (!$("wiz-role").value) $("wiz-role").value = "damage";
+  wizSetSrc("content", $("wiz-content").value ? "setup" : "default");
+  if (!$("wiz-content").value) $("wiz-content").value = "general";
+  if (build && build._exposure) { $("wiz-exposure").value = build._exposure; wizSetSrc("exposure", "setup"); }
+  else { $("wiz-exposure").value = "flex"; wizSetSrc("exposure", "default"); }
+  $("wiz-travel").value = "super_speed"; wizSetSrc("travel", "default");
   $("wiz-primary").innerHTML = "<option value=''>— primary set —</option>";
   $("wiz-secondary").innerHTML = "<option value=''>— secondary set —</option>";
   $("wiz-primary").disabled = $("wiz-secondary").disabled = true;
@@ -252,6 +276,17 @@ function openWizard(mode) {
   $("wiz-discover").classList.toggle("hidden", !isNew);   // discovery only for Start-new
   wizUpdateHint();
   $("respec-wizard").classList.remove("hidden");
+  // Reopening with a real character ("Change how you started" after an import):
+  // sync the archetype and POPULATE the powerset dropdowns immediately — they used
+  // to fill only on the archetype CHANGE event, so same-archetype reopens rendered
+  // dead empty selects until the user toggled away and back (field-report BUG 2).
+  if (build && build.archetype && (build.powers || []).length) $("wiz-at").value = build.archetype;
+  if ($("wiz-at").value) {
+    await wizLoadPowersets();
+    if (build && build.primary) $("wiz-primary").value = build.primary;
+    if (build && build.secondary) $("wiz-secondary").value = build.secondary;
+  }
+  wizExplain(null);   // summary reflects the tagged defaults right away
 }
 function closeRespecWizard() { $("respec-wizard").classList.add("hidden"); }
 
@@ -752,7 +787,13 @@ async function wizExplain(changedKey) {
   }
   const sum = $("wiz-summary"), s = r.summary || {};
   if (sum) {
-    sum.innerHTML = `<div class="wiz-sum-title">📋 Your play style — what the planner will chase</div>`
+    // Honest header: until the user actually picks something, this is a preview of
+    // DEFAULTS, not "your play style" (field-report invariant).
+    const untouched = Object.values(WIZ_SRC).every(v => v !== "you");
+    const sumTitle = untouched
+      ? "📋 Current defaults — nothing chosen yet; your picks below steer this"
+      : "📋 Your play style — what the planner will chase";
+    sum.innerHTML = `<div class="wiz-sum-title">${sumTitle}</div>`
       + `<div class="wiz-sum-text">${escHtml(s.text || "")}</div>`
       + `<div class="wiz-sum-tgts">${(s.targets || [])
             .map(t => `<span class="wiz-tgt">${escHtml(t)}</span>`).join("")}</div>`;
@@ -1246,7 +1287,7 @@ async function init() {
   // refreshes on every change (including character changes — the text re-tailors).
   [["wiz-role", "role"], ["wiz-content", "content"], ["wiz-exposure", "exposure"],
    ["wiz-travel", "travel"]].forEach(([id, key]) =>
-    $(id).addEventListener("change", () => { wizUpdateHint(); wizExplain(key); }));
+    $(id).addEventListener("change", () => { wizSetSrc(key, "you"); wizUpdateHint(); wizExplain(key); }));
   ["wiz-primary", "wiz-secondary"].forEach((id) =>
     $(id).addEventListener("change", () => wizExplain(null)));
   $("start-over-btn").addEventListener("click", showEntry);
@@ -2044,6 +2085,17 @@ function renderPowers() {
   }
   html += `</div>`;
 
+  // One-time hint: the decision notes only answer skepticism if people find them
+  // (field report: the "?" was found only by deliberate poking).
+  try {
+    if (!localStorage.getItem("hc_note_hint")
+        && (build.powers || []).some(p => p.slot_plan && p.slot_plan.text)) {
+      html = `<div id="note-hint" class="note-hint">💡 Every slotting note (like
+        🎯 Full set or 🌐 Global mules) is clickable — it explains why the planner
+        chose that slotting. <button class="mini" onclick="noteHintDone()">got it</button></div>` + html;
+    }
+  } catch (e) { /* localStorage unavailable — skip the hint */ }
+
   host.innerHTML = html;
   updateInfoCards(LAST_TOTALS);   // refill + re-dock the info bricks (masonry balance)
   updateEditBar();
@@ -2056,7 +2108,7 @@ function renderPowers() {
 function powerCardHtml(pw, idx, icon, lv) {
   const cats = (pw.accepted_set_categories || []).join(", ") || "no set categories";
   if ((pw.full_name || "").startsWith("Inherent.")) {
-    return `<div class="power-card" title="accepts: ${escHtml(cats)}\nInherent — the game grants this automatically; it is never a pick.">
+    return `<div class="power-card" title="${escHtml(pw.display_name)} — accepts: ${escHtml(cats)}\nInherent — the game grants this automatically; it is never a pick.">
       <div class="pc-head">
         <span class="pc-title" onclick="selectPower('${escHtml(pw.full_name)}')">
         ${icon ? `<img class="pc-ico" src="${icon}" alt="" loading="lazy"
@@ -2076,7 +2128,7 @@ function powerCardHtml(pw, idx, icon, lv) {
     </div>`;
   }
   const lvl = pw.pick_level || lv;
-  return `<div class="power-card" title="accepts: ${escHtml(cats)}\n(click the name for full power info)">
+  return `<div class="power-card" title="${escHtml(pw.display_name)} — accepts: ${escHtml(cats)}\n(click the name for full power info)">
     <div class="pc-head">
       <span class="pc-title" onclick="selectPower('${escHtml(pw.full_name)}')">
       ${icon ? `<img class="pc-ico" src="${icon}" alt="" loading="lazy"
@@ -2254,10 +2306,26 @@ function slotPlanHtml(pw) {
   const plan = pw.slot_plan;
   if (!plan || !plan.text) return "";
   const [ico, label, topic] = _PLAN_META[plan.kind] || ["🔧", "Slotting", null];
-  return `<div class="slot-plan slot-plan-${escHtml(plan.kind)}" title="${escHtml(plan.text)}">`
+  // The WHOLE chip is the click target, not just the "?" glyph — the bare glyph
+  // was a precision-aim tax nobody discovered (field report; also an
+  // accessibility problem). The "?" stays for recognition; showHelp stops
+  // propagation so it never double-fires.
+  const extraCls = topic ? " slot-plan-click" : "";
+  const clickAttrs = topic
+    ? ` role="button" tabindex="0" onclick="noteHintDone();showHelp('${topic}',event)"`
+    : "";
+  return `<div class="slot-plan slot-plan-${escHtml(plan.kind)}${extraCls}"${clickAttrs} title="${escHtml(plan.text)}">`
     + `<span class="sp-ico">${ico}</span> <span class="sp-label">${label}</span>`
     + (topic ? helpIcon(topic) : "") + `</div>`;
 }
+
+// One-time discoverability hint for the note chips (dismisses forever on any
+// chip click or the button).
+window.noteHintDone = function () {
+  try { localStorage.setItem("hc_note_hint", "1"); } catch (e) { /* private mode */ }
+  const el = $("note-hint");
+  if (el) el.remove();
+};
 
 const enhIconUrl = (img) => img ? `/static/icons/enh/${img}` : "";
 
