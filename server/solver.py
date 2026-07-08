@@ -213,6 +213,29 @@ _DMG_SET_CATS = {
 # coverage weights (so hard defense/resist targets are still hit first). Scaled per attack by
 # its base damage / the build's hardest hit, so premium attacks win the slots.
 _DMG_REWARD_W = 0.05
+# Worth of an attack's 6th slot, as a fraction of a piece. The old hard cap (min(n,5))
+# priced the 6th slot at ZERO damage, so every real attack stalled at exactly 5 slots
+# (Maelwys: "the biggest glitch"). The 6th slot is not dead weight: the proc pass turns
+# tail slots into procs (damage ED never touches) and a premium set's 6th piece carries
+# its capstone bonus. Ordinary attacks: 0.7 of a piece. PROC VEHICLES (AoE-damage
+# acceptors and mid-recharge ST clicks — the powers the proc pass bombs) get a full
+# extra proc out of slot 6, worth more than any filler bonus piece: 2.5.
+_SIXTH_SLOT_W = 0.7
+_SIXTH_SLOT_VEHICLE_W = 2.5
+_AOE_DMG_CAT_NAMES = {"PBAoE Damage", "Targeted AoE Damage", "Melee AoE",
+                      "Targeted AoE", "Player Melee AoE"}
+
+
+def _is_proc_vehicle(p):
+    """Mirror of proc_pass's vehicle test, from the fields the solver already has:
+    a power whose tail slots become PROCS downstream — an AoE-damage acceptor, or a
+    single-target click in the PPM sweet spot (6s < recharge <= 90s, the Dominate
+    hybrid gate). Its 6th slot is one more proc, not an ED-flat 6th piece."""
+    cats = set(p.get("accepted_set_categories") or [])
+    if cats & _AOE_DMG_CAT_NAMES:
+        return True
+    return (p.get("power_type") == 0
+            and 6 < (p.get("base_recharge") or 0) <= 90)
 
 
 def _is_dmg_cat(cat):
@@ -620,9 +643,11 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
         # support: a signature buff CLICK that accepts sets must end up functionally
         # slotted with one (its bonuses serve recharge/recovery + the power works) even
         # when the survival objective wouldn't pick it — same "must take a set" rule as
-        # attacks. Trades a little attack survival for working buffs (what a passive
-        # support bot wants). Capped at 4 pieces so the trade stays small.
-        p["_must_set"] = (buffing and not p["_is_attack"] and p.get("_buff_priority")
+        # attacks. Capped at 4 pieces so the trade stays small. Applies on EVERY role,
+        # not just "buffing" (invisible-role doctrine + field report: a damage-role
+        # Marine MM shipped Barrier Reef as a bare 1-slot mule — the absorb shield the
+        # whole set is built around must never be left non-functional).
+        p["_must_set"] = (not p["_is_attack"] and p.get("_buff_priority")
                           and bool(p.get("accepted_set_category_ids"))
                           and (p.get("base_recharge") or 0) >= 8)
         # A signature DEBUFF power (Envenom, Weaken…) must be functionally slotted when the role
@@ -1005,22 +1030,42 @@ def _fill_generated_empties(powers, slots_left):
 
 def _enforce_added_cap(powers, budget):
     """Trim extra slots until additional-slot count (slots beyond the first per
-    power) <= budget. Removes from the most-slotted powers first, dropping only
-    non-locked, non-global slots (keeps preserved sets + unique globals intact).
-    Recomputes nothing — the engine re-derives totals from the trimmed slots."""
-    while _added_slots(powers) > budget:
-        removed = False
+    power) <= budget, dropping only non-locked, non-global slots (keeps preserved
+    sets + unique globals intact). VALUE-AWARE order — the old fattest-first-in-
+    list-order trim beheaded the real attacks' 6th slots while a dead pool attack
+    kept all six (Maelwys's 'biggest glitch'): junk common fills go first, then
+    non-attack set tails (fattest first), then pool attacks, then real attacks
+    weakest hit first. Recomputes nothing — the engine re-derives all totals."""
+    def _tier(q):
+        if not q.get("_is_attack"):
+            return 0
+        if (q.get("full_name") or "").startswith("Pool."):
+            return 1                       # a pool attack is never the rotation
+        return 2
+
+    def _pop_one():
+        # 1) junk common-IO fills beyond a power's base slot
+        for p in powers:
+            if len(p["_slots"]) > 1:
+                for i in range(len(p["_slots"]) - 1, 0, -1):
+                    s = p["_slots"][i]
+                    if s.get("_fill") and not s.get("_locked"):
+                        p["_slots"].pop(i)
+                        return True
+        # 2) non-attacks fattest first -> 3) pool attacks -> 4) weakest real attacks
         for p in sorted((q for q in powers if len(q["_slots"]) > 1),
-                        key=lambda q: len(q["_slots"]), reverse=True):
+                        key=lambda q: (_tier(q),
+                                       (q.get("_base_dmg") or 0.0) if _tier(q) == 2
+                                       else -len(q["_slots"]))):
             for i in range(len(p["_slots"]) - 1, 0, -1):
                 s = p["_slots"][i]
                 if not s.get("_locked") and not s.get("_global"):
                     p["_slots"].pop(i)
-                    removed = True
-                    break
-            if removed:
-                break
-        if not removed:        # nothing left to trim (all locked/global)
+                    return True
+        return False
+
+    while _added_slots(powers) > budget:
+        if not _pop_one():     # nothing left to trim (all locked/global)
             break
     return _added_slots(powers)
 
@@ -1159,12 +1204,21 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
             if pref_cats and o["set"].get("category") in pref_cats:
                 cat_terms.append((o["n"], v))
             # Attack-damage reward: a damage set in a real attack, weighted by the attack's
-            # base hit (premium attacks first) and the pieces it lands — capped at 5 since
-            # past ~5 the extra DAMAGE is ED-flat (the 6th piece's SET BONUS is already
-            # valued by the coverage obj, so it isn't double-counted here).
+            # base hit (premium attacks first) and the pieces it lands. Pieces 1-5 carry
+            # the enhancement; the 6th is credited at proc-worth (_SIXTH_SLOT_W) — the old
+            # min(n,5) cap priced it at zero and every real attack stalled at 5 slots.
             if dmg_mode and p["_is_attack"] and _is_dmg_cat(o["set"].get("category")):
-                base_w = (p.get("_base_dmg", 0.0) / max_base) if max_base > 0 else 1.0
-                dmg_terms.append((base_w * min(o["n"], 5), v))
+                base_w = ((p.get("_base_dmg") or 0.0) / max_base) if max_base > 0 else 1.0
+                vehicle = _is_proc_vehicle(p)
+                # A proc VEHICLE's slots become procs downstream, and proc damage is
+                # PPM-flat — it does NOT scale with the host's base hit. A zero-damage
+                # proc anchor (Shifting Tides, a buff aura accepting AoE-damage sets)
+                # must not price at zero and get starved to 2 slots.
+                if vehicle:
+                    base_w = max(base_w, 0.5)
+                w6 = _SIXTH_SLOT_VEHICLE_W if vehicle else _SIXTH_SLOT_W
+                credit = min(o["n"], 5) + w6 * max(0, o["n"] - 5)
+                dmg_terms.append((base_w * credit, v))
             # Non-damage role: penalise damage-set pieces (wasted enhancement) so the solver
             # leans to role/utility sets. The penalty is HEAVY on powers where a damage set is
             # pure waste — a Fighting-pool PREREQ (Boxing/Kick) and a multi-minute utility CLICK
@@ -1200,10 +1254,33 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
                 prob += pulp.lpSum(o["n"] * x[(pi, oi)]
                                    for oi, o in enumerate(opts)) >= 2
 
-    # slot budget
-    prob += pulp.lpSum(o["n"] * x[(pi, oi)]
-                       for pi, opts in opts_by_power.items()
-                       for oi, o in enumerate(opts)) <= budget
+    # slot budget — EXACT added-slot accounting (the 5-slot-attack root cause): the
+    # caller's slot_cap assumes every power consumes >=1 piece (67 added + one free
+    # base piece per power). A power the ILP leaves EMPTY still consumes its base
+    # piece later (the common-IO fill guarantees nothing ships empty), so charge it
+    # HERE via an indicator — otherwise the ILP overspends by one per empty power
+    # and _enforce_added_cap used to behead the real attacks' 6th slots to repay it.
+    empty_u = {}
+    for pi, opts in opts_by_power.items():
+        if opts and not free_powers[pi]["_slots"]:
+            u = pulp.LpVariable(f"u_{pi}", cat="Binary")
+            prob += u <= pulp.lpSum(x[(pi, oi)] for oi in range(len(opts)))
+            empty_u[pi] = u
+    # Empty powers with NO options this pass still owe their base fill — a constant.
+    # A set-LESS long-recharge click (Hasten) owes TWO pieces (its standard 2x Recharge
+    # slotting, _fill_generated_empties), so the ILP can't starve it into one slot.
+    reserved = 0
+    for pi, p in enumerate(free_powers):
+        if p["_slots"] or pi in empty_u:
+            continue
+        types = {t.lower() for t in (p.get("accepted_enhancement_types") or [])}
+        wants_two = ("recharge reduction" in types
+                     and (p.get("base_recharge") or 0) >= 60)
+        reserved += 2 if wants_two else 1
+    prob += (pulp.lpSum(o["n"] * x[(pi, oi)]
+                        for pi, opts in opts_by_power.items()
+                        for oi, o in enumerate(opts))
+             + pulp.lpSum(1 - u for u in empty_u.values())) <= budget - reserved
     # rule of five per bonus signature
     for s, vs in sig_terms.items():
         if len(vs) > RULE_OF_FIVE:

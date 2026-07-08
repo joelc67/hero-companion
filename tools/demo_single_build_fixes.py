@@ -123,6 +123,49 @@ check("Force Feedback seats WITHOUT cannibalizing a proc bomb",
       ff_host is not None and (ff_host not in bombs or bombs[ff_host] >= 5),
       f"FF host: {ff_host} — full proc bombs intact: {dict(bombs)}")
 
+# 7 — Maelwys's "biggest glitch": real attacks must reach 6 slots, not stall at 5
+sixed = [p.get("display_name") for p in powers
+         if len([s for s in (p.get("slots") or []) if s]) >= 6
+         and (srv.POWER_BY_FULL.get(p.get("full_name")) or {}).get("is_attack")
+         and not (p.get("full_name") or "").startswith("Pool.")]
+check("real (non-pool) attacks reach 6 slots", len(sixed) >= 2,
+      f"6-slotted real attacks: {sixed or 'NONE'}")
+
+# 8 — proc bombs carry ACCURACY (a Nucleolus Acc/Dam HO rides in every big bomb)
+bomb_acc = {}
+for p in powers:
+    slots = [s for s in (p.get("slots") or []) if s]
+    n_proc = sum(1 for s in slots if s.get("_proc"))
+    if n_proc >= 3 and len(slots) >= 4:
+        has_acc = any(str(s.get("piece_uid", "")).startswith("Hamidon_") for s in slots)
+        bomb_acc[p.get("display_name")] = has_acc
+check("every big proc bomb carries accuracy (Nucleolus HO)",
+      bool(bomb_acc) and all(bomb_acc.values()),
+      f"bombs: { {k: ('acc OK' if v else 'NO ACC') for k, v in bomb_acc.items()} }")
+
+# 9 — Hasten keeps its standard 2x Recharge slotting (never starved to 1)
+hasten = next((p for p in powers if "Hasten" in (p.get("display_name") or "")), None)
+h_n = len([s for s in (hasten.get("slots") or []) if s]) if hasten else 0
+check("Hasten holds its standard 2 recharge slots", h_n >= 2,
+      f"Hasten slots: {h_n}")
+
+# 10 — signature support buffs are FUNCTIONALLY slotted (no bare 1-slot mules)
+weak_buffs = []
+for p in powers:
+    ps = (p.get("powerset_full_name") or "")
+    if ".Marine_Affinity" not in ps:
+        continue
+    rec = srv.POWER_BY_FULL.get(p.get("full_name")) or {}
+    if rec.get("is_attack") or (rec.get("base_recharge") or 0) < 8:
+        continue
+    if not rec.get("accepted_set_category_ids") and not p.get("accepted_set_category_ids"):
+        continue
+    n = len([s for s in (p.get("slots") or []) if s])
+    if n < 2:
+        weak_buffs.append(f"{p.get('display_name')} ({n} slot)")
+check("signature support buffs functionally slotted (>=2 pieces)",
+      not weak_buffs, weak_buffs or "every Marine buff click carries a working set")
+
 # 6 — HO pricing: no ref level for HOs (grade-flat), ref level 50 for common IOs
 ho_ref = [u for u in srv.PIECE_REF_LEVEL if str(u).startswith(("Hamidon_", "Titan_",
                                                                "Hydra_", "DSync_",

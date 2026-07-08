@@ -234,10 +234,24 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general"):
             if nslots < 2:
                 continue                  # not enough room to proc-bomb meaningfully
             cats = rec.get("accepted_set_categories") or []
-            procs = _pick_procs(cats, nslots, used)
+            # A big bomb (4+ slots) RESERVES one slot for accuracy (the Nucleolus top-up
+            # below) — a proc misses like any attack, and a bombed power carries no acc
+            # of its own. Small bombs (2-3 slots) stay all-proc; global acc covers them.
+            procs = _pick_procs(cats, nslots if nslots <= 3 else nslots - 1, used)
             if len(procs) >= 2:           # only convert if we can land a real proc bomb
                 cid = (slots[0] or {}).get("category_id")
-                p["slots"] = [_proc_slot(sn, uid, cid) for sn, uid, _c in procs]
+                bomb = [_proc_slot(sn, uid, cid) for sn, uid, _c in procs]
+                # Keep the power's slot COUNT (procs are one-per-set limited, so a
+                # 6-slot nuke used to shrink to 5 — a leaked budget slot) AND give the
+                # bomb its accuracy (Maelwys: "should really have some accuracy in
+                # there too"): top up with Nucleolus HOs — Acc/Dam 33.3% each,
+                # recharge-free so every proc keeps its full PPM chance.
+                bomb += [{"set_uid": "Hamidon_Origin", "set_name": "Hamidon Origin",
+                          "piece_name": "Nucleolus Exposure",
+                          "piece_uid": "Hamidon_Damage_Accuracy",
+                          "category_id": cid, "_ho": True}
+                         for _ in range(nslots - len(bomb))]
+                p["slots"] = bomb
         # ST proc HYBRIDS (offense + control roles): keep the set's acc/dam core — the first
         # 3 pieces of a premium home (its bonuses are build-defining), 2 of a filler set —
         # and fill the tail slots with damage procs. Only fires when the PPM math clears the

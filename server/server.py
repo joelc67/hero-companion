@@ -1791,6 +1791,7 @@ def _endurance_relief_pass(powers, archetype, ctx, res_cap):
             if drain <= 3.0 * rec:
                 return powers
             cands = []
+            _global_sets = {g.get("set", "").lower() for g in engine.PIECE_GLOBALS}
             for p in powers:
                 rec_p = POWER_BY_FULL.get(p.get("full_name")) or {}
                 if rec_p.get("power_type") != 2:
@@ -1800,8 +1801,15 @@ def _endurance_relief_pass(powers, archetype, ctx, res_cap):
                     continue
                 last = slots[-1] or {}
                 uid = last.get("piece_uid") or ""
-                if (last.get("_proc") or uid == "Crafted_Endurance_Discount"
-                        or uid in engine.PIECE_GLOBALS):
+                lset = (last.get("set_name") or "").lower()
+                if (last.get("_proc") or last.get("_ho")
+                        or uid == "Crafted_Endurance_Discount"
+                        or lset in _global_sets):     # never eat a LotG-class global
+                    continue
+                # never ORPHAN a pair: swapping the 2nd piece of a 2-piece set leaves
+                # a dead 1-piece fragment (field report: Tactics RRx2 -> RRx1+EndRdx)
+                if lset and sum(1 for s in slots
+                                if s and (s.get("set_name") or "").lower() == lset) == 2:
                     continue
                 cost = (rec_p.get("end_cost") or 0) / max(
                     rec_p.get("activate_period") or 1.0, 0.25)
