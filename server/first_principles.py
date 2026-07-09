@@ -27,7 +27,7 @@ import math
 # (lessons) from an older model version is ignored — conclusions drawn by a blinder model must
 # not steer the proposer after the model improves (measured: run 9, blind to Carrion Creepers'
 # vine damage, taught autopick to drop it; the fix landed and the stale lesson kept biting).
-MODEL_VERSION = 28     # v28: THE STABILITY BATCH (Joel + Maelwys round-2 field reports, 2026-07-08) — (1) HitPoints set-bonus UNIT fix, GAME-VERIFIED: values are Melee_HealSelf SCALES (flat HP = value × table ≈ base_hp/10 per AT; Brute 2.01%), the engine had added them raw = every +HP bonus 10x inflated in totals AND ILP targets (masked by the HP cap); tank preset floor 0.30→30 (latent percent-units bug); (2) Reactive Defenses scaling-res unique priced into PIECE_GLOBALS at its +3% always-on floor (was entirely invisible to the solver); (3) toggle END-COST term: a def/res set's endurance aspect relieves the host toggle's REAL drain (end_cost/activate_period — Weave 0.325, Maneuvers 0.39, CJ 0.065 end/s), credited as recovery-equivalent coverage, so expensive toggles are strictly better set hosts; (4) armor-credit recharge gate REMOVED: a toggle is always-on by definition — the old <8 (armor-native) / <=10.5 (squishy) gates silently excluded the POOL armor toggles (Tough/Weave store 10.0s, Maneuvers 15.0s: Maneuvers had NEVER earned the credit on any AT); (5) exact ILP added-slot budget (indicator per empty power + reservations; Hasten's 2-slot standard reserved AND guarded from the junk trim) + value-aware over-budget trim (junk fills → non-attacks → pool attacks → weakest real attacks) — real attacks reach 6 slots (the universal 5-slot attack cap was budget overspend + order-blind trimming, never a preference); (6) 6th-slot damage credit (0.7 of a piece; PROC VEHICLES 2.5 with base weight floored at 0.5) and proc bombs keep their slot count + reserve a Nucleolus Acc/Dam slot; (7) last-piece-swap guards everywhere (−res anchor, FF seating, endurance relief): never overwrite procs/HOs/globals/uniques, never orphan a 2-piece set; ST-hybrid tails stack HOs instead of keeping dead fragments; (8) signature support-set buff clicks are must-set on EVERY role; (9) ACCURACY VALUED END-TO-END (the LotG-x4 gap, Maelwys: "Global Accuracy set bonuses are a big help in capping your hit rate versus +4s and above"): DATA — parse_mids dropped every global-accuracy set bonus (missing "Accuracy" in the Enhancement-relabel allowlist; LotG 4pc +9% parsed to an EMPTY effects list), all 65 accuracy bonuses back-filled from the game-client extraction and the set-bonus reality check extended (name matching fixed too: it silently covered 43 values, now 282, 0 drift); SOLVER — an ("Accuracy",None) objective term derived by linearizing outgoing_hit at the solve baseline: target = accuracy headroom to the 95% ceiling from the scenario's player-vs-+N base-hit table (~4% vs +1s, 41% vs iTrial +3s, 74% vs +4s — content-aware saturation, never overbought), weight = the recharge term's per-fraction weight × the scorer's own marginal ratio (dlnDPS/dacc = 1/(1+acc0) ÷ recharge-bound share 0.5/(1+rech0)); scenario key rides the preset targets; the engine/scorer side already consumed totals["accuracy"] — it had just never been fed; v27: THE REMAINING MAELWYS PROMISES — (1) −res procs for EVERY role that can host them (the anchor sweep was debuffer/control-only; a damage role owns the biggest share of the spawn's damage, so Achilles/Annihilation/Fury multiply HIS output too; Annihilation PPM corrected to the client's 3.0, attuned twins priced, Fury priced at Achilles-class 15); (2) FORCE FEEDBACK +recharge valued for real: seated in the spammiest non-premium knockback attack and priced in engine totals as chance × 5s ÷ actual cycle (multiple copies add uptime, capped at +75%) — flows into everything recharge touches (chains, hasten, debuff uptime, pet cycles); (3) HAMIDON ORIGINS modeled: all 62 special IOs registered as priceable pieces, and the ST proc-hybrid's filler core trades up to 2× Nucleolus (Acc/Dam 33.3% each — ≈66/66 in two recharge-free slots; Endoplasm for pure holds); premium cores stay set pieces; v26: HENCHMEN FOR REAL — pet entities reconciled to the live client (henchman classes were 2.2x hot from the Mids snapshot; the live henchman-family columns didn't even exist), SQUAD counts from EntCreate templates (Soldiers = 2xSoldier+1xMedic; tier squads of 3/2/1), per-power pet class (Controller vs Dominator versions share an entity uid), timed-summon UPTIME (Spiderlings 240s earn duration/cycle credit; recharge slotting shortens the cycle), copy_boosts honored (no phantom damage enhancement on pets the game doesn't boost); the optimizer eats dps_total = each x count x uptime; v25: ST PROC HYBRIDS — a long-recharge single-target attack/hold keeps a 2-3 piece acc/dam core (recharge-free: local recharge divides proc chance) and fills its tail slots with damage procs once the PPM math clears ~50%/roll (the Dominate / Seismic Smash master pattern; capacity counted by distinct proc SETS; pet summons excluded — henchman procs are the pet's own model, task #33) + proc-catalog PPM values now authoritative from the game client (11 fixed; ATO procs were 30-43% undervalued); v24: CURRENT-META CALIBRATION from the 2,255-build Sovereign corpus + the master builder's doctrine — damage-proc PPM pricing in the engine (procs are DEAL, tradeable against set bonuses), typed S/L/F/C-35 default targets (positional-armor builds swap to Melee/Ranged/AoE 35; "classic softcap" goal restores 45s), Hasten hard 2-slot rule; v23: FOCUS SPLIT (role_mix — ask the user their percentage split when sets support multiple roles); v22: role lens × playstyle (solo relaxes to raw physics — 'whole team in one character') + wiki Role Diversity natural-roles table; v21: ROLE LENS (declared role weights the objective — role-based game first, off-role only by explicit pick); v20: scenario end_relief (incarnate-era recovery — mules stop beating Leadership via a phantom endurance crisis); v19: debuffer proc pass = res/anchor procs ONLY (no damage bombing — his damage is 1/9th of the league's; every −res proc placed, last-piece swaps, premium homes protected); v18: no pool/inherent melee in ranged ST chains + pure-ADD moves; v17: attack cast budget; v16: team buffs; v15: team −tohit; v14: ally buffs; v13: Redirects; v12: −def; v11: uptime; v10: enh-aware
+MODEL_VERSION = 29     # v29 (Joel-approved scope, 2026-07-08 late evening): (1) HENCHMAN SET-BONUS INHERITANCE — bins-verified (client powers.bin: Henchmen-tagged effect groups on Set_Bonus.Set_Bonus.* only; SetBonusPetShareHP[50]=40.159 on the MM class, henchman classes lack the table): henchmen receive 50% of TRUE set bonuses — flat HP from the MM's own base (identical every tier → T1s gain most), half-percentage def/res/regen; piece globals + accolades structurally excluded via engine set_bonus_totals (accumulated inside the set-bonus loop only); consumed as a per-henchman survival availability (same ttl→1−exp shape as the player's own) on pet DPS. Provisional+flagged: uniform spawn-damage spread across squad+MM; henchman innate defenses unmodeled (understatement). +Damage inheritance deferred WITH the player-side +damage%-set-bonus gap (shared plumbing, v30 candidate, stated in reality_check_setbonuses). (2) HEAL STRENGTH — the game's 11 heal-strength set bonuses (Numina 4pc +6%…) back-filled game-first (patch_heal_strength.py; parse_mids allowlist fixed — same root cause as v28's accuracy find) and multiplied onto the build's own heal output (set bonuses bypass ED); lands BEFORE any healer champion per the boundary condition. // v28: THE STABILITY BATCH (Joel + Maelwys round-2 field reports, 2026-07-08) — (1) HitPoints set-bonus UNIT fix, GAME-VERIFIED: values are Melee_HealSelf SCALES (flat HP = value × table ≈ base_hp/10 per AT; Brute 2.01%), the engine had added them raw = every +HP bonus 10x inflated in totals AND ILP targets (masked by the HP cap); tank preset floor 0.30→30 (latent percent-units bug); (2) Reactive Defenses scaling-res unique priced into PIECE_GLOBALS at its +3% always-on floor (was entirely invisible to the solver); (3) toggle END-COST term: a def/res set's endurance aspect relieves the host toggle's REAL drain (end_cost/activate_period — Weave 0.325, Maneuvers 0.39, CJ 0.065 end/s), credited as recovery-equivalent coverage, so expensive toggles are strictly better set hosts; (4) armor-credit recharge gate REMOVED: a toggle is always-on by definition — the old <8 (armor-native) / <=10.5 (squishy) gates silently excluded the POOL armor toggles (Tough/Weave store 10.0s, Maneuvers 15.0s: Maneuvers had NEVER earned the credit on any AT); (5) exact ILP added-slot budget (indicator per empty power + reservations; Hasten's 2-slot standard reserved AND guarded from the junk trim) + value-aware over-budget trim (junk fills → non-attacks → pool attacks → weakest real attacks) — real attacks reach 6 slots (the universal 5-slot attack cap was budget overspend + order-blind trimming, never a preference); (6) 6th-slot damage credit (0.7 of a piece; PROC VEHICLES 2.5 with base weight floored at 0.5) and proc bombs keep their slot count + reserve a Nucleolus Acc/Dam slot; (7) last-piece-swap guards everywhere (−res anchor, FF seating, endurance relief): never overwrite procs/HOs/globals/uniques, never orphan a 2-piece set; ST-hybrid tails stack HOs instead of keeping dead fragments; (8) signature support-set buff clicks are must-set on EVERY role; (9) ACCURACY VALUED END-TO-END (the LotG-x4 gap, Maelwys: "Global Accuracy set bonuses are a big help in capping your hit rate versus +4s and above"): DATA — parse_mids dropped every global-accuracy set bonus (missing "Accuracy" in the Enhancement-relabel allowlist; LotG 4pc +9% parsed to an EMPTY effects list), all 65 accuracy bonuses back-filled from the game-client extraction and the set-bonus reality check extended (name matching fixed too: it silently covered 43 values, now 282, 0 drift); SOLVER — an ("Accuracy",None) objective term derived by linearizing outgoing_hit at the solve baseline: target = accuracy headroom to the 95% ceiling from the scenario's player-vs-+N base-hit table (~4% vs +1s, 41% vs iTrial +3s, 74% vs +4s — content-aware saturation, never overbought), weight = the recharge term's per-fraction weight × the scorer's own marginal ratio (dlnDPS/dacc = 1/(1+acc0) ÷ recharge-bound share 0.5/(1+rech0)); scenario key rides the preset targets; the engine/scorer side already consumed totals["accuracy"] — it had just never been fed; v27: THE REMAINING MAELWYS PROMISES — (1) −res procs for EVERY role that can host them (the anchor sweep was debuffer/control-only; a damage role owns the biggest share of the spawn's damage, so Achilles/Annihilation/Fury multiply HIS output too; Annihilation PPM corrected to the client's 3.0, attuned twins priced, Fury priced at Achilles-class 15); (2) FORCE FEEDBACK +recharge valued for real: seated in the spammiest non-premium knockback attack and priced in engine totals as chance × 5s ÷ actual cycle (multiple copies add uptime, capped at +75%) — flows into everything recharge touches (chains, hasten, debuff uptime, pet cycles); (3) HAMIDON ORIGINS modeled: all 62 special IOs registered as priceable pieces, and the ST proc-hybrid's filler core trades up to 2× Nucleolus (Acc/Dam 33.3% each — ≈66/66 in two recharge-free slots; Endoplasm for pure holds); premium cores stay set pieces; v26: HENCHMEN FOR REAL — pet entities reconciled to the live client (henchman classes were 2.2x hot from the Mids snapshot; the live henchman-family columns didn't even exist), SQUAD counts from EntCreate templates (Soldiers = 2xSoldier+1xMedic; tier squads of 3/2/1), per-power pet class (Controller vs Dominator versions share an entity uid), timed-summon UPTIME (Spiderlings 240s earn duration/cycle credit; recharge slotting shortens the cycle), copy_boosts honored (no phantom damage enhancement on pets the game doesn't boost); the optimizer eats dps_total = each x count x uptime; v25: ST PROC HYBRIDS — a long-recharge single-target attack/hold keeps a 2-3 piece acc/dam core (recharge-free: local recharge divides proc chance) and fills its tail slots with damage procs once the PPM math clears ~50%/roll (the Dominate / Seismic Smash master pattern; capacity counted by distinct proc SETS; pet summons excluded — henchman procs are the pet's own model, task #33) + proc-catalog PPM values now authoritative from the game client (11 fixed; ATO procs were 30-43% undervalued); v24: CURRENT-META CALIBRATION from the 2,255-build Sovereign corpus + the master builder's doctrine — damage-proc PPM pricing in the engine (procs are DEAL, tradeable against set bonuses), typed S/L/F/C-35 default targets (positional-armor builds swap to Melee/Ranged/AoE 35; "classic softcap" goal restores 45s), Hasten hard 2-slot rule; v23: FOCUS SPLIT (role_mix — ask the user their percentage split when sets support multiple roles); v22: role lens × playstyle (solo relaxes to raw physics — 'whole team in one character') + wiki Role Diversity natural-roles table; v21: ROLE LENS (declared role weights the objective — role-based game first, off-role only by explicit pick); v20: scenario end_relief (incarnate-era recovery — mules stop beating Leadership via a phantom endurance crisis); v19: debuffer proc pass = res/anchor procs ONLY (no damage bombing — his damage is 1/9th of the league's; every −res proc placed, last-piece swaps, premium homes protected); v18: no pool/inherent melee in ranged ST chains + pure-ADD moves; v17: attack cast budget; v16: team buffs; v15: team −tohit; v14: ally buffs; v13: Redirects; v12: −def; v11: uptime; v10: enh-aware
 
 # ── Scenario: what the FIGHT is (physics), not what stats to want ────────────
 # Units are relative (contribution is compared between builds, so absolute scale cancels).
@@ -159,6 +159,67 @@ def _pct(totals, key):
     return ((x.get("value", 0) if isinstance(x, dict) else x) or 0) / 100.0
 
 
+# ── v29 HENCHMAN SET-BONUS INHERITANCE (bins-verified 2026-07-08) ────────────
+# Henchmen receive 50% of the Mastermind's TRUE set bonuses: a FLAT hit-point
+# amount computed from the MM'S OWN class table (SetBonusPetShareHP[50] = 40.159
+# = 803.17 × 10% × 0.5 per scale unit — identical for every tier, so the squishy
+# T1s gain the most proportional survivability: Maelwys's point, and the game's),
+# and half the percentage for defense/resistance/regeneration. Piece globals
+# (Unbreakable Guard, LotG) and accolades carry NO Henchmen effect groups, so the
+# exclusion is structural: engine.calculate_build's `set_bonus_totals` is
+# accumulated inside the set-bonus loop only. The +damage inheritance family is
+# NOT modeled yet — it shares plumbing with the player's own (unvalued) +damage%
+# set bonuses and both land together (v30 candidate, stated in the reality check).
+# Henchman base HP at 50 from the client's villain_classes.bin (both class-name
+# spellings carry identical values).
+_HENCH_HP50 = {
+    "Class_Minion_Henchman": 578.3, "Class_Henchman_Minion": 578.3,
+    "Class_Minion_Henchman_Small": 578.3, "Class_Henchman_Minion_Small": 578.3,
+    "Class_Lt_Henchman": 771.0, "Class_Henchman_Lt": 771.0,
+    "Class_Boss_Henchman": 963.8, "Class_Henchman_Boss": 963.8,
+}
+_INHERIT_SHARE = 0.5      # SetBonusPetShare / SetBonusPetShareHP (client tables)
+
+
+def _henchman_availability(pet, totals, sc, tohit_deb, bodies, owner_base_hp,
+                           upgrade_cast=0.0):
+    """Fraction of the fight this pet is UP — a RENEWAL process, not a one-death
+    gate: a henchman lives ttl seconds, dies, and costs its resummon + re-upgrade
+    cast time to bring back, so availability = ttl / (ttl + downtime). Every
+    quantity is the game's own: tier HP from the client's villain_classes.bin,
+    the inherited 50% share per the bins, cast times from the build's actual
+    summon/upgrade powers, the hit math the whole model runs on. The spawn's
+    damage spreads uniformly across every body on the field (teammates + MM +
+    squad — provisional, flagged); henchman innate defenses, MM aura buffs and
+    per-tier summon-level offsets are not modeled (flagged; the first two
+    UNDERSTATE availability, the last overstates T1s slightly). The MM's own
+    −tohit debuffs protect henchmen exactly as they protect him (game rule)."""
+    hp50 = _HENCH_HP50.get(pet.get("pet_class") or "")
+    if not hp50:
+        return 1.0            # non-henchman pet: no inheritance, no death model
+    sb = totals.get("set_bonus_totals") or {}
+    # engine stores max_hp as the MM's own +HP fraction of HIS base — the game
+    # computes the flat share from exactly that: frac × MM base × 0.5.
+    hp = hp50 + (sb.get("max_hp") or 0) / 100.0 * (owner_base_hp or 0) * _INHERIT_SHARE
+    dvals = sb.get("defense") or {}
+
+    def _bestdef(keys):
+        return max((dvals.get(k) or 0) for k in keys) / 100.0 * _INHERIT_SHARE
+
+    p_ml = incoming_hit(_bestdef(("Melee", "Smashing", "Lethal")), tohit_deb, sc)
+    p_rn = incoming_hit(_bestdef(("Ranged", "AoE", "Energy")), tohit_deb, sc)
+    res_sl = ((sb.get("resistance") or {}).get("Smashing") or 0) / 100.0 * _INHERIT_SHARE
+    incoming = (sc["enemies"] * sc["enemy_dps"] * (0.5 * p_ml + 0.5 * p_rn)
+                * (1.0 - min(res_sl, 0.90)) / max(bodies, 1))
+    regen = hp * _REGEN_PER_SEC * (1.0 + (sb.get("regeneration") or 0) / 100.0
+                                   * _INHERIT_SHARE)
+    ttl = hp / max(incoming - regen, 1.0)
+    downtime = (pet.get("resummon_cast") or 0.0) + upgrade_cast
+    if downtime <= 0:
+        return 1.0
+    return ttl / (ttl + downtime)
+
+
 def _def_against(totals, kind_keys):
     """Defense the game would apply: BEST of the applicable typed/positional values."""
     d = totals.get("defense") or {}
@@ -230,6 +291,15 @@ def encounter_value(archetype, powers, ctx, totals, scenario="general", arch_row
         rezzes = h["rez"]
     else:
         team_heal_hps, rezzes = 0.0, 0
+    # v29 HEAL STRENGTH: the game's 11 heal-strength set bonuses (Numina 4pc +6%,
+    # Doctored Wounds 4pc +4%, Panacea 6pc +6%…) multiply the healing the build's
+    # own powers put out — game-verified values back-filled from the client
+    # (tools/patch_heal_strength.py). Set bonuses bypass ED, so a plain multiplier
+    # on the enhanced heal output is the game's own arithmetic. Boundary condition
+    # honored: this term exists BEFORE any healer-role champion is certified.
+    heal_str = 1.0 + _pct(totals, "heal_strength")
+    self_heal_hps *= heal_str
+    team_heal_hps *= heal_str
     net_in = max(incoming - regen_hps - self_heal_hps, 1.0)
     ttl = hp / net_in                                  # time-to-live in this spawn
     # Smooth availability: surviving margin keeps diminishing value (alpha spikes, streaks) —
@@ -246,9 +316,39 @@ def encounter_value(archetype, powers, ctx, totals, scenario="general", arch_row
     p_out = outgoing_hit(_pct(totals, "tohit"), _pct(totals, "accuracy"), sc, def_deb_eff)
     my_dps = (off.get("st_dps") or 0) * 0.4 + (off.get("aoe_dps") or 0) * min(sc["enemies"], 10) * 0.6
     # pets contribute the SQUAD's uptime-weighted DPS (v26): each × count × uptime —
-    # per-pet alone undercounted a 6-henchman Mastermind and overcounted timed summons
-    my_dps += sum((p.get("dps_total") or p.get("dps_each") or p.get("dps") or 0)
-                  for p in (off.get("pets") or []))
+    # per-pet alone undercounted a 6-henchman Mastermind and overcounted timed summons.
+    # v29: each HENCHMAN's contribution is additionally weighted by its survival
+    # availability (renewal: alive ttl, dead for the resummon+re-upgrade casts) —
+    # dead henchmen deal nothing, and inherited set bonuses (the 50% share,
+    # bins-verified) are what keep the squishy tiers alive. Non-henchman pets
+    # have no inheritance and keep the pre-v29 always-up assumption.
+    _hench_n = sum((p.get("count") or 1) for p in (off.get("pets") or [])
+                   if (p.get("pet_class") or "") in _HENCH_HP50)
+    _up_cast = 0.0
+    if _hench_n:
+        # the spawn's damage spreads across every body on the field
+        _bodies = sc["teammates"] + 1 + _hench_n
+        # re-upgrade overhead: every MM primary carries exactly TWO upgrade
+        # powers — effect-less clicks in the summon powerset (grant-power
+        # redirects the parser sees as empty). Two lowest casts win the tie
+        # when a set also parses a click buff effect-less (Beast Mastery).
+        pbf = (ctx or {}).get("power_by_full") or {}
+        recs = [pbf.get(p.get("full_name")) for p in (powers or [])]
+        summon_sets = {r.get("powerset_full_name") for r in recs
+                       if r and r.get("summons")}
+        cands = sorted((r.get("cast_time") or 0.0) for r in recs
+                       if r and r.get("powerset_full_name") in summon_sets
+                       and not r.get("summons") and not r.get("damage_effects")
+                       and not r.get("buff_effects") and not r.get("heal_effects")
+                       and (r.get("cast_time") or 0) > 0)
+        _up_cast = sum(cands[:2])
+        my_dps += sum((p.get("dps_total") or p.get("dps_each") or p.get("dps") or 0)
+                      * _henchman_availability(p, totals, sc, tohit_deb,
+                                               _bodies, base_hp, _up_cast)
+                      for p in (off.get("pets") or []))
+    else:
+        my_dps += sum((p.get("dps_total") or p.get("dps_each") or p.get("dps") or 0)
+                      for p in (off.get("pets") or []))
     my_dps *= p_out * pp * hasten_mult_dmg   # hit chance × purple patch × click-recharge credit
     # ENDURANCE ECONOMY (v10): a build that bottoms out can't sustain its output — the engine
     # already measures the drain (attack chain + toggles) vs recovery. Sustainable → full credit;

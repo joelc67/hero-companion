@@ -61,16 +61,20 @@ def _gkind(attribs, aspect):
     if a0 == "hitpoints": return "HitPoints", None
     if a0 == "tohit": return "ToHit", None
     if a0 == "accuracy" and asp == "strength": return "Accuracy", None
-    # KNOWN MODEL GAP (stated, not hidden): the game's 11 heal-strength set bonuses
-    # (Numina 4pc +6% heal etc., attrib Heal_Dmg/Strength) are untracked — the
-    # engine has no Heal-strength stat yet. Same class of gap as the 2026-07-08
-    # Accuracy find; queued for v29 (adding it mid-refresh would shift champion
-    # scores). Counted and printed separately so it can never silently vanish.
-    if a0 == "heal_dmg":
-        return "UNTRACKED_HEAL", None
+    # v29: heal strength tracked (the 11 Numina-class bonuses back-filled by
+    # tools/patch_heal_strength.py; engine totals["heal_strength"], scorer
+    # multiplies heal output). Verified below like every other kind.
+    if a0 == "heal_dmg" and asp == "strength":
+        return "Heal", None
     # An X_Dmg attrib is DamageBuff only at aspect Strength — at aspect Resistance
     # it IS typed resistance (Bonesnap 2pc Fire_Dmg/Resistance = +1.5% fire res).
     # Misrouting those to DamageBuff hid 224 checkable resistance values.
+    # KNOWN MODEL GAP (stated, not hidden — found v29, deferred v30): DamageBuff
+    # set-bonus VALUES verify against the client below (at the ×2.5 convention),
+    # but neither engine totals nor the scorer apply the build's OWN +damage% set
+    # bonuses to its damage (only incarnate DamageBuff reaches offense), and the
+    # henchman-inheritance term skips the damage family for the same reason —
+    # both halves share the plumbing and land together.
     if a0 in DMG or "_dmg" in a0:
         if asp == "strength": return "DamageBuff", dt
         if asp == "resistance": return "Resistance", dt
@@ -100,7 +104,7 @@ def main():
 
     drift = []
     missing = []
-    damage_conv = matched = expected = untracked_heal = 0
+    damage_conv = matched = expected = 0
     for gkey, g in game.items():
         nm = _norm(_SNAP_ALIASES.get(gkey, gkey))
         if not any(k[0] == nm for k in ours):
@@ -110,9 +114,6 @@ def main():
             for e in tier["effects"]:
                 kind, dt = _gkind(e["attribs"], e["aspect"])
                 if not kind:
-                    continue
-                if kind == "UNTRACKED_HEAL":
-                    untracked_heal += 1
                     continue
                 expected += 1
                 gv = round(e["scale"], 4)
@@ -138,8 +139,10 @@ def main():
 
     covered = matched + damage_conv + len(drift)
     print(f"Coverage: {covered} of {expected} mappable game set-bonus effects found in our data.")
-    print(f"KNOWN UNTRACKED: {untracked_heal} heal-strength bonuses "
-          f"(no Heal stat in the model yet — queued v29, see _gkind comment).")
+    print("STATED EXCLUSION (v30 candidate): the build's OWN +damage% set bonuses "
+          "verify here but are consumed nowhere (engine offense takes only "
+          "incarnate DamageBuff); henchman damage-family inheritance waits on the "
+          "same plumbing — see _gkind comment.")
     print(f"Set-bonus values matched to the live game: {matched} "
           f"(+ {damage_conv} damage-buff at the known x2.5 convention).")
     print(f"REAL DRIFT: {len(drift)}")

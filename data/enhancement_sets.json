@@ -15375,7 +15375,16 @@
     "bonuses": [
      "Tiny Improved Heal Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Heal",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Heal",
+      "value": 0.02,
+      "to_who": 2
+     }
+    ]
    }
   ]
  },
@@ -15590,7 +15599,16 @@
     "bonuses": [
      "Moderate Improved Heal Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Heal",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Heal",
+      "value": 0.04,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -15931,7 +15949,16 @@
     "bonuses": [
      "Small Improved Heal Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Heal",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Heal",
+      "value": 0.03,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -16297,7 +16324,16 @@
     "bonuses": [
      "Large Improved Heal Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Heal",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Heal",
+      "value": 0.05,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -16727,7 +16763,16 @@
     "bonuses": [
      "Moderate Improved Heal Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Heal",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Heal",
+      "value": 0.04,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -17077,7 +17122,16 @@
     "bonuses": [
      "Huge Improved Heal Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Heal",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Heal",
+      "value": 0.06,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -37761,7 +37815,16 @@
     "bonuses": [
      "Large Improved Heal Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Heal",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Heal",
+      "value": 0.05,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -38173,7 +38236,16 @@
     "bonuses": [
      "Large Improved Heal Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Heal",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Heal",
+      "value": 0.05,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -43396,7 +43468,16 @@
     "bonuses": [
      "Huge Improved Heal Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Heal",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Heal",
+      "value": 0.06,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -45918,7 +45999,16 @@
     "bonuses": [
      "Huge Improved Heal Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Heal",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Heal",
+      "value": 0.06,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -50522,7 +50612,16 @@
     "bonuses": [
      "Ultimate Improved Heal Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Heal",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Heal",
+      "value": 0.08,
+      "to_who": 2
+     }
+    ]
    },
    {
     "pieces_required": 5,

@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+- **Henchmen inherit your set bonuses — and the optimizer knows.** The game
+  gives Mastermind henchmen half of your true set bonuses (verified straight
+  from the game client): +Max HP arrives as a flat amount from the
+  Mastermind's own hit points, identical for every henchman, so your squishy
+  tier-1s gain the most staying power — exactly the effect the forum
+  discussion described. Builds are now scored with each henchman's real
+  survival in the fight (tier hit points from the game's own tables, deaths
+  cost the actual resummon and re-upgrade cast times), so +HP, defense and
+  resistance bonuses carry honest extra value on a Mastermind. Globals like
+  Unbreakable Guard and accolade HP do NOT reach henchmen (also the game's
+  rule), and the planner never credits them there.
+- **Heal-strength set bonuses exist now.** The game's 11 heal-strength bonuses
+  (Numina's 4-piece +6% heal, Doctored Wounds +4%, Panacea's 6-piece +6%…) had
+  parsed to nothing — same story as the accuracy bonuses fixed in 0.12.15. All
+  11 are restored from the game client, the totals panel shows your +% Heal
+  strength, and the optimizer values what they do to your actual healing
+  output.
+
 - **Slot anything by hand.** The enhancement picker now offers the single
   enhancements a power accepts alongside its sets: common crafted IOs, Hamidon
   / Titan / Hydra Origins, and D-Syncs. Identical copies stack freely (that's

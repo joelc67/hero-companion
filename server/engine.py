@@ -253,6 +253,7 @@ def _empty_totals():
         "max_hp": 0.0,
         "tohit": 0.0,
         "accuracy": 0.0,
+        "heal_strength": 0.0,   # v29: global +Heal strength (set bonuses)
     }
 
 
@@ -767,6 +768,11 @@ def _pet_offense(build, totals, ctx):
             count = max(1, int(se.get("count") or 1))
             pets.append({"name": ent.get("display_name") or uid,
                          "from_power": p.get("display_name"),
+                         # v29: the pet's game class + the summon's real cast time
+                         # ride along so the scorer's henchman-inheritance term can
+                         # key tier HP and the resummon downtime off them.
+                         "pet_class": se.get("class") or ent.get("class_name"),
+                         "resummon_cast": round(p.get("cast_time") or 0.0, 2),
                          "dps_each": round(dps, 1), "attack_count": natk,
                          "count": count, "uptime": round(uptime, 2),
                          "dps_total": round(dps * count * uptime, 1)})
@@ -900,6 +906,12 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
     bonus_signature_count = defaultdict(int)
     applied_bonuses = []        # for display / AI context
     capped_out = []
+    # v29: TRUE-set-bonus-only subtotals — what MM henchmen inherit at 50%
+    # (bins-verified 2026-07-08: Henchmen-tagged effect groups exist ONLY on
+    # Set_Bonus.Set_Bonus.* powers; piece globals — Unbreakable Guard, LotG —
+    # and accolades have none). Accumulated INSIDE this loop so the exclusion
+    # is structural: _piece_globals/_external_buffs never touch it.
+    sb_only = _empty_totals()
 
     for power in build.get("powers", []):
         set_counts = defaultdict(int)
@@ -937,6 +949,7 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
                         eff = dict(eff, value=hp_bonus_fraction(
                             eff.get("value", 0.0), ctx))
                     _apply_effect(totals, eff)
+                    _apply_effect(sb_only, eff)
 
     # FORCE FEEDBACK average recharge (v27): a slotted "Chance for +Recharge" in a cycled
     # attack sustains a real average global-recharge uplift — chance/roll = PPM × (base
@@ -960,6 +973,16 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
             sec_caps["recovery"] = ctx["at_recovery_cap"] * 100.0
     # Convert fractions -> percentages for display
     display = _to_display(totals, res_cap, sec_caps, ctx=ctx)
+    # v29: what MM henchmen inherit (50% of TRUE set bonuses only) — the scorer's
+    # henchman-survivability term reads this. Percent units, same as the display.
+    display["set_bonus_totals"] = {
+        "defense": {t: round(v * 100.0, 2) for t, v in sb_only["defense"].items()},
+        "resistance": {t: round(v * 100.0, 2) for t, v in sb_only["resistance"].items()},
+        "max_hp": round(sb_only["max_hp"] * 100.0, 2),
+        "regeneration": round(sb_only["regeneration"] * 100.0, 2),
+        "recovery": round(sb_only["recovery"] * 100.0, 2),
+        "heal_strength": round(sb_only["heal_strength"] * 100.0, 2),
+    }
     if ff:
         # transparency: how much of the global recharge FF is carrying (shown in %)
         display["ff_recharge_avg"] = round(ff * 100.0, 1)
@@ -1078,6 +1101,10 @@ def _apply_effect(totals, eff):
         totals["tohit"] += val
     elif et == "Accuracy":
         totals["accuracy"] += val
+    elif et == "Heal":
+        # v29: heal STRENGTH (Numina 4pc +6% etc.) — multiplies the healing the
+        # build's own heal powers put out; unrelated to +HP or +Regeneration.
+        totals["heal_strength"] += val
 
 
 def _to_display(totals, res_cap=RESISTANCE_HARD_CAP, sec_caps=None, ctx=None):
@@ -1146,6 +1173,8 @@ def _to_display(totals, res_cap=RESISTANCE_HARD_CAP, sec_caps=None, ctx=None):
         "max_hp": dict(capped("max_hp", "+% Max HP"), **max_hp_abs),
         "tohit": {"value": pct(totals["tohit"]), "label": "+% ToHit"},
         "accuracy": {"value": pct(totals["accuracy"]), "label": "+% Accuracy"},
+        "heal_strength": {"value": pct(totals.get("heal_strength", 0.0)),
+                          "label": "+% Heal strength"},
         "caps": {"defense_soft_cap": DEFENSE_SOFT_CAP,
                  "resistance_hard_cap": res_cap,
                  "max_hp_cap": sec_caps.get("max_hp"),

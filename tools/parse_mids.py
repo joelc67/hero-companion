@@ -799,7 +799,10 @@ def main():
             eff = et
             if et == "Enhancement":
                 if modifies in ("RechargeTime", "Recovery", "Regeneration",
-                                "ToHit", "HitPoints", "Accuracy"):
+                                "ToHit", "HitPoints", "Accuracy", "Heal"):
+                    # "Accuracy" was missing until 2026-07-08 (65 invisible
+                    # bonuses); "Heal" until v29 (the 11 heal-strength bonuses,
+                    # Numina 4pc +6% etc.) — same gap, same fix.
                     eff = modifies
                 else:
                     continue   # enhancement of an untracked aspect (Range, EndDisc…)
