@@ -2,6 +2,16 @@
 
 ## 0.12.16 — 2026-07-09
 
+- **Every "How do you play?" question explains itself the moment you answer
+  it.** The Role and "You fight from" pop-ups were silent on the first pass
+  through the wizard (they come before "Mostly in", and the explainers waited
+  for that answer). Now each question pops its tailored explanation as soon as
+  YOU answer it, on every surface that asks — Start New, Respec 50, and Change
+  how you started — while the combined summary still waits until your Role and
+  Content are actually chosen. Also: the import screen now says plainly that
+  in-game /build_save_file exports carry no boost levels — import a Mids .mbd
+  to bring +1..+5 and HO levels across.
+
 - **Henchmen inherit your set bonuses — and the optimizer knows.** The game
   gives Mastermind henchmen half of your true set bonuses (verified straight
   from the game client): +Max HP arrives as a flat amount from the
