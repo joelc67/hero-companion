@@ -67,6 +67,10 @@ tr:last-child td{border-bottom:none}
 .pill{display:inline-block;background:var(--panel2);border:1px solid var(--line);
 border-radius:3px;padding:2px 9px;font-size:.78rem;margin:2px 3px 2px 0}
 .chartrow td:first-child{width:44%}
+.tabbar{display:flex;gap:6px;margin:14px 0 10px}
+.tabbtn{background:#141b28;border:1px solid #2a3550;color:#8fa0bd;border-radius:8px 8px 0 0;
+  padding:8px 18px;font-size:.95rem;cursor:pointer}
+.tabbtn.active{background:#1c2740;color:#e8eefc;border-bottom-color:transparent;font-weight:600}
 .soon{border-style:dashed;opacity:.85}
 .soon .tagline{color:var(--gold);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em}
 .kpi{display:flex;gap:22px;flex-wrap:wrap;margin:4px 0 2px}
@@ -256,6 +260,12 @@ def _scorecard(label, cs, public=False):
 
 # ── event categories (Joel's board design): the content→category map ships in the
 # hub-updatable lexicon pack; unmapped/learned content falls back to name heuristics ──
+# Category accent colors — the bright stop of each banner gradient, reused so
+# every colored element on the page speaks the same category language.
+_CAT_ACCENT = {"itrial": "#7b4fe0", "hero_tf": "#2e7fd6", "villain_sf": "#b3202e",
+               "raid": "#3fae6e", "trial": "#26a6a0", "team": "#c79a2e",
+               "other": "#5b6c8c"}
+
 CATEGORIES = [
     ("itrial", "Incarnate Trials"),
     ("hero_tf", "Hero & Co-op Task Forces"),
@@ -614,13 +624,30 @@ def build(state_dir=None, public=False):
         if r.get("spots_filled") is not None and r.get("spots_total"):
             return f"{r['spots_filled']}/{r['spots_total']}"
         return r.get("spots_needed") or ""
+    # Recent formations, reworked (Joel 2026-07-10: "needs a color and tab with
+    # perhaps a pruned list or top bar like summary like the other categories —
+    # makes no sense as is"): pruned to the freshest 15, every row wears its
+    # category's color, and a summary strip up top mirrors the category cards.
+    recent_list = (pulse.get("recent") or [])[-15:][::-1]
+    rc_counts = {}
+    for r in recent_list:
+        rc_counts[_categorize(r.get("content") or "", lx_map)] = \
+            rc_counts.get(_categorize(r.get("content") or "", lx_map), 0) + 1
+    rc_pills = "".join(
+        f"<span class='pill'><i style='display:inline-block;width:10px;height:10px;"
+        f"border-radius:2px;background:{_CAT_ACCENT.get(k, '#5b6c8c')};"
+        f"margin-right:5px'></i>{_esc(lbl)} · {rc_counts[k]}</span>"
+        for k, lbl in CATEGORIES if rc_counts.get(k))
     recent_rows = "".join(
-        f"<tr><td class='dim'>{_esc((r.get('ts') or '')[11:16])}</td>"
+        f"<tr style='border-left:3px solid "
+        f"{_CAT_ACCENT.get(_categorize(r.get('content') or '', lx_map), '#5b6c8c')}'>"
+        f"<td class='dim'>{_esc((r.get('ts') or '')[11:16])}</td>"
         f"<td>{_esc(r.get('content') or '?')}</td><td>{_esc(r.get('channel'))}</td>"
-        f"<td class='num'>{_esc(_spots(r))}</td></tr>" for r in (pulse.get("recent") or []))
+        f"<td class='num'>{_esc(_spots(r))}</td></tr>" for r in recent_list)
     recent_card = _card(
-        "Recent formations witnessed", None,
-        "<table><tr><th>Time</th><th>Content</th><th>Channel</th><th class='num'>Spots</th></tr>"
+        "Recent formations witnessed", "the freshest 15, colored by category",
+        (f"<div style='margin-bottom:8px'>{rc_pills}</div>" if rc_pills else "")
+        + "<table><tr><th>Time</th><th>Content</th><th>Channel</th><th class='num'>Spots</th></tr>"
         + (recent_rows or "<tr><td class='dim' colspan='4'>—</td></tr>") + "</table>")
 
     # ---- Scorecards: ONE per account (fixes "only Lime Juice") -------------------------
@@ -734,14 +761,21 @@ def build(state_dir=None, public=False):
 
     # characters + haul are LOCAL ONLY for now (Joel: pointless on the public board
     # until the one-time character sync can bring characters over whole, task #38).
-    # Market PRICES render on both boards (Joel's 2026-07-10 ruling).
+    # Market content lives on its own TAB (Joel 2026-07-10: "Market data on a
+    # different tab at the top. First tab default called Activity, the other
+    # Market Data") — the prices card plus, locally, the personal ledger.
+    no_prices = ("<div class='card full'><h2>Market prices</h2><div class='dim'>"
+                 "No confirmed prices witnessed yet. A price records when a sale "
+                 "and its Consignment House credit pair unambiguously on a capture "
+                 "client — they land here automatically as clients see them.</div></div>")
     if public:
-        tail_sections = prices_card
+        tail_sections = ""
+        market_tab = prices_card or no_prices
     else:
         tail_sections = ("<h2 style='margin-top:24px'>Your characters</h2>"
                          + scorecards
-                         + f"<div class='grid'>{haul_card}{market_card}</div>"
-                         + prices_card)
+                         + f"<div class='grid'>{haul_card}</div>")
+        market_tab = market_card + (prices_card or no_prices)
 
     script = ""
     if public:
@@ -822,6 +856,11 @@ def build(state_dir=None, public=False):
 <div class='logo'>CoH <b>Pulse</b> Boards <span style='font-size:.9rem;color:#8fa0bd'>{logo_note}</span></div>
 <div class='tag'>{tag}</div>
 {diag}
+<div class='tabbar'>
+  <button class='tabbtn active' onclick="showTab('activity',this)">Activity</button>
+  <button class='tabbtn' onclick="showTab('market',this)">Market Data</button>
+</div>
+<div id='tab-activity'>
 {now_card}
 {week_card}
 {pulse_card}
@@ -830,6 +869,17 @@ def build(state_dir=None, public=False):
 {tail_sections}
 {badge_card}
 {soon}
+</div>
+<div id='tab-market' style='display:none'>
+{market_tab}
+</div>
+<noscript><style>#tab-market{{display:block!important}}.tabbar{{display:none}}</style></noscript>
+<script>function showTab(k,btn){{
+  document.getElementById('tab-activity').style.display=(k==='activity')?'':'none';
+  document.getElementById('tab-market').style.display=(k==='market')?'':'none';
+  document.querySelectorAll('.tabbtn').forEach(function(b){{b.classList.remove('active')}});
+  btn.classList.add('active');
+}}</script>
 <footer>{foot}</footer>
 </div>{script}</body></html>"""
     os.makedirs(APPDIR, exist_ok=True)
