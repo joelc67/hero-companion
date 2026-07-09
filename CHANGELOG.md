@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## Unreleased
+## 0.12.16 — 2026-07-09
 
 - **Henchmen inherit your set bonuses — and the optimizer knows.** The game
   gives Mastermind henchmen half of your true set bonuses (verified straight
