@@ -1501,7 +1501,7 @@ def _res_job_note(power, all_powers):
             f"below your other sets.")
 
 
-def _totals_kind(full_name, rec):
+def _totals_kind(full_name, rec, power=None, ctx=None):
     """Classify a power for the totals checkbox's replacement UI (Joel's Σ-checkbox
     design: the game gives each power TYPE a different real on/off story, so the
     control has to match). Returns None for powers that need no control at all
@@ -1530,8 +1530,25 @@ def _totals_kind(full_name, rec):
         return {"kind": "toggle"}
     if pt == 0 and rec.get("self_effects"):   # Click w/ a self-targeted buff
         durs = [e.get("duration") or 0 for e in rec["self_effects"]]
-        return {"kind": "click_buff", "base_recharge": rec.get("base_recharge") or 0,
-                "buff_duration": max(durs) if durs else 0}
+        out = {"kind": "click_buff", "base_recharge": rec.get("base_recharge") or 0,
+               "buff_duration": max(durs) if durs else 0}
+        # Honest cycle math for the uptime note: the power's OWN slotted recharge
+        # (post-ED) adds to global recharge in the game's formula. Without it,
+        # Hasten's own recharge IOs vanish from the note and uptime reads ~45%
+        # when the real figure is ~67% — a dishonest number is worse than none.
+        if power and ctx:
+            tot = 0.0
+            for slot in power.get("slots") or []:
+                if not slot or not slot.get("piece_uid"):
+                    continue
+                for asp, val in engine._scaled_boosts(slot, ctx):
+                    if asp == "RechargeTime":
+                        tot += val
+            if tot:
+                out["recharge_enh"] = round(engine.apply_ed_sched(
+                    engine.ED_SCHEDULE.get("RechargeTime", 0), tot,
+                    ctx["mult_ed"]), 4)
+        return out
     return None       # plain Click attack — no self_effects, no control needed
 
 
@@ -1789,7 +1806,7 @@ def build_calculate():
         fn = p.get("full_name")
         if not fn:
             continue
-        k = _totals_kind(fn, POWER_BY_FULL.get(fn))
+        k = _totals_kind(fn, POWER_BY_FULL.get(fn), p, ctx)
         if k:
             kinds[fn] = k
     res["power_kinds"] = kinds

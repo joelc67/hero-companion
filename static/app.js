@@ -2177,8 +2177,13 @@ function _clickUptimeNote(tk) {
   const rech = tk.base_recharge || 0;
   const dur = tk.buff_duration || 0;
   if (!rech || !dur) return "";
+  // The game's formula: local slotted recharge (server-computed, post-ED) and
+  // global recharge ADD in one denominator. Both matter — Hasten's own IOs
+  // carry a third of its uptime.
   const globalRech = (LAST_TOTALS && LAST_TOTALS.recharge && LAST_TOTALS.recharge.value) || 0;
-  const effRecharge = rech / (1 + globalRech / 100);
+  const effRecharge = rech / (1 + globalRech / 100 + (tk.recharge_enh || 0));
+  // Perma when the window covers cast-to-cast cycle (recharge starts on cast;
+  // the cast itself is negligible next to these windows).
   const uptime = Math.max(0, Math.min(1, dur / effRecharge));
   return uptime >= 0.95
     ? " — perma at your current recharge when previewed"
@@ -2209,7 +2214,10 @@ function totalsChipHtml(pw, idx) {
       <input type="checkbox" ${included ? "checked" : ""}
         onchange="toggleInclude(${idx}, this.checked)"></label>`;
   }
-  // click_buff — exclusive preview, default off, burst numbers kept visually distinct
+  // click_buff — exclusive preview, default off, burst numbers kept visually distinct.
+  // EXPLICIT check, not a fallthrough: an unknown future kind must render as "no
+  // chip" (safe), never silently borrow this branch's semantics (ideas.md caution).
+  if (tk.kind !== "click_buff") return "";
   const note = _clickUptimeNote(tk);
   return `<label class="totals-chip totals-cycle ${included ? "active" : ""}"
       title="Preview this click's window in your totals — in-game these are temporary, so only one preview runs at a time${note}.">

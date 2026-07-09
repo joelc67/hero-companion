@@ -968,6 +968,12 @@ def main():
             # Effects and Maths > Suppression). Zero = never suppresses = omitted.
             if ef.get("suppression"):
                 entry["suppression"] = ef["suppression"]
+            # Buff window (nDuration, seconds): kept only when set — a click
+            # self-buff's active window (Hasten 120s, Build Up 10s), which the
+            # totals-chip uptime note divides by the power's cycle. Zero (toggle
+            # ticks, autos) = omitted, same convention as suppression.
+            if ef.get("duration"):
+                entry["duration"] = round(ef["duration"], 3)
             out.append(entry)
         return out
 
