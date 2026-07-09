@@ -1347,10 +1347,15 @@ def enhancement_detail():
     tiers = []
     for t in sd.get("tiers", []):
         need = t["pieces_required"]
-        # Honesty marker: 152 of 1049 tiers (movement/slow-resist/range/mez-
-        # duration/KB-protection families) carry EMPTY effect lists in our data
-        # — the game grants them but the totals can't count them yet. The card
-        # says so instead of rendering a bare name that looks like an oversight.
+        # Honesty marker: 112 of 1,049 bonus records (103 PvE-side) carry EMPTY
+        # effect lists in our data — the slow-resist/movement/range/mez-
+        # duration/KB-protection families. Through this join that marks 143 of
+        # 1,056 rendered tier rows (the client stores 52 duplicate same-piece-
+        # count tier rows; 40 of them land on empty records). The game grants
+        # these but the totals can't count them yet — the card says so instead
+        # of rendering a bare name that looks like an oversight. Join is
+        # unambiguous in shipped data: no tier has two pv_mode!=2 records at
+        # one piece count, and no tier is PVP-only (counted 2026-07-09).
         b_rec = next((b for b in (set_rec or {}).get("bonuses", [])
                       if b.get("pieces_required") == need
                       and b.get("pv_mode") != 2), None)
