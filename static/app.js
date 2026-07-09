@@ -2163,6 +2163,61 @@ function renderPowers() {
   renderConverterGuide();
 }
 
+// ── Totals-checkbox redesign (Joel, ideas.md "the Σ checkbox is wrong for most
+// power types"): the uniform checkbox lied about what the game actually allows.
+// Four states, color + glyph coded (never color alone):
+//   locked (🔒 always-on autos/passives/inherents — no off-state exists in-game)
+//   toggle (⏻ default ON — its legitimate checkbox home: mule hosts, what-ifs)
+//   click_buff (⟳ timed self-buff/burst clicks — Hasten/Build Up/godmodes — default
+//     OFF, one preview at a time; game data doesn't cleanly separate "cycling
+//     utility buff" from "attack-window burst", so both render as this one kind)
+// Plain Click attacks (no self_effects) get no chip at all — a checkbox there would
+// be a false control, since they have no self-total to include or exclude.
+function _clickUptimeNote(tk) {
+  const rech = tk.base_recharge || 0;
+  const dur = tk.buff_duration || 0;
+  if (!rech || !dur) return "";
+  const globalRech = (LAST_TOTALS && LAST_TOTALS.recharge && LAST_TOTALS.recharge.value) || 0;
+  const effRecharge = rech / (1 + globalRech / 100);
+  const uptime = Math.max(0, Math.min(1, dur / effRecharge));
+  return uptime >= 0.95
+    ? " — perma at your current recharge when previewed"
+    : ` — ~${Math.round(uptime * 100)}% uptime at your current recharge`;
+}
+// A freshly solved/imported power often carries no explicit include_in_totals yet
+// (unset, not false) — the checkbox must still communicate what the ENGINE actually
+// assumes (engine.py mirrors this: undefined -> auto/toggle on, click off), not read
+// as an accidental "off". Only an explicit true/false (a user's own edit) overrides it.
+function _effectiveIncluded(pw) {
+  if (pw.include_in_totals !== undefined && pw.include_in_totals !== null) {
+    return !!pw.include_in_totals;
+  }
+  return !!(pw.totals_kind && pw.totals_kind.kind === "toggle");
+}
+function totalsChipHtml(pw, idx) {
+  const tk = pw.totals_kind;
+  if (!tk) return "";   // plain attack — no self-total to control, no false checkbox
+  if (tk.kind === "locked") {
+    return `<span class="totals-chip totals-locked" title="Always on — cannot be turned off in-game">
+      <span class="tc-glyph" aria-hidden="true">🔒</span></span>`;
+  }
+  const included = _effectiveIncluded(pw);
+  if (tk.kind === "toggle") {
+    return `<label class="totals-chip totals-toggle"
+        title="Counts this toggle's own effects in your totals — uncheck toggles you won't actually run (a mule host, or a circumstantial what-if like &quot;Weave off&quot;). Set bonuses count either way.">
+      <span class="tc-glyph" aria-hidden="true">⏻</span>
+      <input type="checkbox" ${included ? "checked" : ""}
+        onchange="toggleInclude(${idx}, this.checked)"></label>`;
+  }
+  // click_buff — exclusive preview, default off, burst numbers kept visually distinct
+  const note = _clickUptimeNote(tk);
+  return `<label class="totals-chip totals-cycle ${included ? "active" : ""}"
+      title="Preview this click's window in your totals — in-game these are temporary, so only one preview runs at a time${note}.">
+    <span class="tc-glyph" aria-hidden="true">⟳</span>
+    <input type="checkbox" ${included ? "checked" : ""}
+      onchange="toggleInclude(${idx}, this.checked)"></label>`;
+}
+
 // One taken power as a Sidekick-style card: power icon + name + level badge on top,
 // the enhancement-icon row as the star, tools tucked right, set summary as fine print.
 function powerCardHtml(pw, idx, icon, lv) {
@@ -2175,9 +2230,7 @@ function powerCardHtml(pw, idx, icon, lv) {
                    onerror="this.style.display='none'">` : ""}
         <span class="pname">${escHtml(pw.display_name)}</span><span class="pc-info-glyph" title="full power info">ⓘ</span></span>
         <span class="pc-tools">
-          <label class="include-toggle" title="Count this power's stats in the totals">
-            <input type="checkbox" ${pw.include_in_totals ? "checked" : ""}
-              onchange="toggleInclude(${idx}, this.checked)">Σ</label>
+          ${totalsChipHtml(pw, idx)}
           <button class="mini" onclick="changeSlots(${idx}, -1)" title="return this power's last slot to the shared pool (67 added slots for the whole build)">−</button>
           <button class="mini" onclick="changeSlots(${idx}, 1)" title="spend a free slot from the shared pool here (67 added slots for the whole build)">+</button>
         </span>
@@ -2196,9 +2249,7 @@ function powerCardHtml(pw, idx, icon, lv) {
       <span class="pname">${escHtml(pw.display_name)}</span><span class="pc-info-glyph" title="full power info">ⓘ</span></span>
       ${lvl ? `<span class="pick-lvl" title="${pw.pick_level ? `Chosen at level ${lvl}` : `Suggested pick order — about level ${lvl}`}">${pw.pick_level ? "" : "~"}L${lvl}</span>` : ""}
       <span class="pc-tools">
-        <label class="include-toggle" title="Count this power's stats in the totals">
-          <input type="checkbox" ${pw.include_in_totals ? "checked" : ""}
-            onchange="toggleInclude(${idx}, this.checked)">Σ</label>
+        ${totalsChipHtml(pw, idx)}
         <button class="mini" onclick="changeSlots(${idx}, -1)" title="return this power's last slot to the shared pool (67 added slots for the whole build)">−</button>
         <button class="mini" onclick="changeSlots(${idx}, 1)" title="spend a free slot from the shared pool here (67 added slots for the whole build)">+</button>
         <button class="remove-power" onclick="removePower(${idx})" title="remove this power">✕</button>
@@ -2536,7 +2587,18 @@ window.clearSlot = function (ev, powerIdx, slotIdx) {
 
 window.toggleInclude = function (idx, checked) {
   recordEdit();
-  build.powers[idx].include_in_totals = checked;
+  const pw = build.powers[idx];
+  // Burst/cycle previews (Build Up, Hasten class) are exclusive: the game only lets
+  // you have one such window meaningfully "active" for a preview at a time, so
+  // switching one on switches every other click_buff preview off.
+  if (checked && pw.totals_kind && pw.totals_kind.kind === "click_buff") {
+    build.powers.forEach((p, i) => {
+      if (i !== idx && p.totals_kind && p.totals_kind.kind === "click_buff") {
+        p.include_in_totals = false;
+      }
+    });
+  }
+  pw.include_in_totals = checked;
   recompute();
 };
 
@@ -3146,10 +3208,15 @@ async function recompute() {
   // Imported build shows them, not just a freshly-solved one.
   if (totals) {
     const plans = totals.slot_plans || {};
+    const kinds = totals.power_kinds || {};
     build.powers.forEach(p => {
       const plan = plans[p.full_name] || null;
       if (JSON.stringify(p.slot_plan || null) !== JSON.stringify(plan)) {
         p.slot_plan = plan; repaint = true;
+      }
+      const kind = kinds[p.full_name] || null;
+      if (JSON.stringify(p.totals_kind || null) !== JSON.stringify(kind)) {
+        p.totals_kind = kind; repaint = true;
       }
     });
   }
@@ -3329,7 +3396,18 @@ function renderStats(t) {
     return `<div class="o-row"><span>${k}${badge}</span><span>+${d.value}%${over}${abs}</span></div>`;
   }).join("");
   renderOffense(t.offense);
-  $("stats-note").textContent = t.note || "";
+  // Endurance honesty rule (Σ-checkbox redesign): say so when the checked toggle
+  // set + attack chain drains faster than recovery sustains.
+  let note = t.note || "";
+  if (t.endurance && t.endurance.sustainable === false) {
+    const warn = `⚠ Your checked toggles + attack chain drain ${t.endurance.drain_per_sec} `
+      + `end/s against ${t.endurance.recovery_per_sec} end/s recovery`
+      + (t.endurance.empty_after_sec
+          ? ` — empty in ~${t.endurance.empty_after_sec}s of nonstop attacking.`
+          : ".");
+    note = note ? `${note} ${warn}` : warn;
+  }
+  $("stats-note").textContent = note;
 }
 
 // Damage/DPS + debuff/buff + pet summary. Hidden when there's no offense at all.

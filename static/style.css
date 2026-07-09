@@ -225,6 +225,16 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .slot-count button { width: 24px; height: 24px; padding: 0; border-radius: 4px; }
 .include-toggle { display: flex; align-items: center; gap: 5px; margin-top: 7px; font-size: 11px; color: var(--muted); cursor: pointer; }
 .include-toggle input { width: auto; margin: 0; }
+
+/* Σ-checkbox redesign: color + glyph per power-totals kind (never color alone). */
+.totals-chip { display: inline-flex; align-items: center; gap: 2px; margin: 0 3px 0 0;
+  border-radius: 4px; padding: 1px 3px; }
+.totals-chip .tc-glyph { font-size: 11px; line-height: 1; }
+.totals-chip input { width: 11px; height: 11px; margin: 0; }
+.totals-locked { color: var(--muted); cursor: default; }
+.totals-toggle { color: var(--def); cursor: pointer; }
+.totals-cycle { color: var(--res); cursor: pointer; opacity: 0.55; }
+.totals-cycle.active { opacity: 1; background: rgba(224, 136, 59, 0.15); }
 .incarnate-toggle { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 10px; font-size: 12px; color: var(--muted); cursor: pointer; }
 .incarnate-toggle input { width: auto; margin: 0; }
 .mini { font-size: 11px; padding: 2px 6px; width: auto; }

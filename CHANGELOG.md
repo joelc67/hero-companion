@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+- **The "count in totals" checkbox now matches what the game actually allows.**
+  It used to be one uniform Σ checkbox on every power — which lied for most of
+  them. Now there are three honest states, each with its own color and glyph
+  (never color alone): always-on powers (autos, passives, inherents) show a
+  locked 🔒 badge with no control at all, since the game gives them no
+  off-switch; toggles keep a checkbox (⏻, green, default ON) as their real
+  home — uncheck a mule host or run a quick "what if Weave were off"; timed
+  self-buff clicks (Hasten, Build Up, and their kind) get a preview toggle
+  (⟳, orange, default OFF) that previews one window at a time, since the game
+  only ever has one of these running as a meaningful "on" state — checking one
+  switches any other preview off. Plain attacks get no chip at all. Also: the
+  endurance-sustainability warning now respects your checkbox choices (an
+  unchecked toggle no longer counts against your endurance), and it actually
+  shows up in the totals panel when your checked toggles + attack chain would
+  run you dry.
+
 - **The true in-game enhancement experience.** Click a slotted enhancement and
   open its full detail card: the game's own description text with honest
   numbers at YOUR piece's level and boost state ("Enhances the defense debuff

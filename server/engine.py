@@ -1039,6 +1039,13 @@ def _endurance_balance(build, display, offense, ctx):
         p = power_by_full.get(power.get("full_name"))
         if not p or p.get("power_type") != 2:
             continue
+        # Honor the per-power totals checkbox: an unchecked toggle (a mule host you
+        # never run, or a what-if "Weave off" check) doesn't drain endurance either.
+        include = power.get("include_in_totals")
+        if include is None:
+            include = p.get("power_type") in ACTIVE_POWER_TYPES
+        if not include:
+            continue
         ap = p.get("activate_period") or 0
         nm = (p.get("full_name") or "").split(".")[-1].lower()
         if ap <= 0 or any(s in nm for s in _END_SKIP_TOGGLES):

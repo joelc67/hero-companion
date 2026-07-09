@@ -1501,6 +1501,37 @@ def _res_job_note(power, all_powers):
             f"below your other sets.")
 
 
+def _totals_kind(full_name, rec):
+    """Classify a power for the totals checkbox's replacement UI (Joel's Σ-checkbox
+    design: the game gives each power TYPE a different real on/off story, so the
+    control has to match). Returns None for powers that need no control at all
+    (plain attacks — checking/unchecking them changes nothing; they carry no
+    self_effects). Four kinds:
+      locked      — auto/passive/inherent: no off-state in-game, always counted.
+      toggle      — the checkbox's legitimate home (mule hosts, situational what-ifs).
+      click_buff  — a timed self-buff/burst click (Hasten, Build Up, godmodes):
+                    preview one at a time, default off, distinct from sustained totals.
+    Game data can't cleanly split "cycling utility buff" (Hasten) from "attack-window
+    burst" (Build Up) — both are Click powers with self-targeted buff effects and no
+    stored flag distinguishes them — so both render as one click_buff kind pending a
+    verified split.
+    """
+    if (full_name or "").startswith("Inherent."):
+        return {"kind": "locked"}
+    if not rec:
+        return None
+    pt = rec.get("power_type")
+    if pt == 1:      # Auto
+        return {"kind": "locked"}
+    if pt == 2:      # Toggle
+        return {"kind": "toggle"}
+    if pt == 0 and rec.get("self_effects"):   # Click w/ a self-targeted buff
+        durs = [e.get("duration") or 0 for e in rec["self_effects"]]
+        return {"kind": "click_buff", "base_recharge": rec.get("base_recharge") or 0,
+                "buff_duration": max(durs) if durs else 0}
+    return None       # plain Click attack — no self_effects, no control needed
+
+
 def _slot_plan(power, archetype=None, all_powers=None):
     """A one-line rationale for a power's slotting: proc bomb / proc hybrid / committed
     set / franken / global mules. Returns {"kind","text"} or None when there's nothing
@@ -1748,6 +1779,17 @@ def build_calculate():
             rec = POWER_BY_FULL.get(fn) or {}
             under.append(rec.get("display_name") or fn.split(".")[-1].replace("_", " "))
     res["slot_plans"] = plans
+    # Totals-checkbox kind per power (Σ-checkbox redesign): locked/toggle/click_buff,
+    # attached every recompute so Resumed/Imported builds get it too.
+    kinds = {}
+    for p in pw:
+        fn = p.get("full_name")
+        if not fn:
+            continue
+        k = _totals_kind(fn, POWER_BY_FULL.get(fn))
+        if k:
+            kinds[fn] = k
+    res["power_kinds"] = kinds
     # RESPEC HINT: powers that CAN hold a set and have the slots for one, but earn no set
     # bonus (just commons / a lone fragment). Purely factual — same signal the chips show —
     # so the tool can honestly say "a respec could put these slots to work" without judging.
