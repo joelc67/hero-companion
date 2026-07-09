@@ -240,6 +240,10 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .totals-toggle { color: var(--def); cursor: pointer; }
 .totals-cycle { color: var(--res); cursor: pointer; opacity: 0.55; }
 .totals-cycle.active { opacity: 1; background: rgba(224, 136, 59, 0.15); }
+/* Amplifier previews (Power Boost class): own color+glyph and own exclusivity
+   group — they multiply other previews rather than adding stat lines. */
+.totals-amp { color: #b48ee0; cursor: pointer; opacity: 0.55; }
+.totals-amp.active { opacity: 1; background: rgba(180, 142, 224, 0.15); }
 .incarnate-toggle { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 10px; font-size: 12px; color: var(--muted); cursor: pointer; }
 .incarnate-toggle input { width: auto; margin: 0; }
 .mini { font-size: 11px; padding: 2px 6px; width: auto; }
@@ -732,6 +736,7 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .slot-plan-committed   { background: rgba(60, 160, 90, .13);   border-color: rgba(60,160,90,.45);  color: #2f8a53; }
 .slot-plan-frankenslot { background: rgba(150, 110, 200, .14); border-color: rgba(150,110,200,.5); color: #7a54b0; }
 .slot-plan-global-mules,
+.slot-plan-global-host,
 .slot-plan-mixed       { background: rgba(70, 140, 200, .13);  border-color: rgba(70,140,200,.45); color: #2f76ad; }
 .powers-wall .slot-plan { margin-top: auto; }   /* sit at the brick's bottom edge */
 /* The whole chip is the click target (not just the "?") — real affordance. */
@@ -1186,6 +1191,19 @@ body { overflow: hidden; }
   color: var(--muted); opacity: 0; transition: opacity 0.1s; }
 .slot:hover .slot-info { opacity: 1; }
 .slot .slot-info:hover { color: var(--accent); border-color: var(--accent); }
+
+/* Booster PREVIEW (display-only, never saved as owned): previewed chits and
+   tags read distinctly from imported/owned boosts — same info, preview color. */
+.slot.slot-previewing { border-color: #b48ee0; }
+.slot-lvl.lvl-preview { color: #b48ee0; font-weight: 700; }
+.eh-boost { margin: 8px 0; padding: 6px 8px; border: 1px solid var(--border);
+  border-radius: 6px; }
+.eh-boost-head { font-size: 12.5px; font-weight: 600; margin-bottom: 4px; }
+.eh-boost-row { display: flex; align-items: center; gap: 6px; }
+.eh-boost-val { font-weight: 700; min-width: 26px; text-align: center; }
+.eh-boost-val.previewing { color: #b48ee0; }
+.eh-preview-tag { color: #b48ee0; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.4px; }
 
 /* Frankenslot rows on the power-info panel: one collapsed row per parent set,
    the summary line carrying the count + next-piece hint. */

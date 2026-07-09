@@ -18,6 +18,36 @@
   shows up in the totals panel when your checked toggles + attack chain would
   run you dry.
 
+- **Preview Enhancement Boosters before you buy them.** Every boostable
+  enhancement's detail card now carries a booster stepper: walk it from +1 to
+  +5 one level at a time and watch your real totals move — "+3 reaches the
+  soft cap, +4 and +5 buy nothing here" is now something you can see instead
+  of guess. Previewed pieces show their level exactly like imports do
+  ("50+3") but in a distinct preview color, and the totals panel says plainly
+  that previews are not saved as owned. Pieces that can't boost say why:
+  attuned enhancements (including ATOs and Winter sets) scale with your level
+  instead and keep exemplaring down, and Hamidon/Titan/Hydra Origins and
+  D-Syncs get their strength from their own level. The card also explains
+  where boosters come from and the exemplar trade-off in plain English.
+
+- **Power Boost previews for real.** Powers that amplify your other buffs
+  (Power Boost, Power Build Up) now have their own preview chip (⚡): switch
+  one on and your buffable defense and ToHit values amplify exactly the way
+  the game does it — effects the game marks "Ignores Buffs" are skipped,
+  verified per-effect against the game's own data. Combine it with one buff
+  preview (Power Boost + Farsight) to answer the real question: does this
+  build actually hit the soft cap in its burst window? The totals panel
+  labels the result as a burst view, never sustained. (Clarion Radial isn't
+  modeled yet — its incarnate data doesn't carry a verifiable amplifier
+  record; the tool says so rather than guessing.)
+
+- **Running toggles are no longer called "mules."** A toggle or always-on
+  power that hosts global uniques (Fire Shield with a Steadfast, Weave with a
+  Luck of the Gambler) now reads "Global host — this toggle runs; its slots
+  carry build-wide bonuses" instead of "Global mules," which implied the
+  power was dead weight. True set-real-estate powers keep honest mule
+  wording.
+
 - **The detail card grew into a real rail.** The right-side panel now scrolls
   on its own (a long six-piece card browses in place while your build stays on
   screen), every slotted enhancement carries its own ⓘ — hover the chit — so

@@ -2219,6 +2219,17 @@ function totalsChipHtml(pw, idx) {
   // chip" (safe), never silently borrow this branch's semantics (ideas.md caution).
   if (tk.kind !== "click_buff") return "";
   const note = _clickUptimeNote(tk);
+  if (tk.amplifier) {
+    // Power Boost class: previews as a MULTIPLIER on other checked powers'
+    // buffable defense/ToHit, not as its own stat line. Own exclusivity group
+    // so it can preview together with the buff it amplifies.
+    const pct = Math.round((tk.amp_scale || 0) * 100);
+    return `<label class="totals-chip totals-amp ${included ? "active" : ""}"
+        title="Preview this amplifier: while its window is up, your buffable defense/ToHit values are boosted +${pct}% strength (effects the game marks 'Ignores Buffs' are skipped). Combine with one buff preview — e.g. Power Boost + Farsight to check the soft cap${note}.">
+      <span class="tc-glyph" aria-hidden="true">⚡</span>
+      <input type="checkbox" ${included ? "checked" : ""}
+        onchange="toggleInclude(${idx}, this.checked)"></label>`;
+  }
   return `<label class="totals-chip totals-cycle ${included ? "active" : ""}"
       title="Preview this click's window in your totals — in-game these are temporary, so only one preview runs at a time${note}.">
     <span class="tc-glyph" aria-hidden="true">⟳</span>
@@ -2313,6 +2324,45 @@ document.addEventListener("click", (ev) => {
 let SELECTED_ENH = null;   // {powerFull, slotIdx}
 let RAIL_TOKEN = 0;        // bumps per render; stale awaits check and bail
 
+// ── ENHANCEMENT-BOOSTER PREVIEW (Joel's design, display-only) ────────────────
+// Ephemeral BY CONSTRUCTION: previews live OUTSIDE the build object, so
+// auto-save can never persist them as owned — "not saved as owned" is
+// structural, not a stripping step. Each entry remembers the piece it was
+// set on; if a solve/import replaces the slot's piece, the stale preview
+// self-invalidates instead of silently boosting the new piece. The solver
+// never sees these: only buildPayload (calculate/validate) injects them,
+// and every /build/solve call builds its payload from build.powers directly
+// (the standing boundary: champions/solver never run on boosted values).
+const PREVIEW_BOOSTS = {};   // "powerFull|slotIdx" -> {boost: 1..5, piece: uid}
+
+// Attunement arrives two ways: the slot flag (imports) or the piece's own
+// Attuned_* uid (solver-placed pieces carry no flag) — either blocks boosting.
+function _slotAttuned(slot) {
+  return !!(slot && (slot.attuned || /^Attuned_/.test(slot.piece_uid || "")));
+}
+function _previewBoostFor(powerFull, slotIdx, slot) {
+  const e = PREVIEW_BOOSTS[powerFull + "|" + slotIdx];
+  return (e && slot && !_slotAttuned(slot) && e.piece === slot.piece_uid) ? e.boost : 0;
+}
+
+window.stepBoostPreview = function (powerFull, slotIdx, delta) {
+  const pw = build.powers.find(p => p.full_name === powerFull);
+  const s = pw && (pw.slots || [])[slotIdx];
+  if (!s || !s.piece_uid || _slotAttuned(s)) return;
+  const key = powerFull + "|" + slotIdx;
+  const owned = s.boost || 0;
+  const cur = _previewBoostFor(powerFull, slotIdx, s) || owned;
+  const next = Math.max(0, Math.min(5, cur + delta));
+  if (next === owned) delete PREVIEW_BOOSTS[key];      // back to what you own
+  else PREVIEW_BOOSTS[key] = { boost: next, piece: s.piece_uid };
+  renderPowers();     // preview-styled level tags on the chits
+  recompute();        // live totals at the previewed level (+ rail re-render)
+};
+window.clearBoostPreview = function (powerFull, slotIdx) {
+  delete PREVIEW_BOOSTS[powerFull + "|" + slotIdx];
+  renderPowers(); recompute();
+};
+
 // The set roster + tier ladder, shared verbatim between the IO detail card and
 // the power-info set view (Feature B refinement) — one renderer, per the
 // fix-at-the-rail-level rule.
@@ -2336,12 +2386,15 @@ function enhSetSectionHtml(st) {
          </div>`).join("")}</div>`;
 }
 
-function _enhDetailPayload(pw, s) {
+function _enhDetailPayload(pw, s, slotIdx) {
+  // An active booster preview renders the card's help text at the previewed
+  // level — the description's own numbers teach the value curve.
+  const pv = slotIdx != null ? _previewBoostFor(pw.full_name, slotIdx, s) : 0;
   return {
     piece_uid: s.piece_uid, set_uid: s.set_uid || null,
     piece_name: s.piece_name || null,
     archetype: build.archetype,
-    io_level: s.io_level || null, boost: s.boost || 0,
+    io_level: s.io_level || null, boost: pv || s.boost || 0,
     attuned: !!s.attuned,
     power_full_name: pw.full_name,
     powers: build.powers.map(p => ({ full_name: p.full_name, slots: p.slots })),
@@ -2364,7 +2417,7 @@ async function renderEnhInfo() {
   if (!s || !s.piece_uid) { closePowerInfo(); return; }   // slot cleared under us
   const token = ++RAIL_TOKEN;
   const r = await api("/enhancement/detail",
-                      postJson(_enhDetailPayload(pw, s))).catch(() => null);
+                      postJson(_enhDetailPayload(pw, s, SELECTED_ENH.slotIdx))).catch(() => null);
   if (token !== RAIL_TOKEN || !SELECTED_ENH) return;      // superseded render
   if (!r || !r.ok) return;
   const panel = $("power-info");
@@ -2372,13 +2425,45 @@ async function renderEnhInfo() {
   const lvl = s.attuned ? "attuned"
     : s.io_level ? `level ${s.io_level}${s.boost ? "+" + s.boost : ""}` : "";
   const p = r.piece, st = r.set;
+
+  // Booster preview stepper (Joel's design): per-level +1..+5 so the value
+  // curve is visible ("+3 reaches the soft cap; +4 and +5 buy nothing here").
+  // Ineligible pieces say WHY. The description above re-renders at the
+  // previewed level on recompute, so the card's own numbers teach the curve.
+  const bp = p.boost_preview || {};
+  const pf = SELECTED_ENH.powerFull, si = SELECTED_ENH.slotIdx;
+  const pv = _previewBoostFor(pf, si, s);
+  const owned = (!s.attuned && s.boost) || 0;
+  let boostHtml = "";
+  if (bp.boostable) {
+    const shown = pv || owned;
+    boostHtml = `<div class="eh-boost">
+      <div class="eh-boost-head">Enhancement Boosters${pv ? ` <span class="eh-preview-tag">PREVIEW — not saved as owned</span>` : ""}</div>
+      <div class="eh-boost-row">
+        <button class="mini" onclick="stepBoostPreview('${escHtml(pf)}',${si},-1)">−</button>
+        <span class="eh-boost-val${pv ? " previewing" : ""}">+${shown}</span>
+        <button class="mini" onclick="stepBoostPreview('${escHtml(pf)}',${si},1)">+</button>
+        ${pv ? `<button class="mini" onclick="clearBoostPreview('${escHtml(pf)}',${si})">back to owned (+${owned})</button>` : ""}
+      </div>
+      <p class="muted small">Boosters (+1 per booster, up to +5) come from merit
+      vendors and the Auction House; in-game you combine them onto the slotted
+      enhancement in the enhancement management screen, permanently. The
+      trade-off: a boosted IO stops scaling down when you exemplar below its
+      level, while an attuned one keeps scaling — boosting is a choice, not a
+      straight upgrade.</p></div>`;
+  } else if (bp.reason) {
+    boostHtml = `<div class="eh-boost"><div class="eh-boost-head">Enhancement Boosters</div>
+      <p class="muted small">${escHtml(bp.reason)}</p></div>`;
+  }
+
   panel.innerHTML =
     `<h2><span>${escHtml(p.title)}</span>
        <button class="iconbtn pi-close" onclick="closePowerInfo()" title="close">✕</button></h2>`
-    + (lvl ? `<div class="muted small">${escHtml(lvl)}${st ? ` · set levels ${st.min_level}–${st.max_level}` : ""}</div>` : "")
+    + (lvl ? `<div class="muted small">${escHtml(lvl)}${pv ? ` · <span class="eh-preview-tag">previewing +${pv}</span>` : ""}${st ? ` · set levels ${st.min_level}–${st.max_level}` : ""}</div>` : "")
     + `<p class="eh-desc">${escHtml(p.description)}</p>`
     + (p.unique_line ? `<p class="eh-note">${escHtml(p.unique_line)}</p>` : "")
     + (p.attuned_note ? `<p class="eh-note">${escHtml(p.attuned_note)}</p>` : "")
+    + boostHtml
     + (st ? `<h3 class="eh-set-h">${escHtml(st.display)} <span class="muted small">${escHtml(st.category_label || "")} · ${st.slotted_here} of ${st.roster.length} in this power</span></h3>`
       + enhSetSectionHtml(st) : "");
   panel.classList.remove("hidden");
@@ -2558,6 +2643,9 @@ const _PLAN_META = {
   "committed":    ["🎯", "Full set", "committed"],
   "frankenslot":  ["🧩", "Frankenslot", "frankenslot"],
   "global-mules": ["🌐", "Global mules", "global-mules"],
+  // Running auto/toggle hosting globals — reads as a working power, not dead
+  // weight (Maelwys round 3: "Global mules" on Fire Shield implied unpriced).
+  "global-host":  ["🌐", "Global host", "global-mules"],
   "mixed":        ["🌐", "Globals", "global-mules"],
   "procs":        ["💥", "Procs", "proc-bomb"],
   "ho-hybrid":    ["🧬", "Proc hybrid", "proc-bomb"],
@@ -2603,12 +2691,16 @@ function slotHtml(powerIdx, slotIdx, slot) {
     const plus = (!slot.attuned && slot.boost > 0) ? `+${slot.boost}` : "";
     const lvl = slot.io_level ? ` · level ${slot.io_level}${plus}${slot.attuned ? " (attuned)" : ""}`
                               : (plus ? ` · boosted ${plus}` : "");
-    const tag = slot.attuned ? "A" : (slot.io_level ? `${slot.io_level}${plus}` : "");
-    // Direct detail affordance on the chit itself (Joel's discoverability fix:
-    // the card must be reachable without entering the replace-picker flow).
-    return `<div class="slot filled${slot.unique?' unique':''}" title="${slot.set_name}: ${slot.piece_name}${lvl}\n(click to change, ⓘ for full details, right-click to clear)"
+    // Booster PREVIEW: the tag shows the previewed level exactly like an
+    // imported boosted IO would ("50+3"), but visually distinct — previewed,
+    // not owned (Joel's spec).
+    const pv = _previewBoostFor(build.powers[powerIdx].full_name, slotIdx, slot);
+    const tag = pv ? `${slot.io_level || 50}+${pv}`
+      : slot.attuned ? "A" : (slot.io_level ? `${slot.io_level}${plus}` : "");
+    const pvTitle = pv ? `\nPREVIEWING +${pv} boosters — not saved as owned` : "";
+    return `<div class="slot filled${slot.unique?' unique':''}${pv?' slot-previewing':''}" title="${slot.set_name}: ${slot.piece_name}${lvl}${pvTitle}\n(click to change, ⓘ for full details, right-click to clear)"
       onclick="openSlot(${powerIdx},${slotIdx})"
-      oncontextmenu="clearSlot(event,${powerIdx},${slotIdx})">${inner}${tag ? `<span class="slot-lvl">${tag}</span>` : ""}<span class="slot-info" title="full enhancement details" onclick="event.stopPropagation(); openEnhInfo(${powerIdx},${slotIdx})">ⓘ</span></div>`;
+      oncontextmenu="clearSlot(event,${powerIdx},${slotIdx})">${inner}${tag ? `<span class="slot-lvl${pv?' lvl-preview':''}">${tag}</span>` : ""}<span class="slot-info" title="full enhancement details" onclick="event.stopPropagation(); openEnhInfo(${powerIdx},${slotIdx})">ⓘ</span></div>`;
   }
   return `<div class="slot" title="empty slot — click to choose"
     onclick="openSlot(${powerIdx},${slotIdx})">+</div>`;
@@ -2670,12 +2762,16 @@ window.clearSlot = function (ev, powerIdx, slotIdx) {
 window.toggleInclude = function (idx, checked) {
   recordEdit();
   const pw = build.powers[idx];
-  // Burst/cycle previews (Build Up, Hasten class) are exclusive: the game only lets
-  // you have one such window meaningfully "active" for a preview at a time, so
-  // switching one on switches every other click_buff preview off.
+  // Burst/cycle previews (Build Up, Hasten class) are exclusive: the game only
+  // lets you have one such window meaningfully "active" at a time. AMPLIFIERS
+  // (Power Boost class) form their OWN exclusivity group — one amplifier plus
+  // one buff can preview together, which is the whole point (Power Boost +
+  // Farsight = "does this build actually softcap?", the Maelwys case).
   if (checked && pw.totals_kind && pw.totals_kind.kind === "click_buff") {
+    const myGroup = !!pw.totals_kind.amplifier;
     build.powers.forEach((p, i) => {
-      if (i !== idx && p.totals_kind && p.totals_kind.kind === "click_buff") {
+      if (i !== idx && p.totals_kind && p.totals_kind.kind === "click_buff"
+          && !!p.totals_kind.amplifier === myGroup) {
         p.include_in_totals = false;
       }
     });
@@ -3435,7 +3531,13 @@ function buildPayload() {
       accepted_set_categories: p.accepted_set_categories,
       include_in_totals: p.include_in_totals,
       pick_level: p.pick_level,
-      slots: p.slots,
+      // Booster previews ride into calculate/validate ONLY — solve payloads
+      // are built elsewhere from build.powers directly, so the solver never
+      // optimizes on previewed levels (the standing boost boundary).
+      slots: (p.slots || []).map((s, si) => {
+        const pv = _previewBoostFor(p.full_name, si, s);
+        return pv ? Object.assign({}, s, { boost: pv }) : s;
+      }),
     })),
   };
 }
@@ -3485,6 +3587,20 @@ function renderStats(t) {
   // Endurance honesty rule (Σ-checkbox redesign): say so when the checked toggle
   // set + attack chain drains faster than recovery sustains.
   let note = t.note || "";
+  if (t.strength_preview) {
+    const sp = t.strength_preview;
+    const fams = Object.entries(sp.families || {})
+      .map(([f, v]) => `${f.toLowerCase()} +${Math.round(v * 100)}%`).join(", ");
+    note = `⚡ Previewing ${sp.sources.join(" + ")}: buffable ${fams} strength `
+      + `during its window — a burst view, not sustained totals. `
+      + (note || "");
+  }
+  const nBoostPv = Object.keys(PREVIEW_BOOSTS).length;
+  if (nBoostPv) {
+    note = `🔺 Previewing enhancement boosters on ${nBoostPv} piece${nBoostPv > 1 ? "s" : ""} `
+      + `— these totals include the boosted values, but the boosts are not saved as owned. `
+      + (note || "");
+  }
   if (t.endurance && t.endurance.sustainable === false) {
     const warn = `⚠ Your checked toggles + attack chain drain ${t.endurance.drain_per_sec} `
       + `end/s against ${t.endurance.recovery_per_sec} end/s recovery`

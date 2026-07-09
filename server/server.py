@@ -1281,6 +1281,29 @@ def _tier_values(set_rec, pieces_required, archetype):
     return [v for v in out if not (v in seen or seen.add(v))]
 
 
+def _boostability(piece_uid, attuned):
+    """Eligibility honesty for the booster preview (Joel's spec): say WHY a
+    piece can't boost, never silently skip. Game rules: only regular crafted
+    IOs (incl. purples) take boosters; attuned pieces (incl. ATOs/Winter,
+    which only exist attuned) scale with your level instead; HO/D-Sync
+    strength comes from their own level (50/53), no boosters."""
+    # Attunement arrives two ways: the slot flag (imports) OR the piece's own
+    # Attuned_* uid (solver-placed pieces carry no flag — found live when an
+    # Attuned_Overwhelming_Force chit offered the stepper).
+    if attuned or str(piece_uid or "").startswith("Attuned_"):
+        return {"boostable": False, "reason":
+                "Attuned enhancements can't take boosters — they scale with "
+                "your level instead, and keep scaling down when you exemplar."}
+    if str(piece_uid or "").startswith(_SPECIAL_PIECE_PREFIXES):
+        return {"boostable": False, "reason":
+                "Hamidon/Titan/Hydra Origins and D-Syncs can't take boosters "
+                "— their strength comes from their own level (50/53)."}
+    if piece_uid not in PIECE_BOOSTS:
+        return {"boostable": False,
+                "reason": "No enhancement values stored for this piece."}
+    return {"boostable": True}
+
+
 @app.route("/enhancement/detail", methods=["POST"])
 def enhancement_detail():
     """Feature A+B: the full in-game detail card for one slotted piece, plus
@@ -1315,7 +1338,8 @@ def enhancement_detail():
         return jsonify({"ok": True, "piece": {
             "title": body.get("piece_name") or piece_uid,
             "description": " · ".join(lines) or "No stored detail for this piece.",
-            "static": False}, "set": None})
+            "static": False,
+            "boost_preview": _boostability(piece_uid, attuned)}, "set": None})
 
     desc = piece_sd["help_template"] if piece_sd.get("static") else \
         _render_enh_help(piece_sd["help_template"], piece_uid, io_level,
@@ -1329,6 +1353,7 @@ def enhancement_detail():
                         "slotted across your whole build."
                         if (our_piece or {}).get("unique") else None),
         "attuned_note": _SD_META.get("attuned_note") if attuned else None,
+        "boost_preview": _boostability(piece_uid, attuned),
     }
     # roster status vs the current build (feature B)
     here = {(s or {}).get("piece_uid") for s in next(
@@ -1550,10 +1575,22 @@ def _totals_kind(full_name, rec, power=None, ctx=None):
         return {"kind": "locked"}
     if pt == 2:      # Toggle
         return {"kind": "toggle"}
-    if pt == 0 and rec.get("self_effects"):   # Click w/ a self-targeted buff
-        durs = [e.get("duration") or 0 for e in rec["self_effects"]]
+    if pt == 0 and (rec.get("self_effects") or rec.get("strength_effects")):
+        # Click w/ a self-targeted buff — or a pure amplifier (Power Boost's
+        # value is its strength_effects; its lone ToHit ride-along is minor).
+        durs = [e.get("duration") or 0 for e in rec.get("self_effects") or []]
+        durs += [s.get("duration") or 0 for s in rec.get("strength_effects") or []]
         out = {"kind": "click_buff", "base_recharge": rec.get("base_recharge") or 0,
                "buff_duration": max(durs) if durs else 0}
+        # Amplifier chip (Power Boost class): its preview multiplies OTHER
+        # checked powers' buffable Defense/ToHit — its own exclusivity group,
+        # so Power Boost + Farsight can preview together (the Maelwys case)
+        # while bursts stay one-at-a-time among themselves.
+        amp = [s for s in rec.get("strength_effects") or []
+               if s.get("modifies") in ("Defense", "ToHit")]
+        if amp:
+            out["amplifier"] = True
+            out["amp_scale"] = max(s.get("scale") or 0 for s in amp)
         # Honest cycle math for the uptime note: the power's OWN slotted recharge
         # (post-ED) adds to global recharge in the game's formula. Without it,
         # Hasten's own recharge IOs vanish from the note and uptime reads ~45%
@@ -1574,6 +1611,22 @@ def _totals_kind(full_name, rec, power=None, ctx=None):
     return None       # plain Click attack — no self_effects, no control needed
 
 
+def _global_host_phrase(power):
+    """Copy fix (Maelwys round 3, Joel-approved direction): a RUNNING power that
+    hosts globals is not a 'mule' — the tag read as 'this power is dead weight'
+    on Fire Shield/Weave, which the engine counts and the player actually runs.
+    Key on the power's real mechanic; Click powers keep honest mule wording."""
+    rec = POWER_BY_FULL.get(power.get("full_name")) or {}
+    pt = rec.get("power_type", power.get("power_type"))
+    if pt == 1:
+        return ("Hosts global uniques — this power is always on; "
+                "its slots carry build-wide bonuses")
+    if pt == 2:
+        return ("Hosts global uniques — this toggle runs; "
+                "its slots carry build-wide bonuses")
+    return None
+
+
 def _slot_plan(power, archetype=None, all_powers=None):
     """A one-line rationale for a power's slotting: proc bomb / proc hybrid / committed
     set / franken / global mules. Returns {"kind","text"} or None when there's nothing
@@ -1587,6 +1640,11 @@ def _slot_plan(power, archetype=None, all_powers=None):
         s = slots[0]
         gk = _global_key(s.get("set_name"))
         if gk:
+            host = _global_host_phrase(power)
+            if host:
+                return {"kind": "global-host",
+                        "text": f"{host}: {s.get('set_name')} "
+                                f"({_GLOBAL_DESC[gk]}) — works from this single slot."}
             return {"kind": "global-mules",
                     "text": f"Global mule: {s.get('set_name')} ({_GLOBAL_DESC[gk]}) — "
                             "a build-wide unique that works from this single slot."}
@@ -1662,8 +1720,14 @@ def _slot_plan(power, archetype=None, all_powers=None):
                     "text": "Frankenslot: " + "; ".join(parts)
                             + " — stacked for their set bonuses" + tail + "."}
         return {"kind": "committed", "text": parts[0] + tail + "."}
-    # 5) GLOBAL MULES — a power carrying only build-wide unique globals
+    # 5) GLOBAL MULES — a power carrying only build-wide unique globals.
+    # Running powers (auto/toggle) get host wording, not mule wording.
     if glob and len(glob) == len(nonproc):
+        host = _global_host_phrase(power)
+        if host:
+            return {"kind": "global-host",
+                    "text": host + ": " + _glist(glob) + ". Each works from a "
+                            "single slot — no set bonus intended."}
         return {"kind": "global-mules",
                 "text": "Global mules: " + _glist(glob) + ". Each piece is a build-wide "
                         "unique that works from a single slot — no set bonus intended."}

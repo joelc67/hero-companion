@@ -258,9 +258,11 @@ def _empty_totals():
 
 
 def _power_totals(build, totals, ctx):
-    """Add active-power self-buff contributions (base x enhancement w/ ED)."""
+    """Add active-power self-buff contributions (base x enhancement w/ ED).
+    Returns the active strength-amplifier preview summary (or None) so the
+    display can state what is being amplified."""
     if not ctx:
-        return
+        return None
     power_by_full = ctx["power_by_full"]
     piece_boosts = ctx["piece_boosts"]
     mod_tables = ctx["modifier_tables"]
@@ -275,6 +277,28 @@ def _power_totals(build, totals, ctx):
     # Stealth's suppressible defense layer goes, its mez-only layer stays.
     # DISPLAY ONLY: the solver/scorer never sets the flag.
     suppress_mask = SUPPRESS_IN_COMBAT if build.get("suppression") else 0
+
+    # STRENGTH-AMPLIFIER PREVIEW (Power Boost / Power Build Up — display only):
+    # a CHECKED click power carrying strength_effects amplifies the families it
+    # names on OTHER checked powers' buffable effects, mirroring Mids' math
+    # (every buff-application loop gates per-effect on Buffable). Consumed
+    # families = the ones these totals display. Clicks are never checked by
+    # the solver/scorer (they set include only for auto/toggle), so this is
+    # structurally inert outside a user's preview. Clarion Radial is NOT here:
+    # its incarnate data carries no verified amplifier record.
+    _AMP_FAMILIES = {"Defense": "Defense", "ToHit": "ToHit"}
+    amp = defaultdict(float)     # family -> summed scale from active previews
+    amp_sources = set()
+    for power in build.get("powers", []):
+        p = power_by_full.get(power.get("full_name"))
+        if not p or p.get("power_type") != 0 or not p.get("strength_effects"):
+            continue
+        if power.get("include_in_totals") is not True:   # explicit preview only
+            continue
+        for sfx in p["strength_effects"]:
+            if sfx.get("modifies") in _AMP_FAMILIES:
+                amp[sfx["modifies"]] += sfx.get("scale") or 0.0
+                amp_sources.add(power.get("full_name"))
 
     for power in build.get("powers", []):
         full = power.get("full_name")
@@ -315,8 +339,20 @@ def _power_totals(build, totals, ctx):
             base = fx["scale"] * fx.get("nmag", 1.0) * row[col]
             boost = ed_by_aspect.get(fx["enhance_aspect"], 0.0)
             val = base * (1.0 + boost)
+            # Active amplifier preview: multiply this effect's contribution
+            # when its family is amplified, it is buffable (Mids' per-effect
+            # gate), and it isn't the amplifier's own effect (Power Boost
+            # boosts what you cast during its window, not itself).
+            fam = amp.get(fx["effect"])
+            if fam and not fx.get("unbuffable") and full not in amp_sources:
+                val *= (1.0 + fam)
             _add_power_effect(totals, fx["effect"], fx["damage_type"], val,
                               base_hp=ctx.get("at_base_hp"))
+    if not amp:
+        return None
+    return {"sources": sorted(power_by_full[f].get("display_name") or f
+                              for f in amp_sources),
+            "families": {k: round(v, 3) for k, v in amp.items()}}
 
 
 def _add_power_effect(totals, et, dt, val, base_hp=None):
@@ -899,7 +935,7 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
     if ctx is not None:                 # per-build character level for IO scaling
         ctx = dict(ctx)
         ctx["char_level"] = build.get("char_level") or 50
-    _power_totals(build, totals, ctx)
+    amp_preview = _power_totals(build, totals, ctx)
     _incarnate_totals(build, totals, ctx)
     _piece_globals(build, totals)
     _external_buffs(build, totals)
@@ -986,6 +1022,10 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
     if ff:
         # transparency: how much of the global recharge FF is carrying (shown in %)
         display["ff_recharge_avg"] = round(ff * 100.0, 1)
+    if amp_preview:
+        # Honesty note for the amplifier preview: name the source, the factor,
+        # and the window — burst numbers must read as burst, never sustained.
+        display["strength_preview"] = amp_preview
     display["incarnates_included"] = bool(build.get("include_incarnates"))
     display["external_included"] = bool(build.get("include_external"))
     extras = []

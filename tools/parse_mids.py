@@ -261,7 +261,9 @@ def read_effect(r: Reader):
     r.int32()                                   # Stacking
     e["base_probability"] = r.single()
     e["suppression"] = r.int32()                # eSuppress bitmask (combat suppression)
-    r.boolean()                                 # Buffable
+    e["buffable"] = r.boolean()                 # strength-amplifiable (Mids gates ALL
+    #                                             buff application on this per effect;
+    #                                             false renders "[Ignores Enh & Buffs]")
     r.boolean()                                 # Resistible
     r.int32()                                   # SpecialCase
     r.boolean()                                 # VariableModifiedOverride
@@ -974,7 +976,44 @@ def main():
             # ticks, autos) = omitted, same convention as suppression.
             if ef.get("duration"):
                 entry["duration"] = round(ef["duration"], 3)
+            # Strength-amplification eligibility (Mids' Buffable, gates every
+            # buff-application loop per effect): omitted when True (the norm);
+            # unbuffable effects ignore Power Boost-class amplifiers entirely.
+            if ef.get("buffable") is False:
+                entry["unbuffable"] = True
             out.append(entry)
+        return out
+
+    def power_strength_effects(p):
+        """Enhancement(X) SELF effects outside the four global kinds — the
+        Power Boost / Power Build Up amplifier family: each entry multiplies
+        the STRENGTH of the caster's buffable effects of that family for the
+        window (Defense ×12 types, Mez ×6, Heal, Absorb, Endurance, speeds on
+        Power Boost — all +66%/15s). power_self_effects deliberately drops
+        these (they are not stat buffs); this keeps them as amplifier records
+        for the display-only preview. Deduped per (family, scale, duration)."""
+        seen = set()
+        out = []
+        for ef in p["effects"]:
+            et = (EFFECT_TYPE[ef["effect_type"]]
+                  if 0 <= ef["effect_type"] < len(EFFECT_TYPE) else None)
+            if et != "Enhancement":
+                continue
+            mod_et = (EFFECT_TYPE[ef["et_modifies"]]
+                      if 0 <= ef["et_modifies"] < len(EFFECT_TYPE) else None)
+            if mod_et in ("RechargeTime", "Recovery", "Regeneration", "ToHit") \
+                    or mod_et is None:
+                continue      # the four global kinds live in self_effects
+            if ef["attrib_type"] != 0 or ef["to_who"] != 2:
+                continue
+            if ef["base_probability"] < 0.99:
+                continue
+            key = (mod_et, round(ef["scale"], 6), round(ef["duration"], 3))
+            if key in seen:
+                continue      # the game stores one row per damage/mez subtype
+            seen.add(key)
+            out.append({"modifies": mod_et, "scale": round(ef["scale"], 6),
+                        "duration": round(ef["duration"], 3)})
         return out
 
     def power_combat_effects(p):
@@ -1181,6 +1220,10 @@ def main():
             "summons": summon_uids,
             "pet_powersets": pet_powersets,
         }
+        # Power Boost-class amplifier records — omitted when absent (the norm)
+        strength_fx = power_strength_effects(p)
+        if strength_fx:
+            rec["strength_effects"] = strength_fx
         powers_out.setdefault(powerset_full, []).append(rec)
 
     # ---- enhancement_sets.json ----
