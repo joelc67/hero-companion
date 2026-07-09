@@ -3264,12 +3264,18 @@ function renderModalSets() {
         <div class="piece-list">
           ${s.pieces.map((p, pi) => {
             const pIcon = enhIconUrl(p.image || s.image);
+            // In-game rule: each SET piece slots at most once per power (the
+            // stack-freely rule covers commons/HOs/D-Syncs only). Pieces this
+            // power already holds are shown but not pickable — honest, not
+            // hidden (field report: the picker let the same LotG in twice).
+            const dup = _pieceSlottedHere(p.uid, pi === undefined ? null : pi, s.uid);
             return `
-            <div class="piece ${p.unique?'unique':''}"
-              onclick='pickPiece(${JSON.stringify(s.uid)}, ${JSON.stringify(s.name)}, ${pi})'>
+            <div class="piece ${p.unique?'unique':''}${dup?' piece-dup':''}"
+              ${dup ? `title="Already slotted in this power — the game won't let a set piece repeat within one power."`
+                    : `onclick='pickPiece(${JSON.stringify(s.uid)}, ${JSON.stringify(s.name)}, ${pi})'`}>
               ${pIcon ? `<img class="piece-icon" src="${pIcon}" alt="" loading="lazy">` : ""}
               <span>${p.name}</span>
-              <span class="muted">${(p.enhances||[]).join("/")}</span>
+              <span class="muted">${dup ? "✔ slotted here" : (p.enhances||[]).join("/")}</span>
             </div>`;
           }).join("")}
         </div>
@@ -3317,9 +3323,22 @@ window.pickSpecial = function (uid) {
   recompute();
 };
 
+// In-game rule: a SET piece slots at most once per power. Checks the active
+// power's OTHER slots for the piece (the slot being edited may hold it — a
+// re-pick of the same piece into the same slot is a no-op, not a duplicate).
+function _pieceSlottedHere(pieceUid, _pi, _setUid) {
+  if (!activeSlot) return false;
+  const { powerIdx, slotIdx } = activeSlot;
+  return (build.powers[powerIdx].slots || []).some((sl, i) =>
+    sl && i !== slotIdx && sl.piece_uid === pieceUid);
+}
+
 window.pickPiece = function (setUid, setName, pieceIdx) {
   const s = MODAL_SETS.find(x => x.uid === setUid);
   const piece = s.pieces[pieceIdx];
+  // Defense in depth behind the disabled picker row: the game won't allow a
+  // set piece twice in one power, so neither do we.
+  if (_pieceSlottedHere(piece.uid)) return;
   const { powerIdx, slotIdx } = activeSlot;
   recordEdit();
   build.powers[powerIdx].slots[slotIdx] = {

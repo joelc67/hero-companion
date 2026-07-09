@@ -213,10 +213,12 @@ def validate_build(build):
             if set_uid:
                 set_pieces[set_uid].append(slot)
 
-        # within one power, a given set's piece should not be duplicated.
-        # Hamidon/Titan/Hydra Origins and D-Syncs are EXEMPT: they aren't set pieces —
-        # the game lets you stack as many identical ones in a power as you like
-        # (field report: HO x2 cores were warned as "duplicate piece" — wrongly).
+        # Within one power, a given set's piece may appear at most ONCE — the
+        # game won't allow a repeat (field report 2026-07-09: the picker let
+        # the same LotG piece into several slots). An ERROR, not a warning:
+        # the state is impossible in-game, so any math over it is fiction.
+        # Hamidon/Titan/Hydra Origins and D-Syncs are EXEMPT: they aren't set
+        # pieces — identical copies stack freely.
         for set_uid, slots in set_pieces.items():
             seen_pieces = defaultdict(int)
             for s in slots:
@@ -226,10 +228,11 @@ def validate_build(build):
                 seen_pieces[pid] += 1
             for pid, c in seen_pieces.items():
                 if c > 1:
-                    warnings.append(
-                        f"'{pname}': duplicate piece slotted {c}x in the same set "
-                        f"({slots[0].get('set_name','?')}). A set piece can only be "
-                        f"slotted once per power.")
+                    errors.append(
+                        f"'{pname}': the same set piece is slotted {c}x "
+                        f"({slots[0].get('set_name','?')}). The game won't "
+                        f"allow a set piece to repeat within one power — "
+                        f"replace the extra cop{'ies' if c > 2 else 'y'}.")
 
     for label, count in unique_seen.items():
         if count > 1:
@@ -459,8 +462,11 @@ def _piece_globals(build, totals):
     """Add always-on special-IO piece globals (Steadfast +3% Def, LotG +7.5%
     Recharge, Shield Wall +5% Res, Kismet +6% ToHit, etc.). These work whether
     or not the host power is active, so every slotted piece counts; unique
-    globals count once across the build, LotG recharge counts per slot."""
+    globals count once across the build; stackable globals (LotG recharge)
+    count per slot up to the game's rule of five — a 6th copy grants nothing
+    in-game, so it grants nothing here (field-report audit 2026-07-09)."""
     seen_unique = set()
+    stack_count = defaultdict(int)
     for power in build.get("powers", []):
         for slot in power.get("slots", []) or []:
             if not slot:
@@ -473,6 +479,10 @@ def _piece_globals(build, totals):
                         if g["set"] in seen_unique:
                             break
                         seen_unique.add(g["set"])
+                    else:
+                        stack_count[(g["set"], g["piece"])] += 1
+                        if stack_count[(g["set"], g["piece"])] > RULE_OF_FIVE:
+                            break
                     for eff in g["effects"]:
                         _apply_effect(totals, eff)
                     break   # at most one global per slotted piece
@@ -950,10 +960,15 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
     sb_only = _empty_totals()
 
     for power in build.get("powers", []):
-        set_counts = defaultdict(int)
+        # DISTINCT pieces per set, not slots: a duplicated set piece (an
+        # in-game-impossible state validation errors on) must not conjure the
+        # next bonus tier — the game grants tiers by distinct pieces.
+        set_counts = defaultdict(set)
         for slot in power.get("slots", []) or []:
             if slot and slot.get("set_uid"):
-                set_counts[slot["set_uid"]] += 1
+                set_counts[slot["set_uid"]].add(
+                    slot.get("piece_uid") or slot.get("piece_name") or id(slot))
+        set_counts = {uid: len(pieces) for uid, pieces in set_counts.items()}
 
         for set_uid, n_pieces in set_counts.items():
             sb = set_bonuses_by_uid.get(set_uid)
