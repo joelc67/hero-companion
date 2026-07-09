@@ -41,15 +41,20 @@ _UPDATE_VERSION_URL = ("https://raw.githubusercontent.com/joelc67/hero-companion
                        "master/lite_version.txt")
 _RELEASES_URL = "https://github.com/joelc67/hero-companion/releases"
 
-TERMS_VERSION = 1
+TERMS_VERSION = 2   # v2 (2026-07-10): discloses public character names on the
+#                     boards (Team Leaders) and per-item price contributions.
 
 TERMS = """Companion Lite feeds the live CoH Pulse Boards. Using it means you
 accept these terms; if you do not accept them, quit and uninstall it.
 
 WHAT IT CAPTURES (from your game chat log, only while logging is on):
   - your own rewards: XP, influence, drops, merits, badges, defeats
-  - recruitment facts from public channels (what's forming, never raw
-    chat). Private messages (tells, whispers) are never captured.
+  - recruitment facts from public channels (what's forming, and the
+    recruiting CHARACTER's name — it was broadcast publicly in game).
+    Never raw chat. Private messages (tells, whispers) are never
+    captured.
+  - your auction-house lines, so confirmed per-item SALE PRICES can
+    feed the public price board.
 
 WHAT IT UPLOADS: that captured play data, and nothing else. Uploads are
 tagged with an anonymous install id. Your account login names never
@@ -58,9 +63,10 @@ Machine names, file paths, and anything outside the game log are never
 read or sent.
 
 WHERE IT GOES: into the project's locked storage that the general
-public cannot read. The only thing made public is the rendered board
-page itself, which never shows account names, money totals, or
-machine details.
+public cannot read. What the PUBLIC board shows: what's forming and
+when, the character names of public-channel recruiters (public in game
+already), and per-item sale prices. It never shows account names,
+anyone's money totals, who sold what, or machine details.
 
 YOUR CONTROLS: turn game logging off any time (/logchat in game) and
 nothing is captured; quit Companion Lite and nothing is uploaded;

@@ -224,27 +224,51 @@ def _market_prices_html(events):
     points = [s for s in _pair_sales(events) if s.get("price")]
     if not points:
         return ""
-    by_item = {}
+    # Grouped by GOODS KIND (Joel 2026-07-10: "often what I personally sell is
+    # recipes, not actual items — I farm a lot") — a recipe and its crafted
+    # enhancement are different goods at very different prices; the board must
+    # never blur them. Reuses the same name classifier the Haul card runs on.
+    _KIND_LABEL = [("recipe", "Recipes"), ("enhancement", "Enhancements & boosts"),
+                   ("crafting", "Crafting (converters & catalysts)"),
+                   ("incarnate", "Incarnate components"),
+                   ("incarnate_merit", "Incarnate merits"), ("salvage", "Salvage & other")]
+    by_kind = {}
     for p in points:
-        by_item.setdefault(p.get("item") or "?", []).append(p)
-    rows = ""
-    for item, ps in sorted(by_item.items(),
-                           key=lambda x: -max(p["_t"] or 0 for p in x[1])):
-        prices = sorted(p["price"] for p in ps)
-        last = max(ps, key=lambda p: p["_t"] or 0)
-        med = prices[len(prices) // 2]
-        spread = (f"{_n(prices[0])} – {_n(prices[-1])}" if len(prices) > 1
-                  else _n(prices[0]))
-        rows += (f"<tr><td>{_esc(item)}</td><td class='num'>{_n(last['price'])}</td>"
-                 f"<td class='num'>{_n(med)}</td><td class='num'>{spread}</td>"
-                 f"<td class='num'>{len(ps)}</td>"
-                 f"<td class='dim'>{_esc(last.get('ts') or '')}</td></tr>")
+        by_kind.setdefault(gamelog._drop_kind(p.get("item") or ""), []).append(p)
+    sections = ""
+    for kind, klabel in _KIND_LABEL:
+        pts = by_kind.pop(kind, [])
+        if kind == "salvage":            # the last bucket sweeps any future
+            for rest in by_kind.values():  # classifier kinds — nothing vanishes
+                pts.extend(rest)
+            by_kind = {}
+        if not pts:
+            continue
+        by_item = {}
+        for p in pts:
+            by_item.setdefault(p.get("item") or "?", []).append(p)
+        rows = ""
+        for item, ps in sorted(by_item.items(),
+                               key=lambda x: -max(p["_t"] or 0 for p in x[1])):
+            prices = sorted(p["price"] for p in ps)
+            last = max(ps, key=lambda p: p["_t"] or 0)
+            med = prices[len(prices) // 2]
+            spread = (f"{_n(prices[0])} – {_n(prices[-1])}" if len(prices) > 1
+                      else _n(prices[0]))
+            rows += (f"<tr><td>{_esc(item)}</td><td class='num'>{_n(last['price'])}</td>"
+                     f"<td class='num'>{_n(med)}</td><td class='num'>{spread}</td>"
+                     f"<td class='num'>{len(ps)}</td>"
+                     f"<td class='dim'>{_esc(last.get('ts') or '')}</td></tr>")
+        sections += (f"<p class='sub' style='margin-top:10px'>{klabel} · "
+                     f"{len(pts)} confirmed sale{'s' if len(pts) > 1 else ''}</p>"
+                     "<table><tr><th>Item</th><th class='num'>Last</th>"
+                     "<th class='num'>Median</th><th class='num'>Range</th>"
+                     f"<th class='num'>Sales</th><th>Last sale</th></tr>{rows}</table>")
     return _card(
         "Market prices", "confirmed sale prices witnessed by capture clients — "
         "items and prices only, never who or how much anyone holds",
-        "<table><tr><th>Item</th><th class='num'>Last</th><th class='num'>Median</th>"
-        f"<th class='num'>Range</th><th class='num'>Sales</th><th>Last sale</th></tr>{rows}"
-        "</table><p class='dim'>A price records only when a sale and its Consignment "
+        sections
+        + "<p class='dim'>A price records only when a sale and its Consignment "
         "House credit pair unambiguously on the same client — transacted prices, "
         "never listings or guesses. Buy-side prices join when the game exposes a "
         "distinct purchase line.</p>", cls="full")
@@ -908,9 +932,13 @@ def build(state_dir=None, public=False):
                "releases</a>). Uploads are private and pseudonymized — no account "
                "names, no money, no machine details ever appear here; only these "
                "rendered boards are public.")
-        foot = ("Built from game logs captured by players running Companion Lite. Sections "
-                "marked \"collecting\" fill in as capture learns the line formats from real "
-                "sessions.")
+        foot = ("Built from game logs captured by players running Companion Lite. "
+                "What appears here: public-channel recruiting (including the recruiting "
+                "character's name — it was broadcast publicly in game) and confirmed "
+                "per-item sale prices. What never appears: account names, anyone's "
+                "money totals, who sold what, private messages, or machine details. "
+                "Sections marked \"collecting\" fill in as capture learns the line "
+                "formats from real sessions.")
     else:
         mock = "Your LOCAL board · built from your own game log · nothing uploaded"
         logo_note = "(your machine)"
