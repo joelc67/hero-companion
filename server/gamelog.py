@@ -670,7 +670,8 @@ def _tally(s, ev):
         # keep the LATEST 60 (events arrive ts-sorted; capping at the first N froze the
         # card on the oldest sightings ever captured — the opposite of "recent")
         pu["recent"].append({k: ev.get(k) for k in
-                             ("ts", "channel", "content", "spots_needed",
-                              "spots_filled", "spots_total", "difficulty")})
+                             ("ts", "channel", "content", "speaker",
+                              "spots_needed", "spots_filled", "spots_total",
+                              "difficulty")})
         if len(pu["recent"]) > 60:
             pu["recent"].pop(0)

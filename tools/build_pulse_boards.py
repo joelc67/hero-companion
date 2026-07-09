@@ -123,38 +123,95 @@ def _n(x):
     return f"{x:,}" if isinstance(x, (int, float)) else _esc(x)
 
 
+def _ev_t(ev):
+    try:
+        return calendar.timegm(time.strptime(ev.get("ts") or "",
+                                             "%Y-%m-%d %H:%M:%S"))
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def _pair_sales(events):
-    """Single-claim price pairing (0.1.16 — the pricing layer #31 proving
-    ground). The game logs a sale ("You have sold X") and its influence credit
-    ("You got N influence from the Consignment House") as SEPARATE lines with
-    no link, and credits can also arrive for older stored sales. So: a credit
-    claims the single most recent unpaired sale within the window before it;
-    zero or two-plus candidates = no pair, and the ledger says "unconfirmed"
-    rather than guessing (a wrong price is worse than no price).
-    Pairing runs PER ACCOUNT — on the pipeline's merged multi-source events
-    (and for dual-boxers locally), one client's credit must never claim
-    another's sale. BUY side is deliberately absent: "You paid N" covers
-    listing fees and purchases alike with no item link (verified in real
-    logs — fee payments interleave with collections), so pairing it would
-    fabricate prices; a distinct buy-line format waits on the format hunter."""
-    window = 180  # seconds
-    def _t(ev):
-        try:
-            return calendar.timegm(time.strptime(ev.get("ts") or "",
-                                                 "%Y-%m-%d %H:%M:%S"))
-        except Exception:  # noqa: BLE001
-            return None
-    sales = [dict(e, _t=_t(e)) for e in events if e.get("type") == "ah_sold"]
-    for cred in (e for e in events if e.get("type") == "influence_ah"):
-        ct = _t(cred)
-        if ct is None:
-            continue
-        cands = [s for s in sales if s["_t"] is not None and "price" not in s
-                 and s.get("account") == cred.get("account")
-                 and 0 <= ct - s["_t"] <= window]
-        if len(cands) == 1:
-            cands[0]["price"] = cred.get("inf")
-    return sales
+    """Item↔price pairing, CORRECTED on Joel's re-read of his own stream
+    (2026-07-10 — the first model treated claim-time "You paid" lines as
+    unattributable fees; they are the claim COMMISSION, and its amount equals
+    the LISTING fee of the item being claimed — an item fingerprint):
+
+      list:  "You put X in the Consignment House" + "You paid F" (±10s)
+             -> listing {item X, fee F}
+      sell:  "You have sold X" -> the pending sale keeps its listing's fee
+      claim: "You got P influence" + "You paid F'" (adjacent, same moment)
+             -> the pending SOLD item whose fee == F' sold for P.
+             Verified on Joel's real events: Essence of Curare (fee 2,500)
+             -> (50,000, 2,500); Harmonized Healing (5,000) -> (100,000,
+             5,000). P is the sale price the buyer paid — the market price.
+
+    Fallback for claims with no fee match (sold above ask, listing fee not
+    captured): the old adjacent rule — a lone credit within 180s after a lone
+    unpaired sale. Anything ambiguous stays unconfirmed, never guessed.
+    All matching runs PER ACCOUNT: one client's claim can never price
+    another's sale. BUY side still absent (no item-linked purchase line)."""
+    by_acct = {}
+    for e in events:
+        if e.get("type") in ("ah_listed", "ah_sold", "influence_ah", "spent"):
+            by_acct.setdefault(e.get("account"), []).append(dict(e, _t=_ev_t(e)))
+    out = []
+    for acct_events in by_acct.values():
+        acct_events.sort(key=lambda e: (e["_t"] or 0))
+        listings = []          # open listings: {item, fee}
+        sales = []             # ah_sold records (returned; gain "price" on match)
+        for i, e in enumerate(acct_events):
+            if e["type"] == "ah_listed":
+                listings.append({"item": e.get("item"), "fee": None,
+                                 "_t": e["_t"]})
+            elif e["type"] == "spent":
+                # A listing fee lands seconds AFTER its listing confirm — it
+                # belongs to the LATEST fee-less listing within 10s before it
+                # (nearest-in-either-direction let an earlier listing steal a
+                # later one's fee — caught on Joel's real stream).
+                if e.get("_used") or e["_t"] is None:
+                    continue
+                for li in reversed(listings):
+                    if li["fee"] is None and li["_t"] is not None \
+                            and 0 <= e["_t"] - li["_t"] <= 10:
+                        li["fee"] = e["inf"]
+                        e["_used"] = True
+                        break
+            elif e["type"] == "ah_sold":
+                rec = dict(e)
+                # bind the most recent open listing of the same item (its fee
+                # becomes the claim fingerprint)
+                for li in reversed(listings):
+                    if li["item"] == rec.get("item") and not li.get("_sold"):
+                        li["_sold"] = True
+                        rec["_fee"] = li["fee"]
+                        break
+                sales.append(rec)
+            elif e["type"] == "influence_ah":
+                # claim: commission = the adjacent spent at the same moment
+                comm = None
+                for j in (i + 1, i - 1):
+                    if 0 <= j < len(acct_events) and acct_events[j]["type"] == "spent" \
+                            and not acct_events[j].get("_used") \
+                            and acct_events[j]["_t"] == e["_t"]:
+                        comm = acct_events[j]
+                        break
+                cands = ([s for s in sales if "price" not in s
+                          and s.get("_fee") is not None
+                          and comm is not None and s["_fee"] == comm["inf"]]
+                         if comm is not None else [])
+                if len(cands) == 1:
+                    comm["_used"] = True
+                    cands[0]["price"] = e.get("inf")
+                    continue
+                # fallback: lone credit adjacent to a lone unpaired sale
+                near = [s for s in sales if "price" not in s
+                        and s["_t"] is not None and e["_t"] is not None
+                        and 0 <= e["_t"] - s["_t"] <= 180]
+                if len(near) == 1:
+                    near[0]["price"] = e.get("inf")
+        out.extend(sales)
+    return out
 
 
 def _market_prices_html(events):
@@ -624,31 +681,49 @@ def build(state_dir=None, public=False):
         if r.get("spots_filled") is not None and r.get("spots_total"):
             return f"{r['spots_filled']}/{r['spots_total']}"
         return r.get("spots_needed") or ""
-    # Recent formations, reworked (Joel 2026-07-10: "needs a color and tab with
-    # perhaps a pruned list or top bar like summary like the other categories —
-    # makes no sense as is"): pruned to the freshest 15, every row wears its
-    # category's color, and a summary strip up top mirrors the category cards.
-    recent_list = (pulse.get("recent") or [])[-15:][::-1]
-    rc_counts = {}
-    for r in recent_list:
-        rc_counts[_categorize(r.get("content") or "", lx_map)] = \
-            rc_counts.get(_categorize(r.get("content") or "", lx_map), 0) + 1
-    rc_pills = "".join(
-        f"<span class='pill'><i style='display:inline-block;width:10px;height:10px;"
-        f"border-radius:2px;background:{_CAT_ACCENT.get(k, '#5b6c8c')};"
-        f"margin-right:5px'></i>{_esc(lbl)} · {rc_counts[k]}</span>"
-        for k, lbl in CATEGORIES if rc_counts.get(k))
+    # TEAM LEADERS board (Joel 2026-07-10: "the name of the persons looking for
+    # people to join them could be like Team Leaders board, not just some
+    # 'Recent Formations Witnessed'"). Character names are public in game —
+    # a broadcast recruiter IS announcing themselves. Aggregated from ALL
+    # recruit events: who forms things, what they run, colored by category.
+    leaders = {}
+    for ev in events:
+        if ev.get("type") != "recruit" or not ev.get("speaker"):
+            continue
+        L = leaders.setdefault(ev["speaker"], {"n": 0, "contents": {}, "last": ""})
+        L["n"] += 1
+        c = ev.get("content") or "(unrecognized)"
+        L["contents"][c] = L["contents"].get(c, 0) + 1
+        L["last"] = max(L["last"], ev.get("ts") or "")
+    lead_rows = ""
+    for name, L in sorted(leaders.items(), key=lambda x: -x[1]["n"])[:12]:
+        tops = sorted(L["contents"].items(), key=lambda kv: -kv[1])[:3]
+        dots = "".join(
+            f"<i title='{_esc(c)}' style='display:inline-block;width:10px;height:10px;"
+            f"border-radius:2px;margin-right:3px;background:"
+            f"{_CAT_ACCENT.get(_categorize(c, lx_map), '#5b6c8c')}'></i>"
+            for c, _n in tops)
+        runs = ", ".join(f"{_esc(c)} ×{n}" if n > 1 else _esc(c) for c, n in tops)
+        lead_rows += (f"<tr><td><b>{_esc(name)}</b></td><td>{dots} {runs}</td>"
+                      f"<td class='num'>{L['n']}</td>"
+                      f"<td class='dim'>{_esc(L['last'][:16])}</td></tr>")
+    # the freshest sightings ride below the leaders, pruned + category-colored
+    recent_list = (pulse.get("recent") or [])[-10:][::-1]
     recent_rows = "".join(
         f"<tr style='border-left:3px solid "
         f"{_CAT_ACCENT.get(_categorize(r.get('content') or '', lx_map), '#5b6c8c')}'>"
         f"<td class='dim'>{_esc((r.get('ts') or '')[11:16])}</td>"
-        f"<td>{_esc(r.get('content') or '?')}</td><td>{_esc(r.get('channel'))}</td>"
+        f"<td>{_esc(r.get('speaker') or '')}</td>"
+        f"<td>{_esc(r.get('content') or '?')}</td>"
         f"<td class='num'>{_esc(_spots(r))}</td></tr>" for r in recent_list)
     recent_card = _card(
-        "Recent formations witnessed", "the freshest 15, colored by category",
-        (f"<div style='margin-bottom:8px'>{rc_pills}</div>" if rc_pills else "")
-        + "<table><tr><th>Time</th><th>Content</th><th>Channel</th><th class='num'>Spots</th></tr>"
-        + (recent_rows or "<tr><td class='dim' colspan='4'>—</td></tr>") + "</table>")
+        "Team leaders", "who's forming things — every run starts with someone asking",
+        "<table><tr><th>Leader</th><th>Runs</th><th class='num'>Formations</th>"
+        f"<th>Last seen</th></tr>{lead_rows}"
+        + ("</table><p class='sub' style='margin-top:10px'>freshest sightings</p>"
+           "<table><tr><th>Time</th><th>Leader</th><th>Content</th>"
+           f"<th class='num'>Spots</th></tr>{recent_rows}</table>"
+           if recent_rows else "</table>"), cls="full")
 
     # ---- Scorecards: ONE per account (fixes "only Lime Juice") -------------------------
     accounts = sorted({e.get("account") for e in events if e.get("account")})
