@@ -126,7 +126,13 @@ def _pair_sales(events):
     no link, and credits can also arrive for older stored sales. So: a credit
     claims the single most recent unpaired sale within the window before it;
     zero or two-plus candidates = no pair, and the ledger says "unconfirmed"
-    rather than guessing (a wrong price is worse than no price)."""
+    rather than guessing (a wrong price is worse than no price).
+    Pairing runs PER ACCOUNT — on the pipeline's merged multi-source events
+    (and for dual-boxers locally), one client's credit must never claim
+    another's sale. BUY side is deliberately absent: "You paid N" covers
+    listing fees and purchases alike with no item link (verified in real
+    logs — fee payments interleave with collections), so pairing it would
+    fabricate prices; a distinct buy-line format waits on the format hunter."""
     window = 180  # seconds
     def _t(ev):
         try:
@@ -140,10 +146,47 @@ def _pair_sales(events):
         if ct is None:
             continue
         cands = [s for s in sales if s["_t"] is not None and "price" not in s
+                 and s.get("account") == cred.get("account")
                  and 0 <= ct - s["_t"] <= window]
         if len(cands) == 1:
             cands[0]["price"] = cred.get("inf")
     return sales
+
+
+def _market_prices_html(events):
+    """PUBLIC per-item price observations (Joel's ruling 2026-07-10: capture
+    pricing through clients — 1 influence or 10 million, all marketplace
+    goods; never a person, never a wallet). Each observation is a CONFIRMED
+    sale price from some client's own pairing; what renders is item + price
+    stats + when, nothing else. Returns "" when no confirmed prices exist yet
+    (no empty card)."""
+    points = [s for s in _pair_sales(events) if s.get("price")]
+    if not points:
+        return ""
+    by_item = {}
+    for p in points:
+        by_item.setdefault(p.get("item") or "?", []).append(p)
+    rows = ""
+    for item, ps in sorted(by_item.items(),
+                           key=lambda x: -max(p["_t"] or 0 for p in x[1])):
+        prices = sorted(p["price"] for p in ps)
+        last = max(ps, key=lambda p: p["_t"] or 0)
+        med = prices[len(prices) // 2]
+        spread = (f"{_n(prices[0])} – {_n(prices[-1])}" if len(prices) > 1
+                  else _n(prices[0]))
+        rows += (f"<tr><td>{_esc(item)}</td><td class='num'>{_n(last['price'])}</td>"
+                 f"<td class='num'>{_n(med)}</td><td class='num'>{spread}</td>"
+                 f"<td class='num'>{len(ps)}</td>"
+                 f"<td class='dim'>{_esc(last.get('ts') or '')}</td></tr>")
+    return _card(
+        "Market prices", "confirmed sale prices witnessed by capture clients — "
+        "items and prices only, never who or how much anyone holds",
+        "<table><tr><th>Item</th><th class='num'>Last</th><th class='num'>Median</th>"
+        f"<th class='num'>Range</th><th class='num'>Sales</th><th>Last sale</th></tr>{rows}"
+        "</table><p class='dim'>A price records only when a sale and its Consignment "
+        "House credit pair unambiguously on the same client — transacted prices, "
+        "never listings or guesses. Buy-side prices join when the game exposes a "
+        "distinct purchase line.</p>", cls="full")
 
 
 def _market_ledger_html(events, overall):
@@ -609,11 +652,16 @@ def build(state_dir=None, public=False):
     haul_card = _card(
         "Haul", "everything picked up, by kind",
         f"<table><tr><th>Kind</th><th class='num'>Count</th></tr>{haul_rows}</table>")
-    # Money is LOCAL ONLY (Joel: how much people make is not for the public board — the
-    # future price board needs per-item prices, never personal wealth).
+    # Joel's market rulings, refined 2026-07-10: personal WEALTH stays local-only
+    # (the ledger below never goes public), but per-item PRICE observations are
+    # public — "capture pricing through clients... not their sales, not their
+    # name, just the prices for goods." The prices card renders on BOTH boards
+    # (locally it previews exactly what the public sees) and only when at least
+    # one confirmed price exists — no empty card.
     market_card = "" if public else _card(
         "Market activity", "your own auction-house ledger (the price board's proving ground)",
         _market_ledger_html(events, overall), cls="full")
+    prices_card = _market_prices_html(events)
 
     # ---- Badges (LOCAL ONLY — a partial badge count misrepresents a veteran character;
     # badges/levels/accolades go public only via the one-time character sync, task #38) ---
@@ -684,13 +732,15 @@ def build(state_dir=None, public=False):
                    f"{_esc(', '.join(accounts))}</div>") + "</div>")
 
     # characters + haul are LOCAL ONLY for now (Joel: pointless on the public board
-    # until the one-time character sync can bring characters over whole, task #38)
+    # until the one-time character sync can bring characters over whole, task #38).
+    # Market PRICES render on both boards (Joel's 2026-07-10 ruling).
     if public:
-        tail_sections = ""
+        tail_sections = prices_card
     else:
         tail_sections = ("<h2 style='margin-top:24px'>Your characters</h2>"
                          + scorecards
-                         + f"<div class='grid'>{haul_card}{market_card}</div>")
+                         + f"<div class='grid'>{haul_card}{market_card}</div>"
+                         + prices_card)
 
     script = ""
     if public:
