@@ -137,6 +137,12 @@ def _drop_kind(item):
 
 _PATTERNS = [
     # (type, regex, extractor)  — order matters; specific before general.
+    # Run-level tick CONFIRMED from the archive (0.1.16 scoping, 2026-07-10):
+    # the game's bare mission/task completion line. Carries no content name —
+    # feeds an honest tally, not a run page (full TF/iTrial run capture waits
+    # on completion-line formats from a designated to-completion session).
+    ("task_done", re.compile(r"^Team task completed\.?$", re.I),
+     lambda m: {}),
     ("xp", re.compile(rf"^You gain {_N} experience(?: and {_N} (?:influence|infamy))?\.?$", re.I),
      lambda m: {"xp": _num(m.group(1)), "inf": _num(m.group(2))}),
     ("influence_ah", re.compile(rf"^You got {_N} (?:influence|infamy) from the Consignment House\.?$", re.I),
@@ -318,6 +324,14 @@ def parse_line(line, pulse=False):
     msg = m.group("msg")
     if pulse:
         if msg.startswith("["):
+            # Zone-event completion broadcast, CONFIRMED format from the archive
+            # (0.1.16 scoping): "[PPD] Alert Cancelled: Raid has been completed
+            # in Skyway City." Channel-agnostic on the exact message shape.
+            zm = re.match(r"^\[[^\]]+\] Alert Cancelled: (?:The )?[Rr]aid has been "
+                          r"completed in (.+?)\.?$", msg)
+            if zm:
+                return {"ts": m.group(1), "type": "zone_event", "what": "raid",
+                        "zone": zm.group(1).strip()}, True
             ev = parse_channel_line(msg)
             if ev:
                 ev["ts"] = m.group(1)
@@ -342,8 +356,40 @@ def parse_line(line, pulse=False):
     # Deliberately NOT keyed on bare "defeat/influence/experience" — those are already
     # parsed, and AE farm mobs spew flavor text full of "defeat".
     interesting = bool(re.search(r"\b(merit|veteran|badge|accolade|component)\b", msg, re.I)) \
-        or bool(re.match(r"^You (gain \d|got |received |earned |have earned|have been awarded)", msg))
+        or bool(re.match(r"^You (gain \d|got |received |earned |have earned|have been awarded)", msg)) \
+        or (not msg.startswith("[")
+            and bool(re.search(r"\b(task force|trial|complete[ds]?)\b", msg, re.I)))
     return None, interesting
+
+
+_FC_SEEN = None      # lazy-loaded dedup memo for the candidates file
+_FC_CAP = 500        # the file never grows unbounded
+
+
+def _collect_format_candidate(line):
+    """LOCAL-ONLY format hunter (0.1.16): unparsed-but-interesting lines self-
+    collect into format_candidates.txt so unknown formats (TF/iTrial completion,
+    merit awards, league lifecycle) don't wait for another scoping session.
+    Deduped by message text (timestamp stripped), capped, NEVER uploaded —
+    Joel hand-carries the file when he wants a format pinned."""
+    global _FC_SEEN
+    try:
+        path = os.path.join(STATE_DIR, "format_candidates.txt")
+        msg = re.sub(r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\s+", "", line)[:200]
+        if _FC_SEEN is None:
+            _FC_SEEN = set()
+            if os.path.isfile(path):
+                with open(path, encoding="utf-8", errors="replace") as f:
+                    _FC_SEEN = {re.sub(r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\s+", "",
+                                       ln.strip())[:200] for ln in f}
+        if msg in _FC_SEEN or len(_FC_SEEN) >= _FC_CAP:
+            return
+        _FC_SEEN.add(msg)
+        os.makedirs(STATE_DIR, exist_ok=True)
+        with open(path, "a", encoding="utf-8") as f:
+            f.write(line + "\n")
+    except Exception:  # noqa: BLE001 — the hunter never breaks capture
+        pass
 
 
 def ingest(log_dir, state):
@@ -398,6 +444,7 @@ def ingest(log_dir, state):
                     report["unparsed_interesting"] += 1
                     if len(report["unparsed_samples"]) < 20:
                         report["unparsed_samples"].append(line.strip()[:160])
+                    _collect_format_candidate(line.strip())
         except Exception:  # noqa: BLE001 — one unreadable file never blocks the rest
             continue
     # SHARD AUTO-DETECT (Joel's insight): the client maintains playerslot.txt beside
@@ -479,7 +526,7 @@ def load_events(limit=20000):
 def _blank_summary():
     return {"xp": 0, "inf_gained": 0, "inf_spent": 0, "merits": 0, "levels": [],
             "badges": [], "kills": 0, "deaths": 0, "drops": [], "ah_sold": 0,
-            "drop_kinds": {}, "days": set(),
+            "ah_listed": 0, "drop_kinds": {}, "days": set(),
             "pulse": {"recruit_seen": 0, "by_content": {}, "recent": [],
                       "by_channel": {}, "learned_terms": {}, "by_hour": {},
                       "content_hours": {}, "content_day_hours": {}}}
@@ -595,6 +642,8 @@ def _tally(s, ev):
         s["deaths"] += 1
     elif t == "ah_sold":
         s["ah_sold"] += 1
+    elif t == "ah_listed":
+        s["ah_listed"] = s.get("ah_listed", 0) + 1
     elif t == "drop":
         s["drops"].append(ev)
         k = ev.get("kind", "salvage")

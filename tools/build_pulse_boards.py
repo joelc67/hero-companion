@@ -119,6 +119,58 @@ def _n(x):
     return f"{x:,}" if isinstance(x, (int, float)) else _esc(x)
 
 
+def _pair_sales(events):
+    """Single-claim price pairing (0.1.16 — the pricing layer #31 proving
+    ground). The game logs a sale ("You have sold X") and its influence credit
+    ("You got N influence from the Consignment House") as SEPARATE lines with
+    no link, and credits can also arrive for older stored sales. So: a credit
+    claims the single most recent unpaired sale within the window before it;
+    zero or two-plus candidates = no pair, and the ledger says "unconfirmed"
+    rather than guessing (a wrong price is worse than no price)."""
+    window = 180  # seconds
+    def _t(ev):
+        try:
+            return calendar.timegm(time.strptime(ev.get("ts") or "",
+                                                 "%Y-%m-%d %H:%M:%S"))
+        except Exception:  # noqa: BLE001
+            return None
+    sales = [dict(e, _t=_t(e)) for e in events if e.get("type") == "ah_sold"]
+    for cred in (e for e in events if e.get("type") == "influence_ah"):
+        ct = _t(cred)
+        if ct is None:
+            continue
+        cands = [s for s in sales if s["_t"] is not None and "price" not in s
+                 and 0 <= ct - s["_t"] <= window]
+        if len(cands) == 1:
+            cands[0]["price"] = cred.get("inf")
+    return sales
+
+
+def _market_ledger_html(events, overall):
+    """The local-only per-item sales ledger. Prices appear only where the
+    single-claim pairing is unambiguous."""
+    sales = _pair_sales(events)
+    priced = sum(1 for s in sales if s.get("price"))
+    rows = "".join(
+        f"<tr><td>{_esc(s.get('item') or '?')}</td>"
+        + ("<td class='num'>" + _n(s["price"]) + "</td>" if s.get("price")
+           else "<td class='num dim'>unconfirmed</td>")
+        + f"<td class='dim'>{_esc(s.get('ts') or '')}</td></tr>"
+        for s in sales[-20:][::-1]) or \
+        "<tr><td class='dim' colspan='3'>no sales captured yet</td></tr>"
+    return (
+        f"<table><tr><td>Influence earned</td><td class='num'>{_n(overall.get('inf_gained', 0))}</td></tr>"
+        f"<tr><td>Influence spent</td><td class='num'>{_n(overall.get('inf_spent', 0))}</td></tr>"
+        f"<tr><td>Items listed</td><td class='num'>{overall.get('ah_listed', 0)}</td></tr>"
+        f"<tr><td>Items sold</td><td class='num'>{overall.get('ah_sold', 0)}"
+        f" <span class='dim'>({priced} with a confirmed price)</span></td></tr></table>"
+        "<table style='margin-top:8px'><tr><th>Sold</th><th class='num'>Price</th>"
+        f"<th>When</th></tr>{rows}</table>"
+        "<p class='dim'>A price shows only when exactly one sale sits within 3 minutes "
+        "before its Consignment House credit — the game logs them as separate lines, "
+        "so an ambiguous match stays unconfirmed rather than guessed.</p>")
+
+
 def _card(title, sub, body, cls=""):
     subhtml = f"<p class='sub'>{sub}</p>" if sub else ""
     return f"<div class='card {cls}'><h2>{_esc(title)}</h2>{subhtml}{body}</div>"
@@ -560,12 +612,8 @@ def build(state_dir=None, public=False):
     # Money is LOCAL ONLY (Joel: how much people make is not for the public board — the
     # future price board needs per-item prices, never personal wealth).
     market_card = "" if public else _card(
-        "Market activity", "your own auction-house flow (a seed for the price board)",
-        f"<table>"
-        f"<tr><td>Influence earned</td><td class='num'>{_n(overall.get('inf_gained', 0))}</td></tr>"
-        f"<tr><td>Influence spent</td><td class='num'>{_n(overall.get('inf_spent', 0))}</td></tr>"
-        f"<tr><td>Items sold</td><td class='num'>{overall.get('ah_sold', 0)}</td></tr>"
-        f"</table>")
+        "Market activity", "your own auction-house ledger (the price board's proving ground)",
+        _market_ledger_html(events, overall), cls="full")
 
     # ---- Badges (LOCAL ONLY — a partial badge count misrepresents a veteran character;
     # badges/levels/accolades go public only via the one-time character sync, task #38) ---
@@ -577,13 +625,38 @@ def build(state_dir=None, public=False):
         "Badges earned", f"{len(badges)} captured", badge_pills, cls="full")
 
     # ---- Boards still collecting (the vision pieces that need more log parsing) ---------
+    # 0.1.16: the first CONFIRMED run-level formats now land as real rows — zone-
+    # event completions and task-completion ticks — while per-run pages still wait
+    # on the TF/iTrial completion-line formats (a designated to-completion session).
+    zev = {}
+    task_ticks = 0
+    for ev in events:
+        if ev.get("type") == "zone_event":
+            z = ev.get("zone") or "?"
+            zev.setdefault(z, {"n": 0, "last": ""})
+            zev[z]["n"] += 1
+            zev[z]["last"] = max(zev[z]["last"], ev.get("ts") or "")
+        elif ev.get("type") == "task_done":
+            task_ticks += 1
+    early_rows = ""
+    if zev or task_ticks:
+        zrows = "".join(
+            f"<tr><td>Raid completed — {_esc(z)}</td><td class='num'>{d['n']}</td>"
+            f"<td class='dim'>{_esc(d['last'])}</td></tr>"
+            for z, d in sorted(zev.items(), key=lambda x: -x[1]["n"]))
+        trow = (f"<tr><td>Team tasks completed (name unknown — the game's line "
+                f"carries none)</td><td class='num'>{task_ticks}</td><td></td></tr>"
+                if task_ticks else "")
+        early_rows = ("<table><tr><th>Witnessed</th><th class='num'>Count</th>"
+                      f"<th>Last seen</th></tr>{zrows}{trow}</table>")
     sync_note = ("<p class='dim'>Character pages (level, badges, accolades, vet levels) "
                  "join the boards when the one-time character sync ships — so a "
                  "multi-year character arrives whole, not as the sliver a fresh capture "
                  "happens to see.</p>" if public else "")
     soon = _card(
         "iTrials · Task Forces · League runs", None,
-        "<p class='dim'>Per-run pages (leader, participants, time, badges earned, ranked "
+        early_rows
+        + "<p class='dim'>Per-run pages (leader, participants, time, badges earned, ranked "
         "against every recorded run) appear here once the run start/finish and league "
         "join/leader line formats are confirmed from real logs. Capture is watching for "
         "them now — the format hunter flags each new shape it sees.</p>" + sync_note
