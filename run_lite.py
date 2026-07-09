@@ -309,10 +309,18 @@ def _maybe_upload():
         # own playerslot.txt) — character names are public in game; the roster is not
         # read beyond lookups and never uploaded.
         char_shards = st.get("char_shards") or {}
-        _inbox_put(f"sources/{iid}/state.json",
-                   json.dumps({"characters": chars, "char_shards": char_shards,
-                               "shards": sorted(set(char_shards.values()))}).encode(),
-                   f"state from {iid}", need_sha=True)
+        state_body = json.dumps({"characters": chars, "char_shards": char_shards,
+                                 "shards": sorted(set(char_shards.values()))}).encode()
+        # Push state ONLY when it changed (field report 2026-07-10): the
+        # unconditional every-cycle state push doubled the inbox's commit —
+        # and therefore CI-run — count all night for identical content.
+        import hashlib as _hl
+        state_hash = _hl.sha256(state_body).hexdigest()
+        if st.get("state_upload_hash") != state_hash:
+            _inbox_put(f"sources/{iid}/state.json", state_body,
+                       f"state from {iid}", need_sha=True)
+            st["state_upload_hash"] = state_hash
+            gamelog.save_state(st)
         st = gamelog.load_state()                       # re-load: capture may have run
         st["upload_offset"] = offset + sent
         gamelog.save_state(st)
