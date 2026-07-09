@@ -793,10 +793,15 @@ let WIZ_POP_KEY = null;      // which choice's pop-up is open (refreshes on char
 let WIZ_EXPLAIN_SEQ = 0;     // stale-response guard
 async function wizExplain(changedKey) {
   const at = $("wiz-at") && $("wiz-at").value;
-  // NO DEFAULTS: nothing is explained or summarized until Role AND Content are
-  // actually chosen — the server tailors by them, and inventing them here would
-  // reintroduce the silent default through the back door.
-  if (!($("wiz-role") && $("wiz-role").value) || !($("wiz-content") && $("wiz-content").value)) {
+  // NO DEFAULTS, fixed scope (release-gate bug): a question the user JUST
+  // answered always pops its explainer — explaining a given answer invents
+  // nothing. The server returns null for every UNANSWERED question, and the
+  // summary asserts nothing until Role AND Content exist (empty text = hidden).
+  // The old whole-function gate on Role+Content silenced the Role and
+  // Fight-from pop-ups on every first pass — they sit BEFORE Mostly-in.
+  const anyAnswered = ["wiz-role", "wiz-content", "wiz-exposure", "wiz-travel"]
+    .some(id => $(id) && $(id).value);
+  if (!anyAnswered) {
     const pop = $("wiz-pop"), sum = $("wiz-summary");
     if (pop) pop.classList.add("hidden");
     if (sum) sum.classList.add("hidden");

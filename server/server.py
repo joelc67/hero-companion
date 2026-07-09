@@ -740,6 +740,8 @@ def _ps_label(ps_full):
 
 
 def _explain_role(archetype, role, primary, secondary, at_name):
+    if not role:                 # unanswered explains nothing (no-defaults ruling)
+        return None
     spec = ai_build.ROLE_PRESETS.get(role) or {}
     label = spec.get("label") or role
     is_mm = archetype == "Class_Mastermind"
@@ -796,6 +798,8 @@ def _explain_role(archetype, role, primary, secondary, at_name):
 
 
 def _explain_content(archetype, content, primary, secondary, res_cap):
+    if not content:              # unanswered explains nothing (no-defaults ruling)
+        return None
     base = ai_build.CONTENT_PRESETS.get(content) or {}
     label = base.get("label") or content
     positional = ai_build.positional_build(primary, secondary)
@@ -898,7 +902,11 @@ def _explain_travel(travel, content, archetype):
 
 def _summarize_intent(archetype, primary, secondary, role, content, exposure,
                       travel, res_cap, at_name):
-    """The combined picture: what these choices make the solver actually chase."""
+    """The combined picture: what these choices make the solver actually chase.
+    Asserts nothing until Role AND Content exist (empty text hides the panel) —
+    the per-choice pop-ups fire independently for whatever WAS answered."""
+    if not (role and content):
+        return {"text": "", "targets": []}
     tgt = ai_build.preset_targets(content, role, res_cap=res_cap, exposure=exposure,
                                   primary=primary, secondary=secondary) or {}
     targets = tgt.get("targets") or {}
@@ -945,11 +953,13 @@ def explain_intent():
     body = request.get_json(force=True, silent=True) or {}
     archetype = body.get("archetype")
     primary, secondary = body.get("primary"), body.get("secondary")
-    # No server-side inventions either (no-defaults ruling): role/content keep a
-    # fallback only because the client never calls without them; exposure and
-    # travel pass through as-is and unanswered ones explain nothing.
-    role = body.get("role") or "damage"
-    content = body.get("content") or "general"
+    # No server-side inventions either (no-defaults ruling): EVERY unanswered
+    # question explains nothing — including role/content, whose old "damage"/
+    # "general" fallbacks leaned on the client's whole-gate (the release-gate
+    # bug: Role and Fight-from sit before Mostly-in in the wizard flow, so
+    # gating all explainers on content silenced their pop-ups at pick time).
+    role = body.get("role") or None
+    content = body.get("content") or None
     exposure = body.get("exposure") or None
     travel = body.get("travel") or None
     at = ARCH_BY_NAME.get(archetype) or {}

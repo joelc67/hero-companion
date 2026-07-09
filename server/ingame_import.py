@@ -36,10 +36,12 @@ _SKIP_POWERS = {"Pool.Speed.SpeedPhase"}
 
 _HEADER_RE = re.compile(r"^(.*?):\s*Level\s+(\d+)\s+(\w+)\s+(Class_\w+)\s*$")
 _POWER_RE = re.compile(r"^Level\s+(\d+):\s+(.+?)\s*$")
-# "(50)" = the enhancement's level (human, unlike Mids' 0-based IoLevel). An
-# optional "+N" tolerates a boosted notation ("(50+5)") — unverified against a
-# real boosted save (none on hand); a plain "(53)" HO carries its boost in the
-# level itself and the engine derives +3 from it.
+# "(50)" = the enhancement's level (human, unlike Mids' 0-based IoLevel).
+# VERIFIED against a real export (Lime Juice, 295 lines, 2026-07-09): the game
+# does NOT serialize boost levels at all — boosted pieces write their plain
+# level, and ATTUNED pieces serialize as "(1)". The optional "+N" below is
+# tolerance only (harmless if the game ever grows the notation); the honest
+# path to boost fidelity is a Mids .mbd import, and the entry card says so.
 _SLOT_RE = re.compile(r"^(.+?)\s+\((\d+)(?:\+(\d+))?\)\s*$")
 
 
