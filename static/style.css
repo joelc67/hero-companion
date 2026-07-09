@@ -1192,6 +1192,30 @@ body { overflow: hidden; }
 .slot:hover .slot-info { opacity: 1; }
 .slot .slot-info:hover { color: var(--accent); border-color: var(--accent); }
 
+/* CUSTOM BUILD-TARGETS editor (Maelwys item 4; Joel's rulings): a centered
+   overlay seeded from the preset; the chip marks a derived (yours) build. */
+#targets-modal { position: fixed; inset: 0; z-index: 60; display: flex;
+  align-items: center; justify-content: center; background: rgba(8, 12, 18, 0.72); }
+#targets-modal.hidden { display: none; }
+.ct-card { background: var(--panel, #10161f); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px; max-width: 720px; width: 94vw;
+  max-height: 88vh; overflow-y: auto; }
+.ct-card h3 { display: flex; align-items: center; justify-content: space-between; margin: 0 0 6px; }
+.ct-card h4 { margin: 8px 0 4px; font-size: 12.5px; }
+.ct-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.ct-field { display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; font-size: 12px; margin: 2px 0; }
+.ct-field input { width: 64px; padding: 2px 6px; }
+.ct-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;
+  align-items: center; }
+.custom-targets-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.ct-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px;
+  border: 1px solid #b48ee0; color: #b48ee0; border-radius: 9px; padding: 1px 8px; }
+.ct-chip.hidden { display: none; }
+.ct-chip .ct-clear { background: transparent; color: inherit; width: auto;
+  padding: 0 2px; font-size: 11px; }
+@media (max-width: 760px) { .ct-grid { grid-template-columns: 1fr; } }
+
 /* Booster PREVIEW (display-only, never saved as owned): previewed chits and
    tags read distinctly from imported/owned boosts — same info, preview color. */
 .slot.slot-previewing { border-color: #b48ee0; }

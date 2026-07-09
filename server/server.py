@@ -1304,6 +1304,65 @@ def _boostability(piece_uid, attuned):
     return {"boostable": True}
 
 
+# ── Custom build-targets (Maelwys item 4, Joel's four rulings 2026-07-09) ──
+@app.route("/targets/preset")
+def targets_preset():
+    """The RESOLVED numeric targets for a content×role×exposure pick — seeds
+    the Customize-build-targets editor so the user edits from an informed
+    default, never a blank guess (choice doctrine)."""
+    content = request.args.get("content") or ""
+    role = request.args.get("role") or ""
+    at = ARCH_BY_NAME.get(request.args.get("archetype") or "")
+    res_cap = round(at["res_cap"] * 100, 1) if at else engine.RESISTANCE_HARD_CAP
+    pre = ai_build.preset_targets(content, role, res_cap=res_cap,
+                                  exposure=request.args.get("exposure") or None,
+                                  primary=request.args.get("primary") or None,
+                                  secondary=request.args.get("secondary") or None)
+    t = {k: v for k, v in pre["targets"].items() if k != "scenario"}
+    return jsonify({"ok": True, "targets": t, "res_cap": res_cap,
+                    "defense_types": engine.DEFENSE_TYPES,
+                    "resistance_types": engine.RESISTANCE_TYPES})
+
+
+def _target_presets_path():
+    return os.path.join(_saves_dir(), "target_presets.json")
+
+
+def _load_target_presets():
+    try:
+        with open(_target_presets_path(), encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:  # noqa: BLE001 — absent/corrupt file = empty library
+        return {}
+
+
+@app.route("/target_presets", methods=["GET", "POST"])
+def target_presets():
+    """The user's own named target presets (Joel's ruling 4: reusable, the
+    user's explicit act — shipped presets remain the offered path; anything
+    solved under these is derived, never champion-certified)."""
+    presets = _load_target_presets()
+    if request.method == "GET":
+        return jsonify({"ok": True, "presets": presets})
+    body = request.get_json(force=True) or {}
+    name = (body.get("name") or "").strip()[:60]
+    if not name:
+        return jsonify({"ok": False, "error": "A preset needs a name."}), 400
+    presets[name] = body.get("targets") or {}
+    with open(_target_presets_path(), "w", encoding="utf-8") as f:
+        json.dump(presets, f, ensure_ascii=False, indent=1)
+    return jsonify({"ok": True, "presets": presets})
+
+
+@app.route("/target_presets/<name>", methods=["DELETE"])
+def target_presets_delete(name):
+    presets = _load_target_presets()
+    presets.pop(name, None)
+    with open(_target_presets_path(), "w", encoding="utf-8") as f:
+        json.dump(presets, f, ensure_ascii=False, indent=1)
+    return jsonify({"ok": True, "presets": presets})
+
+
 @app.route("/enhancement/detail", methods=["POST"])
 def enhancement_detail():
     """Feature A+B: the full in-game detail card for one slotted piece, plus
@@ -1546,6 +1605,43 @@ def _res_job_note(power, all_powers):
     return (f" {job} is anchored in {where} — the −res procs roll there at better "
             f"uptime, so slots here would buy debuff uptime the optimizer prices "
             f"below your other sets.")
+
+
+_CUSTOM_SCALAR_CLAMPS = {"recharge": 400, "recovery": 300, "regen": 1000,
+                         "max_hp": 100, "tohit": 60}
+
+
+def _apply_custom_targets(targets, custom, res_cap):
+    """User-authored targets replace the preset's NUMERIC fields; the preset's
+    non-numeric context (scenario for the accuracy term) survives. Clamps to
+    game reality — defense 0-60, resistance 0-the AT's cap, scalars per table.
+    Zero/absent = no target on that axis (dropping a target is a choice)."""
+    out = {}
+    if targets.get("scenario"):
+        out["scenario"] = targets["scenario"]
+    defs = {t: min(60.0, max(0.0, float(v)))
+            for t, v in (custom.get("defense") or {}).items()
+            if t in engine.DEFENSE_TYPES and _num(v) and float(v) > 0}
+    if defs:
+        out["defense"] = defs
+    res = {t: min(float(res_cap), max(0.0, float(v)))
+           for t, v in (custom.get("resistance") or {}).items()
+           if t in engine.RESISTANCE_TYPES and _num(v) and float(v) > 0}
+    if res:
+        out["resistance"] = res
+    for fld, cap in _CUSTOM_SCALAR_CLAMPS.items():
+        v = custom.get(fld)
+        if _num(v) and float(v) > 0:
+            out[fld] = min(float(cap), max(0.0, float(v)))
+    return out
+
+
+def _num(v):
+    try:
+        float(v)
+        return True
+    except (TypeError, ValueError):
+        return False
 
 
 def _totals_kind(full_name, rec, power=None, ctx=None):
@@ -3218,6 +3314,18 @@ def build_solve():
     _orn = _off_role_notice(archetype, role, body.get("primary"), body.get("secondary"))
     if _orn:
         understood.insert(0, _orn)     # off-role/extension is a deliberate, ECHOED choice
+    # CUSTOM BUILD-TARGETS (Maelwys item 4, Joel's rulings 2026-07-09): the
+    # user's numbers REPLACE the preset's numeric targets wholesale — the
+    # editor is seeded from the preset, so what it sends is the whole intended
+    # truth (a dropped defense target is a choice, not an omission — the
+    # Axe/FA case). Content/role still drive everything non-numeric (scenario
+    # accuracy context, role kinds, perk focus). Values clamp to game reality;
+    # champions are keyed to certified presets, so a custom solve is DERIVED —
+    # labeled below, never certified.
+    custom = body.get("custom_targets") or None
+    if custom:
+        targets = _apply_custom_targets(targets, custom, _rescap)
+        understood.insert(0, "Custom targets (yours)")
     target_summary = _targets_summary(targets)
     if not (archetype and powers_in):
         return jsonify({"ok": False, "response": "Need an archetype and a build "
@@ -3393,6 +3501,9 @@ def build_solve():
                     "added_slots": sol.get("added_slots"),
                     "added_budget": sol.get("added_budget", 67),
                     "targets": targets,
+                    # Derived-build labeling (Joel's constraint): a custom-
+                    # target solve never reads as a certified/champion result.
+                    "custom_targets": bool(custom),
                     "understood": understood,        # human-readable goal interpretation
                     "target_summary": target_summary,
                     "totals": final, "report": report,

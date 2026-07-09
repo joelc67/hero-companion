@@ -370,6 +370,14 @@
             </label>
           </div>
           <div id="preset-targets" class="preset-targets muted small"></div>
+          <div class="custom-targets-row">
+            <button id="custom-targets-btn" class="mini" type="button"
+              onclick="openTargetsEditor()">Customize build targets…</button>
+            <span id="custom-targets-chip" class="ct-chip hidden"
+              title="This build solves to YOUR numbers, not a preset — the result is yours, never a certified champion build.">🎯 Custom targets (yours)
+              <button class="ct-clear" type="button" title="back to the preset targets"
+                onclick="clearCustomTargets()">✕</button></span>
+          </div>
         </div>
         <input id="gen-goal"
           placeholder="(optional) fine-tune in words, e.g. 'also soft-cap energy defense'">

@@ -65,7 +65,8 @@ async function saveProgress() {
     if (!name) return;
   }
   const plan = { content: $("preset-content") && $("preset-content").value,
-                 role: $("preset-role") && $("preset-role").value, role_mix: roleMixPayload(), mode: build._mode || null };
+                 role: $("preset-role") && $("preset-role").value, role_mix: roleMixPayload(), mode: build._mode || null,
+                 custom_targets: build._custom_targets || null };   // ruling 4: persist in the save
   const res = await api("/saves", postJson({ name, id: CURRENT_SAVE && CURRENT_SAVE.id,
     build, plan, level_reached: build.level_reached || null }));
   if (res && res.ok) {
@@ -107,7 +108,16 @@ window.loadSave = async function (id) {
   if (!res || !res.ok) { alert((res && res.error) || "Couldn't load that save."); return; }
   await applyImportedBuild(res.save.build || {});
   CURRENT_SAVE = { id, name: res.save.name };
-  build._mode = (res.save.plan && res.save.plan.mode) || build._mode;
+  const _plan = res.save.plan || {};
+  build._mode = _plan.mode || build._mode;
+  // Restore the saved plan into the visible controls: the content/role
+  // dropdowns (a resumed build used to come back with these EMPTY, so the
+  // next Solve ran against different targets than the ones that built it)
+  // and the custom targets (Joel's ruling 4: Resume reproduces them).
+  if (_plan.content && $("preset-content")) $("preset-content").value = _plan.content;
+  if (_plan.role && $("preset-role")) $("preset-role").value = _plan.role;
+  build._custom_targets = _plan.custom_targets || null;
+  updateCustomTargetsChip();
   // Restore an in-progress respec worksheet (applyImportedBuild cleared it) so a respec
   // being worked over days picks up exactly where it left off — checkboxes and all.
   restoreWorksheet(res.save.respec_worksheet || null);
@@ -159,7 +169,8 @@ async function autoSaveTick() {
   const name = (CURRENT_SAVE && CURRENT_SAVE.name)
     || (build.primary_display ? `${build.primary_display} ${(build.archetype || "").replace("Class_", "")}` : "Autosave");
   const plan = { content: $("preset-content") && $("preset-content").value,
-                 role: $("preset-role") && $("preset-role").value, role_mix: roleMixPayload(), mode: build._mode || null };
+                 role: $("preset-role") && $("preset-role").value, role_mix: roleMixPayload(), mode: build._mode || null,
+                 custom_targets: build._custom_targets || null };   // ruling 4: persist in the save
   const res = await api("/saves", postJson({ name, id: CURRENT_SAVE && CURRENT_SAVE.id,
     build, plan, level_reached: build.level_reached || null }));
   if (res && res.ok) {
@@ -844,7 +855,11 @@ async function wizExplain(changedKey) {
     sum.innerHTML = `<div class="wiz-sum-title">${sumTitle}</div>`
       + `<div class="wiz-sum-text">${escHtml(s.text || "")}</div>`
       + `<div class="wiz-sum-tgts">${(s.targets || [])
-            .map(t => `<span class="wiz-tgt">${escHtml(t)}</span>`).join("")}</div>`;
+            .map(t => `<span class="wiz-tgt">${escHtml(t)}</span>`).join("")}</div>`
+      // Joel's ruling 2: the targets editor opens from where the target
+      // chips display — presets stay the offered path; custom is your act.
+      + (wizAnswered() ? `<button class="mini" style="margin-top:6px"
+            onclick="openTargetsEditor()">Customize build targets…</button>` : "");
     sum.classList.toggle("hidden", !s.text);
   }
 }
@@ -4642,6 +4657,157 @@ function confirmIntent(req) {
   });
 }
 
+// ── CUSTOM BUILD-TARGETS (Maelwys item 4; Joel's four rulings 2026-07-09) ──
+// The editor seeds from the chosen preset (edit an informed default, never a
+// blank guess), covers BOTH typed and positional defense (armor sets
+// specialize — SR positional, Invuln typed), persists in the save AND as
+// named reusable presets (the user's own explicit act). Anything solved
+// under custom targets is DERIVED — labeled, never champion-certified.
+const _CT_SCALARS = [["recharge", "Recharge", 400], ["recovery", "Recovery", 300],
+                     ["regen", "Regeneration", 1000], ["max_hp", "Max HP", 100],
+                     ["tohit", "ToHit", 60]];
+let _CT_META = null;    // {res_cap, defense_types, resistance_types} from the server
+
+function updateCustomTargetsChip() {
+  const chip = $("custom-targets-chip");
+  if (chip) chip.classList.toggle("hidden", !build._custom_targets);
+}
+
+window.clearCustomTargets = function () {
+  build._custom_targets = null;
+  updateCustomTargetsChip();
+  const st = $("gen-status");
+  if (st) st.textContent = "Back to the preset targets.";
+};
+
+window.openTargetsEditor = async function () {
+  // Callable from BOTH entry points (ruling 2): the Build Assistant's preset
+  // dropdowns, or the wizard's — whichever carries the pick.
+  const content = ($("preset-content") && $("preset-content").value)
+    || ($("wiz-content") && $("wiz-content").value) || "";
+  const role = ($("preset-role") && $("preset-role").value)
+    || ($("wiz-role") && $("wiz-role").value) || "";
+  const [seed, lib] = await Promise.all([
+    api(`/targets/preset?content=${encodeURIComponent(content)}&role=${encodeURIComponent(role)}`
+        + `&archetype=${encodeURIComponent(build.archetype || "")}`
+        + `&exposure=${encodeURIComponent(build._exposure || "")}`
+        + `&primary=${encodeURIComponent(build.primary || "")}`
+        + `&secondary=${encodeURIComponent(build.secondary || "")}`),
+    api("/target_presets"),
+  ]);
+  if (!seed || !seed.ok) return;
+  _CT_META = seed;
+  // Active custom targets win over the preset seed — you edit what's applied.
+  const t = build._custom_targets || seed.targets || {};
+  const typed = (_CT_META.defense_types || []).filter(x => !["Melee", "Ranged", "AoE"].includes(x));
+  const row = (grp, ty, val) =>
+    `<label class="ct-field">${ty}<input type="number" min="0" step="0.5"
+       data-ct="${grp}" data-ty="${ty}" value="${val != null ? val : ""}"></label>`;
+  const dv = (t.defense || {});
+  const rv = (t.resistance || {});
+  let host = $("targets-modal");
+  if (!host) {
+    host = document.createElement("div");
+    host.id = "targets-modal";
+    document.body.appendChild(host);
+  }
+  const presetNames = Object.keys((lib && lib.presets) || {});
+  host.innerHTML = `<div class="ct-card">
+    <h3>Customize build targets
+      <button class="iconbtn" onclick="closeTargetsEditor()" title="close">✕</button></h3>
+    <p class="muted small">Seeded from ${content || role ? "your preset" : "a blank slate"} —
+      set a number to chase it, clear it (or 0) to drop that target. The solver
+      gets as close as 67 slots allow and reports honestly when the ask exceeds
+      the budget. Solves under custom targets are YOUR builds — never labeled
+      as certified champion builds.</p>
+    <div class="ct-grid">
+      <div><h4>Defense — typed <span class="muted small">(0–60)</span></h4>
+        ${typed.map(ty => row("defense", ty, dv[ty])).join("")}</div>
+      <div><h4>Defense — positional <span class="muted small">(0–60)</span></h4>
+        ${["Melee", "Ranged", "AoE"].map(ty => row("defense", ty, dv[ty])).join("")}
+        <h4>Globals</h4>
+        ${_CT_SCALARS.map(([k, lab, cap]) =>
+          `<label class="ct-field">${lab} <span class="muted small">(0–${cap})</span>
+             <input type="number" min="0" step="5" data-ct="scalar" data-ty="${k}"
+               value="${t[k] != null ? t[k] : ""}"></label>`).join("")}</div>
+      <div><h4>Resistance <span class="muted small">(0–${_CT_META.res_cap} on this archetype)</span></h4>
+        ${(_CT_META.resistance_types || []).map(ty => row("resistance", ty, rv[ty])).join("")}</div>
+    </div>
+    <div class="ct-actions">
+      <button class="mini" onclick="applyCustomTargets()">✓ Use these targets</button>
+      <button class="mini" onclick="resetTargetsEditor()">Reset to preset</button>
+      <button class="mini" onclick="saveTargetPreset()">Save as my preset…</button>
+      ${presetNames.length ? `<select id="ct-preset-pick">
+          <option value="">— my presets —</option>
+          ${presetNames.map(n => `<option>${escHtml(n)}</option>`).join("")}
+        </select>
+        <button class="mini" onclick="loadTargetPreset()">Load</button>
+        <button class="mini" onclick="deleteTargetPreset()">Delete</button>` : ""}
+      <button class="mini" onclick="closeTargetsEditor()">Cancel</button>
+    </div></div>`;
+  host.classList.remove("hidden");
+};
+
+function _collectTargetsEditor() {
+  const out = { defense: {}, resistance: {} };
+  document.querySelectorAll("#targets-modal input[data-ct]").forEach(inp => {
+    const v = parseFloat(inp.value);
+    if (!v || v <= 0) return;
+    const grp = inp.dataset.ct, ty = inp.dataset.ty;
+    if (grp === "scalar") out[ty] = v;
+    else out[grp][ty] = v;
+  });
+  if (!Object.keys(out.defense).length) delete out.defense;
+  if (!Object.keys(out.resistance).length) delete out.resistance;
+  return out;
+}
+
+window.applyCustomTargets = function () {
+  const t = _collectTargetsEditor();
+  const any = t.defense || t.resistance
+    || _CT_SCALARS.some(([k]) => t[k] != null);
+  build._custom_targets = any ? t : null;
+  updateCustomTargetsChip();
+  closeTargetsEditor();
+  const st = $("gen-status");
+  if (st) st.textContent = any
+    ? "Custom targets set — hit Solve to slot toward YOUR numbers."
+    : "No targets set — back to the preset.";
+  autoSaveTick();    // ruling 4: custom targets persist in the save
+};
+window.resetTargetsEditor = function () {
+  build._custom_targets = null;
+  updateCustomTargetsChip();
+  openTargetsEditor();     // re-seed from the preset
+};
+window.closeTargetsEditor = function () {
+  const m = $("targets-modal");
+  if (m) m.classList.add("hidden");
+};
+window.saveTargetPreset = async function () {
+  const name = prompt("Name this target preset (yours, reusable on any build):");
+  if (!name) return;
+  await api("/target_presets", postJson({ name, targets: _collectTargetsEditor() }));
+  openTargetsEditor();     // re-render with the library refreshed
+};
+window.loadTargetPreset = async function () {
+  const sel = $("ct-preset-pick");
+  if (!sel || !sel.value) return;
+  const lib = await api("/target_presets");
+  const t = lib && lib.presets && lib.presets[sel.value];
+  if (!t) return;
+  build._custom_targets = t;
+  updateCustomTargetsChip();
+  openTargetsEditor();     // re-render seeded from the loaded preset
+};
+window.deleteTargetPreset = async function () {
+  const sel = $("ct-preset-pick");
+  if (!sel || !sel.value) return;
+  if (!confirm(`Delete your target preset "${sel.value}"?`)) return;
+  await fetch(`/target_presets/${encodeURIComponent(sel.value)}`, { method: "DELETE" });
+  openTargetsEditor();
+};
+
 async function solveSlotting(perkFocus, opts) {
   // Called from a perk chip (perkFocus = string), the Solve button's click listener
   // (perkFocus = a MouseEvent), or applyRoute (opts.targets = an alternative route).
@@ -4660,8 +4826,8 @@ async function solveSlotting(perkFocus, opts) {
   const goal = $("gen-goal").value.trim();
   const content = $("preset-content") ? $("preset-content").value : "";
   const role = $("preset-role") ? $("preset-role").value : "";
-  if (!goal && !content && !opts.targets) {
-    status.textContent = "Pick a Content preset (Fire Farm, iTrials, Team, General) — Role refines it. Or type a goal.";
+  if (!goal && !content && !opts.targets && !build._custom_targets) {
+    status.textContent = "Pick a Content preset (Fire Farm, iTrials, Team, General) — Role refines it. Or type a goal, or set custom targets.";
     return;
   }
   // Confirm-understanding gate (initial solve only — perk re-solves & applied routes skip it):
@@ -4698,6 +4864,7 @@ async function solveSlotting(perkFocus, opts) {
       archetype: build.archetype, goal, tier: build.tier || "premium",
       content: content || null, role: role || null, exposure: build._exposure || null,
       targets: opts.targets || null,    // an applied alternative route overrides
+      custom_targets: build._custom_targets || null,   // YOUR numbers (derived, never certified)
       perk_focus: perkFocus || null, roles: selectedRoles(), pvp: build.pvp,
       preserve, keep_layout,
       // powerset display names -> context-aware goal interpretation (e.g. a
@@ -4812,9 +4979,12 @@ async function solveSlotting(perkFocus, opts) {
     if (!perkFocus) renderAssessment(presolvePowers,
       { content, role, goal, preserve, keep_layout });
     if (!perkFocus && res.incarnate_recs) renderIncarnateRecs(res.incarnate_recs, res.incarnate_loadouts);
-    status.textContent = res.added_slots != null
+    status.textContent = (res.added_slots != null
       ? `✓ Slotting solved (${res.added_slots}/${res.added_budget || 67} added slots).`
-      : `✓ Slotting solved (${res.slots_used} slots).`;
+      : `✓ Slotting solved (${res.slots_used} slots).`)
+      // Derived-build labeling (Joel's constraint): a custom-target solve is
+      // YOURS — it never reads as a certified champion result.
+      + (res.custom_targets ? " Built to YOUR custom targets — not a certified champion build." : "");
   } catch (e) {
     status.textContent = "Solve error: " + e;
   } finally {

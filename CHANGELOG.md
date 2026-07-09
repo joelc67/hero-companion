@@ -18,6 +18,33 @@
   shows up in the totals panel when your checked toggles + attack chain would
   run you dry.
 
+- **Customize the targets the solver chases.** "Customize build targets…"
+  (on the play-style summary and next to the Content/Role pickers) opens an
+  editor seeded from your chosen preset: typed AND positional defense,
+  per-type resistance, recharge, recovery, regeneration, and max HP. Set a
+  number to chase it, clear it to drop it — a resistance-primary set like
+  Fiery Aura can finally chase 90% S/L/F resistance plus recharge and HP
+  instead of being held to defense-shaped preset thresholds. Values clamp to
+  game reality (your archetype's own resistance cap); when the ask exceeds
+  what 67 slots can buy, the solve gets as close as it can and says so.
+  Custom targets persist with the save, and you can keep them as named
+  presets of your own to reuse on any build. Honest labeling throughout: a
+  custom-target build is YOURS — it never reads as a certified champion
+  build. Also fixed on the way: resuming a saved character now restores its
+  Content/Role picks into the dropdowns (they used to come back empty, so a
+  re-solve could silently run against different targets).
+
+- **The same set piece can no longer be slotted twice in one power.** The
+  game doesn't allow it, and now neither does the picker: pieces already in
+  the power show "✔ slotted here" and can't be picked again. If a build
+  arrives with duplicates anyway, validation flags it as a real error, the
+  duplicate no longer conjures set-bonus tiers (tiers count distinct
+  pieces, so the card's "N of 6" and your totals always agree), and
+  stackable globals like Luck of the Gambler +recharge now respect the
+  game's rule of five — a sixth copy grants nothing, exactly like in-game.
+  Identical Hamidon/Titan/Hydra Origins and D-Syncs still stack freely (the
+  game's actual rule).
+
 - **Preview Enhancement Boosters before you buy them.** Every boostable
   enhancement's detail card now carries a booster stepper: walk it from +1 to
   +5 one level at a time and watch your real totals move — "+3 reaches the
