@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## Unreleased
+## 0.12.17 — 2026-07-10
 
 - **The "count in totals" checkbox now matches what the game actually allows.**
   It used to be one uniform Σ checkbox on every power — which lied for most of
