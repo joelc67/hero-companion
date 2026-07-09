@@ -1274,7 +1274,11 @@ def _tier_values(set_rec, pieces_required, archetype):
             dt = e.get("damage_type")
             dt = "" if dt in (None, "None", "Special") else f"{dt.lower()} "
             out.append(f"+{pct}% {dt}{lab}")
-    return out
+    # Compact per Joel's eyeball: a mez-resist bonus stores one identical value
+    # per mez type ("+5% status resistance" ×6) — the label already aggregates,
+    # so repeats add nothing. Dedupe preserving order; unequal values stay apart.
+    seen = set()
+    return [v for v in out if not (v in seen or seen.add(v))]
 
 
 @app.route("/enhancement/detail", methods=["POST"])
@@ -1291,7 +1295,11 @@ def enhancement_detail():
     power_full = body.get("power_full_name")
     powers = body.get("powers") or []
 
-    set_uid = body.get("set_uid") or _SET_UID_BY_PIECE.get(piece_uid)
+    # The piece knows its set — prefer the extraction's own piece→set map over
+    # the caller's set_uid, which arrives in legacy variants ("Shield Breaker"
+    # with a space) that miss the SET_DETAILS key and silently downgraded real
+    # set pieces to the minimal no-set card (found via Hack's franken view).
+    set_uid = _SET_UID_BY_PIECE.get(piece_uid) or body.get("set_uid")
     sd = SET_DETAILS.get(set_uid) if set_uid else None
     set_rec = SET_BY_UID.get(set_uid) if set_uid else None
     piece_sd = next((p for p in (sd or {}).get("pieces", [])
@@ -1339,10 +1347,19 @@ def enhancement_detail():
     tiers = []
     for t in sd.get("tiers", []):
         need = t["pieces_required"]
+        # Honesty marker: 152 of 1049 tiers (movement/slow-resist/range/mez-
+        # duration/KB-protection families) carry EMPTY effect lists in our data
+        # — the game grants them but the totals can't count them yet. The card
+        # says so instead of rendering a bare name that looks like an oversight.
+        b_rec = next((b for b in (set_rec or {}).get("bonuses", [])
+                      if b.get("pieces_required") == need
+                      and b.get("pv_mode") != 2), None)
         tiers.append({"pieces_required": need,
                       "bonus_title": t["bonus_title"],
                       "bonus_short": t.get("bonus_short") or "",
                       "values": _tier_values(set_rec or {}, need, archetype),
+                      "unpriced": bool(b_rec is not None
+                                       and not b_rec.get("effects")),
                       "attained": n_here >= need,
                       "next": n_here + 1 == need})
     return jsonify({"ok": True, "piece": piece, "set": {

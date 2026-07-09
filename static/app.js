@@ -2305,15 +2305,39 @@ document.addEventListener("click", (ev) => {
 // The authentic in-game text (client-bin extraction) for the piece under a
 // slot, plus the parent set's roster/tier progress against THIS build — the
 // vendor-tooltip experience. Shares the right-rail panel with power info.
-let SELECTED_ENH = null;   // {powerIdx, slotIdx}
+// LIVE-RAIL RULE (Joel's pinned acceptance criterion): whatever rail view is
+// open re-renders on every build edit — recompute() calls renderRail(), and
+// the async renders are token-guarded so a stale fetch can never paint over a
+// newer state. The card keys on the POWER'S FULL NAME, not its index, so
+// adding/removing other powers can't silently re-point it at a different slot.
+let SELECTED_ENH = null;   // {powerFull, slotIdx}
+let RAIL_TOKEN = 0;        // bumps per render; stale awaits check and bail
 
-window.openEnhInfo = async function (powerIdx, slotIdx) {
-  const pw = build.powers[powerIdx];
-  const s = pw && (pw.slots || [])[slotIdx];
-  if (!s || !s.piece_uid) return;
-  SELECTED_POWER = null;
-  SELECTED_ENH = { powerIdx, slotIdx };
-  const r = await api("/enhancement/detail", postJson({
+// The set roster + tier ladder, shared verbatim between the IO detail card and
+// the power-info set view (Feature B refinement) — one renderer, per the
+// fix-at-the-rail-level rule.
+function enhSetSectionHtml(st) {
+  const chip = { "slotted-here": ["✔ here", "eh-here"],
+                 "elsewhere": ["◐ elsewhere", "eh-else"],
+                 "missing": ["· missing", "eh-miss"] };
+  return `<div class="eh-roster">${st.roster.map(x => {
+      const [lab, cls] = chip[x.status] || ["", ""];
+      return `<div class="eh-piece ${cls}" title="${escHtml(x.title)}">
+                <span class="eh-piece-name">${escHtml(x.title.split(":").pop().trim())}</span>
+                <span class="eh-status">${lab}</span></div>`;
+    }).join("")}</div>`
+    + `<div class="eh-tiers">${st.tiers.map(t =>
+        `<div class="eh-tier ${t.attained ? "eh-lit" : ""} ${t.next ? "eh-next" : ""}">
+           <span class="eh-tier-n">(${t.pieces_required})</span>
+           <span class="eh-tier-txt">${escHtml(t.bonus_title)}${t.values.length
+             ? ` — ${escHtml(t.values.join(", "))}` : ""}${t.unpriced
+             ? ` <span class="muted small">· not yet in totals</span>` : ""}</span>
+           ${t.next ? `<span class="eh-tier-hint">← next piece</span>` : ""}
+         </div>`).join("")}</div>`;
+}
+
+function _enhDetailPayload(pw, s) {
+  return {
     piece_uid: s.piece_uid, set_uid: s.set_uid || null,
     piece_name: s.piece_name || null,
     archetype: build.archetype,
@@ -2321,16 +2345,33 @@ window.openEnhInfo = async function (powerIdx, slotIdx) {
     attuned: !!s.attuned,
     power_full_name: pw.full_name,
     powers: build.powers.map(p => ({ full_name: p.full_name, slots: p.slots })),
-  })).catch(() => null);
-  if (!r || !r.ok || !SELECTED_ENH) return;
+  };
+}
+
+window.openEnhInfo = function (powerIdx, slotIdx) {
+  const pw = build.powers[powerIdx];
+  const s = pw && (pw.slots || [])[slotIdx];
+  if (!s || !s.piece_uid) return;
+  SELECTED_POWER = null;
+  SELECTED_ENH = { powerFull: pw.full_name, slotIdx };
+  renderEnhInfo();
+};
+
+async function renderEnhInfo() {
+  if (!SELECTED_ENH) return;
+  const pw = build.powers.find(p => p.full_name === SELECTED_ENH.powerFull);
+  const s = pw && (pw.slots || [])[SELECTED_ENH.slotIdx];
+  if (!s || !s.piece_uid) { closePowerInfo(); return; }   // slot cleared under us
+  const token = ++RAIL_TOKEN;
+  const r = await api("/enhancement/detail",
+                      postJson(_enhDetailPayload(pw, s))).catch(() => null);
+  if (token !== RAIL_TOKEN || !SELECTED_ENH) return;      // superseded render
+  if (!r || !r.ok) return;
   const panel = $("power-info");
   if (!panel) return;
   const lvl = s.attuned ? "attuned"
     : s.io_level ? `level ${s.io_level}${s.boost ? "+" + s.boost : ""}` : "";
   const p = r.piece, st = r.set;
-  const chip = { "slotted-here": ["✔ here", "eh-here"],
-                 "elsewhere": ["◐ elsewhere", "eh-else"],
-                 "missing": ["· missing", "eh-miss"] };
   panel.innerHTML =
     `<h2><span>${escHtml(p.title)}</span>
        <button class="iconbtn pi-close" onclick="closePowerInfo()" title="close">✕</button></h2>`
@@ -2339,24 +2380,19 @@ window.openEnhInfo = async function (powerIdx, slotIdx) {
     + (p.unique_line ? `<p class="eh-note">${escHtml(p.unique_line)}</p>` : "")
     + (p.attuned_note ? `<p class="eh-note">${escHtml(p.attuned_note)}</p>` : "")
     + (st ? `<h3 class="eh-set-h">${escHtml(st.display)} <span class="muted small">${escHtml(st.category_label || "")} · ${st.slotted_here} of ${st.roster.length} in this power</span></h3>`
-      + `<div class="eh-roster">${st.roster.map(x => {
-          const [lab, cls] = chip[x.status] || ["", ""];
-          return `<div class="eh-piece ${cls}" title="${escHtml(x.title)}">
-                    <span class="eh-piece-name">${escHtml(x.title.split(":").pop().trim())}</span>
-                    <span class="eh-status">${lab}</span></div>`;
-        }).join("")}</div>`
-      + `<div class="eh-tiers">${st.tiers.map(t =>
-          `<div class="eh-tier ${t.attained ? "eh-lit" : ""} ${t.next ? "eh-next" : ""}">
-             <span class="eh-tier-n">(${t.pieces_required})</span>
-             <span class="eh-tier-txt">${escHtml(t.bonus_title)}${t.values.length
-               ? ` — ${escHtml(t.values.join(", "))}` : ""}</span>
-             ${t.next ? `<span class="eh-tier-hint">← next piece</span>` : ""}
-           </div>`).join("")}</div>` : "");
+      + enhSetSectionHtml(st) : "");
   panel.classList.remove("hidden");
   document.querySelector("main").classList.add("has-info");
-};
+}
 
-function renderPowerInfo() {
+// One dispatcher for whichever rail view is open — recompute() calls this so
+// both views track every build edit (slot swaps, +/- slots, undo, solve).
+function renderRail() {
+  if (SELECTED_ENH) renderEnhInfo();
+  else if (SELECTED_POWER) renderPowerInfo();
+}
+
+async function renderPowerInfo() {
   const panel = $("power-info");
   if (!panel || !SELECTED_POWER) return;
   let rec = null;
@@ -2385,8 +2421,45 @@ function renderPowerInfo() {
   }
   const cats = ((rec && rec.accepted_set_categories) || pw.accepted_set_categories || []);
   const slotted = (pw.slots || []).filter(Boolean);
-  const setCounts = {};
-  slotted.forEach(s => { const n = s.set_name || "Common IO"; setCounts[n] = (setCounts[n] || 0) + 1; });
+
+  // Feature B refinement (Joel's GO): the merchant-style set view, grouped by
+  // parent set. One set in the power → its card renders inline; a frankenslot
+  // (2+ sets) → one collapsed row per set ("2/6 — next: +10% regen"),
+  // expandable — the grouping IS the information there. Fetches are token-
+  // guarded: an edit mid-fetch abandons this paint (live-rail rule).
+  const bySet = new Map();   // set_uid -> [slots] (first slot anchors the fetch)
+  slotted.forEach(s => {
+    if (!s.set_uid) return;
+    if (!bySet.has(s.set_uid)) bySet.set(s.set_uid, []);
+    bySet.get(s.set_uid).push(s);
+  });
+  const sel = SELECTED_POWER;
+  const token = ++RAIL_TOKEN;
+  const entries = [...bySet.entries()];
+  const details = await Promise.all(entries.map(([, group]) =>
+    api("/enhancement/detail", postJson(_enhDetailPayload(pw, group[0]))).catch(() => null)));
+  if (token !== RAIL_TOKEN || SELECTED_POWER !== sel) return;   // superseded
+  const sets = details.filter(r => r && r.ok && r.set).map(r => r.set);
+  // Pieces with no set card (HOs, D-Syncs, commons) get an honest count line
+  // instead of vanishing: everything slotted minus the resolved sets' pieces.
+  const resolvedPieces = entries.reduce((n, [, group], i) =>
+    n + ((details[i] && details[i].ok && details[i].set) ? group.length : 0), 0);
+  const commons = slotted.length - resolvedPieces;
+  let setHtml = "";
+  if (sets.length === 1) {
+    const st = sets[0];
+    setHtml = `<h3 class="eh-set-h">${escHtml(st.display)} <span class="muted small">${st.slotted_here} of ${st.roster.length} in this power</span></h3>`
+      + enhSetSectionHtml(st);
+  } else if (sets.length > 1) {
+    setHtml = `<div class="muted small">Sets in this power</div>` + sets.map(st => {
+      const nextT = st.tiers.find(t => !t.attained);
+      const hint = nextT ? ` — next: ${nextT.values[0] || nextT.bonus_short || nextT.bonus_title}` : " — complete";
+      return `<details class="pi-set-row">
+        <summary>${escHtml(st.display)} <span class="muted small">${st.slotted_here}/${st.roster.length}${escHtml(hint)}</span></summary>
+        ${enhSetSectionHtml(st)}</details>`;
+    }).join("");
+  }
+
   panel.innerHTML =
     `<h2>${rec && rec.icon ? `<img class="pi-ico" src="${rec.icon}" alt="">` : ""}
        <span>${escHtml(name)}</span>
@@ -2395,9 +2468,8 @@ function renderPowerInfo() {
         `<tr><td>${k}</td><td>${escHtml(String(v))}</td></tr>`).join("")}</table>` : "")
     + (cats.length ? `<div class="muted small">Allowed enhancements</div>
        <div class="pi-tags">${cats.map(c => `<span class="pi-tag">${escHtml(c)}</span>`).join("")}</div>` : "")
-    + (Object.keys(setCounts).length ? `<div class="muted small">Slotted now</div>
-       <div class="pi-tags">${Object.entries(setCounts).map(([n, c]) =>
-         `<span class="pi-tag">${escHtml(n)}${c > 1 ? ` ×${c}` : ""}</span>`).join("")}</div>` : "")
+    + setHtml
+    + (commons ? `<div class="muted small">plus ${commons} common/special piece${commons > 1 ? "s" : ""} (no set)</div>` : "")
     + (atk ? `<p class="pi-note">Damage numbers include slotted proc contributions and your
        global recharge — they update with every change.</p>` : "");
   panel.classList.remove("hidden");
@@ -2532,9 +2604,11 @@ function slotHtml(powerIdx, slotIdx, slot) {
     const lvl = slot.io_level ? ` · level ${slot.io_level}${plus}${slot.attuned ? " (attuned)" : ""}`
                               : (plus ? ` · boosted ${plus}` : "");
     const tag = slot.attuned ? "A" : (slot.io_level ? `${slot.io_level}${plus}` : "");
-    return `<div class="slot filled${slot.unique?' unique':''}" title="${slot.set_name}: ${slot.piece_name}${lvl}\n(click to change or open full details, right-click to clear)"
+    // Direct detail affordance on the chit itself (Joel's discoverability fix:
+    // the card must be reachable without entering the replace-picker flow).
+    return `<div class="slot filled${slot.unique?' unique':''}" title="${slot.set_name}: ${slot.piece_name}${lvl}\n(click to change, ⓘ for full details, right-click to clear)"
       onclick="openSlot(${powerIdx},${slotIdx})"
-      oncontextmenu="clearSlot(event,${powerIdx},${slotIdx})">${inner}${tag ? `<span class="slot-lvl">${tag}</span>` : ""}</div>`;
+      oncontextmenu="clearSlot(event,${powerIdx},${slotIdx})">${inner}${tag ? `<span class="slot-lvl">${tag}</span>` : ""}<span class="slot-info" title="full enhancement details" onclick="event.stopPropagation(); openEnhInfo(${powerIdx},${slotIdx})">ⓘ</span></div>`;
   }
   return `<div class="slot" title="empty slot — click to choose"
     onclick="openSlot(${powerIdx},${slotIdx})">+</div>`;
@@ -3229,6 +3303,10 @@ async function recompute() {
     });
   }
   if (repaint) renderPowers();
+  // Live-rail rule (Joel's pinned acceptance criterion): every recompute —
+  // which every build edit triggers — re-renders whichever rail view is open,
+  // so the IO card's roster/tiers and power-info's set view never go stale.
+  renderRail();
   // Respec: show the active worksheet if there is one, else a factual under-investment nudge.
   renderRespecUI(totals && totals.respec_hint);
   refreshBuildViews();   // keep the always-visible respec-order + tray sections live

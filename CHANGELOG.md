@@ -18,6 +18,20 @@
   shows up in the totals panel when your checked toggles + attack chain would
   run you dry.
 
+- **The detail card grew into a real rail.** The right-side panel now scrolls
+  on its own (a long six-piece card browses in place while your build stays on
+  screen), every slotted enhancement carries its own ⓘ — hover the chit — so
+  the full detail card is one click away without entering the change-picker,
+  and both rail views are LIVE: slot a new piece of the displayed set and the
+  roster chips and lit bonus tiers update in place, no reopening. The power
+  info panel now shows the full merchant-style set view too: one set in a
+  power renders its card inline; a mixed-set power gets one compact row per
+  set ("Shield Breaker 1/6 — next: +2.5% recovery") that expands to the full
+  card. Set-bonus tiers also read cleaner — repeated per-type values collapse
+  to one line, and bonuses the game grants but the totals can't count yet
+  (slow resist, movement, range, mez duration) say so honestly instead of
+  showing a bare name.
+
 - **The true in-game enhancement experience.** Click a slotted enhancement and
   open its full detail card: the game's own description text with honest
   numbers at YOUR piece's level and boost state ("Enhances the defense debuff
