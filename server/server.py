@@ -1205,6 +1205,153 @@ def sets_for_power():
                     "commons": commons, "specials": specials})
 
 
+# ── IO detail card + slotted-set progress (feature pair, display-only) ──────
+# data/set_details.json = AUTHENTIC in-game text extracted from the client bins
+# (tools/extract_set_details.py): piece titles, help TEMPLATES with
+# {Boost.Attrib.X.Scale} placeholders, attuned wording, rosters, tier text.
+try:
+    SET_DETAILS = _load("set_details.json")
+except Exception:  # noqa: BLE001 — feature degrades gracefully without the file
+    SET_DETAILS = {}
+_SD_META = SET_DETAILS.get("_meta") or {}
+_SD_ALIASES = {k: tuple(v) for k, v in (_SD_META.get("attrib_aliases") or {}).items()}
+_SD_PLACEHOLDER = re.compile(r"\{Boost\.Attrib\.([A-Za-z_]+)\.Scale\}")
+# set uid per piece uid (for pieces arriving without their set context)
+_SET_UID_BY_PIECE = {p["piece_uid"]: uid for uid, rec in SET_DETAILS.items()
+                     if uid != "_meta" for p in rec.get("pieces", [])}
+
+
+def _render_enh_help(template, piece_uid, io_level, boost, attuned, archetype):
+    """Substitute the game's {Boost.Attrib.X.Scale} placeholders with the
+    piece's level-scaled values — engine._scaled_boosts IS the math, so the
+    card always agrees with the totals. Unmatched placeholders render as '?'
+    (the extractor's coverage gate makes that unreachable for shipped data)."""
+    ctx = _stat_ctx(archetype or "Class_Blaster")
+    slot = {"piece_uid": piece_uid, "io_level": io_level,
+            "boost": boost, "attuned": attuned}
+    vals = defaultdict(float)
+    for asp, v in engine._scaled_boosts(slot, ctx):
+        vals[asp] += v
+
+    def _sub(m):
+        attrib = m.group(1)
+        for cand in (attrib,) + _SD_ALIASES.get(attrib, ()):
+            if cand in vals:
+                return f"{round(vals[cand] * 100.0, 1):g}"
+        low = {k.lower(): k for k in vals}
+        if attrib.lower() in low:
+            return f"{round(vals[low[attrib.lower()]] * 100.0, 1):g}"
+        return "?"
+    return _SD_PLACEHOLDER.sub(_sub, template or "")
+
+
+def _tier_values(set_rec, pieces_required, archetype):
+    """This exact tier's bonus values (PvE), formatted with magnitudes."""
+    hp_ctx = _hp_bonus_ctx(archetype)
+    out = []
+    for b in set_rec.get("bonuses", []):
+        if b.get("pieces_required") != pieces_required or b.get("pv_mode") == 2:
+            continue
+        for e in b.get("effects", []):
+            et = e.get("effect")
+            lab = _EFFECT_LABEL_MAP.get(et) or {"Endurance": "max endurance",
+                                                "MezResist": "status resistance",
+                                                "Heal": "heal strength"}.get(et, et)
+            v = e.get("value") or 0
+            if not lab or not v:
+                continue
+            if et == "HitPoints":
+                v = engine.hp_bonus_fraction(v, hp_ctx)
+            # unit conventions (verified against the data's own ranges):
+            # Endurance stores flat max-end points (1.8 = +1.8%); MezResist
+            # mixes duration-resist fractions (0.025) with whole-point
+            # slow-resist values (10.0) — >1 means points, else fraction.
+            if et == "Endurance" or (et == "MezResist" and abs(v) > 1):
+                pct = round(v, 2)
+            else:
+                pct = round(v * 100.0, 2)
+            pct = int(pct) if float(pct).is_integer() else pct
+            dt = e.get("damage_type")
+            dt = "" if dt in (None, "None", "Special") else f"{dt.lower()} "
+            out.append(f"+{pct}% {dt}{lab}")
+    return out
+
+
+@app.route("/enhancement/detail", methods=["POST"])
+def enhancement_detail():
+    """Feature A+B: the full in-game detail card for one slotted piece, plus
+    the parent set's roster/tier progress against the CURRENT build. Display
+    only — reads the same data the totals run on, writes nothing."""
+    body = request.get_json(force=True) or {}
+    piece_uid = body.get("piece_uid") or ""
+    archetype = body.get("archetype")
+    io_level = body.get("io_level")
+    boost = body.get("boost") or 0
+    attuned = bool(body.get("attuned"))
+    power_full = body.get("power_full_name")
+    powers = body.get("powers") or []
+
+    set_uid = body.get("set_uid") or _SET_UID_BY_PIECE.get(piece_uid)
+    sd = SET_DETAILS.get(set_uid) if set_uid else None
+    set_rec = SET_BY_UID.get(set_uid) if set_uid else None
+    piece_sd = next((p for p in (sd or {}).get("pieces", [])
+                     if p["piece_uid"] == piece_uid), None)
+    our_piece = next((pc for pc in (set_rec or {}).get("pieces", [])
+                      if pc.get("uid") == piece_uid), None)
+
+    # graceful minimal card for commons/HOs/unknown pieces (no set context)
+    if not (sd and piece_sd):
+        boosts = PIECE_BOOSTS.get(piece_uid) or []
+        lines = [f"+{round(engine._scale_io(b['value'], b.get('schedule'), min(io_level or 50, 50), PIECE_REF_LEVEL.get(piece_uid) or 50, MULT_IO) * 100.0, 1):g}% {b['aspect']}"
+                 for b in boosts]
+        return jsonify({"ok": True, "piece": {
+            "title": body.get("piece_name") or piece_uid,
+            "description": " · ".join(lines) or "No stored detail for this piece.",
+            "static": False}, "set": None})
+
+    desc = piece_sd["help_template"] if piece_sd.get("static") else \
+        _render_enh_help(piece_sd["help_template"], piece_uid, io_level,
+                         boost, attuned, archetype)
+    piece = {
+        "title": piece_sd["title"], "short": piece_sd.get("short") or "",
+        "description": desc, "static": bool(piece_sd.get("static")),
+        # composed (not a stored client string — the game builds this from
+        # flags): our unique flags validate against the game's slotting rules.
+        "unique_line": ("Unique: only one copy of this enhancement can be "
+                        "slotted across your whole build."
+                        if (our_piece or {}).get("unique") else None),
+        "attuned_note": _SD_META.get("attuned_note") if attuned else None,
+    }
+    # roster status vs the current build (feature B)
+    here = {(s or {}).get("piece_uid") for s in next(
+        (p.get("slots") or [] for p in powers
+         if p.get("full_name") == power_full), [])}
+    elsewhere = {(s or {}).get("piece_uid")
+                 for p in powers if p.get("full_name") != power_full
+                 for s in (p.get("slots") or []) if s}
+    roster = [{"piece_uid": p["piece_uid"], "title": p["title"],
+               "short": p.get("short") or "",
+               "status": ("slotted-here" if p["piece_uid"] in here else
+                          "elsewhere" if p["piece_uid"] in elsewhere else
+                          "missing")}
+              for p in sd["pieces"]]
+    n_here = sum(1 for r in roster if r["status"] == "slotted-here")
+    tiers = []
+    for t in sd.get("tiers", []):
+        need = t["pieces_required"]
+        tiers.append({"pieces_required": need,
+                      "bonus_title": t["bonus_title"],
+                      "bonus_short": t.get("bonus_short") or "",
+                      "values": _tier_values(set_rec or {}, need, archetype),
+                      "attained": n_here >= need,
+                      "next": n_here + 1 == need})
+    return jsonify({"ok": True, "piece": piece, "set": {
+        "uid": set_uid, "display": sd["display"],
+        "category_label": sd.get("category_label"),
+        "min_level": sd.get("min_level"), "max_level": sd.get("max_level"),
+        "slotted_here": n_here, "roster": roster, "tiers": tiers}})
+
+
 @app.route("/setbonuses/<path:setname>")
 def get_setbonuses(setname):
     s = SET_BY_UID.get(setname) or SET_BY_NAME.get(setname.lower())

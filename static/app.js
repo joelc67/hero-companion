@@ -2173,7 +2173,7 @@ function powerCardHtml(pw, idx, icon, lv) {
         <span class="pc-title" onclick="selectPower('${escHtml(pw.full_name)}')">
         ${icon ? `<img class="pc-ico" src="${icon}" alt="" loading="lazy"
                    onerror="this.style.display='none'">` : ""}
-        <span class="pname">${escHtml(pw.display_name)}</span></span>
+        <span class="pname">${escHtml(pw.display_name)}</span><span class="pc-info-glyph" title="full power info">ⓘ</span></span>
         <span class="pc-tools">
           <label class="include-toggle" title="Count this power's stats in the totals">
             <input type="checkbox" ${pw.include_in_totals ? "checked" : ""}
@@ -2193,7 +2193,7 @@ function powerCardHtml(pw, idx, icon, lv) {
       <span class="pc-title" onclick="selectPower('${escHtml(pw.full_name)}')">
       ${icon ? `<img class="pc-ico" src="${icon}" alt="" loading="lazy"
                  onerror="this.style.display='none'">` : ""}
-      <span class="pname">${escHtml(pw.display_name)}</span></span>
+      <span class="pname">${escHtml(pw.display_name)}</span><span class="pc-info-glyph" title="full power info">ⓘ</span></span>
       ${lvl ? `<span class="pick-lvl" title="${pw.pick_level ? `Chosen at level ${lvl}` : `Suggested pick order — about level ${lvl}`}">${pw.pick_level ? "" : "~"}L${lvl}</span>` : ""}
       <span class="pc-tools">
         <label class="include-toggle" title="Count this power's stats in the totals">
@@ -2222,6 +2222,7 @@ window.selectPower = function (fullName) {
 };
 window.closePowerInfo = function () {
   SELECTED_POWER = null;
+  SELECTED_ENH = null;
   const panel = $("power-info");
   if (panel) panel.classList.add("hidden");
   document.querySelector("main").classList.remove("has-info");
@@ -2229,16 +2230,72 @@ window.closePowerInfo = function () {
 // The panel closes on Esc and outside-click, not only via its ✕ (the steady-
 // mouse tax, UX note 5). Undo (Ctrl+Z) stays edits-only and ignores the panel.
 document.addEventListener("keydown", (ev) => {
-  if (ev.key === "Escape" && SELECTED_POWER) closePowerInfo();
+  if (ev.key === "Escape" && (SELECTED_POWER || SELECTED_ENH)) closePowerInfo();
 });
 document.addEventListener("click", (ev) => {
-  if (!SELECTED_POWER) return;
+  if (!SELECTED_POWER && !SELECTED_ENH) return;
   const panel = $("power-info");
   if (panel && !panel.classList.contains("hidden")
-      && !panel.contains(ev.target) && !ev.target.closest(".pc-title")) {
+      && !panel.contains(ev.target) && !ev.target.closest(".pc-title")
+      && !ev.target.closest(".slot") && !ev.target.closest("#modal")) {
     closePowerInfo();
   }
 });
+
+// ── IO FULL-DETAIL CARD + SLOTTED-SET PROGRESS (feature pair, display-only) ──
+// The authentic in-game text (client-bin extraction) for the piece under a
+// slot, plus the parent set's roster/tier progress against THIS build — the
+// vendor-tooltip experience. Shares the right-rail panel with power info.
+let SELECTED_ENH = null;   // {powerIdx, slotIdx}
+
+window.openEnhInfo = async function (powerIdx, slotIdx) {
+  const pw = build.powers[powerIdx];
+  const s = pw && (pw.slots || [])[slotIdx];
+  if (!s || !s.piece_uid) return;
+  SELECTED_POWER = null;
+  SELECTED_ENH = { powerIdx, slotIdx };
+  const r = await api("/enhancement/detail", postJson({
+    piece_uid: s.piece_uid, set_uid: s.set_uid || null,
+    piece_name: s.piece_name || null,
+    archetype: build.archetype,
+    io_level: s.io_level || null, boost: s.boost || 0,
+    attuned: !!s.attuned,
+    power_full_name: pw.full_name,
+    powers: build.powers.map(p => ({ full_name: p.full_name, slots: p.slots })),
+  })).catch(() => null);
+  if (!r || !r.ok || !SELECTED_ENH) return;
+  const panel = $("power-info");
+  if (!panel) return;
+  const lvl = s.attuned ? "attuned"
+    : s.io_level ? `level ${s.io_level}${s.boost ? "+" + s.boost : ""}` : "";
+  const p = r.piece, st = r.set;
+  const chip = { "slotted-here": ["✔ here", "eh-here"],
+                 "elsewhere": ["◐ elsewhere", "eh-else"],
+                 "missing": ["· missing", "eh-miss"] };
+  panel.innerHTML =
+    `<h2><span>${escHtml(p.title)}</span>
+       <button class="iconbtn pi-close" onclick="closePowerInfo()" title="close">✕</button></h2>`
+    + (lvl ? `<div class="muted small">${escHtml(lvl)}${st ? ` · set levels ${st.min_level}–${st.max_level}` : ""}</div>` : "")
+    + `<p class="eh-desc">${escHtml(p.description)}</p>`
+    + (p.unique_line ? `<p class="eh-note">${escHtml(p.unique_line)}</p>` : "")
+    + (p.attuned_note ? `<p class="eh-note">${escHtml(p.attuned_note)}</p>` : "")
+    + (st ? `<h3 class="eh-set-h">${escHtml(st.display)} <span class="muted small">${escHtml(st.category_label || "")} · ${st.slotted_here} of ${st.roster.length} in this power</span></h3>`
+      + `<div class="eh-roster">${st.roster.map(x => {
+          const [lab, cls] = chip[x.status] || ["", ""];
+          return `<div class="eh-piece ${cls}" title="${escHtml(x.title)}">
+                    <span class="eh-piece-name">${escHtml(x.title.split(":").pop().trim())}</span>
+                    <span class="eh-status">${lab}</span></div>`;
+        }).join("")}</div>`
+      + `<div class="eh-tiers">${st.tiers.map(t =>
+          `<div class="eh-tier ${t.attained ? "eh-lit" : ""} ${t.next ? "eh-next" : ""}">
+             <span class="eh-tier-n">(${t.pieces_required})</span>
+             <span class="eh-tier-txt">${escHtml(t.bonus_title)}${t.values.length
+               ? ` — ${escHtml(t.values.join(", "))}` : ""}</span>
+             ${t.next ? `<span class="eh-tier-hint">← next piece</span>` : ""}
+           </div>`).join("")}</div>` : "");
+  panel.classList.remove("hidden");
+  document.querySelector("main").classList.add("has-info");
+};
 
 function renderPowerInfo() {
   const panel = $("power-info");
@@ -2416,7 +2473,7 @@ function slotHtml(powerIdx, slotIdx, slot) {
     const lvl = slot.io_level ? ` · level ${slot.io_level}${plus}${slot.attuned ? " (attuned)" : ""}`
                               : (plus ? ` · boosted ${plus}` : "");
     const tag = slot.attuned ? "A" : (slot.io_level ? `${slot.io_level}${plus}` : "");
-    return `<div class="slot filled${slot.unique?' unique':''}" title="${slot.set_name}: ${slot.piece_name}${lvl}\n(click to change, right-click to clear)"
+    return `<div class="slot filled${slot.unique?' unique':''}" title="${slot.set_name}: ${slot.piece_name}${lvl}\n(click to change or open full details, right-click to clear)"
       onclick="openSlot(${powerIdx},${slotIdx})"
       oncontextmenu="clearSlot(event,${powerIdx},${slotIdx})">${inner}${tag ? `<span class="slot-lvl">${tag}</span>` : ""}</div>`;
   }
@@ -2840,6 +2897,20 @@ let MODAL_SPECIALS = [];
 window.openSlot = async function (powerIdx, slotIdx) {
   activeSlot = { powerIdx, slotIdx };
   const pw = build.powers[powerIdx];
+  // Feature A affordance: a filled slot offers the FULL DETAIL card (the
+  // authentic in-game text + set progress) alongside the swap picker.
+  const cur = $("modal-current");
+  if (cur) {
+    const s = (pw.slots || [])[slotIdx];
+    if (s && s.piece_uid) {
+      cur.innerHTML = `<span class="muted small">Currently slotted:</span>
+        <b>${escHtml(s.piece_name || s.piece_uid)}</b>
+        <button class="mc-detail" onclick="closeModal(); openEnhInfo(${powerIdx},${slotIdx})">ⓘ Full details</button>`;
+      cur.classList.remove("hidden");
+    } else {
+      cur.classList.add("hidden");
+    }
+  }
   $("modal-title").textContent = `Enhancement for: ${pw.display_name}`;
   $("modal-sub").textContent =
     `Showing ONLY sets matching this power's categories: ` +

@@ -1,5 +1,18 @@
 # Hero Companion — What's New
 
+## Unreleased
+
+- **The true in-game enhancement experience.** Click a slotted enhancement and
+  open its full detail card: the game's own description text with honest
+  numbers at YOUR piece's level and boost state ("Enhances the defense debuff
+  potential of a power by 17.4%…"), the attuned and unique rules, and the
+  complete parent set — every piece marked slotted-here / elsewhere / missing,
+  and every set-bonus tier lit as you attain it, with "← next piece" showing
+  exactly what one more piece buys. All text extracted from the game client
+  itself (227 sets, every piece and tier), not paraphrased. The picker now
+  shows what's currently slotted with a "Full details" button, and power cards
+  reveal a ⓘ hint so the info panels are discoverable.
+
 ## 0.12.16 — 2026-07-09
 
 - **Every "How do you play?" question explains itself the moment you answer
