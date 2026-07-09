@@ -697,17 +697,18 @@ def build(state_dir=None, public=False):
                 if task_ticks else "")
         early_rows = ("<table><tr><th>Witnessed</th><th class='num'>Count</th>"
                       f"<th>Last seen</th></tr>{zrows}{trow}</table>")
-    sync_note = ("<p class='dim'>Character pages (level, badges, accolades, vet levels) "
-                 "join the boards when the one-time character sync ships — so a "
-                 "multi-year character arrives whole, not as the sliver a fresh capture "
-                 "happens to see.</p>" if public else "")
-    soon = _card(
+    # PUBLIC: no placeholder card (Joel, 2026-07-10: "we might as well remove the
+    # itrials from the bottom" — an empty promise reads worse than absence; the
+    # section returns WITH its first real public rows). LOCAL keeps the card: it
+    # shows the owner's zone-event rows, task ticks, and the hunter's status.
+    sync_note = ""
+    soon = "" if public else _card(
         "iTrials · Task Forces · League runs", None,
         early_rows
         + "<p class='dim'>Per-run pages (leader, participants, time, badges earned, ranked "
         "against every recorded run) appear here once the run start/finish and league "
         "join/leader line formats are confirmed from real logs. Capture is watching for "
-        "them now — the format hunter flags each new shape it sees.</p>" + sync_note
+        "them now — the format hunter flags each new shape it sees.</p>"
         + "<p class='tagline'>collecting</p>", cls="full soon")
 
     # ---- Diagnostic banner (public: no machine path, no account login names) ------------
