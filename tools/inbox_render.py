@@ -120,19 +120,67 @@ def _set_output(published):
 
 def collect():
     """Mailbox cleanup: fold every chunk but the newest into compacted.jsonl and
-    delete it. Keeps each source at one compacted file + at most one live chunk."""
+    delete it. Keeps each source at one compacted file + at most one live chunk.
+    NEVER-RED RULE (field report 2026-07-10): one bad source must not fail the
+    pipeline — it is skipped with a warning and the rest still collect."""
     folded = 0
     for d in _source_dirs():
-        ch = _chunks(d)
-        if len(ch) < 2:
-            continue
-        with open(os.path.join(d, "compacted.jsonl"), "a", encoding="utf-8") as out:
-            for _off, name in ch[:-1]:
-                for ln in _read_lines(os.path.join(d, name)):
-                    out.write(ln + "\n")
-                os.remove(os.path.join(d, name))
-                folded += 1
+        try:
+            ch = _chunks(d)
+            if len(ch) < 2:
+                continue
+            with open(os.path.join(d, "compacted.jsonl"), "a", encoding="utf-8") as out:
+                for _off, name in ch[:-1]:
+                    for ln in _read_lines(os.path.join(d, name)):
+                        out.write(ln + "\n")
+                    os.remove(os.path.join(d, name))
+                    folded += 1
+        except Exception as e:  # noqa: BLE001
+            print(f"::warning::collect skipped {os.path.basename(d)}: {e}")
     print(f"collected {folded} chunk file(s) into compacted stores")
+
+
+_BANNER_RX = re.compile(r'<div id="stale-banner".*?</div>', re.S)
+
+
+def _publish_stale_banner(reason):
+    """Degrade honestly instead of failing red (field report 2026-07-10): when
+    input can't be rendered, the PUBLISHED board says the feed is paused and
+    since when — a red CI run must mean the PIPELINE broke, never the game.
+    Deterministic text (built_at from the last GOOD build, not now()) so
+    repeated runs produce an identical file and the publish commit no-ops."""
+    page = os.path.join(SITE, "docs", "pulse", "index.html")
+    if not os.path.isfile(page):
+        _set_output(False)
+        return
+    try:
+        with open(page, encoding="utf-8") as f:
+            html = f.read()
+        try:
+            with open(os.path.join(INBOX, "last_count.json"), encoding="utf-8") as f:
+                built_at = (json.load(f) or {}).get("built_at") or "an earlier build"
+        except Exception:  # noqa: BLE001
+            built_at = "an earlier build"
+        banner = ('<div id="stale-banner" style="background:#7a5a18;color:#fff;'
+                  'padding:8px 14px;text-align:center;font-size:14px">'
+                  f'&#9888; Live feed paused &mdash; this board is from {built_at} UTC. '
+                  'New data is held until it validates; the board stays honest '
+                  'rather than guessing.</div>')
+        new = _BANNER_RX.sub("", html)
+        m = re.search(r"<body[^>]*>", new)
+        if not m:
+            _set_output(False)
+            return
+        new = new[:m.end()] + banner + new[m.end():]
+        changed = new != html
+        if changed:
+            with open(page, "w", encoding="utf-8") as f:
+                f.write(new)
+        print(f"STALE BANNER {'published' if changed else 'already current'}: {reason}")
+        _set_output(changed)
+    except Exception as e:  # noqa: BLE001 — the degrade path itself never fails red
+        print(f"::warning::stale-banner injection failed: {e}")
+        _set_output(False)
 
 
 def render():
@@ -192,8 +240,9 @@ def render():
     except Exception:  # noqa: BLE001
         last = 0
     if total == 0 or total < last:
-        print(f"GROWTH GUARD: merged {total} events vs last published {last} — skipping")
-        _set_output(False)
+        print(f"GROWTH GUARD: merged {total} events vs last published {last} — "
+              "publishing a stale notice instead")
+        _publish_stale_banner(f"growth guard: {total} events vs {last} published")
         return
 
     import build_pulse_boards
@@ -202,12 +251,26 @@ def render():
     out_path, n = build_pulse_boards.build(state_dir=merged_dir, public=True)
     print(f"built {out_path} from {n:,} events across {nsrc} source(s)")
     with open(os.path.join(INBOX, "last_count.json"), "w", encoding="utf-8") as f:
-        json.dump({"events": n, "offsets": offsets}, f)
+        json.dump({"events": n, "offsets": offsets,
+                   "built_at": time.strftime("%Y-%m-%d %H:%M", time.gmtime())}, f)
     _set_output(True)
 
 
 if __name__ == "__main__":
-    if "--collect" in sys.argv:
-        collect()
-    else:
-        render()
+    # NEVER-RED RULE (field report 2026-07-10): bad INPUT degrades to an honest
+    # stale board and exits green; a red run is reserved for the pipeline
+    # itself breaking. ~20 red runs overnight taught this the hard way — and
+    # every one of them was the workflow's git tail, not data, so the render
+    # guard here is belt-and-braces.
+    try:
+        if "--collect" in sys.argv:
+            collect()
+        else:
+            render()
+    except SystemExit:
+        raise
+    except Exception as e:  # noqa: BLE001
+        print(f"::warning::render degraded to stale notice: {type(e).__name__}: {e}")
+        if "--collect" not in sys.argv:
+            _publish_stale_banner(f"render error: {type(e).__name__}")
+        sys.exit(0)
