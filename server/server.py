@@ -1506,8 +1506,8 @@ def _totals_kind(full_name, rec):
     design: the game gives each power TYPE a different real on/off story, so the
     control has to match). Returns None for powers that need no control at all
     (plain attacks — checking/unchecking them changes nothing; they carry no
-    self_effects). Four kinds:
-      locked      — auto/passive/inherent: no off-state in-game, always counted.
+    self_effects). Three kinds:
+      locked      — power_type Auto: no off-state in-game, always counted.
       toggle      — the checkbox's legitimate home (mule hosts, situational what-ifs).
       click_buff  — a timed self-buff/burst click (Hasten, Build Up, godmodes):
                     preview one at a time, default off, distinct from sustained totals.
@@ -1515,9 +1515,12 @@ def _totals_kind(full_name, rec):
     burst" (Build Up) — both are Click powers with self-targeted buff effects and no
     stored flag distinguishes them — so both render as one click_buff kind pending a
     verified split.
+    IMPORTANT (bug fixed 2026-07-09, Joel's live 5080 eyeball): classify by the power's
+    REAL power_type only — never by "Inherent." full_name prefix. That prefix means
+    "auto-granted, not a player pick" (why the card wall sorts these last), a totally
+    different fact from "has no off-switch in-game". Sprint/Rest/Prestige Power Slide
+    are all Inherent-namespaced AND real toggles (power_type 2) — locking them lied.
     """
-    if (full_name or "").startswith("Inherent."):
-        return {"kind": "locked"}
     if not rec:
         return None
     pt = rec.get("power_type")
