@@ -57,10 +57,12 @@ WHAT IT CAPTURES (from your game chat log, only while logging is on):
     feed the public price board.
 
 WHAT IT UPLOADS: that captured play data, and nothing else. Uploads are
-tagged with an anonymous install id. Your account login names never
-leave this machine (they are replaced with meaningless codes first).
-Machine names, file paths, and anything outside the game log are never
-read or sent.
+tagged with an anonymous install id. Your own CHARACTER names (as the
+game announces them) are included so your data can be attributed to
+your characters; they are not shown publicly today. Your account login
+names never leave this machine (they are replaced with meaningless
+codes first). Machine names, file paths, and anything outside the game
+log are never read or sent.
 
 WHERE IT GOES: into the project's locked storage that the general
 public cannot read. What the PUBLIC board shows: what's forming and
