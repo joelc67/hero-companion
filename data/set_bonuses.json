@@ -638,7 +638,64 @@
     "bonuses": [
      "Large Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    }
   ]
  },
@@ -815,7 +872,64 @@
     "bonuses": [
      "Small Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.045,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.045,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.045,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.045,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    }
   ]
  },
@@ -3020,7 +3134,64 @@
     "bonuses": [
      "Small Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.045,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.045,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.045,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.045,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -3686,7 +3857,64 @@
     "bonuses": [
      "Moderate Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -3936,7 +4164,32 @@
     "bonuses": [
      "Tiny Improved Knockback Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Knockup",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Knockup",
+      "value": 0.02,
+      "to_who": 2,
+      "attribs": [
+       "Knockup",
+       "Knockback"
+      ]
+     },
+     {
+      "effect": "Knockback",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Knockback",
+      "value": 0.02,
+      "to_who": 2,
+      "attribs": [
+       "Knockup",
+       "Knockback"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -4518,7 +4771,64 @@
     "bonuses": [
      "Tiny Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -5542,7 +5852,19 @@
     "bonuses": [
      "Tiny Confuse Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Confused",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Confused",
+      "value": 0.01,
+      "to_who": 2,
+      "attribs": [
+       "Confused"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -5623,7 +5945,64 @@
     "bonuses": [
      "Tiny Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -5710,7 +6089,64 @@
     "bonuses": [
      "Moderate Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -8287,7 +8723,64 @@
     "bonuses": [
      "Large Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -8570,7 +9063,64 @@
     "bonuses": [
      "Moderate Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -9490,7 +10040,19 @@
     "bonuses": [
      "Tiny Hold Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Held",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Held",
+      "value": 0.01,
+      "to_who": 2,
+      "attribs": [
+       "Held"
+      ]
+     }
+    ]
    }
   ]
  },
@@ -9611,7 +10173,19 @@
     "bonuses": [
      "Moderate Hold Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Held",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Held",
+      "value": 0.02,
+      "to_who": 2,
+      "attribs": [
+       "Held"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -10040,7 +10614,19 @@
     "bonuses": [
      "Small Hold Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Held",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Held",
+      "value": 0.015,
+      "to_who": 2,
+      "attribs": [
+       "Held"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -10087,7 +10673,64 @@
     "bonuses": [
      "Large Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -10129,7 +10772,19 @@
     "bonuses": [
      "Large Hold Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Held",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Held",
+      "value": 0.025,
+      "to_who": 2,
+      "attribs": [
+       "Held"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -10289,7 +10944,19 @@
     "bonuses": [
      "Large Hold Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Held",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Held",
+      "value": 0.025,
+      "to_who": 2,
+      "attribs": [
+       "Held"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -10442,7 +11109,64 @@
     "bonuses": [
      "Tiny Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -10483,7 +11207,19 @@
     "bonuses": [
      "Tiny Stun Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Stunned",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Stunned",
+      "value": 0.01,
+      "to_who": 2,
+      "attribs": [
+       "Stunned"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -10548,7 +11284,19 @@
     "bonuses": [
      "Moderate Stun Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Stunned",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Stunned",
+      "value": 0.02,
+      "to_who": 2,
+      "attribs": [
+       "Stunned"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -10718,7 +11466,19 @@
     "bonuses": [
      "Moderate Stun Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Stunned",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Stunned",
+      "value": 0.02,
+      "to_who": 2,
+      "attribs": [
+       "Stunned"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -10856,7 +11616,19 @@
     "bonuses": [
      "Huge Stun Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Stunned",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Stunned",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "Stunned"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -10920,7 +11692,19 @@
     "bonuses": [
      "Tiny Immobilize Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Immobilized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Immobilized",
+      "value": 0.02,
+      "to_who": 2,
+      "attribs": [
+       "Immobilized"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -11041,7 +11825,19 @@
     "bonuses": [
      "Moderate Immobilize Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Immobilized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Immobilized",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Immobilized"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -11251,7 +12047,19 @@
     "bonuses": [
      "Small Immobilize Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Immobilized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Immobilized",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "Immobilized"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -11421,7 +12229,19 @@
     "bonuses": [
      "Large Immobilize Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Immobilized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Immobilized",
+      "value": 0.05,
+      "to_who": 2,
+      "attribs": [
+       "Immobilized"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -11648,7 +12468,64 @@
     "bonuses": [
      "Moderate Improved Slow Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "SpeedRunning",
+      "value": 0.02,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "SpeedFlying",
+      "value": 0.02,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "SpeedJumping",
+      "value": 0.02,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "JumpHeight",
+      "value": 0.02,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -11785,7 +12662,64 @@
     "bonuses": [
      "Huge Improved Slow Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "SpeedRunning",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "SpeedFlying",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "SpeedJumping",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "JumpHeight",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -11995,7 +12929,64 @@
     "bonuses": [
      "Small Improved Slow Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "SpeedRunning",
+      "value": 0.015,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "SpeedFlying",
+      "value": 0.015,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "SpeedJumping",
+      "value": 0.015,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "JumpHeight",
+      "value": 0.015,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -12149,7 +13140,64 @@
     "bonuses": [
      "Large Improved Slow Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "SpeedRunning",
+      "value": 0.025,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "SpeedFlying",
+      "value": 0.025,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "SpeedJumping",
+      "value": 0.025,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "JumpHeight",
+      "value": 0.025,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -12286,7 +13334,19 @@
     "bonuses": [
      "Moderate Sleep Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Sleep",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Sleep",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Sleep"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -12407,7 +13467,19 @@
     "bonuses": [
      "Huge Sleep Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Sleep",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Sleep",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "Sleep"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -12449,7 +13521,64 @@
     "bonuses": [
      "Small Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.045,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.045,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.045,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.045,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -12496,7 +13625,19 @@
     "bonuses": [
      "Moderate Sleep Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Sleep",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Sleep",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Sleep"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -12682,7 +13823,19 @@
     "bonuses": [
      "Large Sleep Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Sleep",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Sleep",
+      "value": 0.05,
+      "to_who": 2,
+      "attribs": [
+       "Sleep"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -12820,7 +13973,19 @@
     "bonuses": [
      "Tiny Fear Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Terrorized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Terrorized",
+      "value": 0.011,
+      "to_who": 2,
+      "attribs": [
+       "Terrorized"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -12941,7 +14106,19 @@
     "bonuses": [
      "Moderate Fear Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Terrorized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Terrorized",
+      "value": 0.022,
+      "to_who": 2,
+      "attribs": [
+       "Terrorized"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -13135,7 +14312,19 @@
     "bonuses": [
      "Small Fear Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Terrorized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Terrorized",
+      "value": 0.0165,
+      "to_who": 2,
+      "attribs": [
+       "Terrorized"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -13345,7 +14534,19 @@
     "bonuses": [
      "Large Fear Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Terrorized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Terrorized",
+      "value": 0.0275,
+      "to_who": 2,
+      "attribs": [
+       "Terrorized"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -13500,7 +14701,19 @@
     "bonuses": [
      "Tiny Confuse Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Confused",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Confused",
+      "value": 0.01,
+      "to_who": 2,
+      "attribs": [
+       "Confused"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -13621,7 +14834,19 @@
     "bonuses": [
      "Small Confuse Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Confused",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Confused",
+      "value": 0.015,
+      "to_who": 2,
+      "attribs": [
+       "Confused"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -13791,7 +15016,19 @@
     "bonuses": [
      "Small Confuse Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Confused",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Confused",
+      "value": 0.015,
+      "to_who": 2,
+      "attribs": [
+       "Confused"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -13945,7 +15182,19 @@
     "bonuses": [
      "Large Confuse Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Confused",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Confused",
+      "value": 0.025,
+      "to_who": 2,
+      "attribs": [
+       "Confused"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -14162,7 +15411,64 @@
     "bonuses": [
      "Tiny Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -14193,7 +15499,64 @@
     "bonuses": [
      "Moderate Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -15201,7 +16564,64 @@
     "bonuses": [
      "Large Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -15507,7 +16927,64 @@
     "bonuses": [
      "Small Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.045,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.045,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.045,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.045,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -15588,7 +17065,32 @@
     "bonuses": [
      "Small Knockback Protection Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Knockup",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": -3.0,
+      "to_who": 2,
+      "attribs": [
+       "Knockup",
+       "Knockback"
+      ]
+     },
+     {
+      "effect": "Knockback",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": -3.0,
+      "to_who": 2,
+      "attribs": [
+       "Knockup",
+       "Knockback"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -15636,7 +17138,64 @@
     "bonuses": [
      "Large Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -16767,7 +18326,64 @@
     "bonuses": [
      "Large Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -19429,7 +21045,19 @@
     "bonuses": [
      "Ultimate Confuse Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Confused",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Confused",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Confused"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -20443,7 +22071,64 @@
     "bonuses": [
      "Huge Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.09,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.09,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.09,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.09,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    }
   ]
  },
@@ -21002,7 +22687,64 @@
     "bonuses": [
      "Large Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -21049,7 +22791,64 @@
     "bonuses": [
      "Moderate Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -21604,7 +23403,32 @@
     "bonuses": [
      "Small Knockback Protection Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Knockup",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": -3.0,
+      "to_who": 2,
+      "attribs": [
+       "Knockup",
+       "Knockback"
+      ]
+     },
+     {
+      "effect": "Knockback",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": -3.0,
+      "to_who": 2,
+      "attribs": [
+       "Knockup",
+       "Knockback"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -22086,7 +23910,47 @@
     "bonuses": [
      "Large Slow Resist"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "RechargeTime",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -22632,7 +24496,32 @@
     "bonuses": [
      "Small Knockback Protection Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Knockup",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": -3.0,
+      "to_who": 2,
+      "attribs": [
+       "Knockup",
+       "Knockback"
+      ]
+     },
+     {
+      "effect": "Knockback",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": -3.0,
+      "to_who": 2,
+      "attribs": [
+       "Knockup",
+       "Knockback"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -23105,7 +24994,32 @@
     "bonuses": [
      "Small Knockback Protection Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Knockup",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": -3.0,
+      "to_who": 2,
+      "attribs": [
+       "Knockup",
+       "Knockback"
+      ]
+     },
+     {
+      "effect": "Knockback",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": -3.0,
+      "to_who": 2,
+      "attribs": [
+       "Knockup",
+       "Knockback"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -23521,7 +25435,19 @@
     "bonuses": [
      "Large Hold Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Held",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Held",
+      "value": 0.025,
+      "to_who": 2,
+      "attribs": [
+       "Held"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 2,
@@ -24018,7 +25944,19 @@
     "bonuses": [
      "Large Increased Range"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Range",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Range",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "Range"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -24452,7 +26390,74 @@
      "Huge Hold Duration Bonus",
      "Huge Stun Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Immobilized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Immobilized",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "Immobilized"
+      ]
+     },
+     {
+      "effect": "Sleep",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Sleep",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "Sleep"
+      ]
+     },
+     {
+      "effect": "Terrorized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Terrorized",
+      "value": 0.033,
+      "to_who": 2,
+      "attribs": [
+       "Terrorized"
+      ]
+     },
+     {
+      "effect": "Confused",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Confused",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "Confused"
+      ]
+     },
+     {
+      "effect": "Held",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Held",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "Held"
+      ]
+     },
+     {
+      "effect": "Stunned",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Stunned",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "Stunned"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -24550,7 +26555,19 @@
     "bonuses": [
      "Large Increased Range"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Range",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Range",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "Range"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -24704,7 +26721,19 @@
     "bonuses": [
      "Large Increased Range"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Range",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Range",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "Range"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -24863,7 +26892,74 @@
      "Huge Hold Duration Bonus",
      "Huge Stun Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Immobilized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Immobilized",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "Immobilized"
+      ]
+     },
+     {
+      "effect": "Sleep",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Sleep",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "Sleep"
+      ]
+     },
+     {
+      "effect": "Terrorized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Terrorized",
+      "value": 0.033,
+      "to_who": 2,
+      "attribs": [
+       "Terrorized"
+      ]
+     },
+     {
+      "effect": "Confused",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Confused",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "Confused"
+      ]
+     },
+     {
+      "effect": "Held",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Held",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "Held"
+      ]
+     },
+     {
+      "effect": "Stunned",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Stunned",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "Stunned"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -26379,7 +28475,19 @@
     "bonuses": [
      "Ultimate Increased Range"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Range",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Range",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "Range"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -26813,7 +28921,74 @@
      "Ultimate Hold Duration Bonus",
      "Ultimate Stun Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Immobilized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Immobilized",
+      "value": 0.08,
+      "to_who": 2,
+      "attribs": [
+       "Immobilized"
+      ]
+     },
+     {
+      "effect": "Sleep",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Sleep",
+      "value": 0.08,
+      "to_who": 2,
+      "attribs": [
+       "Sleep"
+      ]
+     },
+     {
+      "effect": "Terrorized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Terrorized",
+      "value": 0.044,
+      "to_who": 2,
+      "attribs": [
+       "Terrorized"
+      ]
+     },
+     {
+      "effect": "Confused",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Confused",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Confused"
+      ]
+     },
+     {
+      "effect": "Held",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Held",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Held"
+      ]
+     },
+     {
+      "effect": "Stunned",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Stunned",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Stunned"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -26911,7 +29086,19 @@
     "bonuses": [
      "Ultimate Increased Range"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Range",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Range",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "Range"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -27065,7 +29252,19 @@
     "bonuses": [
      "Ultimate Increased Range"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Range",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Range",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "Range"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -27224,7 +29423,74 @@
      "Ultimate Hold Duration Bonus",
      "Ultimate Stun Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Immobilized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Immobilized",
+      "value": 0.08,
+      "to_who": 2,
+      "attribs": [
+       "Immobilized"
+      ]
+     },
+     {
+      "effect": "Sleep",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Sleep",
+      "value": 0.08,
+      "to_who": 2,
+      "attribs": [
+       "Sleep"
+      ]
+     },
+     {
+      "effect": "Terrorized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Terrorized",
+      "value": 0.044,
+      "to_who": 2,
+      "attribs": [
+       "Terrorized"
+      ]
+     },
+     {
+      "effect": "Confused",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Confused",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Confused"
+      ]
+     },
+     {
+      "effect": "Held",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Held",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Held"
+      ]
+     },
+     {
+      "effect": "Stunned",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Stunned",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Stunned"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -28660,7 +30926,32 @@
     "bonuses": [
      "Moderate Knockback Protection Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Knockup",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": -4.0,
+      "to_who": 2,
+      "attribs": [
+       "Knockup",
+       "Knockback"
+      ]
+     },
+     {
+      "effect": "Knockback",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": -4.0,
+      "to_who": 2,
+      "attribs": [
+       "Knockup",
+       "Knockback"
+      ]
+     }
+    ]
    }
   ]
  },
@@ -28781,7 +31072,19 @@
     "bonuses": [
      "Large Endurance Discount"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "EnduranceDiscount",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "EnduranceDiscount",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "EnduranceDiscount"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -28991,7 +31294,19 @@
     "bonuses": [
      "Huge Endurance Discount"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "EnduranceDiscount",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "EnduranceDiscount",
+      "value": 0.0375,
+      "to_who": 2,
+      "attribs": [
+       "EnduranceDiscount"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -29185,7 +31500,19 @@
     "bonuses": [
      "Huge Endurance Discount"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "EnduranceDiscount",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "EnduranceDiscount",
+      "value": 0.0375,
+      "to_who": 2,
+      "attribs": [
+       "EnduranceDiscount"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 6,
@@ -29216,7 +31543,19 @@
     "bonuses": [
      "Moderate Endurance Discount"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "EnduranceDiscount",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "EnduranceDiscount",
+      "value": 0.025,
+      "to_who": 2,
+      "attribs": [
+       "EnduranceDiscount"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -30511,7 +32850,74 @@
      "Moderate Hold Duration Bonus",
      "Moderate Stun Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Immobilized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Immobilized",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Immobilized"
+      ]
+     },
+     {
+      "effect": "Sleep",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Sleep",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Sleep"
+      ]
+     },
+     {
+      "effect": "Terrorized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Terrorized",
+      "value": 0.022,
+      "to_who": 2,
+      "attribs": [
+       "Terrorized"
+      ]
+     },
+     {
+      "effect": "Confused",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Confused",
+      "value": 0.02,
+      "to_who": 2,
+      "attribs": [
+       "Confused"
+      ]
+     },
+     {
+      "effect": "Held",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Held",
+      "value": 0.02,
+      "to_who": 2,
+      "attribs": [
+       "Held"
+      ]
+     },
+     {
+      "effect": "Stunned",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Stunned",
+      "value": 0.02,
+      "to_who": 2,
+      "attribs": [
+       "Stunned"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -30670,7 +33076,74 @@
      "Ultimate Hold Duration Bonus",
      "Ultimate Stun Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Immobilized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Immobilized",
+      "value": 0.08,
+      "to_who": 2,
+      "attribs": [
+       "Immobilized"
+      ]
+     },
+     {
+      "effect": "Sleep",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Sleep",
+      "value": 0.08,
+      "to_who": 2,
+      "attribs": [
+       "Sleep"
+      ]
+     },
+     {
+      "effect": "Terrorized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Terrorized",
+      "value": 0.044,
+      "to_who": 2,
+      "attribs": [
+       "Terrorized"
+      ]
+     },
+     {
+      "effect": "Confused",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Confused",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Confused"
+      ]
+     },
+     {
+      "effect": "Held",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Held",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Held"
+      ]
+     },
+     {
+      "effect": "Stunned",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Stunned",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Stunned"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -31369,7 +33842,74 @@
      "Huge Hold Duration Bonus",
      "Huge Stun Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Immobilized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Immobilized",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "Immobilized"
+      ]
+     },
+     {
+      "effect": "Sleep",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Sleep",
+      "value": 0.06,
+      "to_who": 2,
+      "attribs": [
+       "Sleep"
+      ]
+     },
+     {
+      "effect": "Terrorized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Terrorized",
+      "value": 0.033,
+      "to_who": 2,
+      "attribs": [
+       "Terrorized"
+      ]
+     },
+     {
+      "effect": "Confused",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Confused",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "Confused"
+      ]
+     },
+     {
+      "effect": "Held",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Held",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "Held"
+      ]
+     },
+     {
+      "effect": "Stunned",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Stunned",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "Stunned"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -31528,7 +34068,74 @@
      "Ultimate Hold Duration Bonus",
      "Ultimate Stun Duration Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Immobilized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Immobilized",
+      "value": 0.08,
+      "to_who": 2,
+      "attribs": [
+       "Immobilized"
+      ]
+     },
+     {
+      "effect": "Sleep",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Sleep",
+      "value": 0.08,
+      "to_who": 2,
+      "attribs": [
+       "Sleep"
+      ]
+     },
+     {
+      "effect": "Terrorized",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Terrorized",
+      "value": 0.044,
+      "to_who": 2,
+      "attribs": [
+       "Terrorized"
+      ]
+     },
+     {
+      "effect": "Confused",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Confused",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Confused"
+      ]
+     },
+     {
+      "effect": "Held",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Held",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Held"
+      ]
+     },
+     {
+      "effect": "Stunned",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Stunned",
+      "value": 0.04,
+      "to_who": 2,
+      "attribs": [
+       "Stunned"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -34060,7 +36667,47 @@
     "bonuses": [
      "Large Slow Resist"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "RechargeTime",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -34230,7 +36877,47 @@
     "bonuses": [
      "Ultimate Slow Resist"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.15,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.15,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "RechargeTime",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.15,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -34473,7 +37160,47 @@
     "bonuses": [
      "Large Slow Resist"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "RechargeTime",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -34643,7 +37370,47 @@
     "bonuses": [
      "Ultimate Slow Resist"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.15,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.15,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "RechargeTime",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.15,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -34740,7 +37507,47 @@
     "bonuses": [
      "Large Slow Resist"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "RechargeTime",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -34910,7 +37717,47 @@
     "bonuses": [
      "Ultimate Slow Resist"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.15,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.15,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "RechargeTime",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.15,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -35080,7 +37927,47 @@
     "bonuses": [
      "Large Slow Resist"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "RechargeTime",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -35250,7 +38137,47 @@
     "bonuses": [
      "Ultimate Slow Resist"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.15,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.15,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "RechargeTime",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.15,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -35493,7 +38420,47 @@
     "bonuses": [
      "Large Slow Resist"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "RechargeTime",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -35663,7 +38630,47 @@
     "bonuses": [
      "Ultimate Slow Resist"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.15,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.15,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "RechargeTime",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.15,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -35777,7 +38784,19 @@
     "bonuses": [
      "Large Increased Range"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Range",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Range",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "Range"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -35875,7 +38894,19 @@
     "bonuses": [
      "Ultimate Increased Range"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Range",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Range",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "Range"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -35956,7 +38987,19 @@
     "bonuses": [
      "Large Increased Range"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Range",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Range",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "Range"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -36110,7 +39153,19 @@
     "bonuses": [
      "Ultimate Increased Range"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Range",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Range",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "Range"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -36264,7 +39319,64 @@
     "bonuses": [
      "Large Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -36402,7 +39514,19 @@
     "bonuses": [
      "Tiny Increased Range (PVP)"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Range",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Range",
+      "value": 0.05,
+      "to_who": 2,
+      "attribs": [
+       "Range"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 2,
@@ -36688,7 +39812,64 @@
     "bonuses": [
      "Large Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -36696,7 +39877,47 @@
     "bonuses": [
      "Large Slow Resist"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "RechargeTime",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -37071,7 +40292,19 @@
     "bonuses": [
      "Tiny Increased Range"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Range",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Range",
+      "value": 0.05,
+      "to_who": 2,
+      "attribs": [
+       "Range"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,
@@ -37478,7 +40711,47 @@
     "bonuses": [
      "Large Slow Resist"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "RechargeTime",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 5,
@@ -37632,7 +40905,64 @@
     "bonuses": [
      "Huge Improved Movement Bonus"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.09,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.09,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "SpeedJumping",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.09,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     },
+     {
+      "effect": "JumpHeight",
+      "damage_type": "None",
+      "aspect": "Cur",
+      "modifies": "None",
+      "value": 0.09,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "JumpingSpeed",
+       "JumpHeight"
+      ]
+     }
+    ]
    }
   ]
  },
@@ -37849,7 +41179,47 @@
     "bonuses": [
      "Large Slow Resist"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "SpeedRunning",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "SpeedFlying",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     },
+     {
+      "effect": "RechargeTime",
+      "damage_type": "None",
+      "aspect": "Res",
+      "modifies": "None",
+      "value": 0.1,
+      "to_who": 2,
+      "attribs": [
+       "RunningSpeed",
+       "FlyingSpeed",
+       "RechargeTime"
+      ]
+     }
+    ]
    }
   ]
  },
@@ -37936,7 +41306,19 @@
     "bonuses": [
      "Large Endurance Discount"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "EnduranceDiscount",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "EnduranceDiscount",
+      "value": 0.03,
+      "to_who": 2,
+      "attribs": [
+       "EnduranceDiscount"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 4,
@@ -37944,7 +41326,19 @@
     "bonuses": [
      "Large Increased Range"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "Range",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "Range",
+      "value": 0.075,
+      "to_who": 2,
+      "attribs": [
+       "Range"
+      ]
+     }
+    ]
    }
   ]
  },
@@ -37958,7 +41352,19 @@
     "bonuses": [
      "Moderate Endurance Discount"
     ],
-    "effects": []
+    "effects": [
+     {
+      "effect": "EnduranceDiscount",
+      "damage_type": "None",
+      "aspect": "Str",
+      "modifies": "EnduranceDiscount",
+      "value": 0.025,
+      "to_who": 2,
+      "attribs": [
+       "EnduranceDiscount"
+      ]
+     }
+    ]
    },
    {
     "pieces_required": 3,

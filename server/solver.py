@@ -20,6 +20,7 @@ Functionality guard: attack powers are only ever given attack-category SETS
 so the build stays playable, not just bonus-stacked.
 """
 
+import math
 from collections import defaultdict, Counter
 
 try:
@@ -605,9 +606,90 @@ def _slot_buff_powers(powers, slots_left):
     return spent
 
 
+def _post_target_decay(targets, targets_pct, at_res_cap, at_base_hp):
+    """POST-TARGET SOFT DECAY (v30, Joel's ruling on Maelwys round 4).
+
+    The objective used to value a met survival axis at literally ZERO — the
+    threshold cliff that turned core armor toggles (Fire Shield, Temp
+    Invulnerability) into arbitrary global-mule real estate while a free 10%
+    auto got the full set. Survival is continuous in the game's own physics,
+    so each Defense/Resistance axis gains a SECOND coverage segment from its
+    target to its real ceiling.
+
+    DERIVED WEIGHT, NO INVENTED CONSTANTS (the v28 accuracy-term precedent):
+    the second segment's weight ratio ρ is MEASURED from the encounter model's
+    own availability curve — average marginal availability per point across
+    [target, ceiling] ÷ the marginal at the target — using the scenario's own
+    physics (fp.SCENARIOS), the AT's base HP and its hard res cap. ρ is capped
+    at 1.0: the target region is the player's declared objective and the
+    post-target segment may match it, never outrank it.
+
+    Ceilings: resistance → the AT hard cap (game rule). Defense → DERIVED by
+    walking the availability curve until its marginal dies — the to-hit floor
+    makes the softcap EMERGE (the model's own '45% kink'), never a coded rule.
+
+    Returns {axis: (ceiling, ρ)}; empty when inputs are missing (old callers
+    degrade to the pre-v30 objective, no cliff fix but no wrong physics)."""
+    import first_principles as fp
+    sc = fp.SCENARIOS.get((targets_pct or {}).get("scenario") or "")
+    if not sc or not at_base_hp or not at_res_cap:
+        return {}
+
+    # Representative operating point: the preset's own strongest def/res asks —
+    # each axis's marginal is evaluated with the OTHER family held at target.
+    def_op = max((v for (kind, _), v in targets.items() if kind == "Defense"),
+                 default=0.0)
+    res_op = max((v for (kind, _), v in targets.items() if kind == "Resistance"),
+                 default=0.0)
+
+    def avail(defense, res):
+        # Mirrors encounter_value's own survival arithmetic (incoming × hit ×
+        # (1−res); ttl; 1−exp) — the same physics the scorer certifies with.
+        p_hit = fp.incoming_hit(defense, 0.0, sc)
+        incoming = sc["enemies"] * sc["enemy_dps"] * p_hit \
+            * (1.0 - min(res, at_res_cap))
+        regen = at_base_hp * fp._REGEN_PER_SEC
+        ttl = at_base_hp / max(incoming - regen, 1.0)
+        return 1.0 - math.exp(-ttl / sc["length"])
+
+    out = {}
+    D = 0.01
+    for k, tgt in targets.items():
+        kind = k[0]
+        if kind == "Resistance":
+            ceiling = at_res_cap
+            a_t = avail(def_op, tgt)
+            slope_at = (a_t - avail(def_op, tgt - D)) / D
+            if ceiling - tgt <= D or slope_at <= 1e-9:
+                continue
+            avg_slope = (avail(def_op, ceiling) - a_t) / (ceiling - tgt)
+        elif kind == "Defense":
+            a_t = avail(tgt, res_op)
+            slope_at = (a_t - avail(tgt - D, res_op)) / D
+            if slope_at <= 1e-9:
+                continue
+            ceiling = tgt
+            d = tgt
+            while d < 0.60:            # DDR-less sanity bound, far past any softcap
+                d += D
+                if (avail(d, res_op) - avail(d - D, res_op)) < 0.01 * slope_at * D:
+                    break
+                ceiling = d
+            if ceiling - tgt <= D:
+                continue
+            avg_slope = (avail(ceiling, res_op) - a_t) / (ceiling - tgt)
+        else:
+            continue
+        rho = max(0.0, min(avg_slope / slope_at, 1.0))
+        if rho > 1e-6:
+            out[k] = (ceiling, round(rho, 4))
+    return out
+
+
 def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
               slot_cap=67, tier="premium", perk_focus=None, roles=None, pvp=False,
-              preserve=False, keep_layout=False, archetype=None):
+              preserve=False, keep_layout=False, archetype=None,
+              at_res_cap=None, at_base_hp=None):
     """Optimal slot solve via integer linear programming.
 
     Phase 1 solves the targets with CHEAP sets only (the least-expensive build
@@ -879,12 +961,16 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
             priority[("Accuracy", None)] = _w_rech * _marginal_ratio * _acc_cap
             perks[("Accuracy", None)] = _acc_cap
 
+    # POST-TARGET SOFT DECAY (v30): kills the threshold cliff — see
+    # _post_target_decay. Phase 1 only: the perk pass has its own headroom keys.
+    decay = _post_target_decay(targets, targets_pct, at_res_cap, at_base_hp)
+
     # PHASE 1: solve the targets. PHASE 2: fill remaining slots with perks. Both
     # honor the tier's premium policy (premium upgrades fall out of the solve).
     _ilp_pass(powers, targets, totals, sets_by_category, slot_cap,
               piece_choices=(6, 5, 4, 3, 2), objective_targets=targets,
               allow_premium=allow_premium, cost_w=cost_w, pref_cats=pref_cats, pvp=pvp,
-              priority=priority, piece_meta=piece_meta)
+              priority=priority, piece_meta=piece_meta, decay=decay)
     focus_keys = set(PERK_FOCUS.get(perk_focus, []))
     perk_kind_mult = dict(kind_mult)
     if focus_keys:                  # the 🧮 perk dial gets an outsized weight
@@ -1138,7 +1224,8 @@ def _enforce_added_cap(powers, budget):
 
 def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices,
               objective_targets, perk_pass=False, allow_premium=False, cost_w=0.0,
-              kind_mult=None, pref_cats=None, pvp=False, priority=None, piece_meta=None):
+              kind_mult=None, pref_cats=None, pvp=False, priority=None, piece_meta=None,
+              decay=None):
     """Run one ILP over powers that still have free slots / no set yet.
     `kind_mult` weights a stat KIND (e.g. {'Defense':2}) so the player's role
     leans coverage that way; `pref_cats` nudges set selection toward role-fitting
@@ -1356,19 +1443,34 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
     for puid, vs in uniq_piece.items():
         if len(vs) > 1:
             prob += pulp.lpSum(vs) <= 1
-    # capped coverage vars + balanced objective (fractional coverage per target)
+    # capped coverage vars + balanced objective (fractional coverage per target).
+    # v30: a survival axis no longer dies at its target — a SECOND segment
+    # (cov2) values contribution from target up to the axis's real ceiling at
+    # the decayed weight ρ (see _post_target_decay). Both segments draw on the
+    # same contribution pool; the LP fills the full-weight segment first.
     obj = []
     for k, tgt in objective_targets.items():
         if tgt <= 0:
             continue
         cur = totals.get(k, 0.0)
         room = max(0.0, tgt - cur)
-        if room <= 0 and not perk_pass:
-            continue
-        cov = pulp.LpVariable(f"cov_{k}", lowBound=0, upBound=room)
-        prob += cov <= pulp.lpSum(coef * v for coef, v in cov_upper.get(k, []))
         weight = (priority or {}).get(k, 1.0) * kind_mult.get(k[0], 1.0) / tgt
-        obj.append(weight * cov)
+        segs = []
+        if room > 0 or perk_pass:
+            cov = pulp.LpVariable(f"cov_{k}", lowBound=0, upBound=room)
+            segs.append(cov)
+            obj.append(weight * cov)
+        d = (decay or {}).get(k) if not perk_pass else None
+        if d:
+            ceiling, rho = d
+            room2 = max(0.0, ceiling - max(cur, tgt))
+            if room2 > 1e-6:
+                cov2 = pulp.LpVariable(f"cov2_{k}", lowBound=0, upBound=room2)
+                segs.append(cov2)
+                obj.append(weight * rho * cov2)
+        if segs:
+            prob += pulp.lpSum(segs) <= pulp.lpSum(
+                coef * v for coef, v in cov_upper.get(k, []))
     # Role set-category preference: lean toward the role's set categories. STRONGER for a
     # non-damage role (control/debuff/buff/heal) — there the role's sets are the WHOLE point
     # (they land controls, lengthen holds, debuff), so the lean should actually decide ties,
@@ -1481,10 +1583,27 @@ def _place_globals(powers, piece_globals, sets_by_category, totals, seed_unique=
                 totals[ek] += ev
         return True
 
-    for g in piece_globals:
+    # HOST-AWARE placement (v30, Maelwys round 4 — his Weave point): a global's
+    # slot costs its host an aspect-enhancement slot, and that cost is the host's
+    # BASE res/def (a Combat Jumping slot forgoes ~2.5% base def enhancement; a
+    # Weave slot forgoes 5%+, Fire Shield 25%). Prefer LOW-base hosts so strong
+    # armors keep their slot room for the aspect sets the decayed objective now
+    # values. Order-of-pick was the old rule — that's why WHICH toggle muled was
+    # arbitrary (TI just came first). Stable sort: ties keep pick order.
+    def _host_cost(p):
+        return sum(abs(v) for v in (p.get("_base_rd") or {}).values())
+
+    hosts = sorted(powers, key=_host_cost)
+    fam_placed = defaultdict(int)   # v30: "kb_prot" family — one mag-4 piece is
+    for g in piece_globals:         # the protection threshold; more is dead slots
+        if g.get("solver_place") is False:
+            continue   # priced when the PLAYER slots it; auto-placement = v31
+        fam = g.get("family")
+        if fam and fam_placed[fam] >= 1:
+            continue
         nonunique = not g.get("unique", True)
         placed = 0
-        for p in powers:
+        for p in hosts:
             if p.get("_is_pet_summon"):
                 continue     # reserved for its pet set — never a self-heal-global mule
             if len(p["_slots"]) >= p.get("_slot_budget", 6):
@@ -1495,6 +1614,9 @@ def _place_globals(powers, piece_globals, sets_by_category, totals, seed_unique=
                 break
             if try_place(p, g):
                 placed += 1
+                if fam:
+                    fam_placed[fam] += 1
+                    break
                 if not nonunique:
                     used_unique.add(g["set"])
                     break

@@ -102,6 +102,18 @@ COMMON_IO_MAP.update({
 # Indexes
 PLAYABLE = [a for a in ARCHETYPES["archetypes"] if a.get("playable")]
 ARCH_BY_NAME = {a["name"]: a for a in ARCHETYPES["archetypes"]}
+
+
+def _at_solve_phys(archetype):
+    """The AT physics solve_ilp's post-target decay derives from (v30): the
+    hard res cap bounds the resistance segment, base HP feeds the availability
+    curve ρ is measured on. Empty for an unknown AT — the solver then skips
+    the decay rather than derive from wrong physics."""
+    at = ARCH_BY_NAME.get(archetype or "")
+    if not at:
+        return {}
+    return {"at_res_cap": at.get("res_cap") or 0.75,
+            "at_base_hp": at.get("hitpoints") or 0}
 CAT_BY_ID = {c["id"]: c for c in SET_CATEGORIES["categories"]}
 CAT_BY_SHORT = {c["short"].lower(): c for c in SET_CATEGORIES["categories"]}
 CAT_BY_NAME = {c["name"].lower(): c for c in SET_CATEGORIES["categories"]}
@@ -2117,7 +2129,8 @@ def _assess_solve(archetype, powers_in, targets, tier, perk_focus, roles,
         sol = solver.solve_ilp(powers, targets, SETS_BY_CATEGORY, engine.PIECE_GLOBALS,
                                base, slot_cap=67 + len(powers), tier=tier,
                                perk_focus=perk_focus, roles=roles, pvp=pvp,
-                               preserve=preserve, keep_layout=keep_layout, archetype=archetype)
+                               preserve=preserve, keep_layout=keep_layout, archetype=archetype,
+                               **_at_solve_phys(archetype))
     except Exception:  # noqa: BLE001
         return None
     tot = engine.calculate_build({"archetype": archetype, "powers": sol["powers"], "pvp": pvp},
@@ -3397,7 +3410,8 @@ def build_solve():
             sol = solver.solve_ilp(powers, targets, SETS_BY_CATEGORY,
                                    engine.PIECE_GLOBALS, base, slot_cap=slot_cap, tier=tier,
                                    perk_focus=perk_focus, roles=roles, pvp=pvp,
-                                   preserve=preserve, keep_layout=keep_layout, archetype=archetype)
+                                   preserve=preserve, keep_layout=keep_layout, archetype=archetype,
+                                   **_at_solve_phys(archetype))
         except Exception as e:  # noqa: BLE001
             return jsonify({"ok": False, "response": f"Solver failed: {e}"})
 
@@ -3460,7 +3474,7 @@ def build_solve():
             full = solver.solve_ilp(copy.deepcopy(powers), targets, SETS_BY_CATEGORY,
                                     engine.PIECE_GLOBALS, base, slot_cap=slot_cap,
                                     tier=tier, roles=roles, pvp=pvp, preserve=False,
-                                    archetype=archetype)
+                                    archetype=archetype, **_at_solve_phys(archetype))
             ft = engine.calculate_build(
                 {"archetype": archetype, "powers": full["powers"], "pvp": pvp},
                 SET_BONUSES, res_cap=res_cap, ctx=ctx)
@@ -4594,7 +4608,7 @@ def ai_generate_solved():
             sol = solver.solve_ilp(copy.deepcopy(_pw), targets,
                                    SETS_BY_CATEGORY, engine.PIECE_GLOBALS,
                                    dict(base), slot_cap=slot_cap, tier=tier, roles=roles, pvp=pvp,
-                                   archetype=archetype)
+                                   archetype=archetype, **_at_solve_phys(archetype))
             # Pick order must fit the slot schedule (a 49 pick holds at most 4 slots) —
             # if it can't be repaired by reordering, cap the tail and re-solve once.
             if _assign_pick_levels(sol["powers"], archetype) or _sched_round == 1:

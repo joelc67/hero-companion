@@ -807,7 +807,13 @@ def main():
                     # Numina 4pc +6% etc.) — same gap, same fix.
                     eff = modifies
                 else:
-                    continue   # enhancement of an untracked aspect (Range, EndDisc…)
+                    # Enhancement of an aspect this parser doesn't relabel.
+                    # The ten families this drops (KB prot, slow resist, mez
+                    # DURATIONS, movement, range, end discount…) are back-filled
+                    # game-first by tools/patch_empty_bonus_tiers.py — a
+                    # re-parse would erase them (standing rule: additive
+                    # patchers only; reality_check_setbonuses pins the values).
+                    continue
             out.append({
                 "effect": eff,
                 "damage_type": EDAMAGE[ef["damage_type"]] if 0 <= ef["damage_type"] < len(EDAMAGE) else "None",

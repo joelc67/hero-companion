@@ -47,8 +47,12 @@ def _is_pvp_variant(c):
     return c.get("pv_mode") == 2 or "pvp" in (c.get("modifier_table") or "").lower()
 
 
-def power_control_output(power, ctx):
-    """Control-output score for ONE power. mez-seconds x magnitude-factor x area x (toggle uptime)."""
+def power_control_output(power, ctx, mez_dur=None):
+    """Control-output score for ONE power. mez-seconds x magnitude-factor x area x (toggle uptime).
+    mez_dur: optional {mez type: +duration fraction} from the build's set bonuses
+    (v30 back-fill — 'Ultimate Confuse Duration' etc.): a duration bonus is more
+    mez-seconds per cast, the exact quantity this score measures. Knock* types are
+    per-application (time-to-stand), untouched by duration."""
     ce = power.get("control_effects") or []
     if not ce:
         return 0.0
@@ -74,6 +78,8 @@ def power_control_output(power, ctx):
             dur = abs(c.get("scale") or 0.0) * _table_val(mod_tables, c.get("modifier_table"), col)
             if dur <= 0:
                 dur = c.get("duration") or 0.0
+            if mez_dur:
+                dur *= 1.0 + (mez_dur.get(mez) or 0.0)
         val = w * mag_factor * dur * (c.get("probability") or 1.0)
         by_type[mez] = max(by_type.get(mez, 0.0), val)
     score = sum(by_type.values()) * area
@@ -455,14 +461,14 @@ def build_heal_output(powers, ctx):
     return {"team_hps": round(team, 2), "self_hps": round(self_, 2), "rez": rez, "score": score}
 
 
-def build_control_output(powers, ctx):
+def build_control_output(powers, ctx, mez_dur=None):
     """Total control output of a build + per-power breakdown (sorted)."""
     rows = []
     for p in powers:
         rec = ctx["power_by_full"].get(p.get("full_name")) if ctx.get("power_by_full") else p
         if not rec:
             continue
-        s = power_control_output(rec, ctx)
+        s = power_control_output(rec, ctx, mez_dur)
         if s > 0:
             rows.append((rec.get("power_name") or p.get("full_name"), s))
     rows.sort(key=lambda r: -r[1])

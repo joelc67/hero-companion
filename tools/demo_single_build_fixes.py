@@ -36,7 +36,9 @@ ROLE, CONTENT = "damage", "team"
 _GLOBAL_HINTS = ("luck of the gambler", "steadfast", "gladiator's armor", "shield wall",
                  "kismet", "numina", "miracle", "regenerative tissue", "panacea",
                  "performance shifter", "power transfer", "reactive defenses",
-                 "unbreakable guard", "preventive medicine", "overwhelming force")
+                 "unbreakable guard", "preventive medicine", "overwhelming force",
+                 # v30: the -KB mule pieces (mag 4 each, engine-priced)
+                 "karma", "blessing of the zephyr")
 
 results = []
 
@@ -192,11 +194,26 @@ sol2 = c.post("/build/solve", json={"archetype": "Class_Stalker", "goal": "",
     "preserve": False, "keep_layout": False, "powers": pre2}).get_json()
 by_name = {p.get("display_name"): p for p in sol2["powers"]}
 
+# PIN UPDATED for v30 (post-target decay, Joel's approved Maelwys-round-4 batch,
+# 2026-07-10). The ORIGINAL intent stands — pool toggles must never be
+# credit-blind (the old recharge gate excluded them from the aspect credit
+# entirely). But with the decay live, the model now sends aspect sets to the
+# STRONGEST-base armors first (Maelwys's own prescription: "slot the strongest
+# +DmgRes powers up first... then use weaker powers as mules") — on this
+# Stalker that's native Dark Armor over pool Tough/Weave, MEASURED 2026-07-10:
+# Dark Embrace Titanium x2 + Aegis x4, Murky Cloud Titanium x2 + UG x4, Hide
+# LotG + Shield Wall x4, Tough = Steadfast/Gladiator's mule. So the pin now
+# asserts the full ordering: native armors aspect-slotted, pool toggles
+# working as hosts OR mules — never raw.
+native_ok = all(sum(1 for s in (by_name.get(nm, {}).get("slots") or [])
+                    if s and s.get("set_uid")) >= 4
+                for nm in ("Dark Embrace", "Murky Cloud"))
 tw_pieces = sum(1 for nm in ("Tough", "Weave")
                 for s in (by_name.get(nm, {}).get("slots") or [])
                 if s and s.get("set_uid"))
-check("Fighting-pool toggles are real set hosts (Tough+Weave >= 4 set pieces)",
-      tw_pieces >= 4, f"Tough+Weave set pieces: {tw_pieces}")
+check("armor enhancement lands strongest-base first (native x4+), pool toggles work",
+      native_ok and tw_pieces >= 3,
+      f"Dark Embrace/Murky Cloud >=4 pieces: {native_ok}; Tough+Weave pieces: {tw_pieces}")
 
 h2 = len([s for s in (by_name.get("Hasten", {}).get("slots") or []) if s])
 check("Hasten keeps its standard 2 slots on the Stalker too", h2 >= 2,

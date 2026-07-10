@@ -24,6 +24,9 @@ RULE_OF_FIVE = 5              # most set bonuses count up to 5 instances
 
 DEFENSE_TYPES = ["Smashing", "Lethal", "Fire", "Cold", "Energy", "Negative",
                  "Toxic", "Psionic", "Melee", "Ranged", "AoE"]
+# v30: your own mezzes last longer (set-bonus duration families, Str aspect)
+MEZ_DURATION_EFFECTS = ("Confused", "Held", "Stunned", "Immobilized",
+                        "Sleep", "Terrorized")
 RESISTANCE_TYPES = ["Smashing", "Lethal", "Fire", "Cold", "Energy", "Negative",
                     "Toxic", "Psionic"]
 
@@ -57,6 +60,27 @@ PIECE_GLOBALS = [
      "effects": [{"effect": "Resistance", "damage_type": "None", "value": 0.03}]},
     {"set": "kismet", "piece": "accuracy +6", "unique": True,
      "effects": [{"effect": "ToHit", "value": 0.06}]},
+    # v30: the −KB uniques-that-aren't (they stack in-game, unique flag False in
+    # the piece data). Mag 4 each, client-baked in data/set_details.json ("Provides
+    # 4 points of Knockback protection" / "Reduces Knockback effects by -4").
+    # Encoded as Current Knockback −4 — the same shape the back-filled set
+    # bonuses use, so _apply_effect prices all KB protection through one branch.
+    # family "kb_prot" (cap: ONE per family — mag 4 is the protection threshold,
+    # the scorer's own term saturates there). solver_place False for v30: an
+    # unconditional phase-0 grab was MEASURED to cost the slot Force Feedback
+    # needs (Bots/Marine A/B, 2026-07-10), and the model prices FF higher
+    # (recharge-bound output share vs kb_in availability). Players who slot
+    # these get full totals + scorer credit; SOLVER placement is the v31
+    # slot-value arbitration item, next to the endurance retune.
+    {"set": "karma", "piece": "knockback protection", "unique": False,
+     "family": "kb_prot", "solver_place": False,
+     "effects": [{"effect": "Knockback", "aspect": "Cur", "value": -4.0}]},
+    {"set": "steadfast protection", "piece": "knockback protection", "unique": False,
+     "family": "kb_prot", "solver_place": False,
+     "effects": [{"effect": "Knockback", "aspect": "Cur", "value": -4.0}]},
+    {"set": "blessing of the zephyr", "piece": "knockback reduction", "unique": False,
+     "family": "kb_prot", "solver_place": False,
+     "effects": [{"effect": "Knockback", "aspect": "Cur", "value": -4.0}]},
     # Regen/recovery uniques (verified vs MidsReborn data + Homecoming wiki; the
     # game models them as 100%-chance 120s procs = effectively always-on).
     {"set": "numina", "piece": "regeneration", "unique": True,
@@ -257,6 +281,19 @@ def _empty_totals():
         "tohit": 0.0,
         "accuracy": 0.0,
         "heal_strength": 0.0,   # v29: global +Heal strength (set bonuses)
+        # v30: the ten back-filled bonus families (patch_empty_bonus_tiers).
+        # Multi-attrib game records were expanded per attrib with EQUAL values,
+        # so each total below counts ONE canonical attrib and skips its mirrors
+        # (verified: every slow-resist record carries RechargeTime, every
+        # movement record RunningSpeed, every KB record Knockback).
+        "kb_protection": 0.0,       # protection POINTS (mag), not a percent
+        "slow_resist": 0.0,         # resists −recharge and −movement debuffs
+        "mez_duration": {m: 0.0 for m in MEZ_DURATION_EFFECTS},
+        "movement": 0.0,            # own run/fly/jump speed
+        "range": 0.0,               # own power range
+        "end_discount": 0.0,        # own powers' endurance costs reduced
+        "slow_strength": 0.0,       # your cast slows are stronger
+        "kb_strength": 0.0,         # your cast knockback is stronger
     }
 
 
@@ -1152,7 +1189,13 @@ def _apply_effect(totals, eff):
             for t in RESISTANCE_TYPES:
                 totals["resistance"][t] += val
     elif et == "RechargeTime":
-        totals["recharge"] += val
+        # v30: aspect disambiguates — 'Res' is the recharge component of a SLOW
+        # RESIST bonus (Winter sets etc.), never a +recharge buff. Without this
+        # branch the back-filled records would pollute the recharge total.
+        if eff.get("aspect") == "Res":
+            totals["slow_resist"] += val
+        else:
+            totals["recharge"] += val
     elif et == "Recovery":
         totals["recovery"] += val
     elif et == "Regeneration":
@@ -1167,6 +1210,27 @@ def _apply_effect(totals, eff):
         # v29: heal STRENGTH (Numina 4pc +6% etc.) — multiplies the healing the
         # build's own heal powers put out; unrelated to +HP or +Regeneration.
         totals["heal_strength"] += val
+    # v30: the back-filled families. Multi-attrib records were expanded with
+    # equal values, so one canonical attrib counts and its mirrors are skipped
+    # (SpeedFlying/SpeedJumping/JumpHeight mirror SpeedRunning; Knockup mirrors
+    # Knockback) — adding them all would double/quadruple-count one bonus.
+    elif et == "Knockback":
+        if eff.get("aspect") == "Cur":
+            totals["kb_protection"] += -val    # −3.0 Current = mag 3 protection
+        else:
+            totals["kb_strength"] += val
+    elif et == "SpeedRunning":
+        if eff.get("aspect") == "Cur":
+            totals["movement"] += val
+        elif eff.get("aspect") == "Str":
+            totals["slow_strength"] += val
+        # 'Res' mirror: the slow-resist total is counted on RechargeTime above
+    elif et == "Range":
+        totals["range"] += val
+    elif et == "EnduranceDiscount":
+        totals["end_discount"] += val
+    elif et in MEZ_DURATION_EFFECTS:
+        totals["mez_duration"][et] += val
 
 
 def _to_display(totals, res_cap=RESISTANCE_HARD_CAP, sec_caps=None, ctx=None):
@@ -1237,6 +1301,27 @@ def _to_display(totals, res_cap=RESISTANCE_HARD_CAP, sec_caps=None, ctx=None):
         "accuracy": {"value": pct(totals["accuracy"]), "label": "+% Accuracy"},
         "heal_strength": {"value": pct(totals.get("heal_strength", 0.0)),
                           "label": "+% Heal strength"},
+        # v30: the back-filled bonus families. kb_protection is protection
+        # POINTS (mag), everything else a percent. The frontend shows only
+        # nonzero rows, so builds without these bonuses stay uncluttered.
+        "bonus_extras": {
+            "kb_protection": {"value": round(totals.get("kb_protection", 0.0), 1),
+                              "label": "Knockback protection (mag)"},
+            "slow_resist": {"value": pct(totals.get("slow_resist", 0.0)),
+                            "label": "Slow resistance (recharge + movement)"},
+            "mez_duration": {m: pct(v) for m, v in
+                             (totals.get("mez_duration") or {}).items() if v},
+            "movement": {"value": pct(totals.get("movement", 0.0)),
+                         "label": "+% Movement speed"},
+            "range": {"value": pct(totals.get("range", 0.0)),
+                      "label": "+% Range"},
+            "end_discount": {"value": pct(totals.get("end_discount", 0.0)),
+                             "label": "+% Endurance discount"},
+            "slow_strength": {"value": pct(totals.get("slow_strength", 0.0)),
+                              "label": "+% Slow strength"},
+            "kb_strength": {"value": pct(totals.get("kb_strength", 0.0)),
+                            "label": "+% Knockback strength"},
+        },
         "caps": {"defense_soft_cap": DEFENSE_SOFT_CAP,
                  "resistance_hard_cap": res_cap,
                  "max_hp_cap": sec_caps.get("max_hp"),

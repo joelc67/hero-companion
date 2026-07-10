@@ -51,16 +51,38 @@ def _squash(s):
 _SNAP_ALIASES = {"debiliative_action": "debilitative_action"}
 
 
+# v30 back-filled families (patch_empty_bonus_tiers): canonical family kinds,
+# aspect-disambiguated on BOTH sides (Current=own stat, Strength=your casts,
+# Resistance=debuff resist — the same rule the patcher encodes by).
+_MOVE = {"runningspeed", "flyingspeed", "jumpingspeed", "jumpheight"}
+_KB = {"knockback", "knockup"}
+_MEZ = {"confused", "held", "stunned", "immobilized", "sleep", "terrorized"}
+
+
 def _gkind(attribs, aspect):
     a0 = (attribs[0] if attribs else "").lower()
     asp = (aspect or "").lower()
     dt = a0.replace("_dmg", "").replace("negative_energy", "negative")
     if a0 == "regeneration": return "Regeneration", None
     if a0 == "recovery": return "Recovery", None
-    if a0 == "rechargetime": return "RechargeTime", None
+    if a0 == "rechargetime":
+        # aspect Resistance = the recharge leg of a SLOW RESIST bonus, never +rech
+        return ("SlowResist" if asp == "resistance" else "RechargeTime"), None
     if a0 == "hitpoints": return "HitPoints", None
     if a0 == "tohit": return "ToHit", None
     if a0 == "accuracy" and asp == "strength": return "Accuracy", None
+    if a0 in _MOVE:
+        if asp == "current": return "Movement", None
+        if asp == "resistance": return "SlowResist", None
+        if asp == "strength": return "SlowStrength", None
+    if a0 in _KB:
+        if asp == "current": return "KBProtection", None
+        if asp == "strength": return "KBStrength", None
+    if a0 in _MEZ and asp == "strength":
+        return a0.capitalize(), None
+    if a0 == "range" and asp == "strength": return "Range", None
+    if a0 == "endurancediscount" and asp == "strength":
+        return "EnduranceDiscount", None
     # v29: heal strength tracked (the 11 Numina-class bonuses back-filled by
     # tools/patch_heal_strength.py; engine totals["heal_strength"], scorer
     # multiplies heal output). Verified below like every other kind.
@@ -90,17 +112,34 @@ def main():
     # and the squashed set name so every snapshot key resolves. A global-kind effect
     # stores damage_type "None"; normalize that to "" (the game side has no dtype
     # there) — this mismatch silently skipped every recharge/HP/regen/accuracy bonus.
+    _OUR_MOVE = {"SpeedRunning", "SpeedFlying", "SpeedJumping", "JumpHeight"}
+    _OUR_KB = {"Knockback", "Knockup"}
+
+    def _our_kind(e):
+        """Canonicalize a stored effect to the family kind _gkind emits. The
+        back-filled families are per-attrib records with equal values, so the
+        mirrors collapse onto one key (identical value overwrites harmlessly)."""
+        eff, asp = e.get("effect"), e.get("aspect")
+        if eff in _OUR_MOVE:
+            return {"Cur": "Movement", "Res": "SlowResist", "Str": "SlowStrength"}.get(asp)
+        if eff == "RechargeTime" and asp == "Res":
+            return "SlowResist"
+        if eff in _OUR_KB:
+            return {"Cur": "KBProtection", "Str": "KBStrength"}.get(asp)
+        return eff
+
     ours = {}
     for rec in srv.SET_BONUSES.values():
         for b in rec.get("bonuses", []):
             pc = b.get("pieces_required")
             for e in b.get("effects", []):
-                if e.get("effect") and e.get("value"):
+                kind = _our_kind(e)
+                if kind and e.get("value"):
                     dt = str(e.get("damage_type") or "").lower().replace("negative_energy", "negative")
                     if dt in ("none", "special"):
                         dt = ""
                     for nm in {_norm(rec["name"]), _squash(rec["name"])}:
-                        ours[(nm, pc, e["effect"], dt)] = round(e["value"], 4)
+                        ours[(nm, pc, kind, dt)] = round(e["value"], 4)
 
     drift = []
     missing = []
@@ -139,10 +178,15 @@ def main():
 
     covered = matched + damage_conv + len(drift)
     print(f"Coverage: {covered} of {expected} mappable game set-bonus effects found in our data.")
-    print("STATED EXCLUSION (v30 candidate): the build's OWN +damage% set bonuses "
+    print("STATED EXCLUSION (v31 candidate): the build's OWN +damage% set bonuses "
           "verify here but are consumed nowhere (engine offense takes only "
           "incarnate DamageBuff); henchman damage-family inheritance waits on the "
           "same plumbing — see _gkind comment.")
+    print("STATED EXCLUSIONS (v30, display-only by Joel's approved scope): "
+          "Movement / Range / EnduranceDiscount / SlowStrength / KBStrength "
+          "bonuses verify here and land in engine totals + the IO card, but the "
+          "SCORER does not value them (scored v30 families: KB protection, slow "
+          "resist, mez duration on control roles).")
     print(f"Set-bonus values matched to the live game: {matched} "
           f"(+ {damage_conv} damage-buff at the known x2.5 convention).")
     print(f"REAL DRIFT: {len(drift)}")

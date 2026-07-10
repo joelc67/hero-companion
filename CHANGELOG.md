@@ -2,6 +2,28 @@
 
 ## Unreleased
 
+- **Your core armor toggles are enhanced like they deserve (model v30).** The
+  optimizer used to treat a met survival target as "done" — past that point,
+  enhancing your strongest shields was worth literally nothing to it, so
+  powers like Fire Shield or Temp Invulnerability could end up as two-slot
+  parking spots for global IOs while a free minor power got a full set.
+  That threshold is gone: survival keeps its real, continuously-measured
+  value all the way to your archetype's caps, so the strongest armor powers
+  get their resistance and defense aspects enhanced first — with endurance
+  reduction riding along — and the weaker or free powers take the mule duty.
+  Global IOs now also prefer the cheapest hosts, so an expensive toggle
+  like Weave keeps its slots for real enhancement. (Thanks to Maelwys for
+  the precise field report that pinned this down.)
+- **Ten set-bonus families the planner literally could not see now count
+  (model v30):** knockback protection, slow resistance, all six mez-duration
+  bonuses (confuse, hold, stun, sleep, immobilize, fear), movement speed,
+  range, and endurance discount — 103 bonus tiers back-filled straight from
+  the game client's own data, verified value-for-value. They appear in your
+  totals and on every enhancement card (the "not yet in totals" note is
+  gone), and the optimizer's scoring now values knockback protection, slow
+  resistance, and your controls' longer mez durations. The three stackable
+  −knockback IOs (Karma, Steadfast Protection, Blessing of the Zephyr) are
+  priced too — mag 4 each, exactly as the game grants them.
 - **Preview toggles now stack — every combination the game allows.** The
   one-preview-at-a-time rule blocked real play: Build Up + Aim is the classic
   opener, Farsight + Group Invisibility + Power Boost is how a Time build

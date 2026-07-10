@@ -3638,6 +3638,28 @@ function renderStats(t) {
     }
     return `<div class="o-row"><span>${k}${badge}</span><span>+${d.value}%${over}${abs}</span></div>`;
   }).join("");
+  // v30 bonus extras (the back-filled families) — only nonzero rows, so builds
+  // without these bonuses see nothing new. KB protection is points, not %.
+  const bx = t.bonus_extras || {};
+  const extraRows = [];
+  if (bx.kb_protection && bx.kb_protection.value) {
+    extraRows.push(`<div class="o-row"><span>KB protection</span><span>mag ${bx.kb_protection.value}</span></div>`);
+  }
+  if (bx.slow_resist && bx.slow_resist.value) {
+    extraRows.push(`<div class="o-row"><span>Slow resistance</span><span>+${bx.slow_resist.value}%</span></div>`);
+  }
+  const mezNames = {Confused: "Confuse", Held: "Hold", Stunned: "Stun",
+                    Immobilized: "Immobilize", Sleep: "Sleep", Terrorized: "Fear"};
+  Object.entries(bx.mez_duration || {}).forEach(([m, v]) => {
+    if (v) extraRows.push(`<div class="o-row"><span>${mezNames[m] || m} duration</span><span>+${v}%</span></div>`);
+  });
+  [["movement", "Movement speed"], ["range", "Range"], ["end_discount", "Endurance discount"],
+   ["slow_strength", "Slow strength"], ["kb_strength", "Knockback strength"]].forEach(([k, lab]) => {
+    if (bx[k] && bx[k].value) extraRows.push(`<div class="o-row"><span>${lab}</span><span>+${bx[k].value}%</span></div>`);
+  });
+  if (extraRows.length) {
+    $("other-stats").innerHTML += extraRows.join("");
+  }
   renderOffense(t.offense);
   // Endurance honesty rule (Σ-checkbox redesign): say so when the checked toggle
   // set + attack chain drains faster than recovery sustains.
