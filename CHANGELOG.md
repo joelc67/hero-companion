@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## Unreleased
+## 0.12.18 — 2026-07-10
 
 - **Your core armor toggles are enhanced like they deserve (model v30).** The
   optimizer used to treat a met survival target as "done" — past that point,
