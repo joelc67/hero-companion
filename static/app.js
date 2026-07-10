@@ -2178,20 +2178,24 @@ function renderPowers() {
   renderConverterGuide();
 }
 
-// ── Totals-checkbox redesign (Joel, ideas.md "the Σ checkbox is wrong for most
-// power types"): the uniform checkbox lied about what the game actually allows.
-// Four states, color + glyph coded (never color alone):
-//   locked (🔒 always-on autos/passives/inherents — no off-state exists in-game)
-//   toggle (⏻ default ON — its legitimate checkbox home: mule hosts, what-ifs)
-//   click_buff (⟳ timed self-buff/burst clicks — Hasten/Build Up/godmodes — default
-//     OFF, one preview at a time; game data doesn't cleanly separate "cycling
-//     utility buff" from "attack-window burst", so both render as this one kind)
-// Plain Click attacks (no self_effects) get no chip at all — a checkbox there would
-// be a false control, since they have no self-total to include or exclude.
-function _clickUptimeNote(tk) {
+// ── Totals-checkbox redesign (Joel's four-state visual language, completed
+// 0.12.18 on his Maelwys-round-4 ruling): color + glyph coded, never color
+// alone — and NO exclusivity anywhere. Every combination the old one-at-a-time
+// rule blocked is real play (Build Up+Aim, Farsight+Group Invis+Power Boost,
+// Meltdown+Shadow Meld); honesty in labeling replaced restriction:
+//   locked (🔒 autos/passives/inherents — no off-state exists in-game)
+//   toggle (⏻ default ON — mule hosts, circumstantial what-ifs)
+//   cycle  (⟳ default OFF — a window its uptime math can sustain; shows the
+//           real uptime/perma figure at the build's recharge)
+//   burst  (💥 default OFF — a short strike window, ≤29s and not sustainable;
+//           checking it is a BURST view, and the totals panel says so loudly)
+// The cycle/burst split is LABELING ONLY (duration + the build's own uptime
+// math decide; the 30–89s middle band earns whichever its uptime supports).
+// Plain Click attacks (no self_effects) get no chip — a false control.
+function _clickUptime(tk) {
   const rech = tk.base_recharge || 0;
   const dur = tk.buff_duration || 0;
-  if (!rech || !dur) return "";
+  if (!rech || !dur) return null;
   // The game's formula: local slotted recharge (server-computed, post-ED) and
   // global recharge ADD in one denominator. Both matter — Hasten's own IOs
   // carry a third of its uptime.
@@ -2199,10 +2203,26 @@ function _clickUptimeNote(tk) {
   const effRecharge = rech / (1 + globalRech / 100 + (tk.recharge_enh || 0));
   // Perma when the window covers cast-to-cast cycle (recharge starts on cast;
   // the cast itself is negligible next to these windows).
-  const uptime = Math.max(0, Math.min(1, dur / effRecharge));
+  return Math.max(0, Math.min(1, dur / effRecharge));
+}
+function _clickUptimeNote(tk) {
+  const uptime = _clickUptime(tk);
+  if (uptime == null) return "";
   return uptime >= 0.95
     ? " — perma at your current recharge when previewed"
     : ` — ~${Math.round(uptime * 100)}% uptime at your current recharge`;
+}
+// Burst vs cycle, per Joel's ruling: ≥90s windows (Hasten/Farsight class, 141
+// powers) are cycles by duration; the ≤29s cluster (Build Up/Aim, 279) and the
+// 30–89s middle band (Meltdown/Soul Drain, 175) earn whichever label the
+// build's OWN uptime math supports — Parry at 3s recharge is effectively
+// always-on and wears the cycle chip its math deserves.
+function _isBurst(tk) {
+  const dur = tk.buff_duration || 0;
+  if (!dur || dur >= 90) return false;
+  const uptime = _clickUptime(tk);
+  if (uptime == null) return dur <= 29;   // no recharge data: the duration cluster decides
+  return uptime < 0.5;
 }
 // A freshly solved/imported power often carries no explicit include_in_totals yet
 // (unset, not false) — the checkbox must still communicate what the ENGINE actually
@@ -2229,24 +2249,32 @@ function totalsChipHtml(pw, idx) {
       <input type="checkbox" ${included ? "checked" : ""}
         onchange="toggleInclude(${idx}, this.checked)"></label>`;
   }
-  // click_buff — exclusive preview, default off, burst numbers kept visually distinct.
-  // EXPLICIT check, not a fallthrough: an unknown future kind must render as "no
-  // chip" (safe), never silently borrow this branch's semantics (ideas.md caution).
+  // click_buff — previews stack freely (0.12.18: exclusivity removed, every
+  // blocked combination was real play), default off, visually split cycle vs
+  // burst by the duration + uptime math. EXPLICIT check, not a fallthrough: an
+  // unknown future kind must render as "no chip" (safe), never silently
+  // borrow this branch's semantics (ideas.md caution).
   if (tk.kind !== "click_buff") return "";
   const note = _clickUptimeNote(tk);
   if (tk.amplifier) {
     // Power Boost class: previews as a MULTIPLIER on other checked powers'
-    // buffable defense/ToHit, not as its own stat line. Own exclusivity group
-    // so it can preview together with the buff it amplifies.
+    // buffable defense/ToHit, not as its own stat line.
     const pct = Math.round((tk.amp_scale || 0) * 100);
     return `<label class="totals-chip totals-amp ${included ? "active" : ""}"
-        title="Preview this amplifier: while its window is up, your buffable defense/ToHit values are boosted +${pct}% strength (effects the game marks 'Ignores Buffs' are skipped). Combine with one buff preview — e.g. Power Boost + Farsight to check the soft cap${note}.">
+        title="Preview this amplifier: while its window is up, your buffable defense/ToHit values are boosted +${pct}% strength (effects the game marks 'Ignores Buffs' are skipped). Stacks with your other previews — e.g. Power Boost + Farsight + Group Invisibility to check the soft cap${note}.">
       <span class="tc-glyph" aria-hidden="true">⚡</span>
       <input type="checkbox" ${included ? "checked" : ""}
         onchange="toggleInclude(${idx}, this.checked)"></label>`;
   }
+  if (_isBurst(tk)) {
+    return `<label class="totals-chip totals-burst ${included ? "active" : ""}"
+        title="Preview this STRIKE WINDOW in your totals — a short burst (${tk.buff_duration}s), not sustained numbers. Previews stack freely; the totals panel flags the burst view while any are checked${note}.">
+      <span class="tc-glyph" aria-hidden="true">💥</span>
+      <input type="checkbox" ${included ? "checked" : ""}
+        onchange="toggleInclude(${idx}, this.checked)"></label>`;
+  }
   return `<label class="totals-chip totals-cycle ${included ? "active" : ""}"
-      title="Preview this click's window in your totals — in-game these are temporary, so only one preview runs at a time${note}.">
+      title="Preview this cycling buff's window in your totals — previews stack freely${note}.">
     <span class="tc-glyph" aria-hidden="true">⟳</span>
     <input type="checkbox" ${included ? "checked" : ""}
       onchange="toggleInclude(${idx}, this.checked)"></label>`;
@@ -2776,22 +2804,15 @@ window.clearSlot = function (ev, powerIdx, slotIdx) {
 
 window.toggleInclude = function (idx, checked) {
   recordEdit();
-  const pw = build.powers[idx];
-  // Burst/cycle previews (Build Up, Hasten class) are exclusive: the game only
-  // lets you have one such window meaningfully "active" at a time. AMPLIFIERS
-  // (Power Boost class) form their OWN exclusivity group — one amplifier plus
-  // one buff can preview together, which is the whole point (Power Boost +
-  // Farsight = "does this build actually softcap?", the Maelwys case).
-  if (checked && pw.totals_kind && pw.totals_kind.kind === "click_buff") {
-    const myGroup = !!pw.totals_kind.amplifier;
-    build.powers.forEach((p, i) => {
-      if (i !== idx && p.totals_kind && p.totals_kind.kind === "click_buff"
-          && !!p.totals_kind.amplifier === myGroup) {
-        p.include_in_totals = false;
-      }
-    });
-  }
-  pw.include_in_totals = checked;
+  // 0.12.18 (Joel's ruling on Maelwys round 4): NO exclusivity — previews
+  // stack freely, because every combination the one-at-a-time rule blocked
+  // was real play (Build Up+Aim, Farsight+Group Invis+Power Boost, Meltdown+
+  // Shadow Meld). Honest labeling replaced restriction: the burst-view note
+  // in the totals panel does the warning. The removal also retires the
+  // stale-chip desync (a power silently unchecked without a repaint —
+  // Maelwys's "still toggled on while not counted").
+  build.powers[idx].include_in_totals = checked;
+  renderPowers();   // chips carry state-dependent styling (.active) — repaint
   recompute();
 };
 
@@ -3627,6 +3648,19 @@ function renderStats(t) {
       .map(([f, v]) => `${f.toLowerCase()} +${Math.round(v * 100)}%`).join(", ");
     note = `⚡ Previewing ${sp.sources.join(" + ")}: buffable ${fams} strength `
       + `during its window — a burst view, not sustained totals. `
+      + (note || "");
+  }
+  // LOUD burst-view flag (Joel's ruling: honest labeling instead of
+  // restriction) — checked strike-window buffs mean these totals show an
+  // alpha moment, not what the build sustains.
+  const bursts = (build.powers || []).filter(p =>
+    p.totals_kind && p.totals_kind.kind === "click_buff"
+    && !p.totals_kind.amplifier && p.include_in_totals === true
+    && _isBurst(p.totals_kind)).map(p => p.display_name);
+  if (bursts.length) {
+    note = `💥 BURST VIEW: ${bursts.join(" + ")} — a strike window `
+      + `(${bursts.length > 1 ? "windows" : "window"} of seconds), not `
+      + `sustained totals. Uncheck to see what the build holds all fight. `
       + (note || "");
   }
   const nBoostPv = Object.keys(PREVIEW_BOOSTS).length;

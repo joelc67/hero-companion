@@ -1,5 +1,21 @@
 # Hero Companion — What's New
 
+## Unreleased
+
+- **Preview toggles now stack — every combination the game allows.** The
+  one-preview-at-a-time rule blocked real play: Build Up + Aim is the classic
+  opener, Farsight + Group Invisibility + Power Boost is how a Time build
+  checks its soft cap, Meltdown + Shadow Meld is a genuine defensive layer.
+  All of it now stacks freely. Honesty replaced restriction: short strike
+  windows (Build Up class) wear their own 💥 chip, and while any are checked
+  the totals panel says loudly that you're looking at a BURST VIEW — a window
+  of seconds, not what the build sustains. Cycling buffs (Hasten, Farsight
+  class) keep the ⟳ chip with their real uptime at your build's recharge —
+  and a short-window power your recharge makes effectively permanent (Parry
+  spam) earns the cycle label its math deserves. Also fixed: unchecking
+  behavior could leave a chip LOOKING checked while its power no longer
+  counted — chips now always repaint with their true state.
+
 ## 0.12.17 — 2026-07-10
 
 - **The "count in totals" checkbox now matches what the game actually allows.**
