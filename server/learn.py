@@ -30,7 +30,13 @@ if getattr(sys, "frozen", False):
 else:
     _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     LOG_PATH = os.path.join(_ROOT, "benchmarks", "exploration_log.jsonl")
-CHAMPIONS_PATH = os.path.join(_ROOT, "benchmarks", "champions.json")
+# HC_CHAMPIONS_PATH: write-shard override for PARALLEL certification workers
+# (roster build-out 2026-07-10): each worker saves champions to its own shard
+# so no two processes ever rewrite the same file; shards merge into the real
+# champions.json after validation (tools/merge_champion_shards.py). Warm-start
+# reads follow the same path — harmless for NEW contexts (nothing to warm from).
+CHAMPIONS_PATH = (os.environ.get("HC_CHAMPIONS_PATH")
+                  or os.path.join(_ROOT, "benchmarks", "champions.json"))
 
 
 def ctx_key(archetype, primary, secondary, content):

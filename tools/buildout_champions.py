@@ -62,13 +62,25 @@ def main():
                     help="solve budget per context (default 25000 = certification)")
     ap.add_argument("--restarts", type=int, default=6,
                     help="perturb-and-reclimb restarts per context (default 6)")
+    ap.add_argument("--only", default="",
+                    help="comma-separated archetype class names — this worker "
+                         "converges ONLY those contexts (parallel sharding; "
+                         "pair with HC_CHAMPIONS_PATH so workers never share "
+                         "a write file)")
     args = ap.parse_args()
+    only = {s.strip() for s in args.only.split(",") if s.strip()}
 
     client = srv.app.test_client()
+    # Skip-check reads the REAL champions.json (main roster) AND, when sharded,
+    # this worker's own shard — an interrupted worker resumes cleanly.
     champs = json.load(open(os.path.join(ROOT, "benchmarks", "champions.json"),
                             encoding="utf-8"))
-    todo = [k for k in NEW_CONTEXTS if k not in champs]
-    skipped = [k for k in NEW_CONTEXTS if k in champs]
+    shard = os.environ.get("HC_CHAMPIONS_PATH")
+    if shard and os.path.exists(shard):
+        champs.update(json.load(open(shard, encoding="utf-8")))
+    pool = [k for k in NEW_CONTEXTS if not only or k.split("|")[0] in only]
+    todo = [k for k in pool if k not in champs]
+    skipped = [k for k in pool if k in champs]
     for k in skipped:
         print(f"already certified, skipping: {k}")
     print(f"{len(todo)} of {len(NEW_CONTEXTS)} contexts to converge")
@@ -120,7 +132,8 @@ def main():
         done += 1 if (cert or {}).get("converged") else 0
         print(f"  {conv:16s} {status:16s} {key}")
     print(f"{done} of {len(todo)} new contexts converged "
-          f"({len(NEW_CONTEXTS)} ordered, {len(skipped)} pre-existing)")
+          f"({len(pool)} in this worker's pool of {len(NEW_CONTEXTS)} ordered, "
+          f"{len(skipped)} pre-existing)")
     print(f"total: {(time.time() - t0) / 60:.1f} min")
 
 
