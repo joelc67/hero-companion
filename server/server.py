@@ -5812,6 +5812,11 @@ _ROLE_RANK = {   # easiest/most effective FIRST — but every entry is a valid r
     "tank":    ["Class_Tanker", "Class_Brute", "Class_Scrapper", "Class_Stalker", "Class_Sentinel"],
     "control": ["Class_Controller", "Class_Dominator"],
     "pets":    ["Class_Mastermind"],
+    # "a bit of everything": ATs whose two sets natively span roles (damage+support,
+    # damage+tank, control+support) — the Kheldians ARE the canonical generalists
+    # ("the whole team of diversity in one character", the role-lens solo blend).
+    "mixed":   ["Class_Corruptor", "Class_Controller", "Class_Brute", "Class_Sentinel",
+                "Class_Mastermind", "Class_Warshade", "Class_Peacebringer"],
 }
 _AT_FLAVOR = {
     "Class_Defender": "strongest buffs/debuffs — support is your PRIMARY",

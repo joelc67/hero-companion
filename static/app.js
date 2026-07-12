@@ -758,7 +758,15 @@ window.pickDiscovery = async function (at) {
   await wizLoadPowersets();
   // Discovery answers ARE the user's choices — tag them so, and gate the build
   // (travel stays unanswered on purpose: it is always an explicit pick).
-  $("wiz-role").value = $("disc-role").value; wizSetSrc("role", $("disc-role").value ? "you" : "");
+  // Discovery vocabulary → the Role question's values: "control" IS the
+  // Controller/Lockdown choice; "pets" has no role equivalent (commanding pets
+  // is an archetype, not an objective) so the role question stays UNANSWERED
+  // and the no-defaults gate makes it an explicit pick. The old direct copy set
+  // a nonexistent option value, which silently BLANKED the select while still
+  // tagging it "your pick".
+  const _wr = ({ control: "controller" })[$("disc-role").value] || $("disc-role").value;
+  $("wiz-role").value = [...$("wiz-role").options].some(o => o.value === _wr) ? _wr : "";
+  wizSetSrc("role", $("wiz-role").value ? "you" : "");
   $("wiz-content").value = $("disc-content").value; wizSetSrc("content", $("disc-content").value ? "you" : "");
   $("wiz-exposure").value = $("disc-exposure").value; wizSetSrc("exposure", $("disc-exposure").value ? "you" : "");
   wizGateBuild();
@@ -935,7 +943,8 @@ async function buildRespec() {
 let NATURAL_ROLES = {};
 const ROLE_LABELS = { controller: "Controller / Lockdown", debuffer: "Debuffer",
                      buffer: "Buffer / Support", healer: "Healer",
-                     damage: "Damage dealer", tank: "Tank / Survivor" };
+                     damage: "Damage dealer", tank: "Tank / Survivor",
+                     mixed: "Mixed role / Generalist" };
 
 let SET_ROLE_EXTENSIONS = {};
 // The user's answer to "if we split your focus, what percentage on each role?" —

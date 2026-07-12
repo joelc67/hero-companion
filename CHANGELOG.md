@@ -1,5 +1,17 @@
 # Hero Companion — What's New
 
+## Unreleased
+
+- **"Mixed role / Generalist" now appears everywhere a role is asked.** It was
+  always in the main Role dropdowns, but the "Start a new character" discovery
+  flow ("I want to…") never offered it — now "do a bit of everything
+  (generalist)" is a first-class answer there, with its own archetype
+  recommendations (the sets-span-roles picks, Kheldians included). Also fixed
+  on the way: choosing "control / lock down" or "command pets" in discovery
+  used to silently blank the wizard's Role question while marking it answered —
+  control now carries over as Controller/Lockdown, and pets honestly leaves
+  Role for you to pick (commanding pets is an archetype, not a role).
+
 ## 0.12.18 — 2026-07-10
 
 - **Your core armor toggles are enhanced like they deserve (model v30).** The
