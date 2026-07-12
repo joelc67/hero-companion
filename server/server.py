@@ -824,6 +824,14 @@ _FORM_EXPLAIN = {
              "pure-blasting shape. The planner serves a champion built AROUND "
              "living in Nova: the form power is a permanent part of the build "
              "and the rest supports that way of playing."),
+    "triform": ("All three — tri-form (swap between shapes)",
+                "The classic way to play: you swap shapes mid-fight — Nova to "
+                "blast, Dwarf when things get rough, human for everything else. "
+                "The planner serves a champion that carries BOTH form powers "
+                "plus the human kit, with the slotting spread to make every "
+                "shape worth being in. One honest note: the planner prices what "
+                "each shape gives you, not the swapping itself — your rotation "
+                "skill is yours."),
 }
 
 

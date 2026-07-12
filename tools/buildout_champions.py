@@ -62,16 +62,27 @@ NEW_CONTEXTS = [
     "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|nova",
     "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|dwarf",
     "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|nova",
+    # Joel (2026-07-12): "people might play a combo, using all form types" —
+    # TRI-FORM is the classic Kheldian playstyle. Both form powers pinned;
+    # the build carries all three shapes.
+    "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|triform",
+    "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|triform",
 ]
 
-# (archetype, form) -> the form power that champion is BUILT AROUND.
+_PB_DWARF = "Peacebringer_Defensive.Luminous_Aura.White_Dwarf"
+_PB_NOVA = "Peacebringer_Offensive.Luminous_Blast.Bright_Nova"
+_WS_DWARF = "Warshade_Defensive.Umbral_Aura.Black_Dwarf"
+_WS_NOVA = "Warshade_Offensive.Umbral_Blast.Dark_Nova"
+# (archetype, form) -> the form power SET that champion is BUILT AROUND.
 FORM_POWERS = {
-    ("Class_Peacebringer", "dwarf"): "Peacebringer_Defensive.Luminous_Aura.White_Dwarf",
-    ("Class_Peacebringer", "nova"): "Peacebringer_Offensive.Luminous_Blast.Bright_Nova",
-    ("Class_Warshade", "dwarf"): "Warshade_Defensive.Umbral_Aura.Black_Dwarf",
-    ("Class_Warshade", "nova"): "Warshade_Offensive.Umbral_Blast.Dark_Nova",
+    ("Class_Peacebringer", "dwarf"): {_PB_DWARF},
+    ("Class_Peacebringer", "nova"): {_PB_NOVA},
+    ("Class_Peacebringer", "triform"): {_PB_DWARF, _PB_NOVA},
+    ("Class_Warshade", "dwarf"): {_WS_DWARF},
+    ("Class_Warshade", "nova"): {_WS_NOVA},
+    ("Class_Warshade", "triform"): {_WS_DWARF, _WS_NOVA},
 }
-KHELDIAN_FORMS = set(FORM_POWERS.values())
+KHELDIAN_FORMS = {_PB_DWARF, _PB_NOVA, _WS_DWARF, _WS_NOVA}
 
 
 def main():
@@ -128,7 +139,7 @@ def main():
         parts = key.split("|")
         at, prim, sec, content = parts[:4]
         form = parts[4] if len(parts) > 4 else None
-        pin = {FORM_POWERS[(at, form)]} if form else set()
+        pin = set(FORM_POWERS[(at, form)]) if form else set()
         # Kheldians: human contexts ban all forms; a form context bans the
         # forms it did NOT pin. Everyone else: just the stale roster.
         ban = set(stale_roster)
@@ -136,7 +147,8 @@ def main():
             ban |= KHELDIAN_FORMS - pin
         el = (time.time() - t0) / 60
         print(f"[{el:6.1f}m] {key}"
-              + (f"  [pin {sorted(pin)[0].split('.')[-1]}]" if pin else ""), flush=True)
+              + (f"  [pin {'+'.join(p.split('.')[-1] for p in sorted(pin))}]" if pin else ""),
+              flush=True)
         ap_res = client.post("/build/autopick", json={
             "archetype": at, "primary": prim, "secondary": sec,
             "content": content}).get_json()
