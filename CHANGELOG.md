@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- **Everything Companion Lite does, the full app now does too.** The Play Log
+  tab gains the Pulse Boards: "My private board" builds your personal board
+  (scorecards, market ledger, raids seen) from your own capture store, right
+  in the app — local data, never uploaded. "What sharing shows" previews the
+  sanitized public variant, so the choice to share is an informed one. And
+  the live-board feed itself: an explicit, reversible opt-in behind the full
+  terms (shown in the app before anything ever uploads), with the same
+  privacy guarantees as Lite — account names replaced with meaningless codes
+  before upload, private messages never captured, no machine details ever.
+  Capture itself was always shared between the two apps; if you run Lite
+  alongside, they coordinate exactly as before.
+
 - **"Mixed role / Generalist" now appears everywhere a role is asked.** It was
   always in the main Role dropdowns, but the "Start a new character" discovery
   flow ("I want to…") never offered it — now "do a bit of everything

@@ -1103,6 +1103,11 @@ body { overflow: hidden; }
 #gamelog h2 { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 #gl-refresh { width: auto; margin-left: auto; font-size: 12px; padding: 2px 10px; }
 .gl-cards { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; margin-top: 8px; }
+/* Pulse Boards row (Lite parity): board buttons + the feed consent/toggle block */
+.gl-pulse { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 10px;
+  padding-top: 8px; border-top: 1px solid var(--border); }
+.gl-pulse .ghost-btn { width: auto; font-size: 12px; padding: 3px 10px; }
+.gl-pulse details { max-width: 560px; }
 .gl-card { flex: 1 1 240px; background: var(--panel2); border: 1px solid var(--border);
   border-radius: 8px; padding: 10px 12px; min-width: 0; }
 .gl-card.gl-wide { flex: 2 1 420px; }

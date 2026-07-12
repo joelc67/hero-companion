@@ -16,6 +16,12 @@ datas = [
     # The gold-standard champions: converged best-known builds per context, so END USERS
     # get the 3-hour convergence run's results, not the heuristic fallback.
     ("benchmarks/champions.json", "benchmarks"),
+    # Pulse Boards parity (2026-07-12): the board renderer ships in the full app
+    # (private board + public preview routes build with it). The upload key
+    # (data/inbox_key.bin, gitignored) rides the ("data","data") entry above
+    # automatically when the release procedure drops it in — source checkouts
+    # have no key and the feed is structurally inert.
+    ("tools/build_pulse_boards.py", "tools"),
 ]
 # "Add Shortcuts.bat" belongs NEXT TO the exe (dist root), not inside _internal —
 # COLLECT datas land in _internal, so it's copied post-build by tools/finish_dist.py
@@ -26,7 +32,7 @@ datas += collect_data_files("pulp")        # bundles the CBC solver binary the I
 hiddenimports = [
     "server", "engine", "solver", "first_principles", "role_output", "converter",
     "leveling_schedule", "learn", "proc_pass", "mids_export", "mids_import",
-    "mids_powercust", "ingame_import", "ai_build", "claude_bridge",
+    "mids_powercust", "ingame_import", "ai_build", "claude_bridge", "pulse_feed",
     "flask_cors", "requests",
     "pystray", "pystray._win32",           # tray icon backend
 ]

@@ -3957,6 +3957,7 @@ def ingame_read():
 
 # ── GAME-LOG CAPTURE (P1: import + insights; see server/gamelog.py) ─────────
 import gamelog  # noqa: E402
+import pulse_feed  # noqa: E402  — Lite-parity: boards + consented feed
 
 if getattr(sys, "frozen", False):
     gamelog.STATE_DIR = os.path.join(os.environ.get("APPDATA") or os.path.expanduser("~"),
@@ -4051,6 +4052,10 @@ def gamelog_ingest():
         if stt.get("has_files"):
             newest = stt
     gamelog.save_state(st)
+    # Lite-parity feed: fires only with the release-build key + shown-terms
+    # consent + the reversible toggle on; self-throttled to one upload per
+    # 5 minutes and never raises (a feed hiccup must not break insights).
+    pulse_feed.maybe_upload()
     return jsonify({"ok": True, "report": agg, "insights": _gamelog_insights(),
                     "status": newest or {"has_files": False}})
 
@@ -4058,6 +4063,45 @@ def gamelog_ingest():
 @app.route("/gamelog/insights", methods=["GET"])
 def gamelog_insights():
     return jsonify({"ok": True, "insights": _gamelog_insights()})
+
+
+# ── Pulse Boards parity (Joel's order 2026-07-12: every Companion Lite feature
+# lives in the full app too). server/pulse_feed.py is the faithful port; the
+# capture/parser layer was ALREADY shared (gamelog), so this adds the three
+# Lite-only surfaces: private board, public preview, and the consented feed. ──
+@app.route("/gamelog/board")
+def gamelog_board():
+    """The PRIVATE local pulse board — your scorecards, market ledger, raids,
+    built from your own capture store. Local data only, never uploaded."""
+    try:
+        return pulse_feed.build_board(public=False)
+    except Exception as e:  # noqa: BLE001
+        return jsonify({"ok": False, "response": f"Board build failed: {e}"}), 500
+
+
+@app.route("/gamelog/board/public")
+def gamelog_board_public():
+    """The sanitized PUBLIC-variant preview — exactly what sharing shows,
+    so the choice to feed is an informed one."""
+    try:
+        return pulse_feed.build_board(public=True)
+    except Exception as e:  # noqa: BLE001
+        return jsonify({"ok": False, "response": f"Board build failed: {e}"}), 500
+
+
+@app.route("/gamelog/feed", methods=["GET", "POST"])
+def gamelog_feed():
+    """Feed status (GET) or consent/toggle (POST). POST accepts
+    {accept_terms: true} — records the shown-terms consent the uploader
+    requires — and/or {enabled: bool} — the remembered, reversible off switch.
+    Without the release-build upload key the feed is structurally inert."""
+    if request.method == "POST":
+        body = request.get_json(force=True) or {}
+        if body.get("accept_terms"):
+            pulse_feed.accept_terms()
+        if "enabled" in body:
+            pulse_feed.set_feed_enabled(bool(body.get("enabled")))
+    return jsonify({"ok": True, "terms": pulse_feed.TERMS, **pulse_feed.feed_status()})
 
 
 def _fit_set_index(fit_id):

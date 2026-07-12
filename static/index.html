@@ -288,6 +288,16 @@
       <div id="gl-setup" class="muted small"></div>
       <div id="gl-cards" class="gl-cards"></div>
       <div id="gl-coverage" class="muted small"></div>
+      <!-- PULSE BOARDS (Lite parity): the private board is YOUR data, local only;
+           the public preview shows exactly what feeding would share; the feed is
+           an explicit, reversible opt-in behind the shown terms. -->
+      <div id="gl-pulse" class="gl-pulse">
+        <button class="ghost-btn" type="button" onclick="window.open('/gamelog/board', '_blank')"
+          title="Your private pulse board — scorecards, market ledger, raids seen. Built from your own capture store; never uploaded.">🗞 My private board</button>
+        <button class="ghost-btn" type="button" onclick="window.open('/gamelog/board/public', '_blank')"
+          title="A preview of the sanitized PUBLIC board variant — exactly what sharing shows, so the choice to feed is informed.">👁 What sharing shows</button>
+        <span id="gl-feed-block"></span>
+      </div>
     </section>
     </div><!-- /build-col -->
 

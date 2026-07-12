@@ -1680,7 +1680,41 @@ function renderGamelog(ins, report, status) {
           + `<details><summary>show unrecognized samples</summary><pre class="gl-pre">${escHtml(report.unparsed_samples.join("\n"))}</pre></details>`
         : "");
   }
+  renderFeedBlock();
 }
+
+// ── Pulse Boards feed (Lite parity): explicit, reversible opt-in behind the
+// shown terms. Without the release-build key the whole block honestly says so. ──
+async function renderFeedBlock() {
+  const host = $("gl-feed-block");
+  if (!host) return;
+  const st = await api("/gamelog/feed");
+  if (!st || !st.ok) { host.innerHTML = ""; return; }
+  if (!st.key_present) {
+    host.innerHTML = `<span class="muted small">Live-board feed: not available in this build `
+      + `(no upload key — source runs and forks never feed).</span>`;
+    return;
+  }
+  if (!st.consented) {
+    host.innerHTML = `<details><summary class="muted small">📡 Feed the live Pulse Boards — read the terms first</summary>`
+      + `<pre class="gl-pre">${escHtml(st.terms)}</pre>`
+      + `<button class="ghost-btn" onclick="feedConsent()">I accept — start feeding</button></details>`;
+    return;
+  }
+  const on = !st.feed_disabled;
+  host.innerHTML = `<label class="incarnate-toggle" title="The feed sends your captured play data (pseudonymized) to the live Pulse Boards. Reversible any time.">`
+    + `<input type="checkbox" ${on ? "checked" : ""} onchange="feedToggle(this.checked)"> 📡 Feed the live boards`
+    + `</label> <span class="muted small">${on ? (st.uploaded_last ? `last upload ${escHtml(st.uploaded_last)}` : "waiting for new capture") : "off — nothing uploads"}`
+    + `${st.last_error ? ` · ${escHtml(st.last_error)}` : ""}</span>`;
+}
+window.feedConsent = async function () {
+  await api("/gamelog/feed", postJson({ accept_terms: true, enabled: true }));
+  renderFeedBlock();
+};
+window.feedToggle = async function (on) {
+  await api("/gamelog/feed", postJson({ enabled: on }));
+  renderFeedBlock();
+};
 
 // full_name -> family icon URL (server resolves Incarnate_{Slot}_{Family}_{Rarity}.png)
 let INC_ICON = {};
