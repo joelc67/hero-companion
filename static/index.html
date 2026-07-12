@@ -117,6 +117,15 @@
                your pick) — the wizard never presents a defaulted answer as a
                choice the user made. -->
           <label>Role <span id="wiz-src-role" class="wiz-src"></span><select id="wiz-role"></select></label>
+          <!-- KHELDIANS ONLY (per-form champion route): which form do you want to
+               live in? Each answer serves that form's own certified champion as
+               the base to build under. Hidden for every other archetype. -->
+          <label id="wiz-form-row" class="hidden">Form <span id="wiz-src-form" class="wiz-src"></span><select id="wiz-form">
+            <option value="">— choose —</option>
+            <option value="human">Human form (no shapeshifting)</option>
+            <option value="dwarf">Dwarf form (the tanky shape)</option>
+            <option value="nova">Nova form (the blasting shape)</option>
+          </select></label>
           <label>You fight from <span id="wiz-src-exposure" class="wiz-src"></span><select id="wiz-exposure">
             <option value="">— choose —</option>
             <option value="flex">flexible range</option>

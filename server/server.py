@@ -5055,14 +5055,16 @@ def _pick_epic(archetype, content, role="damage", exposure="flex"):
     return [(p["full_name"], p.get("level_available") or 35) for p in take]
 
 
-def _champion_picks(archetype, primary, secondary, content):
+def _champion_picks(archetype, primary, secondary, content, form=None):
     """If the deep optimizer has a CONVERGED-knowledge champion for this context, return it as the
     pick list (with legal pick levels) — the buttonless delivery of the learning loop: what the
     frontier chain proved best simply becomes what autopick proposes. Returns None if no champion
-    (or it fails current legality/data checks) — the heuristic proposer then runs as usual."""
+    (or it fails current legality/data checks) — the heuristic proposer then runs as usual.
+    `form` (Joel's per-form Kheldian route, 2026-07-12): dwarf/nova serves that
+    form's own champion — the build a player who wants that form bases theirs on."""
     try:
         import learn as _learn
-        champ = _learn.load_champion(archetype, primary, secondary, content)
+        champ = _learn.load_champion(archetype, primary, secondary, content, form)
     except Exception:  # noqa: BLE001
         return None
     if not champ or not all(fn in POWER_BY_FULL for fn in champ):
@@ -5098,13 +5100,16 @@ def _champion_picks(archetype, primary, secondary, content):
 
 
 def _auto_pick_powers(archetype, primary, secondary, role="damage",
-                      exposure="flex", content="general", travel="super_speed"):
+                      exposure="flex", content="general", travel="super_speed",
+                      form=None):
     # Default to the ARCHETYPE's role (same map the tray uses), not a blanket "damage" — a
     # Defender/Corruptor/MM picked with no explicit role must build support, not a blaster.
     role = role or _AT_DEFAULT_ROLE.get(archetype, "damage")
     # Deep-optimizer knowledge, delivered buttonlessly: if the frontier chain has a champion for
     # this context, propose THAT selection (Solve still slots it for the chosen role/goal).
-    champ = _champion_picks(archetype, primary, secondary, content)
+    # A Kheldian FORM choice serves that form's champion; no champion for the
+    # form yet → the heuristic runs and the UI says the champion is coming.
+    champ = _champion_picks(archetype, primary, secondary, content, form)
     if champ:
         return champ
     is_ctrl = role in ("controller", "control", "debuffer")
@@ -5842,7 +5847,7 @@ def build_autopick():
         return jsonify({"ok": False, "error": "Need archetype + primary + secondary."}), 400
     picks = _auto_pick_powers(at, primary, secondary, role=body.get("role"),
                               exposure=body.get("exposure"), content=body.get("content"),
-                              travel=body.get("travel"))
+                              travel=body.get("travel"), form=body.get("form"))
     powers = []
     for pk in picks:
         rec = POWER_BY_FULL.get(pk["full_name"])

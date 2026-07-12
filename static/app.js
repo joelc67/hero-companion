@@ -258,7 +258,19 @@ function wizSetSrc(key, src) {
     el.className = "wiz-src" + (src ? " wiz-src-" + src : "");
   }
 }
+const _KHELDIANS = ["Class_Peacebringer", "Class_Warshade"];
+const _wizIsKheldian = () => _KHELDIANS.includes($("wiz-at") && $("wiz-at").value);
+// Kheldians answer one more question — which FORM they want to live in (each
+// answer serves that form's own certified champion). Hidden for everyone else.
+function wizFormRow() {
+  const row = $("wiz-form-row");
+  if (!row) return;
+  const kheld = _wizIsKheldian();
+  row.classList.toggle("hidden", !kheld);
+  if (!kheld && $("wiz-form")) { $("wiz-form").value = ""; wizSetSrc("form", ""); }
+}
 const wizAnswered = () => ["wiz-role", "wiz-content", "wiz-exposure", "wiz-travel"]
+  .concat(_wizIsKheldian() ? ["wiz-form"] : [])
   .every(id => $(id) && $(id).value);
 // Build-my-kit stays disabled until all four questions are answered.
 function wizGateBuild() {
@@ -277,6 +289,7 @@ async function openWizard(mode) {
   cloneOptions($("wiz-content"), $("preset-content"));
   cloneOptions($("wiz-role"), $("preset-role"));
   cloneOptions($("disc-content"), $("preset-content"));
+  wizFormRow();   // Kheldians get the Form question; everyone else never sees it
   // NO DEFAULTS: unanswered questions show a real "— choose —" and block the
   // build. Values carried from your current character/presets stay (they ARE
   // your choices) and are tagged "from your setup".
@@ -901,13 +914,17 @@ async function buildRespec() {
   const role = $("wiz-role").value;
   const content = $("wiz-content").value;
   const exposure = $("wiz-exposure").value, travel = $("wiz-travel").value;
+  // Kheldian FORM route: "human" IS the classic 4-part champion (no form tag);
+  // dwarf/nova serve that form's own champion as the base to build under.
+  const form = _wizIsKheldian() && $("wiz-form").value !== "human"
+    ? $("wiz-form").value : null;
   build._exposure = exposure;   // carries into the solve so the def vector matches
   build._travel = travel;       // remembered so reopening restores YOUR answer
   $("wiz-build").disabled = true;
   $("wiz-status").textContent = "Choosing powers + solving the slotting…";
   try {
     await applyImportedBuild({ archetype: at, primary: pri, secondary: sec, pools: [], incarnates: {}, powers: [] });
-    const ap = await api("/build/autopick", postJson({ archetype: at, primary: pri, secondary: sec, role, content, exposure, travel }));
+    const ap = await api("/build/autopick", postJson({ archetype: at, primary: pri, secondary: sec, role, content, exposure, travel, form }));
     if (!ap || !ap.ok) { $("wiz-status").textContent = (ap && ap.error) || "Auto-pick failed."; return; }
     build.powers = ap.powers; build.imported = false;
     // Autopick chose pool + epic powers — sync the top-of-page dropdowns to them (the empty-powers
@@ -1354,7 +1371,11 @@ async function init() {
   if ($("update-check")) $("update-check").addEventListener("click", checkUpdates);
   if ($("update-btn")) $("update-btn").addEventListener("click", manualUpdateCheck);
   $("wiz-close").addEventListener("click", closeRespecWizard);
-  $("wiz-at").addEventListener("change", () => { wizLoadPowersets(); wizExplain(null); });
+  $("wiz-at").addEventListener("change", () => { wizLoadPowersets(); wizFormRow(); wizExplain(null); });
+  if ($("wiz-form")) $("wiz-form").addEventListener("change", () => {
+    wizSetSrc("form", $("wiz-form").value ? "you" : "");
+    wizGateBuild();
+  });
   $("wiz-build").addEventListener("click", buildRespec);
   $("disc-find").addEventListener("click", runDiscovery);
   // Each "How do you play" choice pops its tailored explanation; the summary panel

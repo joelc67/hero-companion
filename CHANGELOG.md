@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **Peacebringers and Warshades: pick your form, get its champion.** The
+  level-50 wizard now asks Kheldians one more question — Human, Dwarf, or
+  Nova — and serves that form's own certified champion build as the base to
+  build under. Each form champion is a committed one-form build (the Dwarf
+  champion is built around living in Dwarf), honestly labeled: form-swapping
+  play isn't modeled yet, so each certificate covers exactly the form it
+  names. Other archetypes never see the question.
+
 - **Everything Companion Lite does, the full app now does too.** The Play Log
   tab gains the Pulse Boards: "My private board" builds your personal board
   (scorecards, market ledger, raids seen) from your own capture store, right
