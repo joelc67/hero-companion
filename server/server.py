@@ -809,6 +809,44 @@ def _explain_role(archetype, role, primary, secondary, at_name):
     return {"label": label, "title": f"Role: {label}", "text": " ".join(parts)}
 
 
+_FORM_EXPLAIN = {
+    "human": ("Human form (no shapeshifting)",
+              "You stay in your normal shape and use your full power list. The "
+              "planner serves the human-form champion build: everything is "
+              "enhanced around the powers you cast as yourself."),
+    "dwarf": ("Dwarf form (the tanky shape)",
+              "You plan to spend your fights shifted into the Dwarf — the "
+              "durable, melee shape. The planner serves a champion built AROUND "
+              "living in Dwarf: the form power is a permanent part of the build "
+              "and the rest supports that way of playing."),
+    "nova": ("Nova form (the blasting shape)",
+             "You plan to spend your fights shifted into the Nova — the flying, "
+             "pure-blasting shape. The planner serves a champion built AROUND "
+             "living in Nova: the form power is a permanent part of the build "
+             "and the rest supports that way of playing."),
+}
+
+
+def _explain_form(form, archetype):
+    """The Form question, in plain language (Joel: the user must see WHY a
+    choice is even offered). Kheldians only; unanswered returns the WHY of the
+    question itself — that explains the question, it invents no answer."""
+    if archetype not in ("Class_Peacebringer", "Class_Warshade"):
+        return None
+    why = ("This question only exists for Peacebringers and Warshades: they can "
+           "shapeshift into a tanky Dwarf or a blasting Nova, and a build that "
+           "lives in one form wants different powers and slotting than one that "
+           "stays human. Your answer picks which certified champion build the "
+           "planner starts you from. Whichever you pick, you can still use every "
+           "form in game — this only chooses what the BUILD is optimized around.")
+    if not form or form not in _FORM_EXPLAIN:
+        return {"label": None, "title": "Why the Form question?", "text": why}
+    label, text = _FORM_EXPLAIN[form]
+    return {"label": label, "title": f"Form: {label}",
+            "text": text + " You can still use every form in game — this only "
+                           "chooses what the build is optimized around."}
+
+
 def _explain_content(archetype, content, primary, secondary, res_cap):
     if not content:              # unanswered explains nothing (no-defaults ruling)
         return None
@@ -974,6 +1012,7 @@ def explain_intent():
     content = body.get("content") or None
     exposure = body.get("exposure") or None
     travel = body.get("travel") or None
+    form = body.get("form") or None
     at = ARCH_BY_NAME.get(archetype) or {}
     at_name = at.get("display_name") or (archetype or "?").replace("Class_", "")
     res_cap = round((at.get("res_cap") or 0.75) * 100, 1)
@@ -985,6 +1024,7 @@ def explain_intent():
                                         res_cap),
             "exposure": _explain_exposure(exposure, primary, secondary),
             "travel": _explain_travel(travel, content, archetype),
+            "form": _explain_form(form, archetype),
             "summary": _summarize_intent(archetype, primary, secondary, role,
                                          content, exposure, travel, res_cap,
                                          at_name),

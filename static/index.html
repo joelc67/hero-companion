@@ -120,12 +120,19 @@
           <!-- KHELDIANS ONLY (per-form champion route): which form do you want to
                live in? Each answer serves that form's own certified champion as
                the base to build under. Hidden for every other archetype. -->
-          <label id="wiz-form-row" class="hidden">Form <span id="wiz-src-form" class="wiz-src"></span><select id="wiz-form">
+          <label id="wiz-form-row" class="hidden" title="Peacebringers and Warshades can shapeshift. Your answer picks which certified champion build you start from — you can still use every form in game.">Form <span id="wiz-src-form" class="wiz-src"></span><select id="wiz-form">
             <option value="">— choose —</option>
             <option value="human">Human form (no shapeshifting)</option>
             <option value="dwarf">Dwarf form (the tanky shape)</option>
             <option value="nova">Nova form (the blasting shape)</option>
           </select></label>
+          <!-- Visible BEFORE any answer (Joel: the user must see WHY a choice is
+               even offered) — toggled with the Form row, never shown to non-Kheldians. -->
+          <div id="wiz-form-why" class="muted small hidden" style="grid-column: 1 / -1;">
+            Why Form? Your archetype can shapeshift into a tanky Dwarf or a blasting
+            Nova. Pick the shape you plan to LIVE in and you'll start from a champion
+            build made for exactly that — you can still use every form in game.
+          </div>
           <label>You fight from <span id="wiz-src-exposure" class="wiz-src"></span><select id="wiz-exposure">
             <option value="">— choose —</option>
             <option value="flex">flexible range</option>

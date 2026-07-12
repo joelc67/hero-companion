@@ -263,10 +263,11 @@ const _wizIsKheldian = () => _KHELDIANS.includes($("wiz-at") && $("wiz-at").valu
 // Kheldians answer one more question — which FORM they want to live in (each
 // answer serves that form's own certified champion). Hidden for everyone else.
 function wizFormRow() {
-  const row = $("wiz-form-row");
+  const row = $("wiz-form-row"), why = $("wiz-form-why");
   if (!row) return;
   const kheld = _wizIsKheldian();
   row.classList.toggle("hidden", !kheld);
+  if (why) why.classList.toggle("hidden", !kheld);   // the WHY shows before any answer
   if (!kheld && $("wiz-form")) { $("wiz-form").value = ""; wizSetSrc("form", ""); }
 }
 const wizAnswered = () => ["wiz-role", "wiz-content", "wiz-exposure", "wiz-travel"]
@@ -831,7 +832,7 @@ async function wizExplain(changedKey) {
   // summary asserts nothing until Role AND Content exist (empty text = hidden).
   // The old whole-function gate on Role+Content silenced the Role and
   // Fight-from pop-ups on every first pass — they sit BEFORE Mostly-in.
-  const anyAnswered = ["wiz-role", "wiz-content", "wiz-exposure", "wiz-travel"]
+  const anyAnswered = ["wiz-role", "wiz-content", "wiz-exposure", "wiz-travel", "wiz-form"]
     .some(id => $(id) && $(id).value);
   if (!anyAnswered) {
     const pop = $("wiz-pop"), sum = $("wiz-summary");
@@ -851,6 +852,7 @@ async function wizExplain(changedKey) {
     content: ($("wiz-content") && $("wiz-content").value) || null,
     exposure: ($("wiz-exposure") && $("wiz-exposure").value) || null,
     travel: ($("wiz-travel") && $("wiz-travel").value) || null,
+    form: ($("wiz-form") && $("wiz-form").value) || null,
   })).catch(() => null);
   if (!r || !r.ok || seq !== WIZ_EXPLAIN_SEQ) return;
   if (changedKey) WIZ_POP_KEY = changedKey;
@@ -1375,6 +1377,7 @@ async function init() {
   if ($("wiz-form")) $("wiz-form").addEventListener("change", () => {
     wizSetSrc("form", $("wiz-form").value ? "you" : "");
     wizGateBuild();
+    wizExplain("form");   // the chosen form pops its plain-language explanation
   });
   $("wiz-build").addEventListener("click", buildRespec);
   $("disc-find").addEventListener("click", runDiscovery);
