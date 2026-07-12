@@ -93,6 +93,22 @@ def main():
         stale_roster = set(_reg.get("roster_diffs") or [])
     except Exception:  # noqa: BLE001
         stale_roster = set()
+    # KHELDIAN FORM POWERS: same honesty boundary, same mechanism (2026-07-12).
+    # Form-SWAPPING is unmodeled — a power whose defining mechanic the model
+    # cannot represent cannot anchor a gold standard (the stale-roster
+    # precedent, not an optimizer ban list). MEASURED cost of leaving one in:
+    # the PB seed's White Dwarf (5 set categories / 20 candidate sets vs a
+    # normal shield's 1/8, plus a big base-res armor the v30 credit binds)
+    # ran 24h WITHOUT converging while the form-less Warshade twin converged
+    # in 2.3h. Both Kheldian champions certify as HUMAN-FORM builds — the
+    # scope limit already declared; the WS certificate is form-less already.
+    # Lift this ban WITH the form-modeling work, never before.
+    stale_roster |= {
+        "Peacebringer_Defensive.Luminous_Aura.White_Dwarf",
+        "Peacebringer_Offensive.Luminous_Blast.Bright_Nova",
+        "Warshade_Defensive.Umbral_Aura.Black_Dwarf",
+        "Warshade_Offensive.Umbral_Blast.Dark_Nova",
+    }
 
     t0 = time.time()
     results = []

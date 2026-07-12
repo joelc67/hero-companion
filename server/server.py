@@ -2915,6 +2915,11 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
                 if tsc is not None and (sweep_best is None or tsc > sweep_best[0]):
                     sweep_best, sweep_move = (tsc, trial, tsol, tev), (d, a)
             cert["sweeps"] += 1
+            # Heartbeat (2026-07-12, the 24h-blind Peacebringer lesson): one line
+            # per sweep so a long convergence is WATCHABLE — score, solve budget
+            # spent, restart round. Output-only; certification is untouched.
+            print(f"      sweep {cert['sweeps']:3d} r{r} best={best[0]:.1f} "
+                  f"cur={sc:.1f} solves={n_solves[0]}/{max_solves}", flush=True)
             # Swaps must clear a 0.2% noise threshold (they can oscillate); a PURE ADD is
             # monotone — an empty pick level is filled by ANY strict improvement (a level-50
             # character owns 24 picks; leaving them empty needs proof, not a noise gate).
