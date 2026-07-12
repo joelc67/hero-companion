@@ -39,8 +39,15 @@ CHAMPIONS_PATH = (os.environ.get("HC_CHAMPIONS_PATH")
                   or os.path.join(_ROOT, "benchmarks", "champions.json"))
 
 
-def ctx_key(archetype, primary, secondary, content):
-    return "|".join([archetype or "", primary or "", secondary or "", content or ""])
+def ctx_key(archetype, primary, secondary, content, form=None):
+    """Context identity. `form` (2026-07-12, Joel's per-form Kheldian champions)
+    appends a 5th part — 'dwarf'/'nova' — so a form champion lives beside the
+    human-form one instead of overwriting it. Absent = the classic 4-part key,
+    byte-identical to every existing champion."""
+    parts = [archetype or "", primary or "", secondary or "", content or ""]
+    if form:
+        parts.append(form)
+    return "|".join(parts)
 
 
 def _load_log():
@@ -160,22 +167,23 @@ def seed_adjustments(archetype, primary, secondary, content, model_version=None)
     return {nm: round(v / peak, 3) for nm, v in votes.items()}
 
 
-def load_champion(archetype, primary, secondary, content):
+def load_champion(archetype, primary, secondary, content, form=None):
     """The best converged build (list of full_names) known for this context, or None."""
     try:
         data = json.load(open(CHAMPIONS_PATH, encoding="utf-8"))
     except Exception:  # noqa: BLE001
         return None
-    e = data.get(ctx_key(archetype, primary, secondary, content))
+    e = data.get(ctx_key(archetype, primary, secondary, content, form))
     return e.get("picks") if e else None
 
 
-def save_champion(archetype, primary, secondary, content, picks, score, certificate):
+def save_champion(archetype, primary, secondary, content, picks, score, certificate,
+                  form=None):
     try:
         data = json.load(open(CHAMPIONS_PATH, encoding="utf-8"))
     except Exception:  # noqa: BLE001
         data = {}
-    data[ctx_key(archetype, primary, secondary, content)] = {
+    data[ctx_key(archetype, primary, secondary, content, form)] = {
         "picks": sorted(picks), "score": score, "certificate": certificate}
     with open(CHAMPIONS_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=1)

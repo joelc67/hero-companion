@@ -53,7 +53,25 @@ NEW_CONTEXTS = [
     "Class_Arachnos_Soldier|Arachnos_Soldiers.Crab_Spider_Soldier|Training_Gadgets.Crab_Spider_Training|itrial",
     "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial",
     "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial",
+    # Joel's third correction (2026-07-12): "make a champion for each form."
+    # 5-part keys: the 5th part is the FORM — the form power is PINNED (never
+    # dropped, seeded in) and the OTHER form banned, so each champion is a
+    # committed one-form build. The 4-part Kheldian keys above stay the
+    # HUMAN-form champions (all forms banned there).
+    "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|dwarf",
+    "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|nova",
+    "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|dwarf",
+    "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|nova",
 ]
+
+# (archetype, form) -> the form power that champion is BUILT AROUND.
+FORM_POWERS = {
+    ("Class_Peacebringer", "dwarf"): "Peacebringer_Defensive.Luminous_Aura.White_Dwarf",
+    ("Class_Peacebringer", "nova"): "Peacebringer_Offensive.Luminous_Blast.Bright_Nova",
+    ("Class_Warshade", "dwarf"): "Warshade_Defensive.Umbral_Aura.Black_Dwarf",
+    ("Class_Warshade", "nova"): "Warshade_Offensive.Umbral_Blast.Dark_Nova",
+}
+KHELDIAN_FORMS = set(FORM_POWERS.values())
 
 
 def main():
@@ -93,29 +111,32 @@ def main():
         stale_roster = set(_reg.get("roster_diffs") or [])
     except Exception:  # noqa: BLE001
         stale_roster = set()
-    # KHELDIAN FORM POWERS: same honesty boundary, same mechanism (2026-07-12).
-    # Form-SWAPPING is unmodeled — a power whose defining mechanic the model
-    # cannot represent cannot anchor a gold standard (the stale-roster
-    # precedent, not an optimizer ban list). MEASURED cost of leaving one in:
-    # the PB seed's White Dwarf (5 set categories / 20 candidate sets vs a
-    # normal shield's 1/8, plus a big base-res armor the v30 credit binds)
-    # ran 24h WITHOUT converging while the form-less Warshade twin converged
-    # in 2.3h. Both Kheldian champions certify as HUMAN-FORM builds — the
-    # scope limit already declared; the WS certificate is form-less already.
-    # Lift this ban WITH the form-modeling work, never before.
-    stale_roster |= {
-        "Peacebringer_Defensive.Luminous_Aura.White_Dwarf",
-        "Peacebringer_Offensive.Luminous_Blast.Bright_Nova",
-        "Warshade_Defensive.Umbral_Aura.Black_Dwarf",
-        "Warshade_Offensive.Umbral_Blast.Dark_Nova",
-    }
+    # KHELDIAN FORMS, per Joel's per-form ruling (2026-07-12, superseding the
+    # blanket ban): each champion commits to ONE form story. HUMAN contexts
+    # (4-part keys) ban every form power — the scope their certificate
+    # describes. FORM contexts (5-part keys) PIN their own form and ban the
+    # other, so a dwarf champion can never wander into nova. Form-SWAPPING
+    # remains unmodeled either way — every Kheldian certificate certifies the
+    # one form it names, priced as what the model measures (the form toggle's
+    # own stats + the human powers). MEASURED history: an unpinned, unvalued
+    # White Dwarf in the seed ground 24h without converging (the plateau the
+    # heartbeat now makes visible); its form-less twin converged in 2.3h.
 
     t0 = time.time()
     results = []
     for key in todo:
-        at, prim, sec, content = key.split("|")
+        parts = key.split("|")
+        at, prim, sec, content = parts[:4]
+        form = parts[4] if len(parts) > 4 else None
+        pin = {FORM_POWERS[(at, form)]} if form else set()
+        # Kheldians: human contexts ban all forms; a form context bans the
+        # forms it did NOT pin. Everyone else: just the stale roster.
+        ban = set(stale_roster)
+        if at in ("Class_Peacebringer", "Class_Warshade"):
+            ban |= KHELDIAN_FORMS - pin
         el = (time.time() - t0) / 60
-        print(f"[{el:6.1f}m] {key}", flush=True)
+        print(f"[{el:6.1f}m] {key}"
+              + (f"  [pin {sorted(pin)[0].split('.')[-1]}]" if pin else ""), flush=True)
         ap_res = client.post("/build/autopick", json={
             "archetype": at, "primary": prim, "secondary": sec,
             "content": content}).get_json()
@@ -123,17 +144,16 @@ def main():
             results.append((key, "AUTOPICK FAILED", None))
             print("   -> AUTOPICK FAILED", flush=True)
             continue
-        stale_picks = sorted({p.get("full_name") for p in ap_res["powers"]}
-                             & stale_roster)
-        if stale_picks:
-            print(f"   seed picked stale-roster powers {stale_picks} — banned from "
+        banned_picks = sorted({p.get("full_name") for p in ap_res["powers"]} & ban)
+        if banned_picks:
+            print(f"   seed picked banned powers {banned_picks} — stripped from "
                   f"the certification build (harden-before-certify)", flush=True)
         try:
             _, info = srv.deep_optimize(at, prim, sec, None, content,
                                         ap_res["powers"],
                                         max_solves=args.max_solves,
                                         restarts=args.restarts,
-                                        ban=stale_roster)
+                                        ban=ban, pin=pin, form=form)
             cert = info.get("certificate")
             results.append((key, f"score {info.get('score'):.1f}", cert))
             print(f"   -> score {info.get('score'):.1f}  certificate: {cert}", flush=True)

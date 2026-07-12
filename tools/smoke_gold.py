@@ -28,10 +28,25 @@ try:
     ok_all = meta["app_version"] == "0.12.18" and meta["model_version"] == 30
     if not ok_all:
         print("  VERSION/MODEL PIN MISMATCH — update the pins for this release")
-    # THE GOLD TEST: every champion context, served to a frozen END USER via autopick
-    checked = 0
+    # THE GOLD TEST: every champion context, served to a frozen END USER via autopick.
+    # FORM champions (5-part keys, Joel's per-form Kheldian ruling 2026-07-12) can't
+    # be reached through plain autopick until the wizard grows its Form question —
+    # they're checked for a CONVERGED certificate + nonempty picks instead, and the
+    # denominator names both counts so nothing hides.
+    checked = form_checked = 0
     for key, entry in CHAMPS.items():
-        at, prim, sec, content = key.split("|")
+        parts = key.split("|")
+        at, prim, sec, content = parts[:4]
+        form = parts[4] if len(parts) > 4 else None
+        if form:
+            cert_ok = bool((entry.get("certificate") or {}).get("converged")) \
+                and bool(entry.get("picks"))
+            ok_all = ok_all and cert_ok
+            form_checked += 1
+            print(f"  {'FORM CERTIFIED' if cert_ok else 'FORM BROKEN (FAIL)':18s} "
+                  f"{prim.split('.')[-1]}/{sec.split('.')[-1]} [{form}] "
+                  f"(picker pending — not autopick-servable yet)")
+            continue
         ap = post("/build/autopick", {"archetype":at,"primary":prim,"secondary":sec,"content":content})
         got = {p["full_name"] for p in ap["powers"] if not p["full_name"].startswith("Inherent")}
         champ = {p for p in entry["picks"] if not p.split(".")[0].startswith("Inherent")}
@@ -41,8 +56,8 @@ try:
         checked += 1
         print(f"  {'GOLD SERVED' if served else 'HEURISTIC (FAIL)':18s} {prim.split('.')[-1]}/{sec.split('.')[-1]}  overlap={overlap:.0%}")
     # Coverage denominator (standing rule): every bundled champion context checked.
-    print(f"  {checked} of {len(CHAMPS)} champion contexts checked")
-    ok_all = ok_all and checked == len(CHAMPS)
+    print(f"  {checked} served + {form_checked} form-certified of {len(CHAMPS)} champion contexts")
+    ok_all = ok_all and (checked + form_checked) == len(CHAMPS)
     print("GOLD SMOKE:", "PASS" if ok_all else "FAIL")
     # A gate that prints FAIL must also EXIT nonzero (it used to exit 0 regardless).
     sys.exit(0 if ok_all else 1)

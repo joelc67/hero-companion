@@ -2723,7 +2723,7 @@ def _endurance_recovery_floor(bt, targets):
 
 def deep_optimize(archetype, primary, secondary, role, content, powers_in,
                   scorer="first_principles", max_solves=1500, restarts=3, seed=1337,
-                  ban=None, role_mix=None):
+                  ban=None, role_mix=None, pin=None, form=None):
     """Run the selection search TO THE END (the user's doctrine — see user-optimization-doctrine):
     evaluate the FULL swap neighborhood (best-improvement, nothing silently pruned — ordering only),
     iterate until a complete sweep finds nothing better ("this is as good as it gets" — earned, not
@@ -2744,6 +2744,14 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
     # excluded from every add, and a champion warm start containing one is rejected — a USER
     # veto (e.g. no Hasten) is a hard constraint, not a preference the physics can outvote.
     ban = set(ban or ())
+    # PIN list (the other half of pin/ban, 2026-07-12 — Joel's per-form Kheldian
+    # champions): pinned picks are injected into the seed, never dropped, never
+    # perturbed away (perturbs draw from the same neighborhood), and a champion
+    # warm start MISSING one is rejected. `form` tags the saved champion's key
+    # so a form champion lives beside the human one, never over it.
+    pin = set(pin or ())
+    if pin & ban:
+        return None, {"error": f"pin/ban conflict: {sorted(pin & ban)}"}
     role = role or _AT_DEFAULT_ROLE.get(archetype, "damage")
     pre = ai_build.preset_targets(content, role, res_cap=75)
     targets, roles, perk = pre["targets"], pre["roles"], pre["perk_focus"]
@@ -2803,8 +2811,8 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
         for p in cur:
             fn = p["full_name"]
             ps = _fn_ps(fn)
-            if fn in _travel_fns or ps.startswith("Inherent"):
-                continue                           # travel is the user's choice; inherents aren't picks
+            if fn in _travel_fns or fn in pin or ps.startswith("Inherent"):
+                continue        # travel/pins are the user's choice; inherents aren't picks
             if (ps in _veat_accessible_sets(primary, secondary)
                     or ps.startswith("Pool.") or ps.startswith("Epic.")):
                 drops.append(p)
@@ -2875,11 +2883,15 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
 
     # CHAMPION WARM START: begin where this context's knowledge ended, not from the heuristic seed.
     powers_in = [p for p in powers_in if p["full_name"] not in ban]
+    for _fn in sorted(pin):                 # pinned picks join the seed if absent
+        if _fn in POWER_BY_FULL and not any(p["full_name"] == _fn for p in powers_in):
+            powers_in.append({"full_name": _fn,
+                              "pick_level": POWER_BY_FULL[_fn].get("level_available") or 1})
     heuristic_picks = [p["full_name"] for p in powers_in]   # what the PROPOSER offered (for the retrospective)
     seed_src = "autopick"
-    champ = learn.load_champion(archetype, primary, secondary, content)
+    champ = learn.load_champion(archetype, primary, secondary, content, form)
     if champ and all(fn in POWER_BY_FULL for fn in champ) \
-            and not (ban & set(champ)) \
+            and not (ban & set(champ)) and pin <= set(champ) \
             and _picks_legal(set(champ), primary, secondary):
         powers_in = [{"full_name": fn,
                       "pick_level": POWER_BY_FULL[fn].get("level_available") or 1}
@@ -3002,7 +3014,8 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
     champion_picks = [p["full_name"] for p in cur_b]
     # Grow the knowledge: this context's champion is now whatever this run proved best.
     try:
-        learn.save_champion(archetype, primary, secondary, content, champion_picks, sc_b, cert)
+        learn.save_champion(archetype, primary, secondary, content, champion_picks, sc_b, cert,
+                            form=form)
     except Exception:  # noqa: BLE001
         pass
     # THE RETROSPECTIVE ("why did I miss those fits 693 times?"): score the heuristic proposer's
