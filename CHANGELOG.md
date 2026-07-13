@@ -3,12 +3,25 @@
 ## Unreleased
 
 - **Peacebringers and Warshades: pick your form, get its champion.** The
-  level-50 wizard now asks Kheldians one more question — Human, Dwarf, or
-  Nova — and serves that form's own certified champion build as the base to
-  build under. Each form champion is a committed one-form build (the Dwarf
-  champion is built around living in Dwarf), honestly labeled: form-swapping
-  play isn't modeled yet, so each certificate covers exactly the form it
-  names. Other archetypes never see the question.
+  level-50 wizard will ask Kheldians one more question — Human, Dwarf, Nova,
+  or all three (tri-form) — and serve that form's own certified champion
+  build as the base to build under. Each form champion is a committed build
+  for the way you actually play, honestly labeled: form-swapping play isn't
+  modeled yet, so each certificate covers exactly what it names. Other
+  archetypes never see the question. (The question appears automatically in
+  the release that bundles the Kheldian champions — coming this week.)
+
+## 0.12.19 — 2026-07-13
+
+- **Eight new champion builds — nearly every archetype now has a certified
+  anchor.** Brute (Battle Axe/Fiery Aura), Tanker (Invulnerability/Super
+  Strength), Scrapper (Broad Sword/Super Reflexes), Stalker (Radiation
+  Melee/Dark Armor), Sentinel (Fire Blast/Willpower), Blaster (Fire
+  Blast/Energy Manipulation), Dominator (Mind Control/Fiery Assault), and
+  Arachnos Soldier (Crab Spider) join the five existing champions — thirteen
+  converged, certified level-50 builds served automatically when you pick
+  those combinations. Peacebringer, Warshade, Night Widow, and one Corruptor
+  combo arrive later this week (the Kheldians with their full form set).
 
 - **Everything Companion Lite does, the full app now does too.** The Play Log
   tab gains the Pulse Boards: "My private board" builds your personal board

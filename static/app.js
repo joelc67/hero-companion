@@ -265,13 +265,16 @@ const _wizIsKheldian = () => _KHELDIANS.includes($("wiz-at") && $("wiz-at").valu
 function wizFormRow() {
   const row = $("wiz-form-row"), why = $("wiz-form-why");
   if (!row) return;
-  const kheld = _wizIsKheldian();
+  // The Form question only exists when form champions actually SHIP in this
+  // build (META.form_champions) — a route is never offered to a champion that
+  // isn't there. It self-activates in the release that bundles them.
+  const kheld = _wizIsKheldian() && !!(META && META.form_champions);
   row.classList.toggle("hidden", !kheld);
   if (why) why.classList.toggle("hidden", !kheld);   // the WHY shows before any answer
   if (!kheld && $("wiz-form")) { $("wiz-form").value = ""; wizSetSrc("form", ""); }
 }
 const wizAnswered = () => ["wiz-role", "wiz-content", "wiz-exposure", "wiz-travel"]
-  .concat(_wizIsKheldian() ? ["wiz-form"] : [])
+  .concat(_wizIsKheldian() && META && META.form_champions ? ["wiz-form"] : [])
   .every(id => $(id) && $(id).value);
 // Build-my-kit stays disabled until all four questions are answered.
 function wizGateBuild() {

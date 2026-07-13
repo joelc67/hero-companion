@@ -455,9 +455,20 @@ def _md_to_html(text):
 @app.route("/meta")
 def meta():
     import first_principles as fp
+    # form_champions gates the wizard's Kheldian Form question: it only shows
+    # when form-tagged champions actually ship in this build — a route is never
+    # offered to a champion that isn't there (Joel's roster-split release,
+    # 2026-07-13: non-Kheldian roster first, Kheldians + forms later that week).
+    try:
+        import learn as _learn
+        _ch = json.load(open(_learn.CHAMPIONS_PATH, encoding="utf-8"))
+        has_forms = any(len(k.split("|")) > 4 for k in _ch)
+    except Exception:  # noqa: BLE001
+        has_forms = False
     return jsonify({"ok": True, "app_version": APP_VERSION, "model_version": fp.MODEL_VERSION,
                     "db_name": DB_NAME, "db_version": DB_VERSION,
                     "packaged": bool(getattr(sys, "frozen", False)),
+                    "form_champions": has_forms,
                     "urls": CLIENT_CONFIG.get("urls", {})})
 
 
