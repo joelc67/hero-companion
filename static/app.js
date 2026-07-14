@@ -4813,9 +4813,17 @@ window.openTargetsEditor = async function () {
     || ($("wiz-content") && $("wiz-content").value) || "";
   const role = ($("preset-role") && $("preset-role").value)
     || ($("wiz-role") && $("wiz-role").value) || "";
+  // The archetype must come from WHICHEVER surface carries it — same
+  // both-entry-points rule as content/role above. build.archetype is empty in
+  // the wizard flow before "Build my kit", which made the editor seed a
+  // Tanker's CAP resistances at the generic 75 instead of 90 (yellowthief1's
+  // field report, 2026-07-13).
+  const at = (build.archetype)
+    || ($("wiz-at") && $("wiz-at").value)
+    || ($("sel-archetype") && $("sel-archetype").value) || "";
   const [seed, lib] = await Promise.all([
     api(`/targets/preset?content=${encodeURIComponent(content)}&role=${encodeURIComponent(role)}`
-        + `&archetype=${encodeURIComponent(build.archetype || "")}`
+        + `&archetype=${encodeURIComponent(at)}`
         + `&exposure=${encodeURIComponent(build._exposure || "")}`
         + `&primary=${encodeURIComponent(build.primary || "")}`
         + `&secondary=${encodeURIComponent(build.secondary || "")}`),

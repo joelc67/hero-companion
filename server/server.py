@@ -2236,7 +2236,11 @@ def joint_refine(archetype, primary, secondary, role, content, powers_in,
     (pure game arithmetic — no targets, no AT map; roles/softcaps/perma are DERIVED)."""
     import first_principles as fp
     role = role or _AT_DEFAULT_ROLE.get(archetype, "damage")
-    pre = ai_build.preset_targets(content, role, res_cap=75)
+    # The AT's REAL res cap (yellowthief1's find): the hardcoded 75 undercut
+    # tank-role/CAP-entry targets on high-cap ATs. Same fix as deep_optimize.
+    pre = ai_build.preset_targets(
+        content, role,
+        res_cap=round(((ARCH_BY_NAME.get(archetype) or {}).get("res_cap") or 0.75) * 100, 1))
     targets, roles, perk = pre["targets"], pre["roles"], pre["perk_focus"]
     ctx = _stat_ctx(archetype)
     ctx["power_by_full"] = POWER_BY_FULL
@@ -2812,7 +2816,15 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
     if pin & ban:
         return None, {"error": f"pin/ban conflict: {sorted(pin & ban)}"}
     role = role or _AT_DEFAULT_ROLE.get(archetype, "damage")
-    pre = ai_build.preset_targets(content, role, res_cap=75)
+    # The AT's REAL res cap (yellowthief1's find, 2026-07-14): the old
+    # hardcoded 75 undercut tank-role/CAP-entry targets for Tanker/Brute (90)
+    # and Kheldians/VEATs (85). Evidence for the record: NO existing champion
+    # certificate was affected — every one certified itrial + default role,
+    # whose resistance asks (50/50/40/40) sit below 75, so the clamp never
+    # engaged. Future tank-role/farm certifications would have hit it.
+    pre = ai_build.preset_targets(
+        content, role,
+        res_cap=round(((ARCH_BY_NAME.get(archetype) or {}).get("res_cap") or 0.75) * 100, 1))
     targets, roles, perk = pre["targets"], pre["roles"], pre["perk_focus"]
     ctx = _stat_ctx(archetype)
     ctx["power_by_full"] = POWER_BY_FULL
