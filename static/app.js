@@ -231,7 +231,24 @@ function revealBuilder() {
 // "Start a new character" — reveal the builder and focus the first choice. The guided
 // discovery flow (recommend an AT from role × exposure × content) + the level-by-level
 // path layer on here next. `_mode` will branch new-character vs respec behavior.
-function startFromScratch() { build._mode = "new"; build.level_reached = build.level_reached || 1; openWizard("new"); }
+// STATE-LIFECYCLE RULE (Joel's field report 2026-07-14, third bug in this
+// family): `build` is a long-lived mutable global — every flow that means "a
+// DIFFERENT character" must reset the build-scoped ephemerals explicitly, or
+// they leak into the next build (his repro: a Stalker's front-line exposure
+// seeded Melee 45 into a fresh Blaster's targets editor).
+function resetBuildScopedState() {
+  build._custom_targets = null;
+  build._exposure = null;
+  build._travel = null;
+  roleFocus = { secondary: "", pct: 100 };
+  Object.keys(PREVIEW_BOOSTS).forEach(k => delete PREVIEW_BOOSTS[k]);
+  updateCustomTargetsChip();
+}
+
+function startFromScratch() {
+  resetBuildScopedState();   // a NEW character inherits nothing
+  build._mode = "new"; build.level_reached = build.level_reached || 1; openWizard("new");
+}
 // "Build a new level-50 character" — a SHORT guided wizard that plans a fresh end-game kit
 // from scratch (so a 50 isn't dropped on the dense builder cold). Start-new adds a DISCOVERY
 // step in front (recommend an AT/sets). This is a PLANNING build for a character that doesn't
@@ -295,12 +312,20 @@ async function openWizard(mode) {
   cloneOptions($("disc-content"), $("preset-content"));
   wizFormRow();   // Kheldians get the Form question; everyone else never sees it
   // NO DEFAULTS: unanswered questions show a real "— choose —" and block the
-  // build. Values carried from your current character/presets stay (they ARE
-  // your choices) and are tagged "from your setup".
-  wizSetSrc("role", $("wiz-role").value ? "setup" : "");
-  wizSetSrc("content", $("wiz-content").value ? "setup" : "");
-  if (build && build._exposure) { $("wiz-exposure").value = build._exposure; wizSetSrc("exposure", "setup"); }
-  else { $("wiz-exposure").value = ""; wizSetSrc("exposure", ""); }
+  // build. Values carried from your CURRENT character/presets stay (they ARE
+  // your choices) and are tagged "from your setup" — but a brand-NEW character
+  // carries NOTHING (state-lifecycle rule): every question starts unanswered.
+  if (mode === "new") {
+    ["wiz-role", "wiz-content", "wiz-exposure", "wiz-travel", "wiz-form"].forEach(id => {
+      if ($(id)) $(id).value = "";
+    });
+    ["role", "content", "exposure", "travel", "form"].forEach(k => wizSetSrc(k, ""));
+  } else {
+    wizSetSrc("role", $("wiz-role").value ? "setup" : "");
+    wizSetSrc("content", $("wiz-content").value ? "setup" : "");
+    if (build && build._exposure) { $("wiz-exposure").value = build._exposure; wizSetSrc("exposure", "setup"); }
+    else { $("wiz-exposure").value = ""; wizSetSrc("exposure", ""); }
+  }
   // Travel is ALWAYS the user's pick — endgame entry can REQUIRE specific travel
   // (BAF/Lambda enter only by Flight or Teleport), so the tool never chooses it.
   // But a pick you ALREADY made restores: the stored wizard answer, else the
@@ -4060,6 +4085,9 @@ async function syncPoolsEpicFromPowers(powers, fallbackPools, fallbackEpic) {
 async function applyImportedBuild(b) {
   resetTrayPanels();          // swapping in a new build → drop the prior tray/order panels
   setRespecHintFresh();       // a new build gets a fresh respec evaluation (undo any dismiss)
+  resetBuildScopedState();    // a swapped-in build is a DIFFERENT character — no leaked
+  //                             custom targets / exposure / travel / previews (state-
+  //                             lifecycle rule; callers that carry answers re-set them after)
   // archetype cascade (loads powerset options)
   $("sel-archetype").value = b.archetype || "";
   await onArchetypeChange({ target: { value: b.archetype || "" } });
@@ -4807,26 +4835,27 @@ window.clearCustomTargets = function () {
 };
 
 window.openTargetsEditor = async function () {
-  // Callable from BOTH entry points (ruling 2): the Build Assistant's preset
-  // dropdowns, or the wizard's — whichever carries the pick.
-  const content = ($("preset-content") && $("preset-content").value)
-    || ($("wiz-content") && $("wiz-content").value) || "";
-  const role = ($("preset-role") && $("preset-role").value)
-    || ($("wiz-role") && $("wiz-role").value) || "";
-  // The archetype must come from WHICHEVER surface carries it — same
-  // both-entry-points rule as content/role above. build.archetype is empty in
-  // the wizard flow before "Build my kit", which made the editor seed a
-  // Tanker's CAP resistances at the generic 75 instead of 90 (yellowthief1's
-  // field report, 2026-07-13).
-  const at = (build.archetype)
-    || ($("wiz-at") && $("wiz-at").value)
-    || ($("sel-archetype") && $("sel-archetype").value) || "";
+  // Callable from BOTH entry points (ruling 2), and EVERY parameter follows
+  // one rule (state-lifecycle family, Joel's field reports 07-13 + 07-14):
+  // when the WIZARD is open, ITS answers are the current flow's truth; only
+  // otherwise does the loaded build speak. Mixing surfaces is how a Stalker's
+  // front-line exposure seeded Melee 45 into a fresh Blaster's editor.
+  const wizOpen = $("respec-wizard") && !$("respec-wizard").classList.contains("hidden");
+  const pick = (wizId, fallback) =>
+    (wizOpen && $(wizId) && $(wizId).value) || fallback || "";
+  const content = pick("wiz-content", $("preset-content") && $("preset-content").value);
+  const role = pick("wiz-role", $("preset-role") && $("preset-role").value);
+  const at = pick("wiz-at", build.archetype
+    || ($("sel-archetype") && $("sel-archetype").value));
+  const exposure = pick("wiz-exposure", build._exposure);
+  const primary = pick("wiz-primary", build.primary);
+  const secondary = pick("wiz-secondary", build.secondary);
   const [seed, lib] = await Promise.all([
     api(`/targets/preset?content=${encodeURIComponent(content)}&role=${encodeURIComponent(role)}`
         + `&archetype=${encodeURIComponent(at)}`
-        + `&exposure=${encodeURIComponent(build._exposure || "")}`
-        + `&primary=${encodeURIComponent(build.primary || "")}`
-        + `&secondary=${encodeURIComponent(build.secondary || "")}`),
+        + `&exposure=${encodeURIComponent(exposure)}`
+        + `&primary=${encodeURIComponent(primary)}`
+        + `&secondary=${encodeURIComponent(secondary)}`),
     api("/target_presets"),
   ]);
   if (!seed || !seed.ok) return;
