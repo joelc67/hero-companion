@@ -30,7 +30,7 @@ except ImportError:  # ILP unavailable -> solve_ilp raises; install pulp
     pulp = None
 
 
-def _mip_solver():
+def _mip_solver(warm=False):
     """Backend for every ILP solve. CBC (the shipping default) unless
     HC_SOLVER_BACKEND=highs. MEASURED 2026-07-14 (tools/validate_solver_backend.py,
     all 19 certified contexts): HiGHS proves the identical optimum everywhere
@@ -44,10 +44,21 @@ def _mip_solver():
     both backends prove the same optimum, so only equal-objective tie-broken
     slottings may differ (and DO: 18/19 contexts tie-break differently, fp
     score deltas up to 6.5% — the ILP plateau finding, see session-report
-    2026-07-14)."""
+    2026-07-14).
+
+    `warm=True` hands CBC the variables' MIP-start values (set by _ilp_pass
+    from a warm hint) so branch-and-bound starts from a known-good incumbent.
+    Not wired for HiGHS. MEASURED 2026-07-14 (scratchpad probe_warmstart, cold
+    solve -> re-solve seeded with its own solution): ~1.0x — CBC's time on our
+    instances is spent PROVING the bound on the degenerate plateau, which an
+    incumbent does not shorten; the reoptimization-literature speedups assume
+    incumbent-finding dominates, and here it doesn't. Windows caveat: CBC
+    ignores warmStart unless keepFiles=True (PuLP warns loudly), which litters
+    solver files — so this stays a re-measurement seam, not a live
+    optimization. Re-measure if work order A reshapes the objective."""
     if os.environ.get("HC_SOLVER_BACKEND", "cbc").lower() == "highs":
         return pulp.HiGHS(msg=False, gapRel=0, gapAbs=0, threads=1)
-    return pulp.PULP_CBC_CMD(msg=0)
+    return pulp.PULP_CBC_CMD(msg=0, warmStart=warm)
 
 
 # Backend-validation instrumentation (tools/validate_solver_backend.py): with
@@ -717,7 +728,7 @@ def _post_target_decay(targets, targets_pct, at_res_cap, at_base_hp):
 def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
               slot_cap=67, tier="premium", perk_focus=None, roles=None, pvp=False,
               preserve=False, keep_layout=False, archetype=None,
-              at_res_cap=None, at_base_hp=None):
+              at_res_cap=None, at_base_hp=None, warm_hint=None):
     """Optimal slot solve via integer linear programming.
 
     Phase 1 solves the targets with CHEAP sets only (the least-expensive build
@@ -998,7 +1009,8 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
     _ilp_pass(powers, targets, totals, sets_by_category, slot_cap,
               piece_choices=(6, 5, 4, 3, 2), objective_targets=targets,
               allow_premium=allow_premium, cost_w=cost_w, pref_cats=pref_cats, pvp=pvp,
-              priority=priority, piece_meta=piece_meta, decay=decay)
+              priority=priority, piece_meta=piece_meta, decay=decay,
+              warm_hint=warm_hint)
     focus_keys = set(PERK_FOCUS.get(perk_focus, []))
     perk_kind_mult = dict(kind_mult)
     if focus_keys:                  # the 🧮 perk dial gets an outsized weight
@@ -1021,7 +1033,8 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
     _ilp_pass(powers, targets, totals, sets_by_category, slot_cap,
               piece_choices=(6, 5, 4, 3, 2), objective_targets=perks, perk_pass=True,
               allow_premium=allow_premium, cost_w=cost_w, priority=_perk_priority,
-              kind_mult=perk_kind_mult, pref_cats=pref_cats, pvp=pvp, piece_meta=piece_meta)
+              kind_mult=perk_kind_mult, pref_cats=pref_cats, pvp=pvp, piece_meta=piece_meta,
+              warm_hint=warm_hint)
 
     # DEFAULT: never drop a cheap IO for an empty slot — restore any the solve
     # didn't replace with a set (keeps Hasten/Fulcrum/etc. functional). Runs in
@@ -1253,11 +1266,15 @@ def _enforce_added_cap(powers, budget):
 def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices,
               objective_targets, perk_pass=False, allow_premium=False, cost_w=0.0,
               kind_mult=None, pref_cats=None, pvp=False, priority=None, piece_meta=None,
-              decay=None):
+              decay=None, warm_hint=None):
     """Run one ILP over powers that still have free slots / no set yet.
     `kind_mult` weights a stat KIND (e.g. {'Defense':2}) so the player's role
     leans coverage that way; `pref_cats` nudges set selection toward role-fitting
-    categories (e.g. damage/heal/debuff sets). `pvp` selects PvP set bonuses."""
+    categories (e.g. damage/heal/debuff sets). `pvp` selects PvP set bonuses.
+    `warm_hint` ({power full_name: [(set_uid, n), ...]}, from a previous solved
+    build) seeds CBC's branch-and-bound with a MIP start — gated behind
+    HC_ILP_WARMSTART=1 because a start can change WHICH equal-objective optimum
+    CBC returns (the tie-break honesty question; Joel adjudicates the default)."""
     kind_mult = kind_mult or {}
     pref_cats = pref_cats or set()
     piece_meta = piece_meta or {}
@@ -1522,7 +1539,18 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
                  + cat_bonus + dmg_bonus - dmg_penalty)
     else:
         prob += pulp.lpSum(obj) - premium_pen + cat_bonus + dmg_bonus - dmg_penalty
-    prob.solve(_mip_solver())
+    hinted = False
+    if warm_hint and os.environ.get("HC_ILP_WARMSTART") == "1":
+        for pi, opts in opts_by_power.items():
+            wanted = warm_hint.get(free_powers[pi].get("full_name"))
+            if not wanted:
+                continue
+            wset = {tuple(w) for w in wanted}
+            for oi, o in enumerate(opts):
+                hit = (o["set"]["uid"], o["n"]) in wset
+                x[(pi, oi)].setInitialValue(1 if hit else 0)
+                hinted = hinted or hit
+    prob.solve(_mip_solver(warm=hinted))
 
     if os.environ.get("HC_SOLVER_DEBUG_OBJ"):
         DEBUG_OBJ.append(pulp.value(prob.objective))
