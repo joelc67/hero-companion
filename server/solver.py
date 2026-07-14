@@ -21,12 +21,40 @@ so the build stays playable, not just bonus-stacked.
 """
 
 import math
+import os
 from collections import defaultdict, Counter
 
 try:
     import pulp
 except ImportError:  # ILP unavailable -> solve_ilp raises; install pulp
     pulp = None
+
+
+def _mip_solver():
+    """Backend for every ILP solve. CBC (the shipping default) unless
+    HC_SOLVER_BACKEND=highs. MEASURED 2026-07-14 (tools/validate_solver_backend.py,
+    all 19 certified contexts): HiGHS proves the identical optimum everywhere
+    (zero backend defects) but is ~3x SLOWER overall on our instances (106s vs
+    33s; worst case the Inv/SS Tanker's 1178-binary pass: 59s/21.5k nodes vs
+    CBC 8s) — the general "HiGHS ~10x faster than CBC" benchmark result does
+    NOT hold on this model's degenerate-plateau structure. Re-measure after any
+    objective reshape (work order A) — the structure, and the verdict, may flip.
+    HiGHS gap tolerances are pinned to 0 because its default mip_rel_gap=1e-4
+    could accept a near-optimal solution and silently move scores; at gap 0
+    both backends prove the same optimum, so only equal-objective tie-broken
+    slottings may differ (and DO: 18/19 contexts tie-break differently, fp
+    score deltas up to 6.5% — the ILP plateau finding, see session-report
+    2026-07-14)."""
+    if os.environ.get("HC_SOLVER_BACKEND", "cbc").lower() == "highs":
+        return pulp.HiGHS(msg=False, gapRel=0, gapAbs=0, threads=1)
+    return pulp.PULP_CBC_CMD(msg=0)
+
+
+# Backend-validation instrumentation (tools/validate_solver_backend.py): with
+# HC_SOLVER_DEBUG_OBJ=1 every ILP solve appends its proven objective value here,
+# so an A/B run can tell "equal objective, different tie-broken solution" apart
+# from "different objective" (which would be a real backend defect).
+DEBUG_OBJ = []
 
 # Stats the solver optimizes toward, keyed uniformly. damage_type "None" on a
 # Defense/Resistance effect spreads to all types.
@@ -1494,8 +1522,10 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
                  + cat_bonus + dmg_bonus - dmg_penalty)
     else:
         prob += pulp.lpSum(obj) - premium_pen + cat_bonus + dmg_bonus - dmg_penalty
-    prob.solve(pulp.PULP_CBC_CMD(msg=0))
+    prob.solve(_mip_solver())
 
+    if os.environ.get("HC_SOLVER_DEBUG_OBJ"):
+        DEBUG_OBJ.append(pulp.value(prob.objective))
     if pulp.LpStatus[prob.status] != "Optimal":
         return
     for pi, opts in opts_by_power.items():
