@@ -951,9 +951,27 @@ def build(state_dir=None, public=False):
                 "sessions. When the community layer opens, sharing any of this stays a "
                 "separate, per-stat choice.")
 
+    # CLIENT-SIDE STALENESS (2026-07-14 quota incident, field-verified need): the
+    # server-drawn stale banner is rendered BY the renderer — the one thing that
+    # can't run when rendering stops, so the page silently ages (it did, for
+    # hours, stamped the exact minute the Actions meter died). This script needs
+    # NO server run: the page carries its own build stamp and the VIEWER'S clock
+    # judges it. Threshold 2h (~8 missed 15-min renders — a real stoppage, never
+    # normal jitter).
+    _stale_js = ("<script>(function(){var el=document.getElementById('stale-note');"
+                 "if(!el)return;var built=Date.parse(el.getAttribute('data-built'));"
+                 "if(!built)return;function tick(){var h=(Date.now()-built)/36e5;"
+                 "if(h>=2){el.style.display='block';el.textContent='\\u26a0 This board was "
+                 "built '+(h<48?Math.round(h)+' hours':Math.round(h/24)+' days')+"
+                 "' ago \\u2014 the live feed may be paused.';}}tick();"
+                 "setInterval(tick,60000);})();</script>")
+    _built_iso = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     page = f"""<!doctype html><html><head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <title>CoH Pulse Boards</title><style>{CSS}</style></head><body>
+<div id='stale-note' data-built='{_built_iso}' style='display:none;background:#5a2e12;
+color:#ffd9a0;padding:8px 14px;text-align:center;font-weight:600'></div>
+{_stale_js}
 <div class='mock'>{mock}</div>
 <div class='wrap'>
 <div class='logo'>CoH <b>Pulse</b> Boards <span style='font-size:.9rem;color:#8fa0bd'>{logo_note}</span></div>

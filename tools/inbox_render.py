@@ -33,7 +33,11 @@ import sys
 import time
 
 INBOX = os.getcwd()
-SITE = os.path.join(INBOX, "site")
+# PULSE_SITE_DIR (2026-07-14 quota incident): the render now runs on the PUBLIC
+# repo's free minutes with the two checkouts side by side (site/ no longer
+# nested inside the inbox checkout) — the env names the site dir; absent, the
+# classic nested layout stands so the old workflow shape keeps working.
+SITE = os.environ.get("PULSE_SITE_DIR") or os.path.join(INBOX, "site")
 sys.path.insert(0, os.path.join(SITE, "server"))
 sys.path.insert(0, os.path.join(SITE, "tools"))
 

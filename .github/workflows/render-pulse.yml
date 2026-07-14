@@ -1,0 +1,76 @@
+name: Render Pulse Boards
+# RELOCATED 2026-07-14 (the Actions-quota incident): the render used to run
+# per-push on the PRIVATE inbox repo, where every 31-second run billed a full
+# minute of the 2,000/month private-repo allowance — 2,031 runs burned the
+# entire quota by mid-month. Here on the PUBLIC repo, standard-runner minutes
+# are free at any feeder count, and the schedule (never per-push) batches
+# everything accumulated since the last run.
+#
+# PRIVACY BOUNDARY (this repo's logs are PUBLIC): the private inbox is checked
+# out via a fine-grained READ-ONLY token into the runner's private workspace.
+# No step prints inbox contents, no artifacts are uploaded, and the ONLY thing
+# committed is the sanitized public board build_pulse_boards produces — its
+# public-variant filter is the tested privacy boundary. Raw uploads never
+# leave the private repo.
+#
+# COLLECT NOTE: chunk compaction WRITES to the inbox, which a read-only token
+# cannot — collection lives in the inbox repo's own daily collect.yml
+# (~31 billed minutes/month). Renders here read compacted + uncollected
+# chunks alike, so a paused collect never stales the board.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: render-pulse
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: PAT expiry self-reminder (the runbook's first line of defense)
+        run: |
+          EXPIRY="2026-10-12"
+          days_left=$(( ($(date -d "$EXPIRY" +%s) - $(date +%s)) / 86400 ))
+          if [ "$days_left" -le 14 ]; then
+            echo "::warning::INBOX_READ_TOKEN expires $EXPIRY (${days_left}d) — rotate per docs/pulse-pipeline-runbook.md"
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          path: site
+          ref: master
+
+      - uses: actions/checkout@v4
+        with:
+          repository: joelc67/hero-companion-inbox
+          token: ${{ secrets.INBOX_READ_TOKEN }}
+          path: inbox
+          ref: main
+          fetch-depth: 0     # source UTC offsets are inferred from chunk commit times
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - id: render
+        env:
+          PULSE_SITE_DIR: ${{ github.workspace }}/site
+        working-directory: inbox
+        run: python "$PULSE_SITE_DIR/tools/inbox_render.py"
+
+      - name: Publish the rendered board
+        if: steps.render.outputs.published == 'true'
+        working-directory: site
+        run: |
+          git config user.name "Pulse Boards Pipeline"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/pulse/index.html
+          git commit -m "Publish Pulse Boards (pipeline)" || exit 0
+          git push || { git pull --rebase --autostash && git push; }

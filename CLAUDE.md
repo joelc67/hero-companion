@@ -21,6 +21,11 @@ Joel's session context is a limited resource. Do not spend it on prose.
 - Server runs `debug=False`: **every server-side code or data change needs a restart** before it takes effect. Headless verification without any port: `sys.path.insert` both repo root and `server/`, `import server as srv`, `srv.app.test_client()`.
 - The frozen exe writes saves to `%APPDATA%\HeroCompanion\saves`; dev uses repo `saves/`.
 
+## Standing watch items
+
+- **INBOX_READ_TOKEN expires 2026-10-12** (the Pulse render's read-only PAT — rotation is a 5-minute chore per docs/pulse-pipeline-runbook.md; the render workflow self-warns within 14 days). Set 2026-07-14 after the Actions-quota incident.
+- **MRB v4 alpha/beta**: keep .mbd import/export compatible as the format moves (public promise to Jacke).
+
 ## Release rules
 
 - Nothing is released without Joel's say-so — **always ask before `gh release create`, asset uploads, or publish-intent version bumps.** Commits and pushes stay autonomous. Changelog entries are staged under **"Unreleased"** until he approves.
