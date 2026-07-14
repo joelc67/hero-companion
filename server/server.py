@@ -2834,16 +2834,19 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
     cache = {}                      # frozenset(picks) -> (score, solved_powers, breakdown)
     explored = []                   # log lines for the learning substrate
     n_solves = [0]
+    _n_lock = __import__("threading").Lock()   # parallel sweeps: exact budget count
 
     def evaluate(pws):
         key = frozenset(p["full_name"] for p in pws)
         if key in cache:
             return cache[key]
-        if n_solves[0] >= max_solves:
-            return (None, None, None)
+        with _n_lock:
+            if n_solves[0] >= max_solves:
+                return (None, None, None)
+            n_solves[0] += 1        # claim the budget slot BEFORE the solve —
+            #                         exact accounting under parallel sweeps
         r = _assess_solve(archetype, _c.deepcopy(pws), _c.deepcopy(targets), "premium",
                           perk, roles, False, False, False, with_powers=True)
-        n_solves[0] += 1
         if not r:
             cache[key] = (None, None, None)
             return cache[key]
@@ -2983,20 +2986,59 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
     best = (sc, cur, solved, ev)
     path = []
     cert = {"sweeps": 0, "converged": False, "restarts_done": 0, "budget_truncated": False}
+    # PARALLEL SWEEPS (2026-07-14, Joel's word): a sweep's moves are independent
+    # solves, and the CBC subprocess releases the GIL — evaluating them
+    # concurrently is where the 4-6x lives. DETERMINISM IS PRESERVED: budget
+    # slots are claimed in MOVE ORDER before any submission (the exact serial
+    # semantics — a budget cutoff lands on the same move it always did), and
+    # the reduce walks results in move order with the same strict-> comparison,
+    # so tie-breaks match the serial sweep byte for byte. HC_PARALLEL_SWEEP=0
+    # is the fallback switch.
+    _workers = 1 if os.environ.get("HC_PARALLEL_SWEEP") == "0" \
+        else max(1, min(8, (os.cpu_count() or 4) - 2))
+    _tpe = __import__("concurrent.futures", fromlist=["ThreadPoolExecutor"])
     for r in range(restarts + 1):
         while True:                                  # climb THIS basin to the top
             sweep_best, sweep_move = None, None
             complete = True
-            for d, a in neighborhood(cur):
-                if n_solves[0] >= max_solves:
+            moves = neighborhood(cur)
+            # Phase 1, in MOVE ORDER: exact serial semantics — the budget
+            # check comes FIRST (top of the serial loop), so a cutoff lands on
+            # the same move it always did; cache hits consume no budget.
+            ordered = []          # (idx, d, a, trial, cached_result_or_None)
+            claims = 0
+            for idx, (d, a) in enumerate(moves):
+                if n_solves[0] + claims >= max_solves:
                     complete = False
                     break
                 trial = apply(cur, d, a)
                 if trial is None:
                     continue
-                tsc, tsol, tev = evaluate(trial)
+                key = frozenset(p["full_name"] for p in trial)
+                if key in cache:
+                    ordered.append((idx, d, a, trial, cache[key]))
+                    continue
+                claims += 1
+                ordered.append((idx, d, a, trial, None))
+            # Phase 2: evaluate the uncached trials concurrently.
+            pending = [(i, t) for i, (idx, d, a, t, res) in enumerate(ordered)
+                       if res is None]
+            if pending and _workers > 1:
+                with _tpe.ThreadPoolExecutor(max_workers=_workers) as ex:
+                    futs = {ex.submit(evaluate, t): i for i, t in pending}
+                    for f in _tpe.as_completed(futs):
+                        i = futs[f]
+                        idx, d, a, t, _ = ordered[i]
+                        ordered[i] = (idx, d, a, t, f.result())
+            else:
+                for i, t in pending:
+                    idx, d, a, t2, _ = ordered[i]
+                    ordered[i] = (idx, d, a, t2, evaluate(t2))
+            # Phase 3, in MOVE ORDER: the serial reduce, unchanged semantics.
+            for idx, d, a, trial, res in ordered:
+                tsc = res[0] if res else None
                 if tsc is not None and (sweep_best is None or tsc > sweep_best[0]):
-                    sweep_best, sweep_move = (tsc, trial, tsol, tev), (d, a)
+                    sweep_best, sweep_move = (tsc, trial, res[1], res[2]), (d, a)
             cert["sweeps"] += 1
             # Heartbeat (2026-07-12, the 24h-blind Peacebringer lesson): one line
             # per sweep so a long convergence is WATCHABLE — score, solve budget
