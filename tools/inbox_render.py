@@ -212,7 +212,10 @@ def render():
             # VIEWER's time zone (offset inferred per source, cached across collects)
             lines = [_shift_line(ln, offsets[iid]) for ln in lines]
             out.write("\n".join(lines) + ("\n" if lines else ""))
-            print(f"source {iid}: {len(lines)} events, utc offset {offsets[iid]} min")
+            # Log only an id PREFIX: this print now lands in the PUBLIC repo's
+            # run logs (relocated render, 2026-07-14). The install id is
+            # anonymous by design, but public logs get the minimum anyway.
+            print(f"source {iid[:4]}…: {len(lines)} events, utc offset {offsets[iid]} min")
             st = {}
             try:
                 with open(os.path.join(d, "state.json"), encoding="utf-8") as f:

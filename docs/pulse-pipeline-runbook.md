@@ -37,6 +37,28 @@ annotation on every run within 14 days of the hardcoded expiry date, and
 CLAUDE.md's watch items carry the date. The staleness banner on the public
 page is the LAST line of defense, not the first.
 
+**The 90-day expiry is DELIBERATE (Joel's ruling, 2026-07-14).** A forever
+token was considered and rejected: rotation is the documented 5-minute chore
+above, the workflow self-warns 14 days out, and the staleness banner catches
+a missed rotation honestly. Do not "improve" this to no-expiry.
+
+## pulse-boards-inbox-upload (the OTHER credential — accepted exception)
+
+The Lite/full-app UPLOAD key (`inbox_key.bin`, obfuscated in release builds)
+has **NO expiration, deliberately** — an accepted, documented exception to
+the expiry rule above, NOT an oversight:
+- It is baked into every shipped exe in the field. Expiring it would brick
+  the entire fleet's uploads until every user manually updated — a
+  distribution constraint, not a hygiene preference.
+- Its blast radius is bounded by scope: write-only to the private inbox
+  repo. Worst case if leaked: junk uploads into a private mailbox that the
+  growth guard and render sanitizer already defend against; it cannot read
+  anything, cannot touch the public site, cannot see other users' data.
+- **Do NOT add an expiration to this token.** If it must ever be revoked
+  (actual leak), that is a coordinated fleet event: revoke + mint + bundle
+  the new key into emergency releases of BOTH apps, knowing field installs
+  are silent until they update.
+
 ## Rotation (the 5-minute October chore)
 
 1. github.com → Settings → Developer settings → Fine-grained tokens →
