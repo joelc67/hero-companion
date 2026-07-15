@@ -307,6 +307,37 @@ CONTENT_PRESETS = {
         "resistance": {"Fire": "CAP", "Smashing": "CAP", "Lethal": "CAP", "Cold": 45},
         "recharge": 50, "recovery": 50,
     },
+    # v31 FARM OBJECTIVES (work order D, Maelwys's taxonomy): two honestly
+    # DIFFERENT objectives, never one "farm" preset pretending to be both.
+    "farm_afk": {
+        "label": "AFK Fire Farm (passive)",
+        # THE HARD PREREQUISITES (Maelwys: "Passive farming prerequisites are
+        # 90% DmgRes and 45% Defense and 35-40+ HP/Sec regeneration"): nobody
+        # is at the wheel — no inspirations, no clicks, no repositioning.
+        "defense": {"Fire": 45},
+        "resistance": {"Fire": "CAP"},
+        # regen floor: derived per-AT in preset_targets from the 37 HP/s
+        # absolute requirement (see _afk_regen_floor — the base-HP
+        # simplification is stated there). recharge modest: nothing is
+        # being pressed.
+        "afk_regen_floor": True,
+        "recharge": 40, "recovery": 50,
+        # an AFK farmer's role is survival — its damage comes from auras and
+        # patches (the v31-priced terms), not a click rotation
+        "default_role": "tank",
+    },
+    "farm_active": {
+        "label": "Active Fire Farm",
+        # Maelwys: building 90/45 as an ACTIVE farmer "leaves a substantial
+        # amount of damage output on the table" — the goal is chaining
+        # procbombed AoEs; survivability comes from the player (insps,
+        # clicks, positioning). Res cap stays (it's cheap on FA and death
+        # wastes time); defense 45 is a decaying ask, not a wall.
+        "defense": {"Fire": 45},
+        "resistance": {"Fire": "CAP"},
+        "recharge": 100, "recovery": 50,
+        "default_role": "damage",
+    },
     "itrial": {                     # league / incarnate content: +3/+4 enemies
         "label": "League / iTrials",
         "defense": {"Smashing": 35, "Lethal": 35, "Fire": 35, "Cold": 35},
@@ -407,8 +438,28 @@ ROLE_PRESETS = {
 }
 
 
+# archetype -> base hit points, registered by server.py at startup so every
+# preset_targets call site can pass archetype= instead of threading raw HP.
+BASE_HP_BY_AT = {}
+
+
+def _afk_regen_floor(base_hp):
+    """Maelwys's absolute AFK sustain requirement (35–40 HP/s vs +4x8 — we ask
+    37) converted to a regen% target. SIMPLIFICATION, STATED (the flag Joel
+    accepted with the v31 green light): the conversion divides by the AT's
+    BASE hit points — a built pool with +HP bonuses regenerates more per
+    percent, so this floor OVERSHOOTS on real builds, erring safe. The
+    scorer's survival math always uses the build's actual max HP; only this
+    ASK simplifies. regen% = (37 × 240 / base_hp − 1) × 100 (the game:
+    HP/s = maxHP × (1 + regen%) / 240)."""
+    if not base_hp:
+        return 400.0            # conservative fallback for an unknown AT
+    return max(0.0, round((37.0 * 240.0 / base_hp - 1.0) * 100.0))
+
+
 def preset_targets(content, role, res_cap=75, exposure=None,
-                   primary=None, secondary=None, goal=None):
+                   primary=None, secondary=None, goal=None, base_hp=None,
+                   archetype=None):
     """Compose a CONTENT preset + ROLE (+ EXPOSURE) into a concrete solver request:
     {"targets": {...}, "roles": [...], "perk_focus": ...}. No free text needed.
 
@@ -421,6 +472,8 @@ def preset_targets(content, role, res_cap=75, exposure=None,
     NOTE on role-first: the survival def/res targets remain HARVEST proxies, not
     literal goals — the role KIND-MULTIPLIERS (ROLE_DEFS) still tilt which bonuses
     get harvested."""
+    if base_hp is None and archetype:
+        base_hp = BASE_HP_BY_AT.get(archetype)
     base = CONTENT_PRESETS.get(content) or {}
     rolespec = ROLE_PRESETS.get(role) or {}
     out = {"defense": {}, "resistance": {}}
@@ -461,6 +514,10 @@ def preset_targets(content, role, res_cap=75, exposure=None,
     for fld in ("recharge", "recovery", "regen", "max_hp", "tohit"):
         if fld in base:
             out[fld] = base[fld]
+    # v31 AFK farm: the regen floor is a derived HARD prerequisite, not a
+    # role floor (see _afk_regen_floor for the stated base-HP simplification)
+    if base.get("afk_regen_floor"):
+        out["regen"] = max(out.get("regen", 0), _afk_regen_floor(base_hp))
     # role raises the relevant perk floors (max), never lowers the content baseline
     for fld, v in rolespec.get("floors", {}).items():
         out[fld] = max(out.get(fld, 0), v)

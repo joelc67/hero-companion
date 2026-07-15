@@ -619,6 +619,48 @@ def _area_factor(rec):
     return max(1.0, inner * 0.75 + 0.25)
 
 
+def aura_proc_dps_per_target(power, rec):
+    """v31 (aura/patch proc modeling — Joel's green-lit batch, 2026-07-16):
+    damage procs slotted in a TOGGLE aura or an AUTO patch power roll once per
+    activate_period per target: chance = min(0.90, PPM × period / (60 × AF)).
+    Per-target proc DPS = chance × dmg50 ÷ period. This is the canonical HC
+    PPM rule expressed with the CLIENT'S OWN period (Blazing Aura 2.0s, Quills
+    2.0s, the Irradiated Ground pet 2.0s — all read from powers.bin); it is
+    per-second-equivalent to the community's 10-second-window form, and the
+    joint fire rate it predicts for a 2-proc aura loadout (~49–57%/window)
+    brackets Joel's measured 56.7% — the cross-check the batch required."""
+    period = rec.get("activate_period") or 0.0
+    if period <= 0:
+        return 0.0
+    table = _proc_table()
+    af = _area_factor(rec)
+    total = 0.0
+    for slot in (power.get("slots") or []):
+        if not slot:
+            continue
+        entry = table.get(slot.get("piece_uid"))
+        if not entry:
+            continue
+        ppm, dmg = entry
+        chance = min(0.90, ppm * period / (60.0 * af))
+        total += chance * dmg / period
+    return total
+
+
+def resolve_patch_pet(rec, power_by_full):
+    """A summoner power's pseudo-pet PATCH attack record, when we have one
+    with real mechanics (the additive patcher backfills them from the client
+    bin — _patch_pet marks a record whose period/radius are game-verified).
+    Naming convention in the data: Pets.<Set>_<Power>.<Power>."""
+    if not rec.get("summons") and "summons" not in rec:
+        pass
+    set_short = (rec.get("powerset_full_name") or "").rsplit(".", 1)[-1]
+    pname = (rec.get("full_name") or "").rsplit(".", 1)[-1]
+    pet = power_by_full.get(f"Pets.{set_short}_{pname}.{pname}")
+    return pet if (pet and pet.get("_patch_pet")
+                   and (pet.get("activate_period") or 0) > 0) else None
+
+
 def proc_damage_per_activation(power, rec, local_rech_boost):
     """Expected proc damage added to ONE activation of this attack, from every
     %Damage proc slotted in it."""
@@ -710,13 +752,20 @@ def _offense(build, totals, ctx):
         if rech_cap is not None:
             rech_total = min(rech_total, rech_cap)
         dmg = base * (1.0 + dmg_boost)
-        # model v24: slotted %Damage procs are DAMAGE — priced by PPM math (see
-        # proc_damage_per_activation). Procs ignore the damage buff/cap by design.
-        dmg += proc_damage_per_activation(power, p, rech_boost)
         cast = p.get("cast_time") or 0.0
         base_rech = p.get("base_recharge") or 0.0
         actual_rech = base_rech / (1.0 + rech_total) if rech_total > -0.999 else base_rech
         cycle = cast + actual_rech
+        # model v24: slotted %Damage procs are DAMAGE — priced by PPM math.
+        # v31: a TOGGLE aura's procs roll per activate_period per target, not
+        # per click cycle (Blazing Aura ticks every 2s from the client's own
+        # record) — fold the per-second proc DPS through this attack's cycle
+        # so dmg/cycle carries it exactly. Clicks keep the v24 formula.
+        # Procs ignore the damage buff/cap by design.
+        if p.get("power_type") == 2 and (p.get("activate_period") or 0) > 0:
+            dmg += aura_proc_dps_per_target(power, p) * cycle
+        else:
+            dmg += proc_damage_per_activation(power, p, rech_boost)
         # AoE vs single-target by the set categories the power accepts — no radius
         # field in the data, but a hit-many attack always accepts an AoE damage set.
         is_aoe_hit = is_aoe(p)                  # real geometry: hits an area (radius/effect_area)
@@ -730,6 +779,30 @@ def _offense(build, totals, ctx):
             "is_aoe": is_aoe_hit,
             "dpa": round(dmg / cast, 1) if cast > 0 else None,
             "dps_spam": round(dmg / cycle, 1) if cycle > 0 else None,
+        })
+    # v31 PATCH SUMMONERS (Irradiated Ground, the poster case): the summoning
+    # power carries NO damage_effects — its whole output lives on the pseudo-
+    # pet, so it never entered this loop and contributed ZERO priced DPS
+    # before v31. Procs slotted in the SUMMONER roll on the PET's own pulse
+    # (client bin: Auto, activate_period 2.0s, radius 8, 10 targets). Uptime
+    # is taken as continuous — the patch's 4s recharge is far under its
+    # duration, the standard farm rotation keeps it down (stated assumption).
+    for power in build.get("powers", []):
+        p = power_by_full.get(power.get("full_name"))
+        if not p or p.get("damage_effects"):
+            continue                      # damage-carrying powers priced above
+        pet = resolve_patch_pet(p, power_by_full)
+        if not pet:
+            continue
+        pdps = aura_proc_dps_per_target(power, pet)
+        if pdps <= 0:
+            continue
+        attacks.append({
+            "name": p.get("display_name"), "damage": round(pdps, 1),
+            "damage_types": [], "cast_time": 0.0, "recharge": 1.0,
+            "end_cost": p.get("end_cost") or 0.0, "is_aoe": True,
+            "dpa": None,                  # never part of the click chain
+            "dps_spam": round(pdps, 1),   # per-target proc DPS, continuous
         })
     if not attacks:
         return {}

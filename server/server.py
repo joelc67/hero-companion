@@ -102,6 +102,11 @@ COMMON_IO_MAP.update({
 # Indexes
 PLAYABLE = [a for a in ARCHETYPES["archetypes"] if a.get("playable")]
 ARCH_BY_NAME = {a["name"]: a for a in ARCHETYPES["archetypes"]}
+# v31: preset_targets derives the AFK-farm regen floor from the AT's base HP
+# (the stated simplification) — register the lookup so every call site can
+# just pass archetype=.
+ai_build.BASE_HP_BY_AT = {a["name"]: a.get("hitpoints") or 0
+                          for a in ARCHETYPES["archetypes"]}
 
 
 def _at_solve_phys(archetype):
@@ -2357,12 +2362,14 @@ def joint_refine(archetype, primary, secondary, role, content, powers_in,
     scorer: 'payoff' = the AT_PAYOFF map (hand-taught); 'first_principles' = the encounter model
     (pure game arithmetic — no targets, no AT map; roles/softcaps/perma are DERIVED)."""
     import first_principles as fp
-    role = role or _AT_DEFAULT_ROLE.get(archetype, "damage")
+    role = (role or ai_build.CONTENT_PRESETS.get(content or "", {}).get("default_role")
+            or _AT_DEFAULT_ROLE.get(archetype, "damage"))
     # The AT's REAL res cap (yellowthief1's find): the hardcoded 75 undercut
     # tank-role/CAP-entry targets on high-cap ATs. Same fix as deep_optimize.
     pre = ai_build.preset_targets(
         content, role,
-        res_cap=round(((ARCH_BY_NAME.get(archetype) or {}).get("res_cap") or 0.75) * 100, 1))
+        res_cap=round(((ARCH_BY_NAME.get(archetype) or {}).get("res_cap") or 0.75) * 100, 1),
+        archetype=archetype)
     targets, roles, perk = pre["targets"], pre["roles"], pre["perk_focus"]
     ctx = _stat_ctx(archetype)
     ctx["power_by_full"] = POWER_BY_FULL
@@ -2955,7 +2962,11 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
     pin = set(pin or ())
     if pin & ban:
         return None, {"error": f"pin/ban conflict: {sorted(pin & ban)}"}
-    role = role or _AT_DEFAULT_ROLE.get(archetype, "damage")
+    # v31: a farm content preset carries its own role story (AFK = survival,
+    # active = damage) — content default wins over the AT default when the
+    # caller declared neither.
+    role = (role or ai_build.CONTENT_PRESETS.get(content or "", {}).get("default_role")
+            or _AT_DEFAULT_ROLE.get(archetype, "damage"))
     # The AT's REAL res cap (yellowthief1's find, 2026-07-14): the old
     # hardcoded 75 undercut tank-role/CAP-entry targets for Tanker/Brute (90)
     # and Kheldians/VEATs (85). Evidence for the record: NO existing champion
@@ -2964,7 +2975,8 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
     # engaged. Future tank-role/farm certifications would have hit it.
     pre = ai_build.preset_targets(
         content, role,
-        res_cap=round(((ARCH_BY_NAME.get(archetype) or {}).get("res_cap") or 0.75) * 100, 1))
+        res_cap=round(((ARCH_BY_NAME.get(archetype) or {}).get("res_cap") or 0.75) * 100, 1),
+        archetype=archetype)
     targets, roles, perk = pre["targets"], pre["roles"], pre["perk_focus"]
     ctx = _stat_ctx(archetype)
     ctx["power_by_full"] = POWER_BY_FULL
@@ -3579,10 +3591,13 @@ def build_solve():
     # PRESET path: a CONTENT and/or ROLE pick generates the targets (no typing needed).
     # A free-text goal stays OPTIONAL — it just layers extra named caps on top.
     _mp2, _ms2 = _main_sets(body.get("powers"))
+    # v31: farm contents carry their own role story when none was picked
+    role = role or ai_build.CONTENT_PRESETS.get(content or "", {}).get("default_role")
     preset = ai_build.preset_targets(content, role, res_cap=_rescap, exposure=exposure,
                                      primary=body.get("primary") or _mp2,
                                      secondary=body.get("secondary") or _ms2,
-                                     goal=body.get("goal")) if (content or role) else None
+                                     goal=body.get("goal"),
+                                     archetype=archetype) if (content or role) else None
     preset_labels = []
     if body.get("targets"):
         targets = body["targets"]

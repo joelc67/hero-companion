@@ -67,6 +67,15 @@ NEW_CONTEXTS = [
     # the build carries all three shapes.
     "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|triform",
     "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|triform",
+    # v31 FARM CHAMPIONS (work order D, release-blocking for 0.12.20 —
+    # Joel's order 2026-07-16): fire passive on the community-classic
+    # Spines/FA (yellowthief1's lane), fire active on Joel's own Rad/FA
+    # Brute (the acceptance case: Irradiated Ground proc-loaded + Atom
+    # Smasher fully slotted should EMERGE from the solve). Element variants
+    # stay DERIVED — the learning stack + custom targets, never
+    # hand-certified (the public promise's exact shape).
+    "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk",
+    "Class_Brute|Brute_Melee.Radiation_Melee|Brute_Defense.Fiery_Aura|farm_active",
 ]
 
 _PB_DWARF = "Peacebringer_Defensive.Luminous_Aura.White_Dwarf"
