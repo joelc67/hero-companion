@@ -619,21 +619,34 @@ def _area_factor(rec):
     return max(1.0, inner * 0.75 + 0.25)
 
 
+# v32: the MEASURED effective area factor for aura/patch proc rolls. The
+# dev-archive AF formula (radius 8 → 1.9) undershoots the field by 42%:
+# per-proc, per-host attribution on Joel's raw farm chatlogs (ToLG + Shield
+# Breaker → Irradiated Ground by set legality; tools/measure_ig_procs.py,
+# 26,541 in-stretch hit ticks) measures 10.66%/10.65% per hit tick for
+# 3.5 PPM — an effective AF of 1.09. This confirms and quantifies the
+# 2026-07-07 pure-window aura finding ("auras behave as AF≈1", 56.7%±3.2
+# per-proc per window vs theory's 26.5-30.7). One measured constant, cited;
+# clicks keep the dev-verified formula (proc_damage_per_activation).
+AURA_PATCH_AF_MEASURED = 1.1
+
+
 def aura_proc_dps_per_target(power, rec):
-    """v31 (aura/patch proc modeling — Joel's green-lit batch, 2026-07-16):
-    damage procs slotted in a TOGGLE aura or an AUTO patch power roll once per
-    activate_period per target: chance = min(0.90, PPM × period / (60 × AF)).
-    Per-target proc DPS = chance × dmg50 ÷ period. This is the canonical HC
-    PPM rule expressed with the CLIENT'S OWN period (Blazing Aura 2.0s, Quills
-    2.0s, the Irradiated Ground pet 2.0s — all read from powers.bin); it is
-    per-second-equivalent to the community's 10-second-window form, and the
-    joint fire rate it predicts for a 2-proc aura loadout (~49–57%/window)
-    brackets Joel's measured 56.7% — the cross-check the batch required."""
+    """v31 introduced the term (aura/patch procs were priced ZERO since
+    launch): damage procs slotted in a TOGGLE aura or an AUTO patch power
+    roll once per activate_period per target, on the CLIENT'S OWN period
+    (Blazing Aura 2.0s, Quills 2.0s, the Irradiated Ground pet 2.0s — all
+    from powers.bin). Per-target proc DPS = chance × dmg50 ÷ period.
+    v32 (Joel's pricing ruling): chance = min(0.90, PPM × period /
+    (60 × AURA_PATCH_AF_MEASURED)) — the geometric area factor does NOT
+    apply to aura/patch rolls in the field (measured, see the constant's
+    citation above); v31's dev-archive AF (1.9 for an 8-radius patch)
+    undershot the game by 42% and priced Irradiated Ground out of its own
+    signature content."""
     period = rec.get("activate_period") or 0.0
     if period <= 0:
         return 0.0
     table = _proc_table()
-    af = _area_factor(rec)
     total = 0.0
     for slot in (power.get("slots") or []):
         if not slot:
@@ -642,7 +655,7 @@ def aura_proc_dps_per_target(power, rec):
         if not entry:
             continue
         ppm, dmg = entry
-        chance = min(0.90, ppm * period / (60.0 * af))
+        chance = min(0.90, ppm * period / (60.0 * AURA_PATCH_AF_MEASURED))
         total += chance * dmg / period
     return total
 
