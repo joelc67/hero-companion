@@ -414,12 +414,41 @@ else:
 # ---------------------------------------------------------------------------
 @app.route("/")
 def index():
-    return send_from_directory(STATIC_DIR, "index.html")
+    # CACHE-BUSTING (Joel's 0.12.20 standing requirement: "users must never
+    # need Ctrl+F5"): every static asset URL in the page carries a version
+    # token derived from the app version AND the asset file's mtime, so a
+    # release OR a dev-server restart after an edit reaches every browser on
+    # a plain reload. index.html itself is served no-store so the tokens are
+    # always current; the tokenized assets get long-lived caching below —
+    # faster than before AND always fresh.
+    with open(os.path.join(STATIC_DIR, "index.html"), encoding="utf-8") as f:
+        html = f.read()
+
+    def _tok(fname):
+        try:
+            mt = int(os.path.getmtime(os.path.join(STATIC_DIR, fname)))
+        except OSError:
+            mt = 0
+        return f"{APP_VERSION}-{mt}"
+
+    html = re.sub(
+        r'((?:src|href)="/static/([^"?]+))"',
+        lambda m: f'{m.group(1)}?v={_tok(m.group(2))}"',
+        html)
+    resp = app.response_class(html, mimetype="text/html")
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
 
 
 @app.route("/static/<path:fname>")
 def static_files(fname):
-    return send_from_directory(STATIC_DIR, fname)
+    resp = send_from_directory(STATIC_DIR, fname)
+    # versioned URLs may cache hard; unversioned requests must revalidate
+    if request.args.get("v"):
+        resp.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    else:
+        resp.headers["Cache-Control"] = "no-cache"
+    return resp
 
 
 # Legal / attribution pages — the markdown files at the repo root, rendered just enough

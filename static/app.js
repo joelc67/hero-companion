@@ -254,7 +254,15 @@ function startFromScratch() {
 // step in front (recommend an AT/sets). This is a PLANNING build for a character that doesn't
 // exist in-game yet, so its identity is NOT locked (unlike an imported/respec'd real character)
 // — you can freely swap archetype/powersets while planning. level_reached=50 marks it a 50 build.
-function startNew50() { build._mode = "new50"; build.level_reached = 50; openWizard("new50"); }
+function startNew50() {
+  // Joel's confirmed 0.12.20 eyeball find: this entry card (the ↺ menu's
+  // "Build a new level-50 character") NEVER reset — startFromScratch did,
+  // this didn't, and openWizard's "new50" branch then re-seeded every old
+  // answer as "from your setup". Reset means reset, on EVERY start-over
+  // entry point.
+  resetBuildScopedState();
+  build._mode = "new50"; build.level_reached = 50; openWizard("new50");
+}
 
 // Clone a select's options AND its current selection — copying innerHTML alone drops the
 // chosen value, which silently reset the wizard's Content/Role to "— choose —" and lost
@@ -311,33 +319,24 @@ async function openWizard(mode) {
   cloneOptions($("wiz-role"), $("preset-role"));
   cloneOptions($("disc-content"), $("preset-content"));
   wizFormRow();   // Kheldians get the Form question; everyone else never sees it
-  // NO DEFAULTS: unanswered questions show a real "— choose —" and block the
-  // build. Values carried from your CURRENT character/presets stay (they ARE
-  // your choices) and are tagged "from your setup" — but a brand-NEW character
-  // carries NOTHING (state-lifecycle rule): every question starts unanswered.
-  if (mode === "new") {
-    ["wiz-role", "wiz-content", "wiz-exposure", "wiz-travel", "wiz-form"].forEach(id => {
-      if ($(id)) $(id).value = "";
-    });
-    ["role", "content", "exposure", "travel", "form"].forEach(k => wizSetSrc(k, ""));
-  } else {
-    wizSetSrc("role", $("wiz-role").value ? "setup" : "");
-    wizSetSrc("content", $("wiz-content").value ? "setup" : "");
-    if (build && build._exposure) { $("wiz-exposure").value = build._exposure; wizSetSrc("exposure", "setup"); }
-    else { $("wiz-exposure").value = ""; wizSetSrc("exposure", ""); }
-  }
-  // Travel is ALWAYS the user's pick — endgame entry can REQUIRE specific travel
-  // (BAF/Lambda enter only by Flight or Teleport), so the tool never chooses it.
-  // But a pick you ALREADY made restores: the stored wizard answer, else the
-  // travel power the build demonstrably contains (field-report bug: Teleport
-  // was in the build yet reopen reset travel to unanswered). Absence is never
-  // inferred as "none" — that's only restorable from an explicit prior answer.
-  const TRAVEL_POWERS = { "Pool.Teleportation.Teleport": "teleport", "Pool.Flight.Fly": "fly",
-                          "Pool.Speed.Super_Speed": "super_speed", "Pool.Leaping.Super_Jump": "super_jump" };
-  let trav = (build && build._travel) || null;
-  if (!trav && build) trav = (build.powers || []).map(p => TRAVEL_POWERS[p.full_name]).find(Boolean) || null;
-  $("wiz-travel").value = trav || "";
-  wizSetSrc("travel", trav ? "setup" : "");
+  // NO DEFAULTS + STATE-LIFECYCLE (Joel's confirmed 0.12.20 eyeball find,
+  // superseding the "from your setup" carry): BOTH wizard modes are reached
+  // only through the entry cards, and an entry card means a NEW character —
+  // every question starts genuinely unanswered, always. The old else-branch
+  // re-seeded the previous character's answers as "from your setup" (that's
+  // exactly what Joel saw surviving the reset button), and the old travel/
+  // identity restores below it did the same for travel, archetype, and
+  // powersets. Reset means reset — no exceptions, no browser knowledge
+  // required. (If a "tweak my current answers" reopen ever becomes a real
+  // flow, it gets its own explicit mode — it never rides the new-character
+  // cards again.)
+  ["wiz-role", "wiz-content", "wiz-exposure", "wiz-travel", "wiz-form"].forEach(id => {
+    if ($(id)) $(id).value = "";
+  });
+  ["role", "content", "exposure", "travel", "form"].forEach(k => wizSetSrc(k, ""));
+  const presetC = $("preset-content"), presetR = $("preset-role");
+  if (presetC) presetC.value = "";
+  if (presetR) presetR.value = "";
   $("wiz-primary").innerHTML = "<option value=''>— primary set —</option>";
   $("wiz-secondary").innerHTML = "<option value=''>— secondary set —</option>";
   $("wiz-primary").disabled = $("wiz-secondary").disabled = true;
@@ -352,16 +351,11 @@ async function openWizard(mode) {
   $("wiz-discover").classList.toggle("hidden", !isNew);   // discovery only for Start-new
   wizUpdateHint();
   $("respec-wizard").classList.remove("hidden");
-  // Reopening with a real character ("Change how you started" after an import):
-  // sync the archetype and POPULATE the powerset dropdowns immediately — they used
-  // to fill only on the archetype CHANGE event, so same-archetype reopens rendered
-  // dead empty selects until the user toggled away and back (field-report BUG 2).
-  if (build && build.archetype && (build.powers || []).length) $("wiz-at").value = build.archetype;
-  if ($("wiz-at").value) {
-    await wizLoadPowersets();
-    if (build && build.primary) $("wiz-primary").value = build.primary;
-    if (build && build.secondary) $("wiz-secondary").value = build.secondary;
-  }
+  // A new character's identity starts unanswered too (the old import-reopen
+  // re-fill leaked archetype + powersets through the reset button; the dead-
+  // selects bug it fixed can't occur on a blank wizard — the selects are
+  // disabled until an archetype is chosen, the normal fresh path).
+  $("wiz-at").value = "";
   wizGateBuild();
   wizExplain(null);   // renders only what's actually been answered
 }
@@ -967,7 +961,14 @@ async function buildRespec() {
     // confirm gate (its button would render behind this modal and hang the flow).
     await solveSlotting(null, { skipConfirm: true });
     $("wiz-result").classList.remove("hidden");
-    $("wiz-result").innerHTML = `<strong>✓ Your ${ap.count}-power kit is ready.</strong>`
+    // 0.12.20 eyeball fix (Joel: clicking Build looked like nothing happened —
+    // the result rendered below the fold INSIDE this pop-up, with the pop-up
+    // itself sitting in front of the build): an UNMISSABLE reveal button
+    // leads the result, and the result scrolls itself into view. One click
+    // dismisses the pop-up and lands on the build.
+    $("wiz-result").innerHTML = `<button id="wiz-reveal" class="wiz-reveal-cta">`
+      + `⬇&nbsp; Your build is ready — click to see it &nbsp;⬇</button>`
+      + `<strong>✓ Your ${ap.count}-power kit is ready.</strong>`
       + `<p class="muted small">Powers chosen, slotting optimized, and incarnates recommended for your goal. `
       + `Travel + survival are taken early so they survive exemplaring into old Task Forces. `
       + `Open the full build to review caps, DPS, and per-slot enhancements — and tweak anything, or 💾 Save it.</p>`
@@ -979,8 +980,23 @@ async function buildRespec() {
       + `<button id="wiz-open" class="solve-btn" style="width:auto">Open the full build →</button></div>`
       + `<div id="wiz-plan-out"></div>`;
     $("wiz-plan-out").innerHTML = levelingPlanHtml();   // show the full in-game respec order up front
-    $("wiz-open").addEventListener("click", () => { closeRespecWizard(); $("builder").scrollIntoView({ behavior: "smooth", block: "start" }); });
+    const _reveal = () => { closeRespecWizard(); $("builder").scrollIntoView({ behavior: "smooth", block: "start" }); };
+    $("wiz-reveal").addEventListener("click", _reveal);
+    $("wiz-open").addEventListener("click", _reveal);
     $("wiz-step").addEventListener("click", openLevelStepper);
+    // The click's consequence must be ON SCREEN. scrollIntoView proved
+    // unreliable here (the wizard-box is a scroll container inside a fixed
+    // modal and never moved) — scroll the container itself, measured.
+    const _box = $("wiz-reveal").closest(".wizard-box");
+    if (_box) {
+      const _delta = $("wiz-reveal").getBoundingClientRect().top
+        - _box.getBoundingClientRect().top;
+      // instant, not smooth: smooth scrollTo silently no-ops on this
+      // container (measured — scrollTop stayed 0 even standalone), and an
+      // unmissable reveal that sometimes doesn't reveal is a false no-op
+      // all over again.
+      _box.scrollTo({ top: _box.scrollTop + _delta - 60 });
+    }
     $("wiz-status").textContent = "";
   } finally { $("wiz-build").disabled = false; }
 }
@@ -4033,6 +4049,10 @@ function renderIngameFound(r) {
 // different goal/role/options without re-importing the file.
 function resetToImported() {
   if (!IMPORTED_POWERS) return;
+  // reset means reset (0.12.20 eyeball rule): the import didn't carry custom
+  // targets, exposure, travel answers, or boost previews — restoring "exactly
+  // as it came in" clears them too, same as every other start-over path.
+  resetBuildScopedState();
   build.powers = JSON.parse(JSON.stringify(IMPORTED_POWERS));
   build.imported = true;
   CHANGES_AVAILABLE = false;   // back to the imported build — nothing changed to show

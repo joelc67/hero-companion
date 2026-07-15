@@ -683,6 +683,20 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .wiz-actions .solve-btn { width: auto; }
 .wiz-result { margin-top: 14px; padding: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; }
 .wiz-result.hidden { display: none; }
+/* 0.12.20: the unmissable build-reveal CTA — Joel's prescription: a BIG
+   obvious pointer to the build below, because the finished build sits behind
+   this pop-up and the old buttons were below the fold. */
+.wiz-reveal-cta {
+  display: block; width: 100%; margin: 0 0 12px; padding: 16px 12px;
+  font-size: 1.25rem; font-weight: 800; cursor: pointer; border-radius: 10px;
+  border: 2px solid var(--accent, #4da3ff); background: var(--accent, #4da3ff);
+  color: #fff; animation: wizRevealPulse 1.2s ease-in-out infinite;
+}
+.wiz-reveal-cta:hover { filter: brightness(1.12); }
+@keyframes wizRevealPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(77, 163, 255, .55); }
+  50% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(77, 163, 255, 0); }
+}
 /* "How do you play" explainer: per-choice pop-up (tailored to the chosen AT + sets)
    and the combined-choices summary of what the planner will actually chase. */
 .wiz-pop { position: relative; margin-top: 10px; padding: 10px 34px 10px 12px;
