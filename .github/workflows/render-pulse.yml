@@ -18,9 +18,16 @@ name: Render Pulse Boards
 # (~31 billed minutes/month). Renders here read compacted + uncollected
 # chunks alike, so a paused collect never stales the board.
 
+# SCHEDULE HONESTY (measured 2026-07-15 from the run history): GitHub treats
+# cron as BEST-EFFORT — our "*/15" fired every 60-90 minutes in practice, and
+# there were ZERO push-triggered renders (the "bursting" runs seen that night
+# were pages-build-deployment). Explicit off-peak minutes (GitHub's own advice:
+# avoid :00/:15/:30/:45 contention) improve the odds; the real-world promise
+# is "roughly hourly, sometimes better" and the page's two-layer staleness
+# script tells viewers the truth either way.
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "4,19,34,49 * * * *"
   workflow_dispatch:
 
 concurrency:

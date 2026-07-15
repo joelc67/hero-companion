@@ -951,26 +951,56 @@ def build(state_dir=None, public=False):
                 "sessions. When the community layer opens, sharing any of this stays a "
                 "separate, per-stat choice.")
 
-    # CLIENT-SIDE STALENESS (2026-07-14 quota incident, field-verified need): the
-    # server-drawn stale banner is rendered BY the renderer — the one thing that
-    # can't run when rendering stops, so the page silently ages (it did, for
-    # hours, stamped the exact minute the Actions meter died). This script needs
-    # NO server run: the page carries its own build stamp and the VIEWER'S clock
-    # judges it. Threshold 2h (~8 missed 15-min renders — a real stoppage, never
-    # normal jitter).
-    _stale_js = ("<script>(function(){var el=document.getElementById('stale-note');"
-                 "if(!el)return;var built=Date.parse(el.getAttribute('data-built'));"
-                 "if(!built)return;function tick(){var h=(Date.now()-built)/36e5;"
-                 "if(h>=2){el.style.display='block';el.textContent='\\u26a0 This board was "
-                 "built '+(h<48?Math.round(h)+' hours':Math.round(h/24)+' days')+"
-                 "' ago \\u2014 the live feed may be paused.';}}tick();"
-                 "setInterval(tick,60000);})();</script>")
+    # CLIENT-SIDE STALENESS, TWO LAYERS (2026-07-15 field lesson: the first
+    # banner keyed on the RENDER stamp — but a healthy hourly render over a
+    # dead game feed re-stamps the page "fresh" forever while the DATA freezes.
+    # 19 hours of frozen numbers showed no banner because the page was never
+    # more than ~90 min old. The page now carries BOTH stamps and the viewer's
+    # clock judges each):
+    #   data-built  when the renderer produced this page → "render paused"
+    #               banner past 3h (real-world cron cadence is ~hourly —
+    #               GitHub treats */15 as best-effort, measured 60-90 min)
+    #   data-fresh  the NEWEST EVENT in the data → an always-visible
+    #               "data through <local time>" line, and an honest "no new
+    #               data since <time>" banner past 6h (a quiet overnight is
+    #               normal for a small feeder fleet — the copy states the
+    #               fact without crying wolf)
+    _stale_js = (
+        "<script>(function(){var el=document.getElementById('stale-note');"
+        "var dn=document.getElementById('data-note');if(!el)return;"
+        "var built=Date.parse(el.getAttribute('data-built'));"
+        "var fresh=Date.parse(el.getAttribute('data-fresh')||'');"
+        "function fmt(t){return new Date(t).toLocaleString([],{month:'short',"
+        "day:'numeric',hour:'numeric',minute:'2-digit'});}"
+        "function ago(h){return h<48?Math.round(h)+' hours':Math.round(h/24)+' days';}"
+        "function tick(){var now=Date.now();"
+        "if(dn&&fresh){dn.textContent='Data through '+fmt(fresh)+' (your time)';}"
+        "var bh=built?(now-built)/36e5:0;var fh=fresh?(now-fresh)/36e5:0;"
+        "if(built&&bh>=3){el.style.display='block';"
+        "el.textContent='\\u26a0 This board was built '+ago(bh)+' ago \\u2014 "
+        "the render pipeline may be paused.';}"
+        "else if(fresh&&fh>=6){el.style.display='block';"
+        "el.textContent='\\u26a0 No new game data since '+fmt(fresh)+' \\u2014 "
+        "the feed may be offline (or the shard quiet).';}"
+        "else{el.style.display='none';}}"
+        "tick();setInterval(tick,60000);})();</script>")
     _built_iso = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    _newest_ts = max((ev.get("ts") or "" for ev in events), default="")
+    try:
+        _fresh_iso = time.strftime(
+            "%Y-%m-%dT%H:%M:%SZ",
+            time.strptime(_newest_ts, "%Y-%m-%d %H:%M:%S")) if _newest_ts else ""
+    except Exception:  # noqa: BLE001 — freshness is a nicety, never a build risk
+        _fresh_iso = ""
+    _data_note = ("<div id='data-note' style='text-align:center;font-size:.78rem;"
+                  f"color:#8fa0bd;padding:3px 0'>Data through {_newest_ts} UTC</div>"
+                  if public and _newest_ts else "")
     page = f"""<!doctype html><html><head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <title>CoH Pulse Boards</title><style>{CSS}</style></head><body>
-<div id='stale-note' data-built='{_built_iso}' style='display:none;background:#5a2e12;
+<div id='stale-note' data-built='{_built_iso}' data-fresh='{_fresh_iso}' style='display:none;background:#5a2e12;
 color:#ffd9a0;padding:8px 14px;text-align:center;font-weight:600'></div>
+{_data_note}
 {_stale_js}
 <div class='mock'>{mock}</div>
 <div class='wrap'>

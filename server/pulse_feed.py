@@ -151,15 +151,22 @@ def maybe_upload():
     st = gamelog.load_state()
     if not inbox_token() or st.get("terms_version", 0) < TERMS_VERSION:
         return
-    # Choice doctrine: unlike Lite (whose whole job is feeding, so using it IS
-    # the consent), the full app is a build planner first — the feed here is an
-    # explicit, REVERSIBLE opt-in. feed_disabled is the remembered "no"; the
-    # shared key means turning it off here silences a co-installed Lite's
-    # uploads too... it does NOT: Lite ignores this key until it adopts this
-    # module (Lite 0.1.17) — stated plainly in the Play Log UI until then.
-    if st.get("feed_disabled"):
+    # Choice doctrine, TIGHTENED (Pulse diagnostic 6a, 2026-07-15): unlike Lite
+    # (whose whole job is feeding, so using it IS the consent), the full app is
+    # a build planner first — its feed is an explicit, REVERSIBLE opt-in. The
+    # old gate (`feed_disabled` absent = upload) leaked consent ACROSS APPS: on
+    # a machine where LITE's terms were accepted, the full app uploaded without
+    # its own opt-in ever being shown. The full app now uploads only when its
+    # own toggle was explicitly answered YES (feed_disabled present and False —
+    # set_feed_enabled(True) writes exactly that). Absent = this app was never
+    # asked = it does not upload. Lite 0.1.17 respects feed_disabled=True as
+    # the shared remembered "no", as promised here.
+    if st.get("feed_disabled") is not False:
         return
     if time.time() - _stats.get("uploaded_ts", 0) < UPLOAD_SECONDS:
+        return
+    # ONE uploader per store (6a): never race a co-running Lite's offset.
+    if not gamelog.acquire_upload("full"):
         return
     src = os.path.join(gamelog.STATE_DIR, "events.jsonl")
     size = os.path.getsize(src) if os.path.isfile(src) else 0
@@ -206,7 +213,10 @@ def maybe_upload():
         _stats["uploaded_bytes"] = _stats.get("uploaded_bytes", 0) + len(chunk)
         _stats["uploaded_last"] = time.strftime("%H:%M:%S")
     except Exception as e:  # noqa: BLE001 — the feed never breaks the app
-        _stats["last_error"] = f"board feed {type(e).__name__}: {e}"
+        # reason-first, same as Lite 0.1.17 (bare class names forced guessing)
+        reason = getattr(e, "reason", None) or e
+        _stats["last_error"] = f"board feed: {reason} ({type(e).__name__})"
+        _stats["feed_fails"] = _stats.get("feed_fails", 0) + 1
 
 
 def build_board(public=False):
@@ -238,6 +248,11 @@ def feed_status():
             "terms_version_current": TERMS_VERSION,
             "consented": st.get("terms_version", 0) >= TERMS_VERSION,
             "feed_disabled": bool(st.get("feed_disabled")),
+            # 6a consent shape: the full app uploads only when ITS toggle was
+            # explicitly answered yes — absent means "never asked here"
+            "opted_in_here": st.get("feed_disabled") is False,
+            "upload_owner": (gamelog.upload_owner() or {}).get("tag"),
+            "feed_fails": _stats.get("feed_fails", 0),
             "upload_offset": int(st.get("upload_offset", 0)),
             "uploaded_last": _stats.get("uploaded_last"),
             "last_error": _stats.get("last_error")}

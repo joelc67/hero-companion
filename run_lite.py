@@ -36,7 +36,7 @@ import gamelog  # noqa: E402
 APPDIR = os.path.join(os.environ.get("APPDATA", _HERE), "HeroCompanion")
 gamelog.STATE_DIR = os.path.join(APPDIR, "gamelog")
 
-LITE_VERSION = "0.1.16"
+LITE_VERSION = "0.1.17"
 _UPDATE_VERSION_URL = ("https://raw.githubusercontent.com/joelc67/hero-companion/"
                        "master/lite_version.txt")
 _RELEASES_URL = "https://github.com/joelc67/hero-companion/releases"
@@ -278,7 +278,17 @@ def _maybe_upload():
     # feed the live board. Uploads never start before the terms have been shown once.
     if not _inbox_token() or st.get("terms_version", 0) < TERMS_VERSION:
         return
+    # 0.1.17: the shared remembered "no" (feed_disabled, written by the full
+    # app's reversible opt-out) now silences Lite too — the promise pulse_feed
+    # made for this version. One machine, one choice.
+    if st.get("feed_disabled"):
+        return
     if time.time() - _stats.get("uploaded_ts", 0) < UPLOAD_SECONDS:
+        return
+    # 0.1.17 (Pulse diagnostic 6a): ONE uploader per store. When the full app
+    # runs alongside Lite, both uploaders used to race the shared
+    # upload_offset with interleaved state writes.
+    if not gamelog.acquire_upload("lite"):
         return
     src = os.path.join(gamelog.STATE_DIR, "events.jsonl")
     size = os.path.getsize(src) if os.path.isfile(src) else 0
@@ -334,8 +344,18 @@ def _maybe_upload():
         gamelog.save_state(st)
         _stats["uploaded_bytes"] = _stats.get("uploaded_bytes", 0) + len(chunk)
         _stats["uploaded_last"] = time.strftime("%H:%M:%S")
+        _stats["feed_fails"] = 0                       # a success ends the retry story
+        _stats.pop("feed_fail_since", None)
     except Exception as e:  # noqa: BLE001
-        _stats["last_error"] = f"board feed {type(e).__name__}: {e}"
+        # 0.1.17 (field report: a tray tooltip showed bare "board feed
+        # URLError" and forced guessing): lead with the HUMAN reason —
+        # URLError carries it in .reason ("getaddrinfo failed" = no DNS/
+        # offline, "timed out", "connection refused") — and count the
+        # consecutive failures so a dead feed is visible at a glance.
+        reason = getattr(e, "reason", None) or e
+        _stats["last_error"] = f"board feed: {reason} ({type(e).__name__})"
+        _stats["feed_fails"] = _stats.get("feed_fails", 0) + 1
+        _stats.setdefault("feed_fail_since", time.strftime("%H:%M"))
 
 
 def _capture_loop():
@@ -370,11 +390,23 @@ def _status_text():
         board = f"ONLINE (auto-publish every {AUTOPUBLISH_SECONDS // 60} min) — {_PUBLISH_LIVE_URL}"
     elif not _inbox_token():
         board = "feed inert (no upload key in this build)"
+    elif st.get("feed_disabled"):
+        # 0.1.17 gate honesty: a silenced feed SAYS it is silenced and why —
+        # never two green trays over zero uploads.
+        board = "feed OFF (your remembered choice — re-enable in the full app's Play Log)"
+    elif st.get("terms_version", 0) < TERMS_VERSION:
+        board = "feed waiting on the terms notice (shown at next start)"
     else:
+        _owner = gamelog.upload_owner() or {}
         board = ("feeding the live board"
                  + (f" (last upload {up}, {_stats.get('uploaded_bytes', 0):,} bytes "
                     f"this run)" if up else
                     f" (uploads within {UPLOAD_SECONDS // 60} min of new play)"))
+        if _owner.get("tag") == "full":
+            board = "feed owned by the full app (it uploads; Lite stands by)"
+        if _stats.get("feed_fails"):
+            board += (f"\nfeed status: RETRYING — {_stats['feed_fails']} "
+                      f"failure(s) since {_stats.get('feed_fail_since')}")
     return (f"Companion Lite — up {up} min\n"
             f"capture owner: {who}\n"
             f"events captured this run: {_stats['events']} "

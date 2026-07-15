@@ -1,6 +1,42 @@
 # Hero Companion — What's New
 
+## Companion Lite 0.1.17 — 2026-07-15
+
+- **The feed tells you the truth when it can't upload.** Errors now lead with
+  the human reason ("getaddrinfo failed" means no network/DNS, "timed out",
+  "connection refused") instead of a bare class name, and the tray status
+  shows a visible retry line — "RETRYING, N failures since HH:MM" — so a dead
+  feed is never two green icons over silence.
+- **One machine, one uploader.** When the full Hero Companion app runs
+  alongside Lite, exactly one of them feeds the board (a shared lock — the
+  same pattern that already keeps them from double-capturing). No more racing
+  the upload bookmark.
+- **Your remembered "no" now covers Lite too.** Turning the feed off in the
+  full app's Play Log silences Lite's uploads as well — one choice, honored
+  everywhere, reversible in the same place. The tray says plainly when the
+  feed is off and why.
+
 ## Unreleased
+
+- **Custom build targets now survive to the finish line.** When you set your
+  own numbers (the fire-farm 45% defense / 90% resistance case), no later
+  optimization step may trade them away — the solver meets your ask and the
+  finishing passes are held to it. (Work order A: the proc pass was breaking
+  a target-serving set after the solve had already met the number.)
+- **Repeated Optimize presses are stable and honest.** The same button now
+  gives the same build from the first press, and when your imported
+  character owns fewer slots than the level-50 plan places, the result says
+  so plainly instead of silently showing slots you don't have yet. (The
+  reported "slot inflation" was measured everywhere and never existed —
+  slot conservation is now a standing audit anyway.)
+- **No impossible defense numbers.** Where a total includes out-of-combat
+  stealth defense (Hide's big AoE layer), the fight value prints right
+  beside it — "90% ⚔ 30% in combat" — with the explanation on hover.
+- **The public Pulse board is honest about BOTH kinds of quiet.** The page
+  now shows "Data through <time>" always, warns "no new game data since
+  <time>" when the feed goes quiet, and separately warns when the render
+  pipeline itself stops. (Field lesson: a healthy renderer over a dead feed
+  kept re-stamping the page "fresh" while the numbers froze for 19 hours.)
 
 - **Peacebringers and Warshades: pick your form, get its champion.** The
   level-50 wizard will ask Kheldians one more question — Human, Dwarf, Nova,

@@ -83,6 +83,46 @@ def ingest_owner():
     return None
 
 
+# ── single-UPLOADER lock (Pulse diagnostic item 6a, 2026-07-15): when the full
+# app and Companion Lite run together, BOTH feed uploaders used to pass the
+# shared consent gate and race one shared upload_offset with interleaved
+# state.json writes — duplicate chunks at best, torn state at worst. Same
+# heartbeat pattern as the ingest lock: one uploader per store, stale after
+# 90s so a crashed owner never wedges the feed.
+def _upload_owner_path():
+    return os.path.join(STATE_DIR, "upload_owner.json")
+
+
+def acquire_upload(tag):
+    """True if this process may upload feed chunks (it becomes/refreshes the
+    owner). `tag` names the owner for status display ('full' | 'lite')."""
+    os.makedirs(STATE_DIR, exist_ok=True)
+    now = time.time()
+    me = {"pid": os.getpid(), "tag": tag, "ts": now}
+    try:
+        with open(_upload_owner_path(), encoding="utf-8") as f:
+            cur = json.load(f)
+        if cur.get("pid") != me["pid"] and (now - float(cur.get("ts", 0))) < _OWNER_TTL:
+            return False
+    except Exception:  # noqa: BLE001 — no owner file yet
+        pass
+    with open(_upload_owner_path(), "w", encoding="utf-8") as f:
+        json.dump(me, f)
+    return True
+
+
+def upload_owner():
+    """Current upload-owner record, or None — for status display."""
+    try:
+        with open(_upload_owner_path(), encoding="utf-8") as f:
+            cur = json.load(f)
+        if (time.time() - float(cur.get("ts", 0))) < _OWNER_TTL:
+            return cur
+    except Exception:  # noqa: BLE001
+        pass
+    return None
+
+
 # ── discovery ────────────────────────────────────────────────────────────────
 def find_log_accounts(accounts_dirs):
     """Every account folder with (or without) a Logs dir, so the UI can offer the
