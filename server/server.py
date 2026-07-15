@@ -903,6 +903,20 @@ def _explain_form(form, archetype):
                            "chooses what the build is optimized around."}
 
 
+def _afk_champion_label(archetype, primary, secondary):
+    """The certified AFK champion's sustain label for this exact context, if one
+    exists (Joel's ruling, 2026-07-16: the tier a build DOES sustain prints on
+    the certification label — a floor shortfall is never silent, a combo that
+    covers the worst case through auto-fire sustain says exactly that)."""
+    try:
+        import learn as _learn
+        champs = json.load(open(_learn.CHAMPIONS_PATH, encoding="utf-8"))
+        entry = champs.get(f"{archetype}|{primary}|{secondary}|farm_afk") or {}
+        return ((entry.get("certificate") or {}).get("afk_sustain") or {}).get("label")
+    except Exception:  # noqa: BLE001 — explainer must never block the wizard
+        return None
+
+
 def _explain_content(archetype, content, primary, secondary, res_cap):
     if not content:              # unanswered explains nothing (no-defaults ruling)
         return None
@@ -919,6 +933,22 @@ def _explain_content(archetype, content, primary, secondary, res_cap):
                      f"dealer: 45% Fire/S/L defense AND Fire/S/L resistance at your "
                      f"archetype's cap ({res_cap:.0f}%). You tank the spawn first, "
                      "then clear it.")
+    elif content == "farm_afk":
+        parts.append("AFK farming means the build fights alone while you are away "
+                     "from the keyboard: 45% Fire defense, Fire resistance at your "
+                     f"archetype's cap ({res_cap:.0f}%), and enough PASSIVE sustain "
+                     "(regeneration, plus one self-heal on auto-fire) to out-heal "
+                     "the whole spawn's incoming damage indefinitely.")
+        champ_label = _afk_champion_label(archetype, primary, secondary)
+        if champ_label:
+            parts.append(champ_label)
+    elif content == "farm_active":
+        parts.append("Active farming keeps you at the wheel — moving, clicking "
+                     "heals, eating inspirations — so the build spends its budget "
+                     "on AoE throughput and recharge instead of the last word in "
+                     f"survival: Fire resistance at the cap ({res_cap:.0f}%), Fire "
+                     "defense treated as a fading goal past 45%, and every spare "
+                     "slot buying damage.")
     elif content == "itrial":
         parts.append("League and iTrial enemies run +3/+4 with heavy energy/negative "
                      "damage and defense-stripping spikes: the baseline is 35% typed "
@@ -3290,6 +3320,20 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
         pass
     sc_b, cur_b, solved_b, ev_b = best
     champion_picks = [p["full_name"] for p in cur_b]
+    # v31 AFK sustain label (Joel's ruling, 2026-07-16): any content that asks
+    # the AFK regen floor certifies with the tier the build DOES sustain stated
+    # on the certificate — the floor is never relaxed, a shortfall is never
+    # silent, and a combo that covers the worst case through its own sustained
+    # self-heal (auto-fire) says exactly that. Universal: keyed off the preset
+    # flag, not a content-name special case.
+    if (ai_build.CONTENT_PRESETS.get(content or "", {}) or {}).get("afk_regen_floor"):
+        try:
+            tot_b = engine.calculate_build({"archetype": archetype, "powers": solved_b},
+                                           SET_BONUSES, res_cap=res_cap, ctx=ctx)
+            cert["afk_sustain"] = fp.afk_sustain_assessment(
+                solved_b, tot_b, arch_row, ctx, role_output_mod=role_output)
+        except Exception:  # noqa: BLE001
+            cert["afk_sustain"] = {"error": "assessment failed - investigate before release"}
     # Grow the knowledge: this context's champion is now whatever this run proved best.
     try:
         learn.save_champion(archetype, primary, secondary, content, champion_picks, sc_b, cert,

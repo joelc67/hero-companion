@@ -58,10 +58,14 @@ def evaluate_picks(at, prim, sec, content, picks, role, form=None):
     picks are the bit-faithful reconstruction; feeding the autopick seed's
     field shape (slots/earned from the tray plan) measurably changes the
     solve (Crab −7.5 artifact, 2026-07-15)."""
+    # Mirror deep_optimize's preset call EXACTLY (v31): archetype= feeds the
+    # per-AT AFK regen floor — omitting it evaluates farm champions against
+    # the 400 fallback instead of the floor they were certified under.
     pre = srv.ai_build.preset_targets(
         content, role,
         res_cap=round(((srv.ARCH_BY_NAME.get(at) or {}).get("res_cap")
-                       or 0.75) * 100, 1))
+                       or 0.75) * 100, 1),
+        archetype=at)
     targets, roles, perk = pre["targets"], pre["roles"], pre["perk_focus"]
     ctx = srv._stat_ctx(at)
     ctx["power_by_full"] = srv.POWER_BY_FULL
@@ -99,14 +103,20 @@ def main():
     champs, srcs = certified_union()
     print("certified sources: " + ", ".join(f"{k} ({v})" for k, v in srcs.items()))
     print(f"evaluating {len(champs)} certified context(s) against the current "
-          f"model+code (A-fix)\n")
+          f"model+code (model {fp.MODEL_VERSION})\n")
 
     movers, unaffected, failed = [], [], []
     rider_rows = []
     for key in sorted(champs):
         parts = key.split("|")
         at, prim, sec, content = parts[:4]
-        role = srv._AT_DEFAULT_ROLE.get(at, "damage")
+        # v31: content default_role wins over the AT default — same resolution
+        # as deep_optimize (farm_afk certifies under "tank", farm_active under
+        # "damage"; evaluating under a different role than certification is a
+        # counterfeit comparison).
+        role = (srv.ai_build.CONTENT_PRESETS.get(content or "", {})
+                .get("default_role")
+                or srv._AT_DEFAULT_ROLE.get(at, "damage"))
         entry = champs[key]
         form = parts[4] if len(parts) > 4 else None
         # canonical-vs-canonical: the run score (entry["score"]) is a

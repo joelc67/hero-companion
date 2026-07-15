@@ -246,6 +246,75 @@ def _def_against(totals, kind_keys):
     return max(vals) if vals else 0.0
 
 
+# ── v31 AFK sustain assessment (Joel's ruling, 2026-07-16) ───────────────────
+# When a combo cannot meet the AFK regen floor, the certificate does not relax
+# the floor and does not hold certification — it states, from this model's own
+# arithmetic, the difficulty tier the build DOES sustain. The requirement
+# ladder scales Maelwys's +4x8 absolute (35–40 HP/s; we ask 37) by the critter
+# accuracy multiplier per shift (_LEVEL_ACC) — at the defense softcap the
+# incoming stream is accuracy-bound, and per-hit damage stays the scenario
+# constant (stated simplification, the same structure the SCENARIOS table
+# itself uses). The sustain ledger: regen + the SINGLE best self-heal power's
+# sustained rate (heal-strength multiplied) — AFK play allows exactly ONE
+# auto-fire power, so aggregating multiple click heals would certify a rate no
+# absent player can click (caught on the very first stamp: Aid Self + Healing
+# Flames both priced). Rezzes are excluded — a rez fires when you're already
+# dead. Per-power rates use BASE recharge (no recharge credit): conservative,
+# stated.
+AFK_SUSTAIN_ASK_HPS = 37.0
+
+
+def afk_sustain_assessment(powers, totals, arch_row, ctx, role_output_mod=None):
+    """The AFK sustain ledger + the sustained tier, for the certification label."""
+    base_hp = (arch_row or {}).get("hitpoints") or 1000
+    hp = base_hp * (1.0 + _pct(totals, "max_hp"))
+    regen_hps = hp * _REGEN_PER_SEC * (1.0 + _pct(totals, "regeneration"))
+    heal_str = 1.0 + _pct(totals, "heal_strength")
+    heal_rates, auto_name, auto_hps = [], None, 0.0
+    if role_output_mod:
+        pbf = ctx.get("power_by_full") or {}
+        for p in (powers or []):
+            rec = pbf.get(p.get("full_name"))
+            if not rec:
+                continue
+            _team, self_hps, is_rez = role_output_mod.power_heal_output(rec, ctx)
+            if self_hps <= 0 or is_rez:
+                continue
+            rate = round(self_hps * heal_str, 2)
+            name = (rec.get("full_name") or "").split(".")[-1]
+            # An INTERRUPTIBLE heal cannot anchor AFK sustain: every hit taken
+            # during the interrupt window cancels the cast, and the AFK scrum
+            # is nothing but hits (client interrupt_time via
+            # patch_interrupt_times.py — Aid Self 1.0s was priced as 15.7 HP/s
+            # it cannot deliver before this gate existed).
+            interruptible = (rec.get("interrupt_time") or 0) > 0
+            heal_rates.append({"power": name, "self_hps": rate,
+                               "interruptible": interruptible})
+            if not interruptible and rate > auto_hps:
+                auto_name, auto_hps = name, rate
+    sustain = regen_hps + auto_hps
+    reqs = {n: round(AFK_SUSTAIN_ASK_HPS * _LEVEL_ACC[n] / _LEVEL_ACC[4], 1)
+            for n in range(5)}
+    tier = max((n for n in reqs if sustain >= reqs[n]), default=None)
+    auto_part = (f" + {auto_name} on auto-fire {auto_hps:.1f}" if auto_name else "")
+    if tier == 4:
+        label = (f"AFK-certified at +4x8: {sustain:.1f} HP/s sustained "
+                 f"(regen {regen_hps:.1f}{auto_part}) meets the "
+                 f"{AFK_SUSTAIN_ASK_HPS:.0f} HP/s asteroid worst case.")
+    elif tier is not None:
+        label = (f"AFK-certified at +{tier}x8 (sustain {sustain:.1f} HP/s: regen "
+                 f"{regen_hps:.1f}{auto_part}); the +4x8 asteroid worst case is "
+                 f"unreachable for this combo ({reqs[4]:.0f} HP/s needed).")
+    else:
+        label = (f"Does not sustain AFK play at any shift ({sustain:.1f} HP/s vs "
+                 f"{reqs[0]:.0f} needed at +0x8) — active play only.")
+    return {"hp": round(hp, 1), "regen_hps": round(regen_hps, 2),
+            "auto_fire_heal": auto_name, "auto_fire_hps": auto_hps,
+            "heal_rates": heal_rates,
+            "sustain_hps": round(sustain, 2), "requirements": reqs,
+            "tier": tier, "label": label}
+
+
 def encounter_value(archetype, powers, ctx, totals, scenario="general", arch_row=None,
                     role_output_mod=None):
     """Expected contribution of this build to the scenario's fight. Pure arithmetic — see header."""
