@@ -1494,6 +1494,7 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
     # the decayed weight ρ (see _post_target_decay). Both segments draw on the
     # same contribution pool; the LP fills the full-weight segment first.
     obj = []
+    cov_vars = {}                   # k -> [(segment label, var, upBound, weight)]
     for k, tgt in objective_targets.items():
         if tgt <= 0:
             continue
@@ -1505,6 +1506,7 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
             cov = pulp.LpVariable(f"cov_{k}", lowBound=0, upBound=room)
             segs.append(cov)
             obj.append(weight * cov)
+            cov_vars.setdefault(k, []).append(("cov", cov, room, weight))
         d = (decay or {}).get(k) if not perk_pass else None
         if d:
             ceiling, rho = d
@@ -1513,6 +1515,8 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
                 cov2 = pulp.LpVariable(f"cov2_{k}", lowBound=0, upBound=room2)
                 segs.append(cov2)
                 obj.append(weight * rho * cov2)
+                cov_vars.setdefault(k, []).append(("cov2", cov2, room2,
+                                                   weight * rho))
         if segs:
             prob += pulp.lpSum(segs) <= pulp.lpSum(
                 coef * v for coef, v in cov_upper.get(k, []))
@@ -1554,6 +1558,51 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
 
     if os.environ.get("HC_SOLVER_DEBUG_OBJ"):
         DEBUG_OBJ.append(pulp.value(prob.objective))
+    # LP-state snapshot (work order A probe 3): HC_SOLVER_DEBUG_DUMP=<path>
+    # appends one JSON line per pass — every objective key's cur/target/room/
+    # weight/decay and its cov segment VALUES (is the room full? at what
+    # marginal weight?), plus the full option table for any power named in
+    # HC_SOLVER_DEBUG_POWERS (comma-separated substrings) with each option's
+    # per-key contribution and chosen-flag. Answers "why did the LP decline a
+    # credit it can see" with the LP's own numbers.
+    _dump_path = os.environ.get("HC_SOLVER_DEBUG_DUMP")
+    if _dump_path:
+        import json as _json
+        _watch = [w for w in (os.environ.get("HC_SOLVER_DEBUG_POWERS") or "")
+                  .split(",") if w.strip()]
+        snap = {"perk_pass": perk_pass, "status": pulp.LpStatus[prob.status],
+                "objective": pulp.value(prob.objective),
+                "budget": budget, "reserved": reserved, "keys": {}, "powers": {}}
+        for k, tgt in objective_targets.items():
+            if tgt <= 0:
+                continue
+            segs = [{"seg": lbl, "value": v.value(), "bound": b, "weight": w}
+                    for lbl, v, b, w in cov_vars.get(k, [])]
+            chosen_contrib = sum(
+                coef * v.value() for coef, v in cov_upper.get(k, [])
+                if v.value() and v.value() > 0.5)
+            snap["keys"]["|".join(str(x) for x in k)] = {
+                "current": totals.get(k, 0.0), "target": tgt,
+                "weight": (priority or {}).get(k, 1.0)
+                * kind_mult.get(k[0], 1.0) / tgt,
+                "chosen_contrib": chosen_contrib,
+                "segments": segs}
+        for pi, opts in opts_by_power.items():
+            fn = free_powers[pi].get("full_name") or ""
+            if not any(w in fn for w in _watch):
+                continue
+            rows = []
+            for oi, o in enumerate(opts):
+                rows.append({
+                    "set": o["set"].get("name"), "n": o["n"],
+                    "chosen": bool(x[(pi, oi)].value()
+                                   and x[(pi, oi)].value() > 0.5),
+                    "premium_rank": set_cost_rank(o["set"]),
+                    "contrib": {"|".join(str(y) for y in k2): v2
+                                for k2, v2 in o["contrib"].items()}})
+            snap["powers"][fn] = rows
+        with open(_dump_path, "a", encoding="utf-8") as f:
+            f.write(_json.dumps(snap) + "\n")
     if pulp.LpStatus[prob.status] != "Optimal":
         return
     for pi, opts in opts_by_power.items():

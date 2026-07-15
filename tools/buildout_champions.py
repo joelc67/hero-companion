@@ -96,18 +96,46 @@ def main():
                          "converges ONLY those contexts (parallel sharding; "
                          "pair with HC_CHAMPIONS_PATH so workers never share "
                          "a write file)")
+    ap.add_argument("--keys", default="",
+                    help="comma-separated EXACT context keys — finer-grained "
+                         "than --only (used by tools/converge_parallel.py to "
+                         "partition arbitrarily); overrides --only")
     args = ap.parse_args()
     only = {s.strip() for s in args.only.split(",") if s.strip()}
+    keys = {s.strip() for s in args.keys.split(",") if s.strip()}
+    unknown = keys - set(NEW_CONTEXTS)
+    if unknown:
+        # honest denominator: a mistyped key must fail loudly, never silently shrink
+        raise SystemExit(f"unknown context key(s): {sorted(unknown)}")
 
     client = srv.app.test_client()
-    # Skip-check reads the REAL champions.json (main roster) AND, when sharded,
-    # this worker's own shard — an interrupted worker resumes cleanly.
+    # Skip-check reads the REAL champions.json (main roster), EVERY root shard
+    # (2026-07-14 lesson: a context certified in an UNMERGED sibling shard is
+    # still certified — without this, a new worker re-converged PB/WS human at
+    # full 25k-solve cost and would have collided at merge), and this worker's
+    # own shard — an interrupted worker resumes cleanly.
+    import glob
     champs = json.load(open(os.path.join(ROOT, "benchmarks", "champions.json"),
                             encoding="utf-8"))
+    for sp in sorted(glob.glob(os.path.join(ROOT, "champions_shard_*.json"))):
+        try:
+            champs.update(json.load(open(sp, encoding="utf-8")))
+        except Exception:  # noqa: BLE001 — an unreadable shard never blocks a run
+            pass
+    # Gate-PULLED contexts (champions_held_ladderfix.json) linger in their
+    # original shards but are NOT certified — they must re-converge, so they
+    # never count as done here.
+    _held = os.path.join(ROOT, "champions_held_ladderfix.json")
+    if os.path.exists(_held):
+        for _k in json.load(open(_held, encoding="utf-8")):
+            champs.pop(_k, None)
     shard = os.environ.get("HC_CHAMPIONS_PATH")
     if shard and os.path.exists(shard):
         champs.update(json.load(open(shard, encoding="utf-8")))
-    pool = [k for k in NEW_CONTEXTS if not only or k.split("|")[0] in only]
+    if keys:
+        pool = [k for k in NEW_CONTEXTS if k in keys]
+    else:
+        pool = [k for k in NEW_CONTEXTS if not only or k.split("|")[0] in only]
     todo = [k for k in pool if k not in champs]
     skipped = [k for k in pool if k in champs]
     for k in skipped:

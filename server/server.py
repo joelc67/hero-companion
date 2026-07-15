@@ -2994,8 +2994,12 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
     # the reduce walks results in move order with the same strict-> comparison,
     # so tie-breaks match the serial sweep byte for byte. HC_PARALLEL_SWEEP=0
     # is the fallback switch.
+    # HC_SWEEP_WORKERS overrides the thread count — the context-parallel
+    # orchestrator (tools/converge_parallel.py) divides the machine between
+    # worker PROCESSES, so each one's sweep pool must shrink to its share.
     _workers = 1 if os.environ.get("HC_PARALLEL_SWEEP") == "0" \
-        else max(1, min(8, (os.cpu_count() or 4) - 2))
+        else int(os.environ.get("HC_SWEEP_WORKERS")
+                 or max(1, min(8, (os.cpu_count() or 4) - 2)))
     _tpe = __import__("concurrent.futures", fromlist=["ThreadPoolExecutor"])
     for r in range(restarts + 1):
         while True:                                  # climb THIS basin to the top
