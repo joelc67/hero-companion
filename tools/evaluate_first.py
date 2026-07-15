@@ -145,7 +145,8 @@ def main():
                                "highs_score": new_h})
         if args.write:
             cert = entry.setdefault("certificate", {})
-            cert["evaluated"] = {"against": "A-fix scoped (model 30, 2026-07-15)",
+            cert["evaluated"] = {"against": f"model {fp.MODEL_VERSION}, "
+                                            f"{time.strftime('%Y-%m-%d')}",
                                  "verdict": verdict.lower(),
                                  "canonical_score": round(new, 2)}
 
