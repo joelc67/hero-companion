@@ -2025,6 +2025,26 @@ def build_calculate():
                     p[k] = rec.get(k)
         _attach_base_resdef(build.get("powers", []), build.get("archetype"), ctx, res_cap)
     res = engine.calculate_build(build, SET_BONUSES, res_cap=res_cap, ctx=ctx)
+    # AoE-88 FIX (Joel's Stalker eyeball, question 3 — 0.12.20 cut-blocker):
+    # passive totals show suppressible defense UNSUPPRESSED (Hide alone is
+    # +45.6 AoE def on the Rad/Dark champion → an "impossible" 77-88% AoE
+    # reading), which is the Mids display convention but misleads as a fight
+    # stat. The honest fix that never lies in EITHER direction: whenever the
+    # out-of-combat view is showing, compute the in-combat number too and
+    # attach it per defense row where they differ — the UI prints the fight
+    # value right next to the headline one. No default flips, no toggle-state
+    # to manage; the Σ in-combat view still works exactly as before. (The
+    # scorer was never fooled — its survival math already ignores AoE.)
+    if not build.get("suppression"):
+        try:
+            _sup = engine.calculate_build(dict(build, suppression=True),
+                                          SET_BONUSES, res_cap=res_cap, ctx=ctx)
+            for _t, _row in (res.get("defense") or {}).items():
+                _sv = ((_sup.get("defense") or {}).get(_t) or {}).get("value")
+                if _sv is not None and abs(_sv - _row.get("value", 0)) > 0.05:
+                    _row["in_combat"] = _sv
+        except Exception:  # noqa: BLE001 — the companion number is a nicety
+            pass
     # Self-heal pick levels on every recompute: saved builds from older versions carry
     # naive assignments (both Poison powers at level 1) or none at all — re-seat them
     # and hand the corrected levels back so the build grid never shows an illegal order.

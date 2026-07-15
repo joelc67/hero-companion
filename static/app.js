@@ -3840,12 +3840,18 @@ function barRow(label, d, kind) {
   const capped = d.at_cap;
   // Defense can exceed its soft cap; show the overage. Resistance can't.
   const over = (kind === "def" && d.over_cap > 0) ? ` <span class="over">(+${d.over_cap})</span>` : "";
+  // AoE-88 honesty (Joel's Stalker eyeball): when this row includes
+  // suppressible out-of-combat defense (Hide/Stealth class), the server sends
+  // the in-combat value too — print the fight number right beside the
+  // headline one so an "impossible" 77-88% never stands alone.
+  const fight = (typeof d.in_combat === "number")
+    ? ` <span class="over" title="Includes out-of-combat stealth defense that suppresses the moment you fight — in combat this is ${d.in_combat}%.">⚔ ${d.in_combat}%</span>` : "";
   return `<div class="bar-row">
     <span class="bar-label">${label}</span>
     <div class="bar-track">
       <div class="bar-fill ${kind} ${capped?'capped':''}" style="width:${widthPct}%"></div>
     </div>
-    <span class="bar-val ${capped?'capped':''}">${d.value}%${over}</span>
+    <span class="bar-val ${capped?'capped':''}">${d.value}%${over}${fight}</span>
   </div>`;
 }
 
