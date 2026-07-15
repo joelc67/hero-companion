@@ -2395,13 +2395,20 @@ function totalsChipHtml(pw, idx) {
 // the enhancement-icon row as the star, tools tucked right, set summary as fine print.
 function powerCardHtml(pw, idx, icon, lv) {
   const cats = (pw.accepted_set_categories || []).join(", ") || "no set categories";
+  // 2d (Joel's 0.12.20 eyeball walk): the full power NAME owns the card's top
+  // line, untruncated — "for obvious reasons" — with the ⓘ ALWAYS visible
+  // beside it (an affordance that only appears on hover fails discoverability
+  // by definition). Level tag, chips, and controls move to their own row.
+  const nameLine = `<div class="pc-head">
+      <span class="pc-title" onclick="selectPower('${escHtml(pw.full_name)}')">
+      ${icon ? `<img class="pc-ico" src="${icon}" alt="" loading="lazy"
+                 onerror="this.style.display='none'">` : ""}
+      <span class="pname">${escHtml(pw.display_name)}</span><span class="pc-info-glyph" title="IO set &amp; power details">ⓘ</span></span>
+    </div>`;
   if ((pw.full_name || "").startsWith("Inherent.")) {
     return `<div class="power-card" title="${escHtml(pw.display_name)} — accepts: ${escHtml(cats)}\nInherent — the game grants this automatically; it is never a pick.">
-      <div class="pc-head">
-        <span class="pc-title" onclick="selectPower('${escHtml(pw.full_name)}')">
-        ${icon ? `<img class="pc-ico" src="${icon}" alt="" loading="lazy"
-                   onerror="this.style.display='none'">` : ""}
-        <span class="pname">${escHtml(pw.display_name)}</span><span class="pc-info-glyph" title="full power info">ⓘ</span></span>
+      ${nameLine}
+      <div class="pc-sub">
         <span class="pc-tools">
           ${totalsChipHtml(pw, idx)}
           <button class="mini" onclick="changeSlots(${idx}, -1)" title="return this power's last slot to the shared pool (67 added slots for the whole build)">−</button>
@@ -2415,11 +2422,8 @@ function powerCardHtml(pw, idx, icon, lv) {
   }
   const lvl = pw.pick_level || lv;
   return `<div class="power-card" title="${escHtml(pw.display_name)} — accepts: ${escHtml(cats)}\n(click the name for full power info)">
-    <div class="pc-head">
-      <span class="pc-title" onclick="selectPower('${escHtml(pw.full_name)}')">
-      ${icon ? `<img class="pc-ico" src="${icon}" alt="" loading="lazy"
-                 onerror="this.style.display='none'">` : ""}
-      <span class="pname">${escHtml(pw.display_name)}</span><span class="pc-info-glyph" title="full power info">ⓘ</span></span>
+    ${nameLine}
+    <div class="pc-sub">
       ${lvl ? `<span class="pick-lvl" title="${pw.pick_level ? `Chosen at level ${lvl}` : `Suggested pick order — about level ${lvl}`}">${pw.pick_level ? "" : "~"}L${lvl}</span>` : ""}
       <span class="pc-tools">
         ${totalsChipHtml(pw, idx)}

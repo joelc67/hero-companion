@@ -197,12 +197,16 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 }
 .powers-wall .set-summary { white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   margin: auto 0 0; }   /* one line, pinned to the brick's bottom; full list in the tooltip */
+/* 2d (0.12.20 eyeball walk): the full power name OWNS the top line —
+   untruncated, wrapping if it must — and the controls live on their own
+   row below it. No more "Radioac…" hover-guessing. */
 .pc-head { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.pc-sub { display: flex; align-items: center; gap: 6px; min-width: 0; margin-top: 2px; }
 .pc-title { display: inline-flex; align-items: center; gap: 6px; min-width: 0; cursor: pointer; }
 .pc-title:hover .pname { color: var(--accent); }
 .pc-ico { width: 22px; height: 22px; border-radius: 4px; flex: none; }
-.power-card .pname { font-weight: 600; font-size: 12px; white-space: nowrap;
-  overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.power-card .pname { font-weight: 600; font-size: 12px; white-space: normal;
+  overflow: visible; overflow-wrap: anywhere; min-width: 0; line-height: 1.25; }
 .power-card .pick-lvl {
   font-weight: 600; font-size: 9.5px; color: var(--accent);
   border: 1px solid var(--accent); border-radius: 8px;
@@ -1169,9 +1173,14 @@ body { overflow: hidden; }
   padding: 8px 11px; margin: 8px 0; font-size: 12.5px; line-height: 1.6; }
 
 /* ── IO full-detail card + slotted-set progress (feature pair) ─────────── */
-.pc-info-glyph { opacity: 0; font-size: 11px; margin-left: 4px; color: var(--accent);
-  transition: opacity .15s; }
-.power-card:hover .pc-info-glyph { opacity: 0.85; }
+/* 2d: the ⓘ is ALWAYS visible — dim at rest, LIT on hover (an invisible
+   control fails discoverability by definition; Joel triggered the standing
+   "revisit if users echo the tiny-ⓘ" caveat himself). */
+.pc-info-glyph { opacity: 0.55; font-size: 11px; margin-left: 4px; color: var(--accent);
+  transition: opacity .15s, text-shadow .15s; }
+.power-card:hover .pc-info-glyph,
+.pc-title:hover .pc-info-glyph { opacity: 1;
+  text-shadow: 0 0 6px var(--accent), 0 0 2px var(--accent); }
 .modal-current { display: flex; align-items: center; gap: 8px; margin: 4px 0 8px;
   padding: 6px 10px; background: var(--bg); border: 1px solid var(--border);
   border-radius: 6px; font-size: 12.5px; }
