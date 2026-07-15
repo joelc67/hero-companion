@@ -3341,10 +3341,18 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
     # winner UNCAPPED — unconditionally, because capped solves are NOT
     # reliably detectable (CBC's node-limit stop can parse as "Optimal" in
     # PuLP; measured 2026-07-16: a 35s candidate returned in 2.5s at cap 1000
-    # with status Optimal, so CAPPED_SOLVES is only a floor). The certified
-    # score must equal the canonical (uncapped) evaluation — anything else
-    # flags MOVED at the next evaluate-first — and a capped incumbent must
-    # never ship as a champion build.
+    # with status Optimal, so CAPPED_SOLVES is only a floor). A capped
+    # incumbent must never ship as a champion build.
+    # RETRACTION (same day, field-measured): this re-solve does NOT make the
+    # stored score equal the canonical baseline, as first claimed — the very
+    # first field run scored 430.0 here while the canonical chain reproduces
+    # 387.3 from a fresh process (same picks, same code, stable across
+    # re-runs). In-process state after a 7,000-solve 30-thread run changes
+    # the evaluation in a way a fresh process does not (mechanism NOT yet
+    # root-caused; the historical run-vs-canonical gap, e.g. Mind Control
+    # 927.6/705.1, is the same phenomenon). The stored score remains a
+    # WITHIN-RUN ranking; canonical_score, written by evaluate_first from a
+    # fresh process, remains the only portable number.
     if _cap_prev is None:
         os.environ.pop("HC_SOLVER_NODE_CAP", None)
     else:
