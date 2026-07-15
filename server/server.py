@@ -3016,6 +3016,23 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
     arch_row = ARCH_BY_NAME.get(archetype)
     res_cap = round(arch_row["res_cap"] * 100, 1) if arch_row else engine.RESISTANCE_HARD_CAP
 
+    # NODE CAP (2026-07-16, the farm_active plateau pathology): the SEARCH's
+    # candidate solves bound CBC's branch-and-bound nodes, so a plateau
+    # marathon (20s-to-20-min bound-proving; ~1% of farm_active's sparse-ask
+    # neighborhood, four 14-21-min CBC children observed blocking 30 sweep
+    # threads in the field) returns its incumbent instead of stalling the
+    # sweep barrier. Node-based, not wall-clock → same result on any machine.
+    # Capped candidates are counted into the certificate; the WINNER re-solves
+    # UNCAPPED in the finale, so nothing capped ever certifies AND the
+    # certified score always equals the canonical (uncapped) evaluation —
+    # without that re-solve, the next evaluate-first would flag every
+    # capped-search champion as MOVED. Env restored in the finale (a crash
+    # mid-run can leave it set in THIS process; workers are per-run processes,
+    # the hub restarts on release — stated, accepted).
+    _cap_prev = os.environ.get("HC_SOLVER_NODE_CAP")
+    os.environ["HC_SOLVER_NODE_CAP"] = os.environ.get("HC_DEEP_NODE_CAP", "50000")
+    _capped_before = len(solver.CAPPED_SOLVES)
+
     cache = {}                      # frozenset(picks) -> (score, solved_powers, breakdown)
     explored = []                   # log lines for the learning substrate
     n_solves = [0]
@@ -3320,6 +3337,40 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
         pass
     sc_b, cur_b, solved_b, ev_b = best
     champion_picks = [p["full_name"] for p in cur_b]
+    # NODE-CAP FINALE: restore the exact-solve contract, then re-solve the
+    # winner UNCAPPED — unconditionally, because capped solves are NOT
+    # reliably detectable (CBC's node-limit stop can parse as "Optimal" in
+    # PuLP; measured 2026-07-16: a 35s candidate returned in 2.5s at cap 1000
+    # with status Optimal, so CAPPED_SOLVES is only a floor). The certified
+    # score must equal the canonical (uncapped) evaluation — anything else
+    # flags MOVED at the next evaluate-first — and a capped incumbent must
+    # never ship as a champion build.
+    if _cap_prev is None:
+        os.environ.pop("HC_SOLVER_NODE_CAP", None)
+    else:
+        os.environ["HC_SOLVER_NODE_CAP"] = _cap_prev
+    cert["node_cap"] = {"cap": int(os.environ.get("HC_DEEP_NODE_CAP", "50000")),
+                        "capped_solves_floor":
+                            len(solver.CAPPED_SOLVES) - _capped_before}
+    r = _assess_solve(archetype, _c.deepcopy(cur_b), _c.deepcopy(targets),
+                      "premium", perk, roles, False, False, False,
+                      with_powers=True)
+    if r:
+        _tot2, solved2 = r
+        solved2 = proc_pass.apply_proc_pass(solved2, POWER_BY_FULL,
+                                            role=role, content=content)
+        solved2 = _endurance_relief_pass(solved2, archetype, ctx, res_cap)
+        tot2 = engine.calculate_build({"archetype": archetype,
+                                       "powers": solved2},
+                                      SET_BONUSES, res_cap=res_cap, ctx=ctx)
+        ev2 = fp.encounter_value(archetype, solved2, ctx, tot2,
+                                 scenario=content, arch_row=arch_row,
+                                 role_output_mod=role_output)
+        _tm2 = (fp.SCENARIOS.get(content)
+                or fp.SCENARIOS["general"]).get("teammates", 0)
+        sc2 = fp.role_contribution(ev2, role_mix or role, teammates=_tm2)
+        cert["node_cap"]["final_resolve_delta"] = round(sc2 - sc_b, 2)
+        sc_b, solved_b, ev_b = sc2, solved2, ev2
     # v31 AFK sustain label (Joel's ruling, 2026-07-16): any content that asks
     # the AFK regen floor certifies with the tier the build DOES sustain stated
     # on the certificate — the floor is never relaxed, a shortfall is never

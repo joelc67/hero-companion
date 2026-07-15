@@ -55,9 +55,29 @@ def _mip_solver(warm=False):
     incumbent-finding dominates, and here it doesn't. Windows caveat: CBC
     ignores warmStart unless keepFiles=True (PuLP warns loudly), which litters
     solver files — so this stays a re-measurement seam, not a live
-    optimization. Re-measure if work order A reshapes the objective."""
+    optimization. Re-measure if work order A reshapes the objective.
+
+    NODE CAP (HC_SOLVER_NODE_CAP, 2026-07-16 — the farm_active pathology):
+    sparse-ask presets (2 armor axes + recharge/recovery) leave the coverage
+    objective saturated and the plateau ruled by the damage-reward/slot-penalty
+    tie structure — ~1% of certification-sweep candidates become 20-second-to-
+    20-MINUTE bound-proving marathons (field run 2026-07-15: four CBC children
+    at 14-21 min EACH, 30 sweep threads blocked; every one eventually proved
+    Optimal — pure plateau, no wrong answers). The cap bounds branch-and-bound
+    NODES, not wall-clock, so a capped candidate returns the same incumbent on
+    any machine — determinism preserved. 50,000 ≈ 2.3x the honest-worst proven
+    case on record (Inv/SS 21,526 nodes). Set ONLY by certification sweeps
+    (deep_optimize); plain user solves stay exact. A capped solve's incumbent
+    is committed; CAPPED_SOLVES counts only the ones whose status reads
+    non-Optimal — a FLOOR, because CBC's node-limit stop can parse as
+    "Optimal" in PuLP (measured 2026-07-16) — which is why deep_optimize
+    re-solves its final winner uncapped UNCONDITIONALLY: nothing capped can
+    certify regardless of detection."""
     if os.environ.get("HC_SOLVER_BACKEND", "cbc").lower() == "highs":
         return pulp.HiGHS(msg=False, gapRel=0, gapAbs=0, threads=1)
+    cap = os.environ.get("HC_SOLVER_NODE_CAP")
+    if cap:
+        return pulp.PULP_CBC_CMD(msg=0, warmStart=warm, maxNodes=int(cap))
     return pulp.PULP_CBC_CMD(msg=0, warmStart=warm)
 
 
@@ -66,6 +86,10 @@ def _mip_solver(warm=False):
 # so an A/B run can tell "equal objective, different tie-broken solution" apart
 # from "different objective" (which would be a real backend defect).
 DEBUG_OBJ = []
+# Node-cap accounting (HC_SOLVER_NODE_CAP): one entry per solve whose branch-
+# and-bound hit the cap and returned an unproven incumbent. deep_optimize
+# snapshots len() around a run and records the count in the certificate.
+CAPPED_SOLVES = []
 
 # Stats the solver optimizes toward, keyed uniformly. damage_type "None" on a
 # Defense/Resistance effect spreads to all types.
@@ -1554,7 +1578,33 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
                 hit = (o["set"]["uid"], o["n"]) in wset
                 x[(pi, oi)].setInitialValue(1 if hit else 0)
                 hinted = hinted or hit
+    # Slow-solve diagnostic seam (farm_active pathology hunt, 2026-07-16):
+    # HC_SOLVER_SLOW_LOG=<path>;<seconds> appends one JSON line for any ILP
+    # exceeding the threshold — the free-power roster, targets, budget, and
+    # wall time. Off by default; costs one perf_counter call.
+    import time as _time
+    _t_solve0 = _time.perf_counter()
     prob.solve(_mip_solver(warm=hinted))
+    _slow_cfg = os.environ.get("HC_SOLVER_SLOW_LOG")
+    if _slow_cfg:
+        try:
+            _sl_path, _sl_thresh = _slow_cfg.rsplit(";", 1)
+            _dt = _time.perf_counter() - _t_solve0
+            if _dt >= float(_sl_thresh):
+                import json as _json
+                with open(_sl_path, "a", encoding="utf-8") as _f:
+                    _f.write(_json.dumps({
+                        "solve_seconds": round(_dt, 1),
+                        "status": pulp.LpStatus[prob.status],
+                        "budget": budget, "perk_pass": perk_pass,
+                        "n_free_powers": len(free_powers),
+                        "n_options": sum(len(o) for o in opts_by_power.values()),
+                        "free_powers": [p.get("full_name") for p in free_powers],
+                        "targets": {"|".join(str(x) for x in k): v
+                                    for k, v in objective_targets.items()},
+                    }) + "\n")
+        except Exception:  # noqa: BLE001 — diagnostics never break a solve
+            pass
 
     if os.environ.get("HC_SOLVER_DEBUG_OBJ"):
         DEBUG_OBJ.append(pulp.value(prob.objective))
@@ -1604,7 +1654,18 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
         with open(_dump_path, "a", encoding="utf-8") as f:
             f.write(_json.dumps(snap) + "\n")
     if pulp.LpStatus[prob.status] != "Optimal":
-        return
+        # Node-capped incumbent (HC_SOLVER_NODE_CAP, certification sweeps
+        # only): CBC stopped at the node cap with a feasible incumbent — the
+        # plateau marathon case. Committing the incumbent keeps the sweep
+        # moving (the candidate is scored on an ACHIEVABLE build — a possible
+        # understatement, never an overstatement); the count lands in the
+        # certificate and the final winner is re-solved uncapped. Without the
+        # cap set, any non-Optimal status keeps the old contract: no commit.
+        _has_incumbent = (os.environ.get("HC_SOLVER_NODE_CAP")
+                          and any(v.value() is not None for v in x.values()))
+        if not _has_incumbent:
+            return
+        CAPPED_SOLVES.append(pulp.LpStatus[prob.status])
     for pi, opts in opts_by_power.items():
         p = free_powers[pi]
         for oi, o in enumerate(opts):
