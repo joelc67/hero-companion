@@ -945,7 +945,12 @@ async function buildRespec() {
   build._exposure = exposure;   // carries into the solve so the def vector matches
   build._travel = travel;       // remembered so reopening restores YOUR answer
   $("wiz-build").disabled = true;
-  $("wiz-status").textContent = "Choosing powers + solving the slotting…";
+  // Live elapsed pulse across BOTH stages (autopick + solve) — the field
+  // report's "30 seconds of silence" was this line sitting static while a
+  // hard combo solved (Fire/Icy Dominator measured 13s server-side; the
+  // solver's exact math is the cost, the silence was the defect).
+  const stopWizPulse = startSolvePulse($("wiz-status"),
+    "Choosing powers + solving the slotting");
   try {
     await applyImportedBuild({ archetype: at, primary: pri, secondary: sec, pools: [], incarnates: {}, powers: [] });
     const ap = await api("/build/autopick", postJson({ archetype: at, primary: pri, secondary: sec, role, content, exposure, travel, form }));
@@ -997,8 +1002,9 @@ async function buildRespec() {
       // all over again.
       _box.scrollTo({ top: _box.scrollTop + _delta - 60 });
     }
+    stopWizPulse();
     $("wiz-status").textContent = "";
-  } finally { $("wiz-build").disabled = false; }
+  } finally { stopWizPulse(); $("wiz-build").disabled = false; }
 }
 
 // Natural roles per archetype (from /archetypes): picking outside them is a DELIBERATE
@@ -4662,6 +4668,27 @@ function setWorking(btn, label) {
   return () => { btn.disabled = false; btn.classList.remove("btn-working"); btn.textContent = orig; };
 }
 
+// Honest long-solve feedback (Joel's 2026-07-15 order — the 30-second-build
+// field report): NO fake progress bars (a bar that lies about % is a UI-state
+// lie). Indeterminate pulse + LIVE elapsed seconds + plain-language copy that
+// levels with the user once a solve runs long. Measured reality: most combos
+// solve in ~1s, but some power combinations are genuinely hard for the exact
+// solver (Fire/Icy Dominator: 13s server-side, reproducibly) — the wait is
+// real work, and the copy says so instead of leaving a silent void.
+// Universal: every long-running solve click routes its status element here.
+function startSolvePulse(el, baseText) {
+  if (!el) return () => {};
+  const t0 = Date.now();
+  const paint = () => {
+    const s = Math.round((Date.now() - t0) / 1000);
+    el.textContent = `⏳ ${baseText}… ${s}s`
+      + (s >= 6 ? " — some power combinations take up to a minute of real math; still working, not stuck." : "");
+  };
+  paint();
+  const timer = setInterval(paint, 1000);
+  return () => clearInterval(timer);
+}
+
 async function optimizeBuild() {
   const status = $("gen-status");
   if (!build.archetype || !build.primary || !build.secondary || !build.powers.length) {
@@ -5088,9 +5115,11 @@ async function solveSlotting(perkFocus, opts) {
   const btn = $("solve-btn");
   const restore = setWorking(btn, perkFocus
     ? `⏳ Re-solving (${perkFocus})…` : "⏳ Solving slotting…");
-  status.textContent = perkFocus
-    ? `Re-solving with spare slots focused on ${perkFocus}…`
-    : "Solving optimal slotting (deterministic, ~1s)…";
+  // Elapsed-seconds pulse instead of the old static "(deterministic, ~1s)"
+  // line — which was DISHONEST copy for the hard combos (measured 13s).
+  const stopPulse = startSolvePulse(status, perkFocus
+    ? `Re-solving with spare slots focused on ${perkFocus}`
+    : "Solving optimal slotting");
   try {
     // Preserve only applies to imported builds; from-scratch/AI builds solve fully.
     const preserve = build.imported
@@ -5230,6 +5259,7 @@ async function solveSlotting(perkFocus, opts) {
   } catch (e) {
     status.textContent = "Solve error: " + e;
   } finally {
+    stopPulse();   // cleared before restore so no tick overwrites final text
     restore();
   }
 }
