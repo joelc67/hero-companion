@@ -27,7 +27,7 @@ try:
 
     meta = get("/meta")
     print("version:", meta.get("app_version"), "packaged:", meta.get("packaged"))
-    ok3 = meta.get("app_version") == "0.12.19" and meta.get("packaged") is True
+    ok3 = meta.get("app_version") == "0.12.20" and meta.get("packaged") is True
 
     # pinned case 1: Defender Poison/Sonic L1 creation pair (champion-mask trap)
     ap = post("/build/autopick", {"archetype":"Class_Defender","primary":"Defender_Buff.Poison",

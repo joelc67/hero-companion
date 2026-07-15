@@ -1031,5 +1031,83 @@
    }
   },
   "canonical_score": 376.4
+ },
+ "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk": {
+  "picks": [
+   "Brute_Defense.Fiery_Aura.Blazing_Aura",
+   "Brute_Defense.Fiery_Aura.Fire_Shield",
+   "Brute_Defense.Fiery_Aura.Healing_Flames",
+   "Brute_Defense.Fiery_Aura.Plasma_Shield",
+   "Brute_Defense.Fiery_Aura.Rise_of_the_Phoenix",
+   "Brute_Defense.Fiery_Aura.Temperature_Protection",
+   "Brute_Melee.Spines.Lunge",
+   "Brute_Melee.Spines.Quills",
+   "Brute_Melee.Spines.Ripper",
+   "Brute_Melee.Spines.Spine_Burst",
+   "Brute_Melee.Spines.Taunt",
+   "Brute_Melee.Spines.Throw_Spines",
+   "Epic.Pyre_Mastery.Fire_Blast",
+   "Epic.Pyre_Mastery.Melt_Armor",
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Tough",
+   "Pool.Fighting.Weave",
+   "Pool.Invisibility.Misdirection",
+   "Pool.Invisibility.Stealth",
+   "Pool.Medicine.Aid_Self",
+   "Pool.Medicine.Stimulant",
+   "Pool.Speed.Hasten",
+   "Pool.Speed.Super_Speed",
+   "Pool.Speed.Whirlwind"
+  ],
+  "score": 514.4475,
+  "certificate": {
+   "sweeps": 31,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "afk_sustain": {
+    "hp": 1655.6,
+    "regen_hps": 25.13,
+    "auto_fire_heal": "Healing_Flames",
+    "auto_fire_hps": 10.04,
+    "heal_rates": [
+     {
+      "power": "Healing_Flames",
+      "self_hps": 10.04,
+      "interruptible": false
+     },
+     {
+      "power": "Rise_of_the_Phoenix",
+      "self_hps": 0.54,
+      "interruptible": false
+     },
+     {
+      "power": "Aid_Self",
+      "self_hps": 15.74,
+      "interruptible": true
+     }
+    ],
+    "sustain_hps": 35.17,
+    "requirements": {
+     "0": 26.4,
+     "1": 29.1,
+     "2": 31.7,
+     "3": 34.4,
+     "4": 37.0
+    },
+    "tier": 3,
+    "label": "AFK-certified at +3x8 (sustain 35.2 HP/s: regen 25.1 + Healing_Flames on auto-fire 10.0); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed)."
+   },
+   "evaluated": {
+    "against": "model 31, 2026-07-15",
+    "verdict": "baseline",
+    "canonical_score": 166.98
+   }
+  },
+  "canonical_score": 166.98
  }
 }

@@ -16,7 +16,7 @@
   everywhere, reversible in the same place. The tray says plainly when the
   feed is off and why.
 
-## Unreleased
+## 0.12.20 — 2026-07-15
 
 - **Custom build targets now survive to the finish line.** When you set your
   own numbers (the fire-farm 45% defense / 90% resistance case), no later
@@ -32,6 +32,10 @@
 - **No impossible defense numbers.** Where a total includes out-of-combat
   stealth defense (Hide's big AoE layer), the fight value prints right
   beside it — "90% ⚔ 30% in combat" — with the explanation on hover.
+- **High-cap archetypes get their real resistance ceiling.** Tanker and
+  Brute resistance targets were quietly clamped to 75% in some solve paths
+  (their real cap is 90%); Kheldians and Arachnos soldiers were clamped
+  under their 85%. Every target now uses your archetype's actual cap.
 - **The public Pulse board is honest about BOTH kinds of quiet.** The page
   now shows "Data through <time>" always, warns "no new game data since
   <time>" when the feed goes quiet, and separately warns when the render
@@ -39,13 +43,59 @@
   kept re-stamping the page "fresh" while the numbers froze for 19 hours.)
 
 - **Peacebringers and Warshades: pick your form, get its champion.** The
-  level-50 wizard will ask Kheldians one more question — Human, Dwarf, Nova,
-  or all three (tri-form) — and serve that form's own certified champion
+  level-50 wizard asks Kheldians one more question — Human, Dwarf, Nova,
+  or all three (tri-form) — and serves that form's own certified champion
   build as the base to build under. Each form champion is a committed build
   for the way you actually play, honestly labeled: form-swapping play isn't
   modeled yet, so each certificate covers exactly what it names. Other
-  archetypes never see the question. (The question appears automatically in
-  the release that bundles the Kheldian champions — coming this week.)
+  archetypes never see the question.
+- **The Kheldian champions are here — and the whole roster passed a harder
+  legality bar to ship.** Eight new certified builds (Peacebringer and
+  Warshade, all four forms each), plus re-converged Night Widow and
+  Water/Kinetics Corruptor. Every champion now has to be BUILDABLE from
+  level 1 exactly as picked — the game grants your third power pick at
+  level 2, and builds with nothing legal to take there are refused. That
+  gate caught and rebuilt several champions, including two that shipped in
+  0.12.19. Twenty-four certified reference builds ship in this release.
+- **A certified AFK fire-farm champion (Spines/Fiery Aura Brute) — with an
+  honest difficulty label.** Two new Content choices in the wizard: AFK
+  Fire Farm (passive — the build must hold 45% Fire defense, capped Fire
+  resistance, and out-heal the spawn while you're away from the keyboard)
+  and Active Fire Farm (you're at the wheel; the build spends its budget on
+  damage). The AFK champion's certificate states exactly what it sustains:
+  certified at +3x8 — the +4x8 asteroid worst case is out of reach for this
+  combo, and the label says so with the numbers instead of hoping you won't
+  notice. (An interruptible heal can never count toward AFK sustain — the
+  game cancels the cast when you're hit, so the math refuses it too.)
+- **Damage procs in auras and patch powers now count.** Procs slotted in a
+  damage aura (Blazing Aura, Quills) or a ground patch's summoning power
+  (Irradiated Ground) were priced at zero since launch; they now earn their
+  keep on the pulse rate the game client's own records state. The active
+  fire-farm champion is deliberately NOT in this release: our own field
+  measurements say these procs may be worth even more than the formula
+  gives, and that champion waits until the numbers are settled rather than
+  shipping a build we'd have to walk back.
+- **Reset means reset — every start-over path.** The upper-right ↺ and every
+  "start over" entry point now genuinely clear every answer, preset, and
+  leftover; the wizard opens blank. (Found in the field: one path kept old
+  answers alive.)
+- **Nobody ever needs Ctrl+F5 again.** Every release and dev restart reaches
+  your browser on a plain reload — fixes can't hide behind a stale cache.
+- **Power cards read like power cards.** The full power name owns the top
+  line (no more "Radioac…"), and the ⓘ details button is always visible
+  instead of appearing only when you hover over where it would be.
+- **Clicking Build never looks like nothing happened.** A large "Your build
+  is ready" button leads the result and scrolls into view — and while a
+  build is still baking, a live seconds counter now ticks instead of
+  silence. Most combinations solve in about a second; some are genuinely
+  hard math, and after a few seconds the counter says plainly that it's
+  still working, not stuck. No fake progress bars — the old "(~1s)" promise
+  is gone because it wasn't always true.
+- **The header finally shows a version you care about.** It leads with the
+  app version; click it for a plain-language About — what the app is, what
+  a "build model" version means, where the game data comes from, how many
+  certified reference builds you're running with, and the links that matter
+  (forum thread, releases, Pulse Boards, credits).
 
 ## 0.12.19 — 2026-07-13
 
