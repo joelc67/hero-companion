@@ -609,6 +609,17 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
 .modal { position: fixed; inset: 0; background: #000a; display: flex; align-items: center; justify-content: center; z-index: 50; }
 .modal.hidden { display: none; }
 
+/* About dialog (header version click) */
+#app-ver { width: auto; background: transparent; border: none; cursor: pointer;
+  font: inherit; font-size: 0.62em; padding: 0 2px; vertical-align: middle; }
+#app-ver:hover { color: var(--accent); }
+.about-body { overflow-y: auto; margin-top: 8px; line-height: 1.45; }
+.about-body p { margin: 6px 0 10px; }
+.about-row { display: flex; gap: 10px; margin: 6px 0; }
+.about-row b { flex: 0 0 110px; color: var(--accent); }
+.about-row span { flex: 1; }
+.about-links { border-top: 1px solid var(--border); padding-top: 8px; }
+
 /* Entry router (how do you want to start?) */
 .entry-box { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; width: min(940px, 94vw); max-height: 94vh; overflow: hidden; padding: 22px; }
 .entry-box > h2 { margin: 0 0 4px; }

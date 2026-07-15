@@ -497,12 +497,15 @@ def meta():
         import learn as _learn
         _ch = json.load(open(_learn.CHAMPIONS_PATH, encoding="utf-8"))
         has_forms = any(len(k.split("|")) > 4 for k in _ch)
+        champion_count = len(_ch)
     except Exception:  # noqa: BLE001
         has_forms = False
+        champion_count = 0
     return jsonify({"ok": True, "app_version": APP_VERSION, "model_version": fp.MODEL_VERSION,
                     "db_name": DB_NAME, "db_version": DB_VERSION,
                     "packaged": bool(getattr(sys, "frozen", False)),
                     "form_champions": has_forms,
+                    "champion_count": champion_count,
                     "urls": CLIENT_CONFIG.get("urls", {})})
 
 

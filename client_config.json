@@ -5,6 +5,8 @@
     "releases": "https://github.com/joelc67/hero-companion/releases",
     "releases_api": "https://api.github.com/repos/joelc67/hero-companion/releases/latest",
     "bug_report": "https://github.com/joelc67/hero-companion/issues/new",
-    "champion_submit": "https://github.com/joelc67/hero-companion/discussions/new?category=champion-builds"
+    "champion_submit": "https://github.com/joelc67/hero-companion/discussions/new?category=champion-builds",
+    "forum_thread": "https://forums.homecomingservers.com/topic/64761-hero-companion/",
+    "pulse_boards": "https://joelc67.github.io/hero-companion/pulse/"
   }
 }

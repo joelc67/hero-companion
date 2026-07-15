@@ -1176,6 +1176,14 @@ async function loadMeta() {
   try { META = await api("/meta"); } catch { META = null; }
   const f = $("app-version-foot");
   if (f && META) f.textContent = `v${META.app_version} · model v${META.model_version}`;
+  // Header leads with the APP version (the number users actually care about);
+  // the Mids data build lives in the About dialog it opens. (UX item 2026-07-16)
+  const hv = $("app-ver");
+  if (hv && META) {
+    hv.textContent = `v${META.app_version} ⓘ`;
+    hv.hidden = false;
+    hv.onclick = showAbout;
+  }
   // Running from source = the dev copy. Badge it so it can never be mistaken
   // for the installed app when both are open (they serve different ports).
   if (META && !META.packaged && $("app-name") && !$("dev-badge")) {
@@ -1183,6 +1191,41 @@ async function loadMeta() {
       ` <span id="dev-badge" title="Development copy running from source (port ${location.port || 80}) — the installed app is separate">DEV</span>`);
   }
   initUpdateFlow();
+}
+
+// ── About dialog (header version click, UX item 2026-07-16) ─────────────────
+// Display-only. Explains the version vocabulary the header used to leave
+// unexplained; every number comes from /meta so it can never drift from the
+// running app.
+function showAbout() {
+  if (!META) return;
+  const urls = META.urls || {};
+  const link = (u, label) => _urlReady(u)
+    ? `<a href="${escHtml(u)}" target="_blank" rel="noopener">${escHtml(label)}</a>` : "";
+  const links = [
+    link(urls.forum_thread, "Forum thread"),
+    link(urls.releases, "Releases"),
+    link(urls.pulse_boards, "Pulse Boards"),
+    link(urls.project_home, "GitHub"),
+    `<a href="/docs/credits" target="_blank">Credits</a>`,
+  ].filter(Boolean).join(" · ");
+  const roster = META.champion_count
+    ? `<div class="about-row"><b>Champions</b><span>${META.champion_count} certified
+       reference builds, each converged and re-verified whenever the model changes.</span></div>` : "";
+  $("about-body").innerHTML = `
+    <p>Hero Companion designs, optimizes, and levels City of Heroes characters
+    with you. It is free and noncommercial, forever.</p>
+    <div class="about-row"><b>App version</b><span>${escHtml(META.app_version)}
+      (the program itself; updates arrive through the releases page)</span></div>
+    <div class="about-row"><b>Build model</b><span>v${escHtml(String(META.model_version))}
+      (the math that scores and optimizes builds; champions are re-verified when
+      it changes)</span></div>
+    <div class="about-row"><b>Game data</b><span>${escHtml(META.db_name || "Mids data")}
+      ${escHtml(META.db_version || "")}, with the values that drive the optimizer
+      checked against the game client's own files</span></div>
+    ${roster}
+    <p class="about-links">${links}</p>`;
+  $("about-modal").classList.remove("hidden");
 }
 
 // ── Startup update flow (Mids-style, but opt-in) ────────────────────────────
@@ -1344,7 +1387,10 @@ async function checkUpdates() {
 
 async function init() {
   const data = await api("/archetypes");
-  $("db-version").textContent = data.version ? `· Mids data ${data.version}` : "";
+  // The Mids data build used to be the ONLY version in the header — the one
+  // number no user cares about (UX item 2026-07-16). It now lives in the
+  // About dialog; the header leads with the app version (see loadMeta).
+  $("db-version").textContent = "";
   loadMeta();   // versions + project-home links (bug reports, champions, updates)
   NATURAL_ROLES = Object.fromEntries(
     data.archetypes.map(a => [a.name, a.natural_roles || []]));
@@ -1376,6 +1422,9 @@ async function init() {
 
   $("modal-close").addEventListener("click", closeModal);
   $("tier-close").addEventListener("click", () => $("tier-modal").classList.add("hidden"));
+  $("about-close").addEventListener("click", () => $("about-modal").classList.add("hidden"));
+  $("about-modal").addEventListener("click", (e) => {
+    if (e.target === $("about-modal")) $("about-modal").classList.add("hidden"); });
   $("modal-search").addEventListener("input", renderModalSets);
   $("ai-send").addEventListener("click", askAI);
   $("gen-btn").addEventListener("click", confirmGoalThenGenerate);

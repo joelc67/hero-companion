@@ -176,6 +176,8 @@
     <div class="tb-row">
       <h1 id="app-title"><span id="app-glyph">🦸</span> <span id="app-name">Hero Companion</span>
         <span class="app-tag muted">your City of Heroes sidekick</span>
+        <button id="app-ver" class="muted" type="button" hidden
+          title="About Hero Companion: what the version numbers mean"></button>
         <span id="db-version" class="muted"></span></h1>
       <div class="legend">
         <span id="autosave-ind" class="muted small" title="Auto-saves in the background when something changes"></span>
@@ -471,6 +473,18 @@
       <div id="modal-current" class="modal-current hidden"></div>
       <input id="modal-search" placeholder="Filter sets…">
       <div id="modal-sets" class="modal-sets"></div>
+    </div>
+  </div>
+
+  <!-- About dialog (header version click) — display-only: every value comes
+       from /meta; nothing here is hand-maintained except the intro copy. -->
+  <div id="about-modal" class="modal hidden">
+    <div class="modal-box">
+      <div class="modal-head">
+        <strong>About Hero Companion</strong>
+        <button id="about-close">✕</button>
+      </div>
+      <div id="about-body" class="about-body"></div>
     </div>
   </div>
 
