@@ -1,0 +1,130 @@
+{
+ "seed": 20260715,
+ "acceptance_bar": {
+  "derived_over_converged_min_ratio": 0.97,
+  "sample_share_meeting_ratio": 0.9,
+  "battery_failures_allowed": 0,
+  "note": "pre-registered before the first ground-truth solve; worst case (min, p10, median) reported regardless of pass/fail"
+ },
+ "champion_roster_size": 24,
+ "strata_counts": {
+  "adjacent": 8,
+  "distant": 8,
+  "thin": 6,
+  "content": 6
+ },
+ "contexts": [
+  {
+   "key": "Class_Tanker|Tanker_Defense.Bio_Organic_Armor|Tanker_Melee.Super_Strength|itrial",
+   "stratum": "adjacent"
+  },
+  {
+   "key": "Class_Sentinel|Sentinel_Ranged.Archery|Sentinel_Defense.Willpower|itrial",
+   "stratum": "adjacent"
+  },
+  {
+   "key": "Class_Controller|Controller_Control.Arsenal_Control|Controller_Buff.Poison|itrial",
+   "stratum": "adjacent"
+  },
+  {
+   "key": "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Kinetics|itrial",
+   "stratum": "adjacent"
+  },
+  {
+   "key": "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Fiery_Aura|itrial",
+   "stratum": "adjacent"
+  },
+  {
+   "key": "Class_Tanker|Tanker_Defense.Energy_Aura|Tanker_Melee.Super_Strength|itrial",
+   "stratum": "adjacent"
+  },
+  {
+   "key": "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Invulnerability|itrial",
+   "stratum": "adjacent"
+  },
+  {
+   "key": "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Titan_Weapons|itrial",
+   "stratum": "adjacent"
+  },
+  {
+   "key": "Class_Brute|Brute_Melee.Savage_Melee|Brute_Defense.Regeneration|itrial",
+   "stratum": "distant"
+  },
+  {
+   "key": "Class_Defender|Defender_Buff.Storm_Summoning|Defender_Ranged.Dark_Blast|itrial",
+   "stratum": "distant"
+  },
+  {
+   "key": "Class_Dominator|Dominator_Control.Gravity_Control|Dominator_Assault.Sonic_Assault|itrial",
+   "stratum": "distant"
+  },
+  {
+   "key": "Class_Sentinel|Sentinel_Ranged.Psychic_Blast|Sentinel_Defense.Bio_Organic_Armor|itrial",
+   "stratum": "distant"
+  },
+  {
+   "key": "Class_Scrapper|Scrapper_Melee.Dark_Melee|Scrapper_Defense.Stone_Armor|itrial",
+   "stratum": "distant"
+  },
+  {
+   "key": "Class_Sentinel|Sentinel_Ranged.Radiation_Blast|Sentinel_Defense.Dark_Armor|itrial",
+   "stratum": "distant"
+  },
+  {
+   "key": "Class_Dominator|Dominator_Control.Symphony_Control|Dominator_Assault.Psionic_Assault|itrial",
+   "stratum": "distant"
+  },
+  {
+   "key": "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Seismic_Blast|itrial",
+   "stratum": "distant"
+  },
+  {
+   "key": "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Dark_Miasma|itrial",
+   "stratum": "thin"
+  },
+  {
+   "key": "Class_Blaster|Blaster_Ranged.Dark_Blast|Blaster_Support.Plant_Manipulation|itrial",
+   "stratum": "thin"
+  },
+  {
+   "key": "Class_Blaster|Blaster_Ranged.Radiation_Blast|Blaster_Support.Radiation_Manipulation|itrial",
+   "stratum": "thin"
+  },
+  {
+   "key": "Class_Controller|Controller_Control.Fire_Control|Controller_Buff.Force_Field|itrial",
+   "stratum": "thin"
+  },
+  {
+   "key": "Class_Blaster|Blaster_Ranged.Fire_Blast|Blaster_Support.Tactical_Arrow|itrial",
+   "stratum": "thin"
+  },
+  {
+   "key": "Class_Blaster|Blaster_Ranged.Assault_Rifle|Blaster_Support.Ice_Manipulation|itrial",
+   "stratum": "thin"
+  },
+  {
+   "key": "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Radiation_Emission|team",
+   "stratum": "content"
+  },
+  {
+   "key": "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|general",
+   "stratum": "content"
+  },
+  {
+   "key": "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|general",
+   "stratum": "content"
+  },
+  {
+   "key": "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Dark_Armor|general",
+   "stratum": "content"
+  },
+  {
+   "key": "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|general",
+   "stratum": "content"
+  },
+  {
+   "key": "Class_Sentinel|Sentinel_Ranged.Fire_Blast|Sentinel_Defense.Willpower|av",
+   "stratum": "content"
+  }
+ ]
+}
