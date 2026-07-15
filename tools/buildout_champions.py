@@ -116,6 +116,12 @@ def main():
                          "shards for them (this worker's OWN shard still resumes). "
                          "Keys may name any certified context, not just "
                          "NEW_CONTEXTS.")
+    ap.add_argument("--experiment", action="store_true",
+                    help="EXPERIMENT mode (the E holdout, 2026-07-15): --keys "
+                         "may name ANY context — these are ground-truth runs "
+                         "for measurement, not roster candidates. Shards from "
+                         "experiment runs are NEVER merged into champions.json; "
+                         "the normal shard-union skip still gives resume.")
     args = ap.parse_args()
     only = {s.strip() for s in args.only.split(",") if s.strip()}
     keys = {s.strip() for s in args.keys.split(",") if s.strip()}
@@ -127,10 +133,13 @@ def main():
         known |= set(json.load(open(os.path.join(ROOT, "benchmarks",
                                                  "champions.json"),
                                     encoding="utf-8")))
-    unknown = keys - known
-    if unknown:
-        # honest denominator: a mistyped key must fail loudly, never silently shrink
-        raise SystemExit(f"unknown context key(s): {sorted(unknown)}")
+    if not args.experiment:
+        unknown = keys - known
+        if unknown:
+            # honest denominator: a mistyped key must fail loudly, never
+            # silently shrink (experiment mode validates keys downstream —
+            # a bad archetype/set name fails the seed solve loudly instead)
+            raise SystemExit(f"unknown context key(s): {sorted(unknown)}")
 
     client = srv.app.test_client()
     # Skip-check reads the REAL champions.json (main roster), EVERY root shard
@@ -163,6 +172,9 @@ def main():
         if shard and os.path.exists(shard):
             champs = json.load(open(shard, encoding="utf-8"))
         pool = sorted(keys)
+    elif args.experiment:
+        # Experiment mode: arbitrary keys, full shard-union skip (resume).
+        pool = sorted(keys)
     elif keys:
         pool = [k for k in NEW_CONTEXTS if k in keys]
     else:
@@ -171,8 +183,11 @@ def main():
     skipped = [k for k in pool if k in champs]
     for k in skipped:
         print(f"already certified, skipping: {k}")
-    print(f"{len(todo)} of {len(pool) if args.recert else len(NEW_CONTEXTS)} "
-          f"contexts to converge" + (" [RECERT]" if args.recert else ""))
+    _denom = (len(pool) if (args.recert or args.experiment)
+              else len(NEW_CONTEXTS))
+    _mode = " [RECERT]" if args.recert else (
+        " [EXPERIMENT — never merge these shards]" if args.experiment else "")
+    print(f"{len(todo)} of {_denom} contexts to converge{_mode}")
 
     # Same harden-before-certify guard as refresh_champions: stale-roster
     # powers can never anchor a gold standard.

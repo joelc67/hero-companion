@@ -101,7 +101,14 @@ def main():
                     help="evaluate-first wave mode: the keys are certified "
                          "MOVERS being re-converged — no certified-skip, "
                          "workers run --recert, merge runs --replace")
+    ap.add_argument("--experiment", action="store_true",
+                    help="E-holdout mode: arbitrary (non-roster) keys, workers "
+                         "run --experiment; NEVER combine with --merge — "
+                         "experiment shards are measurement artifacts")
     args = ap.parse_args()
+    if args.experiment and args.merge:
+        raise SystemExit("--experiment shards are never merged into the "
+                         "roster; drop --merge")
 
     certified, srcs = certified_union()
     print("certified sources: " + ", ".join(f"{k} ({v})" for k, v in srcs.items()))
@@ -137,8 +144,9 @@ def main():
                    HC_SWEEP_WORKERS=str(sweep))
         cmd = [PY, BUILDOUT, "--keys", ",".join(sl),
                "--max-solves", str(args.max_solves),
-               "--restarts", str(args.restarts)] + (["--recert"] if args.recert
-                                                    else [])
+               "--restarts", str(args.restarts)] \
+            + (["--recert"] if args.recert else []) \
+            + (["--experiment"] if args.experiment else [])
         print(f"  worker {i}: {len(sl)} context(s) -> {os.path.basename(shard)}"
               f" (log {os.path.basename(log)})")
         for k in sl:
