@@ -78,8 +78,9 @@ def solve_once(at, content, role, powers, targets, perk, roles, arch_row, ctx,
     if not r:
         return None, None, ilp_s, objs
     _tot, solved = r
-    solved = proc_pass.apply_proc_pass(solved, srv.POWER_BY_FULL, role=role,
-                                       content=content)
+    solved = proc_pass.apply_proc_pass(
+        solved, srv.POWER_BY_FULL, role=role, content=content,
+        guard=srv._TargetGuard(at, targets, ctx, res_cap))
     solved = srv._endurance_relief_pass(solved, at, ctx, res_cap)
     tot = srv.engine.calculate_build({"archetype": at, "powers": solved},
                                      srv.SET_BONUSES, res_cap=res_cap, ctx=ctx)

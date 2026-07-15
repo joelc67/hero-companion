@@ -172,7 +172,18 @@ def _st_hybrid_chance(rec):
     return min(0.90, _ST_TYPICAL_PPM * (rech + cast) / 60.0)
 
 
-def apply_proc_pass(powers, power_by_full, role="damage", content="general"):
+def apply_proc_pass(powers, power_by_full, role="damage", content="general",
+                    guard=None):
+    """`guard` (A2, work order A — Joel's green light 2026-07-15): a stateful
+    target-conservation checker built by the caller (server._TargetGuard).
+    After every tentative swap this pass calls guard.ok(powers); False means
+    the swap took a targeted axis below its target (or made a short axis
+    shorter) and the swap is REVERTED — the ILP's promise outranks the proc.
+    Measured origin: the proc-bomb path broke a Winter 6-piece the ILP had
+    bought for an explicit 45% fire-def ask, shipping 40.5 (-5.0, the whole
+    custom-targets shortfall). Damage is what the leftover slack buys — never
+    the target's substance. guard=None preserves the old unguarded behavior
+    for callers with no targets in scope."""
     role = role or "damage"
     if not (role in _OFFENSE_ROLES or role in _CONTROL_ROLES or content == "fire_farm"):
         return powers
@@ -180,6 +191,8 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general"):
         cat = _catalog()
         if not cat["damage_procs"]:
             return powers
+        if guard:
+            guard.snapshot(powers)    # A2 baseline: the ILP's delivered axes
         # globals already on the build are unique-once — never duplicate them
         used = set()
         for p in powers:
@@ -252,6 +265,10 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general"):
                           "category_id": cid, "_ho": True}
                          for _ in range(nslots - len(bomb))]
                 p["slots"] = bomb
+                if guard and not guard.ok(powers):
+                    p["slots"] = slots            # A2: the bomb stole a target
+                    for _sn, _uid, _c in procs:
+                        used.discard(_uid)        # freed procs may seat elsewhere
         # ST proc HYBRIDS (offense + control roles): keep the set's acc/dam core — the first
         # 3 pieces of a premium home (its bonuses are build-defining), 2 of a filler set —
         # and fill the tail slots with damage procs. Only fires when the PPM math clears the
@@ -303,6 +320,10 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general"):
                     p["slots"] = (core
                                   + [_proc_slot(sn, uid, cid) for sn, uid, _c in procs]
                                   + tail)
+                    if guard and not guard.ok(powers):
+                        p["slots"] = slots        # A2: the hybrid stole a target
+                        for _sn, _uid, _c in procs:
+                            used.discard(_uid)
         # −RES ANCHOR (v27: ALL roles, not just control/debuff — Maelwys's point): a −res
         # proc multiplies the whole spawn's incoming damage, and a DAMAGE role owns the
         # biggest single share of that damage, so Achilles/Annihilation/Fury belong in
@@ -337,11 +358,19 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general"):
                         is_toggle = 1 if rec.get("power_type") == 2 else 0
                         cand.append(((is_toggle, len(slots)), p, slots))
                 if cand:
+                    # A2: try hosts best-first; a host whose swap would steal a
+                    # targeted axis is skipped, not final — the next host may
+                    # carry the proc for free (its top-tier bonus is off-target).
                     cand.sort(key=lambda x: (-x[0][0], -x[0][1]))
-                    _k, p, slots = cand[0]
-                    cid = (slots[0] or {}).get("category_id")
-                    slots[-1] = _proc_slot(proc["set"], proc["uid"], cid)
-                    used.add(proc["uid"])
+                    for _k, p, slots in cand:
+                        old_last = slots[-1]
+                        cid = (slots[0] or {}).get("category_id")
+                        slots[-1] = _proc_slot(proc["set"], proc["uid"], cid)
+                        if guard and not guard.ok(powers):
+                            slots[-1] = old_last
+                            continue
+                        used.add(proc["uid"])
+                        break
         # FORCE FEEDBACK +RECHARGE (v27): for roles that ATTACK, a Force Feedback proc in
         # a frequently-cycled knockback attack sustains a real average global-recharge
         # uplift (the engine prices it: chance × 5s ÷ cycle). Best host = the SPAMMED
@@ -368,10 +397,15 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general"):
                         cand.append((cycle, p, slots))
                 if cand:
                     cand.sort(key=lambda x: x[0])     # shortest cycle = most FF rolls
-                    _c, p, slots = cand[0]
-                    cid = (slots[0] or {}).get("category_id")
-                    slots[-1] = _proc_slot(proc["set"], proc["uid"], cid)
-                    used.add(proc["uid"])
+                    for _c, p, slots in cand:         # A2: same skip-to-next-host rule
+                        old_last = slots[-1]
+                        cid = (slots[0] or {}).get("category_id")
+                        slots[-1] = _proc_slot(proc["set"], proc["uid"], cid)
+                        if guard and not guard.ok(powers):
+                            slots[-1] = old_last
+                            continue
+                        used.add(proc["uid"])
+                        break
         return powers
     except Exception:  # noqa: BLE001 — fail safe, never break a solve
         return powers

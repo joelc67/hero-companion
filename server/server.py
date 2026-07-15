@@ -2144,6 +2144,79 @@ def _attach_base_dmg(powers, ctx):
             p["_base_dmg"] = _power_base_damage(rec, ctx)
 
 
+class _TargetGuard:
+    """A2 (work order A, Joel's green light 2026-07-15): post-ILP target
+    conservation, engine-verified per swap. The ILP meets the declared targets;
+    no later pass may unmake them — proc_pass calls guard.ok(powers) after
+    every tentative swap and reverts on False. A swap violates when a targeted
+    axis ends below its target AND below its pre-swap value (spending SURPLUS
+    above a met target stays legal — that headroom is the decay segment's
+    territory, and procs are exactly what it should buy). Rule-of-five and
+    every stacking subtlety are inherited from engine.calculate_build, so a
+    swap that breaks a bonus the cap was already eating passes (measured: 4 of
+    the 5 fire-farm swaps were free; only the Winter 6-piece break stole).
+    Pinned origin: Spines/FA custom 45 fire def — ILP shipped 45.52, the
+    unguarded bomb path shipped 40.52.
+
+    TWO PROTECTION TIERS (measured on the Bots/Marine battery case, whose
+    axes sit far below the preset asks): preset def/res targets are HARVEST
+    PROXIES (ai_build's own words) — on a build that can't reach them, the
+    bomb trade (set bonuses → damage) is the scorer-endorsed master pattern,
+    so a SHORT preset axis may still pay for procs. `strict=True` (custom
+    targets — the user's DECLARED ask, Joel's dominance rule) additionally
+    forbids making any short user axis shorter. Met axes stay met under
+    both tiers."""
+    _SCALARS = (("recharge", "recharge"), ("recovery", "recovery"),
+                ("regen", "regeneration"), ("max_hp", "max_hp"),
+                ("tohit", "tohit"))
+    _EPS = 0.05                       # percent points of float noise, not slack
+
+    def __init__(self, archetype, targets, ctx, res_cap, strict=False):
+        self.strict = strict
+        self.archetype, self.ctx, self.res_cap = archetype, ctx, res_cap
+        self.asks = []                # (engine kind, type-or-None, target pct)
+        for t, v in (targets.get("defense") or {}).items():
+            if isinstance(v, (int, float)) and v > 0:
+                self.asks.append(("defense", t, float(v)))
+        for t, v in (targets.get("resistance") or {}).items():
+            if isinstance(v, (int, float)) and v > 0:
+                self.asks.append(("resistance", t, float(v)))
+        for fld, ekey in self._SCALARS:
+            v = targets.get(fld)
+            if isinstance(v, (int, float)) and v > 0:
+                self.asks.append((ekey, None, float(v)))
+        self.base = None
+
+    def _vals(self, powers):
+        tot = engine.calculate_build({"archetype": self.archetype,
+                                      "powers": powers},
+                                     SET_BONUSES, res_cap=self.res_cap,
+                                     ctx=self.ctx)
+        return [(((tot.get(kind) or {}).get(t) or {}).get("value", 0.0)
+                 if t is not None else (tot.get(kind) or {}).get("value", 0.0))
+                for kind, t, _tgt in self.asks]
+
+    def snapshot(self, powers):
+        if self.asks:
+            self.base = self._vals(powers)
+
+    def ok(self, powers):
+        if not self.asks:
+            return True
+        if self.base is None:         # defensive: snapshot() not called yet
+            self.base = self._vals(powers)
+            return True
+        vals = self._vals(powers)
+        for (kind, t, tgt), old, new in zip(self.asks, self.base, vals):
+            if new < tgt - self._EPS:
+                if old >= tgt - self._EPS:
+                    return False      # dropped a MET axis below its ask
+                if self.strict and new < old - self._EPS:
+                    return False      # made a short USER-DECLARED axis shorter
+        self.base = vals              # accepted swap becomes the new baseline
+        return True
+
+
 def _assess_solve(archetype, powers_in, targets, tier, perk_focus, roles,
                   pvp, preserve, keep_layout, with_powers=False):
     """Run ONE solve and return the engine totals (for comparing routes) — or
@@ -2854,7 +2927,9 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
         # Score what will actually SHIP: /build/solve applies the proc pass after the ILP
         # (proc bombs + the Achilles' Heel debuff anchor), and under MODEL_VERSION >= 10 the
         # encounter model reads slotted -res procs — so the search must see them too.
-        solved = proc_pass.apply_proc_pass(solved, POWER_BY_FULL, role=role, content=content)
+        solved = proc_pass.apply_proc_pass(
+            solved, POWER_BY_FULL, role=role, content=content,
+            guard=_TargetGuard(archetype, targets, ctx, res_cap))
         solved = _endurance_relief_pass(solved, archetype, ctx, res_cap)
         tot = engine.calculate_build({"archetype": archetype, "powers": solved},
                                      SET_BONUSES, res_cap=res_cap, ctx=ctx)
@@ -3556,8 +3631,10 @@ def build_solve():
         # fresh wizard/autopick build has no player IO choices to preserve, and skipping the
         # pass there was why generated kits shipped proc-less in the proc meta.
         if not preserve or _generated:
-            sol["powers"] = proc_pass.apply_proc_pass(sol["powers"], POWER_BY_FULL,
-                                                      role=role, content=content)
+            sol["powers"] = proc_pass.apply_proc_pass(
+                sol["powers"], POWER_BY_FULL, role=role, content=content,
+                guard=_TargetGuard(archetype, targets, ctx, _rescap,
+                                   strict=bool(custom)))
             sol["powers"] = _endurance_relief_pass(sol["powers"], archetype, ctx, _rescap)
 
         if _assign_pick_levels(sol["powers"], archetype) or _sched_round == 1:

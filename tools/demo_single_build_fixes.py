@@ -125,13 +125,25 @@ check("Force Feedback seats WITHOUT cannibalizing a proc bomb",
       ff_host is not None and (ff_host not in bombs or bombs[ff_host] >= 5),
       f"FF host: {ff_host} — full proc bombs intact: {dict(bombs)}")
 
-# 7 — Maelwys's "biggest glitch": real attacks must reach 6 slots, not stall at 5
+# 7 — Maelwys's "biggest glitch": attacks must not STALL at 5 (the beheading
+# bug: budget overspend + order-blind trim cut allocated 6th slots). PIN
+# UPDATED for the A-fix (2026-07-15, measured): the new Melee/Ranged-45 axes
+# legitimately move one attack's 6th piece into defense hosts (Energy Torrent
+# 6→5 TOTAL slots, Weave/Maneuvers gained RF×5 — an allocation CHOICE, 66/67
+# budget spent, zero empty slots). The defect class is asserted exactly: the
+# flagship attack still reaches 6, and NO attack ships an allocated-but-empty
+# slot (the actual beheading signature).
 sixed = [p.get("display_name") for p in powers
          if len([s for s in (p.get("slots") or []) if s]) >= 6
          and (srv.POWER_BY_FULL.get(p.get("full_name")) or {}).get("is_attack")
          and not (p.get("full_name") or "").startswith("Pool.")]
-check("real (non-pool) attacks reach 6 slots", len(sixed) >= 2,
-      f"6-slotted real attacks: {sixed or 'NONE'}")
+beheaded = [p.get("display_name") for p in powers
+            if (srv.POWER_BY_FULL.get(p.get("full_name")) or {}).get("is_attack")
+            and (p.get("slots") or []) and any(s is None for s in p["slots"])
+            and any(s for s in p["slots"])]
+check("real attacks never stall/behead (flagship reaches 6, no half-empty attack)",
+      len(sixed) >= 1 and not beheaded,
+      f"6-slotted real attacks: {sixed or 'NONE'}; beheaded: {beheaded or 'none'}")
 
 # 8 — proc bombs carry ACCURACY (a Nucleolus Acc/Dam HO rides in every big bomb)
 bomb_acc = {}
@@ -236,10 +248,35 @@ noteless = [p.get("display_name") for p in sol2["powers"]
 check("every 1-slot set-capable card carries an honest note",
       not noteless, noteless or "all 1-slot cards explain themselves")
 
+# ── FIELD REPORT 3 (yellowthief1 2026-07-13 / work order A, fixed 2026-07-15):
+# TARGET CONSERVATION — "shipped >= promised". The ILP met an explicit custom
+# 45% fire-def ask and the unguarded proc pass then broke the Winter 6-piece
+# that delivered it, shipping 40.5. The guard (_TargetGuard) now reverts any
+# post-ILP swap that takes a targeted axis below its target. Pinned on the
+# exact reported case: Spines/FA Brute, custom 45 fire def / 90 fire res,
+# through the real app path.
+print("\nField report 3 — Spines/FA Brute fire farmer, custom 45/90 (work order A):")
+ap3 = c.post("/build/autopick", json={"archetype": "Class_Brute",
+    "primary": "Brute_Melee.Spines", "secondary": "Brute_Defense.Fiery_Aura",
+    "content": "fire_farm"}).get_json()
+pre3 = [{"full_name": p["full_name"], "slots": p.get("slots"),
+         "earned_slot_count": p.get("earned_slot_count")} for p in ap3["powers"]]
+sol3 = c.post("/build/solve", json={"archetype": "Class_Brute", "goal": "",
+    "tier": "premium", "content": "fire_farm", "preserve": False,
+    "keep_layout": False, "powers": pre3,
+    "custom_targets": {"defense": {"Fire": 45},
+                       "resistance": {"Fire": 90}}}).get_json()
+_fd = (((sol3.get("totals") or {}).get("defense") or {}).get("Fire") or {}).get("value", 0)
+_fr = (((sol3.get("totals") or {}).get("resistance") or {}).get("Fire") or {}).get("value", 0)
+check("custom targets survive the post-ILP passes (shipped >= promised, 45/90 case)",
+      _fd >= 44.95 and _fr >= 89.95,
+      f"shipped fire def {_fd} / fire res {_fr} vs the explicit 45/90 ask "
+      f"(the unguarded proc pass used to ship 40.52)")
+
 # COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
 # check — a crash or skipped section that silently shrinks the list must fail, not
 # pass by absence. Bump EXPECTED_CHECKS when adding a check.
-EXPECTED_CHECKS = 13
+EXPECTED_CHECKS = 14
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
 if len(results) != EXPECTED_CHECKS:

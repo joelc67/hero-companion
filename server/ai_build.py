@@ -442,6 +442,22 @@ def preset_targets(content, role, res_cap=75, exposure=None,
     elif exposure == "back":
         out["defense"]["Ranged"] = max(out["defense"].get("Ranged", 0), 45)
         out["defense"]["AoE"] = max(out["defense"].get("AoE", 0), 45)
+    # A1 (work order A, Joel's green light 2026-07-15): the scorer's survival
+    # physics prices TWO incoming vectors for EVERY archetype — melee = best of
+    # (Melee, S, L) defense, ranged = best of (Ranged, AoE, E), weighted 50/50
+    # (first_principles.encounter_value). Without positional axes the ILP could
+    # never buy the positional half of either vector: enhanced Weave and
+    # positional set bonuses clipped to zero once the typed rooms filled — the
+    # certified Stalker shipped melee 39 with the softcap 6 points away and
+    # Tough/Weave bare while the model's own physics valued exactly those
+    # points. Every defense-carrying preset now asks for the vector softcap on
+    # both positional axes (max with anything exposure already set); the v30
+    # decay segments extend them to their real ceilings. fire_farm keeps its
+    # bespoke hard profile untouched (farm objectives are work order D's
+    # design, gated behind this fix).
+    if out["defense"] and content != "fire_farm":
+        out["defense"]["Melee"] = max(out["defense"].get("Melee", 0), 45)
+        out["defense"]["Ranged"] = max(out["defense"].get("Ranged", 0), 45)
     for t, v in base.get("resistance", {}).items():
         out["resistance"][t] = res_cap if v == "CAP" else min(v, res_cap)
     for fld in ("recharge", "recovery", "regen", "max_hp", "tohit"):
