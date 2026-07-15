@@ -3599,11 +3599,19 @@ def build_solve():
                        "base_recharge": rec.get("base_recharge"),
                        "max_slot_count": rec.get("max_slot_count"),
                        "accepted_enhancement_types": rec.get("accepted_enhancement_types", []),
-                       # current slotting, so preserve mode can lock existing sets
-                       "_existing_slots": p.get("slots") or [],
+                       # current slotting, so preserve mode can lock existing sets.
+                       # WORK ORDER C (2026-07-15): a FULL re-slot ignores the
+                       # inbound layout entirely — with these fields live under
+                       # preserve=False, the echoed-back result changed the
+                       # NEXT press's input (_earned drove top-ups), so the
+                       # same button pressed twice gave two different builds
+                       # before settling. Full re-slot is now idempotent from
+                       # press one: layout in, layout out, only picks matter.
+                       "_existing_slots": (p.get("slots") or []) if (preserve or keep_layout) else [],
                        # slots the player actually placed (keep-layout cap)
-                       "_earned": p.get("earned_slot_count")
-                       or len([s for s in (p.get("slots") or []) if s])})
+                       "_earned": (p.get("earned_slot_count")
+                                   or len([s for s in (p.get("slots") or []) if s]))
+                       if (preserve or keep_layout) else 0})
     if not powers:
         return jsonify({"ok": False, "response": "None of the build's powers were "
                         "recognized."}), 400
@@ -3752,8 +3760,29 @@ def build_solve():
             respec_plan = _respec_plan(powers_in, sol["powers"], cur_totals, final, res_cap)
         except Exception:  # noqa: BLE001 — the plan is a nicety; never fail the solve over it
             respec_plan = None
+    # WORK ORDER C (yellowthief1 find #3, root-caused 2026-07-15): the solve
+    # always lays out the LEVEL-50 plan (all 67 added slots). On an imported
+    # sub-50 character (earned < plan) with preserve off, that read as "it
+    # gives you more slots than what you have" — slot conservation against
+    # the 50 allotment holds in every measured arm (server x3, UI x3, stable
+    # across repeated presses); the defect was the SILENCE about the level
+    # gap. Say it plainly, server-side, so every client inherits the honesty.
+    _warnings = _build_warnings(sol["powers"], archetype, final, content, role,
+                                exposure)
+    _earned_added = sum(max(0, int(p.get("earned_slot_count") or 0) - 1)
+                        for p in powers_in if p.get("earned_slot_count"))
+    _plan_added = sol.get("added_slots") or 0
+    if not preserve and 0 < _earned_added < _plan_added:
+        _warnings.insert(0, {
+            "kind": "level_plan",
+            "text": f"This is the level-50 plan — it places all {_plan_added} "
+                    f"added slots. Your imported character currently owns "
+                    f"{_earned_added} added slots; the rest arrive as you "
+                    f"level (the leveling wall shows when each lands). "
+                    f"Turn 'Preserve my sets' on to stay within today's "
+                    f"slots."})
     return jsonify({"ok": True, "powers": sol["powers"], "respec_plan": respec_plan,
-                    "warnings": _build_warnings(sol["powers"], archetype, final, content, role, exposure),
+                    "warnings": _warnings,
                     "slots_used": sol["slots_used"],
                     "added_slots": sol.get("added_slots"),
                     "added_budget": sol.get("added_budget", 67),
