@@ -97,11 +97,19 @@ def main():
     ap.add_argument("--dry-run", action="store_true",
                     help="print the partition + exact worker command lines, "
                          "launch nothing")
+    ap.add_argument("--recert", action="store_true",
+                    help="evaluate-first wave mode: the keys are certified "
+                         "MOVERS being re-converged — no certified-skip, "
+                         "workers run --recert, merge runs --replace")
     args = ap.parse_args()
 
     certified, srcs = certified_union()
     print("certified sources: " + ", ".join(f"{k} ({v})" for k, v in srcs.items()))
-    if args.keys:
+    if args.recert:
+        keys = [s.strip() for s in args.keys.split(",") if s.strip()]
+        if not keys:
+            raise SystemExit("--recert requires explicit --keys")
+    elif args.keys:
         keys = [s.strip() for s in args.keys.split(",") if s.strip()]
         already = [k for k in keys if k in certified]
         for k in already:
@@ -129,7 +137,8 @@ def main():
                    HC_SWEEP_WORKERS=str(sweep))
         cmd = [PY, BUILDOUT, "--keys", ",".join(sl),
                "--max-solves", str(args.max_solves),
-               "--restarts", str(args.restarts)]
+               "--restarts", str(args.restarts)] + (["--recert"] if args.recert
+                                                    else [])
         print(f"  worker {i}: {len(sl)} context(s) -> {os.path.basename(shard)}"
               f" (log {os.path.basename(log)})")
         for k in sl:
@@ -157,12 +166,13 @@ def main():
 
     shards = [s for _, _, s, _, _, _ in procs if os.path.exists(s)]
     print(f"\n{n - fails} of {n} workers clean, {(time.time() - t0) / 60:.1f} min total")
-    merge_cmd = f'{PY} {os.path.join(ROOT, "tools", "merge_champion_shards.py")} ' \
-                + " ".join(shards)
+    merge_cmd = (f'{PY} {os.path.join(ROOT, "tools", "merge_champion_shards.py")} '
+                 + ("--replace " if args.recert else "") + " ".join(shards))
     if fails == 0 and args.merge and shards:
         print("merging shards...")
         rc = subprocess.call([PY, os.path.join(ROOT, "tools",
-                                               "merge_champion_shards.py")] + shards)
+                                               "merge_champion_shards.py")]
+                             + (["--replace"] if args.recert else []) + shards)
         if rc == 0:
             print("merged. NEXT: validate_champions -> battery (the standard "
                   "completion pipeline).")

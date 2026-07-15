@@ -442,22 +442,20 @@ def preset_targets(content, role, res_cap=75, exposure=None,
     elif exposure == "back":
         out["defense"]["Ranged"] = max(out["defense"].get("Ranged", 0), 45)
         out["defense"]["AoE"] = max(out["defense"].get("AoE", 0), 45)
-    # A1 (work order A, Joel's green light 2026-07-15): the scorer's survival
-    # physics prices TWO incoming vectors for EVERY archetype — melee = best of
-    # (Melee, S, L) defense, ranged = best of (Ranged, AoE, E), weighted 50/50
-    # (first_principles.encounter_value). Without positional axes the ILP could
-    # never buy the positional half of either vector: enhanced Weave and
-    # positional set bonuses clipped to zero once the typed rooms filled — the
-    # certified Stalker shipped melee 39 with the softcap 6 points away and
-    # Tough/Weave bare while the model's own physics valued exactly those
-    # points. Every defense-carrying preset now asks for the vector softcap on
-    # both positional axes (max with anything exposure already set); the v30
-    # decay segments extend them to their real ceilings. fire_farm keeps its
-    # bespoke hard profile untouched (farm objectives are work order D's
-    # design, gated behind this fix).
-    if out["defense"] and content != "fire_farm":
-        out["defense"]["Melee"] = max(out["defense"].get("Melee", 0), 45)
-        out["defense"]["Ranged"] = max(out["defense"].get("Ranged", 0), 45)
+    # A1 STATUS (work order A): the ILP's positional-vector blindness (the
+    # certified Stalker's bare Tough/Weave, melee 39 with softcap 6 away) is
+    # REAL — but the flat fix (Melee/Ranged 45 asks on every preset) was
+    # BUILT, MEASURED by the evaluate-first protocol on all 19 certified
+    # contexts (2026-07-15), and REVERTED the same night: the coverage
+    # objective is ask-normalized, so two big new asks deflate every other
+    # axis's weight and drag the budget into positional sets the true scorer
+    # prices LOWER than what they displaced — every mover moved DOWN (Stalker
+    # −244 unguarded, Fire/WP Sentinel −345, WS nova −790). The honest fix
+    # needs scorer-marginal-DERIVED weights (the accuracy-term pattern), and
+    # must face the best-of(typed, positional) overlap: a positional point
+    # only pays where it exceeds the typed route, which a flat linear axis
+    # cannot express. Design note in session-report 2026-07-15; do not
+    # re-add a flat ask here.
     for t, v in base.get("resistance", {}).items():
         out["resistance"][t] = res_cap if v == "CAP" else min(v, res_cap)
     for fld in ("recharge", "recovery", "regen", "max_hp", "tohit"):

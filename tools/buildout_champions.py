@@ -100,10 +100,25 @@ def main():
                     help="comma-separated EXACT context keys — finer-grained "
                          "than --only (used by tools/converge_parallel.py to "
                          "partition arbitrarily); overrides --only")
+    ap.add_argument("--recert", action="store_true",
+                    help="RE-certification mode (the evaluate-first wave): the "
+                         "--keys given are certified movers being deliberately "
+                         "re-converged — the certified-skip ignores main/sibling "
+                         "shards for them (this worker's OWN shard still resumes). "
+                         "Keys may name any certified context, not just "
+                         "NEW_CONTEXTS.")
     args = ap.parse_args()
     only = {s.strip() for s in args.only.split(",") if s.strip()}
     keys = {s.strip() for s in args.keys.split(",") if s.strip()}
-    unknown = keys - set(NEW_CONTEXTS)
+    if args.recert and not keys:
+        raise SystemExit("--recert requires explicit --keys (never re-certify "
+                         "by wildcard)")
+    known = set(NEW_CONTEXTS)
+    if args.recert:
+        known |= set(json.load(open(os.path.join(ROOT, "benchmarks",
+                                                 "champions.json"),
+                                    encoding="utf-8")))
+    unknown = keys - known
     if unknown:
         # honest denominator: a mistyped key must fail loudly, never silently shrink
         raise SystemExit(f"unknown context key(s): {sorted(unknown)}")
@@ -132,7 +147,14 @@ def main():
     shard = os.environ.get("HC_CHAMPIONS_PATH")
     if shard and os.path.exists(shard):
         champs.update(json.load(open(shard, encoding="utf-8")))
-    if keys:
+    if args.recert:
+        # Re-certification: only this worker's OWN shard skips (interrupt
+        # resume); prior certificates are exactly what's being replaced.
+        champs = {}
+        if shard and os.path.exists(shard):
+            champs = json.load(open(shard, encoding="utf-8"))
+        pool = sorted(keys)
+    elif keys:
         pool = [k for k in NEW_CONTEXTS if k in keys]
     else:
         pool = [k for k in NEW_CONTEXTS if not only or k.split("|")[0] in only]
@@ -140,7 +162,8 @@ def main():
     skipped = [k for k in pool if k in champs]
     for k in skipped:
         print(f"already certified, skipping: {k}")
-    print(f"{len(todo)} of {len(NEW_CONTEXTS)} contexts to converge")
+    print(f"{len(todo)} of {len(pool) if args.recert else len(NEW_CONTEXTS)} "
+          f"contexts to converge" + (" [RECERT]" if args.recert else ""))
 
     # Same harden-before-certify guard as refresh_champions: stale-roster
     # powers can never anchor a gold standard.

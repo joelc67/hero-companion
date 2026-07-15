@@ -2779,6 +2779,24 @@ def _picks_legal(fns, primary, secondary):
                    and ((POWER_BY_FULL.get(fn) or {}).get("level_available") or 1) <= 1
                    for fn in fns):
             return False
+    # LADDER-FIT (certification legality item from the 0.12.19 gate, built for
+    # the wave 2026-07-15): the game grants picks at fixed levels
+    # (POWER_PICK_LEVELS: 1,1,2,4,6,…) and a respec walks the same ladder — so
+    # the i-th earliest-available pick must be available by the ladder's i-th
+    # grant. The pulled Night Widow/Water-Kin champions converged with only two
+    # picks available below level 4: no level-2 pick existed, the build could
+    # not be leveled or respec'd as picked, and the serve-time seater refused
+    # them. The SEARCH now refuses such rosters itself (Hall's condition on
+    # sorted availability), so a certification can never converge unseatable.
+    avails = sorted(
+        ((POWER_BY_FULL.get(fn) or {}).get("level_available") or 1)
+        for fn in fns if not fn.rsplit(".", 1)[0].startswith("Inherent"))
+    ladder = leveling_schedule.POWER_PICK_LEVELS
+    if len(avails) > len(ladder):
+        return False
+    for i, lv in enumerate(avails):
+        if lv > ladder[i]:
+            return False
     return True
 
 
@@ -2927,9 +2945,13 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
         # Score what will actually SHIP: /build/solve applies the proc pass after the ILP
         # (proc bombs + the Achilles' Heel debuff anchor), and under MODEL_VERSION >= 10 the
         # encounter model reads slotted -res procs — so the search must see them too.
-        solved = proc_pass.apply_proc_pass(
-            solved, POWER_BY_FULL, role=role, content=content,
-            guard=_TargetGuard(archetype, targets, ctx, res_cap))
+        # No guard here: certification/preset targets are harvest proxies and
+        # the scorer IS the objective — see the A2 scope note at the
+        # /build/solve call site. When deep_optimize gains declared-target
+        # objectives (work order D farm champions), the strict guard comes
+        # with them.
+        solved = proc_pass.apply_proc_pass(solved, POWER_BY_FULL, role=role,
+                                           content=content)
         solved = _endurance_relief_pass(solved, archetype, ctx, res_cap)
         tot = engine.calculate_build({"archetype": archetype, "powers": solved},
                                      SET_BONUSES, res_cap=res_cap, ctx=ctx)
@@ -3631,10 +3653,19 @@ def build_solve():
         # fresh wizard/autopick build has no player IO choices to preserve, and skipping the
         # pass there was why generated kits shipped proc-less in the proc meta.
         if not preserve or _generated:
+            # A2 GUARD SCOPE (measured 2026-07-15, evaluate-first on all 19
+            # certified contexts): the guard runs ONLY for user-DECLARED
+            # targets (custom). Preset asks are harvest proxies — at
+            # certification the true scorer consistently ENDORSES the proc
+            # trade even where it dips a preset axis (guarding presets cost
+            # every armor context 70-300 true-score points), so protecting a
+            # proxy against the objective it proxies is backwards. A declared
+            # ask is a promise; a preset is a heuristic. Work order D's farm
+            # certifications declare their asks — they run this guard strict.
             sol["powers"] = proc_pass.apply_proc_pass(
                 sol["powers"], POWER_BY_FULL, role=role, content=content,
-                guard=_TargetGuard(archetype, targets, ctx, _rescap,
-                                   strict=bool(custom)))
+                guard=(_TargetGuard(archetype, targets, ctx, _rescap,
+                                    strict=True) if custom else None))
             sol["powers"] = _endurance_relief_pass(sol["powers"], archetype, ctx, _rescap)
 
         if _assign_pick_levels(sol["powers"], archetype) or _sched_round == 1:

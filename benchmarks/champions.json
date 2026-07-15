@@ -35,8 +35,14 @@
    "restarts_done": 6,
    "budget_truncated": false,
    "primary_converged": true,
-   "picks_filled": 0
-  }
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1779.8
+   }
+  },
+  "canonical_score": 1779.8
  },
  "Class_Defender|Defender_Buff.Poison|Defender_Ranged.Sonic_Attack|itrial": {
   "picks": [
@@ -74,8 +80,14 @@
    "restarts_done": 6,
    "budget_truncated": false,
    "primary_converged": true,
-   "picks_filled": 0
-  }
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1988.58
+   }
+  },
+  "canonical_score": 1988.58
  },
  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Sonic_Attack|itrial": {
   "picks": [
@@ -113,8 +125,14 @@
    "restarts_done": 6,
    "budget_truncated": false,
    "primary_converged": true,
-   "picks_filled": 0
-  }
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1664.96
+   }
+  },
+  "canonical_score": 1664.96
  },
  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|itrial": {
   "picks": [
@@ -150,8 +168,14 @@
    "restarts_done": 6,
    "budget_truncated": false,
    "primary_converged": true,
-   "picks_filled": 0
-  }
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1622.8
+   }
+  },
+  "canonical_score": 1622.8
  },
  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Radiation_Emission|itrial": {
   "picks": [
@@ -189,8 +213,14 @@
    "restarts_done": 6,
    "budget_truncated": false,
    "primary_converged": true,
-   "picks_filled": 0
-  }
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1308.34
+   }
+  },
+  "canonical_score": 1308.34
  },
  "Class_Brute|Brute_Melee.Battle_Axe|Brute_Defense.Fiery_Aura|itrial": {
   "picks": [
@@ -228,8 +258,14 @@
    "restarts_done": 6,
    "budget_truncated": false,
    "primary_converged": true,
-   "picks_filled": 0
-  }
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 803.53
+   }
+  },
+  "canonical_score": 803.53
  },
  "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Super_Strength|itrial": {
   "picks": [
@@ -267,8 +303,14 @@
    "restarts_done": 6,
    "budget_truncated": false,
    "primary_converged": true,
-   "picks_filled": 0
-  }
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1232.75
+   }
+  },
+  "canonical_score": 1232.75
  },
  "Class_Blaster|Blaster_Ranged.Fire_Blast|Blaster_Support.Energy_Manipulation|itrial": {
   "picks": [
@@ -306,8 +348,14 @@
    "restarts_done": 6,
    "budget_truncated": false,
    "primary_converged": true,
-   "picks_filled": 0
-  }
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 293.65
+   }
+  },
+  "canonical_score": 293.65
  },
  "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Dark_Armor|itrial": {
   "picks": [
@@ -345,8 +393,14 @@
    "restarts_done": 6,
    "budget_truncated": false,
    "primary_converged": true,
-   "picks_filled": 0
-  }
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1398.58
+   }
+  },
+  "canonical_score": 1398.58
  },
  "Class_Dominator|Dominator_Control.Mind_Control|Dominator_Assault.Fiery_Assault|itrial": {
   "picks": [
@@ -384,8 +438,14 @@
    "restarts_done": 6,
    "budget_truncated": false,
    "primary_converged": true,
-   "picks_filled": 2
-  }
+   "picks_filled": 2,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 705.08
+   }
+  },
+  "canonical_score": 705.08
  },
  "Class_Scrapper|Scrapper_Melee.Broad_Sword|Scrapper_Defense.Super_Reflexes|itrial": {
   "picks": [
@@ -423,8 +483,14 @@
    "restarts_done": 6,
    "budget_truncated": false,
    "primary_converged": true,
-   "picks_filled": 0
-  }
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1006.14
+   }
+  },
+  "canonical_score": 1006.14
  },
  "Class_Sentinel|Sentinel_Ranged.Fire_Blast|Sentinel_Defense.Willpower|itrial": {
   "picks": [
@@ -462,8 +528,14 @@
    "restarts_done": 6,
    "budget_truncated": false,
    "primary_converged": true,
-   "picks_filled": 0
-  }
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1591.68
+   }
+  },
+  "canonical_score": 1591.68
  },
  "Class_Arachnos_Soldier|Arachnos_Soldiers.Crab_Spider_Soldier|Training_Gadgets.Crab_Spider_Training|itrial": {
   "picks": [
@@ -501,7 +573,13 @@
    "restarts_done": 6,
    "budget_truncated": false,
    "primary_converged": true,
-   "picks_filled": 0
-  }
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1600.93
+   }
+  },
+  "canonical_score": 1600.93
  }
 }
