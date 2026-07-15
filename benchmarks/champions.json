@@ -38,7 +38,7 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "A-fix scoped (model 30, 2026-07-15)",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1779.8
    }
   },
@@ -83,7 +83,7 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "A-fix scoped (model 30, 2026-07-15)",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1988.58
    }
   },
@@ -128,7 +128,7 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "A-fix scoped (model 30, 2026-07-15)",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1664.96
    }
   },
@@ -171,7 +171,7 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "A-fix scoped (model 30, 2026-07-15)",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1622.8
    }
   },
@@ -216,7 +216,7 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "A-fix scoped (model 30, 2026-07-15)",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1308.34
    }
   },
@@ -261,7 +261,7 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "A-fix scoped (model 30, 2026-07-15)",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 803.53
    }
   },
@@ -581,5 +581,455 @@
    }
   },
   "canonical_score": 1600.93
+ },
+ "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial": {
+  "picks": [
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Peacebringer_Defensive.Luminous_Aura.Incandescence",
+   "Peacebringer_Defensive.Luminous_Aura.Quantum_Maneuvers",
+   "Peacebringer_Defensive.Luminous_Aura.Reform_Essence",
+   "Peacebringer_Defensive.Luminous_Aura.Shining_Shield",
+   "Peacebringer_Offensive.Luminous_Blast.Dawn_Strike",
+   "Peacebringer_Offensive.Luminous_Blast.Glinting_Eye",
+   "Peacebringer_Offensive.Luminous_Blast.Glowing_Touch",
+   "Peacebringer_Offensive.Luminous_Blast.Luminous_Detonation",
+   "Peacebringer_Offensive.Luminous_Blast.Photon_Seekers",
+   "Peacebringer_Offensive.Luminous_Blast.Proton_Scatter",
+   "Peacebringer_Offensive.Luminous_Blast.Pulsar",
+   "Peacebringer_Offensive.Luminous_Blast.Solar_Flare",
+   "Pool.Fighting.Boxing",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Kick",
+   "Pool.Fighting.Tough",
+   "Pool.Fighting.Weave",
+   "Pool.Leadership.Assault",
+   "Pool.Leadership.Defense",
+   "Pool.Leadership.Vengeance",
+   "Pool.Leaping.Combat_Jumping",
+   "Pool.Leaping.Jump_Kick",
+   "Pool.Medicine.Aid_Self",
+   "Pool.Medicine.Stimulant"
+  ],
+  "score": 1199.769,
+  "certificate": {
+   "sweeps": 31,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "primary_converged": true,
+   "picks_filled": 1,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1199.77
+   }
+  },
+  "canonical_score": 1199.77
+ },
+ "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial": {
+  "picks": [
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Boxing",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Tough",
+   "Pool.Force_of_Will.Project_Will",
+   "Pool.Force_of_Will.Wall_of_Force",
+   "Pool.Force_of_Will.Weaken_Resolve",
+   "Pool.Invisibility.Grant_Invisibility",
+   "Pool.Invisibility.Misdirection",
+   "Pool.Invisibility.Stealth",
+   "Pool.Leadership.Assault",
+   "Pool.Leadership.Defense",
+   "Pool.Leadership.Vengeance",
+   "Warshade_Defensive.Umbral_Aura.Absorption",
+   "Warshade_Defensive.Umbral_Aura.Gravity_Shield",
+   "Warshade_Defensive.Umbral_Aura.Inky_Aspect",
+   "Warshade_Defensive.Umbral_Aura.Shadow_Cloak",
+   "Warshade_Defensive.Umbral_Aura.Stygian_Circle",
+   "Warshade_Defensive.Umbral_Aura.Stygian_Return",
+   "Warshade_Offensive.Umbral_Blast.Dark_Matter_Detonation",
+   "Warshade_Offensive.Umbral_Blast.Gravitic_Emanation",
+   "Warshade_Offensive.Umbral_Blast.Quasar",
+   "Warshade_Offensive.Umbral_Blast.Shadow_Bolt",
+   "Warshade_Offensive.Umbral_Blast.Sunless_Mire",
+   "Warshade_Offensive.Umbral_Blast.Unchain_Essence"
+  ],
+  "score": 1416.8385,
+  "certificate": {
+   "sweeps": 32,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1368.29
+   }
+  },
+  "canonical_score": 1368.29
+ },
+ "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|dwarf": {
+  "picks": [
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Peacebringer_Defensive.Luminous_Aura.Quantum_Maneuvers",
+   "Peacebringer_Defensive.Luminous_Aura.Reform_Essence",
+   "Peacebringer_Defensive.Luminous_Aura.Restore_Essence",
+   "Peacebringer_Defensive.Luminous_Aura.Shining_Shield",
+   "Peacebringer_Defensive.Luminous_Aura.White_Dwarf",
+   "Peacebringer_Offensive.Luminous_Blast.Dawn_Strike",
+   "Peacebringer_Offensive.Luminous_Blast.Gleaming_Blast",
+   "Peacebringer_Offensive.Luminous_Blast.Glinting_Eye",
+   "Peacebringer_Offensive.Luminous_Blast.Glowing_Touch",
+   "Peacebringer_Offensive.Luminous_Blast.Luminous_Detonation",
+   "Peacebringer_Offensive.Luminous_Blast.Proton_Scatter",
+   "Peacebringer_Offensive.Luminous_Blast.Pulsar",
+   "Peacebringer_Offensive.Luminous_Blast.Solar_Flare",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Tough",
+   "Pool.Fighting.Weave",
+   "Pool.Leadership.Assault",
+   "Pool.Leadership.Defense",
+   "Pool.Leadership.Vengeance",
+   "Pool.Leadership.Victory_Rush",
+   "Pool.Leaping.Combat_Jumping",
+   "Pool.Leaping.Jump_Kick",
+   "Pool.Speed.Flurry",
+   "Pool.Speed.Hasten"
+  ],
+  "score": 1308.32385,
+  "certificate": {
+   "sweeps": 31,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1271.8
+   }
+  },
+  "canonical_score": 1271.8
+ },
+ "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|nova": {
+  "picks": [
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Peacebringer_Defensive.Luminous_Aura.Quantum_Maneuvers",
+   "Peacebringer_Defensive.Luminous_Aura.Reform_Essence",
+   "Peacebringer_Defensive.Luminous_Aura.Restore_Essence",
+   "Peacebringer_Defensive.Luminous_Aura.Shining_Shield",
+   "Peacebringer_Offensive.Luminous_Blast.Bright_Nova",
+   "Peacebringer_Offensive.Luminous_Blast.Dawn_Strike",
+   "Peacebringer_Offensive.Luminous_Blast.Gleaming_Bolt",
+   "Peacebringer_Offensive.Luminous_Blast.Glinting_Eye",
+   "Peacebringer_Offensive.Luminous_Blast.Glowing_Touch",
+   "Peacebringer_Offensive.Luminous_Blast.Luminous_Detonation",
+   "Peacebringer_Offensive.Luminous_Blast.Photon_Seekers",
+   "Peacebringer_Offensive.Luminous_Blast.Proton_Scatter",
+   "Peacebringer_Offensive.Luminous_Blast.Pulsar",
+   "Peacebringer_Offensive.Luminous_Blast.Solar_Flare",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Kick",
+   "Pool.Fighting.Tough",
+   "Pool.Invisibility.Grant_Invisibility",
+   "Pool.Invisibility.Misdirection",
+   "Pool.Invisibility.Stealth",
+   "Pool.Leadership.Assault",
+   "Pool.Leadership.Vengeance",
+   "Pool.Medicine.Aid_Self",
+   "Pool.Medicine.Stimulant"
+  ],
+  "score": 1220.317125,
+  "certificate": {
+   "sweeps": 36,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1195.04
+   }
+  },
+  "canonical_score": 1195.04
+ },
+ "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|dwarf": {
+  "picks": [
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Kick",
+   "Pool.Fighting.Weave",
+   "Pool.Force_of_Will.Project_Will",
+   "Pool.Force_of_Will.Unleash_Potential",
+   "Pool.Force_of_Will.Wall_of_Force",
+   "Pool.Force_of_Will.Weaken_Resolve",
+   "Pool.Leadership.Assault",
+   "Pool.Leadership.Defense",
+   "Pool.Leadership.Vengeance",
+   "Pool.Speed.Hasten",
+   "Warshade_Defensive.Umbral_Aura.Absorption",
+   "Warshade_Defensive.Umbral_Aura.Black_Dwarf",
+   "Warshade_Defensive.Umbral_Aura.Eclipse",
+   "Warshade_Defensive.Umbral_Aura.Gravity_Shield",
+   "Warshade_Defensive.Umbral_Aura.Inky_Aspect",
+   "Warshade_Defensive.Umbral_Aura.Stygian_Circle",
+   "Warshade_Offensive.Umbral_Blast.Dark_Extraction",
+   "Warshade_Offensive.Umbral_Blast.Dark_Matter_Detonation",
+   "Warshade_Offensive.Umbral_Blast.Ebon_Eye",
+   "Warshade_Offensive.Umbral_Blast.Gravitic_Emanation",
+   "Warshade_Offensive.Umbral_Blast.Quasar",
+   "Warshade_Offensive.Umbral_Blast.Shadow_Blast",
+   "Warshade_Offensive.Umbral_Blast.Sunless_Mire"
+  ],
+  "score": 1665.2569999999998,
+  "certificate": {
+   "sweeps": 32,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1635.78
+   }
+  },
+  "canonical_score": 1635.78
+ },
+ "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|nova": {
+  "picks": [
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Boxing",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Kick",
+   "Pool.Fighting.Tough",
+   "Pool.Invisibility.Grant_Invisibility",
+   "Pool.Invisibility.Misdirection",
+   "Pool.Invisibility.Stealth",
+   "Pool.Leadership.Assault",
+   "Pool.Leadership.Vengeance",
+   "Pool.Medicine.Stimulant",
+   "Warshade_Defensive.Umbral_Aura.Gravity_Shield",
+   "Warshade_Defensive.Umbral_Aura.Inky_Aspect",
+   "Warshade_Defensive.Umbral_Aura.Shadow_Cloak",
+   "Warshade_Defensive.Umbral_Aura.Stygian_Circle",
+   "Warshade_Offensive.Umbral_Blast.Dark_Extraction",
+   "Warshade_Offensive.Umbral_Blast.Dark_Matter_Detonation",
+   "Warshade_Offensive.Umbral_Blast.Dark_Nova",
+   "Warshade_Offensive.Umbral_Blast.Gravimetric_Snare",
+   "Warshade_Offensive.Umbral_Blast.Gravitic_Emanation",
+   "Warshade_Offensive.Umbral_Blast.Quasar",
+   "Warshade_Offensive.Umbral_Blast.Shadow_Bolt",
+   "Warshade_Offensive.Umbral_Blast.Starless_Step",
+   "Warshade_Offensive.Umbral_Blast.Sunless_Mire",
+   "Warshade_Offensive.Umbral_Blast.Unchain_Essence"
+  ],
+  "score": 1083.148575,
+  "certificate": {
+   "sweeps": 34,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1048.12
+   }
+  },
+  "canonical_score": 1048.12
+ },
+ "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|triform": {
+  "picks": [
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Peacebringer_Defensive.Luminous_Aura.Quantum_Maneuvers",
+   "Peacebringer_Defensive.Luminous_Aura.Restore_Essence",
+   "Peacebringer_Defensive.Luminous_Aura.Shining_Shield",
+   "Peacebringer_Defensive.Luminous_Aura.White_Dwarf",
+   "Peacebringer_Offensive.Luminous_Blast.Bright_Nova",
+   "Peacebringer_Offensive.Luminous_Blast.Dawn_Strike",
+   "Peacebringer_Offensive.Luminous_Blast.Gleaming_Blast",
+   "Peacebringer_Offensive.Luminous_Blast.Glinting_Eye",
+   "Peacebringer_Offensive.Luminous_Blast.Glowing_Touch",
+   "Peacebringer_Offensive.Luminous_Blast.Luminous_Detonation",
+   "Peacebringer_Offensive.Luminous_Blast.Proton_Scatter",
+   "Peacebringer_Offensive.Luminous_Blast.Pulsar",
+   "Peacebringer_Offensive.Luminous_Blast.Solar_Flare",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Kick",
+   "Pool.Fighting.Weave",
+   "Pool.Invisibility.Misdirection",
+   "Pool.Invisibility.Stealth",
+   "Pool.Leadership.Assault",
+   "Pool.Leadership.Defense",
+   "Pool.Leadership.Vengeance",
+   "Pool.Speed.Flurry",
+   "Pool.Speed.Hasten",
+   "Pool.Speed.Super_Speed"
+  ],
+  "score": 1354.7892000000002,
+  "certificate": {
+   "sweeps": 30,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1254.64
+   }
+  },
+  "canonical_score": 1254.64
+ },
+ "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|triform": {
+  "picks": [
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Boxing",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Weave",
+   "Pool.Force_of_Will.Project_Will",
+   "Pool.Force_of_Will.Unleash_Potential",
+   "Pool.Force_of_Will.Wall_of_Force",
+   "Pool.Force_of_Will.Weaken_Resolve",
+   "Pool.Leadership.Assault",
+   "Pool.Leadership.Vengeance",
+   "Pool.Speed.Hasten",
+   "Warshade_Defensive.Umbral_Aura.Black_Dwarf",
+   "Warshade_Defensive.Umbral_Aura.Gravity_Shield",
+   "Warshade_Defensive.Umbral_Aura.Inky_Aspect",
+   "Warshade_Defensive.Umbral_Aura.Shadow_Cloak",
+   "Warshade_Defensive.Umbral_Aura.Stygian_Circle",
+   "Warshade_Offensive.Umbral_Blast.Dark_Extraction",
+   "Warshade_Offensive.Umbral_Blast.Dark_Matter_Detonation",
+   "Warshade_Offensive.Umbral_Blast.Dark_Nova",
+   "Warshade_Offensive.Umbral_Blast.Ebon_Eye",
+   "Warshade_Offensive.Umbral_Blast.Gravitic_Emanation",
+   "Warshade_Offensive.Umbral_Blast.Quasar",
+   "Warshade_Offensive.Umbral_Blast.Shadow_Blast",
+   "Warshade_Offensive.Umbral_Blast.Shadow_Bolt",
+   "Warshade_Offensive.Umbral_Blast.Unchain_Essence"
+  ],
+  "score": 1642.7204999999997,
+  "certificate": {
+   "sweeps": 28,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1646.64
+   }
+  },
+  "canonical_score": 1646.64
+ },
+ "Class_Arachnos_Widow|Widow_Training.Night_Widow_Training|Teamwork.Widow_Teamwork|itrial": {
+  "picks": [
+   "Epic.VEAT_Soul_Mastery.Soul_Tentacles",
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Tough",
+   "Pool.Fighting.Weave",
+   "Pool.Force_of_Will.Mighty_Leap",
+   "Pool.Force_of_Will.Project_Will",
+   "Pool.Force_of_Will.Wall_of_Force",
+   "Pool.Force_of_Will.Weaken_Resolve",
+   "Pool.Leadership.Defense",
+   "Pool.Leadership.Vengeance",
+   "Pool.Speed.Hasten",
+   "Pool.Speed.Super_Speed",
+   "Teamwork.Teamwork.Combat_Training:_Defensive",
+   "Teamwork.Teamwork.Foresight",
+   "Teamwork.Teamwork.Tactical_Training:_Maneuvers",
+   "Teamwork.Widow_Teamwork.Mental_Training",
+   "Teamwork.Widow_Teamwork.NW_Mask_Presence",
+   "Teamwork.Widow_Teamwork.NW_Mind_Link",
+   "Teamwork.Widow_Teamwork.NW_Pain_Tolerance",
+   "Teamwork.Widow_Teamwork.NW_Tactical_Training:_Vengeance",
+   "Widow_Training.Night_Widow_Training.NW_Eviscerate",
+   "Widow_Training.Night_Widow_Training.NW_Smoke_Grenade",
+   "Widow_Training.Widow_Training.Spin",
+   "Widow_Training.Widow_Training.Swipe"
+  ],
+  "score": 1524.7071,
+  "certificate": {
+   "sweeps": 29,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 1546.29
+   }
+  },
+  "canonical_score": 1546.29
+ },
+ "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|itrial": {
+  "picks": [
+   "Corruptor_Buff.Kinetics.Increase_Density",
+   "Corruptor_Buff.Kinetics.Inertial_Reduction",
+   "Corruptor_Buff.Kinetics.Repel",
+   "Corruptor_Buff.Kinetics.Siphon_Power",
+   "Corruptor_Buff.Kinetics.Siphon_Speed",
+   "Corruptor_Buff.Kinetics.Speed_Boost",
+   "Corruptor_Buff.Kinetics.Transfusion",
+   "Corruptor_Ranged.Water_Blast.Aqua_Bolt",
+   "Corruptor_Ranged.Water_Blast.Geyser",
+   "Corruptor_Ranged.Water_Blast.Tidal_Forces",
+   "Epic.Ice_Mastery_DefCorr.Build_Up",
+   "Epic.Ice_Mastery_DefCorr.Flash_Freeze",
+   "Epic.Ice_Mastery_DefCorr.Frozen_Armor",
+   "Epic.Ice_Mastery_DefCorr.Hoarfrost",
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Tough",
+   "Pool.Fighting.Weave",
+   "Pool.Invisibility.Stealth",
+   "Pool.Leadership.Assault",
+   "Pool.Leadership.Defense",
+   "Pool.Leadership.Tactics",
+   "Pool.Leadership.Vengeance",
+   "Pool.Speed.Hasten",
+   "Pool.Speed.Super_Speed",
+   "Pool.Speed.Whirlwind"
+  ],
+  "score": 370.5864000000001,
+  "certificate": {
+   "sweeps": 30,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "evaluated": {
+    "against": "A-fix scoped (model 30, 2026-07-15)",
+    "verdict": "baseline",
+    "canonical_score": 376.4
+   }
+  },
+  "canonical_score": 376.4
  }
 }
