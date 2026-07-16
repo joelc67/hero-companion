@@ -3613,6 +3613,7 @@ async function recompute() {
   renderStats(totals);
   renderValidation(validation);
   LAST_TOTALS = (totals && (totals.totals || totals)) || null;  // feed the tray rotation + notes
+  build._accoladeHp = (LAST_TOTALS && LAST_TOTALS.accolade_hp) || 0;  // v34: live accolade HP for the panel line
   updateInfoCards(LAST_TOTALS);
   // Server-corrected pick levels (older saves carry naive assignments — e.g. both
   // Poison powers badged level 1). Adopt them and repaint the wall once.
@@ -3710,21 +3711,53 @@ function renderAccolades() {
     body += `<div class="acc-group">${label} (${g.length})</div>` + g.map(_accRow).join("");
   }
   if (!body) body = `<div class="acc-empty">No accolade matches “${escHtml(ACCOLADES_FILTER)}”.</div>`;
+  const nPassiveChecked = [...ACCOLADES_CHECKED].filter(k =>
+    (rows.find(a => a.key === k) || {}).tier === "passive").length;
+  const hp = build._accoladeHp || 0;
+  const applied = nPassiveChecked
+    ? `<span class="acc-applied">✓ ${nPassiveChecked} in your numbers${hp ? ` (+${hp} HP)` : ""}</span>`
+    : `<span class="acc-hint">tick the ones your character has — checked accolades feed the totals</span>`;
   card.innerHTML =
     `<div class="acc-head">
        <span class="ovc-head">ACCOLADES <span class="acc-count">${ACCOLADES_CHECKED.size}/${rows.length}</span></span>
        <input id="acc-search" class="acc-search" type="search" placeholder="Search accolades…"
          value="${escHtml(ACCOLADES_FILTER)}" oninput="accSearch(this.value)">
-       <span class="acc-hint">ticking is a personal note — no effect on the numbers yet</span>
+       <button class="acc-preview-btn" onmouseenter="accPreview(true)" onmouseleave="accPreview(false)"
+         onfocus="accPreview(true)" onblur="accPreview(false)"
+         title="Hold to see every build-affecting accolade applied at once — a preview, nothing is committed">👁 Preview all</button>
+       ${applied}
      </div>
      <div class="acc-scroll">${body}</div>`;
   const inp = $("acc-search");
   if (inp && ACCOLADES_FILTER) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
 }
 
+// v34 item 3: the apply-all PREVIEW. Ephemeral BY CONSTRUCTION (booster-preview
+// pattern) — it recomputes stats with every build-affecting accolade applied
+// WITHOUT touching ACCOLADES_CHECKED, so releasing restores exactly what was
+// checked. Nothing is committed; the button is press-and-hold.
+async function accPreview(on) {
+  const passive = (ACCOLADES_ROWS || []).filter(a => a.tier === "passive").map(a => a.key);
+  if (!passive.length) return;
+  const payload = buildPayload();
+  payload.accolades = on ? passive : [...ACCOLADES_CHECKED];
+  const totals = await api("/build/calculate", postJson(payload)).catch(() => null);
+  if (!totals) return;
+  const card = $("stats");
+  if (card) card.classList.toggle("acc-previewing", on);
+  renderStats(totals);
+  const lt = (totals && (totals.totals || totals)) || null;
+  if (lt) { build._accoladeHp = lt.accolade_hp || 0; }
+}
+
 function accSearch(v) { ACCOLADES_FILTER = v; renderAccolades(); }
 function toggleAccolade(k) {
   if (ACCOLADES_CHECKED.has(k)) ACCOLADES_CHECKED.delete(k); else ACCOLADES_CHECKED.add(k);
+  // v34 item 2: a checkmark means "this is in the numbers you're looking at".
+  // Only accolades our math prices (the passive tier) move totals; ticking a
+  // click/badge row is remembered but changes nothing, and the row says so.
+  const row = (ACCOLADES_ROWS || []).find(a => a.key === k);
+  if (row && row.tier === "passive") recompute();
   renderAccolades();
 }
 
@@ -3843,6 +3876,9 @@ function buildPayload() {
       Object.entries(build.incarnates).map(([k, v]) => [k, v.full_name])),
     include_incarnates: build.include_incarnates,
     include_external: build.include_external,
+    // v34 item 2: the accolade panel's checkmarks ARE the source of truth for
+    // which accolades feed the displayed totals (UI state == engine state).
+    accolades: [...ACCOLADES_CHECKED],
     pvp: build.pvp,
     suppression: build.suppression,
     powers: build.powers.map(p => ({
