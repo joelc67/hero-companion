@@ -88,15 +88,66 @@ def check_generators():
                      "denominator, so it must not pass")
 
 
+def check_no_cached_failure():
+    """WALK-3 ROOT CAUSE: loadAccolades() cached a FAILED fetch as [] — truthy,
+    so `if (ACCOLADES_ROWS) return` handed back the empty roster forever with no
+    retry, and every accolade feature silently no-opped while the server was
+    healthy. Joel hit it because a 5080 restart failed the single fetch his page
+    made. PIN: the cache may only be assigned from a SUCCESSFUL response, and
+    the guard must distinguish "never loaded" (null) from "loaded" (an array)."""
+    src = open(APP, encoding="utf-8").read()
+    m = re.search(r"async function loadAccolades\(\)\s*\{(.*?)\n\}", src, re.S)
+    if not m:
+        fails.append("loadAccolades() not found")
+        return
+    body = m.group(1)
+    ok_guard = "ACCOLADES_ROWS !== null" in body
+    # the poison pattern: caching the result of a failure-tolerant ternary
+    poisoned = re.search(r"ACCOLADES_ROWS\s*=\s*\([^)]*\)\s*\?[^:]*:\s*\[\]", body)
+    print(f"  guard distinguishes never-loaded from loaded: "
+          f"{'OK' if ok_guard else 'NO — a failure will be cached'}")
+    print(f"  caches only a successful response: "
+          f"{'NO — poison ternary present' if poisoned else 'OK'}")
+    if not ok_guard:
+        fails.append("loadAccolades guard must test `!== null`, or a failed "
+                     "fetch caches [] forever (walk-3 root cause)")
+    if poisoned:
+        fails.append("loadAccolades assigns the cache from a failure-tolerant "
+                     "ternary — a failed fetch poisons it permanently")
+
+
+def check_reset_clears_accolades():
+    """The stale-state family, third sighting: ACCOLADES_CHECKED is module-level,
+    so without an explicit clear it leaks across characters (tick on one, start
+    another, inherit its ticks) — exactly the custom-targets contamination
+    shape. PIN: resetBuildScopedState must clear it."""
+    src = open(APP, encoding="utf-8").read()
+    m = re.search(r"function resetBuildScopedState\(\)\s*\{(.*?)\n\}", src, re.S)
+    if not m:
+        fails.append("resetBuildScopedState() not found")
+        return
+    ok = "ACCOLADES_CHECKED.clear()" in m.group(1)
+    print(f"  reset clears the accolade ticks: {'OK' if ok else 'NO — they leak'}")
+    if not ok:
+        fails.append("resetBuildScopedState must clear ACCOLADES_CHECKED — "
+                     "accolade ticks are per-character and this Set is "
+                     "module-level (stale-state family)")
+
+
 print("WALK-2 DEFECT PINS")
 print("\ndefect 1 — card-bottom strip visible on every card:")
 check_band()
 print("\ndefect 2 — accolade preselect on EVERY level-50 generation path:")
 check_generators()
 
+print("\nwalk-3 — a failed accolade fetch must never poison the cache:")
+check_no_cached_failure()
+print("\nstale-state — reset must clear the accolade ticks:")
+check_reset_clears_accolades()
+
 print()
 if fails:
     for f in fails:
         print(f"FAIL: {f}")
     sys.exit(1)
-print("both walk-2 defect pins PASS")
+print("all walk-2 + walk-3 pins PASS")

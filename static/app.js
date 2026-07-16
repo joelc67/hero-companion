@@ -253,6 +253,13 @@ function resetBuildScopedState() {
   build._travel = null;
   roleFocus = { secondary: "", pct: 100 };
   Object.keys(PREVIEW_BOOSTS).forEach(k => delete PREVIEW_BOOSTS[k]);
+  // Accolade ticks are PER-CHARACTER, and this Set is module-level — so before
+  // this line it leaked across characters: tick/untick on one, start another,
+  // and it inherited the last one's accolade state. Same stale-state family as
+  // the custom-targets contamination (a Stalker's Melee-45 seeding a fresh
+  // Blaster's editor) — found while root-causing walk-3. A generator re-ticks
+  // the standard four straight after, so a NEW level-50 still starts correct.
+  ACCOLADES_CHECKED.clear();
   updateCustomTargetsChip();
 }
 
@@ -3693,11 +3700,32 @@ let ACCOLADES_ROWS = null;
 let ACCOLADES_CHECKED = new Set();
 let ACCOLADES_FILTER = "";
 
+// ⚠ ONLY A SUCCESS IS EVER CACHED (Joel's walk-3 failure, root-caused
+// 2026-07-16). The old body was:
+//     if (ACCOLADES_ROWS) return ACCOLADES_ROWS;
+//     ACCOLADES_ROWS = (r && r.ok) ? r.rows : [];
+// One failed fetch cached `[]` — which is TRUTHY, so the guard returned the
+// empty array FOREVER, for the life of the page, with no retry. Every
+// downstream feature then silently no-opped: the panel hid itself
+// (`if (!rows.length)`), the preselect ticked nothing, the provenance line said
+// "accolades: none ticked" and the attributed lines vanished — all while the
+// server was healthy and serving 28 rows. Joel hit it because a 5080 RESTART
+// (mine, seconds before I told him it was ready) failed the one fetch his page
+// made; my own checks always loaded after the restart, so I never saw it.
+// `null` = never loaded, retry. An array = a real answer, cache it (even if the
+// roster is legitimately empty). A transient failure returns empty for THIS
+// call and leaves the cache untouched so the next call retries.
+let ACCOLADES_LOAD_FAILED = false;
 async function loadAccolades() {
-  if (ACCOLADES_ROWS) return ACCOLADES_ROWS;
+  if (ACCOLADES_ROWS !== null) return ACCOLADES_ROWS;
   const r = await api("/accolades").catch(() => null);
-  ACCOLADES_ROWS = (r && r.ok) ? r.rows : [];
-  return ACCOLADES_ROWS;
+  if (r && r.ok && Array.isArray(r.rows)) {
+    ACCOLADES_ROWS = r.rows;
+    ACCOLADES_LOAD_FAILED = false;
+    return ACCOLADES_ROWS;
+  }
+  ACCOLADES_LOAD_FAILED = true;   // surfaced in the panel; retried on next call
+  return [];
 }
 
 function _accRow(a) {
@@ -3728,6 +3756,17 @@ function renderAccolades() {
   const card = $("accolades-card");
   if (!card) return;
   const rows = ACCOLADES_ROWS || [];
+  // A LOAD FAILURE MUST NOT LOOK LIKE "no accolades exist" (walk-3 root cause:
+  // the whole feature vanished silently and read as "not built yet"). If the
+  // roster couldn't load, SAY SO and offer the retry — never hide.
+  if (!rows.length && ACCOLADES_LOAD_FAILED && build.powers.length) {
+    card.classList.remove("hidden");
+    card.innerHTML = `<div class="acc-head"><span class="ovc-head">ACCOLADES</span></div>
+      <div class="acc-empty">Couldn't load the accolade list — the app couldn't reach the
+      server (a restart or a hiccup). <button class="linkbtn" onclick="retryAccolades()">Try
+      again</button></div>`;
+    return;
+  }
   if (!rows.length || !build.powers.length) { card.classList.add("hidden"); return; }
   card.classList.remove("hidden");
   const f = ACCOLADES_FILTER.trim().toLowerCase();
@@ -3844,6 +3883,15 @@ async function preselectStandardAccolades() {
     if (a.standard_assumed) ACCOLADES_CHECKED.add(a.key);
   }
 }
+
+// the retry the poisoned cache never had
+window.retryAccolades = async function () {
+  ACCOLADES_ROWS = null; ACCOLADES_LOAD_FAILED = false;
+  await loadAccolades();
+  await preselectStandardAccolades();
+  renderAccolades();
+  recompute();
+};
 
 function accSearch(v) { ACCOLADES_FILTER = v; renderAccolades(); }
 function toggleAccolade(k) {
