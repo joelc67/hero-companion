@@ -3856,6 +3856,40 @@ function toggleAccolade(k) {
   renderAccolades();
 }
 
+// ── Attribution v1 — v34 UI deliverable 4, stat-level ───────────────────────
+// "Attributed lines, not buried numbers": where a source lands in a stat, it
+// gets a NAMED line under that stat. Joel's template case is the Musculature
+// finding — an Alpha that raises damage but was invisible in the DPS block.
+// Every number here comes from the engine's own ledger (totals._accolade_ledger,
+// totals.damage_buff), never recomputed client-side — a second computation is a
+// second source of truth, and that is the defect this feature exists to kill.
+function attributionRowsHtml(statName, t) {
+  const rows = [];
+  if (statName === "Max HP") {
+    const led = t.accolade_ledger || [];
+    const hp = Math.round(t.accolade_hp || 0);
+    if (hp) {
+      const names = led.map(x => x.display || x.name).filter(Boolean);
+      rows.push({label: "↳ Accolades", val: `+${hp} HP`,
+                 title: names.length ? `From: ${names.join(", ")}` : ""});
+    }
+  }
+  return rows.map(r =>
+    `<div class="o-row attr-row" ${r.title ? `title="${escHtml(r.title)}"` : ""}>
+       <span>${r.label}</span><span>${escHtml(r.val)}</span></div>`).join("");
+}
+
+// The DPS block's named contributions (the Musculature case).
+function dpsAttributionHtml(t) {
+  const dmg = (t && t.damage_buff) || 0;
+  if (!dmg) return "";
+  const inc = (build && build.incarnates) || {};
+  const alpha = inc.Alpha && (inc.Alpha.display_name || "");
+  const src = alpha ? `Alpha (${escHtml(alpha)})` : "Incarnate";
+  return `<div class="o-row attr-row" title="A global +damage% the engine applies to every attack — this is the line that used to be invisible.">
+      <span>↳ ${src}</span><span>+${(dmg * 100).toFixed(1)}% damage</span></div>`;
+}
+
 // ── "What's in these numbers" — v34 UI deliverable 1 ────────────────────────
 // Joel's standing question, killed permanently: it was never clear whether the
 // Epic picks and incarnate recommendations actually reached the totals. This
@@ -4065,7 +4099,8 @@ function renderStats(t) {
     } else if (k === "Recovery" && t.endurance && t.endurance.recovery_per_sec) {
       abs = ` <span class="muted small">= ${t.endurance.recovery_per_sec} end/s</span>`;
     }
-    return `<div class="o-row"><span>${k}${badge}</span><span>+${d.value}%${over}${abs}</span></div>`;
+    return `<div class="o-row"><span>${k}${badge}</span><span>+${d.value}%${over}${abs}</span></div>`
+      + attributionRowsHtml(k, t);
   }).join("");
   // v30 bonus extras (the back-filled families) — only nonzero rows, so builds
   // without these bonuses see nothing new. KB protection is points, not %.
@@ -4089,7 +4124,7 @@ function renderStats(t) {
   if (extraRows.length) {
     $("other-stats").innerHTML += extraRows.join("");
   }
-  renderOffense(t.offense);
+  renderOffense(t.offense, t);
   // Endurance honesty rule (Σ-checkbox redesign): say so when the checked toggle
   // set + attack chain drains faster than recovery sustains.
   let note = t.note || "";
@@ -4132,7 +4167,7 @@ function renderStats(t) {
 }
 
 // Damage/DPS + debuff/buff + pet summary. Hidden when there's no offense at all.
-function renderOffense(off) {
+function renderOffense(off, t) {
   const sec = $("offense-section");
   const hasAny = off && (off.attack_count || (off.pets && off.pets.length)
     || (off.debuffs && off.debuffs.length) || (off.buffs && off.buffs.length));
@@ -4146,6 +4181,9 @@ function renderOffense(off) {
       html += `<div class="o-row"><span>AoE alpha <span class="muted small">(one full AoE volley)</span></span><span>${off.aoe_burst}</span></div>`;
     }
     html += `<div class="o-row o-head"><span>Single-target DPS <span class="muted small">(best-attack chain — EB/AV)</span></span><span class="dps">${off.st_dps}</span></div>`;
+    // v34 #4: the Musculature case — a global +damage% that reaches every attack
+    // but had no line of its own. It gets named right under the DPS it feeds.
+    html += dpsAttributionHtml(t);
     html += `<div class="o-row"><span>Top attack (damage / animation)</span><span>${off.top_dpa}</span></div>`;
     const top = (off.attacks || []).slice(0, 6).map(a =>
       `<div class="o-atk"><span>${a.name}${a.is_aoe ? ' <span class="aoe-tag">AoE</span>' : ''}</span>`

@@ -1403,3 +1403,6 @@ body { overflow: hidden; }
   border-bottom: 1px solid var(--border); color: var(--muted); }
 .prov-in { color: var(--def); }
 .prov-off { color: var(--muted); font-style: italic; }
+/* v34 deliverable 4: attributed lines — a named source under the stat it feeds */
+.attr-row { font-size: 10px; color: var(--muted); padding-left: 10px; }
+.attr-row span:last-child { color: var(--accent); }

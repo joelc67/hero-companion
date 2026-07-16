@@ -1235,6 +1235,13 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
     if totals.get("_accolade_ledger"):
         display["accolade_ledger"] = totals["_accolade_ledger"]
         display["accolade_hp"] = round(sum(x["hp"] for x in totals["_accolade_ledger"]), 1)
+    # v34 #4 (the Musculature case, Joel's template): the global +damage% an
+    # Alpha/Hybrid grants is applied to every attack by _offense — but it was
+    # never EXPOSED, so the DPS block could not name where the damage came from.
+    # A number that reaches the math and not the screen is exactly the gap this
+    # deliverable exists to close.
+    if totals.get("damage_buff"):
+        display["damage_buff"] = round(totals["damage_buff"], 4)
     if totals.get("max_end"):
         display["max_end_bonus"] = round(totals["max_end"], 1)
     # v29: what MM henchmen inherit (50% of TRUE set bonuses only) — the scorer's
