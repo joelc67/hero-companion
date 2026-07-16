@@ -95,6 +95,14 @@ main {
   grid-template-areas:
     "setup build"
     "rail  build";
+  /* THE LOPSIDED-GAP FIX (Joel's left-side arrows, 2026-07-16). The build
+     column spans BOTH rows, so with implicit `auto auto` rows the grid shared
+     the tall build column's height between them — the taller the powers side
+     grew, the further the Stats card was pushed from the End-game plan card
+     above it, opening orphaned whitespace on the left. Pinning row 1 to `auto`
+     (setup's natural height) and letting row 2 absorb the slack keeps the rail
+     docked directly under setup no matter how tall the build side gets. */
+  grid-template-rows: auto 1fr;
   gap: 10px;
   padding: 10px 12px;
   align-items: start;
@@ -1280,26 +1288,21 @@ body { overflow: hidden; }
 .pi-set-row[open] { padding-bottom: 7px; }
 
 /* ── ACCOLADES PANEL (v34 scaffold, display-only) ───────────────────────────
-   Joel's CORRECTED placement spec (2026-07-16, from a marked-up screenshot of
-   the first scaffold — the narrow two-band box was "not well thought out"):
-   the panel spans the FULL REMAINING WIDTH of the dead-space band — from the
-   cell after the last power card to the grid's RIGHT EDGE — and is ONE card
-   band tall. Wide and short, not narrow and tall.
+   Joel's placement CORRECTION 2 (2026-07-16): the clever one-band strip wedged
+   into the powers-grid dead space was illegible — rows clipped by the 96px
+   band, a horizontal scrollbar, checkboxes drifting off their names. So the
+   panel moved DOWN into the summary course (Build Vitals / Set Bonuses /
+   Uniques Carried) as a FULL-WIDTH member of that band, sized to be read.
 
-   The span cannot be expressed in CSS: `grid-column: auto / -1` gives a
-   definite END with an auto start, which the grid algorithm resolves to a
-   span of 1 (the last column) — not "from here to the edge". So the remaining
-   column count is COMPUTED in renderAccolades() and written as
-   `grid-column: span N`; it re-runs on resize because auto-fill's column count
-   is width-dependent. The height stays one 96px band, so the list scrolls
-   internally and lays out in MULTIPLE COLUMNS across the width.
-   Non-negotiables unchanged: docks into dead space, displaces nothing (dense
-   flow only drops a LATER item into an EARLIER hole), flexes to whatever
-   contiguous width the final band leaves. */
+   Consequences, all simplifications: its width is just the course's width (no
+   computed span, no resize retrigger, no ResizeObserver); its height is
+   comfortable and capped, scrolling VERTICALLY only; rows never clip. */
 .accolades-card {
-  grid-row: span 1; display: flex; flex-direction: column; min-height: 0;
+  grid-column: 1 / -1;      /* the full width of the summary course */
+  display: flex; flex-direction: column; min-height: 0;
+  max-height: 260px;        /* comfortable; the list scrolls inside it */
   background: var(--panel2); border: 1px solid var(--accent); border-radius: 6px;
-  padding: 5px 8px; font-size: 11px; overflow: hidden;
+  padding: 8px 10px; font-size: 11px; overflow: hidden;
 }
 .accolades-card.hidden { display: none; }
 /* header + search share ONE inline row — the width is the whole point */
@@ -1317,23 +1320,39 @@ body { overflow: hidden; }
 /* the list itself: columns across the available width, vertical scroll.
    CSS multicol would overflow HORIZONTALLY under a fixed height, so this is a
    grid — rows flow left-to-right and the container scrolls down. */
+/* The list: comfortable columns across the full course width, vertical scroll
+   only. Columns are WIDE (240px min) so a name + its effect fit on one line —
+   the strip's 165px columns are what forced the clipping Joel photographed. */
 .acc-scroll {
-  flex: 1 1 auto; overflow-y: auto; min-height: 0; padding-right: 2px;
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
-  gap: 0 10px; align-content: start;
+  flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; min-height: 0;
+  padding-right: 4px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1px 16px; align-content: start;
 }
 .acc-group {
   grid-column: 1 / -1;
-  font-size: 9.5px; font-weight: 700; letter-spacing: .05em; color: var(--muted);
-  margin: 3px 0 1px; position: sticky; top: 0; background: var(--panel2); z-index: 1;
+  font-size: 10px; font-weight: 700; letter-spacing: .05em; color: var(--muted);
+  margin: 6px 0 2px; position: sticky; top: 0; background: var(--panel2); z-index: 1;
 }
-.acc-row { display: flex; gap: 5px; align-items: baseline; padding: 1px 0;
-  min-width: 0; }
-.acc-check { flex: 0 0 auto; cursor: pointer; }
-.acc-body { min-width: 0; display: flex; gap: 5px; align-items: baseline; }
-.acc-name { font-weight: 600; line-height: 1.25; white-space: nowrap; }
-.acc-desc { color: var(--muted); font-size: 9.5px; line-height: 1.25;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.acc-note { color: var(--muted); font-size: 9px; font-style: italic; white-space: nowrap; }
+.acc-group:first-child { margin-top: 0; }
+/* One legible line: box + name + effect together, never clipped. The name may
+   WRAP if a column is narrow — wrapping is honest, ellipsis is not.
+   ⚠ This row is a GRID, not nested flex, and that is deliberate: the flex
+   version was MEASURED collapsing `.acc-body` to width 0 while its nowrap
+   child spilled 70px outside the row box (flex-shrink resolving against a
+   nowrap min-content child). `auto minmax(0,1fr)` makes the text column
+   exactly "whatever is left" and content wraps inside it — no shrink algebra,
+   nothing can escape the column. */
+.acc-row { display: grid; grid-template-columns: auto minmax(0, 1fr);
+  gap: 0 7px; align-items: baseline; padding: 2px 0;
+  cursor: pointer; border-radius: 3px; }
+.acc-row:hover { background: rgba(255, 255, 255, .04); }
+.acc-check { cursor: pointer; }
+.acc-body { min-width: 0; }        /* plain block: the text simply wraps */
+.acc-name { font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; }
+.acc-eff { color: var(--accent); font-size: 10px; line-height: 1.35;
+  margin-left: 5px; overflow-wrap: anywhere; }
+.acc-note { color: var(--muted); font-size: 9.5px; font-style: italic;
+  margin-left: 5px; overflow-wrap: anywhere; }
 .acc-row.badge_only .acc-name { font-weight: 500; color: var(--muted); }
-.acc-empty { grid-column: 1 / -1; color: var(--muted); padding: 4px 2px; }
+.acc-empty { grid-column: 1 / -1; color: var(--muted); padding: 6px 2px; }

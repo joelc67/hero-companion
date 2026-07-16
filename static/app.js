@@ -2312,18 +2312,19 @@ function renderPowers() {
     // bricks as one full-width row at the bottom of the powers section.
     html += `<div class="powers-wall">`
       + cards.map(([pw, idx, lv]) => powerCardHtml(pw, idx, iconOf(pw.full_name), lv)).join("")
-      // v34 ACCOLADES PANEL (display-only scaffold) — Joel's placement spec:
-      // it fills the DEAD SPACE after the last power card, in the same row
-      // band, ABOVE the Build Vitals / Set Bonuses / Uniques row, and must not
-      // displace or reflow anything already placed. As the wall's last grid
-      // item it occupies the trailing gap; scroll + search keep its height
-      // bounded to one card band no matter how long the roster gets.
-      + `<div id="accolades-card" class="accolades-card"></div>`
       + `</div>`
+      // v34 ACCOLADES PANEL — Joel's placement CORRECTION 2 ("the layout it
+      // created is bad"): the one-band strip wedged beside Stamina rendered
+      // cramped and illegible (clipped rows, a horizontal scrollbar, checkboxes
+      // drifting off their names). Legibility beats cleverness. It now lives in
+      // the SUMMARY BAND with the Vitals / Set Bonuses / Uniques boxes, full
+      // width of that course and sized to be read. No dead-space span maths any
+      // more — the width is simply the course's width.
       + `<div class="info-course">`
       + `<div id="overview-card" class="overview-card hidden"></div>`
       + `<div id="bonuses-card" class="overview-card hidden"></div>`
       + `<div id="uniques-card" class="overview-card hidden"></div>`
+      + `<div id="accolades-card" class="accolades-card"></div>`
       + `</div>`;
   }
 
@@ -3674,60 +3675,22 @@ function _accRow(a) {
   const on = ACCOLADES_CHECKED.has(a.key);
   const note = a.tier === "click" ? `not in passive totals`
     : a.tier === "badge_only" ? `no build effect` : "";
-  // one compact line per accolade: the width buys COLUMNS, not taller rows
+  // Correction 2's whole point is LEGIBILITY: the checkbox, the name and the
+  // effect stay together on one readable line, the name is allowed to wrap
+  // rather than be clipped, and nothing overflows sideways.
   return `<label class="acc-row ${a.tier}" data-acc="${escHtml(a.key)}"
         title="${escHtml(a.display + (a.description ? " — " + a.description : ""))}">
       <input class="acc-check" type="checkbox" ${on ? "checked" : ""}
         onchange="toggleAccolade('${escHtml(a.key)}')">
       <span class="acc-body"><span class="acc-name">${escHtml(a.display)}</span>${
         note ? `<span class="acc-note">${note}</span>`
-             : `<span class="acc-desc">${escHtml(a.effect_short || "")}</span>`}</span></label>`;
+             : `<span class="acc-eff">${escHtml(a.effect_short || "")}</span>`}</span></label>`;
 }
 
-// Joel's corrected spec: span the full REMAINING width of the final band. CSS
-// can't say that (`auto / -1` resolves to a span of 1), so count the grid's
-// columns and the cards, and claim what's left. If the last band happens to be
-// exactly full, the panel takes its own band at full width — still "whatever
-// contiguous width remains". auto-fill's column count is width-dependent, so
-// this re-runs on resize.
-function _accSpan() {
-  const wall = document.querySelector(".powers-wall");
-  const card = $("accolades-card");
-  if (!wall || !card) return;
-  const cols = getComputedStyle(wall).gridTemplateColumns.split(" ").filter(Boolean).length;
-  if (!cols) return;
-  const n = wall.querySelectorAll(".power-card").length;
-  const used = n % cols;
-  card.style.gridColumn = `span ${used === 0 ? cols : cols - used}`;
-}
-// Re-trigger on width change, BOTH ways — deliberately belt-and-braces:
-//   • ResizeObserver on the wall: fires after layout, and catches width changes
-//     the window never sees (a sidebar opening, zoom, font reflow).
-//   • window resize: the plain path, in case RO delivery is delayed.
-// _accSpan is idempotent and costs one getComputedStyle, so double-firing is
-// free and a missed fire is the only real failure mode.
-//
-// ⚠ HONESTY NOTE, so nobody "fixes" this on a false lesson: the auto-retrigger
-// is UNVERIFIED in the dev harness. Measured 2026-07-16 — the preview tool's
-// viewport resize dispatches NO resize event to the page (0 events across a
-// 1000→1500 change) and RO callbacks did not deliver either (paint-gated, and
-// three convergence workers were starving the renderer). What IS verified is
-// the maths: _accSpan yields span 4 at 5 columns and span 2 at 4 columns, and
-// renderAccolades always calls it. An earlier version of this comment claimed
-// the window listener "measurably did not work" — that claim came from the
-// broken instrument, not the code, and was wrong. Re-check the retrigger in a
-// real browser on an idle box before trusting or replacing either mechanism.
-let _ACC_RO = null;
-function _accWatch() {
-  const wall = document.querySelector(".powers-wall");
-  if (!wall) return;
-  if (window.ResizeObserver) {
-    if (_ACC_RO) _ACC_RO.disconnect();
-    _ACC_RO = new ResizeObserver(() => _accSpan());
-    _ACC_RO.observe(wall);
-  }
-}
-window.addEventListener("resize", () => { if ($("accolades-card")) _accSpan(); });
+// (The dead-space span maths that lived here is GONE with placement correction
+// 2 — the panel is a full-width member of the summary course now, so its width
+// is the course's width and needs no computation, no resize retrigger, and no
+// unverifiable ResizeObserver. The simplest layout that is legible wins.)
 
 function renderAccolades() {
   const card = $("accolades-card");
@@ -3755,8 +3718,6 @@ function renderAccolades() {
        <span class="acc-hint">ticking is a personal note — no effect on the numbers yet</span>
      </div>
      <div class="acc-scroll">${body}</div>`;
-  _accSpan();
-  _accWatch();
   const inp = $("acc-search");
   if (inp && ACCOLADES_FILTER) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
 }
