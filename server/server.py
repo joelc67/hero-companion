@@ -557,7 +557,8 @@ def accolades_roster():
                  attain_source=(attain.get(k) or {}).get("source", ""),
                  attain_summary=(attain.get(k) or {}).get("summary", ""),
                  badge_chain=(attain.get(k) or {}).get("badge_chain", []),
-                 attain_note=(attain.get(k) or {}).get("note", ""), **v)
+                 attain_note=(attain.get(k) or {}).get("note", ""),
+                 attain_unobtainable=bool((attain.get(k) or {}).get("unobtainable")), **v)
             for k, v in roster.items()]
     rows.sort(key=lambda v: (order.get(v["tier"], 9), -impact(v),
                              v["display"]))

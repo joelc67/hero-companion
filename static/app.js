@@ -3841,8 +3841,14 @@ function accHowTo(k) {
       <ul class="acc-chain">${chain.map(b =>
         `<li><strong>${escHtml(b.badge)}</strong><span>${escHtml(b.tracks)}</span></li>`).join("")}</ul>
       ${a.attain_note ? `<p class="muted small">${escHtml(a.attain_note)}</p>` : ""}`;
-  } else if (!undocumented) {
-    body = `<p>${escHtml(a.attain)}</p>`;
+  } else if (!undocumented && (a.attain || a.attain_summary)) {
+    // a sourced answer that ISN'T a badge chain — e.g. "this badge is not
+    // defined in the game, it cannot be earned". That is a real answer and must
+    // render; the earlier fallback printed a's empty `attain` and produced a
+    // BLANK pop-up, which is worse than saying nothing.
+    body = `<p${a.attain_unobtainable ? ' class="acc-undoc"' : ''}>`
+      + `${escHtml(a.attain || a.attain_summary)}</p>`
+      + (a.attain_note ? `<p class="muted small">${escHtml(a.attain_note)}</p>` : "");
   } else {
     body = `<p class="acc-undoc">Requirements not yet documented from game data.</p>
        <p class="muted small">We only show what a source we trust actually says. The

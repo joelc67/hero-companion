@@ -152,6 +152,8 @@ def main():
                         "badge_chain": w.get("badge_chain", []),
                         "note": w.get("note", ""),
                         "wiki_url": w.get("wiki_url", ""),
+                        "unobtainable": bool(w.get("unobtainable")),
+                        "needs_ingame_check": bool(w.get("needs_ingame_check")),
                         "text": "", "source": w.get("source", "wiki-hc")}
             n_wiki += 1
         else:

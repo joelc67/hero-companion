@@ -33,6 +33,8 @@
   ],
   "note": "Villain/rogue only. Heroes and vigilantes can earn credit, but it is awarded on changing alignment.",
   "wiki_url": "https://homecoming.wiki/wiki/Born_in_Battle_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
@@ -66,6 +68,8 @@
   ],
   "note": "Villain/rogue only. Heroes and vigilantes can earn credit, but it is awarded on changing alignment.",
   "wiki_url": "https://homecoming.wiki/wiki/Demonic_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
@@ -99,6 +103,8 @@
   ],
   "note": "Hero/vigilante only. A CLICK power rather than a passive — listed but not counted in passive totals.",
   "wiki_url": "https://homecoming.wiki/wiki/Archmage_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
@@ -124,6 +130,8 @@
   ],
   "note": "Villain/rogue only, and a CLICK power rather than a passive — it is listed but not counted in passive totals.",
   "wiki_url": "https://homecoming.wiki/wiki/Force_of_Nature_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
@@ -177,6 +185,8 @@
   ],
   "note": "Hero/vigilante only. The villain equivalent is the High Pain Threshold badge.",
   "wiki_url": "https://homecoming.wiki/wiki/Freedom_Phalanx_Reserve_Member_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
@@ -214,6 +224,8 @@
   ],
   "note": "Hero/vigilante only. A CLICK power rather than a passive — listed but not counted in passive totals.",
   "wiki_url": "https://homecoming.wiki/wiki/Geas_of_the_Kind_Ones_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
@@ -251,6 +263,8 @@
   ],
   "note": "Villain/rogue only. Heroes and vigilantes can earn credit, but it is awarded on changing alignment.",
   "wiki_url": "https://homecoming.wiki/wiki/High_Pain_Threshold_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
@@ -296,12 +310,20 @@
   ],
   "note": "Villain/rogue only. Heroes and vigilantes can earn credit, but it is awarded on changing alignment.",
   "wiki_url": "https://homecoming.wiki/wiki/Invader_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
  "Iron_Man": {
-  "text": "requirements not yet documented from game data",
-  "source": "undocumented"
+  "summary": "Not documented as an obtainable accolade — needs an in-game check.",
+  "badge_chain": [],
+  "note": "Investigated rather than guessed: 'Iron Man'/'Ironman' on the wiki redirects to the ADAMANT badge, which is a CONSTITUENT of Born in Battle ('Either Adamant / Ironman / Ironwoman or Laughs it Off is required for the Born in Battle accolade'), not an accolade in its own right — the badge simply shows different names by alignment and body type. Neither accolade index lists an 'Iron Man' accolade at all. Our roster carries the power record from the client bins (+10% Max HP, +10 Max End — larger than any documented accolade, which is itself suspicious), so this looks like a legacy or unused record. It sorts FIRST in the panel purely because of that outsized impact. Joel's badge window settles it.",
+  "wiki_url": "https://homecoming.wiki/wiki/Adamant_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": true,
+  "text": "",
+  "source": "wiki-hc"
  },
  "Labyrinth_Conqueror": {
   "summary": "Master the Labyrinth of Fog.",
@@ -325,6 +347,8 @@
   ],
   "note": "Labyrinth of Fog content. Also grants the Core Attunement power.",
   "wiki_url": "https://homecoming.wiki/wiki/Conqueror_of_the_Labyrinth_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
@@ -358,6 +382,8 @@
   ],
   "note": "First Ward content.",
   "wiki_url": "https://homecoming.wiki/wiki/Between_Realities_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
@@ -391,6 +417,8 @@
   ],
   "note": "Villain/rogue only. Heroes and vigilantes can earn credit, but it is awarded on changing alignment.",
   "wiki_url": "https://homecoming.wiki/wiki/Megalomaniac_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
@@ -424,6 +452,8 @@
   ],
   "note": "An Invention-system chain — no combat required.",
   "wiki_url": "https://homecoming.wiki/wiki/Field_Crafter_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
@@ -449,6 +479,8 @@
   ],
   "note": "Hero/vigilante only. Villains and rogues can earn credit, but the badge is awarded on changing alignment.",
   "wiki_url": "https://homecoming.wiki/wiki/Portal_Jockey_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
@@ -470,6 +502,8 @@
   ],
   "note": "The badge's displayed name varies with body type (Watchman / Watchwoman). It also unlocks Rikti weapon costume options for some powersets.",
   "wiki_url": "https://homecoming.wiki/wiki/Watchman_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
@@ -503,6 +537,8 @@
   ],
   "note": "Collectible by Vigilantes as well as Villains and Rogues. The badge's displayed name varies with alignment.",
   "wiki_url": "https://homecoming.wiki/wiki/Strike_Force_Commander_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
@@ -524,12 +560,20 @@
   ],
   "note": "Villain/rogue only. Heroes and vigilantes can earn credit, but it is awarded on changing alignment. See the badge page for the full chain.",
   "wiki_url": "https://homecoming.wiki/wiki/Headline_Stealer_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
  "Super_Patriot": {
-  "text": "requirements not yet documented from game data",
-  "source": "undocumented"
+  "summary": "This badge is not defined in the game at this time — it cannot be earned, or even held, on a character.",
+  "badge_chain": [],
+  "note": "The wiki states it outright: 'This badge is not defined at this time, which makes it impossible to even have on a character; let alone earn it.' Our roster carries the POWER record from the client bins (+5 Max End), but no obtainable badge grants it. Listed for completeness and marked honestly rather than left as a vague placeholder.",
+  "wiki_url": "https://homecoming.wiki/wiki/Super_Patriot",
+  "unobtainable": true,
+  "needs_ingame_check": false,
+  "text": "",
+  "source": "wiki-hc"
  },
  "Task_Force_Commander": {
   "summary": "Complete each of the Task Forces given out by the Freedom Phalanx.",
@@ -561,6 +605,8 @@
   ],
   "note": "Hero/vigilante only. Villains and rogues can earn credit, but the badge is awarded on changing alignment.",
   "wiki_url": "https://homecoming.wiki/wiki/Task_Force_Commander_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
@@ -590,6 +636,8 @@
   ],
   "note": "Hero/vigilante only. The villain equivalent is the Marshal badge.",
   "wiki_url": "https://homecoming.wiki/wiki/Received_the_Atlas_Medallion_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  },
@@ -615,6 +663,8 @@
   ],
   "note": "Hero/vigilante only, and you must be level 35 before it unlocks — though credit accrues earlier.",
   "wiki_url": "https://homecoming.wiki/wiki/Vanguard_Badge",
+  "unobtainable": false,
+  "needs_ingame_check": false,
   "text": "",
   "source": "wiki-hc"
  }
