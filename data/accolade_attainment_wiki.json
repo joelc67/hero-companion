@@ -55,6 +55,42 @@
   "source": "wiki-hc",
   "fetched": "2026-07-16"
  },
+ "Crey_CBX-9_Pistol": {
+  "wiki_title": "Conspiracy Theorist Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Conspiracy_Theorist_Badge",
+  "summary": "Expose Crey — the wiki's index states the Conspiracy Theorist badge 'Awards the Crey CBX-9 Pistol power'.",
+  "badge_chain": [
+   {"badge": "Bird Watcher", "tracks": "Exploration badge in Echo: Galaxy City"},
+   {"badge": "Crey Fish", "tracks": "Exploration badge in Eden"},
+   {"badge": "Crey Havoc", "tracks": "Exploration badge in Independence Port"},
+   {"badge": "Crey Watcher", "tracks": "Exploration badge in Crey's Folly"},
+   {"badge": "The Doctor's Ally", "tracks": "Finish the 'Investigate the hacker known as The Doctor' mission for Gordon Stacy in Brickstown"},
+   {"badge": "Infiltrator", "tracks": "Defeat 200 Crey Paragon Protectors"}
+  ],
+  "note": "Hero/vigilante only, and you must be level 30 before it unlocks — though credit accrues earlier.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Mazebreaker": {
+  "wiki_title": "(listed in the accolade index but has no page)",
+  "wiki_url": "https://homecoming.wiki/wiki/Hero_Accolade_Badges",
+  "summary": "Labyrinth of Fog content — the wiki lists it but does not document how to earn it.",
+  "badge_chain": [],
+  "note": "Investigated, not assumed: the accolade index names it ('Mazebreaker — Awards +Max Endurance (Labyrinth of Fog Only)') but, unlike every neighbouring row, the name is UNLINKED — there is no badge page, no redirect, and the Labyrinth of Fog page does not mention it. Newer Labyrinth content the wiki has not written up yet. Needs the in-game badge window.",
+  "needs_ingame_check": true,
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Toy_Bat": {
+  "wiki_title": "(no page)",
+  "wiki_url": "",
+  "summary": "Excalibonk — a novelty temp power, not a player-earnable accolade.",
+  "badge_chain": [],
+  "note": "No wiki page and no accolade-index entry. The client's own text describes it as a Rikti Monkey novelty item rather than a badge reward, so there is very likely no 'how to acquire' to show. Listed for completeness and marked honestly.",
+  "needs_ingame_check": true,
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
  "Super_Patriot": {
   "wiki_title": "Super Patriot",
   "wiki_url": "https://homecoming.wiki/wiki/Super_Patriot",
