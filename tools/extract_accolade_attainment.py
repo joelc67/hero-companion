@@ -7,6 +7,35 @@ THE AMENDMENT'S LADDER, implemented literally:
   3. Otherwise the pop-up says "requirements not yet documented from game data".
 No wiki, no third-party prose, no memory-sourced text — ever.
 
+RAW-BYTE DEMONSTRATION (Joel's direction, 2026-07-16: "demonstrate it, don't
+assume it" — his screenshots are the last rung ONLY if the bytes carry no key).
+DONE, and it disproves the dropped-reference hypothesis:
+  Instrumented the parser's reader to log EVERY string pulled from powers.bin,
+  then dumped the full window for the accolade records. Task Force Commander,
+  complete and in order:
+      display_name  "Task Force Commander"
+      display_help  "As a Task Force Commander, you have been granted a
+                     permanent increase to your Max Hit Points by 5%."
+      short_help    "+Max HP"
+      <EMPTY STRING> x 9        <-- EXACTLY the fields the parser discards
+                                    (13 target_help ... 21 power_defense_float)
+      icon          "BA_Task_Force_Cmmndr.tga"
+  The nine dropped fields are EMPTY on every accolade record. The record holds
+  exactly THREE message references — name, grant-help, short-help — and no
+  requirement text, no badge id, no further hash.
+  The "empty descriptions" smell was real but it was OUR BUG: this tool read
+  r["description"]/r["short_help"], field names the exporter never emits (it
+  emits display_help / display_short_help, resolved through the message table).
+  That is fixed; it yields the GRANT text, not requirements.
+  It also clarifies the premise: inspecting the accolade POWER in game shows the
+  GRANT sentence (display_help is literally that string). The requirement prose
+  belongs to the BADGE — a different object. The 416 requirement strings sit in
+  clientmessages under HASH keys with nothing client-side to join on, because
+  the SERVER sends the badge's message key at runtime. No player badges.bin
+  exists in any pigg (enumerated: only supergroup_badges.bin + badge textures).
+  => The raw bytes demonstrably carry no key. Rung 2 (Joel's live-game badge
+     window) is PROVEN necessary, not assumed.
+
 WHAT THE MINING ACTUALLY FOUND (measured, and it CORRECTS the Phase-0 claim
 that "the client carries what an accolade grants, not how it is earned"):
   * The client DOES carry the requirement prose — 416 requirement-shaped
