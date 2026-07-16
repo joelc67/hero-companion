@@ -40,7 +40,9 @@
     "against": "model 33, 2026-07-16",
     "verdict": "unaffected",
     "canonical_score": 1779.8
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1779.8
  },
@@ -85,7 +87,9 @@
     "against": "model 33, 2026-07-16",
     "verdict": "unaffected",
     "canonical_score": 1988.58
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1988.58
  },
@@ -130,7 +134,9 @@
     "against": "model 33, 2026-07-16",
     "verdict": "unaffected",
     "canonical_score": 1664.96
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1664.96
  },
@@ -173,7 +179,9 @@
     "against": "model 33, 2026-07-16",
     "verdict": "unaffected",
     "canonical_score": 1622.8
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1622.8
  },
@@ -218,16 +226,16 @@
     "against": "model 33, 2026-07-16",
     "verdict": "unaffected",
     "canonical_score": 1308.34
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1308.34
  },
  "Class_Brute|Brute_Melee.Battle_Axe|Brute_Defense.Fiery_Aura|itrial": {
   "picks": [
    "Brute_Defense.Fiery_Aura.Burn",
-   "Brute_Defense.Fiery_Aura.Consume",
    "Brute_Defense.Fiery_Aura.Fire_Shield",
-   "Brute_Defense.Fiery_Aura.Healing_Flames",
    "Brute_Defense.Fiery_Aura.Temperature_Protection",
    "Brute_Melee.Battle_Axe.Chop",
    "Brute_Melee.Battle_Axe.Cleave",
@@ -243,29 +251,38 @@
    "Pool.Fighting.Cross_Punch",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
+   "Pool.Force_of_Will.Project_Will",
+   "Pool.Force_of_Will.Unleash_Potential",
+   "Pool.Force_of_Will.Wall_of_Force",
+   "Pool.Force_of_Will.Weaken_Resolve",
    "Pool.Invisibility.Grant_Invisibility",
    "Pool.Invisibility.Misdirection",
    "Pool.Invisibility.Stealth",
-   "Pool.Leaping.Jump_Kick",
-   "Pool.Leaping.Long_Jump",
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed"
   ],
-  "score": 1056.1121999999998,
+  "score": 1436.5867500000002,
   "certificate": {
-   "sweeps": 27,
+   "sweeps": 33,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
    "primary_converged": true,
    "picks_filled": 0,
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "moved",
-    "canonical_score": 859.3
+    "verdict": "baseline",
+    "canonical_score": 1217.98
    }
   },
-  "canonical_score": 859.3
+  "canonical_score": 1217.98
  },
  "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Super_Strength|itrial": {
   "picks": [
@@ -306,9 +323,11 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1232.75
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1232.75
  },
@@ -351,9 +370,11 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 293.65
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 293.65
  },
@@ -396,9 +417,11 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1398.58
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1398.58
  },
@@ -441,9 +464,11 @@
    "picks_filled": 2,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 705.08
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 705.08
  },
@@ -486,9 +511,11 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1006.14
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1006.14
  },
@@ -531,9 +558,11 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1591.68
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1591.68
  },
@@ -576,9 +605,11 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1600.93
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1600.93
  },
@@ -621,9 +652,11 @@
    "picks_filled": 1,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1199.77
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1199.77
  },
@@ -666,9 +699,11 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1368.29
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1368.29
  },
@@ -711,9 +746,11 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1271.8
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1271.8
  },
@@ -756,9 +793,11 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1195.04
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1195.04
  },
@@ -801,9 +840,11 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1635.78
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1635.78
  },
@@ -846,9 +887,11 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1048.12
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1048.12
  },
@@ -891,9 +934,11 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1254.64
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1254.64
  },
@@ -936,9 +981,11 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1646.64
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1646.64
  },
@@ -981,9 +1028,11 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1546.29
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 1546.29
  },
@@ -1026,9 +1075,11 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 376.4
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false
   },
   "canonical_score": 376.4
  },
@@ -1070,8 +1121,8 @@
    "primary_converged": true,
    "picks_filled": 0,
    "afk_sustain": {
-    "hp": 1655.6,
-    "regen_hps": 25.13,
+    "hp": 2137.5,
+    "regen_hps": 32.45,
     "auto_fire_heal": "Healing_Flames",
     "auto_fire_hps": 10.04,
     "heal_rates": [
@@ -1091,7 +1142,15 @@
       "interruptible": true
      }
     ],
-    "sustain_hps": 35.17,
+    "assumed_accolades": [
+     "Task Force Commander",
+     "Freedom Phalanx Reserve",
+     "Portal Jockey"
+    ],
+    "accolade_hp": 321.3,
+    "buff_proc_regen_pct": 0.0,
+    "buff_proc_detail": [],
+    "sustain_hps": 42.49,
     "requirements": {
      "0": 26.4,
      "1": 29.1,
@@ -1099,14 +1158,17 @@
      "3": 34.4,
      "4": 37.0
     },
-    "tier": 3,
-    "label": "AFK-certified at +3x8 (sustain 35.2 HP/s: regen 25.1 + Healing_Flames on auto-fire 10.0); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed)."
+    "tier": 4,
+    "label": "AFK-certified at +4x8: 42.5 HP/s sustained (regen 32.4 + Healing_Flames on auto-fire 10.0) meets the 37 HP/s asteroid worst case. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
    },
    "evaluated": {
     "against": "model 33, 2026-07-16",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 186.89
-   }
+   },
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "canonical_optimality_checked": false,
+   "recert_2026_07_16": "re-convergence REJECTED: it scored canonical 177.6 vs this incumbent 186.9 and sustained 39.8 vs 42.5 HP/s. The v33 DATA fix alone lifted these original picks to +4x8 \u2014 no new picks were needed."
   },
   "canonical_score": 186.89
  }

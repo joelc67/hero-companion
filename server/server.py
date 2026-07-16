@@ -3257,7 +3257,27 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
         h_sc, _hs, _he = evaluate(h_powers)
     best = (sc, cur, solved, ev)
     path = []
-    cert = {"sweeps": 0, "converged": False, "restarts_done": 0, "budget_truncated": False}
+    # ⚠ WHAT "converged" ACTUALLY CLAIMS (Joel's ruling, 2026-07-16 — the IG
+    # flip). This flag means the SEARCH stopped finding improvements ON ITS OWN
+    # OBJECTIVE (the in-run score, computed over search-constructed candidate
+    # dicts). It does NOT claim the picks are optimal under the CANONICAL
+    # evaluator whose number we publish — those are two different numbers, and
+    # the farm_active proof case shows the gap is decision-changing: that build
+    # certified at in-run 497.6 / canonical 432.1 with sweeps 30, restarts 6,
+    # truncated False — and a ONE-POWER swap (Long_Jump -> Irradiated Ground)
+    # scores 473.0 canonically, +40.9 over the champion the search certified
+    # (reproduced fresh-process, twice, to the decimal). The certificate was
+    # honest about the search and silent about the divergence; the wording now
+    # states its own scope so nobody reads more into it than it proves.
+    # ROOT-CAUSE WORK ORDER (queued behind the 0.12.21 cut): one objective, not
+    # two — make the search optimise the number we certify, or certify the
+    # number the search optimises.
+    cert = {"sweeps": 0, "converged": False, "restarts_done": 0,
+            "budget_truncated": False,
+            "claim": "converged on the SEARCH objective (in-run scoring); "
+                     "canonical_score is the portable number and is NOT "
+                     "claimed optimal — see the one-objective work order",
+            "canonical_optimality_checked": False}
     # PARALLEL SWEEPS (2026-07-14, Joel's word): a sweep's moves are independent
     # solves, and the CBC subprocess releases the GIL — evaluating them
     # concurrently is where the 4-6x lives. DETERMINISM IS PRESERVED: budget
