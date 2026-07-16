@@ -1396,3 +1396,10 @@ body { overflow: hidden; }
 .acc-chain li span { display: block; color: var(--muted); font-size: 10.5px; }
 .acc-grants { margin: 0 0 6px; }
 .acc-src { margin-top: 8px; font-style: italic; }
+/* v34 deliverable 1: "what's in these numbers" — live provenance, never a
+   hardcoded sentence. Answers Joel's standing question (did the epic/incarnate
+   recommendations actually reach the totals?) at the point the numbers are read. */
+.prov-line { font-size: 9.5px; line-height: 1.5; margin: 0 0 5px; padding-bottom: 4px;
+  border-bottom: 1px solid var(--border); color: var(--muted); }
+.prov-in { color: var(--def); }
+.prov-off { color: var(--muted); font-style: italic; }

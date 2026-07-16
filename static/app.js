@@ -3856,6 +3856,37 @@ function toggleAccolade(k) {
   renderAccolades();
 }
 
+// ── "What's in these numbers" — v34 UI deliverable 1 ────────────────────────
+// Joel's standing question, killed permanently: it was never clear whether the
+// Epic picks and incarnate recommendations actually reached the totals. This
+// line says so, at the top of Build Vitals, driven by LIVE engine state (never
+// a hardcoded sentence) so it updates the instant any regime toggles.
+// The law it serves: UI state == engine state, with provenance.
+function provenanceLineHtml(t) {
+  const parts = [];
+  // Epic picks are ordinary slotted powers — they have always been in totals.
+  parts.push(`<span class="prov-in">✓ powers, slotting, set bonuses & Epic picks</span>`);
+
+  // Accolades: the panel's checkmarks ARE the source of truth (item 2).
+  const n = (typeof ACCOLADES_CHECKED !== "undefined") ? ACCOLADES_CHECKED.size : 0;
+  const accHp = (t && t.accolade_hp) ? Math.round(t.accolade_hp) : 0;
+  parts.push(n
+    ? `<span class="prov-in">✓ accolades: ${n} applied${accHp ? ` (+${accHp} HP)` : ""}</span>`
+    : `<span class="prov-off">accolades: none ticked</span>`);
+
+  // Incarnates: excluded from passive totals unless the peak toggle is on.
+  const incOn = !!(build && build.include_incarnates);
+  parts.push(incOn
+    ? `<span class="prov-in">✓ incarnates: peak values folded in</span>`
+    : `<span class="prov-off">incarnates: off — tick “Include incarnates (peak)” to preview</span>`);
+
+  // Amplifiers: their own toggle since the split (item 3).
+  if (build && build.include_amplifiers)
+    parts.push(`<span class="prov-in">✓ amplifiers</span>`);
+
+  return `<div class="prov-line" title="Exactly what is and is not folded into the numbers below — it updates the moment you change any of them.">${parts.join(" · ")}</div>`;
+}
+
 // ── Overview bar: the build's vitals in one horizontal line (Sidekick-style) ─
 // Color logic: defense vs the current-meta 35 (green ≥35, amber ≥25), resistance
 // vs the AT cap fraction, recharge green ≥70. Dim = not there yet, never red — the
@@ -3885,6 +3916,7 @@ function updateOverviewBar(t) {
   const td = (v, cls) => `<td class="${cls}">${v}</td>`;
   card.innerHTML =
     `<div class="ovc-head">BUILD VITALS</div>
+     ${provenanceLineHtml(t)}
      <table class="ov-table">
        <tr><th></th><th>S/L</th><th>F/C</th><th>E/N</th><th>Mel</th><th>Rng</th><th>AoE</th></tr>
        <tr><th>DEF %</th>${td(dv.sl, _ovDef(dv.sl))}${td(dv.fc, _ovDef(dv.fc))}${td(dv.en, _ovDef(dv.en))}
