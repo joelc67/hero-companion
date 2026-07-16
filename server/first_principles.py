@@ -22,6 +22,7 @@ own formula, so improving a number improves the model, never the rulebook.
 """
 
 import math
+import os
 
 # Bump on ANY physics/term change. Lessons and champions are stamped with this: proposer BIAS
 # (lessons) from an older model version is ignored — conclusions drawn by a blinder model must
@@ -263,12 +264,133 @@ def _def_against(totals, kind_keys):
 # stated.
 AFK_SUSTAIN_ASK_HPS = 37.0
 
+_BUFF_PROC_TABLE = None
+
+
+def _buff_proc_table():
+    """data/buff_proc_catalog.json (tools/extract_buff_procs.py) — buff procs
+    the DAMAGE proc_catalog never covered."""
+    global _BUFF_PROC_TABLE
+    if _BUFF_PROC_TABLE is None:
+        import json as _json
+        import sys as _sys
+        if getattr(_sys, "frozen", False):
+            base = getattr(_sys, "_MEIPASS", os.path.dirname(_sys.executable))
+        else:
+            base = os.path.join(os.path.dirname(__file__), "..")
+        try:
+            with open(os.path.join(base, "data", "buff_proc_catalog.json"),
+                      encoding="utf-8") as f:
+                _BUFF_PROC_TABLE = _json.load(f)
+        except Exception:  # noqa: BLE001
+            _BUFF_PROC_TABLE = {}
+    return _BUFF_PROC_TABLE
+
+
+def _expected_capped_stacks(n, p, cap):
+    """E[min(cap, X)] for X ~ Binomial(n, p) — exact, not the naive n·p.
+
+    The naive expectation ignores the cap and over-credits; at realistic aura
+    rates the two barely differ (the distribution's mass sits below the cap),
+    but the exact form is cheap and never lies at high PPM."""
+    if n <= 0 or p <= 0:
+        return 0.0
+    from math import comb
+    exp = 0.0
+    # P(X = k) for k < cap, then the whole tail collapses onto `cap`
+    tail = 1.0
+    for k in range(0, int(cap)):
+        pk = comb(n, k) * (p ** k) * ((1 - p) ** (n - k))
+        exp += k * pk
+        tail -= pk
+    exp += cap * max(0.0, tail)
+    return exp
+
+
+def buff_proc_sustain(powers, ctx):
+    """v33 ruling C (Maelwys round 5: the Unrelenting Fury regen proc was
+    unpriced sustain). Buff procs slotted in an always-on TOGGLE/AUTO aura roll
+    on the client's own activate_period, exactly like v32's damage aura procs —
+    same measured area factor (engine.AURA_PATCH_AF_MEASURED), because it is
+    the same roll. Each hit grants a +Regen buff for `duration_s`, stacking to
+    the record's cap, so the sustained credit is the AVERAGE number of stacks
+    alive: E[min(cap, Binomial(duration/period, chance))] × the buff's own
+    magnitude (scale × its modifier table, the engine's own unit convention).
+
+    Passive by construction — a proc is not a click, so this never conflicts
+    with the one-auto-fire-heal rule.
+
+    ⚠ STATED SCOPE (v33): the credit lands in the AFK SUSTAIN LEDGER only, not
+    in general passive totals — so a non-AFK build's survival math does not see
+    it. Conservative and deliberate: widening it would move every champion that
+    slots the piece, which ruling C did not authorize.
+    ⚠ STATED DATA CONFLICT: the effect template's stack_limit (2) disagrees
+    with the piece's help text ("stacks up to 5 times"). We use the template —
+    the conservative reading, which errs AGAINST our own sustain claim. At
+    realistic rates the average sits ~1.1, below either cap.
+    ⚠ STATED COVERAGE: the catalog holds the Boosts→Grant_Power→Set_Bonus proc
+    shape (both Unrelenting Fury tiers). Other buff-proc shapes (Panacea /
+    Performance Shifter class) are NOT in it and stay unpriced — the same
+    honest exclusion pattern, extendable when their shape is verified.
+    """
+    from engine import AURA_PATCH_AF_MEASURED
+    table = _buff_proc_table()
+    if not table:
+        return 0.0, []
+    mod_tables = ctx.get("modifier_tables") or {}
+    col = ctx.get("at_column")
+    pbf = ctx.get("power_by_full") or {}
+    regen_pct, details = 0.0, []
+    for p in (powers or []):
+        rec = pbf.get(p.get("full_name"))
+        if not rec:
+            continue
+        period = rec.get("activate_period") or 0.0
+        if period <= 0:          # not an aura/auto tick host
+            continue
+        for slot in (p.get("slots") or []):
+            if not slot:
+                continue
+            entry = table.get(slot.get("piece_uid"))
+            if not entry:
+                continue
+            scale = (entry.get("effects") or {}).get("Regeneration")
+            if not scale:
+                continue
+            tname = (entry.get("tables") or {}).get("Regeneration")
+            row = mod_tables.get(tname)
+            if not row or col is None or col >= len(row):
+                continue
+            chance = min(0.90, (entry.get("ppm") or 0) * period
+                         / (60.0 * AURA_PATCH_AF_MEASURED))
+            dur = entry.get("duration_s") or 0.0
+            cap = entry.get("stack_limit") or 1
+            n = int(dur // period)
+            stacks = _expected_capped_stacks(n, chance, cap)
+            per_stack = scale * row[col]
+            add = stacks * per_stack
+            regen_pct += add
+            details.append({
+                "piece": slot.get("piece_uid"),
+                "host": (rec.get("full_name") or "").split(".")[-1],
+                "period": period, "chance": round(chance, 4),
+                "avg_stacks": round(stacks, 3), "cap": cap,
+                "per_stack_pct": round(per_stack * 100, 1),
+                "regen_pct": round(add * 100, 1),
+            })
+    return regen_pct, details
+
 
 def afk_sustain_assessment(powers, totals, arch_row, ctx, role_output_mod=None):
     """The AFK sustain ledger + the sustained tier, for the certification label."""
     base_hp = (arch_row or {}).get("hitpoints") or 1000
     hp = base_hp * (1.0 + _pct(totals, "max_hp"))
-    regen_hps = hp * _REGEN_PER_SEC * (1.0 + _pct(totals, "regeneration"))
+    # v33 C: buff procs in always-on auras add sustained +Regen the totals have
+    # never carried (the Unrelenting Fury ATO — Maelwys round 5). Ledger-only
+    # by design; see buff_proc_sustain's stated scope.
+    proc_regen_pct, proc_regen_detail = buff_proc_sustain(powers, ctx)
+    regen_hps = hp * _REGEN_PER_SEC * (1.0 + _pct(totals, "regeneration")
+                                       + proc_regen_pct)
     heal_str = 1.0 + _pct(totals, "heal_strength")
     heal_rates, auto_name, auto_hps = [], None, 0.0
     if role_output_mod:
@@ -311,6 +433,8 @@ def afk_sustain_assessment(powers, totals, arch_row, ctx, role_output_mod=None):
     return {"hp": round(hp, 1), "regen_hps": round(regen_hps, 2),
             "auto_fire_heal": auto_name, "auto_fire_hps": auto_hps,
             "heal_rates": heal_rates,
+            "buff_proc_regen_pct": round(proc_regen_pct * 100, 1),
+            "buff_proc_detail": proc_regen_detail,
             "sustain_hps": round(sustain, 2), "requirements": reqs,
             "tier": tier, "label": label}
 
