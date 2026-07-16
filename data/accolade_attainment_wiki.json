@@ -6,7 +6,9 @@
   "source_ranking": "1 wiki-hc (Unofficial Homecoming Wiki accolade pages, PRIMARY). 2 forum-guide. 3 forum-4pass. Both forum topic URLs 404'd from this box on 2026-07-16, so every entry below is wiki-hc single-sourced — NOT marked conflict (nothing disagreed), simply single-sourced and upgradeable.",
   "fetch_note": "homecoming.wiki returns 403 to cloud egress (Cowork's fetches and the agent fetch tool) but 200 to this Windows box with a browser UA — index AND deep pages. One-time fetch 2026-07-16; never scraped at runtime, never hotlinked.",
   "transcription_note": "TRANSCRIBED BY READING, not by link-scrape. The pages present Heroes|Villains as ALTERNATIVE columns (Positron's Ally OR Positron's Betrayer — you earn one, not both) and add an 'Alternate Method' cross-link to the opposite-alignment accolade. An automated scrape flattened all three into one list and produced contaminated chains — e.g. Task Force Commander picked up 'Invader Badge' (the VILLAIN equivalent accolade, not a constituent), Portal Jockey picked up 'Born in Battle', Atlas picked up 'Marshal'. Those were caught before shipping; these entries are the hero-side Traditional Method only.",
-  "coverage": "4 of 28 — the four standard passives the wizard preselects, which is also exactly what Joel's forum depth-source covers. Every other accolade keeps the honest placeholder until transcribed or captured in-game. Several of the 28 (Crey_CBX-9_Pistol, Challenge_VanguardDummy_Pet, Demonic_Aura, Eye_of_the_Magus...) are accolade POWERS rather than accolade badges and may never have a chain."
+  "coverage": "17 of 28 (2026-07-16, Joel: 'transcribe all the rest'). THE JOIN THAT UNLOCKED THE REST: our roster keys are accolade POWER names, while the wiki documents accolade BADGES — and the wiki's own index states the mapping outright ('Archmage — Awards the Eye of the Magus power'), so a power maps to its badge page without any guessing. That is how Eye_of_the_Magus, Demonic_Aura, Long_Range_Teleport, Elusive_Mind etc. became documentable after I had written them off as 'accolade powers with no badge page'.",
+  "not_covered": "11 remain undocumented and are NAMED rather than quietly dropped: badge pages returned 404 (Mazebreaker, Super_Patriot), or the roster entry is not a player-earnable accolade at all (Challenge_VanguardDummy_Pet, Crey_CBX-9_Pistol test/temp records). Each keeps the honest placeholder.",
+  "alignment_note": "Every chain here is the side the accolade is actually awarded on — hero-side for hero accolades, VILLAIN-side for villain accolades (Born In Battle, High Pain Threshold, Marshal, Megalomaniac, Demonic, Force of Nature are villain/rogue). Taking the wrong column would hand a player the opposite faction's to-do list."
  },
  "Task_Force_Commander": {
   "wiki_title": "Task Force Commander Badge",
@@ -50,6 +52,260 @@
    {"badge": "The Slayer", "tracks": "Defeat 200 Council Vampyri"}
   ],
   "note": "Hero/vigilante only. The villain equivalent is the Marshal badge.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "MarkRecall": {
+  "wiki_title": "Between Realities Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Between_Realities_Badge",
+  "summary": "Earn the Between Realities badge — the wiki's index states it 'Awards the Mark & Recall power'.",
+  "badge_chain": [
+   {"badge": "Germinator Terminator", "tracks": "Defeat The Seed of Hamidon in First Ward"},
+   {"badge": "Full Spectrum", "tracks": "Defeat one of each of the Seedlings in the Seed of Hamidon fight"},
+   {"badge": "Lawbreaker", "tracks": "Defeat 100 points of Drudges (minion 1, lieutenant 2, boss 5)"},
+   {"badge": "Show's Over", "tracks": "Defeat 100 points of Carnival of Light / War / Vengeance enemies"},
+   {"badge": "The Last Word", "tracks": "Visit 10 history plaques"}
+  ],
+  "note": "First Ward content.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Portable_Workbench": {
+  "wiki_title": "Field Crafter Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Field_Crafter_Badge",
+  "summary": "Earn the Field Crafter badge — the wiki's index states it 'Awards the Portable Workbench power'.",
+  "badge_chain": [
+   {"badge": "Inventor", "tracks": "Complete the Invention tutorial"},
+   {"badge": "Artisan", "tracks": "Craft 50 inventions"},
+   {"badge": "Master Artisan", "tracks": "Craft 100 inventions"},
+   {"badge": "Craftsman", "tracks": "Craft 500 inventions"},
+   {"badge": "Master Craftsman", "tracks": "Craft 1000 inventions"},
+   {"badge": "Declining / Decaying / Despoiler …", "tracks": "Memorize enhancements at each level tier (Defense Debuff, To Hit Debuff, Taunt, Confuse)"}
+  ],
+  "note": "An Invention-system chain — no combat required.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Stolen_Immobilizer_Ray": {
+  "wiki_title": "Headline Stealer Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Headline_Stealer_Badge",
+  "summary": "Earn the Headline Stealer badge — the wiki's index states it 'Awards the Stolen Immobilizer Ray power'.",
+  "badge_chain": [
+   {"badge": "Crooked Politician", "tracks": "Exploration badge in Bloody Bay, on top of the casino"},
+   {"badge": "Master of the Airwaves", "tracks": "Exploration badge in Grandville, on the tower in The Tangle"},
+   {"badge": "Crimelord", "tracks": "Exploration badge in St. Martial"}
+  ],
+  "note": "Villain/rogue only. Heroes and vigilantes can earn credit, but it is awarded on changing alignment. See the badge page for the full chain.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "SFC_Accolade_Power": {
+  "wiki_title": "Strike Force Commander Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Strike_Force_Commander_Badge",
+  "summary": "Complete every Arachnos Strike Force — the wiki's index states it 'Awards the Sheer Willpower power'.",
+  "badge_chain": [
+   {"badge": "Binder of Beasts", "tracks": "Complete the Virgil Tarikoss Strike Force"},
+   {"badge": "Leviathan", "tracks": "Complete the Operative Renault Strike Force"},
+   {"badge": "Air Pirate", "tracks": "Complete the Silver Mantis Strike Force"},
+   {"badge": "Crystal Keeper", "tracks": "Complete the Ice Mistral Strike Force"},
+   {"badge": "Gold Standard", "tracks": "Complete the Dr. Aeon Strike Force"}
+  ],
+  "note": "Collectible by Vigilantes as well as Villains and Rogues. The badge's displayed name varies with alignment.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Born_In_Battle": {
+  "wiki_title": "Born in Battle Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Born_in_Battle_Badge",
+  "summary": "Prove yourself in the Rogue Isles. (Villain/rogue side — the hero equivalent is Portal Jockey.)",
+  "badge_chain": [
+   {"badge": "Ironman", "tracks": "Endure 1,000,000 damage"},
+   {"badge": "Exterminator", "tracks": "Complete the mission from Timothy Raymond in Nerva Archipelago"},
+   {"badge": "Hammer Down", "tracks": "Defeat the Ghost of Scrapyard"},
+   {"badge": "Triumphant", "tracks": "Exploration badge in Warburg"},
+   {"badge": "Pirate", "tracks": "Defeat 100 Ghosts in Port Oakes"},
+   {"badge": "Primal Instinct", "tracks": "Exploration badge in Nerva Archipelago"},
+   {"badge": "Swashbuckler", "tracks": "Visit 4 history plaques: Port Oakes, Bloody Bay, Siren's Call, Nerva Archipelago"}
+  ],
+  "note": "Villain/rogue only. Heroes and vigilantes can earn credit, but it is awarded on changing alignment.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "High_Pain_Threshold": {
+  "wiki_title": "High Pain Threshold Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/High_Pain_Threshold_Badge",
+  "summary": "Take everything the Rogue Isles can throw at you. (Villain/rogue side — the hero equivalent is Freedom Phalanx Reserve.)",
+  "badge_chain": [
+   {"badge": "Freak of Nature", "tracks": "Exploration badge in Sharkhead Isle"},
+   {"badge": "Locked and Loaded", "tracks": "Exploration badge in Nerva Archipelago"},
+   {"badge": "Technofreak", "tracks": "Visit 3 history plaques in Cap au Diable"},
+   {"badge": "Bad Luck", "tracks": "Complete The Unlucky Artifact mission from Hard Luck"},
+   {"badge": "Gangbuster", "tracks": "Defeat 200 Family minions or lieutenants"},
+   {"badge": "The Unbroken Spirit", "tracks": "Pay off 200,000 debt"},
+   {"badge": "Spider Smasher", "tracks": "Defeat 200 Wolf Spiders"}
+  ],
+  "note": "Villain/rogue only. Heroes and vigilantes can earn credit, but it is awarded on changing alignment.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Invader": {
+  "wiki_title": "Invader Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Invader_Badge",
+  "summary": "Raid every corner of Paragon City through Mayhem Missions. (Villain/rogue side — the hero equivalent is Task Force Commander.)",
+  "badge_chain": [
+   {"badge": "Global Threat", "tracks": "Exploration badge in the Atlas Park Mayhem Mission"},
+   {"badge": "King Maker", "tracks": "Exploration badge in the Kings Row Mayhem Mission"},
+   {"badge": "Road Raged", "tracks": "Exploration badge in the Skyway City Mayhem Mission"},
+   {"badge": "Steel Worker", "tracks": "Exploration badge in the Steel Canyon Mayhem Mission"},
+   {"badge": "Tyrannical", "tracks": "Exploration badge in the Independence Port Mayhem Mission"},
+   {"badge": "Talon of Talos", "tracks": "Exploration badge in the Talos Island Mayhem Mission"},
+   {"badge": "Brickhouse", "tracks": "Exploration badge in the Brickstown Mayhem Mission"},
+   {"badge": "Anarchist", "tracks": "Exploration badge in the Founder's Falls Mayhem Mission"},
+   {"badge": "Gate Crasher", "tracks": "Exploration badge in the Peregrine Island Mayhem Mission"}
+  ],
+  "note": "Villain/rogue only. Heroes and vigilantes can earn credit, but it is awarded on changing alignment.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Marshall": {
+  "wiki_title": "Marshal Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Marshal_Badge",
+  "summary": "Earn Arachnos's respect. (Villain/rogue side — the hero equivalent is The Atlas Medallion.)",
+  "badge_chain": [
+   {"badge": "The Next Big Thing", "tracks": "Exploration badge in Mercy Island, between Mongoose and Arbiter Richard"},
+   {"badge": "Weapon of Mass Destruction", "tracks": "Exploration badge in Warburg, on the missile gantry"},
+   {"badge": "Arachnos Rising", "tracks": "Visit history plaques: Sharkhead Isle, St. Martial, Warburg, Grandville (x2)"},
+   {"badge": "Paragon of Vice", "tracks": "Complete the Defeat all Arachnos Personnel mission from Willy Wheeler"},
+   {"badge": "Annihilator", "tracks": "Defeat the future Freedom Phalanx during Lord Recluse's Strike Force"},
+   {"badge": "The Mongoose", "tracks": "Defeat 50 Snakes"}
+  ],
+  "note": "Villain/rogue only. Heroes and vigilantes can earn credit, but it is awarded on changing alignment.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Labyrinth_Conqueror": {
+  "wiki_title": "Conqueror of the Labyrinth Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Conqueror_of_the_Labyrinth_Badge",
+  "summary": "Master the Labyrinth of Fog.",
+  "badge_chain": [
+   {"badge": "Greek Philosopher", "tracks": "Visit 6 history plaques inside the Labyrinth of Fog"},
+   {"badge": "Hidden in the Fog", "tracks": "Exploration badges at multiple Labyrinth of Fog locations"},
+   {"badge": "Malevolent Intoxication", "tracks": "Defeat 5 Malevolent Fogs"},
+   {"badge": "Slayer of the Minotaur", "tracks": "Defeat the Minotaur in the Labyrinth of Fog"}
+  ],
+  "note": "Labyrinth of Fog content. Also grants the Core Attunement power.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Megalomaniac": {
+  "wiki_title": "Megalomaniac Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Megalomaniac_Badge",
+  "summary": "Seize control of the Rogue Isles.",
+  "badge_chain": [
+   {"badge": "Last Stand", "tracks": "Exploration badge in Recluse's Victory, between the Foxtrot and Golf pillboxes"},
+   {"badge": "Triumphant", "tracks": "Exploration badge in Warburg, atop the golden globe"},
+   {"badge": "Crystal Keeper", "tracks": "Complete Ice Mistral's Strike Force"},
+   {"badge": "Strikebreaker", "tracks": "Complete the Bust up the Dockworker's Strike mission"}
+  ],
+  "note": "Villain/rogue only. Heroes and vigilantes can earn credit, but it is awarded on changing alignment.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Force_of_Nature": {
+  "wiki_title": "Force of Nature Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Force_of_Nature_Badge",
+  "summary": "Make Paragon City feel your wrath.",
+  "badge_chain": [
+   {"badge": "Vandal", "tracks": "Destroy 25 Hydrants, 25 Mailboxes, 25 Newspaper stands and 25 Pay phones during Mayhem Missions"},
+   {"badge": "Hero Slayer", "tracks": "Defeat 25 (non-player) Heroes"},
+   {"badge": "Outlaw", "tracks": "Defeat 1000 Paragon Police Department members"},
+   {"badge": "Safecracker", "tracks": "Destroy 10 Vault Doors during Mayhem Missions"}
+  ],
+  "note": "Villain/rogue only, and a CLICK power rather than a passive — it is listed but not counted in passive totals.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Geas_of_the_Kind_Ones": {
+  "wiki_title": "Geas of the Kind Ones Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Geas_of_the_Kind_Ones_Badge",
+  "summary": "Earn the blessing of the spirits that watch over Croatoa.",
+  "badge_chain": [
+   {"badge": "Cabalist", "tracks": "Complete Katie Hannon's Task Force: A Tangled Plot"},
+   {"badge": "Giant Killer", "tracks": "Defeat the Croatoa Jack in Irons"},
+   {"badge": "Pumpkin King", "tracks": "Defeat the Croatoa Eochai"},
+   {"badge": "Believer", "tracks": "Defeat Sally once"},
+   {"badge": "Cap Buster", "tracks": "Defeat 333 Red Caps"},
+   {"badge": "Pumpkin Master", "tracks": "Defeat 333 Fir Bolg"},
+   {"badge": "Bane of Dannan", "tracks": "Defeat 333 Tuatha de Dannan"}
+  ],
+  "note": "Hero/vigilante only. A CLICK power rather than a passive — listed but not counted in passive totals.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Eye_of_the_Magus": {
+  "wiki_title": "Archmage Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Archmage_Badge",
+  "summary": "Earn the Archmage badge — the wiki's index states it 'Awards the Eye of the Magus power'.",
+  "badge_chain": [
+   {"badge": "Dark Mystic", "tracks": "Exploration badge in Echo: Dark Astoria"},
+   {"badge": "Faultless Mystic", "tracks": "Exploration badge in Echo: Faultline"},
+   {"badge": "Mystic", "tracks": "Exploration badge in Brickstown"},
+   {"badge": "Mystic King", "tracks": "Exploration badge in Kings Row"},
+   {"badge": "Banisher", "tracks": "Defeat 200 Banished Pantheon Spirit Masks"},
+   {"badge": "Illusionist", "tracks": "Defeat 100 Carnival of Shadows Illusionists, Phantasms and Dark Servants"}
+  ],
+  "note": "Hero/vigilante only. A CLICK power rather than a passive — listed but not counted in passive totals.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Demonic_Aura": {
+  "wiki_title": "Demonic Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Demonic_Badge",
+  "summary": "Earn the Demonic badge — the wiki's index states it 'Awards the Demonic Aura power'.",
+  "badge_chain": [
+   {"badge": "Overlord", "tracks": "Exploration badge in Grandville"},
+   {"badge": "Forged by Hellfire", "tracks": "Exploration badge in Sharkhead Isle"},
+   {"badge": "Lorekeeper", "tracks": "Visit 4 history plaques: Mercy Island, Port Oakes, Cap au Diable, Sharkhead Isle"},
+   {"badge": "Soul Taker", "tracks": "Defeat Circle of Thorns souls (see the badge page for the current count)"}
+  ],
+  "note": "Villain/rogue only. Heroes and vigilantes can earn credit, but it is awarded on changing alignment.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Long_Range_Teleport": {
+  "wiki_title": "Passport Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Passport_Badge",
+  "summary": "Collect any ten Exploration badges — the wiki states the Passport badge 'Awards the Long Range Teleporter power'.",
+  "badge_chain": [
+   {"badge": "Passport", "tracks": "Collect any ten Exploration badges. Each zone's exploration badge then unlocks that zone as a teleport destination"}
+  ],
+  "note": "Either this badge or the Pocket D VIP Gold Club Member badge grants the power.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Elusive_Mind": {
+  "wiki_title": "Watchman Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Watchman_Badge",
+  "summary": "Defend against the Rikti invasions — the wiki's index states the Watchman/Watchwoman badge 'Awards the Elusive Mind power'.",
+  "badge_chain": [
+   {"badge": "Bomb Specialist", "tracks": "Defeat 25 unexploded bombs (UXBs) during Rikti World Invasions"},
+   {"badge": "Chief", "tracks": "Defeat 10 Rikti Heavy Assault Suits during Rikti Invasions"},
+   {"badge": "Sentry", "tracks": "Defeat 100 Rikti during Rikti Invasions"}
+  ],
+  "note": "The badge's displayed name varies with body type (Watchman / Watchwoman). It also unlocks Rikti weapon costume options for some powersets.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Vanguard_Medal": {
+  "wiki_title": "Vanguard Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Vanguard_Badge",
+  "summary": "Earn the Vanguard badge — the wiki's index states it 'Awards the Vanguard Medal power'.",
+  "badge_chain": [
+   {"badge": "Portal Parter", "tracks": "Exploration badge in Peregrine Island"},
+   {"badge": "Ace", "tracks": "Exploration badge in Echo: Rikti Crash Site"},
+   {"badge": "Savant", "tracks": "Visit 5 history plaques: Founders' Falls, Crey's Folly (x2), Eden and one more"}
+  ],
+  "note": "Hero/vigilante only, and you must be level 35 before it unlocks — though credit accrues earlier.",
   "source": "wiki-hc",
   "fetched": "2026-07-16"
  },
