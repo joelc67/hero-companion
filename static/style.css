@@ -177,7 +177,20 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 /* THE BRICK WALL: uniform bricks flowing in rows — snug by construction.
    Every power card is the same height; info bricks span two rows exactly. */
 .powers-wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  grid-auto-rows: 96px; gap: 8px;
+  /* BAND HEIGHT — measured from the UNCONSTRAINED card (Joel's walk-2 defect 1,
+     2026-07-16). The band was 96px while the card's natural content is 149px,
+     so `.set-summary` (a flex child, margin:auto 0 0) was CRUSHED to ~0 — the
+     "sliver of green peeking out" on every card. Cause: the 0.12.20 "2d" change
+     gave the power name its own top line (pc-head 22 + pc-sub 23 where the two
+     used to share one row) and the band never grew to match.
+     ⚠ MEASURE THE FREED CARD, NOT THE BROKEN ONE: my first fix used the card's
+     scrollHeight (120px) and still shipped a 2.4px sliver — because scrollHeight
+     was measured WHILE the strip was already crushed, a circular reading that
+     under-reports what the strip needs. Cloning the card with height:auto gives
+     the truth: pc-head 22 + pc-sub 23 + slot-row 35 + set-summary 18 +
+     slot-plan 20 + padding 12 = 149. Bands below that silently eat the strip.
+     PINNED by tools/audit_card_strip_and_preselect.py. */
+  grid-auto-rows: 152px; gap: 8px;
   grid-auto-flow: dense;   /* puzzle rule: any hole a 2-row brick would leave gets backfilled */ }
 .powers-wall .power-card { height: 100%; margin: 0; overflow: hidden;
   display: flex; flex-direction: column; }

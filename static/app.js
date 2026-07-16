@@ -195,6 +195,9 @@ async function autoPickPowers() {
   if (!build.archetype || !build.primary || !build.secondary) {
     alert("Pick an archetype, primary, and secondary first."); return;
   }
+  // v34 item 5: same class rule — any path that GENERATES a level-50 build
+  // assumes the standard accolades and says so.
+  await preselectStandardAccolades();
   build._exposure = $("autopick-exposure") && $("autopick-exposure").value;
   const res = await api("/build/autopick", postJson({
     archetype: build.archetype, primary: build.primary, secondary: build.secondary,
@@ -789,6 +792,11 @@ window.resetToOptimal = async function () {
     archetype: build.archetype, powers: ap.powers, content: goal.content, role: goal.role, preserve: false }));
   build.powers = (sol && sol.ok) ? sol.powers : ap.powers;
   LEVELING_DEVIATED = false; LAST_REFIT = "";   // back on the suggested plan
+  // v34 item 5 (ENTRY-POINT CLASS, Joel's walk-2 defect 2): EVERY level-50
+  // generation path preselects the standard accolades and states it — not just
+  // the wizard's Build. This is the reset lesson verbatim: the rule is about
+  // the CLASS of entry point, and wiring one member is how the last one bit us.
+  await preselectStandardAccolades();
   renderPowers(); recompute();
   await openLevelStepper(); LEVEL_STEP_I = 0; renderLevelStep();
 };
