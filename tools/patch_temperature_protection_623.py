@@ -130,7 +130,7 @@ def main():
         print("\nAlready current — nothing to write.")
         return
     with open(PATH, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=1)
+        json.dump(data, f, ensure_ascii=False)
     print(f"\nwrote {PATH}")
 
 
