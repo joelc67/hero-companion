@@ -969,6 +969,12 @@ async function buildRespec() {
     await syncPoolsEpicFromPowers(ap.powers);
     if ($("preset-content")) $("preset-content").value = content;
     if ($("preset-role")) $("preset-role").value = role;
+    // v34 item 5: a generated level-50 build ASSUMES the standard accolades —
+    // the same four every community reference build carries, and the same four
+    // the farm presets already assume on the scoring side. Choice doctrine: the
+    // assumption is VISIBLE (they render checked in the panel, and the build
+    // states it) and REVERSIBLE (untick any of them and the totals follow).
+    await preselectStandardAccolades();
     renderPowers();
     // The wizard ALREADY gathered + showed the role/content/exposure intent, so skip the
     // confirm gate (its button would render behind this modal and hang the flow).
@@ -982,6 +988,11 @@ async function buildRespec() {
     $("wiz-result").innerHTML = `<button id="wiz-reveal" class="wiz-reveal-cta">`
       + `⬇&nbsp; Your build is ready — click to see it &nbsp;⬇</button>`
       + `<strong>✓ Your ${ap.count}-power kit is ready.</strong>`
+      // v34 item 5: state the accolade assumption ON the build — visible and
+      // reversible, never silent (choice doctrine).
+      + `<p class="acc-assumed-note">🏅 These numbers assume the four standard accolades`
+      + `${build._accoladeHp ? ` (+${build._accoladeHp} HP)` : ""} — the ones most level-50s have. `
+      + `They're ticked in the Accolades panel below the powers; untick any you don't have and the totals follow.</p>`
       + `<p class="muted small">Powers chosen, slotting optimized, and incarnates recommended for your goal. `
       + `Travel + survival are taken early so they survive exemplaring into old Task Forces. `
       + `Open the full build to review caps, DPS, and per-slot enhancements — and tweak anything, or 💾 Save it.</p>`
@@ -1861,10 +1872,19 @@ function renderIncarnates() {
   if (!host || !INCARNATES) return;
   host.innerHTML = INCARNATES.slots.map((s) => {
     const cur = (build.incarnates[s.slot] || {}).full_name || "";
-    return `<label class="muted small">${s.slot}
+    // v34 item 6 (the honesty clause): a choice our math doesn't price says so
+    // AT THE POINT OF CHOICE — no silent dead picks. `modeled` comes from the
+    // server, computed from the engine's own INCARNATE_FX. A whole slot with
+    // nothing modeled (Lore = pets, Interface = attack procs) says it once on
+    // the label rather than repeating itself down every option.
+    const anyModeled = (s.choices || []).some(c => c.modeled);
+    const slotNote = anyModeled ? "" :
+      ` <span class="inc-unmodeled" title="These are real choices and they work in game — our math just doesn't price this kind of effect yet, so the numbers above won't move. We don't show numbers we can't stand behind.">· not yet modeled</span>`;
+    return `<label class="muted small">${s.slot}${slotNote}
       <select data-slot="${s.slot}" onchange="onIncarnate(this)">
         <option value="">— none —</option>
-        ${s.choices.map((c) => `<option value="${c.full_name}"${c.full_name === cur ? " selected" : ""}>${c.display_name}</option>`).join("")}
+        ${s.choices.map((c) => `<option value="${c.full_name}"${c.full_name === cur ? " selected" : ""}>${
+          c.display_name}${(anyModeled && !c.modeled) ? " (not yet modeled)" : ""}</option>`).join("")}
       </select>
     </label>`;
   }).join("");
@@ -3679,13 +3699,16 @@ function _accRow(a) {
   // Correction 2's whole point is LEGIBILITY: the checkbox, the name and the
   // effect stay together on one readable line, the name is allowed to wrap
   // rather than be clipped, and nothing overflows sideways.
-  return `<label class="acc-row ${a.tier}" data-acc="${escHtml(a.key)}"
-        title="${escHtml(a.display + (a.description ? " — " + a.description : ""))}">
-      <input class="acc-check" type="checkbox" ${on ? "checked" : ""}
+  return `<div class="acc-row ${a.tier}" data-acc="${escHtml(a.key)}">
+      <input class="acc-check" type="checkbox" id="accbx-${escHtml(a.key)}" ${on ? "checked" : ""}
         onchange="toggleAccolade('${escHtml(a.key)}')">
-      <span class="acc-body"><span class="acc-name">${escHtml(a.display)}</span>${
+      <label class="acc-body" for="accbx-${escHtml(a.key)}"
+        title="${escHtml(a.display + (a.description ? " — " + a.description : ""))}">
+        <span class="acc-name">${escHtml(a.display)}</span>${
         note ? `<span class="acc-note">${note}</span>`
-             : `<span class="acc-eff">${escHtml(a.effect_short || "")}</span>`}</span></label>`;
+             : `<span class="acc-eff">${escHtml(a.effect_short || "")}</span>`}</label>
+      <button class="acc-info" onclick="accHowTo('${escHtml(a.key)}')"
+        title="How to earn it">ⓘ</button></div>`;
 }
 
 // (The dead-space span maths that lived here is GONE with placement correction
@@ -3748,6 +3771,53 @@ async function accPreview(on) {
   renderStats(totals);
   const lt = (totals && (totals.totals || totals)) || null;
   if (lt) { build._accoladeHp = lt.accolade_hp || 0; }
+}
+
+// v34 item 4: the attain-it pop-up. Text is GAME-SOURCED ONLY (Joel's no-wiki
+// amendment): the client's own badge prose where the data proves the binding,
+// Joel's live-game badge-window text where it doesn't, and an honest
+// "not yet documented from game data" where neither covers it — never borrowed
+// prose. The source is shown so the user knows which they're reading.
+function accHowTo(k) {
+  const a = (ACCOLADES_ROWS || []).find(x => x.key === k);
+  if (!a) return;
+  const undocumented = !a.attain || a.attain_source === "undocumented";
+  const body = undocumented
+    ? `<p class="acc-undoc">Requirements not yet documented from game data.</p>
+       <p class="muted small">We only show what the game itself tells us. The client
+       carries this accolade's effects but not its badge requirements, so this
+       text is pending a pass from the live game.</p>`
+    : `<p>${escHtml(a.attain)}</p>
+       <p class="muted small">Source: ${a.attain_source === "game (clientmessages-en.bin)"
+         ? "the game client's own badge text" : "the in-game badge window"}.</p>`;
+  const eff = a.effect_short ? `<p class="acc-eff">Grants: ${escHtml(a.effect_short)}</p>` : "";
+  // same overlay pattern as the respec modal (dynamically created .help-overlay,
+  // backdrop click closes) — reuse, don't invent a second modal system
+  let ov = $("acc-howto");
+  if (!ov) {
+    ov = document.createElement("div");
+    ov.id = "acc-howto"; ov.className = "help-overlay";
+    ov.addEventListener("click", (e) => { if (e.target === ov) closeAccHowTo(); });
+    document.body.appendChild(ov);
+  }
+  ov.innerHTML = `<div class="respec-modal-card respec-card">
+      <div class="rc-head"><span class="rc-ico">🏅</span>
+        <span class="rc-title">${escHtml(a.display)}</span>
+        <button class="rc-x" onclick="closeAccHowTo()" title="Close">✕</button></div>
+      <div class="rc-body">${eff}${body}</div></div>`;
+}
+window.closeAccHowTo = function () {
+  const ov = $("acc-howto"); if (ov) ov.remove();
+};
+
+// v34 item 5: the four standard accolades a generated level-50 build assumes.
+// The list is the SERVER's (data/accolades.json flags them), never a hardcoded
+// name list here — the data decides, same as everywhere else.
+async function preselectStandardAccolades() {
+  const rows = await loadAccolades();
+  for (const a of rows) {
+    if (a.standard_assumed) ACCOLADES_CHECKED.add(a.key);
+  }
 }
 
 function accSearch(v) { ACCOLADES_FILTER = v; renderAccolades(); }

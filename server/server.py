@@ -513,6 +513,15 @@ def accolades_roster():
             roster = json.load(f)
     except Exception:  # noqa: BLE001
         return jsonify({"ok": False, "rows": []})
+    # v34 item 4: attain-it text, GAME-SOURCED ONLY (Joel's no-wiki amendment).
+    # Where the client carries no binding and Joel has not yet supplied the
+    # badge-window text, the row says so honestly rather than borrowing prose.
+    try:
+        with open(os.path.join(base, "data", "accolade_attainment.json"),
+                  encoding="utf-8") as f:
+            attain = json.load(f)
+    except Exception:  # noqa: BLE001
+        attain = {}
     order = {"passive": 0, "click": 1, "badge_only": 2}
 
     def impact(v):
@@ -536,7 +545,16 @@ def accolades_roster():
         if e.get("Regeneration"):
             bits.append(f"+{e['Regeneration']:.0f} Regen")
         return " ".join(bits)
-    rows = [dict(key=k, effect_short=effect_short(v), **v)
+    # v34 item 5: which accolades a generated level-50 build assumes. ONE source
+    # of truth — first_principles.FARM_ASSUMED_ACCOLADES, the same four the
+    # scoring side already assumes for farm presets and the same four every
+    # community reference build carries. Never a second list.
+    import first_principles as _fp
+    standard = set(_fp.FARM_ASSUMED_ACCOLADES)
+    rows = [dict(key=k, effect_short=effect_short(v),
+                 standard_assumed=(k in standard),
+                 attain=(attain.get(k) or {}).get("text", ""),
+                 attain_source=(attain.get(k) or {}).get("source", ""), **v)
             for k, v in roster.items()]
     rows.sort(key=lambda v: (order.get(v["tier"], 9), -impact(v),
                              v["display"]))
@@ -1289,9 +1307,21 @@ def get_incarnates():
     """The SIX live incarnate slots. Genesis (and later Omega-tier slots) were DESIGNED
     but never released — the Mids DB carries them as dormant data (37 choices, zero
     effects), and showing them confused players (user report 2026-07-02). Filtered here."""
+    # v34 item 6 — THE HONESTY CLAUSE (Joel's gate: "no silent dead picks in any
+    # picker surface the release touches"). `modeled` says whether OUR MATH
+    # prices this choice, computed from the engine's own source of truth
+    # (INCARNATE_FX — exactly what _incarnate_totals reads), never a hand-list.
+    # Measured 2026-07-16: 357 of the 468 live-picker choices carry ZERO effect
+    # records, so picking them moves no number — Lore (pets) and Interface
+    # (attack procs) are 100% unmodeled, Judgement 52/54 (nukes), and Destiny's
+    # Clarion (mez protection). They are not broken, they are UNPRICED: their
+    # effect KINDS aren't in the incarnate model's vocabulary yet. The picker
+    # now says so instead of pretending. Extraction of the real records is the
+    # standing data-completeness work order; pricing follows per surface.
     live = dict(INCARNATES)
     live["slots"] = [dict(s, choices=[dict(ch, icon=_incarnate_icon(ch.get("full_name"),
-                                                                    ch.get("display_name")))
+                                                                    ch.get("display_name")),
+                                           modeled=bool(INCARNATE_FX.get(ch.get("full_name"))))
                                       for ch in (s.get("choices") or [])])
                      for s in INCARNATES.get("slots", [])
                      if (s.get("slot") or s.get("name") or "") != "Genesis"]
