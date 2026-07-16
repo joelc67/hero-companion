@@ -321,6 +321,12 @@ CONTENT_PRESETS = {
         # simplification is stated there). recharge modest: nothing is
         # being pressed.
         "afk_regen_floor": True,
+        # v33 ruling B: farm presets model the four standard accolades — every
+        # community reference farm build assumes them (Maelwys's three .mbd
+        # files carry exactly these four), so our numbers read artificially low
+        # without them. STATED on the certificate label, never silent; off for
+        # every other content.
+        "assumes_accolades": True,
         "recharge": 40, "recovery": 50,
         # an AFK farmer's role is survival — its damage comes from auras and
         # patches (the v31-priced terms), not a click rotation
@@ -336,6 +342,7 @@ CONTENT_PRESETS = {
         "defense": {"Fire": 45},
         "resistance": {"Fire": "CAP"},
         "recharge": 100, "recovery": 50,
+        "assumes_accolades": True,   # same community baseline as farm_afk (v33 B)
         "default_role": "damage",
     },
     "itrial": {                     # league / incarnate content: +3/+4 enemies

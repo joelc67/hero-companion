@@ -1,0 +1,318 @@
+{
+ "Born_In_Battle": {
+  "full_name": "Temporary_Powers.Accolades.Born_In_Battle",
+  "display": "Born In Battle",
+  "description": "",
+  "tier": "passive",
+  "effects": {
+   "HitPoints": 0.5,
+   "Endurance": 5.0
+  },
+  "tables": {
+   "HitPoints": "Melee_HealSelf",
+   "Endurance": "Melee_Ones"
+  },
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Challenge_VanguardDummy_Pet": {
+  "full_name": "Temporary_Powers.Accolades.Challenge_VanguardDummy_Pet",
+  "display": "Legacy: Vanguard MDC",
+  "description": "",
+  "tier": "badge_only",
+  "effects": {},
+  "tables": {},
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Crey_CBX-9_Pistol": {
+  "full_name": "Temporary_Powers.Accolades.Crey_CBX-9_Pistol",
+  "display": "Crey CBX-9 Pistol",
+  "description": "",
+  "tier": "badge_only",
+  "effects": {},
+  "tables": {},
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Demonic_Aura": {
+  "full_name": "Temporary_Powers.Accolades.Demonic_Aura",
+  "display": "Demonic Aura",
+  "description": "",
+  "tier": "badge_only",
+  "effects": {},
+  "tables": {},
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Eye_of_the_Magus": {
+  "full_name": "Temporary_Powers.Accolades.Eye_of_the_Magus",
+  "display": "Eye of the Magus",
+  "description": "",
+  "tier": "badge_only",
+  "effects": {},
+  "tables": {},
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Force_of_Nature": {
+  "full_name": "Temporary_Powers.Accolades.Force_of_Nature",
+  "display": "Force of Nature",
+  "description": "",
+  "tier": "click",
+  "effects": {
+   "Recovery": 8.0
+  },
+  "tables": {
+   "Recovery": "Melee_Ones"
+  },
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Freedom_Phalanx_Reserve": {
+  "full_name": "Temporary_Powers.Accolades.Freedom_Phalanx_Reserve",
+  "display": "Freedom Phalanx Reserve",
+  "description": "",
+  "tier": "passive",
+  "effects": {
+   "HitPoints": 1.0
+  },
+  "tables": {
+   "HitPoints": "Melee_HealSelf"
+  },
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Geas_of_the_Kind_Ones": {
+  "full_name": "Temporary_Powers.Accolades.Geas_of_the_Kind_Ones",
+  "display": "Geas of the Kind Ones",
+  "description": "",
+  "tier": "click",
+  "effects": {
+   "Recovery": 8.0
+  },
+  "tables": {
+   "Recovery": "Melee_Ones"
+  },
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "High_Pain_Threshold": {
+  "full_name": "Temporary_Powers.Accolades.High_Pain_Threshold",
+  "display": "High Pain Threshold",
+  "description": "",
+  "tier": "passive",
+  "effects": {
+   "HitPoints": 1.0
+  },
+  "tables": {
+   "HitPoints": "Melee_HealSelf"
+  },
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Invader": {
+  "full_name": "Temporary_Powers.Accolades.Invader",
+  "display": "Invader",
+  "description": "",
+  "tier": "passive",
+  "effects": {
+   "HitPoints": 0.5
+  },
+  "tables": {
+   "HitPoints": "Melee_HealSelf"
+  },
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Iron_Man": {
+  "full_name": "Temporary_Powers.Accolades.Iron_Man",
+  "display": "Iron Man",
+  "description": "",
+  "tier": "passive",
+  "effects": {
+   "HitPoints": 1.0,
+   "Endurance": 10.0
+  },
+  "tables": {
+   "HitPoints": "Melee_HealSelf",
+   "Endurance": "Melee_Ones"
+  },
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Labyrinth_Conqueror": {
+  "full_name": "Temporary_Powers.Accolades.Labyrinth_Conqueror",
+  "display": "Conqueror of the Labyrinth",
+  "description": "",
+  "tier": "passive",
+  "effects": {
+   "HitPoints": 0.5,
+   "Endurance": 5.0
+  },
+  "tables": {
+   "HitPoints": "Melee_HealSelf",
+   "Endurance": "Melee_Ones"
+  },
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Long_Range_Teleport": {
+  "full_name": "Temporary_Powers.Accolades.Long_Range_Teleport",
+  "display": "Long Range Teleporter",
+  "description": "",
+  "tier": "badge_only",
+  "effects": {},
+  "tables": {},
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "MarkRecall": {
+  "full_name": "Temporary_Powers.Accolades.MarkRecall",
+  "display": "Mark and Recall",
+  "description": "",
+  "tier": "badge_only",
+  "effects": {},
+  "tables": {},
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Marshall": {
+  "full_name": "Temporary_Powers.Accolades.Marshall",
+  "display": "Marshal",
+  "description": "",
+  "tier": "passive",
+  "effects": {
+   "Endurance": 5.0
+  },
+  "tables": {
+   "Endurance": "Melee_Ones"
+  },
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Mazebreaker": {
+  "full_name": "Temporary_Powers.Accolades.Mazebreaker",
+  "display": "Mazebreaker",
+  "description": "",
+  "tier": "passive",
+  "effects": {
+   "Endurance": 5.0
+  },
+  "tables": {
+   "Endurance": "Melee_Ones"
+  },
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Megalomaniac": {
+  "full_name": "Temporary_Powers.Accolades.Megalomaniac",
+  "display": "Megalomaniac",
+  "description": "",
+  "tier": "badge_only",
+  "effects": {},
+  "tables": {},
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Portable_Workbench": {
+  "full_name": "Temporary_Powers.Accolades.Portable_Workbench",
+  "display": "Portable Workbench",
+  "description": "",
+  "tier": "badge_only",
+  "effects": {},
+  "tables": {},
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Portal_Jockey": {
+  "full_name": "Temporary_Powers.Accolades.Portal_Jockey",
+  "display": "Portal Jockey",
+  "description": "",
+  "tier": "passive",
+  "effects": {
+   "HitPoints": 0.5,
+   "Endurance": 5.0
+  },
+  "tables": {
+   "HitPoints": "Melee_HealSelf",
+   "Endurance": "Melee_Ones"
+  },
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "RIWE_Accolade_Power": {
+  "full_name": "Temporary_Powers.Accolades.RIWE_Accolade_Power",
+  "display": "Elusive Mind",
+  "description": "",
+  "tier": "badge_only",
+  "effects": {},
+  "tables": {},
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Scanalyzer": {
+  "full_name": "Temporary_Powers.Accolades.Scanalyzer",
+  "display": "Orb Weaver R-Scanalyzer",
+  "description": "",
+  "tier": "badge_only",
+  "effects": {},
+  "tables": {},
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "SFC_Accolade_Power": {
+  "full_name": "Temporary_Powers.Accolades.SFC_Accolade_Power",
+  "display": "Sheer Willpower",
+  "description": "",
+  "tier": "badge_only",
+  "effects": {},
+  "tables": {},
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Stolen_Immobilizer_Ray": {
+  "full_name": "Temporary_Powers.Accolades.Stolen_Immobilizer_Ray",
+  "display": "Stolen Immobilizer Ray",
+  "description": "",
+  "tier": "badge_only",
+  "effects": {},
+  "tables": {},
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Super_Patriot": {
+  "full_name": "Temporary_Powers.Accolades.Super_Patriot",
+  "display": "Super Patriot",
+  "description": "",
+  "tier": "passive",
+  "effects": {
+   "Endurance": 5.0
+  },
+  "tables": {
+   "Endurance": "Melee_Ones"
+  },
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Task_Force_Commander": {
+  "full_name": "Temporary_Powers.Accolades.Task_Force_Commander",
+  "display": "Task Force Commander",
+  "description": "",
+  "tier": "passive",
+  "effects": {
+   "HitPoints": 0.5
+  },
+  "tables": {
+   "HitPoints": "Melee_HealSelf"
+  },
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "The_Atlas_Medallion": {
+  "full_name": "Temporary_Powers.Accolades.The_Atlas_Medallion",
+  "display": "The Atlas Medallion",
+  "description": "",
+  "tier": "passive",
+  "effects": {
+   "Endurance": 5.0
+  },
+  "tables": {
+   "Endurance": "Melee_Ones"
+  },
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Toy_Bat": {
+  "full_name": "Temporary_Powers.Accolades.Toy_Bat",
+  "display": "Excalibonk",
+  "description": "",
+  "tier": "badge_only",
+  "effects": {},
+  "tables": {},
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ },
+ "Vanguard_Medal": {
+  "full_name": "Temporary_Powers.Accolades.Vanguard_Medal",
+  "display": "Vanguard Medal",
+  "description": "",
+  "tier": "badge_only",
+  "effects": {},
+  "tables": {},
+  "source": "client bins via out_extra_623 export 2026-07-16"
+ }
+}

@@ -943,12 +943,17 @@ def _explain_content(archetype, content, primary, secondary, res_cap):
         if champ_label:
             parts.append(champ_label)
     elif content == "farm_active":
+        # v33 scenario ruling (Joel, 2026-07-16), stated to the user in plain
+        # language: survival is a CONSTRAINT here, not a goal to maximise.
         parts.append("Active farming keeps you at the wheel — moving, clicking "
-                     "heals, eating inspirations — so the build spends its budget "
-                     "on AoE throughput and recharge instead of the last word in "
-                     f"survival: Fire resistance at the cap ({res_cap:.0f}%), Fire "
-                     "defense treated as a fading goal past 45%, and every spare "
-                     "slot buying damage.")
+                     "heals, eating inspirations — so survival is treated as a "
+                     "REQUIREMENT to satisfy, not a score to keep raising: 45% "
+                     f"Fire defense and Fire resistance at the cap ({res_cap:.0f}%) "
+                     "are hard requirements this build must meet, and once they are "
+                     "met, extra survivability earns nothing more. From there, "
+                     "damage throughput decides every remaining pick and slot — "
+                     "because staying alive past what the requirements already "
+                     "guarantee is your job at the keyboard, not the build's.")
     elif content == "itrial":
         parts.append("League and iTrial enemies run +3/+4 with heavy energy/negative "
                      "damage and defense-stripping spikes: the baseline is 35% typed "
@@ -3390,7 +3395,10 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
             tot_b = engine.calculate_build({"archetype": archetype, "powers": solved_b},
                                            SET_BONUSES, res_cap=res_cap, ctx=ctx)
             cert["afk_sustain"] = fp.afk_sustain_assessment(
-                solved_b, tot_b, arch_row, ctx, role_output_mod=role_output)
+                solved_b, tot_b, arch_row, ctx, role_output_mod=role_output,
+                assume_accolades=bool(
+                    (ai_build.CONTENT_PRESETS.get(content or "", {}) or {})
+                    .get("assumes_accolades")))
         except Exception:  # noqa: BLE001
             cert["afk_sustain"] = {"error": "assessment failed - investigate before release"}
     # Grow the knowledge: this context's champion is now whatever this run proved best.
