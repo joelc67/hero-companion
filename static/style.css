@@ -1280,39 +1280,60 @@ body { overflow: hidden; }
 .pi-set-row[open] { padding-bottom: 7px; }
 
 /* ── ACCOLADES PANEL (v34 scaffold, display-only) ───────────────────────────
-   Joel's placement spec: it lives in the power-grid's DEAD SPACE (the blank
-   after the last power card, same row band) and ABOVE the Build Vitals row,
-   and must not displace or reflow anything already placed. It is therefore the
-   wall's last grid item, spanning two 96px bands: `dense` flow can only drop a
-   later item into a hole earlier bricks left — existing cards never move. The
-   roster is long (28 rows), so the height is FIXED and the list scrolls; the
-   search field is what makes a long list usable rather than a wall of text. */
+   Joel's CORRECTED placement spec (2026-07-16, from a marked-up screenshot of
+   the first scaffold — the narrow two-band box was "not well thought out"):
+   the panel spans the FULL REMAINING WIDTH of the dead-space band — from the
+   cell after the last power card to the grid's RIGHT EDGE — and is ONE card
+   band tall. Wide and short, not narrow and tall.
+
+   The span cannot be expressed in CSS: `grid-column: auto / -1` gives a
+   definite END with an auto start, which the grid algorithm resolves to a
+   span of 1 (the last column) — not "from here to the edge". So the remaining
+   column count is COMPUTED in renderAccolades() and written as
+   `grid-column: span N`; it re-runs on resize because auto-fill's column count
+   is width-dependent. The height stays one 96px band, so the list scrolls
+   internally and lays out in MULTIPLE COLUMNS across the width.
+   Non-negotiables unchanged: docks into dead space, displaces nothing (dense
+   flow only drops a LATER item into an EARLIER hole), flexes to whatever
+   contiguous width the final band leaves. */
 .accolades-card {
-  grid-row: span 2; display: flex; flex-direction: column; min-height: 0;
+  grid-row: span 1; display: flex; flex-direction: column; min-height: 0;
   background: var(--panel2); border: 1px solid var(--accent); border-radius: 6px;
-  padding: 8px 10px; font-size: 11px; overflow: hidden;
+  padding: 5px 8px; font-size: 11px; overflow: hidden;
 }
 .accolades-card.hidden { display: none; }
-.acc-count { float: right; color: var(--accent); font-weight: 700; }
+/* header + search share ONE inline row — the width is the whole point */
+.acc-head {
+  display: flex; align-items: center; gap: 8px; flex: 0 0 auto; margin-bottom: 4px;
+}
+.acc-head .ovc-head { margin: 0; white-space: nowrap; }
+.acc-count { color: var(--accent); font-weight: 700; }
 .acc-search {
-  width: 100%; box-sizing: border-box; margin: 0 0 6px; padding: 3px 6px;
+  flex: 1 1 auto; min-width: 80px; box-sizing: border-box; padding: 2px 6px;
   font-size: 11px; border-radius: 4px; border: 1px solid var(--border);
   background: var(--panel); color: inherit;
 }
-.acc-scroll { flex: 1 1 auto; overflow-y: auto; min-height: 0; padding-right: 2px; }
-.acc-group {
-  font-size: 9.5px; font-weight: 700; letter-spacing: .05em; color: var(--muted);
-  margin: 6px 0 3px; position: sticky; top: 0; background: var(--panel2);
+.acc-hint { color: var(--muted); font-size: 9px; font-style: italic; white-space: nowrap; }
+/* the list itself: columns across the available width, vertical scroll.
+   CSS multicol would overflow HORIZONTALLY under a fixed height, so this is a
+   grid — rows flow left-to-right and the container scrolls down. */
+.acc-scroll {
+  flex: 1 1 auto; overflow-y: auto; min-height: 0; padding-right: 2px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  gap: 0 10px; align-content: start;
 }
-.acc-row { display: flex; gap: 6px; align-items: flex-start; padding: 3px 0;
-  border-bottom: 1px solid var(--border); }
-.acc-row:last-child { border-bottom: 0; }
-.acc-check { flex: 0 0 auto; margin-top: 1px; cursor: pointer; }
-.acc-body { min-width: 0; }
-.acc-name { font-weight: 600; line-height: 1.3; }
-.acc-desc { color: var(--muted); font-size: 10px; line-height: 1.35; }
-.acc-note { color: var(--muted); font-size: 9.5px; font-style: italic; }
+.acc-group {
+  grid-column: 1 / -1;
+  font-size: 9.5px; font-weight: 700; letter-spacing: .05em; color: var(--muted);
+  margin: 3px 0 1px; position: sticky; top: 0; background: var(--panel2); z-index: 1;
+}
+.acc-row { display: flex; gap: 5px; align-items: baseline; padding: 1px 0;
+  min-width: 0; }
+.acc-check { flex: 0 0 auto; cursor: pointer; }
+.acc-body { min-width: 0; display: flex; gap: 5px; align-items: baseline; }
+.acc-name { font-weight: 600; line-height: 1.25; white-space: nowrap; }
+.acc-desc { color: var(--muted); font-size: 9.5px; line-height: 1.25;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acc-note { color: var(--muted); font-size: 9px; font-style: italic; white-space: nowrap; }
 .acc-row.badge_only .acc-name { font-weight: 500; color: var(--muted); }
-.acc-empty { color: var(--muted); padding: 8px 2px; }
-.acc-foot { flex: 0 0 auto; color: var(--muted); font-size: 9.5px; font-style: italic;
-  border-top: 1px solid var(--border); padding-top: 4px; margin-top: 4px; }
+.acc-empty { grid-column: 1 / -1; color: var(--muted); padding: 4px 2px; }

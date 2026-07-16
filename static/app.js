@@ -11,6 +11,14 @@ const build = {
   epic: null, epic_display: null,
   incarnates: {},   // slot -> {full_name, display_name}
   include_incarnates: false,  // peak totals: fold incarnate buffs into totals
+  // ⚠ v34 RECONCILIATION (Joel spotted this on the panel screenshot, 2026-07-16):
+  // this global "Include accolades + amplifiers" toggle and the accolade
+  // panel's per-accolade checkmarks describe THE SAME ASSUMPTION and must
+  // never become two independent sources of truth about it. Plausible shape:
+  // the toggle becomes "apply the CHECKED accolades", or an explicit
+  // all-vs-acquired choice. Design it deliberately when the panel's model half
+  // lands — do not let them drift. (Today the panel is display-only, so
+  // nothing reads it and there is no conflict yet.)
   include_external: false,    // add accolades + amplifiers (external buffs)
   pvp: false,                 // PvP arena: PvP set bonuses + PvP effect variants
   tier: null,       // budget | balanced | premium — the loaded AI build's tier
@@ -3664,17 +3672,62 @@ async function loadAccolades() {
 
 function _accRow(a) {
   const on = ACCOLADES_CHECKED.has(a.key);
-  const note = a.tier === "click" ? `<span class="acc-note">click power — not counted in passive totals</span>`
-    : a.tier === "badge_only" ? `<span class="acc-note">badge only — no build effect</span>` : "";
-  return `<div class="acc-row ${a.tier}" data-acc="${escHtml(a.key)}">
-      <label class="acc-check"><input type="checkbox" ${on ? "checked" : ""}
-        onchange="toggleAccolade('${escHtml(a.key)}')"><span></span></label>
-      <div class="acc-body">
-        <div class="acc-name">${escHtml(a.display)}</div>
-        <div class="acc-desc">${escHtml(a.description || "")}</div>
-        ${note}
-      </div></div>`;
+  const note = a.tier === "click" ? `not in passive totals`
+    : a.tier === "badge_only" ? `no build effect` : "";
+  // one compact line per accolade: the width buys COLUMNS, not taller rows
+  return `<label class="acc-row ${a.tier}" data-acc="${escHtml(a.key)}"
+        title="${escHtml(a.display + (a.description ? " — " + a.description : ""))}">
+      <input class="acc-check" type="checkbox" ${on ? "checked" : ""}
+        onchange="toggleAccolade('${escHtml(a.key)}')">
+      <span class="acc-body"><span class="acc-name">${escHtml(a.display)}</span>${
+        note ? `<span class="acc-note">${note}</span>`
+             : `<span class="acc-desc">${escHtml(a.effect_short || "")}</span>`}</span></label>`;
 }
+
+// Joel's corrected spec: span the full REMAINING width of the final band. CSS
+// can't say that (`auto / -1` resolves to a span of 1), so count the grid's
+// columns and the cards, and claim what's left. If the last band happens to be
+// exactly full, the panel takes its own band at full width — still "whatever
+// contiguous width remains". auto-fill's column count is width-dependent, so
+// this re-runs on resize.
+function _accSpan() {
+  const wall = document.querySelector(".powers-wall");
+  const card = $("accolades-card");
+  if (!wall || !card) return;
+  const cols = getComputedStyle(wall).gridTemplateColumns.split(" ").filter(Boolean).length;
+  if (!cols) return;
+  const n = wall.querySelectorAll(".power-card").length;
+  const used = n % cols;
+  card.style.gridColumn = `span ${used === 0 ? cols : cols - used}`;
+}
+// Re-trigger on width change, BOTH ways — deliberately belt-and-braces:
+//   • ResizeObserver on the wall: fires after layout, and catches width changes
+//     the window never sees (a sidebar opening, zoom, font reflow).
+//   • window resize: the plain path, in case RO delivery is delayed.
+// _accSpan is idempotent and costs one getComputedStyle, so double-firing is
+// free and a missed fire is the only real failure mode.
+//
+// ⚠ HONESTY NOTE, so nobody "fixes" this on a false lesson: the auto-retrigger
+// is UNVERIFIED in the dev harness. Measured 2026-07-16 — the preview tool's
+// viewport resize dispatches NO resize event to the page (0 events across a
+// 1000→1500 change) and RO callbacks did not deliver either (paint-gated, and
+// three convergence workers were starving the renderer). What IS verified is
+// the maths: _accSpan yields span 4 at 5 columns and span 2 at 4 columns, and
+// renderAccolades always calls it. An earlier version of this comment claimed
+// the window listener "measurably did not work" — that claim came from the
+// broken instrument, not the code, and was wrong. Re-check the retrigger in a
+// real browser on an idle box before trusting or replacing either mechanism.
+let _ACC_RO = null;
+function _accWatch() {
+  const wall = document.querySelector(".powers-wall");
+  if (!wall) return;
+  if (window.ResizeObserver) {
+    if (_ACC_RO) _ACC_RO.disconnect();
+    _ACC_RO = new ResizeObserver(() => _accSpan());
+    _ACC_RO.observe(wall);
+  }
+}
+window.addEventListener("resize", () => { if ($("accolades-card")) _accSpan(); });
 
 function renderAccolades() {
   const card = $("accolades-card");
@@ -3695,11 +3748,15 @@ function renderAccolades() {
   }
   if (!body) body = `<div class="acc-empty">No accolade matches “${escHtml(ACCOLADES_FILTER)}”.</div>`;
   card.innerHTML =
-    `<div class="ovc-head">ACCOLADES <span class="acc-count">${ACCOLADES_CHECKED.size}/${rows.length}</span></div>
-     <input id="acc-search" class="acc-search" type="search" placeholder="Search accolades…"
-       value="${escHtml(ACCOLADES_FILTER)}" oninput="accSearch(this.value)">
-     <div class="acc-scroll">${body}</div>
-     <div class="acc-foot">Checking a row is a personal note for now — it does not change the build's numbers yet.</div>`;
+    `<div class="acc-head">
+       <span class="ovc-head">ACCOLADES <span class="acc-count">${ACCOLADES_CHECKED.size}/${rows.length}</span></span>
+       <input id="acc-search" class="acc-search" type="search" placeholder="Search accolades…"
+         value="${escHtml(ACCOLADES_FILTER)}" oninput="accSearch(this.value)">
+       <span class="acc-hint">ticking is a personal note — no effect on the numbers yet</span>
+     </div>
+     <div class="acc-scroll">${body}</div>`;
+  _accSpan();
+  _accWatch();
   const inp = $("acc-search");
   if (inp && ACCOLADES_FILTER) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
 }

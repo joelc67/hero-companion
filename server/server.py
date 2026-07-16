@@ -518,7 +518,26 @@ def accolades_roster():
     def impact(v):
         e = v.get("effects") or {}
         return (e.get("HitPoints") or 0) * 10 + (e.get("Endurance") or 0) * 0.5
-    rows = [dict(key=k, **v) for k, v in roster.items()]
+
+    def effect_short(v):
+        """The one-line row text. The panel is WIDE AND SHORT (Joel's corrected
+        placement), so a row gets one line — the game's full sentence rides the
+        hover title instead. HitPoints scale 1.0 = +10% MaxHP, corroborated by
+        the client's own wording ('Freedom Phalanx Reserve … +10% Max Hit
+        Points')."""
+        e = v.get("effects") or {}
+        bits = []
+        if e.get("HitPoints"):
+            bits.append(f"+{e['HitPoints'] * 10:.0f}% HP")
+        if e.get("Endurance"):
+            bits.append(f"+{e['Endurance']:.0f} End")
+        if e.get("Recovery"):
+            bits.append(f"+{e['Recovery']:.0f} Rec")
+        if e.get("Regeneration"):
+            bits.append(f"+{e['Regeneration']:.0f} Regen")
+        return " ".join(bits)
+    rows = [dict(key=k, effect_short=effect_short(v), **v)
+            for k, v in roster.items()]
     rows.sort(key=lambda v: (order.get(v["tier"], 9), -impact(v),
                              v["display"]))
     return jsonify({"ok": True, "rows": rows,
