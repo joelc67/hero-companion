@@ -1,5 +1,46 @@
 # Hero Companion — What's New
 
+## Unreleased
+
+- **The AFK fire-farm champion's label was corrected upward — publicly owed,
+  now delivered.** The game's June 23 patch made Temperature Protection's
+  +MaxHP and +Regeneration enhanceable; our data snapshot predated it. With
+  the data re-synced to the current client, the same shipped Spines/Fiery
+  Aura build certifies at **+4x8, sustaining 42.5 HP/s** (the old label said
+  +3x8). Thanks to Maelwys for the correction. A new structural check now
+  diffs effect existence and enhanceability against the client so this
+  class of staleness can't hide again.
+- **Accolades are no longer invisible.** Below the powers and IO sets you'll
+  find every build-affecting accolade from the game data, with a search box.
+  Checking one moves your build's real numbers; a press-and-hold preview
+  shows what all of them together would do without committing anything.
+  Each row's ⓘ shows the game's own description, and 26 of 28 explain how
+  to earn it (full badge chains on 20); the rest say plainly that the
+  requirements aren't documented from game data yet. New level-50 builds
+  assume the four standard accolades and say so right on the build — untick
+  any you don't have and the totals follow. Nothing is ever applied without
+  you choosing it.
+- **The numbers now say what's in them.** A line above Build Vitals states
+  exactly which assumptions are folded in (accolades applied, incarnates on
+  or off), and named contribution lines appear beneath the stats they touch
+  ("↳ Accolades +321 HP", "↳ Alpha (Musculature) +45.0% damage") — read from
+  the engine's own ledgers, never re-guessed on the page.
+- **Incarnate choices our math doesn't price yet are marked "not yet
+  modeled"** in the picker instead of silently doing nothing.
+- **The Unrelenting Fury regen proc is priced** in the AFK sustain ledger
+  (it was invisible to the sustain math before), and the active-farm
+  objective now treats survival as hard requirements rather than a score —
+  damage throughput decides the picks, exactly as active farmers build.
+- **Certificates state exactly what they prove.** Every certified build's
+  card now says its score comes from a converged search and prints the
+  canonical number, without claiming more than that.
+- **Fixes from Joel's field walks:** power-card summary strips render at
+  full height again (no more crushed green sliver); a failed accolade load
+  now says "Couldn't load — try again" instead of silently disabling the
+  feature forever; accolade checkmarks no longer leak between characters;
+  and every build entry point (new character, optimize, respec) applies the
+  standard-accolade preselect consistently.
+
 ## Companion Lite 0.1.17 — 2026-07-15
 
 - **The feed tells you the truth when it can't upload.** Errors now lead with
