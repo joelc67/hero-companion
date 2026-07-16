@@ -466,12 +466,13 @@ def _incarnate_totals(build, totals, ctx):
                     totals[bucket][t] += base * s
 
 
-# Common always-up EXTERNAL buffs: the 3 inspiration Amplifiers (temp powers
-# most players keep running) + the permanent passive accolades. Values verified
-# against MidsReborn data (amplifier scales on Melee_Ones=1.0 → exact fractions).
-# Accolades give Max HP / Endurance, NOT resistance — the res/def here is from
-# the Defense Amplifier. These are OFF by default and clearly attributed.
-EXTERNAL_BUFFS = [
+# The 3 inspiration AMPLIFIERS (temp powers many players keep running). Values
+# verified against MidsReborn data (amplifier scales on Melee_Ones=1.0 → exact
+# fractions). v34 (Joel's split ruling, 2026-07-16): amplifiers are their OWN
+# thing — accolades no longer ride this list. The old bundled "+10% HitPoints"
+# accolade approximation is RETIRED; accolades route through the game-verified
+# per-accolade data (data/accolades.json) below.
+AMPLIFIER_BUFFS = [
     # Defense Amplifier
     {"effect": "Defense", "damage_type": "None", "value": 0.05},
     {"effect": "Resistance", "damage_type": "None", "value": 0.075},
@@ -481,18 +482,99 @@ EXTERNAL_BUFFS = [
     # Survival Amplifier
     {"effect": "Regeneration", "value": 0.40},
     {"effect": "Recovery", "value": 0.20},
-    # Accolades (permanent) — Max HP (approx; flat HP is AT-dependent)
-    {"effect": "HitPoints", "value": 0.10},
 ]
 
+_ACCOLADE_TABLE = None
 
-def _external_buffs(build, totals):
-    """Add accolade + amplifier buffs when include_external is set (off by
-    default; these are temporary/external, not from the build's powers)."""
-    if not build.get("include_external"):
+
+def _accolade_table():
+    """data/accolades.json (tools/extract_accolades.py — the GAME's own records,
+    Joel's data-source ruling). Cached; frozen-exe aware, same base-path dance
+    as _proc_table."""
+    global _ACCOLADE_TABLE
+    if _ACCOLADE_TABLE is None:
+        import json as _json
+        import sys as _sys
+        if getattr(_sys, "frozen", False):
+            base = getattr(_sys, "_MEIPASS", os.path.dirname(_sys.executable))
+        else:
+            base = os.path.join(os.path.dirname(__file__), "..")
+        try:
+            with open(os.path.join(base, "data", "accolades.json"),
+                      encoding="utf-8") as f:
+                _ACCOLADE_TABLE = _json.load(f)
+        except Exception:  # noqa: BLE001
+            _ACCOLADE_TABLE = {}
+    return _ACCOLADE_TABLE
+
+
+def accolade_flat(rec, mod_tables, col):
+    """(flat_hp, flat_end) a single accolade grants, from the GAME's own scales:
+    scale × its modifier table at the AT's column. This is the SAME arithmetic
+    first_principles.accolade_bonus_hp uses on the scoring side — the battery
+    pins that the two agree (test_accolade_hp_parity). Corroborated by the
+    client's own text: Freedom Phalanx Reserve HitPoints scale 1.0 → +10% MaxHP;
+    The Atlas Medallion Endurance scale 5.0 → +5 Max Endurance."""
+    eff = rec.get("effects") or {}
+    tabs = rec.get("tables") or {}
+    flat_hp = flat_end = 0.0
+    if eff.get("HitPoints") and col is not None:
+        row = mod_tables.get(tabs.get("HitPoints"))
+        if row and col < len(row):
+            flat_hp = eff["HitPoints"] * row[col]
+    if eff.get("Endurance") and col is not None:
+        row = mod_tables.get(tabs.get("Endurance"))
+        if row and col < len(row):
+            flat_end = eff["Endurance"] * row[col]
+    return flat_hp, flat_end
+
+
+def _amplifier_buffs(build, totals):
+    """The 3 inspiration amplifiers, when include_amplifiers is set (off by
+    default). Split from accolades per Joel's v34 ruling; `include_external`
+    stays honored as the legacy alias for back-compatibility with old payloads."""
+    if not (build.get("include_amplifiers") or build.get("include_external")):
         return
-    for eff in EXTERNAL_BUFFS:
+    for eff in AMPLIFIER_BUFFS:
         _apply_effect(totals, eff)
+
+
+def _accolade_buffs(build, totals, ctx):
+    """v34: the CHECKED accolades feed the displayed totals — the panel's
+    checkmarks are the source of truth (UI state == engine state). `accolades`
+    is the list of checked accolade keys; empty/absent = none applied. Each
+    lands its game-verified +MaxHP (into totals['max_hp'] as a fraction of base
+    HP, the Dull Pain convention) and +MaxEnd (flat points into totals's
+    max_end). A per-accolade attribution ledger is stamped for the display so a
+    number can say where it came from (deliverable #4)."""
+    checked = build.get("accolades") or []
+    if not checked:
+        return
+    tbl = _accolade_table()
+    mod_tables = ctx.get("modifier_tables") or {}
+    col = ctx.get("at_column")
+    base_hp = ctx.get("at_base_hp")
+    ledger = totals.setdefault("_accolade_ledger", [])
+    for key in checked:
+        rec = tbl.get(key)
+        if not rec:
+            continue
+        flat_hp, flat_end = accolade_flat(rec, mod_tables, col)
+        if flat_hp and base_hp:
+            totals["max_hp"] += flat_hp / base_hp
+        if flat_end:
+            totals["max_end"] = totals.get("max_end", 0.0) + flat_end
+        if flat_hp or flat_end:
+            ledger.append({"key": key, "display": rec.get("display", key),
+                           "hp": round(flat_hp, 1), "end": round(flat_end, 1)})
+
+
+def _external_buffs(build, totals, ctx=None):
+    """Back-compat shim: the old single applier, now split. Kept so any caller
+    that still calls it gets both halves; new call sites call the two directly."""
+    _amplifier_buffs(build, totals)
+    if ctx is not None:
+        _accolade_buffs(build, totals, ctx)
 
 
 def _piece_globals(build, totals):
@@ -1071,7 +1153,8 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
     amp_preview = _power_totals(build, totals, ctx)
     _incarnate_totals(build, totals, ctx)
     _piece_globals(build, totals)
-    _external_buffs(build, totals)
+    _amplifier_buffs(build, totals)
+    _accolade_buffs(build, totals, ctx)
     bonus_signature_count = defaultdict(int)
     applied_bonuses = []        # for display / AI context
     capped_out = []
@@ -1147,6 +1230,13 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
             sec_caps["recovery"] = ctx["at_recovery_cap"] * 100.0
     # Convert fractions -> percentages for display
     display = _to_display(totals, res_cap, sec_caps, ctx=ctx)
+    # v34 #4 (attribution, not buried numbers): surface which accolades landed
+    # in the HP number, so the display can print "Accolades +321" and name them.
+    if totals.get("_accolade_ledger"):
+        display["accolade_ledger"] = totals["_accolade_ledger"]
+        display["accolade_hp"] = round(sum(x["hp"] for x in totals["_accolade_ledger"]), 1)
+    if totals.get("max_end"):
+        display["max_end_bonus"] = round(totals["max_end"], 1)
     # v29: what MM henchmen inherit (50% of TRUE set bonuses only) — the scorer's
     # henchman-survivability term reads this. Percent units, same as the display.
     display["set_bonus_totals"] = {
