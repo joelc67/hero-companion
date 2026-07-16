@@ -24,8 +24,57 @@
   "source": "undocumented"
  },
  "Freedom_Phalanx_Reserve": {
-  "text": "requirements not yet documented from game data",
-  "source": "undocumented"
+  "summary": "Earn a reserve membership into Paragon City's premier hero group.",
+  "badge_chain": [
+   {
+    "badge": "Regal",
+    "tracks": "Exploration badge in Boomtown"
+   },
+   {
+    "badge": "Brawler",
+    "tracks": "Exploration badge in Echo: Galaxy City"
+   },
+   {
+    "badge": "Vigorous",
+    "tracks": "Exploration badge in Independence Port"
+   },
+   {
+    "badge": "Summoned",
+    "tracks": "Exploration badge in Kings Row"
+   },
+   {
+    "badge": "Keen Sighted",
+    "tracks": "Exploration badge in Kings Row"
+   },
+   {
+    "badge": "Purifier",
+    "tracks": "Exploration badge in Skyway City"
+   },
+   {
+    "badge": "Nimble Mynx",
+    "tracks": "Exploration badge in Steel Canyon"
+   },
+   {
+    "badge": "Authority",
+    "tracks": "Visit 5 history plaques: Talos Island, Independence Port (x2), Echo: Dark Astoria, Terra Volta"
+   },
+   {
+    "badge": "Tank Buster",
+    "tracks": "Defeat 100 Freakshow Tanks"
+   },
+   {
+    "badge": "Gearsmasher",
+    "tracks": "Defeat 100 Clockwork Gears that spawn after a Clockwork Prince is defeated"
+   },
+   {
+    "badge": "Unveiler",
+    "tracks": "Defeat 100 Fake Nemesis"
+   }
+  ],
+  "note": "Hero/vigilante only. The villain equivalent is the High Pain Threshold badge.",
+  "wiki_url": "https://homecoming.wiki/wiki/Freedom_Phalanx_Reserve_Member_Badge",
+  "text": "",
+  "source": "wiki-hc"
  },
  "Geas_of_the_Kind_Ones": {
   "text": "requirements not yet documented from game data",
@@ -72,8 +121,29 @@
   "source": "undocumented"
  },
  "Portal_Jockey": {
-  "text": "requirements not yet documented from game data",
-  "source": "undocumented"
+  "summary": "Help Portal Corporation explore the multiverse.",
+  "badge_chain": [
+   {
+    "badge": "Multidimensional",
+    "tracks": "Exploration badge in a Tina Macintyre mission"
+   },
+   {
+    "badge": "Shrouded",
+    "tracks": "Exploration badge in a Maria Jenkins mission"
+   },
+   {
+    "badge": "Scholastic",
+    "tracks": "Visit 3 history plaques: Founders' Falls, Brickstown (x2)"
+   },
+   {
+    "badge": "Dimensional Warder",
+    "tracks": "Defeat the Praetorian Earth arch-villains (Anti-Matter, Battle Maiden, Black Swan, Bobcat, Chimera, Diabolique, Dominatrix and the rest)"
+   }
+  ],
+  "note": "Hero/vigilante only. Villains and rogues can earn credit, but the badge is awarded on changing alignment.",
+  "wiki_url": "https://homecoming.wiki/wiki/Portal_Jockey_Badge",
+  "text": "",
+  "source": "wiki-hc"
  },
  "RIWE_Accolade_Power": {
   "text": "requirements not yet documented from game data",
@@ -96,12 +166,66 @@
   "source": "undocumented"
  },
  "Task_Force_Commander": {
-  "text": "requirements not yet documented from game data",
-  "source": "undocumented"
+  "summary": "Complete each of the Task Forces given out by the Freedom Phalanx.",
+  "badge_chain": [
+   {
+    "badge": "Positron's Ally",
+    "tracks": "Complete both parts of Positron's Task Force, The Rule of Three"
+   },
+   {
+    "badge": "Synapse's Cohort",
+    "tracks": "Complete Synapse's Task Force, The Fall of the Clockwork King"
+   },
+   {
+    "badge": "Penelope Yin's Friend",
+    "tracks": "Complete Penelope Yin's Task Force, A Clamor for the People"
+   },
+   {
+    "badge": "Citadel's Assistant",
+    "tracks": "Complete Citadel's Task Force, Citadel's Children"
+   },
+   {
+    "badge": "Manticore's Associate",
+    "tracks": "Complete Manticore's Task Force, Following Countess Crey"
+   },
+   {
+    "badge": "Numina's Compatriot",
+    "tracks": "Complete Numina's Task Force, Soul of the Woodsman"
+   }
+  ],
+  "note": "Hero/vigilante only. Villains and rogues can earn credit, but the badge is awarded on changing alignment.",
+  "wiki_url": "https://homecoming.wiki/wiki/Task_Force_Commander_Badge",
+  "text": "",
+  "source": "wiki-hc"
  },
  "The_Atlas_Medallion": {
-  "text": "requirements not yet documented from game data",
-  "source": "undocumented"
+  "summary": "Earn the might of Atlas, one of the greatest heroes of Paragon City's history.",
+  "badge_chain": [
+   {
+    "badge": "Top Dog",
+    "tracks": "Exploration badge in Atlas Park"
+   },
+   {
+    "badge": "Pupil",
+    "tracks": "Visit 5 history plaques: Atlas Park, Echo: Galaxy City, Kings Row (x2), Perez Park"
+   },
+   {
+    "badge": "Spelunker",
+    "tracks": "Finish the Rescue Fortune Teller mission (from Dr. Trevor Seaborn, Hugo Redding, Haley Philips, or via Flashback)"
+   },
+   {
+    "badge": "The Silver Bullet",
+    "tracks": "Defeat 200 Council War Wolves"
+   },
+   {
+    "badge": "The Slayer",
+    "tracks": "Defeat 200 Council Vampyri"
+   }
+  ],
+  "note": "Hero/vigilante only. The villain equivalent is the Marshal badge.",
+  "wiki_url": "https://homecoming.wiki/wiki/Received_the_Atlas_Medallion_Badge",
+  "text": "",
+  "source": "wiki-hc"
  },
  "Toy_Bat": {
   "text": "requirements not yet documented from game data",

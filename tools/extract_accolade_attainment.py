@@ -76,6 +76,7 @@ ASSETS = r"C:/Games/HC2/assets/live"
 ACC = os.path.join(ROOT, "data", "accolades.json")
 OUT = os.path.join(ROOT, "data", "accolade_attainment.json")
 JOEL = os.path.join(ROOT, "data", "accolade_attainment_joel.json")
+WIKI = os.path.join(ROOT, "data", "accolade_attainment_wiki.json")
 
 UNDOCUMENTED = "requirements not yet documented from game data"
 
@@ -111,9 +112,17 @@ def main():
     if os.path.exists(JOEL):
         joel = json.load(open(JOEL, encoding="utf-8"))
     print(f"Joel-supplied entries on file: {len(joel)}")
+    # Joel's SCOPED EXCEPTION (2026-07-16): wiki prose may bridge attainment
+    # NARRATIVE only — never anything the engine consumes. It sits BELOW his
+    # live-game pass on the ladder and is superseded the moment he captures it.
+    wiki = {}
+    if os.path.exists(WIKI):
+        wiki = {k: v for k, v in json.load(open(WIKI, encoding="utf-8")).items()
+                if not k.startswith("_")}
+    print(f"wiki-bridged entries on file: {len(wiki)}")
 
     out = {}
-    n_game = n_joel = n_undoc = 0
+    n_game = n_joel = n_wiki = n_undoc = 0
     for key, rec in acc.items():
         disp = rec["display"]
         # (1) the client, but ONLY where the text identifies its own accolade —
@@ -126,6 +135,14 @@ def main():
             out[key] = {"text": joel[key],
                         "source": "joel-live-game (badge window)"}
             n_joel += 1
+        elif wiki.get(key):
+            w = wiki[key]
+            out[key] = {"summary": w.get("summary", ""),
+                        "badge_chain": w.get("badge_chain", []),
+                        "note": w.get("note", ""),
+                        "wiki_url": w.get("wiki_url", ""),
+                        "text": "", "source": w.get("source", "wiki-hc")}
+            n_wiki += 1
         else:
             out[key] = {"text": UNDOCUMENTED, "source": "undocumented"}
             n_undoc += 1
@@ -133,6 +150,7 @@ def main():
     print(f"\nattainment coverage of {len(acc)} accolades:")
     print(f"  {n_game:3d} from the game's own text (self-identifying)")
     print(f"  {n_joel:3d} from Joel's live-game pass")
+    print(f"  {n_wiki:3d} bridged from the wiki (narrative only, upgradeable)")
     print(f"  {n_undoc:3d} honestly undocumented -> the pop-up says so")
     if n_undoc:
         need = [k for k, v in out.items() if v["source"] == "undocumented"]

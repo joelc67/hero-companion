@@ -3781,16 +3781,33 @@ async function accPreview(on) {
 function accHowTo(k) {
   const a = (ACCOLADES_ROWS || []).find(x => x.key === k);
   if (!a) return;
-  const undocumented = !a.attain || a.attain_source === "undocumented";
-  const body = undocumented
-    ? `<p class="acc-undoc">Requirements not yet documented from game data.</p>
-       <p class="muted small">We only show what the game itself tells us. The client
-       carries this accolade's effects but not its badge requirements, so this
-       text is pending a pass from the live game.</p>`
-    : `<p>${escHtml(a.attain)}</p>
-       <p class="muted small">Source: ${a.attain_source === "game (clientmessages-en.bin)"
-         ? "the game client's own badge text" : "the in-game badge window"}.</p>`;
-  const eff = a.effect_short ? `<p class="acc-eff">Grants: ${escHtml(a.effect_short)}</p>` : "";
+  // Joel's pop-up content spec (his walk, 2026-07-16): the pop-up's job is to
+  // show WHAT THE ACCOLADE TRACKS and how you acquire it — a to-do list, like a
+  // badge saying "you have healed 100k and can now display Surgeon". The grants
+  // line stays, but small and secondary.
+  const undocumented = !a.attain_source || a.attain_source === "undocumented";
+  const chain = a.badge_chain || [];
+  let body;
+  if (chain.length) {
+    body = `${a.attain_summary ? `<p>${escHtml(a.attain_summary)}</p>` : ""}
+      <p class="acc-howto-lead">How to acquire — earn these badges:</p>
+      <ul class="acc-chain">${chain.map(b =>
+        `<li><strong>${escHtml(b.badge)}</strong><span>${escHtml(b.tracks)}</span></li>`).join("")}</ul>
+      ${a.attain_note ? `<p class="muted small">${escHtml(a.attain_note)}</p>` : ""}`;
+  } else if (!undocumented) {
+    body = `<p>${escHtml(a.attain)}</p>`;
+  } else {
+    body = `<p class="acc-undoc">Requirements not yet documented from game data.</p>
+       <p class="muted small">We only show what a source we trust actually says. The
+       game client carries this accolade's effects but not its badge requirements,
+       so this one is pending an in-game check.</p>`;
+  }
+  const src = {"game (clientmessages-en.bin)": "the game client's own badge text",
+               "joel-live-game (badge window)": "the in-game badge window",
+               "wiki-hc": "the Unofficial Homecoming Wiki — not yet confirmed in game"}[a.attain_source];
+  if (src) body += `<p class="muted small acc-src">Source: ${escHtml(src)}.</p>`;
+  const eff = a.effect_short
+    ? `<p class="acc-grants muted small">Grants: ${escHtml(a.effect_short)}</p>` : "";
   // same overlay pattern as the respec modal (dynamically created .help-overlay,
   // backdrop click closes) — reuse, don't invent a second modal system
   let ov = $("acc-howto");

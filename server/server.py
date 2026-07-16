@@ -554,7 +554,10 @@ def accolades_roster():
     rows = [dict(key=k, effect_short=effect_short(v),
                  standard_assumed=(k in standard),
                  attain=(attain.get(k) or {}).get("text", ""),
-                 attain_source=(attain.get(k) or {}).get("source", ""), **v)
+                 attain_source=(attain.get(k) or {}).get("source", ""),
+                 attain_summary=(attain.get(k) or {}).get("summary", ""),
+                 badge_chain=(attain.get(k) or {}).get("badge_chain", []),
+                 attain_note=(attain.get(k) or {}).get("note", ""), **v)
             for k, v in roster.items()]
     rows.sort(key=lambda v: (order.get(v["tier"], 9), -impact(v),
                              v["display"]))

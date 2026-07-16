@@ -1,0 +1,77 @@
+{
+ "_README": {
+  "what": "Attainment NARRATIVE for the accolade pop-ups — display prose ONLY.",
+  "scope_rule": "Joel's scoped exception, 2026-07-16: this file may carry wiki-sourced PROSE. No number, effect, requirement-count or anything the engine consumes may ever come from here. Structurally enforced: the engine's accolade math reads data/accolades.json (client bins, via extract_accolades.py) and never this file; only the pop-up's how-to-acquire text reads it.",
+  "ladder": "live game (Joel's badge window) > wiki. Any entry here is superseded the moment Joel's in-game pass captures it — see data/accolade_attainment_joel.json.",
+  "source_ranking": "1 wiki-hc (Unofficial Homecoming Wiki accolade pages, PRIMARY). 2 forum-guide. 3 forum-4pass. Both forum topic URLs 404'd from this box on 2026-07-16, so every entry below is wiki-hc single-sourced — NOT marked conflict (nothing disagreed), simply single-sourced and upgradeable.",
+  "fetch_note": "homecoming.wiki returns 403 to cloud egress (Cowork's fetches and the agent fetch tool) but 200 to this Windows box with a browser UA — index AND deep pages. One-time fetch 2026-07-16; never scraped at runtime, never hotlinked.",
+  "transcription_note": "TRANSCRIBED BY READING, not by link-scrape. The pages present Heroes|Villains as ALTERNATIVE columns (Positron's Ally OR Positron's Betrayer — you earn one, not both) and add an 'Alternate Method' cross-link to the opposite-alignment accolade. An automated scrape flattened all three into one list and produced contaminated chains — e.g. Task Force Commander picked up 'Invader Badge' (the VILLAIN equivalent accolade, not a constituent), Portal Jockey picked up 'Born in Battle', Atlas picked up 'Marshal'. Those were caught before shipping; these entries are the hero-side Traditional Method only.",
+  "coverage": "4 of 28 — the four standard passives the wizard preselects, which is also exactly what Joel's forum depth-source covers. Every other accolade keeps the honest placeholder until transcribed or captured in-game. Several of the 28 (Crey_CBX-9_Pistol, Challenge_VanguardDummy_Pet, Demonic_Aura, Eye_of_the_Magus...) are accolade POWERS rather than accolade badges and may never have a chain."
+ },
+ "Task_Force_Commander": {
+  "wiki_title": "Task Force Commander Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Task_Force_Commander_Badge",
+  "summary": "Complete each of the Task Forces given out by the Freedom Phalanx.",
+  "badge_chain": [
+   {"badge": "Positron's Ally", "tracks": "Complete both parts of Positron's Task Force, The Rule of Three"},
+   {"badge": "Synapse's Cohort", "tracks": "Complete Synapse's Task Force, The Fall of the Clockwork King"},
+   {"badge": "Penelope Yin's Friend", "tracks": "Complete Penelope Yin's Task Force, A Clamor for the People"},
+   {"badge": "Citadel's Assistant", "tracks": "Complete Citadel's Task Force, Citadel's Children"},
+   {"badge": "Manticore's Associate", "tracks": "Complete Manticore's Task Force, Following Countess Crey"},
+   {"badge": "Numina's Compatriot", "tracks": "Complete Numina's Task Force, Soul of the Woodsman"}
+  ],
+  "note": "Hero/vigilante only. Villains and rogues can earn credit, but the badge is awarded on changing alignment.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Portal_Jockey": {
+  "wiki_title": "Portal Jockey Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Portal_Jockey_Badge",
+  "summary": "Help Portal Corporation explore the multiverse.",
+  "badge_chain": [
+   {"badge": "Multidimensional", "tracks": "Exploration badge in a Tina Macintyre mission"},
+   {"badge": "Shrouded", "tracks": "Exploration badge in a Maria Jenkins mission"},
+   {"badge": "Scholastic", "tracks": "Visit 3 history plaques: Founders' Falls, Brickstown (x2)"},
+   {"badge": "Dimensional Warder", "tracks": "Defeat the Praetorian Earth arch-villains (Anti-Matter, Battle Maiden, Black Swan, Bobcat, Chimera, Diabolique, Dominatrix and the rest)"}
+  ],
+  "note": "Hero/vigilante only. Villains and rogues can earn credit, but the badge is awarded on changing alignment.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "The_Atlas_Medallion": {
+  "wiki_title": "Received the Atlas Medallion Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Received_the_Atlas_Medallion_Badge",
+  "summary": "Earn the might of Atlas, one of the greatest heroes of Paragon City's history.",
+  "badge_chain": [
+   {"badge": "Top Dog", "tracks": "Exploration badge in Atlas Park"},
+   {"badge": "Pupil", "tracks": "Visit 5 history plaques: Atlas Park, Echo: Galaxy City, Kings Row (x2), Perez Park"},
+   {"badge": "Spelunker", "tracks": "Finish the Rescue Fortune Teller mission (from Dr. Trevor Seaborn, Hugo Redding, Haley Philips, or via Flashback)"},
+   {"badge": "The Silver Bullet", "tracks": "Defeat 200 Council War Wolves"},
+   {"badge": "The Slayer", "tracks": "Defeat 200 Council Vampyri"}
+  ],
+  "note": "Hero/vigilante only. The villain equivalent is the Marshal badge.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ },
+ "Freedom_Phalanx_Reserve": {
+  "wiki_title": "Freedom Phalanx Reserve Member Badge",
+  "wiki_url": "https://homecoming.wiki/wiki/Freedom_Phalanx_Reserve_Member_Badge",
+  "summary": "Earn a reserve membership into Paragon City's premier hero group.",
+  "badge_chain": [
+   {"badge": "Regal", "tracks": "Exploration badge in Boomtown"},
+   {"badge": "Brawler", "tracks": "Exploration badge in Echo: Galaxy City"},
+   {"badge": "Vigorous", "tracks": "Exploration badge in Independence Port"},
+   {"badge": "Summoned", "tracks": "Exploration badge in Kings Row"},
+   {"badge": "Keen Sighted", "tracks": "Exploration badge in Kings Row"},
+   {"badge": "Purifier", "tracks": "Exploration badge in Skyway City"},
+   {"badge": "Nimble Mynx", "tracks": "Exploration badge in Steel Canyon"},
+   {"badge": "Authority", "tracks": "Visit 5 history plaques: Talos Island, Independence Port (x2), Echo: Dark Astoria, Terra Volta"},
+   {"badge": "Tank Buster", "tracks": "Defeat 100 Freakshow Tanks"},
+   {"badge": "Gearsmasher", "tracks": "Defeat 100 Clockwork Gears that spawn after a Clockwork Prince is defeated"},
+   {"badge": "Unveiler", "tracks": "Defeat 100 Fake Nemesis"}
+  ],
+  "note": "Hero/vigilante only. The villain equivalent is the High Pain Threshold badge.",
+  "source": "wiki-hc",
+  "fetched": "2026-07-16"
+ }
+}
