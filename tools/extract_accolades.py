@@ -40,39 +40,25 @@ OUT = os.path.join(ROOT, "data", "accolades.json")
 PRICED = ("HitPoints", "Endurance")          # always-on fit effects
 CLICKY = ("Recovery", "Regeneration")        # burst/click accolade powers
 
-# Joel's data-source ruling (2026-07-16): "the accolade list and descriptions
-# come right from the game, no half baked wiki." The power records carry NO
-# description text (measured: 0 of 28), but clientmessages-en.bin does — it is
-# the client's own UI/tooltip string table. We take the game's sentence where
-# it can be matched UNAMBIGUOUSLY (the display name + a grant phrasing), and
-# otherwise print an effect line COMPUTED from the game's own effect scales.
-# We never guess a description onto a row.
-BIN_PIGG = r"C:/Games/HC2/assets/live/bin.pigg"
-_GRANT_PAT = r"(granted you|has granted|you have been granted|permanent increase)"
-
-
-def game_descriptions(displays):
-    """{display: the game's own sentence} — only unambiguous matches."""
-    try:
-        import re as _re
-        sys.path.insert(0, os.path.join(ROOT, "tools", "gamedata",
-                                        "pigg-wrangler"))
-        from pigg_wrangler.pigg import PiggArchive
-        txt = PiggArchive(BIN_PIGG).extract("clientmessages-en.bin").decode(
-            "latin-1", errors="ignore")
-    except Exception as e:  # noqa: BLE001
-        print(f"  (clientmessages unavailable: {type(e).__name__} — rows will "
-              f"use computed effect lines)")
-        return {}
-    import re as _re
-    strings = [x.strip() for x in _re.findall(r"[ -~]{12,}", txt)]
-    pat = _re.compile(_GRANT_PAT, _re.I)
-    out = {}
-    for d in displays:
-        cands = [x for x in strings if d.lower() in x.lower() and pat.search(x)]
-        if cands:
-            out[d] = min(cands, key=len)
-    return out
+# ⚠ CORRECTED 2026-07-16 (Joel's "find the join key" push — the fix is smaller
+# and better than the workaround it replaces). The earlier claim here, "the
+# power records carry NO description text (measured: 0 of 28)", was OUR BUG,
+# not the client's gap: this tool read r["description"] / r["short_help"] —
+# field names the exporter never emits. It emits **display_help** and
+# **display_short_help**, already resolved through the message table
+# (export_powers.py: `pw.display_help = msgs.resolve(pw.display_help)`).
+# Reading the RIGHT field yields the game's own sentence for 28 of 28.
+#
+# So the fragile fallback that used to live here — scraping clientmessages for
+# a string containing the accolade's name plus a grant-ish phrase, which
+# matched only 5 of 28 and could in principle mis-bind — is DELETED. The record
+# hands us its own text directly. Fewer moving parts, no matching heuristic, and
+# every row is the game's, verbatim.
+#
+# (What the record does NOT carry is the badge REQUIREMENT text — demonstrated
+# at the raw-byte level; see tools/extract_accolade_attainment.py. That is a
+# different field on a different object, and it is why attainment has its own
+# tool and its own honest fallback.)
 
 
 def effect_line(eff):
@@ -136,27 +122,27 @@ def main():
         out[name] = {
             "full_name": fn,
             "display": r.get("display_name") or name.replace("_", " "),
-            "description": (r.get("description") or r.get("short_help")
-                            or "").strip(),
+            # the GAME's own sentence, straight off the record (display_help
+            # is the field the exporter emits, already message-resolved)
+            "description": (r.get("display_help") or "").strip(),
+            "description_source": "game (power record display_help)",
+            "short": (r.get("display_short_help") or "").strip(),
             "tier": tier, "effects": eff, "tables": tabs,
             "source": "client bins via out_extra_623 export 2026-07-16",
         }
 
-    descs = game_descriptions([v["display"] for v in out.values()])
-    n_game = 0
+    # Every row's description is now the GAME's own display_help, read straight
+    # off the record — no matching heuristic, no computed fallback needed.
+    n_game = sum(1 for v in out.values() if v["description"])
     for v in out.values():
-        g = descs.get(v["display"])
-        if g:
-            v["description"] = g
-            v["description_source"] = "game (clientmessages-en.bin)"
-            n_game += 1
-        else:
+        if not v["description"]:                    # belt-and-braces only
             v["description"] = effect_line(v["effects"])
             v["description_source"] = ("computed from the game's own effect "
                                        "scales" if v["effects"] else "")
-    print(f"descriptions: {n_game} from the game's own text, "
-          f"{len(out) - n_game} computed from its effect scales (no row is "
-          f"guessed; attainment chains are NOT in the client — see Phase-0)")
+    print(f"descriptions: {n_game} of {len(out)} are the game's own sentence "
+          f"from the power record (display_help); no row is guessed. Badge "
+          f"REQUIREMENT text is a different object — see "
+          f"extract_accolade_attainment.py.")
 
     tiers = {}
     for v in out.values():
