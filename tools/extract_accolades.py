@@ -40,6 +40,56 @@ OUT = os.path.join(ROOT, "data", "accolades.json")
 PRICED = ("HitPoints", "Endurance")          # always-on fit effects
 CLICKY = ("Recovery", "Regeneration")        # burst/click accolade powers
 
+# Joel's data-source ruling (2026-07-16): "the accolade list and descriptions
+# come right from the game, no half baked wiki." The power records carry NO
+# description text (measured: 0 of 28), but clientmessages-en.bin does — it is
+# the client's own UI/tooltip string table. We take the game's sentence where
+# it can be matched UNAMBIGUOUSLY (the display name + a grant phrasing), and
+# otherwise print an effect line COMPUTED from the game's own effect scales.
+# We never guess a description onto a row.
+BIN_PIGG = r"C:/Games/HC2/assets/live/bin.pigg"
+_GRANT_PAT = r"(granted you|has granted|you have been granted|permanent increase)"
+
+
+def game_descriptions(displays):
+    """{display: the game's own sentence} — only unambiguous matches."""
+    try:
+        import re as _re
+        sys.path.insert(0, os.path.join(ROOT, "tools", "gamedata",
+                                        "pigg-wrangler"))
+        from pigg_wrangler.pigg import PiggArchive
+        txt = PiggArchive(BIN_PIGG).extract("clientmessages-en.bin").decode(
+            "latin-1", errors="ignore")
+    except Exception as e:  # noqa: BLE001
+        print(f"  (clientmessages unavailable: {type(e).__name__} — rows will "
+              f"use computed effect lines)")
+        return {}
+    import re as _re
+    strings = [x.strip() for x in _re.findall(r"[ -~]{12,}", txt)]
+    pat = _re.compile(_GRANT_PAT, _re.I)
+    out = {}
+    for d in displays:
+        cands = [x for x in strings if d.lower() in x.lower() and pat.search(x)]
+        if cands:
+            out[d] = min(cands, key=len)
+    return out
+
+
+def effect_line(eff):
+    """The always-available fallback: what the GAME's own scales say it grants
+    (HitPoints scale 1.0 = +10% MaxHP — corroborated by the client's own text:
+    'Freedom Phalanx Reserve ... +10% Max Hit Points')."""
+    bits = []
+    if eff.get("HitPoints"):
+        bits.append(f"+{eff['HitPoints'] * 10:.0f}% Max Hit Points")
+    if eff.get("Endurance"):
+        bits.append(f"+{eff['Endurance']:.0f} Max Endurance")
+    if eff.get("Recovery"):
+        bits.append(f"+{eff['Recovery']:.0f} Recovery (click power)")
+    if eff.get("Regeneration"):
+        bits.append(f"+{eff['Regeneration']:.0f} Regeneration (click power)")
+    return ", ".join(bits)
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -91,6 +141,22 @@ def main():
             "tier": tier, "effects": eff, "tables": tabs,
             "source": "client bins via out_extra_623 export 2026-07-16",
         }
+
+    descs = game_descriptions([v["display"] for v in out.values()])
+    n_game = 0
+    for v in out.values():
+        g = descs.get(v["display"])
+        if g:
+            v["description"] = g
+            v["description_source"] = "game (clientmessages-en.bin)"
+            n_game += 1
+        else:
+            v["description"] = effect_line(v["effects"])
+            v["description_source"] = ("computed from the game's own effect "
+                                       "scales" if v["effects"] else "")
+    print(f"descriptions: {n_game} from the game's own text, "
+          f"{len(out) - n_game} computed from its effect scales (no row is "
+          f"guessed; attainment chains are NOT in the client — see Phase-0)")
 
     tiers = {}
     for v in out.values():

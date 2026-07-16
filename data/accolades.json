@@ -2,7 +2,7 @@
  "Born_In_Battle": {
   "full_name": "Temporary_Powers.Accolades.Born_In_Battle",
   "display": "Born In Battle",
-  "description": "",
+  "description": "+5% Max Hit Points, +5 Max Endurance",
   "tier": "passive",
   "effects": {
    "HitPoints": 0.5,
@@ -12,7 +12,8 @@
    "HitPoints": "Melee_HealSelf",
    "Endurance": "Melee_Ones"
   },
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": "computed from the game's own effect scales"
  },
  "Challenge_VanguardDummy_Pet": {
   "full_name": "Temporary_Powers.Accolades.Challenge_VanguardDummy_Pet",
@@ -21,7 +22,8 @@
   "tier": "badge_only",
   "effects": {},
   "tables": {},
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": ""
  },
  "Crey_CBX-9_Pistol": {
   "full_name": "Temporary_Powers.Accolades.Crey_CBX-9_Pistol",
@@ -30,7 +32,8 @@
   "tier": "badge_only",
   "effects": {},
   "tables": {},
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": ""
  },
  "Demonic_Aura": {
   "full_name": "Temporary_Powers.Accolades.Demonic_Aura",
@@ -39,7 +42,8 @@
   "tier": "badge_only",
   "effects": {},
   "tables": {},
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": ""
  },
  "Eye_of_the_Magus": {
   "full_name": "Temporary_Powers.Accolades.Eye_of_the_Magus",
@@ -48,12 +52,13 @@
   "tier": "badge_only",
   "effects": {},
   "tables": {},
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": ""
  },
  "Force_of_Nature": {
   "full_name": "Temporary_Powers.Accolades.Force_of_Nature",
   "display": "Force of Nature",
-  "description": "",
+  "description": "+8 Recovery (click power)",
   "tier": "click",
   "effects": {
    "Recovery": 8.0
@@ -61,12 +66,13 @@
   "tables": {
    "Recovery": "Melee_Ones"
   },
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": "computed from the game's own effect scales"
  },
  "Freedom_Phalanx_Reserve": {
   "full_name": "Temporary_Powers.Accolades.Freedom_Phalanx_Reserve",
   "display": "Freedom Phalanx Reserve",
-  "description": "",
+  "description": "Earning Membership into the Freedom Phalanx Reserve has granted you a permanent increase to your Max Hit Points by 10%.",
   "tier": "passive",
   "effects": {
    "HitPoints": 1.0
@@ -74,12 +80,13 @@
   "tables": {
    "HitPoints": "Melee_HealSelf"
   },
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": "game (clientmessages-en.bin)"
  },
  "Geas_of_the_Kind_Ones": {
   "full_name": "Temporary_Powers.Accolades.Geas_of_the_Kind_Ones",
   "display": "Geas of the Kind Ones",
-  "description": "",
+  "description": "+8 Recovery (click power)",
   "tier": "click",
   "effects": {
    "Recovery": 8.0
@@ -87,12 +94,13 @@
   "tables": {
    "Recovery": "Melee_Ones"
   },
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": "computed from the game's own effect scales"
  },
  "High_Pain_Threshold": {
   "full_name": "Temporary_Powers.Accolades.High_Pain_Threshold",
   "display": "High Pain Threshold",
-  "description": "",
+  "description": "+10% Max Hit Points",
   "tier": "passive",
   "effects": {
    "HitPoints": 1.0
@@ -100,12 +108,13 @@
   "tables": {
    "HitPoints": "Melee_HealSelf"
   },
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": "computed from the game's own effect scales"
  },
  "Invader": {
   "full_name": "Temporary_Powers.Accolades.Invader",
   "display": "Invader",
-  "description": "",
+  "description": "+5% Max Hit Points",
   "tier": "passive",
   "effects": {
    "HitPoints": 0.5
@@ -113,12 +122,13 @@
   "tables": {
    "HitPoints": "Melee_HealSelf"
   },
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": "computed from the game's own effect scales"
  },
  "Iron_Man": {
   "full_name": "Temporary_Powers.Accolades.Iron_Man",
   "display": "Iron Man",
-  "description": "",
+  "description": "+10% Max Hit Points, +10 Max Endurance",
   "tier": "passive",
   "effects": {
    "HitPoints": 1.0,
@@ -128,12 +138,13 @@
    "HitPoints": "Melee_HealSelf",
    "Endurance": "Melee_Ones"
   },
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": "computed from the game's own effect scales"
  },
  "Labyrinth_Conqueror": {
   "full_name": "Temporary_Powers.Accolades.Labyrinth_Conqueror",
   "display": "Conqueror of the Labyrinth",
-  "description": "",
+  "description": "+5% Max Hit Points, +5 Max Endurance",
   "tier": "passive",
   "effects": {
    "HitPoints": 0.5,
@@ -143,7 +154,8 @@
    "HitPoints": "Melee_HealSelf",
    "Endurance": "Melee_Ones"
   },
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": "computed from the game's own effect scales"
  },
  "Long_Range_Teleport": {
   "full_name": "Temporary_Powers.Accolades.Long_Range_Teleport",
@@ -152,7 +164,8 @@
   "tier": "badge_only",
   "effects": {},
   "tables": {},
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": ""
  },
  "MarkRecall": {
   "full_name": "Temporary_Powers.Accolades.MarkRecall",
@@ -161,12 +174,13 @@
   "tier": "badge_only",
   "effects": {},
   "tables": {},
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": ""
  },
  "Marshall": {
   "full_name": "Temporary_Powers.Accolades.Marshall",
   "display": "Marshal",
-  "description": "",
+  "description": "+5 Max Endurance",
   "tier": "passive",
   "effects": {
    "Endurance": 5.0
@@ -174,12 +188,13 @@
   "tables": {
    "Endurance": "Melee_Ones"
   },
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": "computed from the game's own effect scales"
  },
  "Mazebreaker": {
   "full_name": "Temporary_Powers.Accolades.Mazebreaker",
   "display": "Mazebreaker",
-  "description": "",
+  "description": "+5 Max Endurance",
   "tier": "passive",
   "effects": {
    "Endurance": 5.0
@@ -187,7 +202,8 @@
   "tables": {
    "Endurance": "Melee_Ones"
   },
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": "computed from the game's own effect scales"
  },
  "Megalomaniac": {
   "full_name": "Temporary_Powers.Accolades.Megalomaniac",
@@ -196,7 +212,8 @@
   "tier": "badge_only",
   "effects": {},
   "tables": {},
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": ""
  },
  "Portable_Workbench": {
   "full_name": "Temporary_Powers.Accolades.Portable_Workbench",
@@ -205,12 +222,13 @@
   "tier": "badge_only",
   "effects": {},
   "tables": {},
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": ""
  },
  "Portal_Jockey": {
   "full_name": "Temporary_Powers.Accolades.Portal_Jockey",
   "display": "Portal Jockey",
-  "description": "",
+  "description": "As a Portal Jockey, you have been granted a permanent increase to your Max Hit Points and Max Endurance by 5%.",
   "tier": "passive",
   "effects": {
    "HitPoints": 0.5,
@@ -220,7 +238,8 @@
    "HitPoints": "Melee_HealSelf",
    "Endurance": "Melee_Ones"
   },
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": "game (clientmessages-en.bin)"
  },
  "RIWE_Accolade_Power": {
   "full_name": "Temporary_Powers.Accolades.RIWE_Accolade_Power",
@@ -229,7 +248,8 @@
   "tier": "badge_only",
   "effects": {},
   "tables": {},
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": ""
  },
  "Scanalyzer": {
   "full_name": "Temporary_Powers.Accolades.Scanalyzer",
@@ -238,7 +258,8 @@
   "tier": "badge_only",
   "effects": {},
   "tables": {},
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": ""
  },
  "SFC_Accolade_Power": {
   "full_name": "Temporary_Powers.Accolades.SFC_Accolade_Power",
@@ -247,7 +268,8 @@
   "tier": "badge_only",
   "effects": {},
   "tables": {},
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": ""
  },
  "Stolen_Immobilizer_Ray": {
   "full_name": "Temporary_Powers.Accolades.Stolen_Immobilizer_Ray",
@@ -256,12 +278,13 @@
   "tier": "badge_only",
   "effects": {},
   "tables": {},
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": ""
  },
  "Super_Patriot": {
   "full_name": "Temporary_Powers.Accolades.Super_Patriot",
   "display": "Super Patriot",
-  "description": "",
+  "description": "As a Super Patriot, you have been granted a permanent increase to your Max Endurance by 5%.",
   "tier": "passive",
   "effects": {
    "Endurance": 5.0
@@ -269,12 +292,13 @@
   "tables": {
    "Endurance": "Melee_Ones"
   },
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": "game (clientmessages-en.bin)"
  },
  "Task_Force_Commander": {
   "full_name": "Temporary_Powers.Accolades.Task_Force_Commander",
   "display": "Task Force Commander",
-  "description": "",
+  "description": "As a Task Force Commander, you have been granted a permanent increase to your Max Hit Points by 5%.",
   "tier": "passive",
   "effects": {
    "HitPoints": 0.5
@@ -282,12 +306,13 @@
   "tables": {
    "HitPoints": "Melee_HealSelf"
   },
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": "game (clientmessages-en.bin)"
  },
  "The_Atlas_Medallion": {
   "full_name": "Temporary_Powers.Accolades.The_Atlas_Medallion",
   "display": "The Atlas Medallion",
-  "description": "",
+  "description": "Earning The Atlas Medallion has granted you a permanent increase of +5 to your Max Endurance.",
   "tier": "passive",
   "effects": {
    "Endurance": 5.0
@@ -295,7 +320,8 @@
   "tables": {
    "Endurance": "Melee_Ones"
   },
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": "game (clientmessages-en.bin)"
  },
  "Toy_Bat": {
   "full_name": "Temporary_Powers.Accolades.Toy_Bat",
@@ -304,7 +330,8 @@
   "tier": "badge_only",
   "effects": {},
   "tables": {},
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": ""
  },
  "Vanguard_Medal": {
   "full_name": "Temporary_Powers.Accolades.Vanguard_Medal",
@@ -313,6 +340,7 @@
   "tier": "badge_only",
   "effects": {},
   "tables": {},
-  "source": "client bins via out_extra_623 export 2026-07-16"
+  "source": "client bins via out_extra_623 export 2026-07-16",
+  "description_source": ""
  }
 }
