@@ -37,7 +37,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "unaffected",
     "canonical_score": 1779.8
    }
@@ -82,7 +82,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "unaffected",
     "canonical_score": 1988.58
    }
@@ -127,7 +127,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "unaffected",
     "canonical_score": 1664.96
    }
@@ -170,7 +170,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "unaffected",
     "canonical_score": 1622.8
    }
@@ -215,7 +215,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "unaffected",
     "canonical_score": 1308.34
    }
@@ -260,12 +260,12 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
-    "verdict": "unaffected",
-    "canonical_score": 803.53
+    "against": "model 33, 2026-07-16",
+    "verdict": "moved",
+    "canonical_score": 859.3
    }
   },
-  "canonical_score": 803.53
+  "canonical_score": 859.3
  },
  "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Super_Strength|itrial": {
   "picks": [
@@ -305,7 +305,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 1232.75
    }
@@ -350,7 +350,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 293.65
    }
@@ -395,7 +395,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 1398.58
    }
@@ -440,7 +440,7 @@
    "primary_converged": true,
    "picks_filled": 2,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 705.08
    }
@@ -485,7 +485,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 1006.14
    }
@@ -530,7 +530,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 1591.68
    }
@@ -575,7 +575,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 1600.93
    }
@@ -620,7 +620,7 @@
    "primary_converged": true,
    "picks_filled": 1,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 1199.77
    }
@@ -665,7 +665,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 1368.29
    }
@@ -710,7 +710,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 1271.8
    }
@@ -755,7 +755,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 1195.04
    }
@@ -800,7 +800,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 1635.78
    }
@@ -845,7 +845,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 1048.12
    }
@@ -890,7 +890,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 1254.64
    }
@@ -935,7 +935,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 1646.64
    }
@@ -980,7 +980,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 1546.29
    }
@@ -1025,7 +1025,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
     "canonical_score": 376.4
    }
@@ -1103,11 +1103,11 @@
     "label": "AFK-certified at +3x8 (sustain 35.2 HP/s: regen 25.1 + Healing_Flames on auto-fire 10.0); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed)."
    },
    "evaluated": {
-    "against": "model 32, 2026-07-15",
+    "against": "model 33, 2026-07-16",
     "verdict": "baseline",
-    "canonical_score": 169.02
+    "canonical_score": 186.89
    }
   },
-  "canonical_score": 169.02
+  "canonical_score": 186.89
  }
 }

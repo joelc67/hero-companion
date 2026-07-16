@@ -56,7 +56,26 @@ def certified_union():
         except Exception:  # noqa: BLE001
             continue
         srcs[os.path.basename(sp)] = len(sd)
-        champs.update(sd)
+        # ⚠ SHARD-SHADOWING GUARD (found 2026-07-16 by the v33 wave): a blind
+        # update() lets a stale root shard OVERWRITE a richer champions.json
+        # entry. The farm_afk champion had already been merged into
+        # champions.json AND carried its canonical_score annotation, but the
+        # leftover champions_shard_farm_p0.json copy (canonical_score: None)
+        # clobbered it — so evaluate_first read old=None and printed BASELINE
+        # for a champion whose canonical had genuinely MOVED 169.0 -> 186.9.
+        # That is the counterfeit-certificate trap wearing a shard's clothes: a
+        # real mover carried forward annotated "verified". The union's PURPOSE
+        # is "a context certified in an unmerged shard is still certified", so
+        # a shard may still ADD contexts and may supersede an entry that has no
+        # canonical baseline — but it must never erase one that does.
+        for k, v in sd.items():
+            prev = champs.get(k)
+            if (prev is not None and prev.get("canonical_score") is not None
+                    and v.get("canonical_score") is None):
+                srcs[f"shadow-blocked:{os.path.basename(sp)}"] = \
+                    srcs.get(f"shadow-blocked:{os.path.basename(sp)}", 0) + 1
+                continue
+            champs[k] = v
     # Contexts PULLED at a gate (ladder-fit 0.12.19) still sit in their
     # original shards — the held file is the record that they are NOT
     # certified and must re-converge. Subtract it.
