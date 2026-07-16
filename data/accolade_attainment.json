@@ -453,8 +453,25 @@
   "source": "wiki-hc"
  },
  "RIWE_Accolade_Power": {
-  "text": "requirements not yet documented from game data",
-  "source": "undocumented"
+  "summary": "Defend against the Rikti invasions — the wiki's index states the Watchman/Watchwoman badge 'Awards the Elusive Mind power'.",
+  "badge_chain": [
+   {
+    "badge": "Bomb Specialist",
+    "tracks": "Defeat 25 unexploded bombs (UXBs) during Rikti World Invasions"
+   },
+   {
+    "badge": "Chief",
+    "tracks": "Defeat 10 Rikti Heavy Assault Suits during Rikti Invasions"
+   },
+   {
+    "badge": "Sentry",
+    "tracks": "Defeat 100 Rikti during Rikti Invasions"
+   }
+  ],
+  "note": "The badge's displayed name varies with body type (Watchman / Watchwoman). It also unlocks Rikti weapon costume options for some powersets.",
+  "wiki_url": "https://homecoming.wiki/wiki/Watchman_Badge",
+  "text": "",
+  "source": "wiki-hc"
  },
  "Scanalyzer": {
   "text": "requirements not yet documented from game data",

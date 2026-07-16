@@ -283,7 +283,8 @@
   "source": "wiki-hc",
   "fetched": "2026-07-16"
  },
- "Elusive_Mind": {
+ "RIWE_Accolade_Power": {
+  "_key_note": "the roster's key for the Elusive Mind power is RIWE_Accolade_Power (Rikti World Invasion Event); keying this 'Elusive_Mind' matched nothing and was silently ignored — caught by the orphan check",
   "wiki_title": "Watchman Badge",
   "wiki_url": "https://homecoming.wiki/wiki/Watchman_Badge",
   "summary": "Defend against the Rikti invasions — the wiki's index states the Watchman/Watchwoman badge 'Awards the Elusive Mind power'.",

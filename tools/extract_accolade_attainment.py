@@ -120,6 +120,17 @@ def main():
         wiki = {k: v for k, v in json.load(open(WIKI, encoding="utf-8")).items()
                 if not k.startswith("_")}
     print(f"wiki-bridged entries on file: {len(wiki)}")
+    # ORPHAN GUARD (2026-07-16): a transcription whose key matches NO roster
+    # entry is silently ignored — the work is done, the file looks right, and
+    # the pop-up still shows the placeholder. That is exactly how I came to tell
+    # Joel "Elusive Mind works" when it did not: I keyed it Elusive_Mind while
+    # the roster calls it RIWE_Accolade_Power. A mismatch must be LOUD.
+    for src_name, src in (("joel", joel), ("wiki", wiki)):
+        orphans = [k for k in src if k not in acc and not k.startswith("_")]
+        if orphans:
+            print(f"HARD FAIL: {len(orphans)} {src_name} entr(ies) match no "
+                  f"roster key and would be silently ignored: {orphans}")
+            sys.exit(1)
 
     out = {}
     n_game = n_joel = n_wiki = n_undoc = 0
