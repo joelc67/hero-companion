@@ -486,6 +486,46 @@ def _md_to_html(text):
 # The client NEVER phones home on its own — every outbound touch is a user click,
 # and all of it goes through the GitHub home configured in client_config.json.
 # ---------------------------------------------------------------------------
+@app.route("/accolades")
+def accolades_roster():
+    """v34 accolade panel — DISPLAY-ONLY scaffold (v33 rides nothing from this).
+
+    Serves data/accolades.json: the roster GAME-FIRST from the client bins
+    (tools/extract_accolades.py), tiered exactly as Joel's scope ruling asks —
+    build-affecting passives first, click-power accolades next, badge-only rows
+    last, each honestly marked. Ordering inside the passive tier is by impact
+    magnitude (computed from the game's own scales, never hand-ranked).
+
+    NOT wired to totals or labels: checking a row changes nothing today. The
+    model half (apply-all preview, per-accolade totals, label statements) is
+    v34 per the one-batch-one-refresh ruling; the farm-preset accolade
+    ASSUMPTION that DOES ship in v33 lives in first_principles, not here.
+    ATTAINMENT text is absent by design: Phase-0 established the client carries
+    what an accolade grants, not how it is earned (no player badges.bin, no
+    requirement chains — that logic is server-side in CoH), so those pop-ups
+    await the wiki as an explicitly labeled guidance-tier last resort.
+    """
+    try:
+        base = getattr(sys, "_MEIPASS", None) or os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "..")
+        with open(os.path.join(base, "data", "accolades.json"),
+                  encoding="utf-8") as f:
+            roster = json.load(f)
+    except Exception:  # noqa: BLE001
+        return jsonify({"ok": False, "rows": []})
+    order = {"passive": 0, "click": 1, "badge_only": 2}
+
+    def impact(v):
+        e = v.get("effects") or {}
+        return (e.get("HitPoints") or 0) * 10 + (e.get("Endurance") or 0) * 0.5
+    rows = [dict(key=k, **v) for k, v in roster.items()]
+    rows.sort(key=lambda v: (order.get(v["tier"], 9), -impact(v),
+                             v["display"]))
+    return jsonify({"ok": True, "rows": rows,
+                    "tiers": {t: sum(1 for r in rows if r["tier"] == t)
+                              for t in order}})
+
+
 @app.route("/meta")
 def meta():
     import first_principles as fp

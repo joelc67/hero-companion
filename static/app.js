@@ -2304,6 +2304,13 @@ function renderPowers() {
     // bricks as one full-width row at the bottom of the powers section.
     html += `<div class="powers-wall">`
       + cards.map(([pw, idx, lv]) => powerCardHtml(pw, idx, iconOf(pw.full_name), lv)).join("")
+      // v34 ACCOLADES PANEL (display-only scaffold) — Joel's placement spec:
+      // it fills the DEAD SPACE after the last power card, in the same row
+      // band, ABOVE the Build Vitals / Set Bonuses / Uniques row, and must not
+      // displace or reflow anything already placed. As the wall's last grid
+      // item it occupies the trailing gap; scroll + search keep its height
+      // bounded to one card band no matter how long the roster gets.
+      + `<div id="accolades-card" class="accolades-card"></div>`
       + `</div>`
       + `<div class="info-course">`
       + `<div id="overview-card" class="overview-card hidden"></div>`
@@ -3633,6 +3640,76 @@ async function recompute() {
   refreshBuildViews();   // keep the always-visible respec-order + tray sections live
 }
 
+// ── Accolades panel (v34 scaffold, DISPLAY-ONLY) ─────────────────────────────
+// Joel's scope ruling: the ENTIRE accolade roster ships (badge-only rows too) —
+// a full goal tracker that happens to price the rows that have prices — with a
+// scrollbar and a search field. Tiering: build-affecting passives on top, click
+// accolades next, badge-only last, each honestly marked.
+// Data-source ruling: roster/effects/descriptions come from the GAME (the
+// client bins via /accolades), never the wiki. Attainment guidance is absent
+// BY DESIGN today — Phase-0 proved the client carries what an accolade grants,
+// not how it is earned; those pop-ups await a labelled guidance-tier source.
+// NOTHING here touches totals: a checkmark is a display-only note in this
+// scaffold. The apply-all preview + real totals/labels are the v34 model half.
+let ACCOLADES_ROWS = null;
+let ACCOLADES_CHECKED = new Set();
+let ACCOLADES_FILTER = "";
+
+async function loadAccolades() {
+  if (ACCOLADES_ROWS) return ACCOLADES_ROWS;
+  const r = await api("/accolades").catch(() => null);
+  ACCOLADES_ROWS = (r && r.ok) ? r.rows : [];
+  return ACCOLADES_ROWS;
+}
+
+function _accRow(a) {
+  const on = ACCOLADES_CHECKED.has(a.key);
+  const note = a.tier === "click" ? `<span class="acc-note">click power — not counted in passive totals</span>`
+    : a.tier === "badge_only" ? `<span class="acc-note">badge only — no build effect</span>` : "";
+  return `<div class="acc-row ${a.tier}" data-acc="${escHtml(a.key)}">
+      <label class="acc-check"><input type="checkbox" ${on ? "checked" : ""}
+        onchange="toggleAccolade('${escHtml(a.key)}')"><span></span></label>
+      <div class="acc-body">
+        <div class="acc-name">${escHtml(a.display)}</div>
+        <div class="acc-desc">${escHtml(a.description || "")}</div>
+        ${note}
+      </div></div>`;
+}
+
+function renderAccolades() {
+  const card = $("accolades-card");
+  if (!card) return;
+  const rows = ACCOLADES_ROWS || [];
+  if (!rows.length || !build.powers.length) { card.classList.add("hidden"); return; }
+  card.classList.remove("hidden");
+  const f = ACCOLADES_FILTER.trim().toLowerCase();
+  const shown = f ? rows.filter(a => (a.display || "").toLowerCase().includes(f)
+                                  || (a.description || "").toLowerCase().includes(f)) : rows;
+  const groups = [["passive", "Affects this build"], ["click", "Click powers"],
+                  ["badge_only", "Badges"]];
+  let body = "";
+  for (const [tier, label] of groups) {
+    const g = shown.filter(a => a.tier === tier);
+    if (!g.length) continue;
+    body += `<div class="acc-group">${label} (${g.length})</div>` + g.map(_accRow).join("");
+  }
+  if (!body) body = `<div class="acc-empty">No accolade matches “${escHtml(ACCOLADES_FILTER)}”.</div>`;
+  card.innerHTML =
+    `<div class="ovc-head">ACCOLADES <span class="acc-count">${ACCOLADES_CHECKED.size}/${rows.length}</span></div>
+     <input id="acc-search" class="acc-search" type="search" placeholder="Search accolades…"
+       value="${escHtml(ACCOLADES_FILTER)}" oninput="accSearch(this.value)">
+     <div class="acc-scroll">${body}</div>
+     <div class="acc-foot">Checking a row is a personal note for now — it does not change the build's numbers yet.</div>`;
+  const inp = $("acc-search");
+  if (inp && ACCOLADES_FILTER) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
+}
+
+function accSearch(v) { ACCOLADES_FILTER = v; renderAccolades(); }
+function toggleAccolade(k) {
+  if (ACCOLADES_CHECKED.has(k)) ACCOLADES_CHECKED.delete(k); else ACCOLADES_CHECKED.add(k);
+  renderAccolades();
+}
+
 // ── Overview bar: the build's vitals in one horizontal line (Sidekick-style) ─
 // Color logic: defense vs the current-meta 35 (green ≥35, amber ≥25), resistance
 // vs the AT cap fraction, recharge green ≥70. Dim = not there yet, never red — the
@@ -3642,6 +3719,7 @@ function _ovCell(label, val, cls) {
 }
 function _ovDef(v) { return v >= 35 ? "ov-good" : v >= 25 ? "ov-mid" : "ov-dim"; }
 function updateOverviewBar(t) {
+  loadAccolades().then(renderAccolades);
   // The vitals live in the OVERVIEW CARD — the gap-filling brick renderPowers
   // docks at the end of the shortest level column.
   const card = $("overview-card");
