@@ -1,0 +1,326 @@
+{
+ "derived_path": "picks=/build/autopick; slotting=_assess_solve(premium)+proc_pass+endurance_relief (evaluate_first canonical chain); NOT /build/solve payload; NOT deep_optimize",
+ "pick_order_note": "the evaluate chain is pick-ORDER sensitive (~8% measured on the certified Rad/Dark Stalker: stored-order 1398.6 vs autopick-order 1509.3, same multiset) \u2014 named watch item, same family as the run-vs-canonical gaps (430/387)",
+ "rows": [
+  {
+   "key": "Class_Tanker|Tanker_Defense.Bio_Organic_Armor|Tanker_Melee.Super_Strength|itrial",
+   "stratum": "adjacent",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 1598.0,
+   "derived_canonical": 491.1,
+   "ratio": 0.3073,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Sentinel|Sentinel_Ranged.Archery|Sentinel_Defense.Willpower|itrial",
+   "stratum": "adjacent",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 1520.5,
+   "derived_canonical": 110.9,
+   "ratio": 0.073,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Controller|Controller_Control.Arsenal_Control|Controller_Buff.Poison|itrial",
+   "stratum": "adjacent",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 1429.7,
+   "derived_canonical": 1111.9,
+   "ratio": 0.7777,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Kinetics|itrial",
+   "stratum": "adjacent",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 355.4,
+   "derived_canonical": 113.2,
+   "ratio": 0.3186,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Fiery_Aura|itrial",
+   "stratum": "adjacent",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 1255.6,
+   "derived_canonical": 336.2,
+   "ratio": 0.2678,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Tanker|Tanker_Defense.Energy_Aura|Tanker_Melee.Super_Strength|itrial",
+   "stratum": "adjacent",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 1368.5,
+   "derived_canonical": 288.2,
+   "ratio": 0.2106,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Invulnerability|itrial",
+   "stratum": "adjacent",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 1248.1,
+   "derived_canonical": 645.4,
+   "ratio": 0.5171,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Titan_Weapons|itrial",
+   "stratum": "adjacent",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 1769.3,
+   "derived_canonical": 744.1,
+   "ratio": 0.4206,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Brute|Brute_Melee.Savage_Melee|Brute_Defense.Regeneration|itrial",
+   "stratum": "distant",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 866.9,
+   "derived_canonical": 132.8,
+   "ratio": 0.1531,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Defender|Defender_Buff.Storm_Summoning|Defender_Ranged.Dark_Blast|itrial",
+   "stratum": "distant",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 1374.8,
+   "derived_canonical": 836.1,
+   "ratio": 0.6082,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Dominator|Dominator_Control.Gravity_Control|Dominator_Assault.Sonic_Assault|itrial",
+   "stratum": "distant",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 743.7,
+   "derived_canonical": 165.8,
+   "ratio": 0.223,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Sentinel|Sentinel_Ranged.Psychic_Blast|Sentinel_Defense.Bio_Organic_Armor|itrial",
+   "stratum": "distant",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 1661.9,
+   "derived_canonical": 231.0,
+   "ratio": 0.139,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Scrapper|Scrapper_Melee.Dark_Melee|Scrapper_Defense.Stone_Armor|itrial",
+   "stratum": "distant",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 1504.1,
+   "derived_canonical": 459.1,
+   "ratio": 0.3052,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Sentinel|Sentinel_Ranged.Radiation_Blast|Sentinel_Defense.Dark_Armor|itrial",
+   "stratum": "distant",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 1688.8,
+   "derived_canonical": 473.1,
+   "ratio": 0.2801,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Dominator|Dominator_Control.Symphony_Control|Dominator_Assault.Psionic_Assault|itrial",
+   "stratum": "distant",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 542.4,
+   "derived_canonical": 159.6,
+   "ratio": 0.2942,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Seismic_Blast|itrial",
+   "stratum": "distant",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 1061.3,
+   "derived_canonical": 421.8,
+   "ratio": 0.3975,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Dark_Miasma|itrial",
+   "stratum": "thin",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 783.0,
+   "derived_canonical": 519.2,
+   "ratio": 0.6631,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Blaster|Blaster_Ranged.Dark_Blast|Blaster_Support.Plant_Manipulation|itrial",
+   "stratum": "thin",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 972.1,
+   "derived_canonical": 221.8,
+   "ratio": 0.2281,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Blaster|Blaster_Ranged.Radiation_Blast|Blaster_Support.Radiation_Manipulation|itrial",
+   "stratum": "thin",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 596.5,
+   "derived_canonical": 168.1,
+   "ratio": 0.2819,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Controller|Controller_Control.Fire_Control|Controller_Buff.Force_Field|itrial",
+   "stratum": "thin",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 2019.7,
+   "derived_canonical": 1345.8,
+   "ratio": 0.6663,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Blaster|Blaster_Ranged.Fire_Blast|Blaster_Support.Tactical_Arrow|itrial",
+   "stratum": "thin",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 338.4,
+   "derived_canonical": 145.9,
+   "ratio": 0.431,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Blaster|Blaster_Ranged.Assault_Rifle|Blaster_Support.Ice_Manipulation|itrial",
+   "stratum": "thin",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 444.7,
+   "derived_canonical": 142.8,
+   "ratio": 0.3211,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Radiation_Emission|team",
+   "stratum": "content",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 1402.3,
+   "derived_canonical": 1201.9,
+   "ratio": 0.8571,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|general",
+   "stratum": "content",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 437.1,
+   "derived_canonical": 274.3,
+   "ratio": 0.6275,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|general",
+   "stratum": "content",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 606.9,
+   "derived_canonical": 423.9,
+   "ratio": 0.6986,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Dark_Armor|general",
+   "stratum": "content",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 759.0,
+   "derived_canonical": 400.3,
+   "ratio": 0.5274,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|general",
+   "stratum": "content",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 506.5,
+   "derived_canonical": 140.4,
+   "ratio": 0.2771,
+   "battery_errors": []
+  },
+  {
+   "key": "Class_Sentinel|Sentinel_Ranged.Fire_Blast|Sentinel_Defense.Willpower|av",
+   "stratum": "content",
+   "status": "OK",
+   "converged": true,
+   "gt_canonical": 244.1,
+   "derived_canonical": 68.5,
+   "ratio": 0.2807,
+   "battery_errors": []
+  }
+ ],
+ "verdict": {
+  "sample": 28,
+  "evaluated": 28,
+  "converged_gt": 28,
+  "meeting_ratio": 0,
+  "share_meeting": 0.0,
+  "min": 0.073,
+  "p10": 0.1531,
+  "median": 0.313,
+  "battery_failures": [],
+  "bar": {
+   "derived_over_converged_min_ratio": 0.97,
+   "sample_share_meeting_ratio": 0.9,
+   "battery_failures_allowed": 0,
+   "note": "pre-registered before the first ground-truth solve; worst case (min, p10, median) reported regardless of pass/fail"
+  },
+  "pass": false,
+  "by_stratum": {
+   "adjacent": {
+    "n": 8,
+    "min": 0.073,
+    "median": 0.313
+   },
+   "distant": {
+    "n": 8,
+    "min": 0.139,
+    "median": 0.2872
+   },
+   "thin": {
+    "n": 6,
+    "min": 0.2281,
+    "median": 0.376
+   },
+   "content": {
+    "n": 6,
+    "min": 0.2771,
+    "median": 0.5775
+   }
+  }
+ }
+}
