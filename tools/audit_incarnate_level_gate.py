@@ -1,22 +1,24 @@
-"""PIN for the incarnate level-50 gate (Joel's game rule, 2026-07-17): incarnate
-abilities exist only on a level-50 character, so the leveling walk keeps them
-OFF (flag forced false, toggle disabled) until level_reached hits 50.
+"""PIN for the endgame-eligibility WARN-BUT-ALLOW gate (Joel's ruling
+2026-07-17, choice doctrine): Epic/Ancillary powers unlock at level 35 (Patron
+pools also need their Patron arc), incarnates at level 50. The 1-50 leveling
+walk PREVIEWS the finished build, so we DON'T block — the player may toggle
+incarnates on / keep epic picks, and we WARN that these aren't available at
+their level yet. The "Build a new level-50 character" path never warns.
 
-Client-side UI logic (the toggle + the include_incarnates flag live in app.js),
-so these are source-level assertions — the same shape as the card-strip pins.
-The engine already applies incarnates ONLY when include_incarnates is true; this
-rule is that the client never sends true below 50.
+Client-side UI logic (the toggle + warning live in app.js), so these are
+source-level assertions — the same shape as the card-strip pins.
 
 Run:  py tools\\audit_incarnate_level_gate.py
 """
 import os
-import re
 import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APP = os.path.join(ROOT, "static", "app.js")
+IDX = os.path.join(ROOT, "static", "index.html")
 app = open(APP, encoding="utf-8").read()
+idx = open(IDX, encoding="utf-8").read()
 checks = 0
 fails = 0
 
@@ -29,43 +31,48 @@ def ok(cond, msg):
         fails += 1
 
 
-# the gate predicate exists and keys on level_reached >= 50
+# the unlock predicate keys on level_reached >= 50 (used for messaging)
 gate = app.split("function incarnatesUnlocked(")[1].split("}")[0] \
     if "function incarnatesUnlocked(" in app else ""
 ok(bool(gate) and "level_reached" in gate and ">= 50" in gate,
    "incarnatesUnlocked() gates on level_reached >= 50")
 
-# applyIncarnateGate forces the flag off and disables the toggle when locked
-ag = app.split("function applyIncarnateGate(")[1].split("\nfunction ")[0] \
-    if "function applyIncarnateGate(" in app else ""
-ok("build.include_incarnates = false" in ag,
-   "applyIncarnateGate() forces include_incarnates off below 50")
-ok("cb.disabled = !unlocked" in ag,
-   "applyIncarnateGate() disables the peak toggle when locked")
+# WARN-BUT-ALLOW: the warnings function covers both gated classes with the
+# right level thresholds and the Patron-arc caveat
+w = app.split("function endgameWarnings(")[1].split("\nfunction ")[0] \
+    if "function endgameWarnings(" in app else ""
+ok(bool(w), "endgameWarnings() exists")
+ok("isLevelingBuild()" in w,
+   "warnings only fire on the 1-50 leveling walk (a fresh level-50 never warns)")
+ok("include_incarnates" in w and "lv < 50" in w,
+   "incarnate warning fires when previewing incarnates below level 50")
+ok('"Epic."' in w and "lv < 35" in w,
+   "epic warning fires when an Epic power is in the plan below level 35")
+ok("Patron" in w,
+   "the epic warning names the Patron-arc requirement (not just the level)")
 
-# recompute() enforces the gate BEFORE building the totals payload
+# it must ALLOW, not block: the toggle handler no longer refuses/disables
+h_anchor = '$("incarnate-peak-toggle").addEventListener'
+h = app.split(h_anchor)[1].split("});")[0] if h_anchor in app else ""
+ok("!incarnatesUnlocked()" not in h and "e.target.checked = false" not in h,
+   "the peak-toggle handler ALLOWS the preview below 50 (no refusal/force-off)")
+ok("cb.disabled" not in app,
+   "the peak toggle is never disabled (warn, don't block)")
+
+# the warning is rendered from recompute() and on level change, into a banner
 rec = app.split("async function recompute(")[1].split("\nasync function ")[0]
-ok("applyIncarnateGate()" in rec,
-   "recompute() applies the gate before totals (so a locked build never "
-   "sends include_incarnates=true)")
-
-# the toggle handler refuses to enable it below 50
-anchor = '$("incarnate-peak-toggle").addEventListener'
-h = app.split(anchor)[1].split("});")[0] if anchor in app else ""
-ok("!incarnatesUnlocked()" in h,
-   "the peak-toggle handler refuses to fold incarnates in below 50")
-
-# level change re-applies the gate (crossing 50 unlocks, dropping re-locks)
+ok("renderEndgameWarnings()" in rec,
+   "recompute() renders the endgame warnings")
 setlvl = app.split("window.setCurrentLevel")[1].split("};")[0] \
     if "window.setCurrentLevel" in app else ""
-ok("applyIncarnateGate()" in setlvl,
-   "setCurrentLevel() re-applies the gate when the tracked level changes")
+ok("renderEndgameWarnings()" in setlvl,
+   "setCurrentLevel() refreshes the warning when the tracked level changes")
+ok('id="endgame-warn"' in idx,
+   "the warning banner container exists in index.html")
 
-# both provenance footers state the lock honestly, not the preview prompt
-ok(app.count("incarnates: unlock at level 50") >= 1,
-   "Build Vitals provenance line says 'unlock at level 50' when locked")
-ok(app.count("incarnates unlock at level 50, so these numbers are without them") >= 1,
-   "the per-card footer states the lock honestly when below 50")
+# honest labeling: the provenance line marks an active sub-50 preview
+ok("endgame preview (unlock at 50)" in app,
+   "the provenance line marks incarnates as an endgame preview when previewed below 50")
 
 print(f"\n{checks} checks, {fails} failed")
 sys.exit(1 if fails else 0)

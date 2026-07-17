@@ -635,46 +635,47 @@ const SYNC_DRIFT_LEVELS = 5;   // gap that triggers a "let's re-sync" nudge
 
 function isLevelingBuild() { return build._mode === "new"; }
 
-// GAME RULE (Joel, 2026-07-17): incarnate abilities exist ONLY on a level-50
-// character — they cannot be slotted until the character is 50 AND has earned
-// them (and incarnate powers are only earnable at 50+, so level 50 is the gate
-// that also covers "attained" for the leveling walk). The leveling path
-// (build._mode "new") therefore keeps incarnates OFF — not folded into totals,
-// toggle disabled — until level_reached hits 50. The "Build a new level-50
-// character" path sets level_reached=50, so it's an endgame plan where
-// incarnates are available as usual.
+// GAME RULE (Joel, 2026-07-17): endgame content unlocks by level — Epic /
+// Ancillary powers at level 35 (Patron pools ALSO require completing their
+// Patron arc), incarnate abilities at level 50. The 1-50 leveling walk PREVIEWS
+// the finished build, so — per Joel's ruling + the choice doctrine ("advise,
+// don't override") — we DON'T block: the player may toggle incarnates on and
+// keep epic picks in the plan, and we WARN that these aren't available at their
+// current level yet. The "Build a new level-50 character" path (level_reached
+// = 50) is an endgame plan, so nothing warns there.
 function incarnatesUnlocked() {
   return (build.level_reached || (isLevelingBuild() ? 1 : 50)) >= 50;
 }
 
-// Enforce the gate wherever it can be reached: force the flag off below 50 and
-// reflect the lock in the toggle + the endgame selectors. Idempotent; called
-// from recompute() and whenever the tracked level changes.
-function applyIncarnateGate() {
-  const unlocked = incarnatesUnlocked();
-  if (!unlocked && build.include_incarnates) build.include_incarnates = false;
-  const cb = $("incarnate-peak-toggle");
-  if (cb) {
-    cb.disabled = !unlocked;
-    if (!unlocked) cb.checked = false;
-    const wrap = cb.closest(".incarnate-toggle");
-    if (wrap) {
-      wrap.classList.toggle("locked", !unlocked);
-      wrap.title = unlocked
-        ? "Fold incarnate buffs (Destiny/Hybrid, e.g. Barrier) into the totals to match Mids' fully-buffed display."
-        : "Incarnates unlock at level 50 — this character isn't 50 yet, so they can't be slotted.";
-      // rewrite the label's text node (after the checkbox) without touching the input
-      [...wrap.childNodes].forEach(n => {
-        if (n.nodeType === 3 && n.textContent.trim()) {
-          n.textContent = " " + (unlocked
-            ? "Include incarnates (peak)"
-            : "Incarnates — unlock at level 50");
-        }
-      });
-    }
+// The warnings shown when a leveling character previews content it hasn't
+// unlocked. Empty unless we're in the 1-50 walk AND actually previewing gated
+// content — so a fresh level-50 build never warns.
+function endgameWarnings() {
+  const out = [];
+  if (!isLevelingBuild()) return out;
+  const lv = build.level_reached || 1;
+  if (build.include_incarnates && lv < 50) {
+    out.push(`⚠️ Incarnate abilities unlock at level 50. These peak totals are an `
+      + `endgame preview — your level-${lv} character doesn't have them yet.`);
   }
-  const sec = $("incarnate-selectors");
-  if (sec) sec.classList.toggle("locked-50", !unlocked);
+  const hasEpic = (build.powers || []).some(p => (p.full_name || "").startsWith("Epic."));
+  if (hasEpic && lv < 35) {
+    out.push(`⚠️ Epic / Ancillary powers unlock at level 35 (Patron pools also `
+      + `require completing their Patron arc). They're in your plan as a preview `
+      + `— not available at level ${lv} yet.`);
+  }
+  return out;
+}
+
+// Paint the warnings into the banner beneath the totals toggles. Called from
+// recompute() and on any level change; hidden entirely when there's nothing
+// to warn about.
+function renderEndgameWarnings() {
+  const el = $("endgame-warn");
+  if (!el) return;
+  const w = endgameWarnings();
+  el.classList.toggle("hidden", !w.length);
+  el.innerHTML = w.map(m => `<div class="warn-row">${escHtml(m)}</div>`).join("");
 }
 
 // Nearest walk-step index for a given game level (first step at/after it, else the last).
@@ -724,10 +725,9 @@ window.setCurrentLevel = function (val) {
   const n = Math.max(1, Math.min(50, parseInt(val, 10) || 0));
   if (!n) return;
   build.level_reached = n;
-  applyIncarnateGate();   // crossing 50 unlocks incarnates; dropping below re-locks
+  renderEndgameWarnings();   // the warning depends on the tracked level
   if (LEVELING_STEPS && LEVELING_STEPS.length) { LEVEL_STEP_I = _stepIndexForLevel(n); }
   renderLevelStep();
-  if (n >= 50) recompute();   // at 50, re-fold nothing changes; below, keep incarnates out
   autoSaveTick();   // persist the new level immediately so Continue shows ⏳ L{n}/50
 };
 
@@ -1575,8 +1575,8 @@ async function init() {
   $("pc-preview-btn").addEventListener("click", () => previewPowerColors());
   $("pc-download-btn").addEventListener("click", downloadPowerCust);
   $("incarnate-peak-toggle").addEventListener("change", (e) => {
-    // game rule: no incarnates below level 50 — refuse the toggle and re-lock
-    if (!incarnatesUnlocked()) { e.target.checked = false; build.include_incarnates = false; applyIncarnateGate(); return; }
+    // warn-but-allow (Joel's choice-doctrine ruling): the player may preview
+    // incarnates below 50; recompute() surfaces the endgame warning if so.
     build.include_incarnates = e.target.checked;
     recompute();
   });
@@ -3670,7 +3670,7 @@ function closeModal() { $("modal").classList.add("hidden"); activeSlot = null; }
 // Stats + validation
 // ---------------------------------------------------------------------------
 async function recompute() {
-  applyIncarnateGate();   // game rule: force incarnates off below level 50 before totals
+  renderEndgameWarnings();   // warn if a leveling character previews epic/incarnate content
   const hasPowers = build.powers.length > 0;
   const ob = $("opt-btn");   // AI refine — hidden entirely when the AI seam is off
   if (ob) ob.style.display = (hasPowers && AI_ON) ? "block" : "none";
@@ -4069,14 +4069,18 @@ function provenanceLineHtml(t) {
     ? `<span class="prov-in">✓ accolades: ${n} applied${accHp ? ` (+${accHp} HP)` : ""}</span>`
     : `<span class="prov-off">accolades: none ticked</span>`);
 
-  // Incarnates: excluded from passive totals unless the peak toggle is on —
-  // and unavailable at all below level 50 (game rule).
+  // Incarnates: excluded from passive totals unless the peak toggle is on. When
+  // a leveling character previews them below 50, say so honestly (endgame
+  // preview) rather than implying they're already available.
   const incOn = !!(build && build.include_incarnates);
+  const incPreview = incOn && !incarnatesUnlocked();
   parts.push(incOn
-    ? `<span class="prov-in">✓ incarnates: peak values folded in</span>`
+    ? (incPreview
+        ? `<span class="prov-off">incarnates: peak values folded in — endgame preview (unlock at 50)</span>`
+        : `<span class="prov-in">✓ incarnates: peak values folded in</span>`)
     : (incarnatesUnlocked()
         ? `<span class="prov-off">incarnates: off — tick “Include incarnates (peak)” to preview</span>`
-        : `<span class="prov-off">incarnates: unlock at level 50</span>`));
+        : `<span class="prov-off">incarnates: off — unlock at level 50</span>`));
 
   // Amplifiers: their own toggle since the split (item 3).
   if (build && build.include_amplifiers)

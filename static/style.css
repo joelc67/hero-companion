@@ -275,11 +275,13 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .totals-burst.active { opacity: 1; background: rgba(224, 99, 90, 0.15); }
 .incarnate-toggle { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 10px; font-size: 12px; color: var(--muted); cursor: pointer; }
 .incarnate-toggle input { width: auto; margin: 0; }
-/* game rule: incarnates unlock at level 50 — the leveling walk shows the toggle
-   locked (not applicable) rather than hiding it, so the rule is visible */
-.incarnate-toggle.locked { opacity: 0.5; cursor: not-allowed; font-style: italic; }
-.incarnate-toggle.locked input { cursor: not-allowed; }
-#incarnate-selectors.locked-50 { opacity: 0.45; pointer-events: none; }
+/* warn-but-allow (Joel's ruling): a leveling character can preview endgame
+   content (epics <35, incarnates <50) — we warn, never block */
+.endgame-warn { margin: 4px 0 10px; display: flex; flex-direction: column; gap: 4px; }
+.endgame-warn .warn-row { font-size: 11px; line-height: 1.4; padding: 6px 8px;
+  border-radius: 5px; color: var(--warn, #b26a00);
+  background: color-mix(in srgb, var(--warn, #b26a00) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--warn, #b26a00) 35%, transparent); }
 .mini { font-size: 11px; padding: 2px 6px; width: auto; }
 .remove-power { background: transparent; color: var(--bad); width: auto; padding: 2px 6px; font-size: 12px; }
 .add-power select { margin-top: 6px; }
