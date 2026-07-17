@@ -542,6 +542,20 @@ def accolade_flat(rec, mod_tables, col):
     return flat_hp, flat_end
 
 
+def accolade_signature(rec):
+    """The game-effect identity of an accolade — its effect scales and modifier
+    tables (AT-independent, so it determines the flat value on every AT). Joel's
+    ruling 2026-07-17: accolades that grant the SAME effect are the SAME accolade
+    under different names (the hero/villain twins — Portal Jockey ≡ Born in
+    Battle ≡ Labyrinth Conqueror, all +HP0.5/+End5.0; Task Force Commander ≡
+    Invader; …). "No matter what the name of the accolade chosen, the effects
+    should be the same" → identical signature = apply ONCE."""
+    eff = rec.get("effects") or {}
+    tabs = rec.get("tables") or {}
+    return tuple(sorted((k, round(float(v), 4), tabs.get(k, ""))
+                        for k, v in eff.items()))
+
+
 def _amplifier_buffs(build, totals):
     """The 3 inspiration amplifiers, when include_amplifiers is set (off by
     default). Split from accolades per Joel's v34 ruling; `include_external`
@@ -568,18 +582,32 @@ def _accolade_buffs(build, totals, ctx):
     col = ctx.get("at_column")
     base_hp = ctx.get("at_base_hp")
     ledger = totals.setdefault("_accolade_ledger", [])
+    # Joel's ruling: a same-effect accolade applies ONCE regardless of how many
+    # of its names are checked (the hero/villain twins are one accolade). Dedup
+    # by game-effect signature; the FIRST checked name in a group wins, later
+    # duplicates are recorded as folded-in (so the panel can say "same as X")
+    # but never add their value a second time.
+    applied_sigs = {}
     for key in checked:
         rec = tbl.get(key)
         if not rec:
             continue
         flat_hp, flat_end = accolade_flat(rec, mod_tables, col)
+        if not (flat_hp or flat_end):
+            continue
+        sig = accolade_signature(rec)
+        if sig in applied_sigs:
+            ledger.append({"key": key, "display": rec.get("display", key),
+                           "hp": 0.0, "end": 0.0, "duplicate_of":
+                           applied_sigs[sig]})
+            continue
+        applied_sigs[sig] = rec.get("display", key)
         if flat_hp and base_hp:
             totals["max_hp"] += flat_hp / base_hp
         if flat_end:
             totals["max_end"] = totals.get("max_end", 0.0) + flat_end
-        if flat_hp or flat_end:
-            ledger.append({"key": key, "display": rec.get("display", key),
-                           "hp": round(flat_hp, 1), "end": round(flat_end, 1)})
+        ledger.append({"key": key, "display": rec.get("display", key),
+                       "hp": round(flat_hp, 1), "end": round(flat_end, 1)})
 
 
 def _external_buffs(build, totals, ctx=None):

@@ -75,5 +75,30 @@ ok(abs(g(amp.get("max_hp")) - g(base.get("max_hp"))) < 1e-9,
    "amplifiers ON, accolades OFF -> MaxHP unchanged (split proven; the old "
    "bundle would have added +10% here)")
 
+# 5) Joel's ruling (2026-07-17): a same-EFFECT accolade applies ONCE no matter
+#    how many of its names are checked (hero/villain twins are one accolade) —
+#    NEGATIVE CONTROL: Portal Jockey + Born In Battle are +HP0.5/+End5.0 twins.
+one = engine.calculate_build({"archetype": at, "powers": [],
+                              "accolades": ["Portal_Jockey"]},
+                             srv.SET_BONUSES, ctx=ctx)
+twin = engine.calculate_build({"archetype": at, "powers": [],
+                               "accolades": ["Portal_Jockey", "Born_In_Battle"]},
+                              srv.SET_BONUSES, ctx=ctx)
+ok(abs(g(one.get("max_hp")) - g(twin.get("max_hp"))) < 1e-9
+   and abs((one.get("max_end_bonus") or 0) - (twin.get("max_end_bonus") or 0)) < 1e-9,
+   "same-effect twins (Portal Jockey + Born In Battle) apply ONCE — the "
+   "second name adds nothing (no double-count)")
+duprec = [x for x in twin.get("accolade_ledger", []) if x.get("duplicate_of")]
+ok(len(duprec) == 1 and duprec[0]["hp"] == 0.0,
+   "the deduped twin is recorded in the ledger as a 0-value duplicate (honest, "
+   "not hidden)")
+# distinct accolades STILL stack (the 4 standard are all distinct signatures)
+four = engine.calculate_build({"archetype": at, "powers": [],
+                               "accolades": list(fp.FARM_ASSUMED_ACCOLADES)},
+                              srv.SET_BONUSES, ctx=ctx)
+ok(g(four.get("max_hp")) > g(one.get("max_hp")) + 1e-6,
+   "distinct accolades still STACK — dedup only collapses identical effects, "
+   "never real ones")
+
 print(f"\n{checks} checks, {fails} failed")
 sys.exit(1 if fails else 0)
