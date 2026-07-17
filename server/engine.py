@@ -577,31 +577,34 @@ def _accolade_buffs(build, totals, ctx):
     checked = build.get("accolades") or []
     if not checked:
         return
+    align = (build.get("alignment") or "hero").lower()
     tbl = _accolade_table()
     mod_tables = ctx.get("modifier_tables") or {}
     col = ctx.get("at_column")
     base_hp = ctx.get("at_base_hp")
     ledger = totals.setdefault("_accolade_ledger", [])
-    # Joel's ruling: a same-effect accolade applies ONCE regardless of how many
-    # of its names are checked (the hero/villain twins are one accolade). Dedup
-    # by game-effect signature; the FIRST checked name in a group wins, later
-    # duplicates are recorded as folded-in (so the panel can say "same as X")
-    # but never add their value a second time.
-    applied_sigs = {}
+    # GAME-FIRST ALIGNMENT GATE (Joel's ruling + "check the game", 2026-07-17):
+    # each accolade record carries an activate_requires alignment gate — hero-
+    # only, villain-only, or none. A character is one alignment, so a hero never
+    # gets a villain accolade's effect and vice versa. THAT is the game's own
+    # reason only one of a hero/villain twin ever applies (Portal Jockey vs Born
+    # In Battle). No-gate accolades (Labyrinth Conqueror, Mazebreaker) apply to
+    # either alignment, and every alignment-COMPATIBLE accolade STACKS — they are
+    # different accolades, so there is no dedup: two distinct bonuses both count.
     for key in checked:
         rec = tbl.get(key)
         if not rec:
             continue
+        acc_align = rec.get("alignment")
+        if acc_align and acc_align != align:
+            # the game leaves an off-alignment accolade dormant — record it as
+            # inactive (0 value) so the panel can say why, never add its value.
+            ledger.append({"key": key, "display": rec.get("display", key),
+                           "hp": 0.0, "end": 0.0, "inactive_alignment": acc_align})
+            continue
         flat_hp, flat_end = accolade_flat(rec, mod_tables, col)
         if not (flat_hp or flat_end):
             continue
-        sig = accolade_signature(rec)
-        if sig in applied_sigs:
-            ledger.append({"key": key, "display": rec.get("display", key),
-                           "hp": 0.0, "end": 0.0, "duplicate_of":
-                           applied_sigs[sig]})
-            continue
-        applied_sigs[sig] = rec.get("display", key)
         if flat_hp and base_hp:
             totals["max_hp"] += flat_hp / base_hp
         if flat_end:

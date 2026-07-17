@@ -19,11 +19,14 @@
   requirements aren't documented from game data yet. New level-50 builds
   assume the four standard accolades and say so right on the build — untick
   any you don't have and the totals follow. Nothing is ever applied without
-  you choosing it. And the same bonus never counts twice: many accolades are
-  the same reward under a hero and a villain name (Portal Jockey and Born In
-  Battle, Task Force Commander and Invader, …), so choosing one greys out its
-  twin — a character earns one of them, not both — while every real, distinct
-  accolade still stacks normally.
+  you choosing it. And it follows the game's own rule: every accolade is
+  hero-side, villain-side, or neither, read straight from the game data — and
+  your character is one alignment, so the other side's accolades are greyed
+  out as unavailable, exactly as in game (Portal Jockey and Born In Battle are
+  the same bonus, one hero, one villain). Switch sides with the alignment
+  button and the panel flips and re-assumes that side's standard set. The
+  accolades that aren't side-locked stack normally, and so does every distinct
+  bonus.
 - **The numbers now say what's in them.** A line above Build Vitals states
   exactly which assumptions are folded in (accolades applied, incarnates on
   or off), and named contribution lines appear beneath the stats they touch

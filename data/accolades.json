@@ -2,6 +2,7 @@
  "Born_In_Battle": {
   "full_name": "Temporary_Powers.Accolades.Born_In_Battle",
   "display": "Born In Battle",
+  "alignment": "villain",
   "description": "You've proved yourself as Born in Battle, adding 5% to both your Endurance and Hit Point totals.",
   "description_source": "game (power record display_help)",
   "short": "+Max HP, +Max END",
@@ -19,6 +20,7 @@
  "Challenge_VanguardDummy_Pet": {
   "full_name": "Temporary_Powers.Accolades.Challenge_VanguardDummy_Pet",
   "display": "Legacy: Vanguard MDC",
+  "alignment": null,
   "description": "This power exists to unlock the Vanguard MDC under the Combat Dummy power category.",
   "description_source": "game (power record display_help)",
   "short": "Unlock",
@@ -30,6 +32,7 @@
  "Crey_CBX-9_Pistol": {
   "full_name": "Temporary_Powers.Accolades.Crey_CBX-9_Pistol",
   "display": "Crey CBX-9 Pistol",
+  "alignment": null,
   "description": "The Crey CBX-9 Pistol Immobilizes your target in an icy trap. Deals some damage over time and slightly Slows the target's attack and movement speed even if they break free from the Immobilization. It can also cause flying targets to be grounded. The Crey Cryo Pistol is extremely accurate, but it can only fire once every 10 minutes.<br><br><color #fcfc95>Notes:<br>Crey CBX-9 Pistol is unaffected by Recharge Time changes.</color><br><br><color #fcfc95>Damage: Light.</color><br><color #fcfc95>Recharge: Very Long.</color>",
   "description_source": "game (power record display_help)",
   "short": "Ranged, Moderate DoT(Cold), Foe Immobilize, -SPD, -Recharge, -Fly",
@@ -41,6 +44,7 @@
  "Demonic_Aura": {
   "full_name": "Temporary_Powers.Accolades.Demonic_Aura",
   "display": "Demonic Aura",
+  "alignment": null,
   "description": "The spirit of a demon resides within you. Bringing it to the surface of your mind can make you highly resistant to all types of damage for a short time. You mustn't let the demon inside you out for too long, however, or it just may cost you your mortal soul.<br><br><color #fcfc95>Notes:<br>Demonic Aura is unaffected by Recharge Time changes.</color><br><br><color #fcfc95>Recharge: Very Long.</color>",
   "description_source": "game (power record display_help)",
   "short": "Self, +Res(All but Psionics), +DEF(All but Psionics)",
@@ -52,6 +56,7 @@
  "Eye_of_the_Magus": {
   "full_name": "Temporary_Powers.Accolades.Eye_of_the_Magus",
   "display": "Eye of the Magus",
+  "alignment": null,
   "description": "When you activate the Eye of the Magus, you are granted a very high bonus to Defense and Damage Resistance for one minute.<br><br><color #fcfc95>Notes:<br>Eye of the Magus is unaffected by Recharge Time changes.</color><br><br><color #fcfc95>Recharge: Very Long.</color>",
   "description_source": "game (power record display_help)",
   "short": "Self, +Res(All but Psionics), +DEF(All but Psionics)",
@@ -63,6 +68,7 @@
  "Force_of_Nature": {
   "full_name": "Temporary_Powers.Accolades.Force_of_Nature",
   "display": "Force of Nature",
+  "alignment": null,
   "description": "You have shown yourself as a true Force of Nature, and been bestowed with the fury of the elements. Like most supernatural gifts, the Force of Nature is both a blessing and a curse. By using it you can greatly increase your recharge speed, Endurance recovery, and Accuracy for 1 minute. However, your Defense will be severely reduced.<br><br><color #fcfc95>Notes:<br>Force of Nature is unaffected by Recharge Time changes.</color><br><br><color #fcfc95>Recharge: Very Long.</color>",
   "description_source": "game (power record display_help)",
   "short": "Self +Recovery, +ACC, +Recharge, -DEF",
@@ -78,6 +84,7 @@
  "Freedom_Phalanx_Reserve": {
   "full_name": "Temporary_Powers.Accolades.Freedom_Phalanx_Reserve",
   "display": "Freedom Phalanx Reserve",
+  "alignment": "hero",
   "description": "Earning Membership into the Freedom Phalanx Reserve has granted you a permanent increase to your Max Hit Points by 10%.",
   "description_source": "game (power record display_help)",
   "short": "+Max HP",
@@ -93,6 +100,7 @@
  "Geas_of_the_Kind_Ones": {
   "full_name": "Temporary_Powers.Accolades.Geas_of_the_Kind_Ones",
   "display": "Geas of the Kind Ones",
+  "alignment": null,
   "description": "You have uncovered the secrets of Croatoa and have been awarded the Geas of the Kind Ones. Like most supernatural gifts, the Geas is both a blessing and a curse. By using it you can greatly increase your recharge speed, Endurance recovery, and Accuracy for 1 minute. However, your Defense will be severely reduced.<br><br><color #fcfc95>Notes:<br>Geas of the Kind Ones is unaffected by Recharge Time changes.</color><br><br><color #fcfc95>Recharge: Very Long.</color>",
   "description_source": "game (power record display_help)",
   "short": "Self +Recovery, +ACC, +Recharge, -DEF",
@@ -108,6 +116,7 @@
  "High_Pain_Threshold": {
   "full_name": "Temporary_Powers.Accolades.High_Pain_Threshold",
   "display": "High Pain Threshold",
+  "alignment": "villain",
   "description": "You've got an incredibly High Pain Threshold, an after effect of which is that your Hit Points are 10%",
   "description_source": "game (power record display_help)",
   "short": "+Max HP",
@@ -123,6 +132,7 @@
  "Invader": {
   "full_name": "Temporary_Powers.Accolades.Invader",
   "display": "Invader",
+  "alignment": "villain",
   "description": "As a Task Force Commander, you have been granted a permanent increase to your Max Hit Points by 5%.",
   "description_source": "game (power record display_help)",
   "short": "+Max HP",
@@ -138,6 +148,7 @@
  "Iron_Man": {
   "full_name": "Temporary_Powers.Accolades.Iron_Man",
   "display": "Iron Man",
+  "alignment": "villain",
   "description": "You are a true Iron Man. You persistence and stamina have resulted in your Max Hit Points and Max Endurance increasing by 10%.",
   "description_source": "game (power record display_help)",
   "short": "+Max HP, +Max END",
@@ -155,6 +166,7 @@
  "Labyrinth_Conqueror": {
   "full_name": "Temporary_Powers.Accolades.Labyrinth_Conqueror",
   "display": "Conqueror of the Labyrinth",
+  "alignment": null,
   "description": "You've mastered the experience of fighting in the strange dream-like corridors of the maze, and as a result have gained increased Hitpoints and Endurance while adventuring within the fog!<br><br><color Yellow>Can only be used while in the Labyrinth of Fog zone.</color><br><br><color BurlyWood>Moving through the Fog takes practice, such as learning to assert your mind's calm when the tendrils of malevolence begin to bore into one's thoughts.</color>",
   "description_source": "game (power record display_help)",
   "short": "+Max HP, +Max END",
@@ -172,6 +184,7 @@
  "Long_Range_Teleport": {
   "full_name": "Temporary_Powers.Accolades.Long_Range_Teleport",
   "display": "Long Range Teleporter",
+  "alignment": null,
   "description": "The Long Range Teleporter allows you to teleport very long distances, even across city zones and to Supergroup bases. Collecting any Exploration badge in a zone will unlock it as a destination for your Long Range Teleporter.<br><br><color #fcfc95>Notes: Long Range Teleporter is unaffected by Recharge Time changes.</color><br><br><color #fcfc95>Recharge: Very Long.</color>",
   "description_source": "game (power record display_help)",
   "short": "Teleport to Zone or Base",
@@ -183,6 +196,7 @@
  "MarkRecall": {
   "full_name": "Temporary_Powers.Accolades.MarkRecall",
   "display": "Mark and Recall",
+  "alignment": null,
   "description": "Activating this power will bind a Recall Marker to your current location, which will then be marked on your map with an icon.<br><br>When this power is deactivated, you will be teleported and returned to the location of your Recall Marker.<br><br><color #fcfc95>Notes:<br>Mark and Recall is unaffected by Recharge Time changes. Cannot be activated on Incarnate Trials or in certain mission maps.</color><br><br><color #fcfc95>Recharge: Very Long.</color>",
   "description_source": "game (power record display_help)",
   "short": "Special: Set Teleport",
@@ -194,6 +208,7 @@
  "Marshall": {
   "full_name": "Temporary_Powers.Accolades.Marshall",
   "display": "Marshal",
+  "alignment": "villain",
   "description": "You've been awarded the title of Marshal for your service to Arachnos. This has given you a 5% increase to Endurance.",
   "description_source": "game (power record display_help)",
   "short": "+Max END",
@@ -209,6 +224,7 @@
  "Mazebreaker": {
   "full_name": "Temporary_Powers.Accolades.Mazebreaker",
   "display": "Mazebreaker",
+  "alignment": null,
   "description": "You've been tested time and time again and emerged triumphant, and as a result have gained increased Endurance while adventuring within the fog!<br><br><color Yellow>Can only be used while in the Labyrinth of Fog zone.</color><br><br><color BurlyWood>The Four were mighty, but their strongest trait was their care for the armies that served under them. Individually instructing every warrior in their service, the Generals were loved and revered by all in the Goddess' service.</color>",
   "description_source": "game (power record display_help)",
   "short": "+Max END",
@@ -224,6 +240,7 @@
  "Megalomaniac": {
   "full_name": "Temporary_Powers.Accolades.Megalomaniac",
   "display": "Megalomaniac",
+  "alignment": null,
   "description": "You've wanted more control and now you have it. Activating this power increases the power of all of your Sleeps, Holds, Immobilize, and Confuse for 60 seconds.<br><br><color #fcfc95>Notes:<br>Megalomaniac is unaffected by Recharge Time changes.</color><br><br><color #fcfc95>Recharge: Very Long.</color>",
   "description_source": "game (power record display_help)",
   "short": "Self +Special",
@@ -235,6 +252,7 @@
  "Portable_Workbench": {
   "full_name": "Temporary_Powers.Accolades.Portable_Workbench",
   "display": "Portable Workbench",
+  "alignment": null,
   "description": "You can use this power to summon a Portable Workbench, which will allow anyone nearby to craft recipes. The Portable Workbench lasts 5 minutes when summoned and can be summoned every 5 minutes. You may not summon the Portable Workbench in PvP enabled areas.",
   "description_source": "game (power record display_help)",
   "short": "Summon Portable Workbench",
@@ -246,6 +264,7 @@
  "Portal_Jockey": {
   "full_name": "Temporary_Powers.Accolades.Portal_Jockey",
   "display": "Portal Jockey",
+  "alignment": "hero",
   "description": "As a Portal Jockey, you have been granted a permanent increase to your Max Hit Points and Max Endurance by 5%.",
   "description_source": "game (power record display_help)",
   "short": "+Max HP, +Max END",
@@ -263,6 +282,7 @@
  "RIWE_Accolade_Power": {
   "full_name": "Temporary_Powers.Accolades.RIWE_Accolade_Power",
   "display": "Elusive Mind",
+  "alignment": null,
   "description": "You have gained the ability to deflect and protect yourself from mental invasions of all sorts. By focusing your mind using this technique, you gain strong defense against Psionic attacks and are moderately resistant to Psionic damage while this power is active. It lasts for 60 seconds per use.<br><br><color #fcfc95>Notes:<br>Elusive Mind is unaffected by Recharge Time changes.</color><br><br><color #fcfc95>Recharge: Very Long.</color>",
   "description_source": "game (power record display_help)",
   "short": "Moderate Psionic Resistance",
@@ -274,6 +294,7 @@
  "Scanalyzer": {
   "full_name": "Temporary_Powers.Accolades.Scanalyzer",
   "display": "Orb Weaver R-Scanalyzer",
+  "alignment": null,
   "description": "The Orb Weaver R-Modulator enables you to gain significant insight into the abilities, strengths and weakness of your foes. It will not function on PVP targets.<br><br>Arachnos surveillance aparatus are very high-tech, and can be used indefinitely without the need for regular maintenance.<br><br><color #fcfc95>Recharge: Moderate.</color>",
   "description_source": "game (power record display_help)",
   "short": "Special",
@@ -285,6 +306,7 @@
  "SFC_Accolade_Power": {
   "full_name": "Temporary_Powers.Accolades.SFC_Accolade_Power",
   "display": "Sheer Willpower",
+  "alignment": null,
   "description": "Whether through spiteful rebellion or heroic perseverence, you push on despite the odds.<br><br>Frees you from many Sleep, Hold, Immobilization, Disorient, Fear, Confuse and KnockBack effects and boosts your resistance to Repel, Taunt and Placate effects for 30 seconds. This power can be used even while under such effects.",
   "description_source": "game (power record display_help)",
   "short": "Resist Effects",
@@ -296,6 +318,7 @@
  "Stolen_Immobilizer_Ray": {
   "full_name": "Temporary_Powers.Accolades.Stolen_Immobilizer_Ray",
   "display": "Stolen Immobilizer Ray",
+  "alignment": null,
   "description": "In your crime spree you have acquired an Immobilizer Ray. You're not sure where it came from, but it sure is useful for stopping foes in their tracks. It can even cause flying targets to be grounded!<br><br><color #fcfc95>Notes:<br>Stolen Immobilizer Ray is unaffected by Recharge Time changes.</color><br><br><color #fcfc95>Damage: Light.</color><br><color #fcfc95>Recharge: Very Long.</color>",
   "description_source": "game (power record display_help)",
   "short": "Ranged, Moderate DoT(Energy), Foe Immobilize, -SPD, -Recharge, -Fly",
@@ -307,6 +330,7 @@
  "Super_Patriot": {
   "full_name": "Temporary_Powers.Accolades.Super_Patriot",
   "display": "Super Patriot",
+  "alignment": "hero",
   "description": "As a Super Patriot, you have been granted a permanent increase to your Max Endurance by 5%.",
   "description_source": "game (power record display_help)",
   "short": "+Max END",
@@ -322,6 +346,7 @@
  "Task_Force_Commander": {
   "full_name": "Temporary_Powers.Accolades.Task_Force_Commander",
   "display": "Task Force Commander",
+  "alignment": "hero",
   "description": "As a Task Force Commander, you have been granted a permanent increase to your Max Hit Points by 5%.",
   "description_source": "game (power record display_help)",
   "short": "+Max HP",
@@ -337,6 +362,7 @@
  "The_Atlas_Medallion": {
   "full_name": "Temporary_Powers.Accolades.The_Atlas_Medallion",
   "display": "The Atlas Medallion",
+  "alignment": "hero",
   "description": "Earning The Atlas Medallion has granted you a permanent increase of +5 to your Max Endurance.",
   "description_source": "game (power record display_help)",
   "short": "+Max END",
@@ -352,6 +378,7 @@
  "Toy_Bat": {
   "full_name": "Temporary_Powers.Accolades.Toy_Bat",
   "display": "Excalibonk",
+  "alignment": null,
   "description": "This Rikti Monkey 'chew toy' was one of the many prototypes that the Rikti attempted to fabricate so that their Honoree could wield it to lead them to victory against the Earth.<br><br>Due to all of the prototypes being failures they were instead repurposed.<br><br><color #fcfc95>Notes:<br>Cannot be used in Pocket D.</color><br><br><color #fcfc95>Damage: Minor Minor.</color><br><color #fcfc95>Recharge: Very Fast.</color>",
   "description_source": "game (power record display_help)",
   "short": "Minor Minor DMG(Special)",
@@ -363,6 +390,7 @@
  "Vanguard_Medal": {
   "full_name": "Temporary_Powers.Accolades.Vanguard_Medal",
   "display": "Vanguard Medal",
+  "alignment": null,
   "description": "When activated, your Vanguard Medal will increase the duration of all your Disorient, Hold, Immobilize, Fear, Confuse and Sleep powers for a short time. Knockback distance is also increased. The effect of this boost will last for 1 minute.<br><br><color #fcfc95>Notes:<br>Vanguard Medal is unaffected by Recharge Time changes.</color><br><br><color #fcfc95>Recharge: Very Long.</color>",
   "description_source": "game (power record display_help)",
   "short": "Self +Special",

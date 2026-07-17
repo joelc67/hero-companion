@@ -77,6 +77,16 @@ def effect_line(eff):
     return ", ".join(bits)
 
 
+def _alignment(req):
+    """hero / villain / None from a record's activate_requires expression."""
+    s = (req or "").lower()
+    if "villain" in s:
+        return "villain"
+    if "hero" in s:
+        return "hero"
+    return None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
@@ -122,6 +132,14 @@ def main():
         out[name] = {
             "full_name": fn,
             "display": r.get("display_name") or name.replace("_", " "),
+            # GAME-FIRST alignment gate (Joel: "check the game", 2026-07-17): the
+            # record's activate_requires ("type char> hero eq" / "villain eq")
+            # says a character only gets this accolade's effect while that
+            # alignment. This is the GAME's own reason only ONE of a hero/villain
+            # twin ever applies (Portal Jockey = hero, Born In Battle = villain —
+            # a character is one or the other), and why the NO-gate accolades
+            # (Labyrinth Conqueror, Mazebreaker) legally STACK. None = no gate.
+            "alignment": _alignment(r.get("activate_requires")),
             # the GAME's own sentence, straight off the record (display_help
             # is the field the exporter emits, already message-resolved)
             "description": (r.get("display_help") or "").strip(),

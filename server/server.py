@@ -555,25 +555,25 @@ def accolades_roster():
     # community reference build carries. Never a second list.
     import first_principles as _fp
     import engine as _engine
-    standard = set(_fp.FARM_ASSUMED_ACCOLADES)
+    # The canonical standard set = the four hero accolades every endgame build
+    # assumes (FARM_ASSUMED, explicit names) + their DIRECT villain equivalents
+    # (the villain-aligned accolade sharing each standard's effect signature —
+    # exactly one per signature, so unambiguous). The no-gate extras (Labyrinth
+    # Conqueror, Mazebreaker) and the odd Super Patriot are NOT standard; they
+    # remain optional stacking choices. The client preselects the four matching
+    # the character's alignment.
+    hero_std = set(_fp.FARM_ASSUMED_ACCOLADES)
+    std_sigs = {_engine.accolade_signature(roster[k]) for k in hero_std
+                if k in roster}
 
-    def mutex_group(v):
-        """Joel's grey-out ruling (2026-07-17): accolades that grant the SAME
-        effect are the same accolade under different names (hero/villain twins)
-        — checking one greys out the others. The group id is the game-effect
-        signature; rows with no build effect (clicks/badge-only) don't group
-        and get an empty id (never greyed). ⚠ Conservative default = same-effect
-        is mutex; if any of these are LEGAL to stack in game (Labyrinth
-        Conqueror / Mazebreaker?), un-group them here once game-verified — a
-        one-line data change, never a guess."""
-        if not (v.get("effects") or {}):
-            return ""
-        return "|".join(f"{k}:{n}:{t}" for k, n, t in
-                        _engine.accolade_signature(v))
+    def is_standard(k, v):
+        if k in hero_std:
+            return True
+        return (v.get("alignment") == "villain"
+                and _engine.accolade_signature(v) in std_sigs)
 
     rows = [dict(key=k, effect_short=effect_short(v),
-                 standard_assumed=(k in standard),
-                 mutex_group=mutex_group(v),
+                 standard_assumed=is_standard(k, v),
                  attain=(attain.get(k) or {}).get("text", ""),
                  attain_source=(attain.get(k) or {}).get("source", ""),
                  attain_summary=(attain.get(k) or {}).get("summary", ""),

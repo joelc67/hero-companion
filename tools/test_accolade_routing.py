@@ -75,51 +75,61 @@ ok(abs(g(amp.get("max_hp")) - g(base.get("max_hp"))) < 1e-9,
    "amplifiers ON, accolades OFF -> MaxHP unchanged (split proven; the old "
    "bundle would have added +10% here)")
 
-# 5) Joel's ruling (2026-07-17): a same-EFFECT accolade applies ONCE no matter
-#    how many of its names are checked (hero/villain twins are one accolade) —
-#    NEGATIVE CONTROL: Portal Jockey + Born In Battle are +HP0.5/+End5.0 twins.
-one = engine.calculate_build({"archetype": at, "powers": [],
-                              "accolades": ["Portal_Jockey"]},
-                             srv.SET_BONUSES, ctx=ctx)
-twin = engine.calculate_build({"archetype": at, "powers": [],
-                               "accolades": ["Portal_Jockey", "Born_In_Battle"]},
-                              srv.SET_BONUSES, ctx=ctx)
-ok(abs(g(one.get("max_hp")) - g(twin.get("max_hp"))) < 1e-9
-   and abs((one.get("max_end_bonus") or 0) - (twin.get("max_end_bonus") or 0)) < 1e-9,
-   "same-effect twins (Portal Jockey + Born In Battle) apply ONCE — the "
-   "second name adds nothing (no double-count)")
-duprec = [x for x in twin.get("accolade_ledger", []) if x.get("duplicate_of")]
-ok(len(duprec) == 1 and duprec[0]["hp"] == 0.0,
-   "the deduped twin is recorded in the ledger as a 0-value duplicate (honest, "
-   "not hidden)")
-# distinct accolades STILL stack (the 4 standard are all distinct signatures)
-four = engine.calculate_build({"archetype": at, "powers": [],
-                               "accolades": list(fp.FARM_ASSUMED_ACCOLADES)},
-                              srv.SET_BONUSES, ctx=ctx)
-ok(g(four.get("max_hp")) > g(one.get("max_hp")) + 1e-6,
-   "distinct accolades still STACK — dedup only collapses identical effects, "
-   "never real ones")
+# 5) GAME-FIRST ALIGNMENT GATE (Joel's "check the game", 2026-07-17): an accolade
+#    applies only when its alignment matches the character. The hero/villain twins
+#    never both apply because a character is ONE alignment — that is the game's own
+#    reason, not a dedup. No-gate accolades STACK.
+hero_pj = engine.calculate_build(
+    {"archetype": at, "powers": [], "alignment": "hero",
+     "accolades": ["Portal_Jockey"]}, srv.SET_BONUSES, ctx=ctx)
+hero_both = engine.calculate_build(
+    {"archetype": at, "powers": [], "alignment": "hero",
+     "accolades": ["Portal_Jockey", "Born_In_Battle"]}, srv.SET_BONUSES, ctx=ctx)
+ok(abs(g(hero_pj.get("max_hp")) - g(hero_both.get("max_hp"))) < 1e-9,
+   "hero build: adding the VILLAIN twin (Born In Battle) changes nothing — the "
+   "game leaves it dormant")
+vil_bb = engine.calculate_build(
+    {"archetype": at, "powers": [], "alignment": "villain",
+     "accolades": ["Born_In_Battle"]}, srv.SET_BONUSES, ctx=ctx)
+ok(abs(g(vil_bb.get("max_hp")) - g(hero_pj.get("max_hp"))) < 1e-9,
+   "villain build: Born In Battle grants the SAME bonus its hero twin Portal "
+   "Jockey does (same effect, opposite side)")
+vil_pj = engine.calculate_build(
+    {"archetype": at, "powers": [], "alignment": "villain",
+     "accolades": ["Portal_Jockey"]}, srv.SET_BONUSES, ctx=ctx)
+ok(abs(g(vil_pj.get("max_hp")) - g(base.get("max_hp"))) < 1e-9,
+   "villain build: a HERO accolade (Portal Jockey) is INACTIVE — no effect")
+# no-gate accolades legally STACK (the case the effect-signature version broke)
+hero_stack = engine.calculate_build(
+    {"archetype": at, "powers": [], "alignment": "hero",
+     "accolades": ["Portal_Jockey", "Labyrinth_Conqueror"]}, srv.SET_BONUSES, ctx=ctx)
+ok(g(hero_stack.get("max_hp")) > g(hero_pj.get("max_hp")) + 1e-6,
+   "no-gate Labyrinth Conqueror STACKS on Portal Jockey (both apply — legal to "
+   "double up, never greyed)")
+# distinct same-alignment accolades still stack (the 4 hero standard)
+four = engine.calculate_build(
+    {"archetype": at, "powers": [], "alignment": "hero",
+     "accolades": list(fp.FARM_ASSUMED_ACCOLADES)}, srv.SET_BONUSES, ctx=ctx)
+ok(g(four.get("max_hp")) > g(hero_pj.get("max_hp")) + 1e-6,
+   "the four hero standard accolades all STACK")
 
-# 6) grey-out grouping (Joel's ruling): same-effect twins share a mutex group,
-#    distinct bonuses don't, and no-effect rows never group.
+# 6) alignment gate read from the game data; server marks the standard set +
+#    villain equivalents; the panel greys the off-alignment side.
 tbl = engine._accolade_table()
-sig = engine.accolade_signature
-ok(sig(tbl["Portal_Jockey"]) == sig(tbl["Born_In_Battle"])
-   == sig(tbl["Labyrinth_Conqueror"]),
-   "Portal Jockey / Born in Battle / Labyrinth Conqueror share a mutex group")
-ok(sig(tbl["Task_Force_Commander"]) == sig(tbl["Invader"]),
-   "Task Force Commander / Invader share a mutex group (the corrected pairing)")
-ok(sig(tbl["Portal_Jockey"]) != sig(tbl["Freedom_Phalanx_Reserve"]),
-   "distinct-bonus accolades are in DIFFERENT groups (never greyed together)")
-ok(sig(tbl["Eye_of_the_Magus"]) == (),
-   "a no-passive-effect accolade has an empty signature (never greyed)")
+ok(tbl["Portal_Jockey"].get("alignment") == "hero"
+   and tbl["Born_In_Battle"].get("alignment") == "villain"
+   and not tbl["Labyrinth_Conqueror"].get("alignment"),
+   "alignment gates read from the game data (hero / villain / none)")
 srv_src = open(os.path.join(ROOT, "server", "server.py"), encoding="utf-8").read()
-ok("mutex_group=mutex_group(v)" in srv_src,
-   "/accolades sends a mutex_group per row (server side of the grey-out)")
+ok("standard_assumed=is_standard(k, v)" in srv_src
+   and 'v.get("alignment") == "villain"' in srv_src,
+   "/accolades marks the hero standard AND their villain equivalents")
 app_src = open(os.path.join(ROOT, "static", "app.js"), encoding="utf-8").read()
-ok("_accGreyedBy(" in app_src and "disabled" in
+ok("_accInactiveAlign(" in app_src and "disabled" in
    app_src.split("function _accRow(")[1].split("\nfunction ")[0],
-   "the panel greys + disables a same-group sibling once one is checked")
+   "the panel greys + disables an off-alignment accolade")
+ok("alignment: charAlignment()" in app_src,
+   "the calculate payload sends the character's alignment (gates the totals)")
 
 print(f"\n{checks} checks, {fails} failed")
 sys.exit(1 if fails else 0)
