@@ -40,6 +40,28 @@
   feature forever; accolade checkmarks no longer leak between characters;
   and every build entry point (new character, optimize, respec) applies the
   standard-accolade preselect consistently.
+- **Every power card now shows what reaches its own numbers.** Open a power's
+  ⓘ and, where a global buff actually multiplies into that power's damage (an
+  Alpha like Musculature, a Hybrid, both together), a named line states the
+  amount folded in — and where the game's damage cap holds it below the raw
+  buff, the card says the effective value, not the raw one. Every card also
+  carries an honest footer: build-wide bonuses such as accolades don't change
+  a single power's numbers, so they're pointed to Build Vitals rather than
+  faked onto the card. Untick the incarnate preview and the line and the
+  numbers drop together. All of it is read from the engine's own ledger —
+  when several incarnates stack, each is named, never lumped under one.
+- **Incarnates and Epics are treated by their real unlock rules.** While
+  you're leveling a character, the tool now warns when you preview endgame
+  content you haven't earned yet: incarnate abilities unlock at level 50, and
+  Epic / Ancillary powers at level 35 (Patron pools also need their Patron
+  arc completed). Nothing is blocked — you can still preview your finished
+  build — but a plain note tells you these aren't available at your current
+  level, and the totals say "endgame preview" instead of implying you have
+  them. A level-50 build never sees the warning.
+- **Iron Man's accolade tells you how to earn it, sourced from the game.**
+  It's the one-million-damage badge (shown as Adamant, Iron Man, or Ironwoman
+  depending on your alignment and body type); the pop-up now states that,
+  confirmed against the game's own text.
 
 ## Companion Lite 0.1.17 — 2026-07-15
 
