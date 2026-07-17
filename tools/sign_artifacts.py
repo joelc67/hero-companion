@@ -82,12 +82,20 @@ def check_prereqs():
     return (not missing), missing, (sign if sign else None)
 
 
+# Our local-build auth path is Joel's `az login` (signing-runbook.md). Pin the
+# credential to azure-cli so the tool doesn't default through DefaultAzureCredential
+# and die on ManagedIdentity (which only exists on Azure VMs). Overridable for CI
+# (e.g. workload-identity) via AZURE_CREDENTIAL_TYPE.
+CRED_TYPE = os.environ.get("AZURE_CREDENTIAL_TYPE", "azure-cli")
+
+
 def sign_file(sign_tool, path):
     """Sign one file with the Trusted Signing client. Returns True on success."""
     cmd = [sign_tool, "code", "trusted-signing",
            "--trusted-signing-account", ACCOUNT,
            "--trusted-signing-certificate-profile", PROFILE,
            "--trusted-signing-endpoint", ENDPOINT,
+           "--azure-credential-type", CRED_TYPE,
            path]
     print(f"  signing {os.path.relpath(path, ROOT)} …", flush=True)
     r = subprocess.run(cmd)
@@ -95,19 +103,18 @@ def sign_file(sign_tool, path):
 
 
 def verify_file(path):
-    """signtool verify /pa — confirm the Authenticode signature chains to a
-    trusted root. signtool ships with the Windows SDK; skip (warn) if absent."""
-    st = _which("signtool")
-    if not st:
-        print(f"  (signtool not on PATH — skipped verify of "
-              f"{os.path.basename(path)}; install the Windows SDK to verify)")
-        return True
-    r = subprocess.run([st, "verify", "/pa", "/v", path],
+    """Confirm the Authenticode signature is Valid and read the signer subject.
+    Uses PowerShell's Get-AuthenticodeSignature — always present on Windows, no
+    Windows SDK / signtool needed."""
+    ps = ("$s = Get-AuthenticodeSignature -LiteralPath '%s'; "
+          "\"$($s.Status)|$($s.SignerCertificate.Subject)\"" % path)
+    r = subprocess.run(["powershell", "-NoProfile", "-Command", ps],
                        capture_output=True, text=True)
-    ok = r.returncode == 0
-    print(f"  verify {os.path.basename(path)}: {'OK' if ok else 'FAILED'}")
-    if not ok:
-        print("   ", (r.stdout or r.stderr).strip().splitlines()[-1:])
+    out = (r.stdout or "").strip()
+    status, _, subject = out.partition("|")
+    ok = status == "Valid"
+    print(f"  verify {os.path.basename(path)}: {status or 'UNKNOWN'}"
+          + (f"  [{subject.split(',')[0]}]" if subject else ""))
     return ok
 
 
