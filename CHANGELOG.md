@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## Unreleased
+## 0.12.21 — 2026-07-17
 
 - **The AFK fire-farm champion's label was corrected upward — publicly owed,
   now delivered.** The game's June 23 patch made Temperature Protection's
