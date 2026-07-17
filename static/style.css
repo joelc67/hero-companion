@@ -1406,3 +1406,9 @@ body { overflow: hidden; }
 /* v34 deliverable 4: attributed lines — a named source under the stat it feeds */
 .attr-row { font-size: 10px; color: var(--muted); padding-left: 10px; }
 .attr-row span:last-child { color: var(--accent); }
+/* v34 item 5 (Joel's 7/17 ruling): per-power-card provenance — the card-scope
+   attribution line under a card's own numbers, and the honest footer that
+   points build-level globals at Build Vitals instead of faking a share here */
+.pi-attr { font-size: 10.5px; color: var(--accent); margin: 2px 0 6px; padding-left: 2px; }
+.pi-prov { margin-top: 8px; padding-top: 5px; border-top: 1px solid var(--border);
+  font-size: 10px; line-height: 1.45; font-style: italic; }

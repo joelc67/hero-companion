@@ -2815,12 +2815,14 @@ async function renderPowerInfo() {
        <button class="iconbtn pi-close" onclick="closePowerInfo()" title="close">✕</button></h2>`
     + (rows.length ? `<table>${rows.map(([k, v]) =>
         `<tr><td>${k}</td><td>${escHtml(String(v))}</td></tr>`).join("")}</table>` : "")
+    + cardAttributionHtml(atk)
     + (cats.length ? `<div class="muted small">Allowed enhancements</div>
        <div class="pi-tags">${cats.map(c => `<span class="pi-tag">${escHtml(c)}</span>`).join("")}</div>` : "")
     + setHtml
     + (commons ? `<div class="muted small">plus ${commons} common/special piece${commons > 1 ? "s" : ""} (no set)</div>` : "")
     + (atk ? `<p class="pi-note">Damage numbers include slotted proc contributions and your
-       global recharge — they update with every change.</p>` : "");
+       global recharge — they update with every change.</p>` : "")
+    + cardProvenanceFooterHtml();
   panel.classList.remove("hidden");
   document.querySelector("main").classList.add("has-info");
 }
@@ -3933,15 +3935,69 @@ function attributionRowsHtml(statName, t) {
        <span>${r.label}</span><span>${escHtml(r.val)}</span></div>`).join("");
 }
 
-// The DPS block's named contributions (the Musculature case).
-function dpsAttributionHtml(t) {
+// The named source of the engine's global +damage% regime — ONE truth shared
+// by the Build Vitals DPS block and the per-power ⓘ card (v34 item 5: the
+// same attribution must read identically everywhere it appears, and both
+// venues read totals.damage_buff, the engine's own ledger, never a client
+// recompute).
+function globalDamageAttr(t) {
   const dmg = (t && t.damage_buff) || 0;
-  if (!dmg) return "";
+  if (!dmg) return null;
   const inc = (build && build.incarnates) || {};
   const alpha = inc.Alpha && (inc.Alpha.display_name || "");
   const src = alpha ? `Alpha (${escHtml(alpha)})` : "Incarnate";
+  return { src, pct: (dmg * 100).toFixed(1) };
+}
+
+// The DPS block's named contributions (the Musculature case).
+function dpsAttributionHtml(t) {
+  const a = globalDamageAttr(t);
+  if (!a) return "";
   return `<div class="o-row attr-row" title="A global +damage% the engine applies to every attack — this is the line that used to be invisible.">
-      <span>↳ ${src}</span><span>+${(dmg * 100).toFixed(1)}% damage</span></div>`;
+      <span>↳ ${a.src}</span><span>+${a.pct}% damage</span></div>`;
+}
+
+// ── Per-power-card provenance — v34 item 5 (Joel's ruling 2026-07-17 + the
+// 5:35 AM amendment's three laws). Two truthful layers, nothing invented:
+//   1. CARD-SCOPE attribution: a named line appears under a card's numbers
+//      ONLY when a global regime provably multiplies into THIS power's own
+//      numbers — today the engine's +damage% regime (Alpha/incarnate damage).
+//      Law 1 (READ, NEVER RE-ADD): it reads the engine's per-attack ledger
+//      (atk.global_dmg_raw / global_dmg_eff), never a client recompute.
+//      Law 3 (GAME BOUNDARIES): it shows the EFFECTIVE value the engine
+//      applied after the game's damage cap, and says so when raw ≠ effective.
+//      Build-level globals that never touch this power's own numbers
+//      (accolade +MaxHP/+MaxEnd class) are NEVER faked into a per-card share
+//      (law 2) — they get the footer instead.
+//   2. The FOOTER: every ⓘ card states, in one honest line, that build-wide
+//      bonuses live in Build Vitals — so no card is silent about what it
+//      does not show. When incarnates are off, it also says these numbers
+//      are WITHOUT them (the not-yet-acquired story, visible).
+function cardAttributionHtml(atk) {
+  if (!atk) return "";
+  const raw = atk.global_dmg_raw || 0;
+  const eff = atk.global_dmg_eff || 0;
+  if (raw <= 0 || eff <= 0) return "";   // no global damage, or capped away here
+  const inc = (build && build.incarnates) || {};
+  const alpha = inc.Alpha && (inc.Alpha.display_name || "");
+  const src = alpha ? `Alpha (${escHtml(alpha)})` : "Incarnate";
+  const rP = (raw * 100).toFixed(1), eP = (eff * 100).toFixed(1);
+  const capped = eff + 1e-6 < raw;       // the game's damage cap bit this power
+  const body = capped
+    ? `↳ ${src} +${rP}% damage — the game's damage cap holds it to +${eP}% on this power`
+    : `↳ ${src} +${eP}% damage — included in these numbers`;
+  return `<div class="pi-attr" title="Read from the engine's own per-attack ledger; the game's damage cap is applied where it bites. Untick the incarnate preview and this line (and the numbers) drop.">${body}</div>`;
+}
+
+function cardProvenanceFooterHtml() {
+  const incOn = !!(build && build.include_incarnates);
+  const accN = (typeof ACCOLADES_CHECKED !== "undefined") ? ACCOLADES_CHECKED.size : 0;
+  const bits = [];
+  bits.push(accN
+    ? `build-wide bonuses (accolades: ${accN} applied) don't change this power's own numbers — they live in Build Vitals`
+    : `build-wide bonuses (accolades, when ticked) don't change this power's own numbers — they live in Build Vitals`);
+  if (!incOn) bits.push(`incarnates are off, so these numbers are without them — the preview toggle is in Build Vitals`);
+  return `<div class="pi-prov muted small">${bits.join(" · ")}</div>`;
 }
 
 // ── "What's in these numbers" — v34 UI deliverable 1 ────────────────────────

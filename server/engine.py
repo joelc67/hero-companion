@@ -837,10 +837,23 @@ def _offense(build, totals, ctx):
                 continue
             for asp, val in _scaled_boosts(slot, ctx):
                 enh[asp] += val
-        dmg_boost = apply_ed_sched(ED_SCHEDULE.get("Damage", 0),
-                                   enh.get("Damage", 0.0), mult_ed) + global_dmg
+        enh_dmg = apply_ed_sched(ED_SCHEDULE.get("Damage", 0),
+                                 enh.get("Damage", 0.0), mult_ed)
+        dmg_boost = enh_dmg + global_dmg
         if dmg_cap is not None:
             dmg_boost = min(dmg_boost, dmg_cap)
+        # v34 item 5, law 3 (GAME BOUNDARIES STATED, NOT SUPERSEDED): the
+        # EFFECTIVE global +damage% THIS attack actually received after the
+        # game's own damage cap — how much the global moved this attack's boost
+        # on top of its enhancement. enh already at/over cap -> global adds 0
+        # here; both under cap -> the full global. The per-power ⓘ attribution
+        # READS this (never the raw build global), so a capped attack states the
+        # truth. Display-only ledger field: `dmg` above is unchanged, so totals
+        # stay byte-identical (law 1 invariance).
+        if global_dmg and dmg_cap is not None:
+            global_dmg_eff = max(0.0, dmg_boost - min(enh_dmg, dmg_cap))
+        else:
+            global_dmg_eff = global_dmg
         rech_boost = apply_ed_sched(ED_SCHEDULE.get("RechargeTime", 0),
                                     enh.get("RechargeTime", 0.0), mult_ed)
         rech_total = rech_boost + global_rech
@@ -874,6 +887,10 @@ def _offense(build, totals, ctx):
             "is_aoe": is_aoe_hit,
             "dpa": round(dmg / cast, 1) if cast > 0 else None,
             "dps_spam": round(dmg / cycle, 1) if cycle > 0 else None,
+            # v34 item 5: the global +damage% ledger for the ⓘ card — raw build
+            # global vs the effective value after this attack's damage cap.
+            "global_dmg_raw": round(global_dmg, 4),
+            "global_dmg_eff": round(global_dmg_eff, 4),
         })
     # v31 PATCH SUMMONERS (Irradiated Ground, the poster case): the summoning
     # power carries NO damage_effects — its whole output lives on the pseudo-
