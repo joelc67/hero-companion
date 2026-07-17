@@ -102,13 +102,15 @@
   "fetched": "2026-07-16"
  },
  "Iron_Man": {
-  "wiki_title": "(no accolade page — 'Ironman' resolves to the Adamant Badge)",
+  "wiki_title": "Adamant / Ironman / Ironwoman Badge",
   "wiki_url": "https://homecoming.wiki/wiki/Adamant_Badge",
-  "summary": "Not documented as an obtainable accolade — needs an in-game check.",
-  "badge_chain": [],
-  "note": "Investigated rather than guessed: 'Iron Man'/'Ironman' on the wiki redirects to the ADAMANT badge, which is a CONSTITUENT of Born in Battle ('Either Adamant / Ironman / Ironwoman or Laughs it Off is required for the Born in Battle accolade'), not an accolade in its own right — the badge simply shows different names by alignment and body type. Neither accolade index lists an 'Iron Man' accolade at all. Our roster carries the power record from the client bins (+10% Max HP, +10 Max End — larger than any documented accolade, which is itself suspicious), so this looks like a legacy or unused record. It sorts FIRST in the panel purely because of that outsized impact. Joel's badge window settles it.",
+  "summary": "Earn the 1,000,000-damage badge. It shows as Adamant on heroes and vigilantes, Iron Man on male or huge villains and rogues, Ironwoman on female villains and rogues.",
+  "badge_chain": [
+   {"badge": "Adamant / Iron Man / Ironwoman", "tracks": "Endure 1,000,000 hit points of damage. Damage taken by pets, falling damage, self-inflicted damage, damage inside Architect Entertainment missions, and damage beyond your current health do not count."}
+  ],
+  "note": "GAME-CORROBORATED 2026-07-16 evening (clientmessages-en.bin): the client carries the badge name 'Iron Man', its flavor text ('You are a true Iron Man…' — the same text as this accolade power's description), and Born in Battle's own requirement string lists Iron Man among its badges — so the badge is real and game-named, superseding the earlier 'not documented' verdict. The same badge also counts toward Born in Battle (villain side). STILL UNVERIFIED: whether earning the badge actually grants the +10% Max HP / +10 Max End power on Homecoming — the wiki's badge page documents no power grant, and +10/+10 would outsize every documented accolade. Joel's in-game check settles it: a character with the badge either shows the HP/End bump or does not.",
   "needs_ingame_check": true,
-  "source": "wiki-hc",
+  "source": "wiki-hc + game (clientmessages corroboration)",
   "fetched": "2026-07-16"
  },
  "MarkRecall": {
