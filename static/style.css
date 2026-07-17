@@ -1375,6 +1375,12 @@ body { overflow: hidden; }
 .acc-note { color: var(--muted); font-size: 9.5px; font-style: italic;
   margin-left: 5px; overflow-wrap: anywhere; }
 .acc-row.badge_only .acc-name { font-weight: 500; color: var(--muted); }
+/* Joel's grey-out: a same-effect twin of an already-checked accolade — a
+   character earns one, not both. Visible (the choice isn't hidden) but not
+   selectable while its equivalent is chosen. */
+.acc-row.greyed { opacity: 0.4; cursor: not-allowed; }
+.acc-row.greyed .acc-check, .acc-row.greyed .acc-body { cursor: not-allowed; }
+.acc-row.greyed:hover { background: none; }
 .acc-empty { grid-column: 1 / -1; color: var(--muted); padding: 6px 2px; }
 
 /* v34 accolade panel — function controls (item 2/3) */

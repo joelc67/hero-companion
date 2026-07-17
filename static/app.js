@@ -3777,20 +3777,42 @@ async function loadAccolades() {
   return [];
 }
 
+// Joel's grey-out ruling (2026-07-17): accolades that grant the SAME game
+// effect are one accolade under different names (the hero/villain twins) — once
+// one is checked, the others are greyed, because a character earns one of them,
+// not both. The group id is server-sent (mutex_group = the game-effect
+// signature); rows with no build effect (clicks/badge-only) carry no group and
+// are never greyed. Returns the checked sibling's display name, or null.
+// (The engine ALSO dedups by signature, so the numbers stay correct even for a
+// loaded save or the preview-all — the grey-out is the visible half of the same
+// rule.)
+function _accGreyedBy(a) {
+  if (!a.mutex_group || ACCOLADES_CHECKED.has(a.key)) return null;
+  for (const o of (ACCOLADES_ROWS || [])) {
+    if (o.key !== a.key && o.mutex_group === a.mutex_group
+        && ACCOLADES_CHECKED.has(o.key)) return o.display;
+  }
+  return null;
+}
+
 function _accRow(a) {
   const on = ACCOLADES_CHECKED.has(a.key);
+  const greyedBy = _accGreyedBy(a);
   const note = a.tier === "click" ? `not in passive totals`
     : a.tier === "badge_only" ? `no build effect` : "";
   // Correction 2's whole point is LEGIBILITY: the checkbox, the name and the
   // effect stay together on one readable line, the name is allowed to wrap
   // rather than be clipped, and nothing overflows sideways.
-  return `<div class="acc-row ${a.tier}" data-acc="${escHtml(a.key)}">
+  const tip = greyedBy
+    ? `Same bonus as ${a.display === greyedBy ? "another accolade" : greyedBy} — a character earns one of these, not both.`
+    : a.display + (a.description ? " — " + a.description : "");
+  return `<div class="acc-row ${a.tier}${greyedBy ? " greyed" : ""}" data-acc="${escHtml(a.key)}">
       <input class="acc-check" type="checkbox" id="accbx-${escHtml(a.key)}" ${on ? "checked" : ""}
-        onchange="toggleAccolade('${escHtml(a.key)}')">
-      <label class="acc-body" for="accbx-${escHtml(a.key)}"
-        title="${escHtml(a.display + (a.description ? " — " + a.description : ""))}">
+        ${greyedBy ? "disabled" : ""} onchange="toggleAccolade('${escHtml(a.key)}')">
+      <label class="acc-body" for="accbx-${escHtml(a.key)}" title="${escHtml(tip)}">
         <span class="acc-name">${escHtml(a.display)}</span>${
-        note ? `<span class="acc-note">${note}</span>`
+        greyedBy ? `<span class="acc-note">same as ${escHtml(greyedBy)}</span>`
+        : note ? `<span class="acc-note">${note}</span>`
              : `<span class="acc-eff">${escHtml(a.effect_short || "")}</span>`}</label>
       <button class="acc-info" onclick="accHowTo('${escHtml(a.key)}')"
         title="How to earn it">ⓘ</button></div>`;

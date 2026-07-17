@@ -554,9 +554,26 @@ def accolades_roster():
     # scoring side already assumes for farm presets and the same four every
     # community reference build carries. Never a second list.
     import first_principles as _fp
+    import engine as _engine
     standard = set(_fp.FARM_ASSUMED_ACCOLADES)
+
+    def mutex_group(v):
+        """Joel's grey-out ruling (2026-07-17): accolades that grant the SAME
+        effect are the same accolade under different names (hero/villain twins)
+        — checking one greys out the others. The group id is the game-effect
+        signature; rows with no build effect (clicks/badge-only) don't group
+        and get an empty id (never greyed). ⚠ Conservative default = same-effect
+        is mutex; if any of these are LEGAL to stack in game (Labyrinth
+        Conqueror / Mazebreaker?), un-group them here once game-verified — a
+        one-line data change, never a guess."""
+        if not (v.get("effects") or {}):
+            return ""
+        return "|".join(f"{k}:{n}:{t}" for k, n, t in
+                        _engine.accolade_signature(v))
+
     rows = [dict(key=k, effect_short=effect_short(v),
                  standard_assumed=(k in standard),
+                 mutex_group=mutex_group(v),
                  attain=(attain.get(k) or {}).get("text", ""),
                  attain_source=(attain.get(k) or {}).get("source", ""),
                  attain_summary=(attain.get(k) or {}).get("summary", ""),

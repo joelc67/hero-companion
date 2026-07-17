@@ -100,5 +100,26 @@ ok(g(four.get("max_hp")) > g(one.get("max_hp")) + 1e-6,
    "distinct accolades still STACK — dedup only collapses identical effects, "
    "never real ones")
 
+# 6) grey-out grouping (Joel's ruling): same-effect twins share a mutex group,
+#    distinct bonuses don't, and no-effect rows never group.
+tbl = engine._accolade_table()
+sig = engine.accolade_signature
+ok(sig(tbl["Portal_Jockey"]) == sig(tbl["Born_In_Battle"])
+   == sig(tbl["Labyrinth_Conqueror"]),
+   "Portal Jockey / Born in Battle / Labyrinth Conqueror share a mutex group")
+ok(sig(tbl["Task_Force_Commander"]) == sig(tbl["Invader"]),
+   "Task Force Commander / Invader share a mutex group (the corrected pairing)")
+ok(sig(tbl["Portal_Jockey"]) != sig(tbl["Freedom_Phalanx_Reserve"]),
+   "distinct-bonus accolades are in DIFFERENT groups (never greyed together)")
+ok(sig(tbl["Eye_of_the_Magus"]) == (),
+   "a no-passive-effect accolade has an empty signature (never greyed)")
+srv_src = open(os.path.join(ROOT, "server", "server.py"), encoding="utf-8").read()
+ok("mutex_group=mutex_group(v)" in srv_src,
+   "/accolades sends a mutex_group per row (server side of the grey-out)")
+app_src = open(os.path.join(ROOT, "static", "app.js"), encoding="utf-8").read()
+ok("_accGreyedBy(" in app_src and "disabled" in
+   app_src.split("function _accRow(")[1].split("\nfunction ")[0],
+   "the panel greys + disables a same-group sibling once one is checked")
+
 print(f"\n{checks} checks, {fails} failed")
 sys.exit(1 if fails else 0)
