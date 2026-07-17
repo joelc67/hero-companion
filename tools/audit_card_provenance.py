@@ -100,6 +100,25 @@ ok(all(a.get("global_dmg_eff", 0) <= a.get("global_dmg_raw", 0) + 1e-9
        for a in on_atk.values()),
    "no card's effective contribution exceeds the single raw global")
 
+# ── NO-GUESS: the +damage% total is attributed to its ACTUAL sources ─────────
+# (the misattribution Joel's directive caught: a summed Alpha+Hybrid buff was
+# labelled "Alpha" alone). The engine now emits damage_buff_sources.
+hyb = next((f for f, fx in (ctx.get("incarnate_fx") or {}).items()
+            if ".Hybrid." in f
+            and any(e.get("effect") == "DamageBuff" for e in fx)), None)
+combo = engine.calculate_build(
+    {"archetype": AT, "powers": copy.deepcopy(ATTACKS),
+     "include_incarnates": True,
+     "incarnates_full": {"Alpha": alpha_full, "Hybrid": hyb}},
+    srv.SET_BONUSES, ctx=ctx)
+srcs = combo.get("damage_buff_sources") or []
+slots = {s["slot"] for s in srcs}
+ok(hyb and {"Alpha", "Hybrid"} <= slots,
+   f"Alpha+Hybrid damage both named in the ledger (slots={sorted(slots)}) — "
+   f"not collapsed to one source")
+ok(abs(sum(s["value"] for s in srcs) - (combo.get("damage_buff") or 0)) < 1e-6,
+   "the named sources' values sum to the build damage_buff (nothing unattributed)")
+
 # ── LAW 3: game boundaries stated, not superseded ───────────────────────────
 # inject a small damage cap so enh+global exceeds it: the engine must report a
 # reduced effective global on the capped attack (the number the card prints).
@@ -129,13 +148,15 @@ ok(all(abs(dmg(acc_atk[n]) - dmg(base_atk[n])) < 1e-6 for n in base_atk),
 # ── static composition + live-flip pins ─────────────────────────────────────
 app = open(os.path.join(ROOT, "static", "app.js"), encoding="utf-8").read()
 rpi = app.split("async function renderPowerInfo()")[1].split("\nfunction ")[0]
-ok("cardAttributionHtml(atk)" in rpi,
+ok("cardAttributionHtml(atk, LAST_TOTALS)" in rpi,
    "renderPowerInfo composes the card-scope attribution line")
 ok("cardProvenanceFooterHtml()" in rpi,
    "renderPowerInfo composes the provenance footer on every ⓘ card")
 card_body = app.split("function cardAttributionHtml(")[1].split("\nfunction ")[0]
 ok("global_dmg_raw" in card_body and "global_dmg_eff" in card_body,
    "the card line reads the engine's per-attack ledger (raw + effective)")
+ok("damageSourceLabel(" in card_body,
+   "the card names sources from the ledger (damageSourceLabel), never a guess")
 ok("damage cap holds it to" in card_body,
    "law 3: the card states the capped value in words when raw != effective")
 rec_body = app.split("async function recompute(")[1].split("\nasync function ")[0]

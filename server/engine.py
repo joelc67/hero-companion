@@ -443,6 +443,7 @@ def _incarnate_totals(build, totals, ctx):
     if not ctx or not build.get("include_incarnates"):
         return
     fx_by_full = ctx.get("incarnate_fx") or {}
+    inc_names = ctx.get("incarnate_names") or {}
     chosen = build.get("incarnates_full") or {}
     alpha_str = {"Resistance": 0.0, "Defense": 0.0}
     for slot, full_name in chosen.items():
@@ -457,6 +458,18 @@ def _incarnate_totals(build, totals, ctx):
                 _apply_effect(totals, eff)
         if dmg_buff:
             totals["damage_buff"] = totals.get("damage_buff", 0.0) + dmg_buff
+            # v34 item 5 (Joel's "not a guess" directive): the +damage% total can
+            # be the SUM of several incarnates (Alpha + Hybrid Assault), so the
+            # per-card attribution must name the ACTUAL contributors, not assume
+            # one. Ledger built from the applied records; `slot` is the game-true
+            # source class the card reads for uptime wording (Alpha passive vs
+            # Hybrid toggle — resolved from the bins in the taxonomy pass, not
+            # hardcoded here).
+            totals.setdefault("damage_buff_sources", []).append({
+                "slot": slot,
+                "name": inc_names.get(full_name)
+                or full_name.split(".")[-1],
+                "value": round(dmg_buff, 4)})
     if alpha_str["Resistance"] or alpha_str["Defense"]:
         for power in build.get("powers", []):
             for (kind, t), base in (power.get("_base_rd") or {}).items():
@@ -1259,6 +1272,10 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
     # deliverable exists to close.
     if totals.get("damage_buff"):
         display["damage_buff"] = round(totals["damage_buff"], 4)
+        # the named contributors, so the attribution line credits every source
+        # (Alpha + Hybrid), never a single assumed one (Joel's no-guess rule).
+        if totals.get("damage_buff_sources"):
+            display["damage_buff_sources"] = totals["damage_buff_sources"]
     if totals.get("max_end"):
         display["max_end_bonus"] = round(totals["max_end"], 1)
     # v29: what MM henchmen inherit (50% of TRUE set bonuses only) — the scorer's

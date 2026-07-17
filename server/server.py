@@ -298,8 +298,11 @@ def _fill_slot_images(resolved):
 
 # full_name -> [effects]; only Destiny/Hybrid/Judgement carry flat effect data.
 INCARNATE_FX = {}
+INCARNATE_NAMES = {}       # full_name -> display_name (per-source attribution)
 for _slot in INCARNATES.get("slots", []):
     for _choice in _slot.get("choices", []):
+        INCARNATE_NAMES[_choice["full_name"]] = (
+            _choice.get("display_name") or _choice["full_name"].split(".")[-1])
         if _choice.get("effects"):
             INCARNATE_FX[_choice["full_name"]] = _choice["effects"]
 
@@ -391,6 +394,7 @@ def _stat_ctx(archetype):
         "at_regen_cap": at.get("regen_cap"),    # bonus-fraction caps (20.0 => +2000%)
         "at_recovery_cap": at.get("recovery_cap"),
         "incarnate_fx": INCARNATE_FX,
+        "incarnate_names": INCARNATE_NAMES,  # full_name -> display (attribution)
         "entities": SUMMONS,           # summon UID -> pet powersets (for pet dmg)
         "summon_powers": SUMMON_POWERS,  # power -> squad spec (counts/uptime/class)
         "class_columns": AT_COLUMN,    # any class name -> AttribMod column (incl pets)
