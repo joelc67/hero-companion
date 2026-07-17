@@ -26,23 +26,34 @@ a = Analysis(
 )
 pyz = PYZ(a.pure)
 
+# ONEDIR (Windows Citizenship, 2026-07-17): Lite was a onefile exe, whose
+# self-unpacking-to-temp behaviour is a packer heuristic AV flags. onedir (an
+# EXE + an _internal folder, like the full app's HeroCompanion.spec) removes
+# that heuristic and starts faster. UPX is a second AV magnet — never pack.
+# The dir is wrapped by the Inno installer (installer/CompanionLite.iss) and
+# the whole tree is Artifact-Signing signed by tools/sign_artifacts.py.
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.datas,
-    [],
+    exclude_binaries=True,
     name='CompanionLite',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
-    upx_exclude=[],
-    runtime_tmpdir=None,
+    upx=False,                 # UPX-packed exes trip antivirus heuristics — never pack
     console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon='assets/HeroCompanion.ico',
+)
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.datas,
+    strip=False,
+    upx=False,
+    name='CompanionLite',
 )

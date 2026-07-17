@@ -70,6 +70,21 @@
   depending on your alignment and body type); the pop-up now states that,
   confirmed against the game's own text.
 
+## Companion Lite 0.1.18 — Unreleased (signing pending Joel's cert profile)
+
+- **A real Windows installer.** Companion Lite now ships as a proper per-user
+  install (Start Menu entry, clean uninstall, no admin prompt) instead of a
+  loose exe. Under the hood it moved from a single packed file to a folder
+  layout, which starts faster and stops tripping antivirus "packer" heuristics.
+- **Signed with a verified publisher.** The installer and app are code-signed,
+  so Windows shows "Joel Andrew Chambers" as the publisher instead of an
+  "unknown publisher" warning. (SmartScreen's "not commonly downloaded" notice
+  fades on its own as more people install — signing removes the scary warning
+  immediately, and reputation does the rest.)
+- **Auto-start is your choice.** On first run it asks, once, whether to start
+  with Windows — never silently on — and you can flip it any time from the
+  tray. Uninstalling removes it cleanly.
+
 ## Companion Lite 0.1.17 — 2026-07-15
 
 - **The feed tells you the truth when it can't upload.** Errors now lead with

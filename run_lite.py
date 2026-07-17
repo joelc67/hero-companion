@@ -36,7 +36,7 @@ import gamelog  # noqa: E402
 APPDIR = os.path.join(os.environ.get("APPDATA", _HERE), "HeroCompanion")
 gamelog.STATE_DIR = os.path.join(APPDIR, "gamelog")
 
-LITE_VERSION = "0.1.17"
+LITE_VERSION = "0.1.18"
 _UPDATE_VERSION_URL = ("https://raw.githubusercontent.com/joelc67/hero-companion/"
                        "master/lite_version.txt")
 _RELEASES_URL = "https://github.com/joelc67/hero-companion/releases"
@@ -753,9 +753,71 @@ def _make_icon_image():
     return img
 
 
+# ── Auto-start (Windows Citizenship, 2026-07-17; CHOICE DOCTRINE) ────────────
+# Opt-in, per-user (HKCU Run, no admin), ASKED once at first run of the INSTALLED
+# app — never silently on — remembered, and reversible from the tray. The
+# installer's uninstaller also removes the Run value, so a remembered "yes"
+# leaves nothing behind. Dev runs (not frozen) never touch autostart.
+_RUN_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
+_RUN_VALUE = "CompanionLite"
+
+
+def _autostart_enabled():
+    try:
+        import winreg
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, _RUN_KEY) as k:
+            winreg.QueryValueEx(k, _RUN_VALUE)
+        return True
+    except OSError:
+        return False
+
+
+def _set_autostart(on):
+    import winreg
+    if on and _FROZEN:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, _RUN_KEY, 0,
+                            winreg.KEY_SET_VALUE) as k:
+            winreg.SetValueEx(k, _RUN_VALUE, 0, winreg.REG_SZ,
+                              f'"{sys.executable}"')
+    else:
+        try:
+            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, _RUN_KEY, 0,
+                                winreg.KEY_SET_VALUE) as k:
+                winreg.DeleteValue(k, _RUN_VALUE)
+        except OSError:
+            pass
+
+
+def _maybe_ask_autostart():
+    """First run of the installed app: ask once, remember, act on the answer."""
+    if not _FROZEN:
+        return
+    st = gamelog.load_state()
+    if st.get("autostart_asked"):
+        return
+    st["autostart_asked"] = True
+    gamelog.save_state(st)
+    try:
+        import ctypes
+        # MB_YESNO(0x4) | MB_ICONQUESTION(0x20) | MB_SETFOREGROUND(0x10000)
+        r = ctypes.windll.user32.MessageBoxW(
+            0,
+            "Start Companion Lite automatically when you sign in to Windows?\n\n"
+            "It runs quietly in the tray and keeps your game-log capture going. "
+            "You can change this any time from the tray menu.",
+            "Companion Lite", 0x4 | 0x20 | 0x10000)
+        if r == 6:      # IDYES
+            _set_autostart(True)
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def _run_tray():
     import pystray
     img = _make_icon_image()
+
+    def _toggle_autostart(icon, item):
+        _set_autostart(not _autostart_enabled())
 
     def _safe(fn):
         """Run each menu action on its OWN thread so the pystray callback returns
@@ -867,6 +929,9 @@ def _run_tray():
     items = [pystray.MenuItem("Open the live Pulse Board", _safe(_open_live_board)),
              pystray.MenuItem("In-game logging menu", install_sub),
              pystray.MenuItem("Status", _safe(_show_status)),
+             pystray.MenuItem("Start automatically at login", _toggle_autostart,
+                              checked=lambda item: _autostart_enabled(),
+                              visible=_FROZEN),
              pystray.MenuItem("About Companion Lite (terms)", _safe(_about)),
              pystray.MenuItem("Check for updates", _safe(_check_updates)),
              pystray.MenuItem("Quit", _quit)]
@@ -896,6 +961,9 @@ def _run_tray():
     _stats["started"] = time.time()          # anchor uptime at tray start, not import
     t = threading.Thread(target=_capture_loop, daemon=True)
     t.start()
+    # First-run auto-start ask on its own thread so the tray appears first (the
+    # MessageBox is modal); no-op after the first answer and in dev.
+    threading.Thread(target=_maybe_ask_autostart, daemon=True).start()
     icon.run()
 
 
