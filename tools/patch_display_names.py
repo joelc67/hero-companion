@@ -48,6 +48,17 @@ def game_name_maps():
         for fn, d in zip(names, disp):
             if d:
                 gp[fn] = d
+    # ALIAS AUGMENTATION: our internal name sometimes differs from the game's
+    # (Temporal_Manipulation vs Time_Manipulation) — the game key wouldn't match
+    # ours by full_name, so resolve OUR name to the game key via the local alias
+    # map and adopt the game display for it too (Joel: "the game calls it Time
+    # Manipulation, so that's what it should be"). The map is gitignored/local.
+    ap = os.path.join(ROOT, "tools", "gamedata", "power_aliases.json")
+    if os.path.exists(ap):
+        alias = json.load(open(ap, encoding="utf-8")).get("aliases", {})
+        for our_fn, game_fn in alias.items():
+            if our_fn not in gp and game_fn in gp:
+                gp[our_fn] = gp[game_fn]
     return gp, gpool
 
 

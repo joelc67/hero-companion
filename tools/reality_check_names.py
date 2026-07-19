@@ -45,6 +45,15 @@ def game_maps():
             for fn, d in zip(names, disp):
                 if d:
                     gp[fn] = d
+    # alias-divergent internal names (Temporal_Manipulation vs Time_Manipulation):
+    # resolve OUR name to the game key via the local alias map so those display
+    # names are verified against the game too.
+    ap = os.path.join(ROOT, "tools", "gamedata", "power_aliases.json")
+    if os.path.exists(ap):
+        alias = json.load(open(ap, encoding="utf-8")).get("aliases", {})
+        for our_fn, game_fn in alias.items():
+            if our_fn not in gp and game_fn in gp:
+                gp[our_fn] = gp[game_fn]
     return gp, gpool
 
 
