@@ -54,7 +54,26 @@ def game_maps():
         for our_fn, game_fn in alias.items():
             if our_fn not in gp and game_fn in gp:
                 gp[our_fn] = gp[game_fn]
+    # namespace divergence (2026-07-19 dig): our Lore/pet attacks live under the
+    # `Incarnate_Pets.` top-level, but the game keys the SAME power (same set,
+    # same leaf) under `Incarnate.` — verified game-first, 189 records, ZERO
+    # display mismatches. Resolve the prefix so those names are checked against
+    # the game too rather than sitting in the unmatched caveat.
+    for our_fn in _our_full_names():
+        if our_fn in gp:
+            continue
+        if our_fn.startswith("Incarnate_Pets."):
+            g = "Incarnate." + our_fn[len("Incarnate_Pets."):]
+            if g in gp:
+                gp[our_fn] = gp[g]
     return gp, gpool
+
+
+def _our_full_names():
+    powers = json.load(open(os.path.join(ROOT, "data", "powers.json"),
+                            encoding="utf-8"))
+    return [p.get("full_name") for lst in powers.values()
+            if isinstance(lst, list) for p in lst]
 
 
 def main():
