@@ -2838,7 +2838,7 @@
     },
     {
      "full_name": "Epic.Field_Mastery",
-     "display_name": "Field Mastery",
+     "display_name": "Energy Mastery",
      "set_type": "Ancillary",
      "archetype_index": -1
     },
@@ -2957,19 +2957,19 @@
    "primary": [
     {
      "full_name": "Mastermind_Pets.Alpha_Wolf_3",
-     "display_name": "Alpha Wolf",
+     "display_name": "Beast Alpha Wolf 3",
      "set_type": "Primary",
      "archetype_index": 17
     },
     {
      "full_name": "Mastermind_Pets.Alpha_Wolf_2",
-     "display_name": "Alpha Wolf",
+     "display_name": "Beast Alpha Wolf 2",
      "set_type": "Primary",
      "archetype_index": 17
     },
     {
      "full_name": "Mastermind_Pets.Alpha_Wolf",
-     "display_name": "Alpha Wolf",
+     "display_name": "Beast Alpha Wolf",
      "set_type": "Primary",
      "archetype_index": 17
     }
