@@ -35,7 +35,50 @@ let activeSlot = null;               // {powerIdx, slotIdx}
 let INCARNATES = null;               // /incarnates payload
 
 const $ = (id) => document.getElementById(id);
-const api = (p, opts) => fetch(p, opts).then(r => r.json());
+
+// GLOBAL ERROR SURFACE (2026-07-20, the dead-air field report): an unreachable
+// or wedged server must NEVER be silent. Root cause of the field incident: the
+// tray server on :5000 was down, so every action's fetch failed and the
+// null-guards (`.catch(()=>null)` -> `if(!x) return`) bailed with no message —
+// three controls dead, zero explanation. Fix at the chokepoint every request
+// already flows through: api() shows a visible banner on failure, then RE-THROWS
+// so existing caller semantics (null-guards, try/catch "Solve error") are
+// unchanged. Purely additive — control flow identical, silence removed.
+function showServerError(msg) {
+  let el = $("global-error-banner");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "global-error-banner";
+    el.className = "global-error-banner";
+    document.body.appendChild(el);
+  }
+  el.innerHTML =
+    '<span class="ge-msg"></span>'
+    + '<button class="ge-reload" type="button">Reload</button>'
+    + '<button class="ge-dismiss" type="button" aria-label="Dismiss">×</button>';
+  el.querySelector(".ge-msg").textContent = msg;
+  el.querySelector(".ge-reload").onclick = () => location.reload();
+  el.querySelector(".ge-dismiss").onclick = () => { el.style.display = "none"; };
+  el.style.display = "flex";
+}
+function clearServerError() {
+  const el = $("global-error-banner");
+  if (el) el.style.display = "none";
+}
+const api = (p, opts) => fetch(p, opts).then(r => {
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  clearServerError();                     // connectivity recovered
+  return r.json();
+}).catch(err => {
+  const net = (err instanceof TypeError)
+    || /Failed to fetch|NetworkError|Load failed/i.test(String(err && err.message));
+  showServerError(net
+    ? "Can't reach Hero Companion — the app may not be running. "
+      + "Start it from the system tray, then click Reload."
+    : "Something went wrong talking to the app. Reload; if it keeps happening, "
+      + "restart the app.");
+  throw err;                              // preserve caller semantics (null-guards, try/catch)
+});
 
 // ---------------------------------------------------------------------------
 // Init

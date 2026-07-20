@@ -1425,3 +1425,24 @@ body { overflow: hidden; }
 .pi-attr { font-size: 10.5px; color: var(--accent); margin: 2px 0 6px; padding-left: 2px; }
 .pi-prov { margin-top: 8px; padding-top: 5px; border-top: 1px solid var(--border);
   font-size: 10px; line-height: 1.45; font-style: italic; }
+
+/* Global error surface (2026-07-20 dead-air fix): an unreachable/wedged server
+   must never be silent. Shown by showServerError() in app.js on any fetch
+   failure; fixed to the top so it is visible regardless of scroll. */
+.global-error-banner {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  display: none; align-items: center; gap: 12px;
+  padding: 10px 16px; font-size: 13.5px; line-height: 1.4;
+  background: var(--bad, #e5534b); color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.35);
+}
+.global-error-banner .ge-msg { flex: 1; }
+.global-error-banner .ge-reload {
+  width: auto; flex: 0 0 auto; padding: 5px 14px; font-size: 12.5px;
+  background: #fff; color: var(--bad, #b3352d); border: none; border-radius: 5px;
+  cursor: pointer; font-weight: 600;
+}
+.global-error-banner .ge-dismiss {
+  width: auto; flex: 0 0 auto; padding: 2px 9px; font-size: 18px; line-height: 1;
+  background: transparent; color: #fff; border: none; cursor: pointer;
+}

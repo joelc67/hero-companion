@@ -55,8 +55,30 @@ try:
             print(f"  {p['display_name']}: {'OK pet sets' if has_set and not bad else sets}")
             if bad or not has_set: ok2 = False
 
-    print("SMOKE:", "PASS" if (ok1 and ok2 and ok3) else f"FAIL (L1={ok1} summons={ok2} ver={ok3})")
-    sys.exit(0 if (ok1 and ok2 and ok3) else 1)
+    # pinned case 3 (NEW, 2026-07-20 — the dead-air interaction smoke): the
+    # controls that silently no-op'd in the field must be exercised in the
+    # PACKAGED app. (a) /build/calculate is the recompute backend behind epic
+    # swap + target edits — a fresh build must yield real totals; (b) the shipped
+    # client must carry the global error surface so a server-down page can never
+    # be silently dead again.
+    calc = post("/build/calculate", {"archetype": "Class_Mastermind",
+                "powers": sol["powers"], "content": "general", "role": "damage"})
+    ok4 = isinstance(calc, dict) and ("endurance" in calc or "defense" in calc)
+    print("recompute backend (/build/calculate):", "OK totals" if ok4 else "NO TOTALS")
+    ok5 = False
+    for path in ("/static/app.js", "/app.js"):
+        try:
+            js = urllib.request.urlopen(base + path, timeout=10).read().decode("utf-8", "ignore")
+            ok5 = "global-error-banner" in js and "showServerError" in js
+            break
+        except Exception:  # noqa: BLE001
+            continue
+    print("client error surface present:", "YES" if ok5 else "MISSING")
+
+    allok = ok1 and ok2 and ok3 and ok4 and ok5
+    print("SMOKE:", "PASS" if allok else
+          f"FAIL (L1={ok1} summons={ok2} ver={ok3} recompute={ok4} errsurface={ok5})")
+    sys.exit(0 if allok else 1)
 finally:
     proc.terminate()
     time.sleep(2)
