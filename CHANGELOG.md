@@ -1,5 +1,57 @@
 # Hero Companion — What's New
 
+## 0.12.22 — 2026-07-20
+
+- **This is the first digitally signed Hero Companion release.** The installer
+  and app now carry a Microsoft-verified signature ("Joel Andrew Chambers"), so
+  Windows shows a named publisher instead of an "unknown publisher" warning.
+  Every release from here on ships signed. (SmartScreen's "not commonly
+  downloaded" prompt is reputation-based and fades as downloads accrue — that
+  part takes time, not more paperwork.)
+- **The engine now values a Mastermind's pet buffs (model v34).** A Mastermind's
+  main damage is its pets, and the buffs it casts on them — Supremacy (+25%),
+  Accelerate Metabolism-class ally buffs, Temporal Selection (single-target, on
+  your biggest pet), Beast Mastery's Pack Mentality (assuming 8 of 10 stacks
+  with pets engaged, stated on the build) — now raise pet damage in every score
+  and label. Caster-only buffs (like the Musculature Alpha) correctly do not.
+  A new "Pet damage buffs" section on the offense panel shows exactly which
+  buffs applied, at what strength and uptime. Stated simplification: pets are
+  modeled as always hitting; pet accuracy is a named next step. Two champions
+  genuinely improved under the corrected math and were re-certified (the
+  Radiation/Sonic and Radiation/Radiation Defenders); every other certified
+  build re-verified with its score updated. Making the search fully exploit
+  the new term is the named next engineering item.
+- **Every power, powerset, and epic pool now uses the game's current names.**
+  The client's own files are the authority — 74 power names and 4 pool names
+  that had drifted (the old "Field Mastery" is the game's "Energy Mastery",
+  "Breath of Fire" is "Fiery Breath", and so on) now match what you see in
+  game. A standing check keeps them matched. The suspected "phantom epic pool"
+  turned out to be a real Mastermind ancillary wearing its stale name — every
+  epic offered to every archetype was verified against the game's own
+  eligibility rules (zero leaks; a standing check now pins that too).
+- **No more silent dead pages.** If the app's local server isn't running (or a
+  page action fails), the page now says so plainly with a Reload button instead
+  of buttons that silently do nothing — the field report that found this also
+  added an interaction test to every release so it can't ship again. Uncaught
+  page errors surface the same visible banner, and older saved characters that
+  a newer version can't fully read load safely with an honest note instead of
+  deadening the page.
+- **Imported builds with empty slots say so.** An import now flags "in
+  progress" powers ("4 empty slots: Dark Consumption") so an unfinished
+  character never reads as a finished plan.
+- **Honest slotting labels.** "Full set" now means the set is actually
+  complete. A partial set mixed with procs reads "Frankenslot"; a clean
+  partial set (plus universal globals like Luck of the Gambler) reads
+  "Partial set". The globals list also learned knockback protection (Karma,
+  Blessing of the Zephyr), slow resistance (Winter's Gift), and the Theft of
+  Essence +endurance proc.
+- **The content picker's farm section is now two honest choices** — AFK Fire
+  Farm (passive) and Active Fire Farm. The old generic "Fire Farm" is retired;
+  saved builds that used it get a prompt to pick the one that matches how they
+  play (never silently remapped).
+- Data currency: game-client data re-exported 2026-07-15; current through the
+  game's July 7 patch.
+
 ## 0.12.21 — 2026-07-17
 
 - **The AFK fire-farm champion's label was corrected upward — publicly owed,
