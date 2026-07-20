@@ -76,7 +76,12 @@ try:
             js = urllib.request.urlopen(base + path, timeout=10).read().decode("utf-8", "ignore")
             ok5 = ("global-error-banner" in js and "showServerError" in js
                    and "unhandledrejection" in js
-                   and "filter((p) => p && p.full_name)" in js)
+                   and "filter((p) => p && p.full_name)" in js
+                   # walk failure #2 (2026-07-20): every solve/action surface gives
+                   # a named-gate-or-visible-result answer, chip==editor truth
+                   and "function flagMissing" in js
+                   and "function hasTargetValues" in js
+                   and "No changes" in js)
             break
         except Exception:  # noqa: BLE001
             continue

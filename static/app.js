@@ -421,16 +421,19 @@ function wizGateBuild() {
 // controls law demands a RESPONSE: name the missing fields, ring them red,
 // scroll the first one into view, and flash the status so a repeat click is
 // visibly a fresh answer.
-function wizFlagMissing(els, msg) {
+function flagMissing(els, msg, statusEl) {
   els.forEach(el => el && el.classList.add("wiz-missing"));
-  const st = $("wiz-status");
+  const st = statusEl || $("wiz-status");
   st.textContent = msg;
   st.classList.remove("wiz-status-flash");
   void st.offsetWidth;                     // restart the animation on every click
   st.classList.add("wiz-status-flash");
-  const first = els.find(Boolean);
+  // scroll the STATUS into view too when it sits below the fold (walk failure #2:
+  // the solve gate's answer rendered off-screen = "zero visible response")
+  const first = els.find(Boolean) || st;
   if (first) first.scrollIntoView({ behavior: "smooth", block: "center" });
 }
+const wizFlagMissing = (els, msg) => flagMissing(els, msg, $("wiz-status"));
 
 async function openWizard(mode) {
   if ($("wiz-at").options.length <= 1) $("wiz-at").innerHTML = $("sel-archetype").innerHTML;
@@ -5594,7 +5597,19 @@ const _CT_SCALARS = [["recharge", "Recharge", 400], ["recovery", "Recovery", 300
                      ["tohit", "ToHit", 60]];
 let _CT_META = null;    // {res_cap, defense_types, resistance_types} from the server
 
+// A custom-targets object with no actual numbers is NOT custom targets (walk
+// failure #2: a stale empty object made the chip claim "yours" while the editor
+// opened blank — chip and editor must read the SAME truth).
+function hasTargetValues(t) {
+  if (!t || typeof t !== "object") return false;
+  return Object.values(t).some(v =>
+    (typeof v === "number" && isFinite(v)) ||
+    (v && typeof v === "object" && Object.values(v).some(x => typeof x === "number" && isFinite(x))));
+}
+
 function updateCustomTargetsChip() {
+  if (build._custom_targets && !hasTargetValues(build._custom_targets))
+    build._custom_targets = null;          // normalize: empty "custom" is no custom
   const chip = $("custom-targets-chip");
   if (chip) chip.classList.toggle("hidden", !build._custom_targets);
 }
@@ -5633,7 +5648,25 @@ window.openTargetsEditor = async function () {
   if (!seed || !seed.ok) return;
   _CT_META = seed;
   // Active custom targets win over the preset seed — you edit what's applied.
-  const t = build._custom_targets || seed.targets || {};
+  let t = (hasTargetValues(build._custom_targets) && build._custom_targets)
+    || (hasTargetValues(seed.targets) && seed.targets) || {};
+  // WALK FAILURE #2 (import path): with Content/Role unset the preset seed is a
+  // blank slate, and the editor opened all-EMPTY on a loaded build. Prefill from
+  // the build's CURRENT numbers instead (the last recompute's totals) — you
+  // customize from where you are, and the editor never opens blank on a real
+  // build. Display seeding only; nothing is applied until the user saves.
+  if (!hasTargetValues(t) && build.powers.length && LAST_TOTALS && typeof LAST_TOTALS === "object") {
+    const cur = { defense: {}, resistance: {} };
+    for (const [ty, d] of Object.entries(LAST_TOTALS.defense || {}))
+      if (d && typeof d.value === "number") cur.defense[ty] = Math.round(d.value * 2) / 2;
+    for (const [ty, d] of Object.entries(LAST_TOTALS.resistance || {}))
+      if (d && typeof d.value === "number") cur.resistance[ty] = Math.round(d.value * 2) / 2;
+    if (typeof (LAST_TOTALS.recharge || {}).value === "number")
+      cur.recharge = Math.round(LAST_TOTALS.recharge.value);
+    if (typeof (LAST_TOTALS.recovery || {}).value === "number")
+      cur.recovery = Math.round(LAST_TOTALS.recovery.value);
+    if (hasTargetValues(cur)) t = cur;
+  }
   const typed = (_CT_META.defense_types || []).filter(x => !["Melee", "Ranged", "AoE"].includes(x));
   const row = (grp, ty, val) =>
     `<label class="ct-field">${ty}<input type="number" min="0" step="0.5"
@@ -5762,7 +5795,13 @@ async function solveSlotting(perkFocus, opts) {
   const content = $("preset-content") ? $("preset-content").value : "";
   const role = $("preset-role") ? $("preset-role").value : "";
   if (!goal && !content && !opts.targets && !build._custom_targets) {
-    status.textContent = "Pick a Content preset (Fire Farm, iTrials, Team, General) — Role refines it. Or type a goal, or set custom targets.";
+    // WALK FAILURE #2 (2026-07-20): this gate wrote its answer into a status line
+    // that sat BELOW THE FOLD — Solve and every perk-focus chip read as dead
+    // controls after an import (Content/Role start unset). Same class as the
+    // wizard gate: name the missing field, ring it, and make the answer visible.
+    flagMissing([$("preset-content")],
+      "Pick a Content preset first (highlighted in red) — Role refines it. "
+      + "Or type a goal, or set custom targets.", status);
     return;
   }
   // Confirm-understanding gate (initial solve only — perk re-solves & applied routes skip it):
@@ -5916,12 +5955,20 @@ async function solveSlotting(perkFocus, opts) {
     if (!perkFocus) renderAssessment(presolvePowers,
       { content, role, goal, preserve, keep_layout });
     if (!perkFocus && res.incarnate_recs) renderIncarnateRecs(res.incarnate_recs, res.incarnate_loadouts);
-    status.textContent = (res.added_slots != null
-      ? `✓ Slotting solved (${res.added_slots}/${res.added_budget || 67} added slots).`
-      : `✓ Slotting solved (${res.slots_used} slots).`)
+    // WALK FAILURE #2: a solve that changes nothing must SAY so — "solved" with
+    // an unchanged build reads as a dead control. Compare the slot signature.
+    const _sig = ps => JSON.stringify((ps || []).map(p =>
+      [p.full_name, (p.slots || []).map(s => s && s.piece_uid)]));
+    const unchanged = _sig(presolvePowers) === _sig(res.powers);
+    status.textContent = (unchanged
+      ? "✓ No changes — your current slotting already meets this goal."
+      : (res.added_slots != null
+        ? `✓ Slotting solved (${res.added_slots}/${res.added_budget || 67} added slots).`
+        : `✓ Slotting solved (${res.slots_used} slots).`))
       // Derived-build labeling (Joel's constraint): a custom-target solve is
       // YOURS — it never reads as a certified champion result.
       + (res.custom_targets ? " Built to YOUR custom targets — not a certified champion build." : "");
+    status.scrollIntoView({ behavior: "smooth", block: "nearest" });
   } catch (e) {
     status.textContent = "Solve error: " + e;
   } finally {
