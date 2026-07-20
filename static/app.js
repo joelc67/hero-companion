@@ -4502,6 +4502,19 @@ function renderOffense(off, t) {
     html += `<div class="o-sub">Pet damage <span class="muted small">(per pet · squad size not multiplied)</span></div>`
       + off.pets.map(p => `<div class="o-atk"><span>${p.name}</span>`
         + `<span class="muted small">~${p.dps_each} DPS each · ${p.attack_count} atk · via ${p.from_power}</span></div>`).join("");
+    // v34 #13: the pet-directed damage-buff ledger — attribution is display of the
+    // engine's ledger, never new math (the three laws). Each source names its scope
+    // and uptime; Pack Mentality carries its stated stack assumption. The
+    // pets-always-hit simplification is an honest known boundary (Joel option B).
+    const pbs = off.pet_damage_buff_sources;
+    if (pbs && pbs.length) {
+      html += `<div class="o-sub">Pet damage buffs <span class="muted small">(applied to the pet DPS above)</span></div>`
+        + pbs.map(s => `<div class="o-row"><span>${s.name}`
+          + `<span class="muted small"> · ${s.scope}${s.uptime != null && s.uptime < 1 ? ` · ${Math.round(s.uptime * 100)}% uptime` : ""}</span></span>`
+          + `<span class="buf">+${s.pct}%</span></div>`
+          + (s.note ? `<div class="o-note muted small">↳ ${s.note}</div>` : "")).join("")
+        + `<div class="o-note muted small">Pets are modeled as always hitting — pet accuracy is not yet modeled (buff ToHit not credited).</div>`;
+    }
   }
   if ((off.debuffs || []).length) {
     html += `<div class="o-sub">Enemy debuffs <span class="muted small">(base, per application)</span></div>`
