@@ -80,6 +80,26 @@ const api = (p, opts) => fetch(p, opts).then(r => {
   throw err;                              // preserve caller semantics (null-guards, try/catch)
 });
 
+// GLOBAL EXCEPTION SURFACE (2026-07-20, dead-air order #2.2): an uncaught JS
+// exception must never silently kill the page's interactivity — the worst
+// failure mode, and it happened in the field. A window-level handler turns any
+// uncaught error / unhandled promise rejection into the same visible banner.
+// Network/server-down rejections are already surfaced by api() with a specific
+// message, so those are skipped here to avoid clobbering the better wording.
+window.addEventListener("error", (e) => {
+  if (e && /Script error/i.test(e.message || "")) return;   // cross-origin noise
+  showServerError("Something broke on this page. Reload; the details are in "
+    + "the browser console (press F12).");
+});
+window.addEventListener("unhandledrejection", (e) => {
+  const r = e && e.reason;
+  const net = (r instanceof TypeError)
+    || /Failed to fetch|NetworkError|Load failed|HTTP \d/i.test(String(r && r.message));
+  if (net) return;                        // api() already showed the network banner
+  showServerError("Something went wrong. Reload; if it keeps happening, restart "
+    + "the app.");
+});
+
 // ---------------------------------------------------------------------------
 // Init
 // ---------------------------------------------------------------------------
@@ -157,7 +177,18 @@ async function openSavesList() {
 window.loadSave = async function (id) {
   const res = await api(`/saves/${encodeURIComponent(id)}`);
   if (!res || !res.ok) { alert((res && res.error) || "Couldn't load that save."); return; }
-  await applyImportedBuild(res.save.build || {});
+  // FORWARD-COMPAT guard (dead-air order #2.3): a save from an older version may
+  // lack fields this renderer expects. The mapping above defaults them, but if a
+  // load still throws, surface an honest note and keep the page ALIVE rather than
+  // letting one exception deaden every control.
+  try {
+    await applyImportedBuild(res.save.build || {});
+  } catch (e) {
+    console.error("old-save load failed:", e);
+    showServerError("This saved character is from an older version and could not "
+      + "be fully loaded. Try starting a fresh build, or re-import it from the game.");
+    return;
+  }
   CURRENT_SAVE = { id, name: res.save.name };
   const _plan = res.save.plan || {};
   build._mode = _plan.mode || build._mode;
@@ -4720,6 +4751,12 @@ async function syncPoolsEpicFromPowers(powers, fallbackPools, fallbackEpic) {
 }
 
 async function applyImportedBuild(b) {
+  // FORWARD-COMPAT (2026-07-20, dead-air order #2.3): normalize an older/partial
+  // save ONCE, up front, so EVERY downstream consumer (syncPoolsEpicFromPowers,
+  // the powers map, renderPowers) sees clean data. A null or full_name-less power
+  // entry would otherwise throw before the load finished and deaden the page.
+  b = b || {};
+  b.powers = (b.powers || []).filter((p) => p && p.full_name);
   resetTrayPanels();          // swapping in a new build → drop the prior tray/order panels
   setRespecHintFresh();       // a new build gets a fresh respec evaluation (undo any dismiss)
   resetBuildScopedState();    // a swapped-in build is a DIFFERENT character — no leaked
@@ -4735,7 +4772,8 @@ async function applyImportedBuild(b) {
     build.secondary_display = $("sel-secondary").selectedOptions[0]?.text; await loadPowers(b.secondary); }
   // Sync the Pool + Epic dropdowns to whatever powers the build actually uses.
   await syncPoolsEpicFromPowers(b.powers || [], b.pools, b.epic);
-  // powers + slots
+  // powers + slots (b.powers already normalized at the top; every field defaults
+  // so a missing key degrades to a sensible value rather than crashing)
   build.powers = (b.powers || []).map((p) => ({
     full_name: p.full_name, display_name: p.display_name,
     powerset_full_name: p.powerset_full_name,

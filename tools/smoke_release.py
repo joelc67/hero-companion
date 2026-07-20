@@ -65,15 +65,22 @@ try:
                 "powers": sol["powers"], "content": "general", "role": "damage"})
     ok4 = isinstance(calc, dict) and ("endurance" in calc or "defense" in calc)
     print("recompute backend (/build/calculate):", "OK totals" if ok4 else "NO TOTALS")
+    # all THREE dead-air surfaces must be present in the shipped client, or the
+    # regression class (silent no-op / dead page) can return unnoticed:
+    #  - fetch banner (server unreachable)   -> global-error-banner + showServerError
+    #  - global exception surface            -> unhandledrejection handler
+    #  - old-save forward-compat guard       -> the powers normalization filter
     ok5 = False
     for path in ("/static/app.js", "/app.js"):
         try:
             js = urllib.request.urlopen(base + path, timeout=10).read().decode("utf-8", "ignore")
-            ok5 = "global-error-banner" in js and "showServerError" in js
+            ok5 = ("global-error-banner" in js and "showServerError" in js
+                   and "unhandledrejection" in js
+                   and "filter((p) => p && p.full_name)" in js)
             break
         except Exception:  # noqa: BLE001
             continue
-    print("client error surface present:", "YES" if ok5 else "MISSING")
+    print("client error/forward-compat surfaces present:", "YES" if ok5 else "MISSING")
 
     allok = ok1 and ok2 and ok3 and ok4 and ok5
     print("SMOKE:", "PASS" if allok else
