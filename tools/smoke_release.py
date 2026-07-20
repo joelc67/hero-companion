@@ -13,6 +13,10 @@ try:
         for port in (5000, 5001, 5002):
             try:
                 v = json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=2))
+                # PORT-RACE GUARD (see smoke_gold): only the exe we launched counts
+                m = json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}/meta", timeout=2))
+                if m.get("app_version") != "0.12.22":
+                    continue
                 base = f"http://127.0.0.1:{port}"; break
             except Exception: pass
         if base: break

@@ -14,6 +14,12 @@ try:
         for port in (5000, 5001, 5002):
             try:
                 urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=2)
+                # PORT-RACE GUARD (bit 3x on 2026-07-20): the installed tray app can
+                # own 5000 while the launched dist exe fell back to 5001 - accept a
+                # port ONLY if it is the exe we just launched (version pin match).
+                m = json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}/meta", timeout=2))
+                if m.get("app_version") != "0.12.22":
+                    continue
                 base = f"http://127.0.0.1:{port}"; break
             except Exception: pass
         if base: break
