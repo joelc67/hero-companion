@@ -82,9 +82,22 @@ try:
             continue
     print("client error/forward-compat surfaces present:", "YES" if ok5 else "MISSING")
 
-    allok = ok1 and ok2 and ok3 and ok4 and ok5
+    # pinned case 4 (2026-07-20): the content picker's farm section renders EXACTLY
+    # the two defined fire-farm choices; the retired generic "fire_farm" key never
+    # reappears in any picker surface.
+    ok6 = False
+    try:
+        html = urllib.request.urlopen(base + "/", timeout=10).read().decode("utf-8", "ignore")
+        ok6 = ('value="fire_farm"' not in html
+               and 'value="farm_afk"' in html and 'value="farm_active"' in html)
+    except Exception:  # noqa: BLE001
+        pass
+    print("fire-farm picker (2 choices, no generic):", "OK" if ok6 else "WRONG")
+
+    allok = ok1 and ok2 and ok3 and ok4 and ok5 and ok6
     print("SMOKE:", "PASS" if allok else
-          f"FAIL (L1={ok1} summons={ok2} ver={ok3} recompute={ok4} errsurface={ok5})")
+          f"FAIL (L1={ok1} summons={ok2} ver={ok3} recompute={ok4} "
+          f"errsurface={ok5} farmpicker={ok6})")
     sys.exit(0 if allok else 1)
 finally:
     proc.terminate()

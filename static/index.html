@@ -385,7 +385,10 @@
             <label class="preset-field">Content
               <select id="preset-content">
                 <option value="">— choose —</option>
-                <option value="fire_farm">Fire Farm</option>
+                <!-- Generic "Fire Farm" retired 2026-07-20 (Joel): the AFK/Active
+                     pair defines the real choice; a third undefined option muddied
+                     it. The backend still ACCEPTS fire_farm for older saves, and
+                     loadSave nudges them to pick AFK or Active. -->
                 <option value="farm_afk">AFK Fire Farm (passive)</option>
                 <option value="farm_active">Active Fire Farm</option>
                 <option value="itrial">League / iTrials</option>
@@ -394,6 +397,15 @@
                 <option value="av">EB / AV (hard targets)</option>
               </select>
             </label>
+            <!-- Nudge shown by loadSave when a saved build uses the RETIRED generic
+                 "Fire Farm" content — never silently remapped (Joel, 2026-07-20). -->
+            <div id="farm-retired-note" class="retired-note hidden">
+              This saved build uses the retired generic <b>Fire Farm</b> content.
+              Choose the one that matches how you play:
+              <button type="button" class="rn-pick" data-farm="farm_afk">AFK (passive)</button>
+              <button type="button" class="rn-pick" data-farm="farm_active">Active</button>
+              <button type="button" class="rn-dismiss">Not now</button>
+            </div>
             <label class="preset-field">Role
               <select id="preset-role">
                 <option value="">— choose —</option>

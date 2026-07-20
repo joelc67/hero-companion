@@ -1446,3 +1446,17 @@ body { overflow: hidden; }
   width: auto; flex: 0 0 auto; padding: 2px 9px; font-size: 18px; line-height: 1;
   background: transparent; color: #fff; border: none; cursor: pointer;
 }
+
+/* Retired-Fire-Farm content nudge (2026-07-20): shown when a saved build uses the
+   retired generic "Fire Farm" key — an honest prompt to pick AFK or Active. */
+.retired-note {
+  margin: 8px 0; padding: 9px 12px; font-size: 12.5px; line-height: 1.5;
+  background: rgba(217, 164, 65, .10); border: 1px solid var(--warn);
+  border-radius: 6px; color: var(--ink);
+}
+.retired-note button {
+  width: auto; margin-left: 8px; padding: 4px 12px; font-size: 12px;
+  border-radius: 5px; cursor: pointer; border: 1px solid var(--warn);
+  background: var(--bg); color: var(--ink);
+}
+.retired-note .rn-dismiss { border-color: var(--border); color: var(--muted); }

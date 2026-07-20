@@ -196,7 +196,16 @@ window.loadSave = async function (id) {
   // dropdowns (a resumed build used to come back with these EMPTY, so the
   // next Solve ran against different targets than the ones that built it)
   // and the custom targets (Joel's ruling 4: Resume reproduces them).
-  if (_plan.content && $("preset-content")) $("preset-content").value = _plan.content;
+  // Retired generic "Fire Farm" (2026-07-20): the option is gone from the picker,
+  // but the backend still accepts the key. Rather than silently remap, blank the
+  // dropdown and nudge the user to choose AFK or Active.
+  if (_plan.content === "fire_farm" && $("preset-content")) {
+    $("preset-content").value = "";
+    if ($("farm-retired-note")) $("farm-retired-note").classList.remove("hidden");
+  } else {
+    if ($("farm-retired-note")) $("farm-retired-note").classList.add("hidden");
+    if (_plan.content && $("preset-content")) $("preset-content").value = _plan.content;
+  }
   if (_plan.role && $("preset-role")) $("preset-role").value = _plan.role;
   build._custom_targets = _plan.custom_targets || null;
   updateCustomTargetsChip();
@@ -1611,6 +1620,16 @@ async function init() {
   $("solve-btn").addEventListener("click", solveSlotting);
   if ($("preset-content")) $("preset-content").addEventListener("change", previewPreset);
   if ($("preset-role")) $("preset-role").addEventListener("change", previewPreset);
+  // Retired-Fire-Farm nudge: pick AFK/Active (sets the picker + re-previews) or defer.
+  if ($("farm-retired-note")) $("farm-retired-note").addEventListener("click", (e) => {
+    const pick = e.target.closest(".rn-pick");
+    if (pick && $("preset-content")) {
+      $("preset-content").value = pick.dataset.farm;
+      $("preset-content").dispatchEvent(new Event("change"));
+    }
+    if (pick || e.target.closest(".rn-dismiss"))
+      $("farm-retired-note").classList.add("hidden");
+  });
   $("export-btn").addEventListener("click", exportMids);
   // Converter panel: build the interactive "want/have" tool when first opened (works with no build).
   if ($("conv-guide-details")) {
