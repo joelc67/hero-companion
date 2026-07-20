@@ -3039,6 +3039,9 @@ document.addEventListener("keydown", (e) => {
 const _PLAN_META = {
   "proc-bomb":    ["💥", "Proc bomb", "proc-bomb"],
   "committed":    ["🎯", "Full set", "committed"],
+  // A partial single set (e.g. 4 of 6) — a real, deliberate commitment for the
+  // early bonuses, but NOT a full set (Joel, 2026-07-20: don't call 3-of-6 "Full").
+  "partial-set":  ["🎯", "Partial set", "committed"],
   "frankenslot":  ["🧩", "Frankenslot", "frankenslot"],
   "global-mules": ["🌐", "Global mules", "global-mules"],
   // Running auto/toggle hosting globals — reads as a working power, not dead

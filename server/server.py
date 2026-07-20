@@ -2072,7 +2072,26 @@ def _slot_plan(power, archetype=None, all_powers=None):
             return {"kind": "frankenslot",
                     "text": "Frankenslot: " + "; ".join(parts)
                             + " — stacked for their set bonuses" + tail + "."}
-        return {"kind": "committed", "text": parts[0] + tail + "."}
+        # ONE committed set. "Full set" means COMPLETE (Joel, 2026-07-20: a 3-of-6
+        # + procs slotting is a frankenstein, not a full set). A single COMPLETE
+        # set (globals may ride along) = a clean Full set; a PARTIAL set mixed with
+        # procs/HOs/other set pieces = a frankenslot; a clean partial (only globals
+        # or empties beside it) = an honest "partial set" — never "Full set".
+        nm0, n0 = committed[0]
+        srec0 = SET_BY_NAME.get(nm0.lower()) or {}
+        total0 = len(srec0.get("pieces") or []) or 6
+        is_full = n0 >= total0
+        # franken = procs/HOs or single pieces from OTHER sets mixed in. Universal
+        # globals (LotG/Kismet/Steadfast — the `glob` list) ride any set cleanly and
+        # do NOT make a partial a frankenstein, so exclude them.
+        franken_extras = (len(procs) + len(hos)
+                          + max(0, len(setters) - n0 - len(glob)))
+        if is_full:
+            return {"kind": "committed", "text": parts[0] + tail + "."}
+        if franken_extras > 0:
+            return {"kind": "frankenslot",
+                    "text": "Frankenslot: " + parts[0] + tail + "."}
+        return {"kind": "partial-set", "text": parts[0] + tail + "."}
     # 5) GLOBAL MULES — a power carrying only build-wide unique globals.
     # Running powers (auto/toggle) get host wording, not mule wording.
     if glob and len(glob) == len(nonproc):
