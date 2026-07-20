@@ -1008,6 +1008,104 @@ def _pet_damage_for_powerset(ps_full, ctx, pet_col, dmg_boost, pvp=False):
     return pet_dps, len(attacks)
 
 
+# Pet-directed damage buffs (#13, Joel's rulings 2026-07-19). A Mastermind's main
+# damage is its pets, and the MM buffs them: the pet-DPS term must credit those
+# buffs. GAME-FIRST ROUTING LEVER: a DamageBuff in a power's `buff_effects` is
+# projected onto affected allies — MM pets are affected allies, so it reaches them;
+# a DamageBuff only in `self_effects` (e.g. Musculature Alpha) is caster-only and
+# does NOT. Confirmed sources: Supremacy +25% (aura, uptime 1), Accelerate
+# Metabolism / Fulcrum-class (click, uptime-weighted), Temporal Selection (click,
+# SINGLE-TARGET radius 0 -> the top-DPS pet only), the Assault HYBRID *Radial*
+# incarnate (team/pet PBAoE; *Core* is self-only, excluded), and Pack Mentality
+# (Beast Mastery charge mechanic — empty effects, priced by Joel's ruling at
+# _PACK_MENTALITY_STACKS of 10 = +16%; the pet-DPS uptime factor already removes
+# idle time, so near-max is scenario-consistent). STATED SIMPLIFICATION (Joel
+# option B): pets are modeled as always-hitting, so buff ToHit is not credited and
+# pet accuracy is deferred to its own item.
+_PACK_MENTALITY_STACKS = 8
+_PACK_MENTALITY_PER_STACK = 0.02
+_PACK_MENTALITY_FN = "Mastermind_Summon.Beast_Mastery.Pack_Mentality"
+
+
+def _pet_damage_buff(build, totals, ctx, global_rech):
+    """(all_pet_mult, top_pet_extra_mult, sources[]) — the MM's pet-directed
+    +damage as FRACTIONS, uptime-weighted, game-first per the routing lever above.
+    Returns (0, 0, []) for any build with no pet-directed +damage (negative
+    control: a non-MM, or an MM with only caster-only buffs, reads exactly 0)."""
+    power_by_full = ctx.get("power_by_full") or {}
+    mod_tables = ctx.get("modifier_tables") or {}
+    mult_ed = ctx.get("mult_ed")
+    col = ctx.get("at_column")
+    if col is None or col < 0:
+        return 0.0, 0.0, []
+    all_mult = top_mult = 0.0
+    sources = []
+    for power in build.get("powers", []):
+        rec = power_by_full.get(power.get("full_name"))
+        if not rec:
+            continue
+        dbs = [d for d in (rec.get("buff_effects") or [])
+               if d.get("effect") == "DamageBuff" and d.get("pv_mode") != 2]
+        if not dbs:
+            continue
+        d = dbs[0]                          # typed spread -> one +dmg value
+        row = mod_tables.get(d.get("modifier_table"))
+        if not row or col >= len(row):
+            continue
+        prob = min(max(d.get("probability") or 1.0, 0.0), 1.0)
+        mag = abs((d.get("scale") or 0.0) * (d.get("nmag") or 1.0) * row[col] * prob)
+        # uptime: click buffs by duration / enhanced recharge; auras/toggles 1.0
+        base_rech = rec.get("base_recharge") or 0.0
+        dur = d.get("duration") or 0.0
+        is_click = ((rec.get("power_type") or 0) == 0
+                    and (rec.get("activate_period") or 0) == 0)
+        uptime = 1.0
+        if is_click and base_rech > 0 and dur > 0:
+            rech_enh = 0.0
+            for slot in power.get("slots", []) or []:
+                if slot and slot.get("piece_uid"):
+                    for asp, val in _scaled_boosts(slot, ctx):
+                        if asp == "Recharge":
+                            rech_enh += val
+            rech_boost = apply_ed_sched(ED_SCHEDULE.get("Recharge", 0), rech_enh, mult_ed)
+            enh_rech = base_rech / (1.0 + global_rech + rech_boost)
+            uptime = min(1.0, dur / enh_rech) if enh_rech > 0 else 1.0
+        val = mag * uptime
+        if val <= 0:
+            continue
+        # single-target ally buff (Temporal Selection: radius 0, not an aura) ->
+        # the top-DPS pet only; PBAoE/aura buffs -> every pet.
+        single = ((rec.get("radius") or 0) == 0
+                  and (rec.get("activate_period") or 0) == 0)
+        label = rec.get("display_name") or power.get("full_name")
+        if single:
+            top_mult += val
+            sources.append({"name": label, "pct": round(val * 100, 1),
+                            "scope": "top pet", "uptime": round(uptime, 2)})
+        else:
+            all_mult += val
+            sources.append({"name": label, "pct": round(val * 100, 1),
+                            "scope": "all pets", "uptime": round(uptime, 2)})
+    # incarnate Assault HYBRID *Radial* (team/pet); Core / Musculature-Alpha excluded
+    for s in (totals.get("damage_buff_sources") or []):
+        if s.get("slot") == "Hybrid" and "Radial" in (s.get("name") or ""):
+            v = s.get("value") or 0.0
+            if v > 0:
+                all_mult += v
+                sources.append({"name": s.get("name"), "pct": round(v * 100, 1),
+                                "scope": "all pets", "uptime": 1.0})
+    # Pack Mentality (Beast Mastery charge mechanic; empty effects -> priced by rule)
+    if any((p.get("full_name") or "") == _PACK_MENTALITY_FN
+           for p in build.get("powers", [])):
+        v = _PACK_MENTALITY_STACKS * _PACK_MENTALITY_PER_STACK
+        all_mult += v
+        sources.append({"name": "Pack Mentality", "pct": round(v * 100, 1),
+                        "scope": "Beast pets",
+                        "note": f"assumes {_PACK_MENTALITY_STACKS} of 10 stacks "
+                                f"with pets engaged"})
+    return all_mult, top_mult, sources
+
+
 def _pet_offense(build, totals, ctx):
     """Pet damage: resolve each summon power to its pet entities -> pet powersets ->
     pet attacks, priced with the pet's own class column. The reconciled summon specs
@@ -1106,9 +1204,24 @@ def _pet_offense(build, totals, ctx):
     if not pets:
         return {}
     pets.sort(key=lambda x: x["dps_total"], reverse=True)
-    return {"pets": pets,
-            "total_each": round(sum(p["dps_each"] for p in pets), 1),
-            "total_squad": round(sum(p["dps_total"] for p in pets), 1)}
+    # #13: apply the MM's pet-directed damage buffs. all_mult is uniform (does not
+    # reorder), so the pre-buff top pet is still the top pet -> Temporal Selection's
+    # single-target bonus lands on pets[0].
+    all_mult, top_mult, buff_sources = _pet_damage_buff(build, totals, ctx, global_rech)
+    if all_mult or top_mult:
+        for i, pt in enumerate(pets):
+            m = 1.0 + all_mult + (top_mult if i == 0 else 0.0)
+            pt["dps_each"] = round(pt["dps_each"] * m, 1)
+            pt["dps_total"] = round(pt["dps_total"] * m, 1)
+        pets.sort(key=lambda x: x["dps_total"], reverse=True)
+    out = {"pets": pets,
+           "total_each": round(sum(p["dps_each"] for p in pets), 1),
+           "total_squad": round(sum(p["dps_total"] for p in pets), 1)}
+    if buff_sources:
+        out["damage_buff_sources"] = buff_sources
+        out["damage_buff_all_pct"] = round(all_mult * 100, 1)
+        out["damage_buff_top_pct"] = round(top_mult * 100, 1)
+    return out
 
 
 def _debuff_buff_summary(build, ctx):
@@ -1357,6 +1470,10 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
             offense["pets"] = pets["pets"]
             offense["pet_dps_each"] = pets["total_each"]
             offense["pet_dps_squad"] = pets.get("total_squad")
+            if pets.get("damage_buff_sources"):
+                offense["pet_damage_buff_sources"] = pets["damage_buff_sources"]
+                offense["pet_damage_buff_all_pct"] = pets.get("damage_buff_all_pct")
+                offense["pet_damage_buff_top_pct"] = pets.get("damage_buff_top_pct")
         display["offense"] = offense
     display["endurance"] = _endurance_balance(build, display, offense, ctx)
     return display
