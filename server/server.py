@@ -2074,12 +2074,21 @@ def _slot_plan(power, archetype=None, all_powers=None):
                         + " — extra damage in the spare slots, no set bonus intended."}
     # 4) COMMITTED SET(S) / FRANKENSLOT — honest piece counts + the bonuses actually earned
     if committed:
+        # A set's OWN proc piece IS a set piece (Joel's walk catch, 2026-07-20:
+        # 6x Javelin Volley — whose 6th piece is the set's damage proc — read as
+        # "5 + a foreign proc" = Frankenslot; it is a genuine FULL set, and the
+        # game counts the proc toward the 6-piece bonus). Count same-set procs
+        # into each committed set; only procs from OTHER sets are franken extras.
+        def _set_procs(nm):
+            return sum(1 for s in procs if (s.get("set_name") or "") == nm)
         parts = []
         for nm, n in committed:
             srec = SET_BY_NAME.get(nm.lower()) or {}
             total = len(srec.get("pieces") or []) or 6
-            frame = (f"full {n}-piece {nm}" if n >= total else f"{n} of {total} {nm}")
-            vals = _earned_bonus_values(nm, n, archetype)
+            n_eff = n + _set_procs(nm)
+            frame = (f"full {n_eff}-piece {nm}" if n_eff >= total
+                     else f"{n_eff} of {total} {nm}")
+            vals = _earned_bonus_values(nm, n_eff, archetype)
             parts.append(frame + (f" — earns {', '.join(vals)}" if vals else ""))
         tail = f". Plus global{'s' if len(glob) > 1 else ''}: {_glist(glob)}" if glob else ""
         if len(committed) > 1:
@@ -2089,16 +2098,17 @@ def _slot_plan(power, archetype=None, all_powers=None):
         # ONE committed set. "Full set" means COMPLETE (Joel, 2026-07-20: a 3-of-6
         # + procs slotting is a frankenstein, not a full set). A single COMPLETE
         # set (globals may ride along) = a clean Full set; a PARTIAL set mixed with
-        # procs/HOs/other set pieces = a frankenslot; a clean partial (only globals
+        # OTHER-set procs/HOs/pieces = a frankenslot; a clean partial (only globals
         # or empties beside it) = an honest "partial set" — never "Full set".
         nm0, n0 = committed[0]
         srec0 = SET_BY_NAME.get(nm0.lower()) or {}
         total0 = len(srec0.get("pieces") or []) or 6
-        is_full = n0 >= total0
-        # franken = procs/HOs or single pieces from OTHER sets mixed in. Universal
-        # globals (LotG/Kismet/Steadfast — the `glob` list) ride any set cleanly and
-        # do NOT make a partial a frankenstein, so exclude them.
-        franken_extras = (len(procs) + len(hos)
+        n0_eff = n0 + _set_procs(nm0)
+        is_full = n0_eff >= total0
+        # franken = OTHER-set procs/HOs or single pieces from OTHER sets mixed in.
+        # Universal globals (LotG/Kismet/Steadfast — the `glob` list) ride any set
+        # cleanly and do NOT make a partial a frankenstein, so exclude them.
+        franken_extras = ((len(procs) - _set_procs(nm0)) + len(hos)
                           + max(0, len(setters) - n0 - len(glob)))
         if is_full:
             return {"kind": "committed", "text": parts[0] + tail + "."}
