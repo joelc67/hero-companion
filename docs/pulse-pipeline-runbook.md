@@ -77,3 +77,29 @@ the expiry rule above, NOT an oversight:
    to a stale banner and exits green, so red = pipeline code/credential broke.
 3. No runs at all: the schedule is disabled (repo inactivity auto-disable after
    60 days without commits — any commit re-enables) or the token expired.
+
+## Pages deploy shape (2026-07-20 — ended the daily Jekyll-503 failure emails)
+
+**Root cause (from the failure annotations):** Pages built in LEGACY mode (Deploy
+from branch `master`/`docs`), which ran Jekyll on **every master push**;
+`jekyll-github-metadata` called `api.github.com/.../pages` and intermittently
+returned **503**, failing the build and emailing Joel — worst in rapid-push
+windows. Nothing in docs/ actually uses `site.github` metadata.
+
+**Current shape:** Pages source = **GitHub Actions** (`build_type: workflow`, set
+via `gh api --method PUT repos/joelc67/hero-companion/pages -f build_type=workflow`).
+`render-pulse.yml` owns the deploy — a `deploy` job (`needs: render`, `if: always()`)
+runs `configure-pages` → `upload-pages-artifact (path: docs)` → `deploy-pages` after
+each render. `docs/.nojekyll` makes the already-static site skip Jekyll entirely.
+
+**Effects:** code pushes to master trigger **no** build (the legacy per-push build
+is off; render-pulse runs only on its schedule + `workflow_dispatch`). The daily
+failure emails end. The client-side staleness banner + "old board stays live if a
+deploy is skipped" behavior are unchanged (the deploy publishes the same
+`docs/pulse` output the render produces). Concurrency group `pages`,
+`cancel-in-progress: false` — never cancel an in-flight Pages deploy.
+
+**If the board stops updating:** check the `Render Pulse Boards` run — the `deploy`
+job is the publish step now (not the old legacy build). Verify
+`https://joelc67.github.io/hero-companion/pulse/` returns 200. To force a deploy:
+`gh workflow run render-pulse.yml`.
