@@ -1665,10 +1665,12 @@ async function init() {
   $("import-btn").addEventListener("click", () => $("import-file").click());
   $("import-file").addEventListener("change", importMids);
   // Entry router — the front door: how do you want to start?
-  $("entry-mids").addEventListener("click", () => { hideEntry(); $("import-file").click(); });
+  // entry stays visible until a file is actually CHOSEN (importMids hides it) —
+  // a cancelled/failed OS dialog must never strand the user on the bare planner
+  $("entry-mids").addEventListener("click", () => $("import-file").click());
   // in-game card: scan-first (the app finds the saves), file picker as fallback
   $("ingame-scan-go").addEventListener("click", () => ingameScan());
-  $("ingame-pick-go").addEventListener("click", () => { hideEntry(); $("import-file").click(); });
+  $("ingame-pick-go").addEventListener("click", () => $("import-file").click());
   $("entry-scratch").addEventListener("click", () => { hideEntry(); startFromScratch(); });
   $("entry-respec").addEventListener("click", () => { hideEntry(); startNew50(); });
   $("entry-continue").addEventListener("click", openSavesList);
@@ -4674,6 +4676,12 @@ async function importMids(e) {
   const file = e.target.files && e.target.files[0];
   e.target.value = "";   // allow re-importing the same file
   if (!file) return;
+  // WALK REPORT (2026-07-20): the entry screen used to hide BEFORE the OS file
+  // dialog opened, so a cancelled or failed-to-appear dialog stranded the user on
+  // the bare planner with every import card gone — "the ability to browse is
+  // GONE". The entry now hides only HERE, after a file was actually chosen;
+  // cancel keeps you exactly where you were, controls intact.
+  hideEntry();
   const report = $("import-report");
   report.classList.remove("hidden");
   report.innerHTML = `<p class="muted small">Reading <strong>${escHtml(file.name)}</strong>…</p>`;
@@ -4746,9 +4754,11 @@ function renderIngameFound(r) {
     + (r.files.length > 12 ? `<p class="muted small">…and ${r.files.length - 12} more (newest shown).</p>` : "");
   box.querySelectorAll(".ingame-file").forEach(btn => btn.addEventListener("click", async () => {
     const f = r.files[+btn.dataset.i];
-    hideEntry();
+    // same stranding class as the file-picker route: hide the entry only AFTER
+    // the file actually read — a failed read leaves the cards (and this list) up
     const rr = await api("/ingame/read", postJson({ path: f.path })).catch(() => null);
     if (!rr || !rr.ok) { alert((rr && rr.response) || "Couldn't read that file — try the file picker."); return; }
+    hideEntry();
     importBuildText(rr.text);
   }));
 }

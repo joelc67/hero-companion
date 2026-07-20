@@ -94,10 +94,24 @@ try:
         pass
     print("fire-farm picker (2 choices, no generic):", "OK" if ok6 else "WRONG")
 
-    allok = ok1 and ok2 and ok3 and ok4 and ok5 and ok6
+    # pinned case 5 (2026-07-20 walk report): EVERY import entry point offers file
+    # navigation — the two entry cards, the builder's import button, and the file
+    # input they all trigger. A missing browse control strands users with a game
+    # export and no way to load it.
+    ok7 = False
+    try:
+        html2 = urllib.request.urlopen(base + "/", timeout=10).read().decode("utf-8", "ignore")
+        ok7 = all(m in html2 for m in
+                  ('id="import-file"', 'id="import-btn"',
+                   'id="entry-mids"', 'id="ingame-pick-go"'))
+    except Exception:  # noqa: BLE001
+        pass
+    print("import entry points (browse everywhere):", "OK" if ok7 else "MISSING")
+
+    allok = ok1 and ok2 and ok3 and ok4 and ok5 and ok6 and ok7
     print("SMOKE:", "PASS" if allok else
           f"FAIL (L1={ok1} summons={ok2} ver={ok3} recompute={ok4} "
-          f"errsurface={ok5} farmpicker={ok6})")
+          f"errsurface={ok5} farmpicker={ok6} importnav={ok7})")
     sys.exit(0 if allok else 1)
 finally:
     proc.terminate()
