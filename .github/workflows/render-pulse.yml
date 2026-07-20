@@ -30,12 +30,24 @@ on:
     - cron: "4,19,34,49 * * * *"
   workflow_dispatch:
 
+# PAGES SOURCE = GITHUB ACTIONS (2026-07-20, the daily failure-email fix): the
+# site used to build in LEGACY mode (Deploy from branch master/docs), which ran
+# Jekyll on every master push. jekyll-github-metadata called the Pages API and
+# intermittently 503'd (confirmed in the annotations) — failing the build and
+# emailing Joel, worst in rapid-push windows. Now this workflow OWNS the deploy:
+# code pushes to master trigger NOTHING (no per-push build), the deploy runs only
+# when the board is rendered (the schedule), and docs/.nojekyll skips Jekyll on
+# the already-static site so the whole metadata/Liquid failure class is gone.
+# cancel-in-progress: false — an in-flight Pages DEPLOY must never be cancelled
+# (GitHub's own guidance); renders are idempotent so not cancelling them is safe.
 concurrency:
-  group: render-pulse
-  cancel-in-progress: true
+  group: pages
+  cancel-in-progress: false
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   render:
@@ -81,3 +93,26 @@ jobs:
           git add docs/pulse/index.html
           git commit -m "Publish Pulse Boards (pipeline)" || exit 0
           git push || { git pull --rebase --autostash && git push; }
+
+  # Deploy the site to GitHub Pages (Actions source). Runs after render in the
+  # SAME run, so the render's freshly-committed board deploys without needing a
+  # cross-workflow trigger (a GITHUB_TOKEN bot commit does not fire other
+  # workflows). if: always() — deploy the last-known-good docs/ even when the
+  # render published nothing or failed, so the board is never left un-deployed.
+  deploy:
+    needs: render
+    if: always()
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - id: deployment
+        uses: actions/deploy-pages@v4
