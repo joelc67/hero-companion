@@ -1735,7 +1735,7 @@ def get_setbonuses(setname):
 _GLOBAL_DESC = {
     "luck of the gambler": "+7.5% global recharge",
     "steadfast protection": "+3% defense (all)",
-    "gladiator's armor": "+3% defense (all)",
+    "gladiators armor": "+3% defense (all)",
     "shield wall": "+5% resistance (all)",
     "reactive defenses": "scaling resist proc",
     "unbreakable guard": "+7.5% max HP",
@@ -1747,6 +1747,17 @@ _GLOBAL_DESC = {
     "performance shifter": "+recovery proc",
     "power transfer": "heal-on-use proc",
     "panacea": "+HP / +recovery proc",
+    # 2026-07-20 (Joel's globals-list check, from the Nimbus Overwhelming Force
+    # question): build-wide global uniques the list was MISSING — knockback
+    # protection (Karma / Blessing of the Zephyr), slow resistance (Winter's Gift),
+    # and the third +End proc (Theft of Essence, sibling of Performance Shifter /
+    # Power Transfer). Verified game-first from set_details short-help. NOTE the
+    # deliberate EXCLUSIONS: Overwhelming Force / Sudden Acceleration are "converts
+    # knockback to KNOCKDOWN" — a PER-POWER effect, not a build-wide global.
+    "karma": "knockback protection",
+    "blessing of the zephyr": "knockback protection",
+    "winters gift": "+slow resistance",
+    "theft of essence": "+endurance proc",
 }
 # effect -> short label for naming the set bonuses a committed set actually earns
 _EFFECT_LABEL = [
@@ -1763,7 +1774,10 @@ def _piece_is_proc(s):
 
 
 def _global_key(set_name):
-    n = (set_name or "").lower()
+    # apostrophe-insensitive: slot set names carry apostrophes ("Winter's Gift")
+    # while set_details display names drop them ("Winters Gift") — normalize both
+    # so the match works regardless of source (2026-07-20).
+    n = (set_name or "").lower().replace("'", "")
     return next((k for k in _GLOBAL_DESC if k in n), None)
 
 
@@ -4287,6 +4301,23 @@ def _critique_build(build, totals):
     if len(bare) > 3:
         out.append({"kind": "info", "text": f"{len(bare)} powers have no enhancement "
                     "slots — possible set-bonus real estate if they accept sets."})
+    # IN-PROGRESS SLOTTING (Joel, 2026-07-20 — the Dark Consumption case): a power
+    # with earned-but-EMPTY slots is unfinished (he couldn't afford the recommended
+    # set yet). An imported build must never present its empty slots as a finished
+    # plan — say so plainly so the state is obvious at a glance.
+    inprog = [(p.get("display_name"), sum(1 for s in (p.get("slots") or [])
+                                          if not (s and s.get("piece_uid"))))
+              for p in powers]
+    inprog = [(nm, n) for nm, n in inprog if n]
+    if inprog:
+        total_empty = sum(n for _, n in inprog)
+        shown = ", ".join(f"{nm} ({n})" for nm, n in inprog[:4])
+        out.append({"kind": "warn", "text": f"In progress — {total_empty} empty slot"
+                    f"{'s' if total_empty != 1 else ''} across {len(inprog)} power"
+                    f"{'s' if len(inprog) != 1 else ''}: {shown}"
+                    + ("…" if len(inprog) > 4 else "")
+                    + ". Fill these to finish the build — an unfinished import is not "
+                    "yet a complete plan."})
     # Level legality: a power can't be chosen before its available level.
     early = [f"{p['display_name']} (L{p.get('pick_level')} < L{p.get('level_available')})"
              for p in powers
