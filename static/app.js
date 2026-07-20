@@ -414,6 +414,24 @@ function wizGateBuild() {
   else if ($("wiz-status").textContent.startsWith("Answer the four")) $("wiz-status").textContent = "";
 }
 
+// FIELD REPORT (Joel's 0.12.22 walk, 2026-07-20): he clicked Build with the
+// primary still on its placeholder and got "ten minutes of no build" — the gate
+// SET the same gray text that was already sitting there, so every click after
+// the first changed nothing visible: a false no-op by repetition. The no-dead-
+// controls law demands a RESPONSE: name the missing fields, ring them red,
+// scroll the first one into view, and flash the status so a repeat click is
+// visibly a fresh answer.
+function wizFlagMissing(els, msg) {
+  els.forEach(el => el && el.classList.add("wiz-missing"));
+  const st = $("wiz-status");
+  st.textContent = msg;
+  st.classList.remove("wiz-status-flash");
+  void st.offsetWidth;                     // restart the animation on every click
+  st.classList.add("wiz-status-flash");
+  const first = els.find(Boolean);
+  if (first) first.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
 async function openWizard(mode) {
   if ($("wiz-at").options.length <= 1) $("wiz-at").innerHTML = $("sel-archetype").innerHTML;
   cloneOptions($("wiz-content"), $("preset-content"));
@@ -1081,7 +1099,14 @@ async function wizLoadPowersets() {
 
 async function buildRespec() {
   const at = $("wiz-at").value, pri = $("wiz-primary").value, sec = $("wiz-secondary").value;
-  if (!at || !pri || !sec) { $("wiz-status").textContent = "Pick an archetype, primary, and secondary first."; return; }
+  if (!at || !pri || !sec) {
+    const missing = [], names = [];
+    if (!at) { missing.push($("wiz-at")); names.push("archetype"); }
+    if (!pri) { missing.push($("wiz-primary")); names.push("primary set"); }
+    if (!sec) { missing.push($("wiz-secondary")); names.push("secondary set"); }
+    wizFlagMissing(missing, `Pick your ${names.join(" and ")} in step 1 — highlighted in red above.`);
+    return;
+  }
   // NO DEFAULTS (design ruling): the button is gated, and this guard backs it up —
   // the planner never invents an answer to "how do you play."
   if (!wizAnswered()) { wizGateBuild(); return; }
@@ -1662,6 +1687,12 @@ async function init() {
     wizExplain("form");   // the chosen form pops its plain-language explanation
   });
   $("wiz-build").addEventListener("click", buildRespec);
+  // a flagged-missing field clears its red ring the moment it gets a value
+  document.addEventListener("change", (e) => {
+    const t = e.target;
+    if (t && t.classList && t.classList.contains("wiz-missing") && t.value)
+      t.classList.remove("wiz-missing");
+  });
   $("disc-find").addEventListener("click", runDiscovery);
   // Each "How do you play" choice pops its tailored explanation; the summary panel
   // refreshes on every change (including character changes — the text re-tailors).

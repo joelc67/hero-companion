@@ -1463,3 +1463,13 @@ body { overflow: hidden; }
 
 /* v34 #13 pet-buff ledger notes (stated assumptions under the buff rows) */
 .offense .o-note { font-size: 11px; color: var(--muted); padding: 1px 0 3px 10px; line-height: 1.4; }
+
+/* Missing-field response (2026-07-20 walk report: Build clicked with the primary
+   on its placeholder read as dead air). The gate now rings the missing selects
+   and flashes the status so every click is a visible answer. */
+.wiz-missing { outline: 2px solid var(--bad); outline-offset: 2px; border-radius: 6px; }
+.wiz-status-flash { animation: wizflash 0.9s ease; }
+@keyframes wizflash {
+  0% { background: rgba(229, 83, 75, 0.35); }
+  100% { background: transparent; }
+}
