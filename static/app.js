@@ -1756,6 +1756,10 @@ async function init() {
       recompute();          // re-gate opt-btn/fit-hint now that AI_ON is known
       return;
     }
+    // the placeholder moved out of the HTML (ai-response now lives outside
+    // #ai-qa); only the AI-ON client shows the ask-a-question copy
+    const _ar = $("ai-response");
+    if (_ar && !_ar.innerHTML.trim()) _ar.textContent = "No question asked yet.";
     $("claude-status").textContent = h.claude_available
       ? "AI: Claude Code ready" : "AI: Claude Code not found";
     $("claude-status").style.color = h.claude_available ? "var(--def)" : "var(--bad)";
@@ -5577,7 +5581,22 @@ function confirmIntent(req) {
           <button id="intent-go" class="solve-btn" style="width:auto">✓ Yes, build it this way</button>
           <button id="intent-adjust" class="ghost-btn" style="width:auto">✗ Let me adjust</button>
         </div></div>`;
-    $("intent-go").addEventListener("click", () => resolve(true));
+    // WALK FAILURE #3 (2026-07-20): this question was rendered into a panel that
+    // an AI-free client HID — Solve hung forever on an invisible confirm. The
+    // structural fix moved ai-response out of #ai-qa; belt-and-suspenders here:
+    // make the question SEEN (scroll to it) and ANNOUNCED (status pointer with
+    // the flash), so a pending confirm can never read as dead air.
+    out.scrollIntoView({ behavior: "smooth", block: "center" });
+    const _st = $("gen-status");
+    if (_st) {
+      _st.textContent = "⚠ One question before I build — answer above: "
+        + "“Yes, build it this way” or “Let me adjust”.";
+      _st.classList.remove("wiz-status-flash");
+      void _st.offsetWidth;
+      _st.classList.add("wiz-status-flash");
+    }
+    const _clearAsk = () => { if (_st && _st.textContent.startsWith("⚠ One question")) _st.textContent = ""; };
+    $("intent-go").addEventListener("click", () => { _clearAsk(); resolve(true); });
     $("intent-adjust").addEventListener("click", () => {
       $("gen-status").textContent = "Adjust the Role or goal text, then Solve again.";
       out.innerHTML = ""; out.classList.add("muted");

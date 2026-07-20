@@ -473,8 +473,13 @@
         <textarea id="ai-question" rows="3"
           placeholder="Ask about your build… e.g. 'How close am I to the defense soft cap?'"></textarea>
         <button id="ai-send">Ask Claude</button>
-        <div id="ai-response" class="ai-response muted">No question asked yet.</div>
       </div>
+      <!-- ai-response lives OUTSIDE #ai-qa (walk failure #3, 2026-07-20): the
+           SOLVE flow renders its confirm question, report, and errors here — on
+           AI-free clients #ai-qa is display:none, and the confirm-intent question
+           was being asked INVISIBLY, hanging Solve forever. This panel's
+           visibility must never depend on the AI seam. -->
+      <div id="ai-response" class="ai-response muted"></div>
     </section>
     </aside>
   </main>

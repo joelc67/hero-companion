@@ -81,7 +81,10 @@ try:
                    # a named-gate-or-visible-result answer, chip==editor truth
                    and "function flagMissing" in js
                    and "function hasTargetValues" in js
-                   and "No changes" in js)
+                   and "No changes" in js
+                   # walk failure #3: a pending confirm-intent question must be
+                   # announced at the button, never an invisible hang
+                   and "One question before I build" in js)
             break
         except Exception:  # noqa: BLE001
             continue
@@ -108,7 +111,11 @@ try:
         html2 = urllib.request.urlopen(base + "/", timeout=10).read().decode("utf-8", "ignore")
         ok7 = all(m in html2 for m in
                   ('id="import-file"', 'id="import-btn"',
-                   'id="entry-mids"', 'id="ingame-pick-go"'))
+                   'id="entry-mids"', 'id="ingame-pick-go"',
+                   # walk failure #3: the solve flow's output panel must live
+                   # OUTSIDE the AI-only #ai-qa section (hidden on AI-free
+                   # clients) or confirms/reports render invisibly
+                   'ai-response lives OUTSIDE'))
     except Exception:  # noqa: BLE001
         pass
     print("import entry points (browse everywhere):", "OK" if ok7 else "MISSING")
