@@ -37,14 +37,14 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 34, 2026-07-20",
+    "against": "model 35, 2026-07-21",
     "verdict": "moved",
-    "canonical_score": 1784.87
+    "canonical_score": 1791.61
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 1784.87
+  "canonical_score": 1791.61
  },
  "Class_Defender|Defender_Buff.Poison|Defender_Ranged.Sonic_Attack|itrial": {
   "picks": [
@@ -84,14 +84,14 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 34, 2026-07-20",
+    "against": "model 35, 2026-07-21",
     "verdict": "moved",
-    "canonical_score": 1995.74
+    "canonical_score": 1963.33
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 1995.74
+  "canonical_score": 1963.33
  },
  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Sonic_Attack|itrial": {
   "picks": [
@@ -138,16 +138,15 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "baseline",
-    "canonical_score": 1976.3
+    "against": "model 35, 2026-07-21",
+    "verdict": "moved",
+    "canonical_score": 1904.43
    }
   },
-  "canonical_score": 1976.3
+  "canonical_score": 1904.43
  },
  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|itrial": {
   "picks": [
-   "Defender_Buff.Radiation_Emission.Accelerate_Metabolism",
    "Defender_Buff.Radiation_Emission.EMP_Pulse",
    "Defender_Buff.Radiation_Emission.Enervating__Field",
    "Defender_Buff.Radiation_Emission.Fallout",
@@ -166,17 +165,18 @@
    "Inherent.Fitness.Stamina",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
+   "Pool.Manipulation.Challenge",
+   "Pool.Manipulation.Provoke",
    "Pool.Medicine.Aid_Other",
    "Pool.Medicine.Aid_Self",
-   "Pool.Medicine.Resuscitate",
    "Pool.Medicine.Stimulant",
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed",
    "Pool.Speed.Whirlwind"
   ],
-  "score": 1871.9766450000002,
+  "score": 1924.1722000000002,
   "certificate": {
-   "sweeps": 31,
+   "sweeps": 33,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
@@ -190,12 +190,12 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 34, 2026-07-20",
+    "against": "model 35, 2026-07-21",
     "verdict": "baseline",
-    "canonical_score": 1754.38
+    "canonical_score": 1943.02
    }
   },
-  "canonical_score": 1754.38
+  "canonical_score": 1943.02
  },
  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Radiation_Emission|itrial": {
   "picks": [
@@ -235,36 +235,36 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 34, 2026-07-20",
+    "against": "model 35, 2026-07-21",
     "verdict": "moved",
-    "canonical_score": 1308.98
+    "canonical_score": 1281.14
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 1308.98
+  "canonical_score": 1281.14
  },
  "Class_Brute|Brute_Melee.Battle_Axe|Brute_Defense.Fiery_Aura|itrial": {
   "picks": [
    "Brute_Defense.Fiery_Aura.Burn",
+   "Brute_Defense.Fiery_Aura.Consume",
    "Brute_Defense.Fiery_Aura.Fire_Shield",
+   "Brute_Defense.Fiery_Aura.Healing_Flames",
    "Brute_Defense.Fiery_Aura.Temperature_Protection",
    "Brute_Melee.Battle_Axe.Chop",
    "Brute_Melee.Battle_Axe.Cleave",
    "Brute_Melee.Battle_Axe.Gash",
    "Brute_Melee.Battle_Axe.Pendulum",
+   "Brute_Melee.Battle_Axe.Taunt",
    "Brute_Melee.Battle_Axe.Whirling_Axe",
-   "Epic.Dark_Mastery_TankBrute.Dark_Blast",
    "Epic.Dark_Mastery_TankBrute.Night_Fall",
+   "Epic.Dark_Mastery_TankBrute.Petrifying_Gaze",
    "Epic.Dark_Mastery_TankBrute.Tar_Patch",
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
-   "Pool.Fighting.Boxing",
    "Pool.Fighting.Cross_Punch",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
-   "Pool.Force_of_Will.Project_Will",
-   "Pool.Force_of_Will.Unleash_Potential",
    "Pool.Force_of_Will.Wall_of_Force",
    "Pool.Force_of_Will.Weaken_Resolve",
    "Pool.Invisibility.Grant_Invisibility",
@@ -273,28 +273,28 @@
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed"
   ],
-  "score": 1436.5867500000002,
+  "score": 1605.3555000000001,
   "certificate": {
-   "sweeps": 33,
+   "sweeps": 35,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
    "primary_converged": true,
-   "picks_filled": 0,
+   "picks_filled": 1,
    "node_cap": {
     "cap": 50000,
     "capped_solves_floor": 0,
     "final_resolve_delta": 0.0
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
-   "canonical_optimality_checked": false,
    "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "unaffected",
-    "canonical_score": 1217.98
+    "against": "model 35, 2026-07-21",
+    "verdict": "baseline",
+    "canonical_score": 1356.69
    }
   },
-  "canonical_score": 1217.98
+  "canonical_score": 1356.69
  },
  "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Super_Strength|itrial": {
   "picks": [
@@ -334,64 +334,71 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "unaffected",
-    "canonical_score": 1232.75
+    "against": "model 35, 2026-07-21",
+    "verdict": "moved",
+    "canonical_score": 1443.0
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 1232.75
+  "canonical_score": 1443.0
  },
  "Class_Blaster|Blaster_Ranged.Fire_Blast|Blaster_Support.Energy_Manipulation|itrial": {
   "picks": [
-   "Blaster_Ranged.Fire_Blast.Aim",
    "Blaster_Ranged.Fire_Blast.Fire_Ball",
+   "Blaster_Ranged.Fire_Blast.Fire_Blast",
    "Blaster_Ranged.Fire_Blast.Fire_Breath",
    "Blaster_Ranged.Fire_Blast.Flares",
    "Blaster_Ranged.Fire_Blast.Inferno",
+   "Blaster_Ranged.Fire_Blast.Rain_of_Fire",
    "Blaster_Support.Energy_Manipulation.Build_Up",
-   "Blaster_Support.Energy_Manipulation.Conserve_Power",
    "Blaster_Support.Energy_Manipulation.Power_Thrust",
    "Epic.Electrical_Mastery.Charged_Armor",
    "Epic.Electrical_Mastery.EM_Pulse",
    "Epic.Electrical_Mastery.Static_Discharge",
-   "Epic.Electrical_Mastery.Surge_of_Power",
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Boxing",
    "Pool.Fighting.Cross_Punch",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
+   "Pool.Invisibility.Grant_Invisibility",
+   "Pool.Invisibility.Invisibility",
+   "Pool.Invisibility.Misdirection",
+   "Pool.Invisibility.Stealth",
+   "Pool.Leadership.Assault",
    "Pool.Leadership.Defense",
-   "Pool.Leadership.Tactics",
    "Pool.Leadership.Vengeance",
-   "Pool.Leaping.Jump_Kick",
-   "Pool.Leaping.Long_Jump",
-   "Pool.Leaping.Spring_Attack",
-   "Pool.Speed.Flurry",
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed"
   ],
-  "score": 292.444425,
+  "score": 382.6879,
   "certificate": {
-   "sweeps": 32,
+   "sweeps": 33,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
-   "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "unaffected",
-    "canonical_score": 293.65
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
-   "canonical_optimality_checked": false
+   "evaluated": {
+    "against": "model 35, 2026-07-21",
+    "verdict": "baseline",
+    "canonical_score": 308.85
+   }
   },
-  "canonical_score": 293.65
+  "canonical_score": 308.85
  },
  "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Dark_Armor|itrial": {
   "picks": [
+   "Epic.Darkness_Mastery.Petrifying_Gaze",
+   "Epic.Darkness_Mastery.Tenebrous_Tentacles",
    "Epic.Darkness_Mastery.Torrent",
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
@@ -400,42 +407,45 @@
    "Pool.Fighting.Kick",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
-   "Pool.Force_of_Will.Unleash_Potential",
    "Pool.Force_of_Will.Wall_of_Force",
    "Pool.Force_of_Will.Weaken_Resolve",
-   "Pool.Invisibility.Grant_Invisibility",
-   "Pool.Invisibility.Misdirection",
+   "Pool.Leadership.Assault",
+   "Pool.Leadership.Defense",
+   "Pool.Leadership.Vengeance",
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed",
-   "Stalker_Defense.Dark_Armor.Cloak_of_Fear",
    "Stalker_Defense.Dark_Armor.Dark_Embrace",
    "Stalker_Defense.Dark_Armor.Hide",
-   "Stalker_Defense.Dark_Armor.Obscure_Sustenance",
    "Stalker_Defense.Dark_Armor.Oppressive_Gloom",
    "Stalker_Defense.Dark_Armor.Shadow_Dweller",
    "Stalker_Defense.Dark_Armor.Soul_Transfer",
-   "Stalker_Melee.Radiation_Melee.Assassins_Corruption",
    "Stalker_Melee.Radiation_Melee.Atom_Smasher",
-   "Stalker_Melee.Radiation_Melee.Contaminated_Strike",
-   "Stalker_Melee.Radiation_Melee.Proton_Sweep"
+   "Stalker_Melee.Radiation_Melee.Placate",
+   "Stalker_Melee.Radiation_Melee.Proton_Sweep",
+   "Stalker_Melee.Radiation_Melee.Radioactive_Smash"
   ],
-  "score": 1547.7569999999998,
+  "score": 2040.9515,
   "certificate": {
-   "sweeps": 32,
+   "sweeps": 35,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
-   "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "unaffected",
-    "canonical_score": 1398.58
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
-   "canonical_optimality_checked": false
+   "evaluated": {
+    "against": "model 35, 2026-07-21",
+    "verdict": "baseline",
+    "canonical_score": 1835.84
+   }
   },
-  "canonical_score": 1398.58
+  "canonical_score": 1835.84
  },
  "Class_Dominator|Dominator_Control.Mind_Control|Dominator_Assault.Fiery_Assault|itrial": {
   "picks": [
@@ -475,14 +485,14 @@
    "primary_converged": true,
    "picks_filled": 2,
    "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "unaffected",
-    "canonical_score": 705.08
+    "against": "model 35, 2026-07-21",
+    "verdict": "moved",
+    "canonical_score": 595.5
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 705.08
+  "canonical_score": 595.5
  },
  "Class_Scrapper|Scrapper_Melee.Broad_Sword|Scrapper_Defense.Super_Reflexes|itrial": {
   "picks": [
@@ -522,14 +532,14 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "unaffected",
-    "canonical_score": 1006.14
+    "against": "model 35, 2026-07-21",
+    "verdict": "moved",
+    "canonical_score": 1226.25
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 1006.14
+  "canonical_score": 1226.25
  },
  "Class_Sentinel|Sentinel_Ranged.Fire_Blast|Sentinel_Defense.Willpower|itrial": {
   "picks": [
@@ -569,14 +579,14 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "unaffected",
-    "canonical_score": 1591.68
+    "against": "model 35, 2026-07-21",
+    "verdict": "moved",
+    "canonical_score": 1704.29
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 1591.68
+  "canonical_score": 1704.29
  },
  "Class_Arachnos_Soldier|Arachnos_Soldiers.Crab_Spider_Soldier|Training_Gadgets.Crab_Spider_Training|itrial": {
   "picks": [
@@ -616,118 +626,23 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 34, 2026-07-20",
+    "against": "model 35, 2026-07-21",
     "verdict": "moved",
-    "canonical_score": 1648.2
+    "canonical_score": 1691.19
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 1648.2
+  "canonical_score": 1691.19
  },
  "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial": {
   "picks": [
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
-   "Peacebringer_Defensive.Luminous_Aura.Incandescence",
    "Peacebringer_Defensive.Luminous_Aura.Quantum_Maneuvers",
    "Peacebringer_Defensive.Luminous_Aura.Reform_Essence",
    "Peacebringer_Defensive.Luminous_Aura.Shining_Shield",
-   "Peacebringer_Offensive.Luminous_Blast.Dawn_Strike",
-   "Peacebringer_Offensive.Luminous_Blast.Glinting_Eye",
-   "Peacebringer_Offensive.Luminous_Blast.Glowing_Touch",
-   "Peacebringer_Offensive.Luminous_Blast.Luminous_Detonation",
-   "Peacebringer_Offensive.Luminous_Blast.Photon_Seekers",
-   "Peacebringer_Offensive.Luminous_Blast.Proton_Scatter",
-   "Peacebringer_Offensive.Luminous_Blast.Pulsar",
-   "Peacebringer_Offensive.Luminous_Blast.Solar_Flare",
-   "Pool.Fighting.Boxing",
-   "Pool.Fighting.Cross_Punch",
-   "Pool.Fighting.Kick",
-   "Pool.Fighting.Tough",
-   "Pool.Fighting.Weave",
-   "Pool.Leadership.Assault",
-   "Pool.Leadership.Defense",
-   "Pool.Leadership.Vengeance",
-   "Pool.Leaping.Combat_Jumping",
-   "Pool.Leaping.Jump_Kick",
-   "Pool.Medicine.Aid_Self",
-   "Pool.Medicine.Stimulant"
-  ],
-  "score": 1199.769,
-  "certificate": {
-   "sweeps": 31,
-   "converged": true,
-   "restarts_done": 6,
-   "budget_truncated": false,
-   "primary_converged": true,
-   "picks_filled": 1,
-   "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "unaffected",
-    "canonical_score": 1199.77
-   },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
-   "canonical_optimality_checked": false
-  },
-  "canonical_score": 1199.77
- },
- "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial": {
-  "picks": [
-   "Inherent.Fitness.Health",
-   "Inherent.Fitness.Stamina",
-   "Pool.Fighting.Boxing",
-   "Pool.Fighting.Cross_Punch",
-   "Pool.Fighting.Tough",
-   "Pool.Force_of_Will.Project_Will",
-   "Pool.Force_of_Will.Wall_of_Force",
-   "Pool.Force_of_Will.Weaken_Resolve",
-   "Pool.Invisibility.Grant_Invisibility",
-   "Pool.Invisibility.Misdirection",
-   "Pool.Invisibility.Stealth",
-   "Pool.Leadership.Assault",
-   "Pool.Leadership.Defense",
-   "Pool.Leadership.Vengeance",
-   "Warshade_Defensive.Umbral_Aura.Absorption",
-   "Warshade_Defensive.Umbral_Aura.Gravity_Shield",
-   "Warshade_Defensive.Umbral_Aura.Inky_Aspect",
-   "Warshade_Defensive.Umbral_Aura.Shadow_Cloak",
-   "Warshade_Defensive.Umbral_Aura.Stygian_Circle",
-   "Warshade_Defensive.Umbral_Aura.Stygian_Return",
-   "Warshade_Offensive.Umbral_Blast.Dark_Matter_Detonation",
-   "Warshade_Offensive.Umbral_Blast.Gravitic_Emanation",
-   "Warshade_Offensive.Umbral_Blast.Quasar",
-   "Warshade_Offensive.Umbral_Blast.Shadow_Bolt",
-   "Warshade_Offensive.Umbral_Blast.Sunless_Mire",
-   "Warshade_Offensive.Umbral_Blast.Unchain_Essence"
-  ],
-  "score": 1416.8385,
-  "certificate": {
-   "sweeps": 32,
-   "converged": true,
-   "restarts_done": 6,
-   "budget_truncated": false,
-   "primary_converged": true,
-   "picks_filled": 0,
-   "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "unaffected",
-    "canonical_score": 1368.29
-   },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
-   "canonical_optimality_checked": false
-  },
-  "canonical_score": 1368.29
- },
- "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|dwarf": {
-  "picks": [
-   "Inherent.Fitness.Health",
-   "Inherent.Fitness.Stamina",
-   "Peacebringer_Defensive.Luminous_Aura.Quantum_Maneuvers",
-   "Peacebringer_Defensive.Luminous_Aura.Reform_Essence",
-   "Peacebringer_Defensive.Luminous_Aura.Restore_Essence",
-   "Peacebringer_Defensive.Luminous_Aura.Shining_Shield",
-   "Peacebringer_Defensive.Luminous_Aura.White_Dwarf",
+   "Peacebringer_Offensive.Luminous_Blast.Build_Up",
    "Peacebringer_Offensive.Luminous_Blast.Dawn_Strike",
    "Peacebringer_Offensive.Luminous_Blast.Gleaming_Blast",
    "Peacebringer_Offensive.Luminous_Blast.Glinting_Eye",
@@ -738,87 +653,6 @@
    "Peacebringer_Offensive.Luminous_Blast.Solar_Flare",
    "Pool.Fighting.Cross_Punch",
    "Pool.Fighting.Tough",
-   "Pool.Fighting.Weave",
-   "Pool.Leadership.Assault",
-   "Pool.Leadership.Defense",
-   "Pool.Leadership.Vengeance",
-   "Pool.Leadership.Victory_Rush",
-   "Pool.Leaping.Combat_Jumping",
-   "Pool.Leaping.Jump_Kick",
-   "Pool.Speed.Flurry",
-   "Pool.Speed.Hasten"
-  ],
-  "score": 1308.32385,
-  "certificate": {
-   "sweeps": 31,
-   "converged": true,
-   "restarts_done": 6,
-   "budget_truncated": false,
-   "primary_converged": true,
-   "picks_filled": 0,
-   "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "unaffected",
-    "canonical_score": 1271.8
-   },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
-   "canonical_optimality_checked": false
-  },
-  "canonical_score": 1271.8
- },
- "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|nova": {
-  "picks": [
-   "Inherent.Fitness.Health",
-   "Inherent.Fitness.Stamina",
-   "Peacebringer_Defensive.Luminous_Aura.Quantum_Maneuvers",
-   "Peacebringer_Defensive.Luminous_Aura.Reform_Essence",
-   "Peacebringer_Defensive.Luminous_Aura.Restore_Essence",
-   "Peacebringer_Defensive.Luminous_Aura.Shining_Shield",
-   "Peacebringer_Offensive.Luminous_Blast.Bright_Nova",
-   "Peacebringer_Offensive.Luminous_Blast.Dawn_Strike",
-   "Peacebringer_Offensive.Luminous_Blast.Gleaming_Bolt",
-   "Peacebringer_Offensive.Luminous_Blast.Glinting_Eye",
-   "Peacebringer_Offensive.Luminous_Blast.Glowing_Touch",
-   "Peacebringer_Offensive.Luminous_Blast.Luminous_Detonation",
-   "Peacebringer_Offensive.Luminous_Blast.Photon_Seekers",
-   "Peacebringer_Offensive.Luminous_Blast.Proton_Scatter",
-   "Peacebringer_Offensive.Luminous_Blast.Pulsar",
-   "Peacebringer_Offensive.Luminous_Blast.Solar_Flare",
-   "Pool.Fighting.Cross_Punch",
-   "Pool.Fighting.Kick",
-   "Pool.Fighting.Tough",
-   "Pool.Invisibility.Grant_Invisibility",
-   "Pool.Invisibility.Misdirection",
-   "Pool.Invisibility.Stealth",
-   "Pool.Leadership.Assault",
-   "Pool.Leadership.Vengeance",
-   "Pool.Medicine.Aid_Self",
-   "Pool.Medicine.Stimulant"
-  ],
-  "score": 1220.317125,
-  "certificate": {
-   "sweeps": 36,
-   "converged": true,
-   "restarts_done": 6,
-   "budget_truncated": false,
-   "primary_converged": true,
-   "picks_filled": 0,
-   "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "unaffected",
-    "canonical_score": 1195.04
-   },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
-   "canonical_optimality_checked": false
-  },
-  "canonical_score": 1195.04
- },
- "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|dwarf": {
-  "picks": [
-   "Inherent.Fitness.Health",
-   "Inherent.Fitness.Stamina",
-   "Pool.Fighting.Cross_Punch",
-   "Pool.Fighting.Kick",
    "Pool.Fighting.Weave",
    "Pool.Force_of_Will.Project_Will",
    "Pool.Force_of_Will.Unleash_Potential",
@@ -827,97 +661,148 @@
    "Pool.Leadership.Assault",
    "Pool.Leadership.Defense",
    "Pool.Leadership.Vengeance",
-   "Pool.Speed.Hasten",
-   "Warshade_Defensive.Umbral_Aura.Absorption",
-   "Warshade_Defensive.Umbral_Aura.Black_Dwarf",
-   "Warshade_Defensive.Umbral_Aura.Eclipse",
+   "Pool.Medicine.Aid_Self",
+   "Pool.Medicine.Stimulant"
+  ],
+  "score": 1568.951625,
+  "certificate": {
+   "sweeps": 30,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
+   },
+   "evaluated": {
+    "against": "model 35, 2026-07-21",
+    "verdict": "baseline",
+    "canonical_score": 1433.02
+   }
+  },
+  "canonical_score": 1433.02
+ },
+ "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial": {
+  "picks": [
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Tough",
+   "Pool.Fighting.Weave",
+   "Pool.Force_of_Will.Unleash_Potential",
+   "Pool.Force_of_Will.Wall_of_Force",
+   "Pool.Force_of_Will.Weaken_Resolve",
+   "Pool.Leadership.Assault",
+   "Pool.Leadership.Defense",
+   "Pool.Leadership.Vengeance",
+   "Pool.Leadership.Victory_Rush",
+   "Pool.Medicine.Aid_Self",
+   "Pool.Medicine.Field_Medic",
+   "Pool.Medicine.Stimulant",
    "Warshade_Defensive.Umbral_Aura.Gravity_Shield",
    "Warshade_Defensive.Umbral_Aura.Inky_Aspect",
+   "Warshade_Defensive.Umbral_Aura.Orbiting_Death",
+   "Warshade_Defensive.Umbral_Aura.Shadow_Cloak",
    "Warshade_Defensive.Umbral_Aura.Stygian_Circle",
    "Warshade_Offensive.Umbral_Blast.Dark_Extraction",
    "Warshade_Offensive.Umbral_Blast.Dark_Matter_Detonation",
    "Warshade_Offensive.Umbral_Blast.Ebon_Eye",
    "Warshade_Offensive.Umbral_Blast.Gravitic_Emanation",
    "Warshade_Offensive.Umbral_Blast.Quasar",
-   "Warshade_Offensive.Umbral_Blast.Shadow_Blast",
-   "Warshade_Offensive.Umbral_Blast.Sunless_Mire"
+   "Warshade_Offensive.Umbral_Blast.Shadow_Bolt"
   ],
-  "score": 1665.2569999999998,
+  "score": 1572.4789999999998,
   "certificate": {
-   "sweeps": 32,
+   "sweeps": 33,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
-   "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "moved",
-    "canonical_score": 1644.99
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
-   "canonical_optimality_checked": false
+   "evaluated": {
+    "against": "model 35, 2026-07-21",
+    "verdict": "baseline",
+    "canonical_score": 1502.1
+   }
   },
-  "canonical_score": 1644.99
+  "canonical_score": 1502.1
  },
- "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|nova": {
+ "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|dwarf": {
   "picks": [
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
+   "Peacebringer_Defensive.Luminous_Aura.Group_Energy_Flight",
+   "Peacebringer_Defensive.Luminous_Aura.Quantum_Maneuvers",
+   "Peacebringer_Defensive.Luminous_Aura.Reform_Essence",
+   "Peacebringer_Defensive.Luminous_Aura.Shining_Shield",
+   "Peacebringer_Defensive.Luminous_Aura.White_Dwarf",
+   "Peacebringer_Offensive.Luminous_Blast.Dawn_Strike",
+   "Peacebringer_Offensive.Luminous_Blast.Gleaming_Blast",
+   "Peacebringer_Offensive.Luminous_Blast.Glinting_Eye",
+   "Peacebringer_Offensive.Luminous_Blast.Luminous_Detonation",
+   "Peacebringer_Offensive.Luminous_Blast.Proton_Scatter",
+   "Peacebringer_Offensive.Luminous_Blast.Solar_Flare",
    "Pool.Fighting.Boxing",
    "Pool.Fighting.Cross_Punch",
-   "Pool.Fighting.Kick",
    "Pool.Fighting.Tough",
-   "Pool.Invisibility.Grant_Invisibility",
+   "Pool.Fighting.Weave",
+   "Pool.Force_of_Will.Mighty_Leap",
+   "Pool.Force_of_Will.Project_Will",
+   "Pool.Force_of_Will.Wall_of_Force",
+   "Pool.Force_of_Will.Weaken_Resolve",
    "Pool.Invisibility.Misdirection",
    "Pool.Invisibility.Stealth",
    "Pool.Leadership.Assault",
-   "Pool.Leadership.Vengeance",
-   "Pool.Medicine.Stimulant",
-   "Warshade_Defensive.Umbral_Aura.Gravity_Shield",
-   "Warshade_Defensive.Umbral_Aura.Inky_Aspect",
-   "Warshade_Defensive.Umbral_Aura.Shadow_Cloak",
-   "Warshade_Defensive.Umbral_Aura.Stygian_Circle",
-   "Warshade_Offensive.Umbral_Blast.Dark_Extraction",
-   "Warshade_Offensive.Umbral_Blast.Dark_Matter_Detonation",
-   "Warshade_Offensive.Umbral_Blast.Dark_Nova",
-   "Warshade_Offensive.Umbral_Blast.Gravimetric_Snare",
-   "Warshade_Offensive.Umbral_Blast.Gravitic_Emanation",
-   "Warshade_Offensive.Umbral_Blast.Quasar",
-   "Warshade_Offensive.Umbral_Blast.Shadow_Bolt",
-   "Warshade_Offensive.Umbral_Blast.Starless_Step",
-   "Warshade_Offensive.Umbral_Blast.Sunless_Mire",
-   "Warshade_Offensive.Umbral_Blast.Unchain_Essence"
+   "Pool.Leadership.Defense",
+   "Pool.Leadership.Vengeance"
   ],
-  "score": 1083.148575,
+  "score": 1648.1959999999997,
   "certificate": {
-   "sweeps": 34,
+   "sweeps": 35,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
-   "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "moved",
-    "canonical_score": 1056.3
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
-   "canonical_optimality_checked": false
+   "evaluated": {
+    "against": "model 35, 2026-07-21",
+    "verdict": "baseline",
+    "canonical_score": 1527.42
+   }
   },
-  "canonical_score": 1056.3
+  "canonical_score": 1527.42
  },
- "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|triform": {
+ "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|nova": {
   "picks": [
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
+   "Peacebringer_Defensive.Luminous_Aura.Essence_Boost",
+   "Peacebringer_Defensive.Luminous_Aura.Light_Form",
    "Peacebringer_Defensive.Luminous_Aura.Quantum_Maneuvers",
-   "Peacebringer_Defensive.Luminous_Aura.Restore_Essence",
    "Peacebringer_Defensive.Luminous_Aura.Shining_Shield",
-   "Peacebringer_Defensive.Luminous_Aura.White_Dwarf",
    "Peacebringer_Offensive.Luminous_Blast.Bright_Nova",
    "Peacebringer_Offensive.Luminous_Blast.Dawn_Strike",
    "Peacebringer_Offensive.Luminous_Blast.Gleaming_Blast",
+   "Peacebringer_Offensive.Luminous_Blast.Gleaming_Bolt",
    "Peacebringer_Offensive.Luminous_Blast.Glinting_Eye",
    "Peacebringer_Offensive.Luminous_Blast.Glowing_Touch",
    "Peacebringer_Offensive.Luminous_Blast.Luminous_Detonation",
@@ -925,34 +810,194 @@
    "Peacebringer_Offensive.Luminous_Blast.Pulsar",
    "Peacebringer_Offensive.Luminous_Blast.Solar_Flare",
    "Pool.Fighting.Cross_Punch",
-   "Pool.Fighting.Kick",
+   "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
+   "Pool.Leadership.Assault",
+   "Pool.Leadership.Defense",
+   "Pool.Leadership.Vengeance",
+   "Pool.Medicine.Aid_Self",
+   "Pool.Medicine.Resuscitate",
+   "Pool.Medicine.Stimulant",
+   "Pool.Speed.Hasten"
+  ],
+  "score": 1317.158775,
+  "certificate": {
+   "sweeps": 31,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
+   },
+   "evaluated": {
+    "against": "model 35, 2026-07-21",
+    "verdict": "baseline",
+    "canonical_score": 1317.16
+   }
+  },
+  "canonical_score": 1317.16
+ },
+ "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|dwarf": {
+  "picks": [
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Boxing",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Weave",
+   "Pool.Force_of_Will.Wall_of_Force",
+   "Pool.Force_of_Will.Weaken_Resolve",
+   "Pool.Leadership.Assault",
+   "Pool.Leadership.Defense",
+   "Pool.Leadership.Vengeance",
+   "Pool.Leaping.Combat_Jumping",
+   "Pool.Leaping.Jump_Kick",
+   "Warshade_Defensive.Umbral_Aura.Absorption",
+   "Warshade_Defensive.Umbral_Aura.Black_Dwarf",
+   "Warshade_Defensive.Umbral_Aura.Inky_Aspect",
+   "Warshade_Defensive.Umbral_Aura.Orbiting_Death",
+   "Warshade_Defensive.Umbral_Aura.Shadow_Cloak",
+   "Warshade_Defensive.Umbral_Aura.Stygian_Circle",
+   "Warshade_Offensive.Umbral_Blast.Dark_Extraction",
+   "Warshade_Offensive.Umbral_Blast.Dark_Matter_Detonation",
+   "Warshade_Offensive.Umbral_Blast.Ebon_Eye",
+   "Warshade_Offensive.Umbral_Blast.Gravimetric_Snare",
+   "Warshade_Offensive.Umbral_Blast.Gravitic_Emanation",
+   "Warshade_Offensive.Umbral_Blast.Gravity_Well",
+   "Warshade_Offensive.Umbral_Blast.Quasar",
+   "Warshade_Offensive.Umbral_Blast.Unchain_Essence"
+  ],
+  "score": 1607.881,
+  "certificate": {
+   "sweeps": 31,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
+   },
+   "evaluated": {
+    "against": "model 35, 2026-07-21",
+    "verdict": "baseline",
+    "canonical_score": 1593.46
+   }
+  },
+  "canonical_score": 1593.46
+ },
+ "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|nova": {
+  "picks": [
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Tough",
+   "Pool.Fighting.Weave",
+   "Pool.Force_of_Will.Wall_of_Force",
+   "Pool.Force_of_Will.Weaken_Resolve",
+   "Pool.Leadership.Assault",
+   "Pool.Leadership.Defense",
+   "Pool.Leadership.Vengeance",
+   "Pool.Speed.Hasten",
+   "Warshade_Defensive.Umbral_Aura.Eclipse",
+   "Warshade_Defensive.Umbral_Aura.Gravity_Shield",
+   "Warshade_Defensive.Umbral_Aura.Orbiting_Death",
+   "Warshade_Defensive.Umbral_Aura.Shadow_Cloak",
+   "Warshade_Defensive.Umbral_Aura.Stygian_Circle",
+   "Warshade_Defensive.Umbral_Aura.Stygian_Return",
+   "Warshade_Defensive.Umbral_Aura.Twilight_Shield",
+   "Warshade_Offensive.Umbral_Blast.Dark_Matter_Detonation",
+   "Warshade_Offensive.Umbral_Blast.Dark_Nova",
+   "Warshade_Offensive.Umbral_Blast.Gravimetric_Snare",
+   "Warshade_Offensive.Umbral_Blast.Gravitic_Emanation",
+   "Warshade_Offensive.Umbral_Blast.Quasar",
+   "Warshade_Offensive.Umbral_Blast.Shadow_Bolt",
+   "Warshade_Offensive.Umbral_Blast.Sunless_Mire",
+   "Warshade_Offensive.Umbral_Blast.Unchain_Essence"
+  ],
+  "score": 1621.6175,
+  "certificate": {
+   "sweeps": 34,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
+   },
+   "evaluated": {
+    "against": "model 35, 2026-07-21",
+    "verdict": "baseline",
+    "canonical_score": 1491.71
+   }
+  },
+  "canonical_score": 1491.71
+ },
+ "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|triform": {
+  "picks": [
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Peacebringer_Defensive.Luminous_Aura.Quantum_Maneuvers",
+   "Peacebringer_Defensive.Luminous_Aura.Reform_Essence",
+   "Peacebringer_Defensive.Luminous_Aura.Shining_Shield",
+   "Peacebringer_Defensive.Luminous_Aura.White_Dwarf",
+   "Peacebringer_Offensive.Luminous_Blast.Bright_Nova",
+   "Peacebringer_Offensive.Luminous_Blast.Dawn_Strike",
+   "Peacebringer_Offensive.Luminous_Blast.Gleaming_Blast",
+   "Peacebringer_Offensive.Luminous_Blast.Gleaming_Bolt",
+   "Peacebringer_Offensive.Luminous_Blast.Glowing_Touch",
+   "Peacebringer_Offensive.Luminous_Blast.Luminous_Detonation",
+   "Peacebringer_Offensive.Luminous_Blast.Proton_Scatter",
+   "Peacebringer_Offensive.Luminous_Blast.Radiant_Strike",
+   "Peacebringer_Offensive.Luminous_Blast.Solar_Flare",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Kick",
+   "Pool.Fighting.Tough",
+   "Pool.Fighting.Weave",
+   "Pool.Force_of_Will.Wall_of_Force",
+   "Pool.Force_of_Will.Weaken_Resolve",
    "Pool.Invisibility.Misdirection",
    "Pool.Invisibility.Stealth",
    "Pool.Leadership.Assault",
    "Pool.Leadership.Defense",
-   "Pool.Leadership.Vengeance",
-   "Pool.Speed.Flurry",
-   "Pool.Speed.Hasten",
-   "Pool.Speed.Super_Speed"
+   "Pool.Leadership.Vengeance"
   ],
-  "score": 1354.7892000000002,
+  "score": 1576.92415,
   "certificate": {
-   "sweeps": 30,
+   "sweeps": 31,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
-   "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "unaffected",
-    "canonical_score": 1254.64
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
-   "canonical_optimality_checked": false
+   "evaluated": {
+    "against": "model 35, 2026-07-21",
+    "verdict": "baseline",
+    "canonical_score": 1579.99
+   }
   },
-  "canonical_score": 1254.64
+  "canonical_score": 1579.99
  },
  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|triform": {
   "picks": [
@@ -960,46 +1005,51 @@
    "Inherent.Fitness.Stamina",
    "Pool.Fighting.Boxing",
    "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
-   "Pool.Force_of_Will.Project_Will",
    "Pool.Force_of_Will.Unleash_Potential",
    "Pool.Force_of_Will.Wall_of_Force",
    "Pool.Force_of_Will.Weaken_Resolve",
    "Pool.Leadership.Assault",
+   "Pool.Leadership.Defense",
    "Pool.Leadership.Vengeance",
    "Pool.Speed.Hasten",
    "Warshade_Defensive.Umbral_Aura.Black_Dwarf",
    "Warshade_Defensive.Umbral_Aura.Gravity_Shield",
    "Warshade_Defensive.Umbral_Aura.Inky_Aspect",
+   "Warshade_Defensive.Umbral_Aura.Orbiting_Death",
    "Warshade_Defensive.Umbral_Aura.Shadow_Cloak",
    "Warshade_Defensive.Umbral_Aura.Stygian_Circle",
    "Warshade_Offensive.Umbral_Blast.Dark_Extraction",
    "Warshade_Offensive.Umbral_Blast.Dark_Matter_Detonation",
    "Warshade_Offensive.Umbral_Blast.Dark_Nova",
    "Warshade_Offensive.Umbral_Blast.Ebon_Eye",
+   "Warshade_Offensive.Umbral_Blast.Gravimetric_Snare",
    "Warshade_Offensive.Umbral_Blast.Gravitic_Emanation",
-   "Warshade_Offensive.Umbral_Blast.Quasar",
-   "Warshade_Offensive.Umbral_Blast.Shadow_Blast",
-   "Warshade_Offensive.Umbral_Blast.Shadow_Bolt",
-   "Warshade_Offensive.Umbral_Blast.Unchain_Essence"
+   "Warshade_Offensive.Umbral_Blast.Quasar"
   ],
-  "score": 1642.7204999999997,
+  "score": 1738.2479999999998,
   "certificate": {
    "sweeps": 28,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
-   "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "moved",
-    "canonical_score": 1655.95
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
-   "canonical_optimality_checked": false
+   "evaluated": {
+    "against": "model 35, 2026-07-21",
+    "verdict": "baseline",
+    "canonical_score": 1727.56
+   }
   },
-  "canonical_score": 1655.95
+  "canonical_score": 1727.56
  },
  "Class_Arachnos_Widow|Widow_Training.Night_Widow_Training|Teamwork.Widow_Teamwork|itrial": {
   "picks": [
@@ -1039,61 +1089,66 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "unaffected",
-    "canonical_score": 1546.29
+    "against": "model 35, 2026-07-21",
+    "verdict": "moved",
+    "canonical_score": 1762.38
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 1546.29
+  "canonical_score": 1762.38
  },
  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|itrial": {
   "picks": [
    "Corruptor_Buff.Kinetics.Increase_Density",
-   "Corruptor_Buff.Kinetics.Inertial_Reduction",
    "Corruptor_Buff.Kinetics.Repel",
-   "Corruptor_Buff.Kinetics.Siphon_Power",
    "Corruptor_Buff.Kinetics.Siphon_Speed",
    "Corruptor_Buff.Kinetics.Speed_Boost",
    "Corruptor_Buff.Kinetics.Transfusion",
-   "Corruptor_Ranged.Water_Blast.Aqua_Bolt",
+   "Corruptor_Ranged.Water_Blast.Dehydrate",
    "Corruptor_Ranged.Water_Blast.Geyser",
-   "Corruptor_Ranged.Water_Blast.Tidal_Forces",
-   "Epic.Ice_Mastery_DefCorr.Build_Up",
+   "Corruptor_Ranged.Water_Blast.Hydro_Blast",
+   "Corruptor_Ranged.Water_Blast.Water_Burst",
    "Epic.Ice_Mastery_DefCorr.Flash_Freeze",
    "Epic.Ice_Mastery_DefCorr.Frozen_Armor",
-   "Epic.Ice_Mastery_DefCorr.Hoarfrost",
+   "Epic.Ice_Mastery_DefCorr.Ice_Elemental",
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
+   "Pool.Invisibility.Misdirection",
    "Pool.Invisibility.Stealth",
    "Pool.Leadership.Assault",
    "Pool.Leadership.Defense",
-   "Pool.Leadership.Tactics",
    "Pool.Leadership.Vengeance",
+   "Pool.Leadership.Victory_Rush",
+   "Pool.Speed.Flurry",
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed",
    "Pool.Speed.Whirlwind"
   ],
-  "score": 370.5864000000001,
+  "score": 397.4022,
   "certificate": {
-   "sweeps": 30,
+   "sweeps": 33,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
-   "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "unaffected",
-    "canonical_score": 376.4
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
-   "canonical_optimality_checked": false
+   "evaluated": {
+    "against": "model 35, 2026-07-21",
+    "verdict": "baseline",
+    "canonical_score": 388.23
+   }
   },
-  "canonical_score": 376.4
+  "canonical_score": 388.23
  },
  "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk": {
   "picks": [
@@ -1174,14 +1229,14 @@
     "label": "AFK-certified at +4x8: 42.5 HP/s sustained (regen 32.4 + Healing_Flames on auto-fire 10.0) meets the 37 HP/s asteroid worst case. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
    },
    "evaluated": {
-    "against": "model 34, 2026-07-20",
-    "verdict": "unaffected",
-    "canonical_score": 186.89
+    "against": "model 35, 2026-07-21",
+    "verdict": "moved",
+    "canonical_score": 280.36
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false,
    "recert_2026_07_16": "re-convergence REJECTED: it scored canonical 177.6 vs this incumbent 186.9 and sustained 39.8 vs 42.5 HP/s. The v33 DATA fix alone lifted these original picks to +4x8 \u2014 no new picks were needed."
   },
-  "canonical_score": 186.89
+  "canonical_score": 280.36
  }
 }
