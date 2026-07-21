@@ -26,13 +26,38 @@ KEYS = os.path.join(ROOT, "tools", "wave_v35_keys.txt")
 DRY = "--dry-run" in sys.argv
 
 
+def _live_worker_keys():
+    """Context keys currently held by a RUNNING buildout worker — a resume must
+    never double-launch those (two workers on one context = wasted compute AND
+    a guaranteed shard-vs-shard collision at merge; field-measured 2026-07-21:
+    the first resume relaunched two in-flight contexts because this check
+    didn't exist)."""
+    try:
+        out = subprocess.run(
+            ["wmic", "process", "where", "name='python.exe'",
+             "get", "CommandLine", "/format:list"],
+            capture_output=True, text=True).stdout
+    except Exception:  # noqa: BLE001 — fail open with a warning, not a crash
+        print("WARNING: couldn't inspect running workers — if any are live, "
+              "their contexts may double-launch.")
+        return set()
+    live = set()
+    for line in out.splitlines():
+        if "buildout_champions.py" in line and "--keys" in line:
+            keyblob = line.split("--keys", 1)[1].strip().split(" ")[0]
+            live |= {k.strip() for k in keyblob.split(",") if k.strip()}
+    return live
+
+
 def main():
     all_keys = [l.strip() for l in open(KEYS, encoding="utf-8") if l.strip()]
     done = set()
     for f in glob.glob(os.path.join(ROOT, "champions_shard_par*_p*.json")):
         done |= set(json.load(open(f, encoding="utf-8")))
-    remaining = [k for k in all_keys if k not in done]
+    live = _live_worker_keys()
+    remaining = [k for k in all_keys if k not in done and k not in live]
     print(f"{len(done & set(all_keys))} of {len(all_keys)} saved; "
+          f"{len(live & set(all_keys))} in flight with live workers; "
           f"{len(remaining)} remaining")
     if not remaining:
         print("Nothing to resume — run the verdict gate:")

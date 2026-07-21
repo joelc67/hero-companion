@@ -3339,6 +3339,35 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
         if _fn in POWER_BY_FULL and not any(p["full_name"] == _fn for p in powers_in):
             powers_in.append({"full_name": _fn,
                               "pick_level": POWER_BY_FULL[_fn].get("level_available") or 1})
+    # SEED LEGALITY REPAIR (WS-triform resume-night case, 2026-07-21): pin
+    # injection APPENDS — a fat heuristic proposal + injected form pins can be
+    # born over the pick cap/ladder, and an ILLEGAL SEED'S EVERY NEIGHBOR IS
+    # ILLEGAL TOO (moves re-check _picks_legal), so the search "converges"
+    # after evaluating only itself: solves=1 per sweep, certificate claiming
+    # converged=True at a third of the incumbent's score. Field-measured on
+    # Class_Warshade triform (28-pick seed, 441.3 vs incumbent ~1585 canonical;
+    # reproduced at f2c4d41 too — predates the UX batch). Repair at birth,
+    # universally: while the seed fails legality, drop the LOWEST-priority
+    # droppable pick — never a pin, never an inherent. Nothing droppable left →
+    # refuse LOUDLY; a silent one-candidate "convergence" is a counterfeit.
+    def _seed_pick_priority(p):
+        return _ps_priority(POWER_BY_FULL.get(p["full_name"]) or {}, role,
+                            "flex", content)
+    _guard = 0
+    while not _picks_legal({p["full_name"] for p in powers_in},
+                           primary, secondary) and _guard < 40:
+        _guard += 1
+        _droppable = [p for p in powers_in
+                      if p["full_name"] not in pin
+                      and not _fn_ps(p["full_name"]).startswith("Inherent")]
+        if not _droppable:
+            return None, {"error": "seed cannot be made pick-legal — pins + "
+                                   "required picks exceed the game's ladder"}
+        _victim = min(_droppable, key=_seed_pick_priority)
+        powers_in.remove(_victim)
+    if not _picks_legal({p["full_name"] for p in powers_in}, primary, secondary):
+        return None, {"error": "seed legality repair failed (ladder-unseatable "
+                               "pick set) — refusing to converge on a lie"}
     heuristic_picks = [p["full_name"] for p in powers_in]   # what the PROPOSER offered (for the retrospective)
     seed_src = "autopick"
     champ = learn.load_champion(archetype, primary, secondary, content, form)
