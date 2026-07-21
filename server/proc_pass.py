@@ -199,9 +199,13 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general",
             for s in p.get("slots", []) or []:
                 if s and s.get("piece_uid") and _is_proc_uid(s["piece_uid"]):
                     used.add(s["piece_uid"])
-        # rank vehicles; proc-bomb auras always, AoEs/controls only if filler-slotted
+        # rank vehicles; proc-bomb auras always, AoEs/controls only if filler-slotted.
+        # v35: a LOCKED power is never a vehicle/host — byte-identical guarantee —
+        # though its slotted procs DO count in `used` above (no duplicates).
         ranked = []
         for p in powers:
+            if p.get("locked"):
+                continue
             rec = power_by_full.get(p.get("full_name"))
             if not rec:
                 continue
@@ -346,6 +350,8 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general",
                     continue
                 cand = []
                 for p in powers:
+                    if p.get("locked"):      # v35: never raid a locked power
+                        continue
                     rec = power_by_full.get(p.get("full_name"))
                     if not rec:
                         continue
@@ -383,6 +389,8 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general",
                     continue
                 cand = []
                 for p in powers:
+                    if p.get("locked"):      # v35: never raid a locked power
+                        continue
                     rec = power_by_full.get(p.get("full_name"))
                     if not rec or not rec.get("is_attack"):
                         continue

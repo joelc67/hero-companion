@@ -40,6 +40,33 @@
   the optimizer — the endurance repricing exposed a case where the solver
   traded 0.4% of a declared defense ask for recovery value. Declared asks
   are promises; a pinned test now holds the line.
+- **The Build Assistant knows whether you're creating or retooling.** With an
+  imported or resumed build on screen the panel now reads "Improve this
+  build", explains that it re-slots what you have, and shows the build's
+  existing identity instead of re-asking setup questions. Every control says
+  what it does in plain words — the steer chips say they're nudges, not
+  commands, and the buttons name their consequence ("Re-slot everything
+  except your 3 locked powers").
+- **"Preserve my IO sets" is now visible padlocks on the power cards.** Turn
+  it on and every power you hand-slotted shows a 🔒 — a locked power's
+  slotting is never altered by any solve, byte for byte (tested every
+  release). Unlock individual powers to let a re-solve improve them. The
+  checkbox and the padlocks can never disagree: it's checked when everything
+  is locked, unchecked when nothing is, and shows a dash for a mix.
+- **Hand edits update totals instantly.** Changing an individual IO always
+  recalculated immediately — now the totals panel visibly pulses so you can
+  see it happen. There is no apply button for hand edits, by design.
+- **One targets control instead of two look-alikes.** Once you set custom
+  targets, the chip itself shows what you asked for ("Your targets: Fire def
+  45 · Fire res 90 — edit"), clicking it reopens the editor, and removing
+  them asks first and says what happens (back to the preset).
+- **Custom targets now shape the power PICKS, not just the slotting.** Ask an
+  Invulnerability Tanker for 45% defense and the proposal now includes Tough
+  Hide (the defense auto the old picker treated as filler) — and tells you
+  what it gave up to serve the ask. Anything not fully reachable is reported
+  with numbers and a concrete suggestion ("adding Weave would close part of
+  the gap"), never silently traded. The targets editor also states what
+  clearing a field means: you drop the demand, not the stat.
 
 ## 0.12.22 — 2026-07-20
 

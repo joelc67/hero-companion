@@ -375,12 +375,17 @@
       <h2 id="assistant-title">AI Assistant</h2>
 
       <div class="generate">
-        <strong>🔧 Build this for me</strong>
+        <!-- v35 UX batch (Joel's Build-Assistant work order): the panel KNOWS
+             whether you are CREATING or RETOOLING — header, intro, identity
+             framing, and button labels all switch on that state (app.js
+             updateAssistantMode). Copy here is the FRESH default. -->
+        <strong id="gen-head">🔧 Build this for me</strong>
         <p id="gen-intro" class="muted small">Pick archetype + primary + secondary above, describe a
           goal, choose which build tiers you want, and Claude designs them — pick
           more than one to compare cost vs. payoff.</p>
         <div class="preset-pick">
-          <span class="muted small"><strong>What are you building for?</strong> Pick a target and the solver optimizes for your archetype automatically — no description needed.</span>
+          <span id="preset-intro" class="muted small"><strong>What are you building for?</strong> Pick a target and the solver optimizes for your archetype automatically — no description needed.</span>
+          <p id="retool-identity-note" class="muted small hidden">↳ These two are <strong>this build's existing identity</strong> — they're already set from when it was made. Leave them alone unless the goal itself changed.</p>
           <div class="preset-row">
             <label class="preset-field">Content
               <select id="preset-content">
@@ -432,7 +437,7 @@
         <input id="gen-goal"
           placeholder="(optional) fine-tune in words, e.g. 'also soft-cap energy defense'">
         <div class="role-pick">
-          <span class="muted small">What should we base this build on? <em>(pick any that fit — they steer which IO sets the solver leans toward)</em></span>
+          <span class="muted small">What should we base this build on? <em>(pick any that fit — each one <strong>biases</strong> which IO sets the solver leans toward; they are nudges, not commands. Your Content/Role targets above are the real asks.)</em></span>
           <div id="role-chips" class="role-chips"></div>
         </div>
         <div class="tier-pick">
@@ -451,11 +456,16 @@
           </div>
         </div>
         <p id="fit-hint" class="fit-hint muted small" style="display:none">Completing an imported or current build? Use <strong>Solve</strong> — it's instant and keeps your power picks. Optimize hands the build to Claude and takes a minute or two.</p>
-        <label id="preserve-toggle-label" class="preserve-toggle" style="display:none" title="ON (recommended): keep every IO set + unique global you already have; only re-slot plain (generic) IOs and empty slots toward the goal. OFF: full re-slot from scratch — may replace expensive sets (it'll flag what it removes).">
+        <!-- v35 UX batch §4: "Preserve my IO sets" is now a MASTER SWITCH over
+             visible per-power LOCKS (padlocks on the power cards). The checkbox
+             is DERIVED from the locks — all locked = checked, none = unchecked,
+             mixed = indeterminate — so the two can never disagree (pinned). A
+             locked power's slotting is byte-identical across any solve. -->
+        <label id="preserve-toggle-label" class="preserve-toggle" style="display:none" title="ON: locks every power where you placed an IO set — a locked power's slotting doesn't change AT ALL (padlocks show on the power cards below). The solver freely re-slots everything else: it fills empty and generic slots and builds around your locks. Unlock individual powers (click their padlock) to let a re-solve replace their sets too. OFF: nothing is locked — a full re-solve may change anything, and it flags any expensive set it removes.">
           <input type="checkbox" id="preserve-toggle" checked>
-          <span>Preserve my IO sets — only re-slot generic IOs &amp; empty slots</span>
+          <span>Preserve my IO sets — 🔒 locks every power I hand-slotted; unlock exceptions on their cards</span>
         </label>
-        <label id="keeplayout-label" class="preserve-toggle keeplayout" style="display:none" title="Tightest option: stay within the slots you ALREADY placed (fill only your empty slots, don't add slots), and keep any cheap IO the solve doesn't upgrade — a generic IO is swapped only when a goal-advancing set takes its place.">
+        <label id="keeplayout-label" class="preserve-toggle keeplayout" style="display:none" title="Tightest option: stay within the slots you ALREADY placed (fill only your empty slots, don't add slots), and keep any cheap IO the solve doesn't upgrade — a generic IO is swapped only when a goal-advancing set takes its place. Applies to unlocked powers; locked powers never change either way.">
           <input type="checkbox" id="keeplayout-toggle">
           <span>…and keep my slot layout — fill only the empty slots I placed, don't add slots</span>
         </label>

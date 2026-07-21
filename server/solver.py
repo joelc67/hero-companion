@@ -866,15 +866,26 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
                 piece_meta[_pc["uid"]] = (_pc.get("unique", False),
                                           _mutex_key(_s.get("name"), _pc.get("name")))
 
+    # PER-POWER LOCKS first (v35 UX batch): user-locked powers freeze verbatim —
+    # byte-identical across any solve — and their bonuses/globals credit so the
+    # ILP builds around them. Runs regardless of preserve (locks are the user's
+    # explicit per-power word; preserve is the coarse mode for the rest).
+    locked_charge, locked_empties, kept_sets, present_globals = _lock_all_powers(
+        powers, set_by_uid, piece_globals, totals, pvp)
+    slots_left -= locked_charge
+
     # PRESERVE mode (the default "complete my fit"): keep the build's existing set
     # IOs + unique globals, re-solving ONLY the freed generic/empty slots. Pre-place
     # the locked sets and credit their bonuses so the ILP fills around them, never
-    # removing what the user already invested in.
-    kept_sets, present_globals = [], set()
+    # removing what the user already invested in. Locked powers are already frozen
+    # above — preserve applies to the rest.
     if preserve:
-        locked, kept_sets, present_globals = _preserve_locked(
-            powers, set_by_uid, piece_globals, totals, pvp)
+        locked, kept2, present2 = _preserve_locked(
+            [p for p in powers if not p.get("_lock_all")],
+            set_by_uid, piece_globals, totals, pvp)
         slots_left -= locked
+        kept_sets.extend(kept2)
+        present_globals |= present2
 
     # Phase 0: place the cheap high-value unique globals (1 slot) into base —
     # but in preserve mode don't re-place a unique global the build already has.
@@ -1099,7 +1110,11 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
     # In-game legality: slots BEYOND the first in each power must total <= 67
     # (each power's first slot is free). The restore above can push a few powers
     # over, so trim the least-valuable extras (fattest set powers first) to budget.
-    added = _enforce_added_cap(powers, ADDED_SLOT_BUDGET)
+    # Locked powers' EMPTY slots are padded back only at finalize, so they are
+    # invisible to this count — charge them against the budget here (the player
+    # spent those added slots; a lock keeps them spent).
+    added = _enforce_added_cap(powers, ADDED_SLOT_BUDGET - locked_empties) \
+        + locked_empties
 
     out_powers = _finalize_powers(powers)
     used = sum(len(p["_slots"]) for p in powers)
@@ -1184,6 +1199,8 @@ def _fill_remaining_slots(powers, set_by_uid, slots_left):
             continue                            # generated builds allocate as they fill
         if _is_no_enhance_inherent(p):
             continue                            # never junk-fill Brawl/Sprint/Rest/etc.
+        if p.get("_lock_all"):
+            continue                            # locked: empties stay empty, verbatim
         free = int(earned) - len(p["_slots"])
         if free <= 0 or slots_left <= 0:
             continue
@@ -1229,8 +1246,8 @@ def _fill_generated_empties(powers, slots_left):
     everything else gets its single base slot filled. Never touches inherents, powers the
     ILP already set, or truly unslottable powers (no accepted enhancement types)."""
     for p in powers:
-        if p.get("_earned") or _is_no_enhance_inherent(p):
-            continue                              # imported / inherent: handled elsewhere
+        if p.get("_earned") or _is_no_enhance_inherent(p) or p.get("_lock_all"):
+            continue                              # imported / inherent / locked: hands off
         if slots_left <= 0:
             break
         if any(s.get("piece_uid") or s.get("set_uid") for s in p["_slots"]):
@@ -1696,6 +1713,74 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
                             defaultdict(int), totals)
 
 
+def _lock_all_powers(powers, set_by_uid, piece_globals, totals, pvp):
+    """PER-POWER LOCKS (v35 UX batch, Joel's Build-Assistant work order §4): a
+    power the user LOCKED is frozen verbatim — every placed IO (set piece,
+    generic, unresolved special) seats as a _locked slot, its empty allocated
+    slots stay empty (recorded in _locked_empties; _finalize pads them back),
+    and its budget collapses to the filled count so no pass — ILP, globals,
+    fills, trims — can touch it. Set bonuses and unique globals it carries are
+    credited so the ILP builds AROUND the frozen investment. PIN: a locked
+    power's slots are byte-identical across any solve.
+
+    Stronger than preserve (which keeps sets but re-solves generics/empties):
+    lock = the whole power, untouchable. Inherited preserve-mode conventions
+    (stated, not silent): locked sets don't join the ILP's rule-of-five or
+    unique-piece constraint counts — the engine's own totals recompute applies
+    the real caps, and validation flags duplicates, same as preserve today.
+
+    Returns (slots_charged, empties_total, kept, present_global_substrs)."""
+    charged = 0
+    empties_total = 0
+    kept = []
+    present = set()
+    uniq_globals = [g for g in piece_globals if g.get("unique", True)]
+    for p in powers:
+        if not p.get("_lock_all"):
+            continue
+        existing = list(p.get("_existing_slots") or [])
+        filled = [s for s in existing
+                  if s and (s.get("piece_uid") or s.get("piece_name")
+                            or s.get("set_uid"))]
+        p["_slots"] = [dict(s, _locked=True) for s in filled]
+        # Byte-identity source of truth: the INBOUND array echoes verbatim at
+        # finalize (slot dicts legitimately carry meaning-bearing underscore
+        # keys — _proc, _ho — that the normal finalize strip would eat).
+        p["_locked_originals"] = existing
+        p["_locked_empties"] = len(existing) - len(filled)
+        empties_total += p["_locked_empties"]
+        p["_slot_budget"] = len(filled)     # zero free room — nothing can enter
+        # _finalize pads back to _earned, restoring the empty slots verbatim.
+        p["_earned"] = max(len(existing), 1)
+        # A frozen power must never trigger a must-take-a-set / min-2 constraint
+        # (no options exist for it — the constraint would be infeasible).
+        p["_must_set"] = False
+        p["_armor_min2"] = False
+        p["_cheap_ios"] = []
+        # The player's allocation is spent whether filled or empty — the pool
+        # the solver may spend elsewhere shrinks by the whole allocation.
+        charged += len(existing)
+        by_set = {}
+        for s in filled:
+            if s.get("set_uid") and s.get("piece_uid"):
+                by_set.setdefault(s["set_uid"], []).append(s)
+            sn = (s.get("set_name") or "").lower()
+            for g in uniq_globals:
+                if g["set"] in sn:
+                    present.add(g["set"])
+        for suid, sl in by_set.items():
+            srec = set_by_uid.get(suid)
+            if srec:
+                contrib, _ = _set_bonus_contrib(srec, len(sl), {}, pvp)
+                for k, v in contrib.items():
+                    totals[k] += v
+            kept.append({"power": p.get("display_name"),
+                         "set": (srec or {}).get("name")
+                         or sl[0].get("set_name") or suid,
+                         "pieces": len(sl), "locked": True})
+    return charged, empties_total, kept, present
+
+
 def _preserve_locked(powers, set_by_uid, piece_globals, totals, pvp):
     """PRESERVE mode. Keep each power's existing SET IOs (any slot with a set_uid —
     purples/Winters/ATOs/regular sets AND unique globals like LotG/Steadfast) by
@@ -1817,6 +1902,20 @@ def _place_globals(powers, piece_globals, sets_by_category, totals, seed_unique=
 def _finalize_powers(powers):
     out = []
     for p in powers:
+        if p.get("_lock_all"):
+            # LOCKED: the inbound slots array echoes verbatim — same dicts, same
+            # order, same empties, same underscore keys. Byte-identical, pinned.
+            slots = p.get("_locked_originals") or []
+            out.append({
+                "full_name": p["full_name"], "display_name": p.get("display_name"),
+                "powerset_full_name": p.get("powerset_full_name"),
+                "accepted_set_category_ids": p.get("accepted_set_category_ids", []),
+                "accepted_set_categories": p.get("accepted_set_categories", []),
+                "power_type": p.get("power_type"),
+                "include_in_totals": p.get("power_type") in (1, 2),
+                "slotCount": max(1, len(slots)), "slots": slots or [None],
+                "locked": True})
+            continue
         slots = [{k: v for k, v in s.items() if not k.startswith("_")}
                  for s in p["_slots"]]
         # Preserve the player's allocated slot COUNT: pad any slots the solve didn't

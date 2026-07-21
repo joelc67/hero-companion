@@ -3079,6 +3079,8 @@ def _endurance_relief_pass(powers, archetype, ctx, res_cap):
             cands = []
             _global_sets = {g.get("set", "").lower() for g in engine.PIECE_GLOBALS}
             for p in powers:
+                if p.get("locked"):     # v35: a locked power is untouchable
+                    continue
                 rec_p = POWER_BY_FULL.get(p.get("full_name")) or {}
                 if rec_p.get("power_type") != 2:
                     continue
@@ -3960,6 +3962,13 @@ def build_solve():
                        "base_recharge": rec.get("base_recharge"),
                        "max_slot_count": rec.get("max_slot_count"),
                        "accepted_enhancement_types": rec.get("accepted_enhancement_types", []),
+                       # v35 UX batch: PER-POWER LOCK — the user froze this power;
+                       # its slotting must come back byte-identical from ANY solve,
+                       # so its existing slots ride along even on a full re-slot.
+                       # (A deliberate, user-declared exception to work order C's
+                       # layout-blindness: layout in = layout out for a lock IS
+                       # the idempotence rule, per power.)
+                       "_lock_all": bool(p.get("locked")),
                        # current slotting, so preserve mode can lock existing sets.
                        # WORK ORDER C (2026-07-15): a FULL re-slot ignores the
                        # inbound layout entirely — with these fields live under
@@ -3968,7 +3977,8 @@ def build_solve():
                        # same button pressed twice gave two different builds
                        # before settling. Full re-slot is now idempotent from
                        # press one: layout in, layout out, only picks matter.
-                       "_existing_slots": (p.get("slots") or []) if (preserve or keep_layout) else [],
+                       "_existing_slots": (p.get("slots") or [])
+                       if (preserve or keep_layout or p.get("locked")) else [],
                        # slots the player actually placed (keep-layout cap)
                        "_earned": (p.get("earned_slot_count")
                                    or len([s for s in (p.get("slots") or []) if s]))
@@ -4142,6 +4152,12 @@ def build_solve():
                     f"level (the leveling wall shows when each lands). "
                     f"Turn 'Preserve my sets' on to stay within today's "
                     f"slots."})
+    # v35 (#15, refuse-with-remedy — Joel's doctrine: only the genuinely
+    # unreachable is refused, WITH numbers and a remedy): for every DECLARED
+    # ask still short after the solve, name real unpicked powers that natively
+    # supply that axis and what they'd roughly add.
+    remedies = _ask_remedies(archetype, sol["powers"], report, ctx, res_cap) \
+        if custom else []
     return jsonify({"ok": True, "powers": sol["powers"], "respec_plan": respec_plan,
                     "warnings": _warnings,
                     "slots_used": sol["slots_used"],
@@ -4151,6 +4167,7 @@ def build_solve():
                     # Derived-build labeling (Joel's constraint): a custom-
                     # target solve never reads as a certified/champion result.
                     "custom_targets": bool(custom),
+                    "ask_remedies": remedies,
                     "understood": understood,        # human-readable goal interpretation
                     "target_summary": target_summary,
                     "totals": final, "report": report,
@@ -4261,6 +4278,70 @@ def _solve_report(targets, totals):
             rows.append({"stat": fld.capitalize(), "have": round(cur, 1),
                          "want": targets[fld], "met": cur >= targets[fld] - 0.5})
     return rows
+
+
+def _ask_remedies(archetype, powers, report, ctx, res_cap):
+    """v35 (#15): REFUSE-WITH-REMEDY. For each DECLARED def/res ask the solve
+    left short (report rows with met:false), find real UNPICKED powers the
+    character could still take — its own primary/secondary leftovers plus the
+    def/res pools (Fighting/Leadership/Concealment) — that natively supply the
+    short axis, priced at their BASE (unslotted) contribution via the same
+    single-power engine call _attach_base_resdef uses. Advice with numbers,
+    never an auto-pick: 'best reachable is N; adding X would add ~M — add it?'"""
+    out = []
+    try:
+        short = [r for r in report
+                 if not r.get("met") and (" Def" in r["stat"] or " Res" in r["stat"])]
+        if not short:
+            return out
+        picked = {p.get("full_name") for p in powers}
+        pools = ("Pool.Fighting", "Pool.Leadership", "Pool.Concealment")
+        own = {p.get("powerset_full_name") for p in powers
+               if (p.get("powerset_full_name") or "").split(".")[0]
+               not in ("Pool", "Epic", "Inherent")}
+        cand_sets = [ps for ps in (list(own) + list(pools)) if ps]
+        cands = []
+        for ps in cand_sets:
+            for rec in (POWERS.get(ps) or []):
+                if rec["full_name"] in picked or rec.get("is_attack"):
+                    continue
+                acc = {t.lower() for t in (rec.get("accepted_enhancement_types") or [])}
+                if rec.get("power_type") in (1, 2) and (
+                        "defense buff" in acc or "resist damage" in acc):
+                    cands.append(rec)
+        if not cands:
+            return out
+        # price each candidate's base contribution once
+        based = []
+        for rec in cands[:12]:                     # bounded — advice, not a search
+            bt = engine.calculate_build({"archetype": archetype, "powers": [
+                {"full_name": rec["full_name"], "power_type": rec["power_type"],
+                 "include_in_totals": True, "slots": []}]},
+                SET_BONUSES, res_cap=res_cap, ctx=ctx)
+            based.append((rec, bt))
+        for r in short:
+            ty, kind = r["stat"].rsplit(" ", 1)
+            disp = "defense" if kind == "Def" else "resistance"
+            best = []
+            for rec, bt in based:
+                v = (bt.get(disp, {}).get(ty) or {})
+                v = v.get("raw", v.get("value", 0)) or 0
+                if v >= 1.0:
+                    best.append((v, rec.get("display_name")))
+            best.sort(reverse=True)
+            item = {"stat": r["stat"], "asked": r["want"], "reached": r["have"]}
+            if best:
+                item["remedy"] = ("adding " + " or ".join(
+                    f"{nm} (~{v:.1f}% base, more enhanced)" for v, nm in best[:2])
+                    + " and re-solving would close part of the gap")
+            else:
+                item["remedy"] = ("no unpicked power on this character supplies "
+                                  f"{ty} {disp} — the ask may be unreachable on "
+                                  "this pairing; lowering it is the honest move")
+            out.append(item)
+    except Exception:  # noqa: BLE001 — remedies are advice; never fail a solve
+        return out
+    return out
 
 
 @app.route("/build/export", methods=["POST"])
@@ -5422,7 +5503,12 @@ def _power_class(p):
     accepts = {t.lower() for t in (p.get("accepted_enhancement_types") or [])}
     setcats = {c.lower() for c in (p.get("accepted_set_categories") or [])}
     return {"atk": bool(p.get("is_attack")),
-            "armor": (p.get("power_type") == 2 and not p.get("is_attack")
+            # v35 (#15, the Tough Hide case): AUTO armor powers (power_type 1 —
+            # Tough Hide, Temp Protection, Agile…) are REAL armor, not filler.
+            # The toggle-only test made every always-on def/res auto invisible
+            # to the pick priorities, which is exactly how an Inv Tanker asked
+            # for 45% defense got its defense auto skipped.
+            "armor": (p.get("power_type") in (1, 2) and not p.get("is_attack")
                       and ("resist damage" in accepts or "defense buff" in accepts)),
             # SUPPORT = any non-attack power in a dedicated buff/debuff powerset (Empathy, Kinetics,
             # Dark Miasma…) OR one carrying buff/debuff effects. Powerset is the reliable signal:
@@ -5446,9 +5532,22 @@ _DMG_ENABLER_NAMES = {"build_up", "build_momentum", "aim", "soul_drain", "spirit
                       "fulcrum_shift", "power_build_up", "power_boost", "power_build_up"}
 
 
-def _ps_priority(p, role, exposure, content=None):
+def _ps_priority(p, role, exposure, content=None, targets=None):
     c = _power_class(p)
     s, front = 1.0, exposure == "front"   # baseline: most powerset powers are worth taking
+    # v35 (#15, Joel's custom-targets doctrine): USER-DECLARED targets shape the
+    # PICKS, not just the slotting — a declared defense/resistance ask lifts the
+    # powers that natively supply that axis (universal rule: derived from the
+    # ask's axis, never a named-power patch). The lift outranks filler and range
+    # nudges but not a role's signature powers — the ask ADDS, it doesn't erase.
+    if targets and c["armor"] and not p.get("is_attack"):
+        _acc = {t.lower() for t in (p.get("accepted_enhancement_types") or [])}
+        _want_def = any((v or 0) >= 30 for v in (targets.get("defense") or {}).values())
+        _want_res = any((v or 0) >= 50 for v in (targets.get("resistance") or {}).values())
+        if _want_def and "defense buff" in _acc:
+            s += 6
+        if _want_res and "resist damage" in _acc:
+            s += 6
     if p["full_name"].split(".")[-1].lower() in _DMG_ENABLER_NAMES:
         s += 9 if role in ("damage", "tank") else 6   # Fulcrum/Build Up/Soul Drain: core to anything that deals damage
     if role in ("controller", "control", "debuffer"):
@@ -5733,7 +5832,7 @@ def _champion_picks(archetype, primary, secondary, content, form=None):
 
 def _auto_pick_powers(archetype, primary, secondary, role="damage",
                       exposure="flex", content="general", travel="super_speed",
-                      form=None):
+                      form=None, custom_targets=None):
     # Default to the ARCHETYPE's role (same map the tray uses), not a blanket "damage" — a
     # Defender/Corruptor/MM picked with no explicit role must build support, not a blaster.
     role = role or _AT_DEFAULT_ROLE.get(archetype, "damage")
@@ -5741,9 +5840,14 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
     # this context, propose THAT selection (Solve still slots it for the chosen role/goal).
     # A Kheldian FORM choice serves that form's champion; no champion for the
     # form yet → the heuristic runs and the UI says the champion is coming.
-    champ = _champion_picks(archetype, primary, secondary, content, form)
-    if champ:
-        return champ
+    # v35 (#15): with USER-DECLARED custom targets, the champion shortcut is
+    # SKIPPED — a champion is certified for its preset, not your numbers, and a
+    # custom solve is DERIVED by doctrine. The heuristic runs with the ask lift
+    # so the picks serve what you actually asked for (the Tough Hide case).
+    if not custom_targets:
+        champ = _champion_picks(archetype, primary, secondary, content, form)
+        if champ:
+            return champ
     is_ctrl = role in ("controller", "control", "debuffer")
     # Epic ATs (Kheldians + Arachnos Soldiers/Widows) are self-sufficient ARMORED hybrids: their
     # masters all run the DEFENSE pools (Fighting=Weave, Leadership=Maneuvers) to softcap POSITIONAL
@@ -5823,7 +5927,7 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
     cand = []
     for ps in _veat_accessible_sets(primary, secondary):
         for p in (POWERS.get(ps) or []):
-            pri0 = _ps_priority(p, role, exposure, content) \
+            pri0 = _ps_priority(p, role, exposure, content, targets=custom_targets) \
                 + 8.0 * _adj.get(p.get("power_name") or "", 0.0)
             cand.append((pri0, p.get("level_available") or 1, p["full_name"]))
     cand.sort(key=lambda x: (-x[0], x[1]))
@@ -6488,9 +6592,38 @@ def build_autopick():
     at, primary, secondary = body.get("archetype"), body.get("primary"), body.get("secondary")
     if not (at and primary and secondary):
         return jsonify({"ok": False, "error": "Need archetype + primary + secondary."}), 400
+    custom = body.get("custom_targets") or None
     picks = _auto_pick_powers(at, primary, secondary, role=body.get("role"),
                               exposure=body.get("exposure"), content=body.get("content"),
-                              travel=body.get("travel"), form=body.get("form"))
+                              travel=body.get("travel"), form=body.get("form"),
+                              custom_targets=custom)
+    # v35 (#15, the tradeoff line — Joel: honor the request AND state what it
+    # costs): with custom targets, diff the picks against the no-targets
+    # proposal so the note reports REAL adds/drops, never a guess.
+    custom_note = None
+    if custom:
+        base_picks = _auto_pick_powers(at, primary, secondary, role=body.get("role"),
+                                       exposure=body.get("exposure"),
+                                       content=body.get("content"),
+                                       travel=body.get("travel"), form=body.get("form"))
+        base_names = {p["full_name"] for p in base_picks}
+        pick_names = {p["full_name"] for p in picks}
+        _disp = lambda fn: (POWER_BY_FULL.get(fn) or {}).get("display_name") or fn
+        added = sorted(_disp(f) for f in pick_names - base_names)
+        dropped = sorted(_disp(f) for f in base_names - pick_names)
+        if added or dropped:
+            bits = []
+            if added:
+                bits.append("took " + ", ".join(added[:4]) + " to serve your targets")
+            if dropped:
+                bits.append("gave up " + ", ".join(dropped[:4]))
+            custom_note = ("🎯 Your custom targets shaped the POWER PICKS, not just the "
+                           "slotting: " + "; ".join(bits) + ". Fewer offense picks means "
+                           "slower kills — that is the stated cost of the ask. Remove the "
+                           "custom targets to get the preset's picks back.")
+        else:
+            custom_note = ("🎯 Your custom targets are in charge of the slotting; the power "
+                           "picks themselves didn't need to change to serve them.")
     powers = []
     for pk in picks:
         rec = POWER_BY_FULL.get(pk["full_name"])
@@ -6503,7 +6636,8 @@ def build_autopick():
                        "power_type": rec.get("power_type"), "pick_level": pk["pick_level"],
                        "level_available": rec.get("level_available"),
                        "slots": [None], "slotCount": 1})
-    return jsonify({"ok": True, "powers": powers, "count": len(powers)})
+    return jsonify({"ok": True, "powers": powers, "count": len(powers),
+                    "custom_note": custom_note})
 
 
 # ---------------------------------------------------------------------------

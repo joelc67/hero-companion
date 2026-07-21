@@ -1285,7 +1285,27 @@ body { overflow: hidden; }
 .ct-chip.hidden { display: none; }
 .ct-chip .ct-clear { background: transparent; color: inherit; width: auto;
   padding: 0 2px; font-size: 11px; }
+/* 2b: the chip IS the control once custom targets exist — it reads as clickable
+   and carries the ask summary; the look-alike button hides meanwhile. */
+.ct-chip { cursor: pointer; }
+.ct-chip u { text-decoration: underline; }
+#custom-targets-btn.hidden { display: none; }
 @media (max-width: 760px) { .ct-grid { grid-template-columns: 1fr; } }
+
+/* v35 UX batch §4: per-power LOCKS. The padlock is a real control (visible at
+   rest, state-colored); a locked card reads locked at a glance. */
+.lock-btn { font-size: 11px; }
+.lock-btn.locked { border-color: #e0b84e; color: #e0b84e; }
+.power-card.pc-locked { border-color: #e0b84e; box-shadow: 0 0 0 1px #e0b84e33 inset; }
+.power-card.pc-locked .slot { opacity: 0.92; }
+
+/* v35 UX batch §3: hand IO edits recompute immediately — the totals panel
+   pulses once so the immediacy is VISIBLE (no apply button exists). */
+@keyframes totalsFlash {
+  0% { box-shadow: 0 0 0 2px #7ec97e88 inset; }
+  100% { box-shadow: none; }
+}
+#stats.totals-flash { animation: totalsFlash 0.8s ease-out 1; }
 
 /* Booster PREVIEW (display-only, never saved as owned): previewed chits and
    tags read distinctly from imported/owned boosts — same info, preview color. */

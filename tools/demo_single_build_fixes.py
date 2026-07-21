@@ -318,10 +318,73 @@ for _scen, _want in (("av", 0.114), ("itrial", 0.579), ("team", 0.685)):
 check("Nimbus worked table holds through the scorer (AV 11.4%, itrial 57.9%, team 68.5%)",
       not _nim_bad, _nim_bad or "fight-duration end_factor matches the paper on all three pins")
 
+# ── v35 UX BATCH (Build Assistant work order §4): PER-POWER LOCK byte-identity.
+# Take the already-solved Bots/Marine build, LOCK one real slotted power, corrupt
+# the lock candidate's neighbors' expectations by asking for a FULL re-slot
+# (preserve=False) — the locked power must come back with its slots JSON-byte-
+# identical (same pieces, same order, same empties) while the rest genuinely
+# re-solves. This exercises the ILP, globals, fills, trims, proc pass, endurance
+# relief, and the added-cap accounting end to end.
+print("\nv35 per-power lock — byte-identity through a full re-slot:")
+import json as _json  # noqa: E402
+
+_lock_target = next(p for p in powers
+                    if sum(1 for s in (p.get("slots") or []) if s and s.get("set_uid")) >= 3)
+_lock_name = _lock_target["full_name"]
+_lock_slots_before = _json.dumps(_lock_target.get("slots"), sort_keys=True)
+_lock_powers_in = [{"full_name": p["full_name"], "slots": p.get("slots"),
+                    "earned_slot_count": p.get("earned_slot_count"),
+                    "locked": p["full_name"] == _lock_name} for p in powers]
+_lock_sol = c.post("/build/solve", json={"archetype": AT, "goal": "", "tier": "premium",
+                                         "content": CONTENT, "role": ROLE, "exposure": "flex",
+                                         "preserve": False, "keep_layout": False,
+                                         "powers": _lock_powers_in}).get_json()
+_lock_out = next((p for p in _lock_sol.get("powers", [])
+                  if p["full_name"] == _lock_name), None)
+_lock_slots_after = _json.dumps((_lock_out or {}).get("slots"), sort_keys=True)
+_others_changed = any(
+    _json.dumps(next((q for q in _lock_sol.get("powers", [])
+                      if q["full_name"] == p["full_name"]), {}).get("slots"),
+                sort_keys=True) != _json.dumps(p.get("slots"), sort_keys=True)
+    for p in powers if p["full_name"] != _lock_name)
+check("LOCKED power byte-identical through a full re-slot; others re-solve",
+      _lock_slots_before == _lock_slots_after and _others_changed
+      and bool((_lock_out or {}).get("locked")),
+      f"locked {_lock_out and _lock_out.get('display_name')}: identical="
+      f"{_lock_slots_before == _lock_slots_after}, echo locked flag="
+      f"{bool((_lock_out or {}).get('locked'))}, others changed={_others_changed}")
+
+# ── #15 ACCEPTANCE PINS (Joel's custom-targets doctrine, the 7/20 forum user's
+# two cases): the pick layer SERVES a declared ask. Case 1 — Inv/SS Tanker with
+# an all-positional-def 45 ask must PROPOSE Tough Hide (the Invulnerability
+# defense AUTO the toggle-only armor class made invisible) and state the
+# tradeoff. Case 2 — a fire-res-90-ONLY ask on the farm pairing is honored at
+# the slotting layer with nothing refused silently (remedies only when short).
+print("\n#15 custom-targets acceptance — the user's two cases:")
+ap_t = c.post("/build/autopick", json={"archetype": "Class_Tanker",
+    "primary": "Tanker_Defense.Invulnerability", "secondary": "Tanker_Melee.Super_Strength",
+    "content": "itrial", "role": "tank",
+    "custom_targets": {"defense": {"Melee": 45, "Ranged": 45, "AoE": 45}}}).get_json()
+_names = {p["full_name"].split(".")[-1].lower() for p in (ap_t.get("powers") or [])}
+check("declared def-45 ask puts Tough Hide in the Inv Tanker's PICKS + states the tradeoff",
+      "tough_hide" in _names and bool(ap_t.get("custom_note")),
+      f"picks carry tough_hide={'tough_hide' in _names}; "
+      f"note={'yes' if ap_t.get('custom_note') else 'MISSING'}")
+
+sol_r = c.post("/build/solve", json={"archetype": "Class_Brute", "goal": "",
+    "tier": "premium", "content": "fire_farm", "preserve": False,
+    "keep_layout": False, "powers": pre3,
+    "custom_targets": {"resistance": {"Fire": 90}}}).get_json()
+_fr2 = (((sol_r.get("totals") or {}).get("resistance") or {}).get("Fire") or {}).get("value", 0)
+_rem = sol_r.get("ask_remedies") or []
+check("fire-res-90-ONLY ask honored (reached, or short WITH a stated remedy)",
+      _fr2 >= 89.95 or any(r.get("stat") == "Fire Res" and r.get("remedy") for r in _rem),
+      f"fire res {_fr2} vs ask 90; remedies: {[r.get('stat') for r in _rem] or 'none needed'}")
+
 # COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
 # check — a crash or skipped section that silently shrinks the list must fail, not
 # pass by absence. Bump EXPECTED_CHECKS when adding a check.
-EXPECTED_CHECKS = 16
+EXPECTED_CHECKS = 19
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
 if len(results) != EXPECTED_CHECKS:

@@ -287,8 +287,13 @@ async function autoPickPowers() {
     role: $("preset-role") && $("preset-role").value, role_mix: roleMixPayload(),
     content: $("preset-content") && $("preset-content").value,
     exposure: build._exposure,
-    travel: $("autopick-travel") && $("autopick-travel").value }));
+    travel: $("autopick-travel") && $("autopick-travel").value,
+    custom_targets: build._custom_targets || null }));
   if (!res || !res.ok) { alert((res && res.error) || "Auto-pick failed."); return; }
+  if (res.custom_note) {
+    const out = $("ai-response");
+    if (out) { out.classList.remove("muted"); out.innerHTML = renderMarkdown(res.custom_note); }
+  }
   build.powers = res.powers;
   build.imported = false;
   await syncPoolsEpicFromPowers(res.powers);   // reflect the chosen pool/epic powers in the dropdowns
@@ -941,7 +946,8 @@ window.resetToOptimal = async function () {
   recordEdit();
   const ap = await api("/build/autopick", postJson({
     archetype: build.archetype, primary: build.primary, secondary: build.secondary,
-    role: goal.role, content: goal.content, exposure: goal.exposure, travel: goal.travel }));
+    role: goal.role, content: goal.content, exposure: goal.exposure, travel: goal.travel,
+    custom_targets: build._custom_targets || null }));
   if (!ap || !ap.ok) { if (out) out.innerHTML = "<p class='muted small'>Couldn't rebuild right now.</p>"; return; }
   const sol = await api("/build/solve", postJson({
     archetype: build.archetype, powers: ap.powers, content: goal.content, role: goal.role, preserve: false }));
@@ -1131,8 +1137,13 @@ async function buildRespec() {
     "Choosing powers + solving the slotting");
   try {
     await applyImportedBuild({ archetype: at, primary: pri, secondary: sec, pools: [], incarnates: {}, powers: [] });
-    const ap = await api("/build/autopick", postJson({ archetype: at, primary: pri, secondary: sec, role, content, exposure, travel, form }));
+    const ap = await api("/build/autopick", postJson({ archetype: at, primary: pri, secondary: sec, role, content, exposure, travel, form,
+      custom_targets: build._custom_targets || null }));
     if (!ap || !ap.ok) { $("wiz-status").textContent = (ap && ap.error) || "Auto-pick failed."; return; }
+    if (ap.custom_note) {
+      const _o = $("ai-response");
+      if (_o) { _o.classList.remove("muted"); _o.innerHTML = renderMarkdown(ap.custom_note); }
+    }
     build.powers = ap.powers; build.imported = false;
     // Autopick chose pool + epic powers — sync the top-of-page dropdowns to them (the empty-powers
     // applyImportedBuild call above couldn't, since the powers didn't exist yet).
@@ -1646,6 +1657,18 @@ async function init() {
   updateGenBtnLabel();
   $("opt-btn").addEventListener("click", optimizeBuild);
   $("solve-btn").addEventListener("click", solveSlotting);
+  // v35 §4: the preserve checkbox is the MASTER LOCK SWITCH — checking it locks
+  // every hand-slotted power (padlocks appear), unchecking unlocks everything.
+  // Individual padlock clicks re-derive its state (mixed = indeterminate).
+  if ($("preserve-toggle")) $("preserve-toggle").addEventListener("change", (ev) => {
+    setAllLocks(ev.target.checked);
+    syncPreserveFromLocks();
+    renderPowers();
+    const st = $("gen-status");
+    if (st) st.textContent = ev.target.checked
+      ? "🔒 Locked every power with a hand-placed set — unlock exceptions on their cards."
+      : "🔓 Everything unlocked — a re-solve may change any power.";
+  });
   if ($("preset-content")) $("preset-content").addEventListener("change", previewPreset);
   if ($("preset-role")) $("preset-role").addEventListener("change", previewPreset);
   // Retired-Fire-Farm nudge: pick AFK/Active (sets the picker + re-previews) or defer.
@@ -2500,6 +2523,86 @@ window.discardRespecPlan = function () {
 };
 window.buildRespecPlan = buildRespecPlan;
 
+// ── v35 UX batch: per-power LOCKS + assistant mode awareness ─────────────────
+// (Joel's Build-Assistant work order, 2026-07-21.) A LOCK freezes a power's
+// slotting: the server echoes a locked power byte-identical through ANY solve
+// (battery-pinned). "Preserve my IO sets" is a MASTER SWITCH whose state is
+// DERIVED from the locks — all hand-slotted powers locked = checked, none =
+// unchecked, a mix = indeterminate — so checkbox and locks can never disagree
+// (the checkmark law: UI state == engine state).
+const _hasSetSlot = (pw) => (pw.slots || []).some(s => s && s.set_uid);
+const _hasAnySlot = (pw) => (pw.slots || []).some(s => s);
+
+// RETOOL = a build that already existed arrived on screen (imported or resumed
+// from a save). FRESH = building from nothing (incl. tool-generated builds the
+// user just asked for — there's no prior investment of theirs to protect).
+function isRetool() {
+  return build.powers.length > 0 && !!(build.imported || build._resumed);
+}
+
+window.togglePowerLock = function (idx) {
+  const pw = build.powers[idx];
+  if (!pw) return;
+  pw._locked = !pw._locked;
+  syncPreserveFromLocks();
+  renderPowers();
+  const st = $("gen-status");
+  if (st) st.textContent = pw._locked
+    ? `🔒 ${pw.display_name} locked — its slotting won't change until you unlock it.`
+    : `🔓 ${pw.display_name} unlocked — a re-solve may now change its slotting.`;
+};
+
+function setAllLocks(on) {
+  build.powers.forEach(pw => {
+    if (_hasSetSlot(pw)) pw._locked = !!on;
+    else if (!on) pw._locked = false;   // OFF means NOTHING is locked — manual locks clear too
+  });
+}
+
+function syncPreserveFromLocks() {
+  const cb = $("preserve-toggle");
+  if (cb) {
+    const elig = build.powers.filter(_hasSetSlot);
+    const locked = elig.filter(pw => pw._locked);
+    cb.checked = elig.length > 0 && locked.length === elig.length;
+    cb.indeterminate = locked.length > 0 && locked.length < elig.length;
+  }
+  updateAssistantMode();
+}
+
+function lockedPowerCount() {
+  return build.powers.filter(pw => pw._locked).length;
+}
+
+// The Build Assistant states what it does in the CURRENT mode — creating vs
+// retooling read as different jobs, and the old panel only ever spoke to the
+// first (Joel: identity questions "seem like a decision made when they first
+// started, not one used for alterations").
+function updateAssistantMode() {
+  const retool = isRetool();
+  const head = $("gen-head");
+  if (head) head.textContent = retool ? "🔧 Improve this build" : "🔧 Build this for me";
+  const intro = $("gen-intro");
+  if (intro) intro.textContent = retool
+    ? "This build already exists — the assistant RE-SLOTS it toward your goal and never touches 🔒 locked powers. The identity below is what the build already is; the goal box and steer chips adjust where the re-slot leans."
+    : "Pick archetype + primary + secondary above, describe a goal, choose which build tiers you want, and Claude designs them — pick more than one to compare cost vs. payoff.";
+  const pIntro = $("preset-intro");
+  if (pIntro) pIntro.innerHTML = retool
+    ? "<strong>What is this build for?</strong> Its content and role — the targets any re-slot solves toward."
+    : "<strong>What are you building for?</strong> Pick a target and the solver optimizes for your archetype automatically — no description needed.";
+  const idNote = $("retool-identity-note");
+  if (idNote) idNote.classList.toggle("hidden", !retool);
+  const sb = $("solve-btn");
+  if (sb) {
+    const n = lockedPowerCount();
+    sb.textContent = !retool
+      ? "🧮 Solve optimal slotting for goal (instant)"
+      : n ? `🧮 Re-slot everything except your ${n} locked power${n === 1 ? "" : "s"} (instant)`
+          : "🧮 Re-slot this whole build toward the goal (instant)";
+  }
+  updateGenBtnLabel();   // the Generate button's replace-warning tracks the mode
+}
+
 function renderPowers() {
   applyIdentityLock();          // keep archetype/powerset lock in sync (onArchetypeChange re-enables them)
   const host = $("powers-list");
@@ -2702,12 +2805,22 @@ function powerCardHtml(pw, idx, icon, lv) {
                  onerror="this.style.display='none'">` : ""}
       <span class="pname">${escHtml(pw.display_name)}</span><span class="pc-info-glyph" title="IO set &amp; power details">ⓘ</span></span>
     </div>`;
+  // v35 UX batch §4: the visible per-power LOCK. Shown on any power with real
+  // slotting; state is the truth the solve honors (locked = byte-identical).
+  const lockBtn = _hasAnySlot(pw)
+    ? `<button class="mini lock-btn${pw._locked ? " locked" : ""}" onclick="togglePowerLock(${idx})"
+         title="${pw._locked
+      ? "Locked — this power's slotting won't change. Unlock it to let a re-solve touch it."
+      : "Unlocked — a re-solve may change this power's slotting. Lock it to keep it exactly as-is."}">${pw._locked ? "🔒" : "🔓"}</button>`
+    : "";
+  const lockedCls = pw._locked ? " pc-locked" : "";
   if ((pw.full_name || "").startsWith("Inherent.")) {
-    return `<div class="power-card" title="${escHtml(pw.display_name)} — accepts: ${escHtml(cats)}\nInherent — the game grants this automatically; it is never a pick.">
+    return `<div class="power-card${lockedCls}" title="${escHtml(pw.display_name)} — accepts: ${escHtml(cats)}\nInherent — the game grants this automatically; it is never a pick.">
       ${nameLine}
       <div class="pc-sub">
         <span class="pc-tools">
           ${totalsChipHtml(pw, idx)}
+          ${lockBtn}
           <button class="mini" onclick="changeSlots(${idx}, -1)" title="return this power's last slot to the shared pool (67 added slots for the whole build)">−</button>
           <button class="mini" onclick="changeSlots(${idx}, 1)" title="spend a free slot from the shared pool here (67 added slots for the whole build)">+</button>
         </span>
@@ -2718,12 +2831,13 @@ function powerCardHtml(pw, idx, icon, lv) {
     </div>`;
   }
   const lvl = pw.pick_level || lv;
-  return `<div class="power-card" title="${escHtml(pw.display_name)} — accepts: ${escHtml(cats)}\n(click the name for full power info)">
+  return `<div class="power-card${lockedCls}" title="${escHtml(pw.display_name)} — accepts: ${escHtml(cats)}\n(click the name for full power info)">
     ${nameLine}
     <div class="pc-sub">
       ${lvl ? `<span class="pick-lvl" title="${pw.pick_level ? `Chosen at level ${lvl}` : `Suggested pick order — about level ${lvl}`}">${pw.pick_level ? "" : "~"}L${lvl}</span>` : ""}
       <span class="pc-tools">
         ${totalsChipHtml(pw, idx)}
+        ${lockBtn}
         <button class="mini" onclick="changeSlots(${idx}, -1)" title="return this power's last slot to the shared pool (67 added slots for the whole build)">−</button>
         <button class="mini" onclick="changeSlots(${idx}, 1)" title="spend a free slot from the shared pool here (67 added slots for the whole build)">+</button>
         <button class="remove-power" onclick="removePower(${idx})" title="remove this power">✕</button>
@@ -3217,6 +3331,7 @@ window.clearSlot = function (ev, powerIdx, slotIdx) {
   recordEdit();
   build.powers[powerIdx].slots[slotIdx] = null;
   renderPowers(); recompute();
+  flashTotals();
 };
 
 window.toggleInclude = function (idx, checked) {
@@ -3739,6 +3854,18 @@ function renderModalSets() {
   host.innerHTML = (singles + html) || `<p class="muted">Nothing matches "${q}".</p>`;
 }
 
+// v35 UX batch §3 (Joel's ruling): hand edits to individual IOs recompute
+// totals IMMEDIATELY — there is no apply button anywhere on that path (verified:
+// every pick/clear below already calls recompute()). This flash makes the
+// immediacy VISIBLE: the totals panel pulses once when a hand edit lands.
+function flashTotals() {
+  const el = $("stats");
+  if (!el) return;
+  el.classList.remove("totals-flash");
+  void el.offsetWidth;             // restart the animation
+  el.classList.add("totals-flash");
+}
+
 // Manual single-enhancement picks (#7). Slot shapes mirror what imports and the
 // optimizer already produce, so every downstream consumer (engine totals,
 // validation, Mids export, trims) treats hand picks identically.
@@ -3757,6 +3884,7 @@ window.pickCommon = function (uid) {
   closeModal();
   renderPowers();
   recompute();
+  flashTotals();
 };
 
 window.pickSpecial = function (uid) {
@@ -3774,6 +3902,7 @@ window.pickSpecial = function (uid) {
   closeModal();
   renderPowers();
   recompute();
+  flashTotals();
 };
 
 // In-game rule: a SET piece slots at most once per power. Checks the active
@@ -3810,6 +3939,7 @@ window.pickPiece = function (setUid, setName, pieceIdx) {
   closeModal();
   renderPowers();
   recompute();
+  flashTotals();
 };
 
 function closeModal() { $("modal").classList.add("hidden"); activeSlot = null; }
@@ -3827,12 +3957,13 @@ async function recompute() {
   const hint = $("fit-hint");   // explains Solve-vs-AI — pointless without the AI option
   if (hint) hint.style.display = (hasPowers && AI_ON) ? "block" : "none";
   const presLbl = $("preserve-toggle-label");
-  // preserve-my-sets only applies to IMPORTED builds (a from-scratch/AI build has
-  // no prior investment to keep — Solve optimizes it freely).
-  const showPres = hasPowers && build.imported;
+  // v35: locks/preserve apply to any RETOOL build — imported OR resumed (Joel's
+  // mode ruling; a from-scratch/AI build has no prior investment to keep).
+  const showPres = hasPowers && isRetool();
   if (presLbl) presLbl.style.display = showPres ? "flex" : "none";
   const klLbl = $("keeplayout-label");
   if (klLbl) klLbl.style.display = showPres ? "flex" : "none";
+  updateAssistantMode();   // header/intro/labels track the CREATE-vs-RETOOL mode
   const rb = $("reset-btn");
   if (rb) rb.style.display = (hasPowers && IMPORTED_POWERS) ? "block" : "none";
   const cb = $("changes-btn");
@@ -4790,6 +4921,8 @@ function resetToImported() {
   resetBuildScopedState();
   build.powers = JSON.parse(JSON.stringify(IMPORTED_POWERS));
   build.imported = true;
+  setAllLocks($("preserve-toggle") ? $("preserve-toggle").checked : true);
+  syncPreserveFromLocks();     // v35: locks re-seed with the restored build
   CHANGES_AVAILABLE = false;   // back to the imported build — nothing changed to show
   renderPowers();
   recompute();
@@ -4877,6 +5010,7 @@ async function applyImportedBuild(b) {
     pick_level: p.pick_level, level_available: p.level_available,
     earned_slot_count: p.earned_slot_count,
     slots: p.slots || [], slotCount: (p.slots || []).length,
+    _locked: !!p._locked,     // v35: lock choices ride saves (resume = same choices)
   }));
   // incarnates
   build.incarnates = {};
@@ -4885,7 +5019,17 @@ async function applyImportedBuild(b) {
     const v = build.incarnates[s.dataset.slot]; if (v) s.value = v.full_name;
   });
   build.level_reached = b.level_reached || null;   // restore where the player was in-game
-  build.imported = true;    // an imported build → preserve its sets on Solve
+  build.imported = true;    // an imported build → RETOOL mode; locks protect its sets
+  // v35 §4: seed the visible locks. A save that already KNOWS about locks keeps
+  // its own choices (resume = the same decisions you left with); anything else
+  // (fresh import, pre-lock save) seeds from the master switch (default ON) —
+  // every hand-slotted power arrives locked, the user unlocks exceptions.
+  const savedLocks = (b.powers || []).some(
+    p => p && Object.prototype.hasOwnProperty.call(p, "_locked"));
+  if (!savedLocks) {
+    setAllLocks($("preserve-toggle") ? $("preserve-toggle").checked : true);
+  }
+  syncPreserveFromLocks();
   renderPowers();
   recompute();
 }
@@ -4922,7 +5066,8 @@ async function previewRespec() {
   if (btn) { btn.disabled = true; btn.textContent = "Building a full respec…"; }
   try {
     const ap = await api("/build/autopick", postJson({ archetype: at, primary: pri, secondary: sec,
-      role, content, exposure: build._exposure || "flex", travel: "speed" }));
+      role, content, exposure: build._exposure || "flex", travel: "speed",
+      custom_targets: build._custom_targets || null }));
     if (!ap || !ap.ok) throw new Error((ap && ap.error) || "auto-pick failed");
     const pw = ap.powers.filter(p => !p.full_name.startsWith("Incarnate"))
                         .map(p => ({ full_name: p.full_name, slots: [] }));
@@ -5147,9 +5292,14 @@ function selectedTiers() {
 function updateGenBtnLabel() {
   const n = selectedTiers().length;
   const btn = $("gen-btn");
+  if (!btn) return;
+  // RETOOL honesty: generating is a FROM-SCRATCH act — it names its consequence
+  // (Joel's §2 rule: buttons say what happens, not the mechanism).
+  const suffix = (typeof isRetool === "function" && isRetool())
+    ? " (fresh from scratch — replaces this build)" : "";
   btn.textContent = n === 0 ? "Select at least one build tier"
-    : n === 1 ? `Generate the ${selectedTiers()[0].label} build`
-    : `Generate ${n} builds`;
+    : n === 1 ? `Generate the ${selectedTiers()[0].label} build${suffix}`
+    : `Generate ${n} builds${suffix}`;
   btn.disabled = n === 0;
 }
 
@@ -5636,18 +5786,59 @@ function hasTargetValues(t) {
     (v && typeof v === "object" && Object.values(v).some(x => typeof x === "number" && isFinite(x))));
 }
 
+// 2b (Joel's close-up screenshot ruling): ONE comprehensible control, not two
+// look-alikes. No custom targets → only the "Customize build targets…" button.
+// Custom targets present → only the CHIP, which SHOWS the asks it holds
+// ("🎯 Your targets: Fire def 45 · Fire res 90 — edit"), opens the editor
+// prefilled when clicked, and whose ✕ confirms with its named consequence.
+function _targetsSummary(t) {
+  const bits = [];
+  for (const [ty, v] of Object.entries(t.defense || {}))
+    if (typeof v === "number" && v > 0) bits.push(`${ty} def ${v}`);
+  for (const [ty, v] of Object.entries(t.resistance || {}))
+    if (typeof v === "number" && v > 0) bits.push(`${ty} res ${v}`);
+  const scalarLabel = { recharge: "recharge", recovery: "recovery",
+                        regen: "regen", max_hp: "max HP", tohit: "to-hit" };
+  for (const [k, lbl] of Object.entries(scalarLabel))
+    if (typeof t[k] === "number" && t[k] > 0) bits.push(`${lbl} ${t[k]}`);
+  if (!bits.length) return "";
+  return bits.length <= 4 ? bits.join(" · ")
+    : bits.slice(0, 4).join(" · ") + ` · +${bits.length - 4} more`;
+}
+
 function updateCustomTargetsChip() {
   if (build._custom_targets && !hasTargetValues(build._custom_targets))
     build._custom_targets = null;          // normalize: empty "custom" is no custom
   const chip = $("custom-targets-chip");
-  if (chip) chip.classList.toggle("hidden", !build._custom_targets);
+  const btn = $("custom-targets-btn");
+  const has = !!build._custom_targets;
+  if (chip) {
+    chip.classList.toggle("hidden", !has);
+    if (has) {
+      chip.innerHTML = `🎯 Your targets: ${escHtml(_targetsSummary(build._custom_targets))}`
+        + ` <u>— edit</u>`
+        + `<button class="ct-clear" type="button" title="Remove your custom targets`
+        + ` — the solver returns to the content preset" onclick="event.stopPropagation();`
+        + `clearCustomTargets()">✕</button>`;
+      chip.onclick = () => openTargetsEditor();
+      chip.title = "These are YOUR numbers — the solver targets them instead of the "
+        + "preset, and the result is yours, never a certified champion build. "
+        + "Click to edit them.";
+    }
+  }
+  // one control at a time: the button offers customization only while no
+  // custom targets exist; once they do, the chip IS the control.
+  if (btn) btn.classList.toggle("hidden", has);
 }
 
 window.clearCustomTargets = function () {
+  if (!confirm("Remove your custom targets? The solver returns to the content preset's targets.")) {
+    return;
+  }
   build._custom_targets = null;
   updateCustomTargetsChip();
   const st = $("gen-status");
-  if (st) st.textContent = "Back to the preset targets.";
+  if (st) st.textContent = "Custom targets removed — back to the preset targets.";
 };
 
 window.openTargetsEditor = async function () {
@@ -5717,6 +5908,12 @@ window.openTargetsEditor = async function () {
       gets as close as 67 slots allow and reports honestly when the ask exceeds
       the budget. Solves under custom targets are YOUR builds — never labeled
       as certified champion builds.</p>
+    <p class="muted small">ℹ️ <strong>What clearing a field means:</strong> a cleared
+      field is <em>no ask</em> — the solver stops chasing that number, nothing more.
+      Your build's own innate stats on that axis still count and still show in
+      totals; you're dropping the demand, not the stat. Your targets also shape
+      the <strong>power picks</strong> on a fresh auto-pick, and anything not fully
+      reachable is reported with numbers and a suggested fix, never traded silently.</p>
     <div class="ct-grid">
       <div><h4>Defense — typed <span class="muted small">(0–60)</span></h4>
         ${typed.map(ty => row("defense", ty, dv[ty])).join("")}</div>
@@ -5855,16 +6052,22 @@ async function solveSlotting(perkFocus, opts) {
     ? `Re-solving with spare slots focused on ${perkFocus}`
     : "Solving optimal slotting");
   try {
-    // Preserve only applies to imported builds; from-scratch/AI builds solve fully.
-    const preserve = build.imported
-      && ($("preserve-toggle") ? $("preserve-toggle").checked : true);
-    // keep_layout (tightest): stay within placed slots + keep un-upgraded cheap IOs.
-    const keep_layout = preserve
+    // v35 UX batch: per-power LOCKS carry preservation now — the checkbox is a
+    // master switch over them (synced before this point), so the server gets
+    // the truth per power instead of one coarse flag. preserve:false always;
+    // a locked power comes back byte-identical (pinned), an unlocked one is
+    // fully fair game — that IS "unlock to let a re-solve touch it".
+    const retool = isRetool();
+    const preserve = false;
+    // keep_layout (tightest): stay within placed slots + keep un-upgraded cheap
+    // IOs — its own choice now, no longer chained to the preserve checkbox.
+    const keep_layout = retool
       && ($("keeplayout-toggle") ? $("keeplayout-toggle").checked : false);
     // snapshot the PRE-solve powers — reused for the request AND the post-solve
     // assessment (which re-solves alternatives from this same starting point).
     const presolvePowers = build.powers.map(p => ({ full_name: p.full_name,
-      slots: p.slots, earned_slot_count: p.earned_slot_count }));
+      slots: p.slots, earned_slot_count: p.earned_slot_count,
+      locked: !!p._locked }));
     const res = await api("/build/solve", postJson({
       archetype: build.archetype, goal, tier: build.tier || "premium",
       content: content || null, role: role || null, exposure: build._exposure || null,
@@ -5918,11 +6121,33 @@ async function solveSlotting(perkFocus, opts) {
     }
     md += `**Optimal slotting solved** — ${addedTxt}, no AI guesswork`;
     md += perkFocus ? ` (spare slots → ${perkFocus}).` : ".";
-    // Be explicit about what happened to existing investment — but only for an
-    // IMPORTED build (a from-scratch/AI build has no prior investment to report on).
+    // v35 (#15) refuse-with-remedy: any DECLARED ask the solve couldn't fully
+    // reach is named with numbers and a concrete next move — never silent.
+    if (res.ask_remedies && res.ask_remedies.length) {
+      md += "\n\n⚖️ **Asks I couldn't fully reach:**\n\n" + res.ask_remedies.map(r =>
+        `- **${r.stat}**: you asked ${r.asked}, best reached ${r.reached} — ${r.remedy}.`
+      ).join("\n");
+    }
+    // Be explicit about what happened to existing investment — but only for a
+    // RETOOL build (a from-scratch/AI build has no prior investment to report on).
     const removed = res.removed_expensive || [];
-    if (build.imported) {
-      if (res.preserved) {
+    const lockedN = build.powers.filter(p => p._locked).length;
+    if (retool) {
+      if (lockedN) {
+        md += `\n\n🔒 **${lockedN} locked power${lockedN === 1 ? "" : "s"} left exactly as you slotted ${lockedN === 1 ? "it" : "them"}** — a lock means byte-for-byte untouched, empty slots included. Everything unlocked was re-slotted toward the goal. Unlock a power (padlock on its card) to let a future re-solve improve it.`;
+        const lockedEmpty = build.powers.filter(p => p._locked
+          && (p.slots || []).some(s => !s)).length;
+        if (lockedEmpty) {
+          md += ` ℹ️ ${lockedEmpty} locked power${lockedEmpty === 1 ? " has" : "s have"} empty slots the solve was not allowed to fill.`;
+        }
+        if (keep_layout) {
+          md += " 📐 **Kept your slot layout** on the unlocked powers — stayed within the slots you placed (no added slots); any cheap IO not upgraded by a goal-advancing set was left in place.";
+        }
+        if (removed.length) {
+          md += "\n\n⚠️ **Had to drop some set pieces to fit** (an unlocked power ran out of room):\n\n"
+            + removed.map(r => `- ${r.power}: ${r.set} (${r.before}→${r.after})`).join("\n");
+        }
+      } else if (res.preserved) {
         const kept = (res.kept_sets || []).length;
         md += `\n\n🔒 **Preserved your sets** — kept ${kept} existing IO set${kept === 1 ? "" : "s"} + unique globals; only re-slotted generic IOs and empty slots toward the goal.`;
         if (keep_layout) {
