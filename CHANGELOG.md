@@ -49,6 +49,16 @@
   Farm (passive) and Active Fire Farm. The old generic "Fire Farm" is retired;
   saved builds that used it get a prompt to pick the one that matches how they
   play (never silently remapped).
+- **Four more dead-air fixes from release-night testing.** The build button now
+  names the exact field you're missing and highlights it in red instead of
+  repeating gray text; the Solve button does the same when Content isn't picked,
+  and honestly says "no changes" when your slotting already meets the goal. The
+  biggest one: Solve's "are you sure about this role?" question was being asked
+  in a hidden panel on every installed copy — Solve would silently wait forever
+  for an answer you couldn't see. It now asks where you can see it. And the
+  import file dialog no longer strands you on an empty page if you cancel it.
+  A set's own proc piece now counts toward its "Full set" label (a 6-piece
+  Javelin Volley is a full set, not a mix).
 - Data currency: game-client data re-exported 2026-07-15; current through the
   game's July 7 patch.
 
