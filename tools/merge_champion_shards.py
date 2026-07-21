@@ -29,9 +29,30 @@ def main():
     # MAIN are the point. Shard-vs-shard collisions still hard-fail (two
     # workers re-converging one context is a sharding bug either way).
     replace = "--replace" in args
+    # VERDICT GATE (Joel's standing mechanic, made STRUCTURAL 2026-07-21 on his
+    # urgent flag): a bare --replace is a BLIND supersede, and the v34 wave
+    # proved recerts LOSE the fresh-process canonical-vs-canonical check more
+    # often than they win (7 of 9 kept the incumbent). So --replace refuses to
+    # run without --verdicts <file> from tools/recert_verdicts.py
+    # ({context_key: "supersede"|"keep"}): only "supersede" contexts merge,
+    # "keep" contexts leave the incumbent untouched (counted, printed).
+    # HC_MERGE_FORCE=1 bypasses for deliberate, eyes-open repairs only.
+    verdicts = None
+    if "--verdicts" in args:
+        vi = args.index("--verdicts")
+        verdicts = json.load(open(args[vi + 1], encoding="utf-8"))
+        args = args[:vi] + args[vi + 2:]
     shards = [a for a in args if a != "--replace"]
+    if replace and verdicts is None and os.environ.get("HC_MERGE_FORCE") != "1":
+        raise SystemExit(
+            "FAIL: --replace without --verdicts is a BLIND supersede.\n"
+            "Run the gate first:  py tools/recert_verdicts.py <shards...>\n"
+            "then merge with:     py tools/merge_champion_shards.py --replace "
+            "--verdicts recert_verdicts.json <shards...>\n"
+            "(HC_MERGE_FORCE=1 overrides, eyes open.) Nothing written.")
     if not shards:
         raise SystemExit("usage: merge_champion_shards.py [--replace] "
+                         "[--verdicts recert_verdicts.json] "
                          "shard1.json [shard2.json ...]")
     data = json.load(open(MAIN, encoding="utf-8"))
     n_main = len(data)
@@ -51,6 +72,12 @@ def main():
             if not (v.get("picks") and v.get("certificate")):
                 raise SystemExit(f"FAIL: {k} in {sp} lacks picks/certificate "
                                  f"— nothing written")
+            # verdict gate: a recert that LOST canonical-vs-canonical keeps the
+            # incumbent — the shard entry is measurement, not a champion.
+            if replace and verdicts is not None and k in data:
+                if verdicts.get(k) != "supersede":
+                    print(f"  KEEP incumbent (verdict={verdicts.get(k) or 'MISSING'}): {k}")
+                    continue
             replaced += 1 if k in data else 0
             seen_in_shards.add(k)
             data[k] = v
