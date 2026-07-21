@@ -913,15 +913,38 @@ def build(state_dir=None, public=False):
                   + _PULSE_JS + "</script>")
 
     if public:
-        # direct download of the CURRENT Lite build — the pipeline renders from a fresh
-        # site checkout, so this link self-updates with every Lite release
+        # direct download of the CURRENT Lite build. GROUND TRUTH FIRST (Joel's
+        # field report 2026-07-21: the board advertised 0.1.17 for four days
+        # after 0.1.18 shipped): the release LIST is the authority — the
+        # "self-updating" lite_version.txt file only updates when a release
+        # checklist remembers to bump it, and 0.1.18's didn't. The render runs
+        # in Actions where the anonymous API call is free; the file is the
+        # OFFLINE fallback, and a mismatch is printed loudly so a stale bump
+        # shows up in the render log instead of on the public page.
+        _lv = None
+        try:
+            import urllib.request
+            _rels = json.load(urllib.request.urlopen(
+                "https://api.github.com/repos/joelc67/hero-companion/releases",
+                timeout=10))
+            _lv = next((r["tag_name"].replace("lite-v", "") for r in _rels
+                        if r.get("tag_name", "").startswith("lite-v")), None)
+        except Exception:  # noqa: BLE001 — offline render falls back to the file
+            pass
         try:
             with open(os.path.join(ROOT, "lite_version.txt"), encoding="utf-8") as f:
-                _lv = f.read().strip()
+                _lv_file = f.read().strip()
+        except Exception:  # noqa: BLE001
+            _lv_file = None
+        if _lv and _lv_file and _lv != _lv_file:
+            print(f"WARNING: lite_version.txt says {_lv_file} but the newest "
+                  f"lite release is {_lv} — bump the file (release checklist).")
+        _lv = _lv or _lv_file
+        if _lv:
             dl = ("https://github.com/joelc67/hero-companion/releases/download/"
                   f"lite-v{_lv}/CompanionLite.exe")
             dl_label = f"Companion Lite {_lv}"
-        except Exception:  # noqa: BLE001 — frozen/odd layouts fall back to the list
+        else:
             dl = "https://github.com/joelc67/hero-companion/releases"
             dl_label = "Companion Lite"
         mock = "Alpha · built from live player capture · times shown in your time zone"
