@@ -91,16 +91,30 @@ PIECE_GLOBALS = [
     {"set": "regenerative tissue", "piece": "regeneration", "unique": True,
      "effects": [{"effect": "Regeneration", "value": 0.25}]},
     # SUSTAIN procs — the masters universally slot these in Stamina/Health (the free Fitness
-    # real estate) and the tool was BLIND to them (no parseable FX). Added so the solver SEES +
-    # PLACES them (every modern master fit has them). Values are CONSERVATIVE effective estimates
-    # of the chance-proc's always-on equivalent in an auto power — [ESTIMATE — audit vs Mids].
-    {"set": "performance shifter", "piece": "+end", "unique": True,
-     "effects": [{"effect": "Recovery", "value": 0.10}]},          # Chance for +Endurance
+    # real estate). v35 (endurance batch, Q1 ruling 2026-07-21): the +Endurance procs are
+    # credited at their MEASURED average (tools/measure_end_procs.py on Joel's raw chatlogs,
+    # ~4,900 10s roll windows: rate 0.497/window — the client's 3.0 PPM auto-host formula
+    # exactly; grants log-verified at 50: Performance Shifter 10.64 end/proc, Panacea 7.98).
+    # Expressed as base-recovery equivalents (end/s ÷ 1.667) so the existing Recovery
+    # plumbing prices them; the old values were flagged conservative estimates and undershot
+    # the field 3–5×. CORRECTION vs the design paper's Q1 list (log-verified): Power
+    # Transfer's proc is a self-HEAL (80.32 HP @50), NOT an endurance return — it keeps its
+    # Regeneration credit; PANACEA is the real end-returning sibling. Performance Shifter's
+    # unique flag corrected to the game data's False (it stacks; rule of five applies).
+    {"set": "performance shifter", "piece": "+end", "unique": False,
+     "effects": [{"effect": "Recovery", "value": 0.317}]},         # MEASURED 0.529 end/s
     {"set": "power transfer", "piece": "heal self", "unique": True,
-     "effects": [{"effect": "Regeneration", "value": 0.125}]},     # Chance to Heal Self
+     "effects": [{"effect": "Regeneration", "value": 0.125}]},     # heal proc (NOT +end)
     {"set": "panacea", "piece": "hit points", "unique": True,
-     "effects": [{"effect": "Recovery", "value": 0.05},            # Chance for +HP/+End
+     "effects": [{"effect": "Recovery", "value": 0.239},           # MEASURED 0.398 end/s
                  {"effect": "Regeneration", "value": 0.05}]},
+    # Theft of Essence: Chance for +Endurance — heal-set proc (click hosts, Dark
+    # Regeneration class). UNMEASURED (absent from the log archive); priced from the client
+    # PPM formula (3.0 PPM ≈ 0.5 end/s if fired on cooldown) at a stated HALF-USAGE
+    # assumption (heals fire when hurt, not on cooldown) → ~0.25 end/s. PROVISIONAL —
+    # replace with a measured average when logs carrying it exist.
+    {"set": "theft of essence", "piece": "+endurance", "unique": False,
+     "effects": [{"effect": "Recovery", "value": 0.15}]},
 ]
 
 
@@ -1481,17 +1495,26 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
 
 # Base endurance recovery ≈ 1.667 end/sec at 100 max endurance (Homecoming); +Recovery scales
 # it. A toggle drains end_cost / activate_period per second; a sustained attack chain drains
-# offense.chain_end_per_sec. Net = recovery − (toggles + chain). Travel/sprint/rest toggles
-# aren't running while you fight, so they're excluded.
+# offense.chain_end_per_sec. Net = recovery − (toggles + chain).
+# v35 travel split (Q3 ruling 2026-07-21, the Nimbus gap): sprint/prestige/rest stay excluded
+# (nobody fights in Rest), but Fly/Hover-class TRAVEL toggles are TALLIED SEPARATELY and
+# always DISPLAYED — a combat-hover playstyle really does pay that drain in the fight. The
+# scorer includes them when the build's declared fighting range is ranged ("back"); the
+# displayed ledger never silently drops them again.
 _END_BASE_RECOVERY = 1.667
-_END_SKIP_TOGGLES = ("sprint", "prestige", "fly", "hover", "rest", "mystic_flight")
+_END_SKIP_TOGGLES = ("sprint", "prestige", "rest")
+_END_TRAVEL_TOGGLES = ("fly", "hover", "mystic_flight")
+# Measured end/s per slotted copy (tools/measure_end_procs.py — see PIECE_GLOBALS note);
+# used here only to STATE the credit already inside the recovery% total.
+_END_PROC_EPS = {"performance shifter": 0.529, "panacea": 0.398, "theft of essence": 0.25}
 
 
 def _endurance_balance(build, display, offense, ctx):
     """Real endurance math (uses end_cost + activate_period): can the build SUSTAIN its rotation,
-    or does it need a refuel? Returns recovery/sec vs drain/sec (toggles + nonstop chain) → net."""
+    or does it need a refuel? Returns recovery/sec vs drain/sec (toggles + nonstop chain) → net,
+    plus the v35 fight-duration inputs (travel split, E_max pool, stated end-proc credit)."""
     power_by_full = ctx.get("power_by_full", {})
-    toggle = 0.0
+    toggle = travel = 0.0
     for power in build.get("powers", []):
         p = power_by_full.get(power.get("full_name"))
         if not p or p.get("power_type") != 2:
@@ -1507,16 +1530,58 @@ def _endurance_balance(build, display, offense, ctx):
         nm = (p.get("full_name") or "").split(".")[-1].lower()
         if ap <= 0 or any(s in nm for s in _END_SKIP_TOGGLES):
             continue
-        toggle += (p.get("end_cost") or 0.0) / ap
+        if any(s in nm for s in _END_TRAVEL_TOGGLES):
+            travel += (p.get("end_cost") or 0.0) / ap
+        else:
+            toggle += (p.get("end_cost") or 0.0) / ap
     chain = (offense or {}).get("chain_end_per_sec", 0.0)
     rec_pct = (display.get("recovery") or {}).get("value", 0.0) / 100.0
     recovery = _END_BASE_RECOVERY * (1.0 + rec_pct)
     drain = chain + toggle
+    # E_max: 100 base + flat MaxEnd (accolades + the v35-credited set bonuses).
+    pool = 100.0 + (display.get("max_end_bonus") or 0.0)
+    # Stated end-proc credit (already inside recovery% via PIECE_GLOBALS — this
+    # field only makes the assumption VISIBLE, it is not added again).
+    seen_unique, eps = set(), 0.0
+    for power in build.get("powers", []):
+        for slot in power.get("slots", []) or []:
+            if not slot:
+                continue
+            sn, pn = (slot.get("set_name") or "").lower(), (slot.get("piece_name") or "").lower()
+            for key, val in _END_PROC_EPS.items():
+                if key in sn and ("+end" in pn or "hit points" in pn or "+endurance" in pn):
+                    if key == "panacea":
+                        if key in seen_unique:
+                            break
+                        seen_unique.add(key)
+                    eps += val
+                    break
+    # Declared fighting range decides whether travel drain joins the SCORED fight
+    # (Q3: ranged/hover = yes, melee = no); the display shows it regardless.
+    travel_declared = (build.get("_exposure") or build.get("exposure")) == "back"
     out = {"recovery_per_sec": round(recovery, 2), "toggle_drain_per_sec": round(toggle, 2),
            "chain_drain_per_sec": round(chain, 2), "drain_per_sec": round(drain, 2),
-           "net_per_sec": round(recovery - drain, 2), "sustainable": (recovery - drain) >= 0}
+           "net_per_sec": round(recovery - drain, 2), "sustainable": (recovery - drain) >= 0,
+           "max_end_pool": round(pool, 1)}
+    if travel > 0:
+        out["travel_toggle_drain_per_sec"] = round(travel, 2)
+        out["drain_with_travel_per_sec"] = round(drain + travel, 2)
+        out["net_with_travel_per_sec"] = round(recovery - drain - travel, 2)
+    out["travel_in_combat"] = bool(travel_declared and travel > 0)
+    if eps > 0:
+        out["end_proc_per_sec"] = round(eps, 2)
+    # Stated assumptions (choice doctrine: nothing silent on a safety-relevant line).
+    assumes = []
+    if eps > 0:
+        assumes.append("end procs credited at their measured average (chatlog-verified)")
+    if display.get("incarnates_included"):
+        assumes.append("incarnate buffs included (your toggle) — recovery is NOT bare")
+    if out["travel_in_combat"]:
+        assumes.append("travel toggle drain counted in-combat (you fight from range)")
+    if assumes:
+        out["assumes"] = assumes
     if recovery - drain < -0.05:                  # seconds of nonstop attacking before empty
-        out["empty_after_sec"] = round(100.0 / (drain - recovery))
+        out["empty_after_sec"] = round(pool / (drain - recovery))
     return out
 
 
@@ -1594,6 +1659,13 @@ def _apply_effect(totals, eff):
         totals["range"] += val
     elif et == "EnduranceDiscount":
         totals["end_discount"] += val
+    elif et == "Endurance":
+        # v35: +MaxEnd set bonuses (aspect Max, values already flat-on-base-100:
+        # 1.8 = +1.8 points). 40 records existed in the data and were silently
+        # dropped here — the same allowlist-gap family as the v28 accuracy and
+        # v29 heal-strength finds. Feeds E_max in the fight-duration ledger.
+        if eff.get("aspect") == "Max":
+            totals["max_end"] = totals.get("max_end", 0.0) + val
     elif et in MEZ_DURATION_EFFECTS:
         totals["mez_duration"][et] += val
 

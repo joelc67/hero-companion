@@ -4505,11 +4505,21 @@ function renderStats(t) {
   }
   if (t.endurance && t.endurance.sustainable === false) {
     const warn = `⚠ Your checked toggles + attack chain drain ${t.endurance.drain_per_sec} `
-      + `end/s against ${t.endurance.recovery_per_sec} end/s recovery`
+      + `end/s against ${t.endurance.recovery_per_sec} end/s recovery (no incarnates assumed)`
       + (t.endurance.empty_after_sec
-          ? ` — empty in ~${t.endurance.empty_after_sec}s of nonstop attacking.`
+          ? ` — empty in ~${t.endurance.empty_after_sec}s of nonstop attacking; long fights `
+            + `throttle your real output after that.`
           : ".");
     note = note ? `${note} ${warn}` : warn;
+  }
+  // v35: the travel toggle's drain is always shown, never silently dropped (the
+  // hover-blaster gap) — with an honest note on whether the fight math counts it.
+  if (t.endurance && t.endurance.travel_toggle_drain_per_sec) {
+    const tr = `✈ Travel toggle: ${t.endurance.travel_toggle_drain_per_sec} end/s `
+      + (t.endurance.travel_in_combat
+          ? "(counted in combat — you fight from range)."
+          : "(not counted in combat — grounded playstyle; pick \"from range\" and it counts).");
+    note = note ? `${note} ${tr}` : tr;
   }
   $("stats-note").textContent = note;
 }

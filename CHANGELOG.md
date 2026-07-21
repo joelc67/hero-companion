@@ -1,5 +1,46 @@
 # Hero Companion — What's New
 
+## Unreleased
+
+- **Endurance is now real physics (model v35).** The old scoring gave an
+  endurance-broken build 45–72% credit no matter how fast the blue bar
+  emptied. Now the model plays the fight out: full output until the bar
+  drains, then only what recovery can pay for — measured against each fight's
+  actual length. A build that empties in 17 seconds keeps most of its score
+  in short scraps and collapses to its true ~11% output in a 4-minute
+  Archvillain fight, exactly as it plays. Sustainable builds are never
+  penalized, and a build the tool generates can no longer "afford" a rotation
+  it cannot actually run. (This keeps the promise made in the forum thread:
+  endurance was named as the known gap, and this is the fix.)
+- **No hidden incarnate assumptions.** Scores and warnings now use your BARE
+  recovery — the old model quietly assumed incarnate-era recovery (Ageless)
+  in some content. If your build includes incarnates via the toggle, the
+  ledger says so in plain text instead of assuming silently.
+- **Endurance procs are worth their real, measured value.** Performance
+  Shifter and Panacea's +endurance procs were priced at conservative
+  guesses; they're now credited at their measured average from real game
+  logs (about 0.53 and 0.40 endurance/second — the measurement matched the
+  game's proc formula to within 1%). Theft of Essence is priced from the
+  formula with its usage assumption stated. (Correction found during
+  measurement: Power Transfer's proc is a self-heal, not an endurance
+  return — it stays priced as healing.)
+- **+Max Endurance finally counts.** 40 set bonuses granting +Max Endurance
+  existed in the data but were silently dropped; they now raise your
+  endurance pool in totals and in the fight math, alongside accolades.
+- **Travel toggles are never silently ignored again.** If you run Fly or
+  Hover, the ledger always shows that drain. Declare a ranged/hover
+  playstyle and the fight math counts it too (a grounded melee build still
+  doesn't pay for a travel power it turns off).
+- **Cardiac gets recommended when it should be.** If your build's endurance
+  ledger runs a deficit, the incarnate recommender now leads with Cardiac
+  and explains the trade — more damage on paper loses to damage you actually
+  have the endurance to deliver.
+- **Your typed-in build targets can't be traded away.** A declared custom
+  target (like "45% fire defense") now outranks every internal heuristic in
+  the optimizer — the endurance repricing exposed a case where the solver
+  traded 0.4% of a declared defense ask for recovery value. Declared asks
+  are promises; a pinned test now holds the line.
+
 ## 0.12.22 — 2026-07-20
 
 - **This is the first digitally signed Hero Companion release.** The installer

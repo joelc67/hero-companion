@@ -1904,6 +1904,12 @@ def _apply_custom_targets(targets, custom, res_cap):
         v = custom.get(fld)
         if _num(v) and float(v) > 0:
             out[fld] = min(float(cap), max(0.0, float(v)))
+    # v35: mark which axes the USER declared, so the solver can rank them senior
+    # to every heuristic term (a declared ask is a promise — "shipped >= promised",
+    # work order A; the measured end-proc repricing exposed that ordinary coverage
+    # weights let side-value out-bid the last sliver of a declared axis).
+    out["_declared"] = {"defense": sorted(defs), "resistance": sorted(res),
+                        "scalars": [f for f in _CUSTOM_SCALAR_CLAMPS if f in out]}
     return out
 
 
@@ -6268,14 +6274,25 @@ def _tray_notes(role, totals, rotation_end=0.0, pos=None):
                                  f"~{aoe} AoE/target" if aoe else "",
                                  f"~{burst} alpha" if burst else ""] if x)
     eb = totals.get("endurance") or {}
+    # v35: the travel toggle is NEVER silently dropped from the displayed ledger (the
+    # Nimbus gap) — show it whenever it exists, and say whether the fight counts it.
+    trav = eb.get("travel_toggle_drain_per_sec")
+    trav_line = ""
+    if trav:
+        trav_line = (f" Travel toggle adds {trav}/s"
+                     + (" (counted — you fight from range)." if eb.get("travel_in_combat")
+                        else " (shown, not counted — grounded in the fight; declare a ranged "
+                             "playstyle and it counts)."))
     if eb.get("sustainable"):
         end_line = (f" 🔋 Endurance: sustainable — ~{eb.get('recovery_per_sec')}/s recovery "
-                    f"covers the ~{eb.get('drain_per_sec')}/s rotation + toggles.")
+                    f"covers the ~{eb.get('drain_per_sec')}/s rotation + toggles.{trav_line}")
     elif eb:
         end_line = (f" 🔋 Endurance: drains ~{eb.get('drain_per_sec')}/s "
                     f"({eb.get('chain_drain_per_sec')} chain + {eb.get('toggle_drain_per_sec')} toggles) "
-                    f"vs ~{eb.get('recovery_per_sec')}/s recovery — attacking nonstop you bottom out in "
-                    f"~{eb.get('empty_after_sec')}s, so lean on Ageless/Consume (or add +recovery).")
+                    f"vs ~{eb.get('recovery_per_sec')}/s recovery (no incarnates assumed) — attacking "
+                    f"nonstop you bottom out in ~{eb.get('empty_after_sec')}s and long fights throttle "
+                    f"your real output after that. Add +recovery/endurance reduction, or accept it and "
+                    f"lean on Ageless/Consume — your call, stated here so it's a choice.{trav_line}")
     else:
         end_line = ""
     rch0 = round((totals.get("recharge") or {}).get("value", 0)) if isinstance(totals.get("recharge"), dict) else 0

@@ -992,6 +992,28 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
         # Healers live on recharge too (recast heals/buffs), but keep heal/regen for the team.
         priority[("RechargeTime", None)] = max(priority.get(("RechargeTime", None), 0.0), 10.0)
 
+    # DECLARED-ASK SENIORITY (v35, pinned by the 45/90 battery case): a user-DECLARED
+    # axis (custom_targets) is a PROMISE — "shipped >= promised" (work order A) —
+    # while every other objective term is a heuristic proxy. The v35 measured
+    # end-proc repricing made recovery value big enough to out-bid the last sliver
+    # of a declared 45% fire-def ask (measured: 44.59 shipped, −0.41 traded for
+    # +1.18 end/s). A dominant WEIGHT, deliberately not a hard constraint: an
+    # unreachable ask still solves best-effort and the honest-refusal report states
+    # the shortfall (task #15's seam) — but no realistic side-value bundle (single
+    # trades measure ~1-2 objective units) out-bids declared shortfall at 600.
+    _DECLARED_PRIORITY = 600.0
+    _dec = targets_pct.get("_declared") or {}
+    _dec_scalar_keys = {"recharge": ("RechargeTime", None), "recovery": ("Recovery", None),
+                        "regen": ("Regeneration", None), "max_hp": ("HitPoints", None),
+                        "tohit": ("ToHit", None)}
+    _dec_keys = ([("Defense", ty) for ty in _dec.get("defense") or []]
+                 + [("Resistance", ty) for ty in _dec.get("resistance") or []]
+                 + [_dec_scalar_keys[f] for f in _dec.get("scalars") or []
+                    if f in _dec_scalar_keys])
+    for k in _dec_keys:
+        if k in targets:
+            priority[k] = max(priority.get(k, 0.0), _DECLARED_PRIORITY)
+
     # ACCURACY-VALUATION TERM (v28, derived — no magic weights): global Accuracy
     # multiplies OUTSIDE the to-hit clamp (first_principles.outgoing_hit: hit =
     # clamp(ACC_ENH × (1+acc) × clamp(base+tohit))), so below the 95% ceiling every

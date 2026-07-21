@@ -37,6 +37,9 @@ _GLOBAL_HINTS = ("luck of the gambler", "steadfast", "gladiator's armor", "shiel
                  "kismet", "numina", "miracle", "regenerative tissue", "panacea",
                  "performance shifter", "power transfer", "reactive defenses",
                  "unbreakable guard", "preventive medicine", "overwhelming force",
+                 # v35: Theft of Essence +End proc is a priced piece-global (measured
+                 # batch) — a single copy is a working mule, not a dead fragment
+                 "theft of essence",
                  # v30: the -KB mule pieces (mag 4 each, engine-priced)
                  "karma", "blessing of the zephyr")
 
@@ -273,10 +276,52 @@ check("custom targets survive the post-ILP passes (shipped >= promised, 45/90 ca
       f"shipped fire def {_fd} / fire res {_fr} vs the explicit 45/90 ask "
       f"(the unguarded proc pass used to ship 40.52)")
 
+# ── v35 ENDURANCE BATCH (2026-07-21, endurance-fix-paper.md §7): the mandatory
+# negative control + the paper's worked Nimbus table, pinned through the REAL
+# scorer path (encounter_value my_dps ratio isolates end_factor exactly — every
+# other multiplier is identical between the two totals).
+print("\nv35 endurance model — negative control + Nimbus fight-duration pins:")
+import first_principles as fp  # noqa: E402
+
+
+def _end_totals(endb):
+    return {"offense": {"st_dps": 100.0, "aoe_dps": 0.0, "debuffs": []},
+            "endurance": endb}
+
+
+_SUS = {"chain_drain_per_sec": 3.0, "toggle_drain_per_sec": 1.0,
+        "recovery_per_sec": 4.5, "max_end_pool": 100.0}          # drain 4.0 <= rec 4.5
+_RICH = dict(_SUS, recovery_per_sec=99.0)                        # absurd margin
+_neg_bad = []
+for _scen in fp.SCENARIOS:
+    a = fp.encounter_value("Class_Blaster", [], {}, _end_totals(_SUS), scenario=_scen)
+    b = fp.encounter_value("Class_Blaster", [], {}, _end_totals(_RICH), scenario=_scen)
+    if abs(a["my_dps"] - b["my_dps"]) > 1e-6:
+        _neg_bad.append(_scen)
+check("NEGATIVE CONTROL: drain <= recovery => end_factor 1.0 on EVERY scenario",
+      not _neg_bad, _neg_bad or f"sustainable build unpenalized across all "
+      f"{len(fp.SCENARIOS)} scenarios (margin size irrelevant)")
+
+# Nimbus (§2 worked table, bare recovery, travel declared in-combat): the measured
+# ledger — R 2.92, combat toggles 2.16, Fly 0.46, chain 6.28, E_max 100 —
+# must collapse to 11.4% on the 240s AV fight and ~57.9%/68.5% on short fights.
+_NIM = {"chain_drain_per_sec": 6.28, "toggle_drain_per_sec": 2.16,
+        "travel_toggle_drain_per_sec": 0.46, "travel_in_combat": True,
+        "recovery_per_sec": 2.92, "max_end_pool": 100.0}
+_nim_bad = []
+for _scen, _want in (("av", 0.114), ("itrial", 0.579), ("team", 0.685)):
+    n = fp.encounter_value("Class_Blaster", [], {}, _end_totals(_NIM), scenario=_scen)
+    s = fp.encounter_value("Class_Blaster", [], {}, _end_totals(_RICH), scenario=_scen)
+    got = n["my_dps"] / max(s["my_dps"], 1e-9)
+    if abs(got - _want) > 0.005:
+        _nim_bad.append(f"{_scen}: {got:.3f} != {_want}")
+check("Nimbus worked table holds through the scorer (AV 11.4%, itrial 57.9%, team 68.5%)",
+      not _nim_bad, _nim_bad or "fight-duration end_factor matches the paper on all three pins")
+
 # COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
 # check — a crash or skipped section that silently shrinks the list must fail, not
 # pass by absence. Bump EXPECTED_CHECKS when adding a check.
-EXPECTED_CHECKS = 14
+EXPECTED_CHECKS = 16
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
 if len(results) != EXPECTED_CHECKS:

@@ -659,13 +659,36 @@ def recommend_incarnates(archetype, content, role, totals, targets=None, res_cap
     survival_met = res_capped or def_capped
     recs = []
 
+    # v35 (§6, fight-duration model): a NEGATIVE endurance balance makes Cardiac a real —
+    # often optimal — candidate: lower toggle+attack end cost raises both T_empty and the
+    # post-empty chain rate, so EFFECTIVE damage on a long fight can beat a raw-damage
+    # Alpha whose output is throttled once the bar is dry. Computed on the BARE ledger
+    # (Q4: no silent incarnate relief), travel drain included only if declared in-combat.
+    eb = totals.get("endurance") or {}
+    _end_drain = (eb.get("drain_per_sec") or 0.0) + (
+        (eb.get("travel_toggle_drain_per_sec") or 0.0) if eb.get("travel_in_combat") else 0.0)
+    _end_net = _end_drain - (eb.get("recovery_per_sec") or 0.0)
+    _t_empty = (eb.get("max_end_pool") or 100.0) / _end_net if _end_net > 0 else None
+
     # ALPHA — decision tree:
+    #   bar empties in under a minute of real output -> Cardiac (the build can't act = nothing else matters)
     #   far below caps -> close the gap (raw mitigation needed, ANY content)
     #   at caps + DEBUFF content (iTrial/league/AV) -> Resilient for the overcap cushion
     #   at caps + FIRE FARM (no debuffs) -> sustain (buff frequency + heal), NOT more res
     #   recharge starved -> Spiritual; else support->Vigor, damage->Musculature
     #   CONTROLLER/DEBUFFER -> Spiritual first: recharge (perma-control) IS the survival.
-    if controller:
+    if _t_empty is not None and _t_empty < 60:
+        recs.append({"slot": "Alpha", "full_name": _alpha("Cardiac"),
+                     "display": "Cardiac Core Paragon",
+                     "why": f"your endurance ledger runs a DEFICIT (−{abs(_end_net):.1f}/s net at full output, no "
+                            f"incarnates assumed) — the blue bar empties in ~{round(_t_empty)}s and after "
+                            "that every attack waits on recovery. On a long fight that throttles your real "
+                            "damage far below what a damage Alpha adds: Musculature raises numbers you "
+                            "won't have the endurance to deliver, Cardiac's endurance discount stretches "
+                            "the bar so the whole rotation actually runs. Fix the leak first; if you later "
+                            "build the recovery to go sustainable, re-check this pick.",
+                     "always_on": True})
+    elif controller:
         recs.append({"slot": "Alpha", "full_name": _alpha("Nerve"),
                      "display": "Nerve Core Paragon",
                      "why": "controls must LAND and hold longer — Nerve adds accuracy + hold duration + defense past ED. "
