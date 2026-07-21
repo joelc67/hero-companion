@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## Unreleased
+## 0.12.23 — 2026-07-21
 
 - **Endurance is now real physics (model v35).** The old scoring gave an
   endurance-broken build 45–72% credit no matter how fast the blue bar
