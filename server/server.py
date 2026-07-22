@@ -2324,7 +2324,56 @@ def build_calculate():
     # Never fires on a well-slotted build (every real power is committed / proc / global).
     if len(under) >= 2:
         res["respec_hint"] = {"count": len(under), "powers": under[:6]}
+    # v36 DISPLAY DELIVERABLE (first-class, Joel's GO): every inherent meter
+    # mechanic renders with its status + stated basis — users see the
+    # mechanic, not just absorb it. The Pack Mentality pattern.
+    res["inherent_mechanics"] = _inherent_mechanics(build.get("archetype"),
+                                                    build.get("powers") or [])
     return jsonify(res)
+
+
+# v36: the offense panel's "Inherent mechanics" block — one honest entry per
+# family the archetype (or its slotted sets) carries. status: scored (basis
+# stated) | dormant (shown, not scored — why stated) | not_yet (visibly
+# unmodeled). Bases mirror fp._meter_damage_mult exactly; if the model and
+# this table ever disagree, the battery's meter pins catch the model side.
+_INHERENT_MECHANICS = {
+    "Class_Blaster":   [("Defiance", "scored", "derived from your own attack chain "
+                         "(game data: +damage 0.066 × cast time per blast, ~7.5s window)")],
+    "Class_Defender":  [("Vigilance", "scored", "game data: +30% damage solo, stepping "
+                         "down 10% per teammate; your scenario's team size decides")],
+    "Class_Corruptor": [("Scourge", "scored", "game's own ramp (starts below 50% target "
+                         "health): +30% expected damage on targets fought to the end")],
+    "Class_Controller": [("Containment", "scored", "damage doubled on controlled targets, "
+                          "weighted by each scenario's control-landing physics "
+                          "(an AV largely can't be contained — the number says so)")],
+    "Class_Dominator": [("Domination", "scored", "perma-Domination derived from your own "
+                         "recharge: endurance refill credited when sustained (stated); "
+                         "mez-magnitude double SHOWN, not yet scored — landing model pending")],
+    "Class_Brute":     [("Fury", "dormant", "meter and build curve shown; damage credit "
+                         "awaits a clean measurement from real play (instrument in progress) "
+                         "— never a guessed number")],
+    "Class_Sentinel":  [("Opportunity", "dormant", "formula shown; scoring awaits grounding "
+                         "in the game's own data")],
+    "Class_Tanker":    [("Gauntlet", "not_yet", "not yet modeled — next meter batch")],
+    "Class_Scrapper":  [("Critical Hits", "not_yet", "modeled only where the game data is "
+                         "explicit; the rest not yet modeled — next meter batch")],
+    "Class_Stalker":   [("Critical Hits + Assassin's Focus", "not_yet", "modeled only where "
+                         "the game data is explicit; the rest not yet modeled — next batch")],
+}
+_SET_MECHANICS = {"Titan_Weapons": ("Momentum", "not_yet", "combo mechanics not yet modeled"),
+                  "Street_Justice": ("Combo levels", "not_yet", "combo mechanics not yet modeled"),
+                  "Brawling": ("Combo levels", "not_yet", "combo mechanics not yet modeled")}
+
+
+def _inherent_mechanics(archetype, powers):
+    out = [{"family": f, "status": s, "basis": b}
+           for f, s, b in _INHERENT_MECHANICS.get(archetype or "", [])]
+    seen_sets = {(p.get("powerset_full_name") or "").split(".")[-1] for p in powers}
+    for key, (f, s, b) in _SET_MECHANICS.items():
+        if key in seen_sets:
+            out.append({"family": f, "status": s, "basis": b})
+    return out
 
 
 def _attach_base_resdef(powers, archetype, ctx, res_cap):

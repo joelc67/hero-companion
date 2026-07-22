@@ -381,10 +381,37 @@ check("fire-res-90-ONLY ask honored (reached, or short WITH a stated remedy)",
       _fr2 >= 89.95 or any(r.get("stat") == "Fire Res" and r.get("remedy") for r in _rem),
       f"fire res {_fr2} vs ask 90; remedies: {[r.get('stat') for r in _rem] or 'none needed'}")
 
+# ── v36 METER-CLASS pins (meter-batch-notes.md, ruled 2026-07-22): per-family
+# NEGATIVE CONTROL (meterless/other-AT builds gain exactly zero from every
+# meter term) + the scoring floor's positive magnitudes, straight through
+# fp._meter_damage_mult (the exact function encounter_value consumes).
+print("\nv36 meter terms — negative controls + scoring-floor pins:")
+_sc_t, _sc_g, _sc_av = fp.SCENARIOS["team"], fp.SCENARIOS["general"], fp.SCENARIOS["av"]
+_t0 = {"offense": {"attacks": [], "st_dps": 0}, "damage_buff": 0}
+_neg = [fp._meter_damage_mult(at, _sc_t, _t0) for at in
+        ("Class_Brute", "Class_Scrapper", "Class_Tanker", "Class_Sentinel",
+         "Class_Stalker", "Class_Blaster", "Class_Mastermind")]
+check("METER NEGATIVE CONTROL: dormant ATs + attackless builds read exactly 1.0",
+      all(m == 1.0 for m in _neg),
+      f"multipliers: {_neg} (Fury/Opportunity/crit-silent = dormant by basis audit)")
+_tb = {"offense": {"attacks": [{"cast_time": 1.5}, {"cast_time": 2.0}], "st_dps": 100},
+       "damage_buff": 0}
+_mb = fp._meter_damage_mult("Class_Blaster", _sc_t, _tb)
+_md_solo = fp._meter_damage_mult("Class_Defender", _sc_g, _t0)
+_md_team = fp._meter_damage_mult("Class_Defender", _sc_t, _t0)
+_mc = fp._meter_damage_mult("Class_Corruptor", _sc_t, _t0)
+_mct_av = fp._meter_damage_mult("Class_Controller", _sc_av, _t0)
+check("METER FLOOR: Defiance chain-derived, Vigilance solo-not-team, Scourge +30%, "
+      "Containment honest vs AV",
+      1.25 < _mb < 1.40 and 1.10 < _md_solo < 1.20 and _md_team == 1.0
+      and abs(_mc - 1.30) < 1e-9 and _mct_av < 1.10,
+      f"Defiance {_mb:.3f}, Vigilance solo {_md_solo:.3f}/team {_md_team:.3f}, "
+      f"Scourge {_mc:.3f}, Containment-vs-AV {_mct_av:.3f}")
+
 # COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
 # check — a crash or skipped section that silently shrinks the list must fail, not
 # pass by absence. Bump EXPECTED_CHECKS when adding a check.
-EXPECTED_CHECKS = 19
+EXPECTED_CHECKS = 21
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
 if len(results) != EXPECTED_CHECKS:

@@ -4003,6 +4003,7 @@ async function recompute() {
   renderStats(totals);
   renderValidation(validation);
   LAST_TOTALS = (totals && (totals.totals || totals)) || null;  // feed the tray rotation + notes
+  LAST_CALC = totals || null;   // v36: carries inherent_mechanics for the offense block
   build._accoladeHp = (LAST_TOTALS && LAST_TOTALS.accolade_hp) || 0;  // v34: live accolade HP for the panel line
   updateInfoCards(LAST_TOTALS);
   // Server-corrected pick levels (older saves carry naive assignments — e.g. both
@@ -4527,6 +4528,7 @@ function updateInfoCards(t) {
   updateUniquesCard();
 }
 let LAST_TOTALS = null;
+let LAST_CALC = null;   // full /build/calculate response (v36 inherent mechanics)
 
 function buildPayload() {
   return {
@@ -4731,6 +4733,17 @@ function renderOffense(off, t) {
   if ((off.buffs || []).length) {
     html += `<div class="o-sub">Ally buffs <span class="muted small">(base, per application)</span></div>`
       + off.buffs.map(d => `<div class="o-row"><span>${d.effect}${d.type && d.type !== "all" ? " (" + d.type + ")" : d.type === "all" ? " (all)" : ""}</span><span class="buf">${sign(d.pct)}%</span></div>`).join("");
+  }
+  // v36 (first-class display deliverable): the Inherent Mechanics block —
+  // every meter family the AT (or slotted sets) carries, with its honest
+  // status: scored (basis stated) / shown-not-scored / not yet modeled.
+  const im = (LAST_CALC && LAST_CALC.inherent_mechanics) || [];
+  if (im.length) {
+    const tag = { scored: "scored", dormant: "shown, not scored", not_yet: "not yet modeled" };
+    html += `<div class="o-row o-head" style="margin-top:8px"><span>Inherent mechanics</span></div>`
+      + im.map(m => `<div class="o-row im-row im-${m.status}"><span><b>${escHtml(m.family)}</b>`
+        + ` <span class="im-tag">${tag[m.status] || m.status}</span>`
+        + ` <span class="muted small">${escHtml(m.basis)}</span></span></div>`).join("");
   }
   $("offense-stats").innerHTML = html;
 }

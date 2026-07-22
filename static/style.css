@@ -1299,6 +1299,15 @@ body { overflow: hidden; }
 .power-card.pc-locked { border-color: #e0b84e; box-shadow: 0 0 0 1px #e0b84e33 inset; }
 .power-card.pc-locked .slot { opacity: 0.92; }
 
+/* v36: the Inherent Mechanics block — status tags read at a glance; dormant/
+   not-yet rows are honest, visible, and visually quieter than scored ones. */
+.im-tag { font-size: 10px; border: 1px solid var(--border); border-radius: 8px;
+  padding: 0 6px; margin: 0 4px; text-transform: uppercase; letter-spacing: .04em; }
+.im-row.im-scored .im-tag { border-color: #7ec97e; color: #7ec97e; }
+.im-row.im-dormant .im-tag { border-color: #e0b84e; color: #e0b84e; }
+.im-row.im-not_yet .im-tag { opacity: 0.7; }
+.im-row.im-dormant, .im-row.im-not_yet { opacity: 0.85; }
+
 /* v35 four-vs-two fix: a DORMANT watched log (no writes in 24h) reads
    visually distinct from a live one — counted honestly, never silently. */
 .gl-chip.stale { border-style: dashed; opacity: 0.75; }

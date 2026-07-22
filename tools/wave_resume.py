@@ -22,7 +22,11 @@ import sys
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = sys.executable
-KEYS = os.path.join(ROOT, "tools", "wave_v35_keys.txt")
+# v36+: the CURRENT wave's key list (written at each wave launch); falls back
+# to the v35 file so old state never breaks the kit.
+KEYS = os.path.join(ROOT, "tools", "wave_current_keys.txt")
+if not os.path.exists(KEYS):
+    KEYS = os.path.join(ROOT, "tools", "wave_v35_keys.txt")
 DRY = "--dry-run" in sys.argv
 
 
