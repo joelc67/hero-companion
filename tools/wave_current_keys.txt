@@ -1,0 +1,3 @@
+Class_Blaster|Blaster_Ranged.Fire_Blast|Blaster_Support.Energy_Manipulation|itrial
+Class_Controller|Controller_Control.Plant_Control|Controller_Buff.Poison|itrial
+Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|itrial

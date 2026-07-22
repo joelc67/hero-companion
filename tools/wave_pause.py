@@ -75,7 +75,7 @@ def main():
 
     all_keys = [l.strip() for l in open(KEYS, encoding="utf-8") if l.strip()]
     done = set()
-    for f in glob.glob(os.path.join(ROOT, "champions_shard_par*_p*.json")):
+    for f in glob.glob(os.path.join(ROOT, "champions_shard_*_p*.json")):
         done |= set(json.load(open(f, encoding="utf-8")))
     remaining = [k for k in all_keys if k not in done]
 
