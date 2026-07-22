@@ -1,0 +1,107 @@
+<!-- THROWAWAY MOCKUP — Leveling Journey View, levels 10-20 hero-side.
+     Joel's eyeball = the acceptance test ("inviting, not a droll paragraph").
+     Placeholder content entries are LABELED; the bins pass replaces them.
+     One surface with the Leveling Companion: the road is the map, the pulsing
+     marker is the you-are-here (mocked at level 12 here). -->
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Journey Mock — Hero Companion</title>
+<style>
+  :root { --bg:#0e1320; --card:#171e30; --border:#2a3350; --ink:#dfe6f5;
+          --muted:#8fa0bd; --gold:#e0b84e; --green:#7ec97e; --blue:#5aa7e8;
+          --purple:#b48ee0; }
+  body { background:var(--bg); color:var(--ink); font:14px/1.45 "Segoe UI",sans-serif;
+         margin:0; padding:28px 0 80px; }
+  h1 { text-align:center; font-size:20px; letter-spacing:.06em; }
+  h1 small { display:block; color:var(--muted); font-size:12px; font-weight:400; margin-top:4px; }
+  .road { position:relative; max-width:760px; margin:34px auto 0; padding:10px 0; }
+  .road::before { content:""; position:absolute; left:50%; top:0; bottom:0; width:6px;
+    transform:translateX(-50%); border-radius:3px;
+    background:linear-gradient(180deg,var(--green) 0%,var(--green) 22%,var(--border) 24%,var(--border) 100%); }
+  .stop { position:relative; display:flex; margin:26px 0; min-height:64px; }
+  .stop .node { position:absolute; left:50%; top:14px; transform:translate(-50%,0);
+    width:38px; height:38px; border-radius:50%; background:var(--card);
+    border:3px solid var(--border); display:flex; align-items:center; justify-content:center;
+    font-weight:700; z-index:2; }
+  .stop.done .node { border-color:var(--green); color:var(--green); }
+  .stop.here .node { border-color:var(--gold); color:var(--gold);
+    box-shadow:0 0 0 6px rgba(224,184,78,.18), 0 0 22px rgba(224,184,78,.45);
+    animation:pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 50% { box-shadow:0 0 0 10px rgba(224,184,78,.10), 0 0 30px rgba(224,184,78,.55);} }
+  .card { width:44%; background:var(--card); border:1px solid var(--border);
+    border-radius:12px; padding:12px 14px; box-shadow:0 4px 14px rgba(0,0,0,.35); }
+  .stop:nth-child(odd) .card { margin-left:auto; }
+  .stop.here .card { border-color:var(--gold); }
+  .lv { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
+  .pick { display:flex; align-items:center; gap:10px; margin:7px 0 4px; }
+  .pick img { width:34px; height:34px; border-radius:7px; border:1px solid var(--border);
+    background:#0a0e18; }
+  .pick b { font-size:15px; }
+  .slots { display:flex; gap:5px; margin:6px 0 2px; }
+  .slots span { width:16px; height:16px; border-radius:50%; border:2px solid var(--blue);
+    display:inline-block; opacity:.85; }
+  .slots span.new { border-color:var(--gold); box-shadow:0 0 6px rgba(224,184,78,.5); }
+  .chip { display:inline-block; font-size:11px; border:1px solid; border-radius:9px;
+    padding:1px 8px; margin:6px 6px 0 0; }
+  .chip.tf { border-color:var(--blue); color:var(--blue); }
+  .chip.badge { border-color:var(--purple); color:var(--purple); }
+  .chip.ding { border-color:var(--gold); color:var(--gold); }
+  .content-card { border-left:3px solid var(--blue); }
+  .content-card .why { color:var(--muted); font-size:12px; margin-top:4px; }
+  .prov { font-size:10px; color:var(--muted); opacity:.8; margin-top:6px; font-style:italic; }
+  .youare { text-align:center; color:var(--gold); font-size:12px; letter-spacing:.05em;
+    margin:-14px 0 0; }
+</style></head><body>
+<h1>THE LEVELING JOURNEY <small>Fire Blast / Energy Manipulation Blaster · levels 10–20 of the road to 50 ·
+mock — visual direction review</small></h1>
+<div class="road">
+
+  <div class="stop done"><div class="node">10</div>
+    <div class="card"><div class="lv">Level 10 — reached ✓</div>
+      <div class="pick"><img src="/static/icons/powers/FireBlast_FireBlast.png" onerror="this.style.display='none'">
+        <b>Aim</b></div>
+      <div class="slots"><span></span></div>
+      <span class="chip badge">Badge: Undying (Vahzilok arc) — step 2 of 4 toward The Atlas Medallion</span>
+    </div></div>
+
+  <div class="stop done"><div class="node">11</div>
+    <div class="card"><div class="lv">Level 11 — reached ✓</div>
+      <div class="pick"><img src="/static/icons/powers/Fitness_Health.png" onerror="this.style.display='none'">
+        <b>Slot milestone</b></div>
+      <div class="slots"><span></span><span></span><span class="new"></span></div>
+      <div class="why">Two new slots — your plan puts them in <b>Fire Blast</b> (Thunderstrike #3, #4)</div>
+    </div></div>
+
+  <div class="stop here"><div class="node">12</div>
+    <div class="card"><div class="lv">Level 12 — ★ you are here</div>
+      <div class="pick"><img src="/static/icons/powers/EnergyManipulation_BuildUp.png" onerror="this.style.display='none'">
+        <b>Build Up</b> <span class="chip ding">Ding! your plan takes this now</span></div>
+      <div class="slots"><span class="new"></span></div>
+      <div class="why">Followed live from your chat log — the marker moves when you do</div>
+    </div></div>
+  <div class="youare">— the Companion moves this marker as you play —</div>
+
+  <div class="stop"><div class="node">15</div>
+    <div class="card content-card"><div class="lv">Level 15 — the game opens</div>
+      <div class="pick"><b>⚔ Synapse's Task Force</b></div>
+      <div class="why">15–20 · Skyway City · the Clockwork King awaits · badge: Synapse's Cohort</div>
+      <span class="chip tf">Task Force</span><span class="chip badge">Accolade credit: Task Force Commander 2/5</span>
+      <div class="prov">placeholder entry — level range pending the client-bins pass</div>
+    </div></div>
+
+  <div class="stop"><div class="node">16</div>
+    <div class="card"><div class="lv">Level 16</div>
+      <div class="pick"><img src="/static/icons/powers/FireBlast_Blaze.png" onerror="this.style.display='none'">
+        <b>Blaze</b></div>
+      <div class="slots"><span class="new"></span></div>
+      <div class="why">Your heaviest single-target hit arrives — the plan 6-slots it by 23</div>
+    </div></div>
+
+  <div class="stop"><div class="node">20</div>
+    <div class="card content-card"><div class="lv">Level 20 — milestone</div>
+      <div class="pick"><b>🏅 Hollows arc closes · Cape mission unlocks</b></div>
+      <div class="why">Frostfire badge chain complete — and your first costume slot</div>
+      <span class="chip badge">Badge chain</span><span class="chip tf">Story milestone</span>
+      <div class="prov">placeholder entry — pending the client-bins pass</div>
+    </div></div>
+
+</div></body></html>
