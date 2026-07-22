@@ -40,6 +40,17 @@ JOURNEY_CATEGORIES = {
 
 _ZONE_TOUR = re.compile(r"^(?:P_)?([A-Za-z_]+?)Tour(?:ism)?\d*$")
 
+# The game's message strings carry gender-conditional templates the client
+# expands per character: "Wise{Hero.gender=male guy|gal}". A catalog has no
+# character, so render BOTH variants in place ("Wiseguy/gal") — truthful to
+# the game text, never a silent male default. Measured 2026-07-22: 86 fields,
+# and this is the only brace-token family in badges.bin text.
+_GENDER = re.compile(r"\{[^}]*?gender=\w+\s+([^|}]*)\|([^}]*)\}", re.I)
+
+
+def _expand_gender(text):
+    return _GENDER.sub(lambda m: f"{m.group(1)}/{m.group(2)}", text or "")
+
 
 def main():
     if not SRC.is_file():
@@ -60,12 +71,12 @@ def main():
             "name": b["name"],
             "id": b["id"],
             "category": b["category"],
-            "display_hero": b["display_hero"],
-            "display_villain": b["display_villain"],
-            "desc_hero": b["desc_hero"],
-            "desc_villain": b["desc_villain"],
-            "earn_hint_hero": b["earn_hint_hero"],
-            "earn_hint_villain": b["earn_hint_villain"],
+            "display_hero": _expand_gender(b["display_hero"]),
+            "display_villain": _expand_gender(b["display_villain"]),
+            "desc_hero": _expand_gender(b["desc_hero"]),
+            "desc_villain": _expand_gender(b["desc_villain"]),
+            "earn_hint_hero": _expand_gender(b["earn_hint_hero"]),
+            "earn_hint_villain": _expand_gender(b["earn_hint_villain"]),
             "requires_count": b["requires_count"],
         }
         if b["category"] == "tourism":

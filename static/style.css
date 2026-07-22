@@ -1506,3 +1506,64 @@ body { overflow: hidden; }
   0% { background: rgba(229, 83, 75, 0.35); }
   100% { background: transparent; }
 }
+
+/* ── THE LEVELING JOURNEY (task #16) — horizontal road, design language from
+   static/journey_mock2.html. Namespaced .jny-*; theme vars so hero/villain
+   reskins ride along. Cards alternate above/below the road; collapsed by
+   default (.open reveals deltas/tips) — inviting, never crammed. */
+.jny-head { margin: 10px 0 2px; }
+.jny-viewport { position: relative; margin-top: 4px; }
+.jny-viewport::before, .jny-viewport::after { content: ""; position: absolute; top: 0;
+  bottom: 12px; width: 54px; z-index: 3; pointer-events: none; }
+.jny-viewport::before { left: 0; background: linear-gradient(90deg, var(--panel), transparent); }
+.jny-viewport::after { right: 0; background: linear-gradient(270deg, var(--panel), transparent); }
+.jny-strip { overflow-x: auto; scroll-snap-type: x proximity; padding: 6px 44px 10px;
+  scrollbar-color: var(--border) transparent; }
+.jny-lane { position: relative; display: flex; gap: 44px; width: max-content; padding: 190px 30px; }
+.jny-lane::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 5px;
+  transform: translateY(-50%); border-radius: 3px; background: var(--border); }
+.jny-stop { position: relative; width: 212px; scroll-snap-align: center; flex: none; }
+.jny-node { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: 38px; height: 38px; border-radius: 50%; background: var(--panel2);
+  border: 3px solid var(--border); display: flex; align-items: center; justify-content: center;
+  font-weight: 700; z-index: 2; }
+.jny-stop.done .jny-node { border-color: var(--def); color: var(--def); }
+.jny-stop.here .jny-node { border-color: var(--warn); color: var(--warn);
+  box-shadow: 0 0 0 6px rgba(217, 164, 65, .18), 0 0 20px rgba(217, 164, 65, .45);
+  animation: jnypulse 1.6s ease-in-out infinite; }
+@keyframes jnypulse { 50% { box-shadow: 0 0 0 10px rgba(217, 164, 65, .10), 0 0 28px rgba(217, 164, 65, .55); } }
+.jny-card { position: absolute; left: 0; width: 212px; background: var(--panel2);
+  border: 1px solid var(--border); border-radius: 10px; padding: 9px 11px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .35); }
+.jny-card.has-detail { cursor: pointer; }
+.jny-stop:nth-child(odd) .jny-card { bottom: calc(50% + 34px); }
+.jny-stop:nth-child(even) .jny-card { top: calc(50% + 34px); }
+.jny-stop::after { content: ""; position: absolute; left: 50%; width: 2px; height: 22px;
+  background: var(--border); transform: translateX(-50%); }
+.jny-stop:nth-child(odd)::after { bottom: calc(50% + 12px); }
+.jny-stop:nth-child(even)::after { top: calc(50% + 12px); }
+.jny-stop.here .jny-card { border-color: var(--warn); }
+.jny-youare { position: absolute; left: 50%; top: calc(50% + 26px); transform: translateX(-50%);
+  color: var(--warn); font-size: 10px; white-space: nowrap; letter-spacing: .04em; z-index: 2; }
+.jny-stop:nth-child(even) .jny-youare { top: auto; bottom: calc(50% + 26px); }
+.jny-lv { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
+.jny-pick { margin: 5px 0 2px; font-size: 13px; }
+.jny-slots { display: flex; align-items: center; gap: 4px; margin: 5px 0 2px; }
+.jny-slots span.new { width: 13px; height: 13px; border-radius: 50%;
+  border: 2px solid var(--warn); display: inline-block;
+  box-shadow: 0 0 5px rgba(217, 164, 65, .5); flex: none; }
+.jny-chip { display: inline-block; font-size: 10.5px; border: 1px solid; border-radius: 9px;
+  padding: 1px 7px; margin: 5px 5px 0 0; }
+.jny-chip.badge { border-color: #b48ee0; color: #b48ee0; }
+.jny-ms { margin-top: 5px; font-size: 12px; color: var(--warn); }
+.jny-detail { display: none; margin-top: 6px; border-top: 1px solid var(--border); padding-top: 6px; }
+.jny-card.open .jny-detail { display: block; }
+.jny-tip { color: var(--muted); font-size: 11.5px; margin-top: 3px; }
+.jny-zones { margin-top: 10px; border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; }
+.jny-zones > summary { cursor: pointer; }
+.jny-zonegrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 6px 14px; margin-top: 8px; }
+.jny-zone { border-left: 2px solid var(--border); padding-left: 8px; }
+.jny-zone > summary { cursor: pointer; font-size: 12.5px; }
+.jny-zbadge { margin: 5px 0 5px 4px; }
+.jny-prov { font-size: 10px; color: var(--muted); opacity: .85; margin-top: 8px; font-style: italic; }

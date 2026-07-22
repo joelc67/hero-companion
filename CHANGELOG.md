@@ -1,5 +1,18 @@
 # Hero Companion — What's New
 
+## Unreleased
+
+- **The Leveling Journey (first cut).** A new "🗺️ See the journey" view on the
+  wizard's build result: your whole 1–50 rolls past left-to-right like a map —
+  every level a stop on the road with its power pick, new enhancement slots,
+  and milestones. Click a card for what that level buys you (stat gains and
+  tips); the security-level badges sit at 10/20/30/40/50 with the game's own
+  descriptions. A "Zones & badges" drawer holds the full exploration-badge
+  catalog straight from the game's files — badge names and their find-hint
+  descriptions grouped by zone. Zone display names, level ranges, and task
+  force suggestions are labeled as coming (they need server-side game data,
+  in progress) — nothing on the road is a guess.
+
 ## 0.12.24 — 2026-07-22
 
 - **Your archetype's hidden mechanics are now in the math AND on the screen

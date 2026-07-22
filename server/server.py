@@ -490,6 +490,60 @@ def _md_to_html(text):
 # The client NEVER phones home on its own — every outbound touch is a user click,
 # and all of it goes through the GitHub home configured in client_config.json.
 # ---------------------------------------------------------------------------
+@app.route("/journey/badges")
+def journey_badges():
+    """Journey band content — GAME-FIRST from badges.bin via data/journey_badges.json
+    (tools/build_journey_badges.py; layout pinned 2026-07-22 against a real
+    character's earned list).
+
+    Serves exactly what the client bins ground:
+      - level_badges: the security-level achievement badges keyed by the level
+        that awards them (the LevelN name family — their own descriptions state
+        the level, so the anchor is the record's own text, not a guess).
+      - zones: exploration badges grouped by the structural <Zone>Tour<N> name
+        convention (390 of 476 tourism badges; the rest group under "other").
+        zone_key is the RAW internal prefix — the prefix→English-name map,
+        zone level ranges, and badge coordinates are SERVER-SIDE data awaiting
+        the i24 archive pass (Joel's ruling 2026-07-22); until it lands the
+        band labels those columns pending, never guesses.
+    Each payload carries its provenance string so the client can ride it on
+    every card (the work order: provenance tags on every entry)."""
+    try:
+        base = getattr(sys, "_MEIPASS", None) or os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "..")
+        with open(os.path.join(base, "data", "journey_badges.json"),
+                  encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:  # noqa: BLE001
+        return jsonify({"ok": False})
+    import re as _re
+    level_badges = {}
+    zones = {}
+    for b in data.get("badges", []):
+        m = _re.fullmatch(r"Level(\d+)", b["name"])
+        if m and b["category"] == "achievement":
+            level_badges[int(m.group(1))] = {
+                "display_hero": b["display_hero"], "display_villain": b["display_villain"],
+                "desc_hero": b["desc_hero"], "desc_villain": b["desc_villain"]}
+        zk = b.get("zone_key")
+        if zk:
+            zones.setdefault(zk, []).append({
+                "name": b["name"], "display_hero": b["display_hero"],
+                "display_villain": b["display_villain"],
+                # the badge's own description IS the find hint (game text:
+                # "You have seen the statue of Cassiopeia…")
+                "find_hint": b["desc_hero"] or b["desc_villain"]})
+    return jsonify({
+        "ok": True,
+        "provenance": "badges.bin (client game data), export 2026-07-22",
+        "pending": "zone names, level ranges, TF/SF rosters and badge "
+                   "coordinates arrive with the i24 server-data pass",
+        "level_badges": level_badges,
+        "zones": [{"zone_key": k, "badges": v} for k, v in sorted(zones.items())
+                  if k != "other"],
+    })
+
+
 @app.route("/accolades")
 def accolades_roster():
     """v34 accolade panel — DISPLAY-ONLY scaffold (v33 rides nothing from this).

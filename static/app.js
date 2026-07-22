@@ -733,6 +733,101 @@ function renderLevelStep() {
     + `<div id="lvl-endgame">${LAST_REFIT}</div>`
     + `</div>`;
 }
+// ── THE LEVELING JOURNEY (task #16) — the horizontal road ───────────────────
+// Design language locked from static/journey_mock2.html (Joel's direction call,
+// 2026-07-22): the 1-50 rolls past left-to-right like a map, cards alternate
+// above/below the road, you-are-here pulses at the player's level. Same
+// grounded data as the stepper (/build/leveling-steps) plus badges.bin content
+// (/journey/badges). Cards are COLLAPSED by default (click a card for its
+// deltas and tips) — inviting, never crammed. Zone rungs are honesty-tier
+// until the i24 server-data pass lands (Joel's sourcing ruling): zone display
+// names, level fit, TF/SF rosters and badge coordinates are labeled pending,
+// and every content entry rides its provenance string.
+let JOURNEY_BADGES = null;
+
+async function openJourneyView() {
+  const out = $("wiz-plan-out");
+  out.innerHTML = "<p class='muted small'>Rolling out the road…</p>";
+  if (!LEVELING_STEPS) {
+    const res = await api("/build/leveling-steps",
+      postJson({ archetype: build.archetype, powers: build.powers }));
+    if (!res || !res.ok || !res.steps || !res.steps.length) { out.innerHTML = levelingPlanHtml(); return; }
+    LEVELING_STEPS = res.steps;
+    LEVELING_TOTAL = res.total_slots || 67;
+  }
+  if (!JOURNEY_BADGES) JOURNEY_BADGES = (await api("/journey/badges")) || {};
+  renderJourney();
+  // greet the player at their level: center the you-are-here stop
+  const here = document.querySelector(".jny-stop.here");
+  if (here) here.scrollIntoView({ inline: "center", block: "nearest" });
+}
+
+function toggleJourneyCard(i) {
+  const el = document.getElementById(`jny-card-${i}`);
+  if (el) el.classList.toggle("open");
+}
+
+function renderJourney() {
+  const steps = LEVELING_STEPS;
+  const hereLv = (isLevelingBuild() && build.level_reached) ? build.level_reached : null;
+  const hereIdx = hereLv != null ? _stepIndexForLevel(hereLv) : -1;
+  const jb = JOURNEY_BADGES || {};
+  const lvBadges = jb.level_badges || {};
+
+  const stops = steps.map((s, i) => {
+    const state = i < hereIdx ? "done" : i === hereIdx ? "here" : "";
+    const picks = (s.picks || []).map(pk => pk.temp
+      ? `<div class="jny-pick"><b>Your choice</b> <span class="muted small">temporary — the level-24 respec re-places it</span></div>`
+      : `<div class="jny-pick"><b>${escHtml(pk.name)}</b> <span class="muted small">${escHtml(pk.powerset)}</span></div>`
+    ).join("");
+    const slotDots = s.slots
+      ? `<div class="jny-slots">${'<span class="new"></span>'.repeat(s.slots)}
+         <span class="muted small">${s.slots_running} / ${LEVELING_TOTAL} placed</span></div>`
+      : "";
+    const lb = lvBadges[s.level];
+    const badgeChip = lb
+      ? `<span class="jny-chip badge" title="${escHtml(lb.desc_hero || lb.desc_villain || "")}">🏅 ${escHtml(lb.display_hero)}${lb.display_villain && lb.display_villain !== lb.display_hero ? ` / ${escHtml(lb.display_villain)}` : ""}</span>`
+      : "";
+    const ms = s.milestone ? `<div class="jny-ms">⭐ ${escHtml(s.milestone)}</div>` : "";
+    // collapsed by default: deltas + tips live behind the card click
+    const deltas = _LVL_STATS.map(([k, lab, u]) => {
+      const dv = (s.delta || {})[k]; if (!dv || Math.abs(dv) < 1) return "";
+      return `<span class="rt-delta ${dv > 0 ? "up" : "down"}">${dv > 0 ? "+" : ""}${dv}${u} ${lab}</span>`;
+    }).filter(Boolean).join(" ");
+    const detail = (deltas ? `<div class="jny-detail-deltas">${deltas}</div>` : "")
+      + (s.tips || []).map(t => `<div class="jny-tip">💡 ${escHtml(t)}</div>`).join("");
+    return `<div class="jny-stop ${state}"><div class="jny-node">${s.level}</div>`
+      + (state === "here" ? `<div class="jny-youare">★ you are here</div>` : "")
+      + `<div class="jny-card${detail ? " has-detail" : ""}" id="jny-card-${i}"`
+      + (detail ? ` onclick="toggleJourneyCard(${i})" title="click for what this level buys you"` : "")
+      + `><div class="jny-lv">Level ${s.level}${state === "done" ? " — reached ✓" : state === "here" ? " — now" : ""}</div>`
+      + picks + slotDots + ms + badgeChip
+      + (detail ? `<div class="jny-detail">${detail}</div>` : "")
+      + `</div></div>`;
+  }).join("");
+
+  const zones = (jb.zones || []).map(z =>
+    `<details class="jny-zone"><summary><b>${escHtml(z.zone_key)}</b>
+       <span class="muted small">${z.badges.length} exploration badge${z.badges.length > 1 ? "s" : ""}</span></summary>`
+    + z.badges.map(b => `<div class="jny-zbadge"><b>${escHtml(b.display_hero || b.display_villain)}</b>`
+        + (b.find_hint ? `<div class="muted small">${escHtml(b.find_hint)}</div>` : "")
+        + `</div>`).join("")
+    + `</details>`).join("");
+
+  $("wiz-plan-out").innerHTML =
+    `<div class="jny">`
+    + `<div class="jny-head">🗺️ <b>The Leveling Journey</b> <span class="muted small">— scroll the road; every stop is a level your plan does something. Click a card for what it buys you.</span>
+       <button class="linkbtn" onclick="openLevelStepper()">▶ step-by-step view</button></div>`
+    + `<div class="jny-viewport"><div class="jny-strip"><div class="jny-lane">${stops}</div></div></div>`
+    + (zones
+        ? `<details class="jny-zones"><summary>🧭 <b>Zones & badges</b> <span class="muted small">— the grounded
+           catalog from the game's own files. ${escHtml(jb.pending || "")}</span></summary>
+           <div class="jny-zonegrid">${zones}</div>
+           <div class="jny-prov">source: ${escHtml(jb.provenance || "badges.bin")}</div></details>`
+        : "")
+    + `</div>`;
+}
+
 // ── Level tracking + absence flag (leveling builds only) ────────────────────
 // The companion can only stay in sync with what the player TELLS it — we don't watch
 // the game. So a leveling character carries build.level_reached (last-known level), and
@@ -1182,6 +1277,7 @@ async function buildRespec() {
           ? `<p class="lvl-tip">🚀 <strong>iTrial access:</strong> some trials (BAF, Lambda) can only be entered by <strong>Flight or Teleport</strong> — you can't run in. With ${travel === "super_speed" ? "Super Speed" : "Super Jump"} you'll want a P2W <strong>jet pack</strong> on hand. Switching travel to Fly/Teleport fixes it but costs an extra pool (Super Speed shares its pool with Hasten; Fly/Teleport don't).</p>`
           : "")
       + `<div class="wiz-result-btns"><button id="wiz-step" class="secondary" style="width:auto">▶ Walk it step-by-step</button>`
+      + `<button id="wiz-journey" class="secondary" style="width:auto">🗺️ See the journey</button>`
       + `<button id="wiz-open" class="solve-btn" style="width:auto">Open the full build →</button></div>`
       + `<div id="wiz-plan-out"></div>`;
     $("wiz-plan-out").innerHTML = levelingPlanHtml();   // show the full in-game respec order up front
@@ -1189,6 +1285,7 @@ async function buildRespec() {
     $("wiz-reveal").addEventListener("click", _reveal);
     $("wiz-open").addEventListener("click", _reveal);
     $("wiz-step").addEventListener("click", openLevelStepper);
+    $("wiz-journey").addEventListener("click", openJourneyView);
     // The click's consequence must be ON SCREEN. scrollIntoView proved
     // unreliable here (the wizard-box is a scroll container inside a fixed
     // modal and never moved) — scroll the container itself, measured.
