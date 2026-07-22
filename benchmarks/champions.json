@@ -351,20 +351,20 @@
    "Blaster_Ranged.Fire_Blast.Flares",
    "Blaster_Ranged.Fire_Blast.Inferno",
    "Blaster_Ranged.Fire_Blast.Rain_of_Fire",
-   "Blaster_Support.Energy_Manipulation.Build_Up",
+   "Blaster_Support.Energy_Manipulation.Conserve_Power",
    "Blaster_Support.Energy_Manipulation.Power_Thrust",
    "Epic.Electrical_Mastery.Charged_Armor",
    "Epic.Electrical_Mastery.EM_Pulse",
-   "Epic.Electrical_Mastery.Static_Discharge",
+   "Epic.Electrical_Mastery.Surge_of_Power",
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
    "Pool.Fighting.Boxing",
    "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Kick",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
    "Pool.Invisibility.Grant_Invisibility",
    "Pool.Invisibility.Invisibility",
-   "Pool.Invisibility.Misdirection",
    "Pool.Invisibility.Stealth",
    "Pool.Leadership.Assault",
    "Pool.Leadership.Defense",
@@ -372,9 +372,9 @@
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed"
   ],
-  "score": 382.6879,
+  "score": 470.640625,
   "certificate": {
-   "sweeps": 33,
+   "sweeps": 38,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
@@ -386,14 +386,8 @@
     "cap": 50000,
     "capped_solves_floor": 0,
     "final_resolve_delta": 0.0
-   },
-   "evaluated": {
-    "against": "model 35, 2026-07-21",
-    "verdict": "baseline",
-    "canonical_score": 308.85
    }
-  },
-  "canonical_score": 308.85
+  }
  },
  "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Dark_Armor|itrial": {
   "picks": [
