@@ -1515,6 +1515,16 @@ body { overflow: hidden; }
    z-index above the wizard modal (z 50) so "See the journey" opens on top. */
 #journey-modal { z-index: 60; }
 .journey-box { width: min(1560px, 97vw); overflow-y: auto; }
+/* the header pill: the ONE switch for the road — labeled (not a bare icon),
+   lit while the road is out, and it pulses after an ✕/Esc close so users
+   learn where to reopen it. */
+.journey-pill { width: auto; padding: 0 9px; display: inline-flex; align-items: center; gap: 4px; }
+.journey-pill-label { font-size: 12px; font-weight: 600; }
+.journey-pill.journey-open { border-color: var(--warn); color: var(--warn); }
+.journey-pill.journey-pulse { animation: jnybtnpulse 0.85s ease-in-out 3; }
+@keyframes jnybtnpulse {
+  50% { border-color: var(--warn); box-shadow: 0 0 10px rgba(217, 164, 65, .55); }
+}
 .jny-head { margin: 10px 0 2px; }
 .jny-viewport { position: relative; margin-top: 4px; }
 .jny-viewport::before, .jny-viewport::after { content: ""; position: absolute; top: 0;

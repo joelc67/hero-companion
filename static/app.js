@@ -751,6 +751,8 @@ async function openJourneyView() {
   // button, the header 🗺️, or a resumed character.
   const modal = $("journey-modal"), out = $("journey-body");
   modal.classList.remove("hidden");
+  const jb = $("journey-btn");
+  if (jb) jb.classList.add("journey-open");   // the pill reads as "on" while the road is out
   out.innerHTML = "<p class='muted small'>Rolling out the road…</p>";
   if (!LEVELING_STEPS) {
     const res = await api("/build/leveling-steps",
@@ -769,7 +771,30 @@ async function openJourneyView() {
   if (here) here.scrollIntoView({ inline: "center", block: "nearest" });
 }
 
-function closeJourneyView() { $("journey-modal").classList.add("hidden"); }
+// One switch, both directions: the header "🗺️ Journey" pill opens the road
+// and closes it again. When the overlay closes any OTHER way (✕, Esc,
+// clicking the dark backdrop), the pill pulses for a moment so the user
+// learns where the road lives before they ever need to find it again.
+function closeJourneyView(teach = true) {
+  $("journey-modal").classList.add("hidden");
+  const jb = $("journey-btn");
+  if (jb) jb.classList.remove("journey-open");
+  if (teach) teachJourneyPill();
+}
+
+function toggleJourneyView() {
+  if ($("journey-modal").classList.contains("hidden")) openJourneyView();
+  else closeJourneyView(false);           // they used the pill — no lesson needed
+}
+
+function teachJourneyPill() {
+  const jb = $("journey-btn");
+  if (!jb || getComputedStyle(jb).display === "none") return;
+  jb.classList.remove("journey-pulse");
+  void jb.offsetWidth;                    // restart the animation
+  jb.classList.add("journey-pulse");
+  setTimeout(() => jb.classList.remove("journey-pulse"), 2600);
+}
 
 function toggleJourneyCard(i) {
   const el = document.getElementById(`jny-card-${i}`);
@@ -1813,8 +1838,15 @@ async function init() {
   $("saves-back").addEventListener("click", () => {
     $("saves-panel").classList.add("hidden"); $("entry-cards").classList.remove("hidden"); });
   $("save-btn").addEventListener("click", saveProgress);
-  $("journey-btn").addEventListener("click", openJourneyView);
-  $("journey-close").addEventListener("click", closeJourneyView);
+  $("journey-btn").addEventListener("click", toggleJourneyView);
+  $("journey-close").addEventListener("click", () => closeJourneyView());
+  // standard overlay affordances: Esc closes, so does clicking the dark backdrop
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !$("journey-modal").classList.contains("hidden")) closeJourneyView();
+  });
+  $("journey-modal").addEventListener("click", (e) => {
+    if (e.target === $("journey-modal")) closeJourneyView();
+  });
   if ($("bug-btn")) $("bug-btn").addEventListener("click", reportBug);
   if ($("champ-btn")) $("champ-btn").addEventListener("click", submitChampion);
   if ($("update-check")) $("update-check").addEventListener("click", checkUpdates);
