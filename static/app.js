@@ -746,12 +746,19 @@ function renderLevelStep() {
 let JOURNEY_BADGES = null;
 
 async function openJourneyView() {
-  const out = $("wiz-plan-out");
+  // The road gets its own full-width overlay (a 720px wizard box cramps a
+  // horizontal journey) — so it opens identically from the wizard's result
+  // button, the header 🗺️, or a resumed character.
+  const modal = $("journey-modal"), out = $("journey-body");
+  modal.classList.remove("hidden");
   out.innerHTML = "<p class='muted small'>Rolling out the road…</p>";
   if (!LEVELING_STEPS) {
     const res = await api("/build/leveling-steps",
       postJson({ archetype: build.archetype, powers: build.powers }));
-    if (!res || !res.ok || !res.steps || !res.steps.length) { out.innerHTML = levelingPlanHtml(); return; }
+    if (!res || !res.ok || !res.steps || !res.steps.length) {
+      out.innerHTML = "<p class='muted'>I couldn't lay the road out — the plan needs powers first.</p>";
+      return;
+    }
     LEVELING_STEPS = res.steps;
     LEVELING_TOTAL = res.total_slots || 67;
   }
@@ -762,6 +769,8 @@ async function openJourneyView() {
   if (here) here.scrollIntoView({ inline: "center", block: "nearest" });
 }
 
+function closeJourneyView() { $("journey-modal").classList.add("hidden"); }
+
 function toggleJourneyCard(i) {
   const el = document.getElementById(`jny-card-${i}`);
   if (el) el.classList.toggle("open");
@@ -769,7 +778,8 @@ function toggleJourneyCard(i) {
 
 function renderJourney() {
   const steps = LEVELING_STEPS;
-  const hereLv = (isLevelingBuild() && build.level_reached) ? build.level_reached : null;
+  // a leveling character starts the road at level 1 even before their first sync
+  const hereLv = isLevelingBuild() ? (build.level_reached || 1) : null;
   const hereIdx = hereLv != null ? _stepIndexForLevel(hereLv) : -1;
   const jb = JOURNEY_BADGES || {};
   const lvBadges = jb.level_badges || {};
@@ -814,10 +824,13 @@ function renderJourney() {
         + `</div>`).join("")
     + `</details>`).join("");
 
-  $("wiz-plan-out").innerHTML =
+  // step-by-step lives in the wizard modal — only offer the jump when it's open
+  const wizOpen = !document.getElementById("respec-wizard").classList.contains("hidden");
+  $("journey-body").innerHTML =
     `<div class="jny">`
-    + `<div class="jny-head">🗺️ <b>The Leveling Journey</b> <span class="muted small">— scroll the road; every stop is a level your plan does something. Click a card for what it buys you.</span>
-       <button class="linkbtn" onclick="openLevelStepper()">▶ step-by-step view</button></div>`
+    + `<div class="jny-head"><span class="muted small">Scroll the road — every stop is a level your plan does something. Click a card for what it buys you.</span>`
+    + (wizOpen ? ` <button class="linkbtn" onclick="closeJourneyView(); openLevelStepper()">▶ step-by-step view</button>` : "")
+    + `</div>`
     + `<div class="jny-viewport"><div class="jny-strip"><div class="jny-lane">${stops}</div></div></div>`
     + (zones
         ? `<details class="jny-zones"><summary>🧭 <b>Zones & badges</b> <span class="muted small">— the grounded
@@ -1800,6 +1813,8 @@ async function init() {
   $("saves-back").addEventListener("click", () => {
     $("saves-panel").classList.add("hidden"); $("entry-cards").classList.remove("hidden"); });
   $("save-btn").addEventListener("click", saveProgress);
+  $("journey-btn").addEventListener("click", openJourneyView);
+  $("journey-close").addEventListener("click", closeJourneyView);
   if ($("bug-btn")) $("bug-btn").addEventListener("click", reportBug);
   if ($("champ-btn")) $("champ-btn").addEventListener("click", submitChampion);
   if ($("update-check")) $("update-check").addEventListener("click", checkUpdates);
@@ -4074,6 +4089,8 @@ function closeModal() { $("modal").classList.add("hidden"); activeSlot = null; }
 async function recompute() {
   renderEndgameWarnings();   // warn if a leveling character previews epic/incarnate content
   const hasPowers = build.powers.length > 0;
+  const jb = $("journey-btn");   // the header road icon rides with having a plan
+  if (jb) jb.style.display = hasPowers ? "" : "none";
   const ob = $("opt-btn");   // AI refine — hidden entirely when the AI seam is off
   if (ob) ob.style.display = (hasPowers && AI_ON) ? "block" : "none";
   const sb = $("solve-btn");

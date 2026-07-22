@@ -63,6 +63,19 @@
     </div>
   </div>
 
+  <!-- THE LEVELING JOURNEY: its own full-width overlay — a horizontal road wants
+       the whole screen, not the 720px wizard box. Reachable from the wizard's
+       result AND the header (🗺️) once a build has powers. -->
+  <div id="journey-modal" class="modal hidden">
+    <div class="entry-box journey-box">
+      <div class="wizard-head">
+        <h2>🗺️ The Leveling Journey</h2>
+        <button id="journey-close" class="linkchip">✕ Close</button>
+      </div>
+      <div id="journey-body"></div>
+    </div>
+  </div>
+
   <!-- RESPEC WIZARD: short guided flow so a level-50 respec isn't dropped on the dense builder cold -->
   <div id="respec-wizard" class="modal hidden">
     <div class="entry-box wizard-box">
@@ -181,6 +194,7 @@
         <span id="db-version" class="muted"></span></h1>
       <div class="legend">
         <span id="autosave-ind" class="muted small" title="Auto-saves in the background when something changes"></span>
+        <button id="journey-btn" class="iconbtn" title="The Leveling Journey — your 1-50 as a road" style="display:none">🗺️</button>
         <button id="save-btn" class="iconbtn" title="Save this character's plan + progress so you can resume later">💾</button>
         <a id="help-btn" class="iconbtn" href="/static/help/HeroCompanion-Help.pdf" target="_blank"
            rel="noopener" title="User guide + release notes (PDF)">❓</a>

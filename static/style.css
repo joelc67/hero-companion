@@ -1511,6 +1511,10 @@ body { overflow: hidden; }
    static/journey_mock2.html. Namespaced .jny-*; theme vars so hero/villain
    reskins ride along. Cards alternate above/below the road; collapsed by
    default (.open reveals deltas/tips) — inviting, never crammed. */
+/* the journey overlay: as wide as the screen allows — the road is horizontal.
+   z-index above the wizard modal (z 50) so "See the journey" opens on top. */
+#journey-modal { z-index: 60; }
+.journey-box { width: min(1560px, 97vw); overflow-y: auto; }
 .jny-head { margin: 10px 0 2px; }
 .jny-viewport { position: relative; margin-top: 4px; }
 .jny-viewport::before, .jny-viewport::after { content: ""; position: absolute; top: 0;
