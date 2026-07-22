@@ -80,6 +80,12 @@ Filename: "{app}\HeroCompanion.exe"; Description: "Launch {#AppName} now"; Flags
 ; and expects to be brought back to life afterward.
 Filename: "{app}\HeroCompanion.exe"; Parameters: "--after-update"; Flags: nowait; Check: WantRelaunch
 
+[UninstallRun]
+; The app writes an HKCU Run value only if the user opts into auto-start at first
+; run. Remove it on uninstall regardless (choice doctrine: a remembered "yes"
+; leaves nothing behind once the app is gone). Same pattern as Companion Lite.
+Filename: "{sys}\reg.exe"; Parameters: "delete ""HKCU\Software\Microsoft\Windows\CurrentVersion\Run"" /v HeroCompanion /f"; Flags: runhidden; RunOnceId: "DelHCAutostart"
+
 [UninstallDelete]
 ; the app folder only — saves in %APPDATA%\HeroCompanion are the player's, not ours to delete
 Type: filesandordirs; Name: "{app}"

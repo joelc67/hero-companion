@@ -15,7 +15,7 @@ try:
                 v = json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=2))
                 # PORT-RACE GUARD (see smoke_gold): only the exe we launched counts
                 m = json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}/meta", timeout=2))
-                if m.get("app_version") != "0.12.23":
+                if m.get("app_version") != "0.12.24":
                     continue
                 base = f"http://127.0.0.1:{port}"; break
             except Exception: pass
@@ -31,7 +31,7 @@ try:
 
     meta = get("/meta")
     print("version:", meta.get("app_version"), "packaged:", meta.get("packaged"))
-    ok3 = meta.get("app_version") == "0.12.23" and meta.get("packaged") is True
+    ok3 = meta.get("app_version") == "0.12.24" and meta.get("packaged") is True
 
     # pinned case 1: Defender Poison/Sonic L1 creation pair (champion-mask trap)
     ap = post("/build/autopick", {"archetype":"Class_Defender","primary":"Defender_Buff.Poison",
@@ -124,10 +124,27 @@ try:
         pass
     print("import entry points (browse everywhere):", "OK" if ok7 else "MISSING")
 
-    allok = ok1 and ok2 and ok3 and ok4 and ok5 and ok6 and ok7
+    # pinned case 6 (0.12.24, order A): the packaged exe supports opt-in
+    # auto-start AND its reported state equals REGISTRY REALITY — /meta answers
+    # through a live HKCU read; we make the same read here and they must agree.
+    # (The smoke never toggles the value — it verifies truth, not behavior.)
+    auto = meta.get("autostart") or {}
+    try:
+        import winreg
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                            r"Software\Microsoft\Windows\CurrentVersion\Run") as k:
+            winreg.QueryValueEx(k, "HeroCompanion")
+        reg_reality = True
+    except OSError:
+        reg_reality = False
+    ok8 = auto.get("supported") is True and auto.get("enabled") == reg_reality
+    print(f"autostart: supported={auto.get('supported')} enabled={auto.get('enabled')} "
+          f"registry={reg_reality}", "OK" if ok8 else "MISMATCH")
+
+    allok = ok1 and ok2 and ok3 and ok4 and ok5 and ok6 and ok7 and ok8
     print("SMOKE:", "PASS" if allok else
           f"FAIL (L1={ok1} summons={ok2} ver={ok3} recompute={ok4} "
-          f"errsurface={ok5} farmpicker={ok6} importnav={ok7})")
+          f"errsurface={ok5} farmpicker={ok6} importnav={ok7} autostart={ok8})")
     sys.exit(0 if allok else 1)
 finally:
     proc.terminate()

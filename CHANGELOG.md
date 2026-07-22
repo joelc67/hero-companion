@@ -1,5 +1,26 @@
 # Hero Companion — What's New
 
+## 0.12.24 — 2026-07-22
+
+- **Your archetype's hidden mechanics are now in the math AND on the screen
+  (model v36).** Fury, Domination, Defiance, Vigilance, Scourge, Containment
+  and the other built-in meters were silently absent from scoring; each is now
+  credited with its stated steady-state assumption, and a new **Inherent
+  Mechanics** panel shows every credited meter with the assumption written
+  next to it — you see the mechanic, not just absorb it. Champions were
+  re-certified under the new math (one build improved enough to be replaced).
+- **Live game-log connections are now a named list, not a bare number.** The
+  connections display previously could count stale or rotated log files as
+  "live" (the four-connections-for-two-accounts field report). Each connection
+  now shows its file path and last-activity time, and a log that stops being
+  active stops being counted, on a stated timeout.
+- **Optional: start Hero Companion automatically when you sign in to
+  Windows.** Asked once on first run of the installed app — never turned on
+  silently — and changeable any time from the tray menu ("Start automatically
+  at login"). A login start stays quiet in the tray: no window or browser tab
+  opens until you click. Uninstalling removes the setting completely. Same
+  opt-in mechanism Companion Lite shipped in 0.1.18.
+
 ## 0.12.23 — 2026-07-21
 
 - **Endurance is now real physics (model v35).** The old scoring gave an

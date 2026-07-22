@@ -603,11 +603,19 @@ def meta():
     except Exception:  # noqa: BLE001
         has_forms = False
         champion_count = 0
+    if AUTOSTART_STATE_FN:
+        try:
+            autostart = {"supported": True, "enabled": bool(AUTOSTART_STATE_FN())}
+        except Exception:  # noqa: BLE001 — registry read failed; say so, don't guess
+            autostart = {"supported": True, "enabled": None}
+    else:
+        autostart = {"supported": False}
     return jsonify({"ok": True, "app_version": APP_VERSION, "model_version": fp.MODEL_VERSION,
                     "db_name": DB_NAME, "db_version": DB_VERSION,
                     "packaged": bool(getattr(sys, "frozen", False)),
                     "form_champions": has_forms,
                     "champion_count": champion_count,
+                    "autostart": autostart,
                     "urls": CLIENT_CONFIG.get("urls", {})})
 
 
@@ -640,6 +648,12 @@ def update_check():
 # A clean stop is what removes the Windows tray icon — a force-kill orphans it as a "ghost"
 # that lingers until you hover the notification area. None in dev/source mode.
 SHUTDOWN_HOOK = None
+
+# Set by run_app.py in packaged builds: a zero-arg callable returning whether the
+# HKCU Run value currently exists. /meta reports THROUGH it so the answer is
+# always the live registry, never a cached setting — the state==reality pin.
+# None in dev/source mode (dev runs never touch autostart).
+AUTOSTART_STATE_FN = None
 
 
 @app.route("/app/shutdown", methods=["POST"])

@@ -104,6 +104,88 @@ def _kill_other_copies():
         pass
 
 
+# ── Auto-start (Windows Citizenship order A, 2026-07-22; CHOICE DOCTRINE) ────
+# Parity with Companion Lite 0.1.18: opt-in, per-user (HKCU Run, no admin),
+# ASKED once at first run of the INSTALLED app — never silently on — remembered,
+# and reversible from the tray menu. The installer's uninstaller also removes
+# the Run value, so a remembered "yes" leaves nothing behind. Dev runs (not
+# frozen) never touch autostart. The Run value launches with --from-autostart:
+# a login start stays quiet in the tray (no browser tab) — opening the app is
+# the user's click, not the boot's.
+_RUN_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
+_RUN_VALUE = "HeroCompanion"
+_FROZEN = getattr(sys, "frozen", False)
+_STATE_FILE = os.path.join(_APPDIR, "app_state.json")
+
+
+def _load_app_state():
+    try:
+        with open(_STATE_FILE, encoding="utf-8") as f:
+            st = json.load(f)
+        return st if isinstance(st, dict) else {}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def _save_app_state(st):
+    try:
+        os.makedirs(_APPDIR, exist_ok=True)
+        with open(_STATE_FILE, "w", encoding="utf-8") as f:
+            json.dump(st, f)
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def _autostart_enabled():
+    try:
+        import winreg
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, _RUN_KEY) as k:
+            winreg.QueryValueEx(k, _RUN_VALUE)
+        return True
+    except OSError:
+        return False
+
+
+def _set_autostart(on):
+    import winreg
+    if on and _FROZEN:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, _RUN_KEY, 0,
+                            winreg.KEY_SET_VALUE) as k:
+            winreg.SetValueEx(k, _RUN_VALUE, 0, winreg.REG_SZ,
+                              f'"{sys.executable}" --from-autostart')
+    else:
+        try:
+            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, _RUN_KEY, 0,
+                                winreg.KEY_SET_VALUE) as k:
+                winreg.DeleteValue(k, _RUN_VALUE)
+        except OSError:
+            pass
+
+
+def _maybe_ask_autostart():
+    """First run of the installed app: ask once, remember, act on the answer."""
+    if not _FROZEN:
+        return
+    st = _load_app_state()
+    if st.get("autostart_asked"):
+        return
+    st["autostart_asked"] = True
+    _save_app_state(st)
+    try:
+        import ctypes
+        # MB_YESNO(0x4) | MB_ICONQUESTION(0x20) | MB_SETFOREGROUND(0x10000)
+        r = ctypes.windll.user32.MessageBoxW(
+            0,
+            "Start Hero Companion automatically when you sign in to Windows?\n\n"
+            "It runs quietly in the tray (no window opens) so your builds are a "
+            "click away. You can change this any time from the tray menu.",
+            "Hero Companion", 0x4 | 0x20 | 0x10000)
+        if r == 6:      # IDYES
+            _set_autostart(True)
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def _pick_port(start):
     """First free port from `start` upward — so a double-launch (or a squatter on
     5000) opens on 5001 instead of dying silently."""
@@ -162,10 +244,15 @@ def _run_tray(port):
             _clear_lock()          # os._exit skips atexit — release the instance lock here
             os._exit(0)
 
+        def _toggle_autostart(icon, item):
+            _set_autostart(not _autostart_enabled())
+
         icon = pystray.Icon(
             "HeroCompanion", img, f"Hero Companion — running at localhost:{port}",
             menu=pystray.Menu(
                 pystray.MenuItem("Open Hero Companion", _open, default=True),
+                pystray.MenuItem("Start automatically at login", _toggle_autostart,
+                                 checked=lambda item: _autostart_enabled()),
                 pystray.MenuItem("Check for updates…", _check_updates),
                 pystray.MenuItem("Quit Hero Companion", _quit)))
 
@@ -195,16 +282,26 @@ def _run_tray(port):
 
 def main():
     after_update = "--after-update" in sys.argv
+    from_autostart = "--from-autostart" in sys.argv
     if _SINGLE and after_update:
         _kill_other_copies()
     elif _SINGLE:
         existing = _live_instance_port()
         if existing:
+            if from_autostart:
+                # Login race: the user (or a previous session) already has a copy
+                # up. The boot start bows out silently — no browser, no dialog.
+                print(f"autostart: a copy is already live on port {existing} — exiting quietly")
+                return
             print(f"Hero Companion is already running at http://localhost:{existing} — "
                   "opening that copy instead of starting a second one.")
             if os.environ.get("HC_NO_BROWSER") != "1":
                 webbrowser.open(f"http://localhost:{existing}")
             return
+    if _FROZEN:
+        # /meta answers autostart state through the live registry read — the
+        # setting shown anywhere can never disagree with registry reality.
+        server.AUTOSTART_STATE_FN = _autostart_enabled
     want = int(os.environ.get("PORT", "5000"))
     port = _pick_port(want)
     print(f"Hero Companion v{server.APP_VERSION} — model v{__import__('first_principles').MODEL_VERSION}"
@@ -218,7 +315,7 @@ def main():
     threading.Thread(
         target=lambda: server.app.run(host="127.0.0.1", port=port, debug=False),
         daemon=True).start()
-    if os.environ.get("HC_NO_BROWSER") != "1":
+    if os.environ.get("HC_NO_BROWSER") != "1" and not from_autostart:
         if after_update:
             # Relaunched by the installer after a self-update. The tab the user
             # clicked "Update now" in is polling us and will reload itself into
@@ -239,6 +336,7 @@ def main():
             threading.Timer(1.0, lambda: webbrowser.open(f"http://localhost:{port}")).start()
 
     if _WINDOWED:
+        threading.Thread(target=_maybe_ask_autostart, daemon=True).start()
         if not _run_tray(port):
             threading.Event().wait()      # tray failed — keep serving anyway
     else:
