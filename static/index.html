@@ -86,35 +86,16 @@
       <p id="wiz-intro" class="muted">Answer a few questions and I'll build the whole thing — powers, slotting,
         soft/hard caps, epic, and incarnates. You can fine-tune everything afterward.</p>
 
-      <!-- DISCOVERY (Start-new only): what do you want to do → recommended archetypes -->
-      <div id="wiz-discover" class="hidden">
-        <div class="wiz-step" style="border-top:none">
-          <div class="wiz-q">Not sure what to roll? Tell me your aim.</div>
-          <div class="wiz-row wiz-grid">
-            <label>I want to<select id="disc-role">
-              <option value="damage">deal damage</option>
-              <option value="buffer">buff / support a team</option>
-              <option value="healer">heal</option>
-              <option value="tank">tank / protect</option>
-              <option value="control">control / lock down</option>
-              <option value="pets">command pets</option>
-              <option value="mixed">do a bit of everything (generalist)</option>
-            </select></label>
-            <label>mostly in<select id="disc-content"></select></label>
-            <label>from<select id="disc-exposure">
-              <option value="flex">flexible range</option>
-              <option value="front">the front line (melee)</option>
-              <option value="back">long range (backline)</option>
-            </select></label>
-          </div>
-          <button id="disc-find" class="solve-btn" style="width:auto;margin-top:10px">🔍 Find my character</button>
-        </div>
-        <div id="disc-results" class="disc-results"></div>
-      </div>
-
       <div class="wiz-step">
         <div class="wiz-q">1 · Your character</div>
         <p class="muted small">Your archetype and your two main powersets.</p>
+        <!-- ONE-COPY RULE (Joel's field report 2026-07-22: "same questions asking
+             twice"): the archetype recommender owns NO questions of its own — it
+             reads the answers in 2 · How do you play? and lives below them. This
+             hint is the not-sure user's pointer; toggled with #wiz-discover. -->
+        <p id="disc-hint" class="muted small hidden">Not sure what to roll?
+          Skip ahead to <b>2 · How do you play?</b> — answer it and I'll
+          recommend archetypes that fit.</p>
         <div class="wiz-row">
           <select id="wiz-at"></select>
           <select id="wiz-primary" disabled></select>
@@ -169,6 +150,21 @@
              summary: what these answers make the planner actually chase. -->
         <div id="wiz-pop" class="wiz-pop hidden"></div>
         <div id="wiz-summary" class="wiz-summary hidden"></div>
+      </div>
+
+      <!-- DISCOVERY (Start-new only): the archetype recommender. It owns no
+           questions — it READS Role / Mostly in / You fight from above, so
+           nothing in the wizard is ever asked twice. -->
+      <div id="wiz-discover" class="hidden">
+        <div class="wiz-step">
+          <div class="wiz-q">Not sure what to roll?</div>
+          <p class="muted small">With your answers above I can rank the archetypes
+            that fit — every recommendation is the easiest route, never the only way.</p>
+          <button id="disc-find" class="solve-btn" style="width:auto">🔍 Find my character</button>
+          <p class="muted small">Want to <b>command pets</b>? That's the
+            <b>Mastermind</b> — choose it under 1 · Your character.</p>
+          <div id="disc-results" class="disc-results"></div>
+        </div>
       </div>
 
       <div class="wiz-actions">

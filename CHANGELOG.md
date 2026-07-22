@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **The wizard never asks a question twice.** Starting a new character used to
+  show the "tell me your aim" recommender and the "How do you play?" section
+  with the same three questions — anyone picking their own archetype saw both.
+  The recommender now owns no questions of its own: it reads your Role /
+  Mostly-in / You-fight-from answers and lives right below them ("Not sure
+  what to roll? … 🔍 Find my character"). Asking it with Role unanswered
+  flags the question instead of quietly assuming damage.
 - **The Leveling Journey (first cut).** A new "🗺️ See the journey" view on the
   wizard's build result: your whole 1–50 rolls past left-to-right like a map —
   every level a stop on the road with its power pick, new enhancement slots,

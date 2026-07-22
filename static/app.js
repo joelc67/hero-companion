@@ -444,7 +444,6 @@ async function openWizard(mode) {
   if ($("wiz-at").options.length <= 1) $("wiz-at").innerHTML = $("sel-archetype").innerHTML;
   cloneOptions($("wiz-content"), $("preset-content"));
   cloneOptions($("wiz-role"), $("preset-role"));
-  cloneOptions($("disc-content"), $("preset-content"));
   wizFormRow();   // Kheldians get the Form question; everyone else never sees it
   // NO DEFAULTS + STATE-LIFECYCLE (Joel's confirmed 0.12.20 eyeball find,
   // superseding the "from your setup" carry): BOTH wizard modes are reached
@@ -476,6 +475,7 @@ async function openWizard(mode) {
     ? "Let's find a character that fits how you want to play — then build it."
     : "Answer a few questions and I'll build the whole thing — powers, slotting, caps, epic, and incarnates.";
   $("wiz-discover").classList.toggle("hidden", !isNew);   // discovery only for Start-new
+  $("disc-hint").classList.toggle("hidden", !isNew);      // …and so is its pointer in step 1
   wizUpdateHint();
   $("respec-wizard").classList.remove("hidden");
   // A new character's identity starts unanswered too (the old import-reopen
@@ -488,10 +488,25 @@ async function openWizard(mode) {
 }
 function closeRespecWizard() { $("respec-wizard").classList.add("hidden"); }
 
-// DISCOVERY: what do you want to do → ranked archetypes (support-as-secondary, roles
-// fluid, easiest-not-only). Picking one fills the character step.
+// DISCOVERY: ranked archetypes from the "How do you play?" answers (ONE-COPY
+// RULE — the recommender owns no questions; it reads wiz-role/content/exposure).
+// The wizard's Role vocabulary is richer than /discover's aim vocabulary:
+// "controller" is the aim "control", and "debuffer" ranks exactly as "buffer"
+// (the server's buffer/healer/debuff table is one list — Defender-family ATs).
+// "pets" has no Role equivalent by design (commanding pets is an archetype,
+// not an objective) — the markup carries a visible Mastermind pointer instead.
+const _DISC_ROLE = { controller: "control", debuffer: "buffer" };
 async function runDiscovery() {
-  const role = $("disc-role").value, content = $("disc-content").value, exposure = $("disc-exposure").value;
+  const roleRaw = $("wiz-role").value;
+  if (!roleRaw) {
+    // no silent damage-default (the server falls back to "damage" for an
+    // unknown role — an unanswered question must never become that quietly)
+    wizFlagMissing([$("wiz-role")], "Answer Role first — then I can rank archetypes for you.");
+    return;
+  }
+  const role = _DISC_ROLE[roleRaw] || roleRaw;
+  const content = $("wiz-content").value || null;    // unanswered = no assumption,
+  const exposure = $("wiz-exposure").value || null;  // not a silent default
   const res = await api("/discover", postJson({ role, content, exposure }));
   if (!res || !res.ok) return;
   $("disc-results").innerHTML = res.recommendations.map((r) =>
@@ -1102,23 +1117,15 @@ window.levelStep = (d) => {
 window.pickDiscovery = async function (at) {
   $("wiz-at").value = at;
   await wizLoadPowersets();
-  // Discovery answers ARE the user's choices — tag them so, and gate the build
-  // (travel stays unanswered on purpose: it is always an explicit pick).
-  // Discovery vocabulary → the Role question's values: "control" IS the
-  // Controller/Lockdown choice; "pets" has no role equivalent (commanding pets
-  // is an archetype, not an objective) so the role question stays UNANSWERED
-  // and the no-defaults gate makes it an explicit pick. The old direct copy set
-  // a nonexistent option value, which silently BLANKED the select while still
-  // tagging it "your pick".
-  const _wr = ({ control: "controller" })[$("disc-role").value] || $("disc-role").value;
-  $("wiz-role").value = [...$("wiz-role").options].some(o => o.value === _wr) ? _wr : "";
-  wizSetSrc("role", $("wiz-role").value ? "you" : "");
-  $("wiz-content").value = $("disc-content").value; wizSetSrc("content", $("disc-content").value ? "you" : "");
-  $("wiz-exposure").value = $("disc-exposure").value; wizSetSrc("exposure", $("disc-exposure").value ? "you" : "");
+  // ONE-COPY RULE: the aim answers already ARE wiz-role/content/exposure (the
+  // recommender read them from there), tagged "your pick" by their own change
+  // handlers — nothing to copy. Travel stays unanswered on purpose: it is
+  // always an explicit pick. The recommender stays available for a re-find;
+  // only its result cards clear once one is chosen.
   wizGateBuild();
   wizUpdateHint();
   wizExplain(null);
-  $("wiz-discover").classList.add("hidden");   // collapse discovery, reveal the picked character in step 1
+  $("disc-results").innerHTML = "";
   $("wiz-at").scrollIntoView({ behavior: "smooth", block: "center" });
 };
 
