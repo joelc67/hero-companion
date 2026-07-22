@@ -549,6 +549,55 @@ def log_status(log_dir, now):
             "today_log": any(today in f for f in files)}
 
 
+# A watched log dir is LIVE only if the game wrote to it recently — existence
+# is not activity (field report 2026-07-22: "4 live connections" against 2 real
+# accounts; the extras were discoverable dirs full of week-old files that
+# nothing ever expired). STATED TIMEOUT: newest .txt touched within 24h = live;
+# older = dormant (still listed, never silently counted). A bare number that
+# can be wrong is the retired-defect family — every count renders as a NAMED
+# LIST with path + last activity, so a user can see WHY each entry is counted.
+LIVE_WINDOW_SECS = 24 * 3600
+
+
+def watch_status(dirs, now=None):
+    """Per-dir facts for every watched/discovered Logs folder: account name,
+    path, newest file, last-activity age, and the honest live/dormant verdict.
+    Both apps render THIS list — neither invents its own count."""
+    now = now or time.time()
+    out = []
+    for d in dirs or []:
+        row = {"dir": d,
+               "account": os.path.basename(os.path.dirname(d)) or d}
+        st = log_status(d, now)
+        if not st.get("has_files"):
+            row.update({"has_files": False, "live": False, "age_sec": None,
+                        "newest": None})
+        else:
+            row.update({"has_files": True, "newest": st["newest"],
+                        "age_sec": st["age_sec"],
+                        "live": st["age_sec"] <= LIVE_WINDOW_SECS})
+        out.append(row)
+    return out
+
+
+def watch_status_lines(dirs, now=None):
+    """The named list as plain text (tray tooltips, --console, feed_result):
+    one line per connection, honest verdict included."""
+    rows = watch_status(dirs, now)
+    if not rows:
+        return ["none — run /logchat 1 in game"]
+    def _age(s):
+        if s is None:
+            return "no log files"
+        if s < 3600:
+            return f"{s // 60} min ago"
+        if s < 48 * 3600:
+            return f"{s // 3600} h ago"
+        return f"{s // 86400} d ago"
+    return [f"{'LIVE   ' if r['live'] else 'dormant'}  {r['account']}  "
+            f"({_age(r['age_sec'])})  {r['dir']}" for r in rows]
+
+
 def load_events(limit=20000):
     out = []
     try:

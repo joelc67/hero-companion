@@ -140,13 +140,23 @@ def _accounts_roots():
 
 
 def _watch_dirs(state):
-    """EVERY account Logs folder that has files — the union of what the full app
-    configured and everything discoverable, re-checked each poll so a dual-box account
-    that enables /logchat mid-session starts capturing without a restart."""
+    """Account Logs folders worth tailing — the union of what the full app
+    configured and everything discoverable, re-checked each poll so a dual-box
+    account that enables /logchat mid-session starts capturing without a
+    restart. v0.1.19 (field report 2026-07-22, four 'live' vs two accounts):
+    AUTO-discovered dirs join only when RECENTLY ACTIVE (newest log within
+    gamelog.LIVE_WINDOW_SECS) — a stale prior-install dir full of week-old
+    files is not a connection. User-CONFIGURED dirs always stay (their choice),
+    but the status line names each entry with its last activity, so nothing is
+    ever just a bare number."""
     dirs = {os.path.normcase(d): d for d in (state.get("watch_dirs") or [])
             if os.path.isdir(d)}
+    now = time.time()
     for acct in gamelog.find_log_accounts(_accounts_roots()):
-        if acct.get("has_logs"):
+        if not acct.get("has_logs"):
+            continue
+        st = gamelog.log_status(acct["log_dir"], now)
+        if st.get("has_files") and st.get("age_sec", 1 << 30) <= gamelog.LIVE_WINDOW_SECS:
             dirs.setdefault(os.path.normcase(acct["log_dir"]), acct["log_dir"])
     return list(dirs.values())
 
@@ -384,7 +394,6 @@ def _status_text():
     who = "Lite" if owner.get("tag") == "lite" else (
         "full app" if owner.get("tag") == "full" else "idle")
     watching = _watch_dirs(st)
-    accounts = sorted({os.path.basename(os.path.dirname(d)) for d in watching})
     up = _stats.get("uploaded_last")
     if _publish_token():
         board = f"ONLINE (auto-publish every {AUTOPUBLISH_SECONDS // 60} min) — {_PUBLISH_LIVE_URL}"
@@ -413,7 +422,12 @@ def _status_text():
             f"({_stats['recruit']} recruitment)\n"
             f"pulse capture (channels): {'ON' if st.get('pulse_capture', True) is not False else 'off'}\n"
             f"board home: {board}\n"
-            f"watching {len(watching)} log folder(s): {', '.join(accounts) or 'none — run /logchat 1 in game'}"
+            # v0.1.19: never a bare count — the NAMED LIST, one line per
+            # connection with its last activity, live/dormant stated (the
+            # four-vs-two field report's class fix).
+            f"log connections ({sum(1 for r in gamelog.watch_status(watching) if r['live'])} live"
+            f" of {len(watching)} watched):\n  "
+            + "\n  ".join(gamelog.watch_status_lines(watching))
             + (f"\nlast error: {_stats['last_error']}" if _stats["last_error"] else ""))
 
 

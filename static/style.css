@@ -1299,6 +1299,10 @@ body { overflow: hidden; }
 .power-card.pc-locked { border-color: #e0b84e; box-shadow: 0 0 0 1px #e0b84e33 inset; }
 .power-card.pc-locked .slot { opacity: 0.92; }
 
+/* v35 four-vs-two fix: a DORMANT watched log (no writes in 24h) reads
+   visually distinct from a live one — counted honestly, never silently. */
+.gl-chip.stale { border-style: dashed; opacity: 0.75; }
+
 /* v35 UX batch §3: hand IO edits recompute immediately — the totals panel
    pulses once so the immediacy is VISIBLE (no apply button exists). */
 @keyframes totalsFlash {

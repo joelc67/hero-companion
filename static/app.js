@@ -1838,6 +1838,7 @@ async function initGamelog() {
     sec.classList.remove("hidden");
     GAMELOG_ACCOUNTS = scan.accounts;
     GAMELOG_WATCHING = scan.watching || [];   // list of watched log dirs (dual-box = >1)
+    GAMELOG_WATCH_STATUS = scan.watch_status || [];   // named per-dir facts (v35, no bare counts)
     renderGamelogControls();
     if (GAMELOG_WATCHING.length) gamelogIngest();
   } catch { /* section stays hidden on any failure */ }
@@ -1847,18 +1848,41 @@ async function initGamelog() {
 // the Play Log shows each character (each account is its own log).
 let GAMELOG_ACCOUNTS = [];
 let GAMELOG_WATCHING = [];
+let GAMELOG_WATCH_STATUS = [];   // [{dir, account, live, age_sec, newest}] from the server
 
 function renderGamelogControls() {
   const nd = (p) => (p || "").replace(/\\/g, "\\\\");
+  // v35 (the four-vs-two field report): every watched connection is NAMED —
+  // its chip carries the path + last-activity verdict from the server's
+  // watch_status, and "live" means RECENT ACTIVITY (24h window, stated),
+  // never mere existence. No bare counts anywhere on this surface.
+  const statusOf = {};
+  (GAMELOG_WATCH_STATUS || []).forEach(s => { statusOf[s.dir] = s; });
+  const ageTxt = (s) => s == null ? "no log files yet"
+    : s < 3600 ? `${Math.floor(s / 60)} min ago`
+    : s < 172800 ? `${Math.floor(s / 3600)} h ago`
+    : `${Math.floor(s / 86400)} d ago`;
   const chips = (GAMELOG_ACCOUNTS || []).map(a => {
     const on = GAMELOG_WATCHING.includes(a.log_dir);
-    return `<button class="gl-chip${on ? " active" : ""}" onclick="gamelogToggle('${nd(escHtml(a.log_dir))}')">`
-      + `${on ? "● " : ""}${escHtml(a.account)}`
-      + (a.has_logs ? "" : ` <span class="muted">(no logs)</span>`) + `</button>`;
+    const st = statusOf[a.log_dir];
+    const stale = on && st && !st.live;
+    const tip = `${a.log_dir}\n`
+      + (st ? `last log activity: ${ageTxt(st.age_sec)}`
+            + (stale ? "\nDORMANT — no writes in 24h; not counted as live. "
+              + "Old install or logging off? Unwatch it, or it revives the "
+              + "moment the game writes here." : "")
+        : "");
+    return `<button class="gl-chip${on ? " active" : ""}${stale ? " stale" : ""}"`
+      + ` title="${escHtml(tip)}" onclick="gamelogToggle('${nd(escHtml(a.log_dir))}')">`
+      + `${on ? (stale ? "◌ " : "● ") : ""}${escHtml(a.account)}`
+      + (a.has_logs ? (stale ? ` <span class="muted">(dormant, ${ageTxt(st.age_sec)})</span>` : "")
+                    : ` <span class="muted">(no logs)</span>`) + `</button>`;
   }).join(" ");
+  const liveN = (GAMELOG_WATCH_STATUS || []).filter(s => s.live).length;
   const watching = GAMELOG_WATCHING.length;
   $("gl-setup").innerHTML =
-    (watching ? `<span class="gl-live" title="Reading new log entries automatically">● live</span> ` : "")
+    (watching ? `<span class="gl-live" title="Live = the game wrote to that log within 24 hours — hover each account for its path and last activity">`
+      + `● ${liveN} live${watching > liveN ? ` / ${watching - liveN} dormant` : ""}</span> ` : "")
     + `<b>Watch account${GAMELOG_ACCOUNTS.length > 1 ? "s" : ""}:</b> ${chips} `
     + `<span class="muted small">— ${watching ? "click to add/remove. " : "pick the one(s) you play. "}`
     + `Dual-boxing? Watch both to see each character side by side.</span>`
@@ -1871,7 +1895,10 @@ window.gamelogToggle = async function (dir) {
   const i = GAMELOG_WATCHING.indexOf(dir);
   if (i >= 0) GAMELOG_WATCHING.splice(i, 1); else GAMELOG_WATCHING.push(dir);
   const r = await api("/gamelog/watch", postJson({ log_dirs: GAMELOG_WATCHING }));
-  if (r && r.ok) GAMELOG_WATCHING = r.watching || GAMELOG_WATCHING;
+  if (r && r.ok) {
+    GAMELOG_WATCHING = r.watching || GAMELOG_WATCHING;
+    GAMELOG_WATCH_STATUS = r.watch_status || GAMELOG_WATCH_STATUS;
+  }
   renderGamelogControls();
   if (GAMELOG_WATCHING.length) gamelogIngest(); else gamelogStopLive();
 };

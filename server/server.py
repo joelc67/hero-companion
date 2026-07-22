@@ -4742,7 +4742,12 @@ def gamelog_scan():
     body = request.get_json(force=True) or {}
     accounts = gamelog.find_log_accounts(_find_accounts_dirs(body.get("root")))
     st = gamelog.load_state()
-    return jsonify({"ok": True, "accounts": accounts, "watching": _watch_dirs(st)})
+    watching = _watch_dirs(st)
+    # v35 UX (four-vs-two field report): the watch list ships as a NAMED status
+    # list — path, last activity, live/dormant — never a bare count the UI
+    # could render wrong. Same facts Lite's tray prints.
+    return jsonify({"ok": True, "accounts": accounts, "watching": watching,
+                    "watch_status": gamelog.watch_status(watching)})
 
 
 @app.route("/gamelog/watch", methods=["POST"])
