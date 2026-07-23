@@ -935,6 +935,12 @@ function _modernHtml(level) {
       foes.length
         ? `<div class="muted small">Who you'll fight: ${foes.slice(0, 8).map(escHtml).join(", ")}`
           + (foes.length > 8 ? `, +${foes.length - 8} more` : "") + `</div>` : "",
+      (z.safe_havens || []).length
+        ? `<div class="jny-tip">🛡 Safe spots: ${z.safe_havens.map(escHtml).join(" · ")}`
+          + (z.safe_havens_note ? ` <span class="muted small">— ${escHtml(z.safe_havens_note)}</span>` : "")
+          + `</div>` : "",
+      (z.contacts || []).length
+        ? `<div class="muted small">Contacts: ${z.contacts.map(escHtml).join(" · ")}</div>` : "",
       z.note ? `<div class="muted small">${escHtml(z.note)}</div>` : "",
       `</div>`,
     ];

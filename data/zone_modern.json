@@ -38,6 +38,42 @@
                              "Tourist Trapped"],
       "plaque_badges": ["Patron of the Arts", "Flagtown Memorialist", "Christie Consolidation"],
       "url": "https://homecoming.wiki/wiki/Kallisti_Wharf"
+    },
+    {
+      "zone": "Dark Astoria",
+      "from": 50, "to": 54,
+      "kind": "Co-op hazard zone · Incarnate content",
+      "since": "Revamped in Issue 22 (before that it was hero-only, levels 21-29 — that version is Echo: Dark Astoria)",
+      "note": "The one solo-friendly road into the Incarnate system: full story arcs at 50, not just trials. On foot through the gate in Talos Island's east wall, or by TUNNEL. Mot is free, and the whole zone is a Cold Hand of Death day-job location.",
+      "contacts": ["Heather Townshend", "Mu'Vorkan", "Max (phone)", "Praetor Duncan (phone)",
+                   "Dream Doctor (phone)", "Ephram Sha (hero, repeatable)", "Maharaj (villain, repeatable)"],
+      "events": [
+        { "name": "Behavioral Adjustment Facility (BAF)", "kind": "trial", "min": 50, "note": "Incarnate trial" },
+        { "name": "Lambda Sector (LAM)", "kind": "trial", "min": 50, "note": "Incarnate trial" },
+        { "name": "Keyes Island Reactor (KIR)", "kind": "trial", "min": 50, "note": "Incarnate trial" },
+        { "name": "The Underground (UGT)", "kind": "trial", "min": 50, "note": "Incarnate trial" },
+        { "name": "TPN Campus (TPN)", "kind": "trial", "min": 50, "note": "Incarnate trial" },
+        { "name": "Minds of Mayhem (MoM)", "kind": "trial", "min": 50, "note": "Incarnate trial" },
+        { "name": "Dilemma Diabolique (DD)", "kind": "trial", "min": 50, "note": "Incarnate trial" },
+        { "name": "Magisterium (MAG)", "kind": "trial", "min": 50, "note": "Incarnate trial" }
+      ],
+      "neighborhoods": [
+        { "name": "Barca Plaza", "from": 50, "to": 54 },
+        { "name": "Dido's View", "from": 50, "to": 54 },
+        { "name": "Moth Cemetery", "from": 50, "to": 54 },
+        { "name": "Raimi Arcade", "from": 50, "to": 54 },
+        { "name": "Romero Heights", "from": 50, "to": 54 },
+        { "name": "Toffet Terrace", "from": 50, "to": 54 }
+      ],
+      "safe_havens": ["Fading Nimbus", "First Light", "Flicker", "Illuminous",
+                      "Scintillating Prism", "The Bulwark", "The Rose Lamp"],
+      "safe_havens_note": "rune-protected, no enemies at all — somewhere to stop and breathe in a zone where everything else is 50-54",
+      "enemies": ["Banished Pantheon", "Circle of Thorns", "Knives of Artemis",
+                  "Knives of Vengeance", "Talons of Vengeance", "Tsoo"],
+      "exploration_badges": ["Auspice Avernus", "Death's Head Supplicant", "Folly's Victim",
+                             "Life out of Death", "Palace of Stone Leaves", "Of Things Unclean",
+                             "Walker on the Profane Ascent", "Witness of Oaths"],
+      "url": "https://homecoming.wiki/wiki/Dark_Astoria"
     }
   ]
 }
