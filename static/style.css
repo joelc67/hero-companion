@@ -1660,3 +1660,7 @@ body { overflow: hidden; }
    difficulty colours because they mean "whose ground is this", not "how hard". */
 .risk-blue { color: #5b9be0; border-color: #5b9be0; }
 .risk-purple { color: #a97fd6; border-color: #a97fd6; }
+/* Green = the safest band the wiki marks; and a separate starting path, which
+   is a different road rather than a detour off this one. */
+.risk-green { color: #6fbf73; border-color: #6fbf73; }
+.jny-altstart { margin-top: 4px; color: var(--accent); font-size: 11.5px; }

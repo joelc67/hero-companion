@@ -482,6 +482,34 @@
       "exploration_badges": ["Reborn", "Geneticist", "Here Be Dragons", "Caged Beast", "No Escape",
                              "Hamidon's Ire", "The Tree of Woe", "Abyssal Gaze"],
       "url": "https://homecoming.wiki/wiki/The_Abyss"
+    },
+    {
+      "zone": "Nova Praetoria",
+      "from": 1,
+      "to": 9,
+      "kind": "Praetorian city zone",
+      "since": "Issue 18 (Going Rogue)",
+      "alt_start": true,
+      "alt_start_note": "Praetoria is a SEPARATE STARTING PATH, not a side trip. A character created here levels through Praetoria instead of Paragon City and is neither hero nor villain until they leave — so the hero and villain routes above do not apply to a Praetorian until then.",
+      "note": "Cole's showcase district: Cole Tower, the Magisterium, and a police presence that is the point rather than the backdrop. Your contacts split by allegiance — Resistance (Warden arc) or Loyalist (Power and Responsibility arcs) — and that choice is the story. Bridges and the Cole Transportation Authority lead to Imperial City; sewer covers lead to the Underground; a manhole in the Magisterium goes to Pocket D.",
+      "events": [{ "name": "The Protest", "kind": "event" }],
+      "contacts": ["Praetor White", "Robert Flores / Tunnel Rat / Doctor Arvin (Resistance, Warden arc)",
+                   "Provost Marchand (Loyalist)",
+                   "Deputy Assistant of Information / Warrant / Reese (Loyalist, Power arc)",
+                   "Chief Interrogator Washington / Cleopatra (Loyalist, Responsibility arc)"],
+      "neighborhoods": [
+        { "name": "Magisterium", "from": 1, "to": 2, "risk": "Green" },
+        { "name": "Elyssian Avenue", "from": 2, "to": 4, "risk": "Yellow" },
+        { "name": "North Aetna", "from": 5, "to": 6, "risk": "Orange" },
+        { "name": "South Aetna", "from": 5, "to": 8, "risk": "Red" }
+      ],
+      "enemies": ["Destroyers", "Praetorian Police Department", "Praetorian Clockwork",
+                  "The Resistance", "Seers", "Angry Citizens"],
+      "exploration_badges": ["Ambitious", "Citizen Cole", "Civic Minded", "Guardians of Justice",
+                             "Into the Wild", "Technophile", "Un-Civil Society", "On the Waterfront",
+                             "River Rat", "Rail Rider"],
+      "plaque_badges": ["Starstruck I-VI", "Headjuiced (5 Resistance lessons)"],
+      "url": "https://homecoming.wiki/wiki/Nova_Praetoria"
     }
   ]
 }
