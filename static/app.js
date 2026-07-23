@@ -925,6 +925,16 @@ function _zoneRewardsHtml(zoneNames) {
 // Zones that arrived AFTER Gulbasaur wrote the guides. Shown on the levels they
 // cover, in their own block, with their own source line — the road should not
 // quietly end at 2020.
+// The modern-layer zone NAMES active at this level for the current alignment —
+// used both to feed the art slot and (in _modernHtml) to render the blocks.
+function _modernZonesAt(level) {
+  const prae = _journeyAlign() === "praetorian";
+  return ((JOURNEY_PLACES || {}).modern || {}).zones
+    .filter(z => z.from != null && z.to != null && level >= z.from && level <= z.to
+      && (prae ? z.alt_start : !z.alt_start))
+    .map(z => z.zone);
+}
+
 function _modernHtml(level) {
   const m = (JOURNEY_PLACES || {}).modern || {};
   // A zone with no level range is NOT placed. A range is the whole basis for
@@ -1035,8 +1045,12 @@ function renderJourneyLevelPanel() {
   // first named place — the thing a player would actually be looking at.
   // Every zone this level sends you to, story names first, deduped by normalised
   // name — one list feeds both the art slot and the badge/accolade block.
+  // Story names, route places, AND the modern zones active at this level — the
+  // last is what gives the Praetorian view (and any modern-only stop) its art,
+  // since those zones come through the modern layer, not the story/route.
   const zoneNames = _dedupeZoneNames(zones.map(z => z.zone)
-    .concat((band ? band.places : []).map(_placeZoneName)));
+    .concat((band ? band.places : []).map(_placeZoneName))
+    .concat(_modernZonesAt(s.level)));
   const lb = lvBadges[s.level];
   const deltas = _LVL_STATS.map(([k, lab, u]) => {
     const dv = (s.delta || {})[k]; if (!dv || Math.abs(dv) < 1) return "";
