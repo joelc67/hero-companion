@@ -6,74 +6,371 @@
   "zones": [
     {
       "zone": "Kallisti Wharf",
-      "from": 40, "to": 50,
+      "from": 40,
+      "to": 50,
       "kind": "Co-op city zone",
       "since": "Issue 25; extensively updated in Issue 28 Page 2",
       "note": "Not in either of Gulbasaur's guides — it arrived after they were written. Reachable by the Paragon City Monorail (station in Christie Square) or the Smuggler's Submarine in Old Slough. No connecting zones on foot.",
       "events": [
-        { "name": "Market Crash", "kind": "trial", "min": 40, "max": 50, "note": "from Ada Wellington" },
-        { "name": "Marigold 'Zoe' Langston's Task Force", "kind": "tf", "min": 40, "max": 50, "note": "hero" }
+        {
+          "name": "Market Crash",
+          "kind": "trial",
+          "min": 40,
+          "max": 50,
+          "note": "from Ada Wellington"
+        },
+        {
+          "name": "Marigold 'Zoe' Langston's Task Force",
+          "kind": "tf",
+          "min": 40,
+          "max": 50,
+          "note": "hero"
+        }
       ],
       "neighborhoods": [
-        { "name": "Christie Square", "from": 40, "to": 44 },
-        { "name": "Kallisti Medical Center", "from": 40, "to": 44 },
-        { "name": "Kallisti Marina", "from": 40, "to": 44 },
-        { "name": "Maxwell Stadium", "from": 40, "to": 44 },
-        { "name": "Theatre Row", "from": 40, "to": 44 },
-        { "name": "Paragon University Medical Campus", "from": 45, "to": 48 },
-        { "name": "New Flagtown", "from": 45, "to": 48 },
-        { "name": "Flagtown Memorial Park", "from": 45, "to": 48 },
-        { "name": "Collier Industrial Park", "from": 45, "to": 48 },
-        { "name": "Adamstown", "from": 45, "to": 50 },
-        { "name": "Paragon Trade Center", "from": 49, "to": 54 },
-        { "name": "Blackwing Headquarters", "from": 49, "to": 54 },
-        { "name": "Old Slough", "from": 49, "to": 54 }
+        {
+          "name": "Christie Square",
+          "from": 40,
+          "to": 44
+        },
+        {
+          "name": "Kallisti Medical Center",
+          "from": 40,
+          "to": 44
+        },
+        {
+          "name": "Kallisti Marina",
+          "from": 40,
+          "to": 44
+        },
+        {
+          "name": "Maxwell Stadium",
+          "from": 40,
+          "to": 44
+        },
+        {
+          "name": "Theatre Row",
+          "from": 40,
+          "to": 44
+        },
+        {
+          "name": "Paragon University Medical Campus",
+          "from": 45,
+          "to": 48
+        },
+        {
+          "name": "New Flagtown",
+          "from": 45,
+          "to": 48
+        },
+        {
+          "name": "Flagtown Memorial Park",
+          "from": 45,
+          "to": 48
+        },
+        {
+          "name": "Collier Industrial Park",
+          "from": 45,
+          "to": 48
+        },
+        {
+          "name": "Adamstown",
+          "from": 45,
+          "to": 50
+        },
+        {
+          "name": "Paragon Trade Center",
+          "from": 49,
+          "to": 54
+        },
+        {
+          "name": "Blackwing Headquarters",
+          "from": 49,
+          "to": 54
+        },
+        {
+          "name": "Old Slough",
+          "from": 49,
+          "to": 54
+        }
       ],
-      "enemies": ["Blackwing Industries", "Freaklok", "Crey", "Freakshow", "Warriors", "Skulls",
-                  "The Awakened", "Unified People's Army", "Wyvern", "Malta Operatives",
-                  "The Family", "Gold Brickers", "Nemesis Automatons", "Port Noble Citizen's Brigade",
-                  "Sky Raiders", "Tsoo", "Vanguard Shield", "Vanguard Sword"],
-      "exploration_badges": ["On the Shoulders of Giants", "In Their Prime", "Protest Too Much",
-                             "Fueled by Greed", "Raving Mad", "Marked Out", "Quay to the City",
-                             "Tourist Trapped"],
-      "plaque_badges": ["Patron of the Arts", "Flagtown Memorialist", "Christie Consolidation"],
+      "enemies": [
+        "Blackwing Industries",
+        "Freaklok",
+        "Crey",
+        "Freakshow",
+        "Warriors",
+        "Skulls",
+        "The Awakened",
+        "Unified People's Army",
+        "Wyvern",
+        "Malta Operatives",
+        "The Family",
+        "Gold Brickers",
+        "Nemesis Automatons",
+        "Port Noble Citizen's Brigade",
+        "Sky Raiders",
+        "Tsoo",
+        "Vanguard Shield",
+        "Vanguard Sword"
+      ],
+      "exploration_badges": [
+        "On the Shoulders of Giants",
+        "In Their Prime",
+        "Protest Too Much",
+        "Fueled by Greed",
+        "Raving Mad",
+        "Marked Out",
+        "Quay to the City",
+        "Tourist Trapped"
+      ],
+      "plaque_badges": [
+        "Patron of the Arts",
+        "Flagtown Memorialist",
+        "Christie Consolidation"
+      ],
       "url": "https://homecoming.wiki/wiki/Kallisti_Wharf"
     },
     {
       "zone": "Dark Astoria",
-      "from": 50, "to": 54,
+      "from": 50,
+      "to": 54,
       "kind": "Co-op hazard zone · Incarnate content",
       "since": "Revamped in Issue 22 (before that it was hero-only, levels 21-29 — that version is Echo: Dark Astoria)",
       "note": "The one solo-friendly road into the Incarnate system: full story arcs at 50, not just trials. On foot through the gate in Talos Island's east wall, or by TUNNEL. Mot is free, and the whole zone is a Cold Hand of Death day-job location.",
-      "contacts": ["Heather Townshend", "Mu'Vorkan", "Max (phone)", "Praetor Duncan (phone)",
-                   "Dream Doctor (phone)", "Ephram Sha (hero, repeatable)", "Maharaj (villain, repeatable)"],
+      "contacts": [
+        "Heather Townshend",
+        "Mu'Vorkan",
+        "Max (phone)",
+        "Praetor Duncan (phone)",
+        "Dream Doctor (phone)",
+        "Ephram Sha (hero, repeatable)",
+        "Maharaj (villain, repeatable)"
+      ],
       "events": [
-        { "name": "Behavioral Adjustment Facility (BAF)", "kind": "trial", "min": 50, "note": "Incarnate trial" },
-        { "name": "Lambda Sector (LAM)", "kind": "trial", "min": 50, "note": "Incarnate trial" },
-        { "name": "Keyes Island Reactor (KIR)", "kind": "trial", "min": 50, "note": "Incarnate trial" },
-        { "name": "The Underground (UGT)", "kind": "trial", "min": 50, "note": "Incarnate trial" },
-        { "name": "TPN Campus (TPN)", "kind": "trial", "min": 50, "note": "Incarnate trial" },
-        { "name": "Minds of Mayhem (MoM)", "kind": "trial", "min": 50, "note": "Incarnate trial" },
-        { "name": "Dilemma Diabolique (DD)", "kind": "trial", "min": 50, "note": "Incarnate trial" },
-        { "name": "Magisterium (MAG)", "kind": "trial", "min": 50, "note": "Incarnate trial" }
+        {
+          "name": "Behavioral Adjustment Facility (BAF)",
+          "kind": "trial",
+          "min": 50,
+          "note": "Incarnate trial"
+        },
+        {
+          "name": "Lambda Sector (LAM)",
+          "kind": "trial",
+          "min": 50,
+          "note": "Incarnate trial"
+        },
+        {
+          "name": "Keyes Island Reactor (KIR)",
+          "kind": "trial",
+          "min": 50,
+          "note": "Incarnate trial"
+        },
+        {
+          "name": "The Underground (UGT)",
+          "kind": "trial",
+          "min": 50,
+          "note": "Incarnate trial"
+        },
+        {
+          "name": "TPN Campus (TPN)",
+          "kind": "trial",
+          "min": 50,
+          "note": "Incarnate trial"
+        },
+        {
+          "name": "Minds of Mayhem (MoM)",
+          "kind": "trial",
+          "min": 50,
+          "note": "Incarnate trial"
+        },
+        {
+          "name": "Dilemma Diabolique (DD)",
+          "kind": "trial",
+          "min": 50,
+          "note": "Incarnate trial"
+        },
+        {
+          "name": "Magisterium (MAG)",
+          "kind": "trial",
+          "min": 50,
+          "note": "Incarnate trial"
+        }
       ],
       "neighborhoods": [
-        { "name": "Barca Plaza", "from": 50, "to": 54 },
-        { "name": "Dido's View", "from": 50, "to": 54 },
-        { "name": "Moth Cemetery", "from": 50, "to": 54 },
-        { "name": "Raimi Arcade", "from": 50, "to": 54 },
-        { "name": "Romero Heights", "from": 50, "to": 54 },
-        { "name": "Toffet Terrace", "from": 50, "to": 54 }
+        {
+          "name": "Barca Plaza",
+          "from": 50,
+          "to": 54,
+          "risk": "Orange"
+        },
+        {
+          "name": "Dido's View",
+          "from": 50,
+          "to": 54,
+          "risk": "Orange"
+        },
+        {
+          "name": "Moth Cemetery",
+          "from": 50,
+          "to": 54,
+          "risk": "Orange"
+        },
+        {
+          "name": "Raimi Arcade",
+          "from": 50,
+          "to": 54,
+          "risk": "Orange"
+        },
+        {
+          "name": "Romero Heights",
+          "from": 50,
+          "to": 54,
+          "risk": "Orange"
+        },
+        {
+          "name": "Toffet Terrace",
+          "from": 50,
+          "to": 54,
+          "risk": "Orange"
+        }
       ],
-      "safe_havens": ["Fading Nimbus", "First Light", "Flicker", "Illuminous",
-                      "Scintillating Prism", "The Bulwark", "The Rose Lamp"],
+      "safe_havens": [
+        "Fading Nimbus",
+        "First Light",
+        "Flicker",
+        "Illuminous",
+        "Scintillating Prism",
+        "The Bulwark",
+        "The Rose Lamp"
+      ],
       "safe_havens_note": "rune-protected, no enemies at all — somewhere to stop and breathe in a zone where everything else is 50-54",
-      "enemies": ["Banished Pantheon", "Circle of Thorns", "Knives of Artemis",
-                  "Knives of Vengeance", "Talons of Vengeance", "Tsoo"],
-      "exploration_badges": ["Auspice Avernus", "Death's Head Supplicant", "Folly's Victim",
-                             "Life out of Death", "Palace of Stone Leaves", "Of Things Unclean",
-                             "Walker on the Profane Ascent", "Witness of Oaths"],
+      "enemies": [
+        "Banished Pantheon",
+        "Circle of Thorns",
+        "Knives of Artemis",
+        "Knives of Vengeance",
+        "Talons of Vengeance",
+        "Tsoo"
+      ],
+      "exploration_badges": [
+        "Auspice Avernus",
+        "Death's Head Supplicant",
+        "Folly's Victim",
+        "Life out of Death",
+        "Palace of Stone Leaves",
+        "Of Things Unclean",
+        "Walker on the Profane Ascent",
+        "Witness of Oaths"
+      ],
       "url": "https://homecoming.wiki/wiki/Dark_Astoria"
+    },
+    {
+      "zone": "Perez Park",
+      "from": 7,
+      "to": 14,
+      "kind": "Hero hazard zone",
+      "since": "Issue 0 — one of the originals",
+      "note": "A hazard zone: bigger spawns than the street outside, and it is walled in the middle of the early city with gates to Atlas Park, Kings Row, Skyway City and Steel Canyon (the Kings Row gate arrived in Issue 28 Page 3). The Kraken is sighted here.",
+      "events": [
+        {
+          "name": "Kraken",
+          "kind": "event",
+          "note": "giant monster, sighted in the zone"
+        }
+      ],
+      "neighborhoods": [
+        {
+          "name": "Boneyard",
+          "from": 7,
+          "to": 10,
+          "risk": "Yellow"
+        },
+        {
+          "name": "Hell's Highway",
+          "from": 7,
+          "to": 10,
+          "risk": "Yellow"
+        },
+        {
+          "name": "Perez Park",
+          "from": 7,
+          "to": 11,
+          "risk": "Orange"
+        },
+        {
+          "name": "Everett Lake",
+          "from": 8,
+          "to": 14,
+          "risk": "Orange"
+        },
+        {
+          "name": "Bettis Hills",
+          "from": 7,
+          "to": 14,
+          "risk": "Red"
+        },
+        {
+          "name": "Gaiman Woods",
+          "from": 7,
+          "to": 14,
+          "risk": "Red"
+        }
+      ],
+      "enemies": [
+        "Circle of Thorns",
+        "Clockwork",
+        "Hellions",
+        "Hydra",
+        "The Lost",
+        "Skulls",
+        "Vahzilok"
+      ],
+      "exploration_badges": [
+        "Territorial",
+        "Avatar",
+        "Around the Bendis",
+        "Doc Whedon",
+        "Justice Avenger",
+        "Nebula's Memory",
+        "Blood Moss",
+        "Ophelia's Final Scene"
+      ],
+      "plaque_badges": [
+        "Expert IV",
+        "Intellectual VI",
+        "Pupil V",
+        "Student IV",
+        "Student V"
+      ],
+      "url": "https://homecoming.wiki/wiki/Perez_Park"
+    },
+    {
+      "zone": "Terra Volta",
+      "from": 20,
+      "to": 29,
+      "kind": "Hero trial zone",
+      "since": "Issue 0 — one of the originals",
+      "note": "The reactor complex, and the way in to the Terra Volta Respecification Trials. Entered through the gate in the north wall from Independence Port. The zone's own level spread is unusually wide for its size — the neighbourhoods below are the real guide to where you belong.",
+      "contacts": ["Jane Hallaway (Independence Port)", "Captain James Harlan (Founders' Falls)",
+                   "Major Richard Flagg (Peregrine Island)"],
+      "neighborhoods": [
+        { "name": "Challenger Technology", "from": 21, "to": 27, "risk": "Yellow" },
+        { "name": "Raysun Petroleum", "from": 21, "to": 27, "risk": "Yellow" },
+        { "name": "Coroman Manufacturing", "from": 23, "to": 25, "risk": "Yellow" },
+        { "name": "Rogers Industries", "from": 25, "to": 27, "risk": "Orange" },
+        { "name": "Walker Energy", "from": 25, "to": 27, "risk": "Orange" },
+        { "name": "Gordon Trench", "from": 23, "to": 27, "risk": "Red" },
+        { "name": "Carter Engineering", "from": 27, "to": 29, "risk": "Red" },
+        { "name": "Savage Waste Disposal", "from": 27, "to": 29, "risk": "Red" },
+        { "name": "Terra Volta Reactor", "from": 27, "to": 29, "risk": "Red" }
+      ],
+      "enemies": ["Devouring Earth", "Freakshow", "The Lost", "Sky Raiders"],
+      "exploration_badges": ["Conjunction Junction", "Meltdown", "Nervous Dreck",
+                             "Guardian of the Volts", "Danger! Danger!", "Scrapheap of History",
+                             "Power Walker", "High Voltage!"],
+      "plaque_badges": ["Authority V", "Historian IV", "Historian V", "Researcher VI"],
+      "url": "https://homecoming.wiki/wiki/Terra_Volta"
     }
   ]
 }

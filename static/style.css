@@ -1649,3 +1649,10 @@ body { overflow: hidden; }
 /* Content newer than the 2020 guides — visually distinct because its source is
    different (the wiki, supplied by hand) from every game-first layer above it. */
 .jny-modern { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--accent); font-size: 11.5px; }
+/* The wiki's own neighbourhood difficulty marking. Colour-coded AND labelled in
+   words — colour alone is not information for everyone reading this. */
+.jny-risk { font-size: 9.5px; border: 1px solid; border-radius: 8px; padding: 0 5px;
+  text-transform: uppercase; letter-spacing: .04em; vertical-align: middle; }
+.risk-yellow { color: #d9c04a; border-color: #d9c04a; }
+.risk-orange { color: #e08a3c; border-color: #e08a3c; }
+.risk-red { color: #e05c5c; border-color: #e05c5c; }

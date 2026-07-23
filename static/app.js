@@ -928,8 +928,15 @@ function _modernHtml(level) {
       `<div class="jny-modern"><b>🆕 ${escHtml(z.zone)}</b> `
         + `<span class="muted small">${escHtml(z.kind || "")} · ${z.from}–${z.to}`
         + (z.since ? ` · ${escHtml(z.since)}` : "") + `</span>`,
+      // Yellow/Orange/Red is the wiki's own difficulty marking, and it answers
+      // the question the game's tram board never does: you CAN go in, but is it
+      // a fight you want at this level? (Joel's Positron case, per-neighbourhood.)
       hoods.length
-        ? `<div class="jny-route-places">At your level: ${hoods.map(n => escHtml(n.name)).join(" · ")}</div>` : "",
+        ? `<div class="jny-route-places">At your level: `
+          + hoods.map(n => escHtml(n.name)
+              + (n.risk ? ` <span class="jny-risk risk-${n.risk.toLowerCase()}">${escHtml(n.risk)}</span>` : ""))
+              .join(" · ")
+          + `</div>` : "",
       events.map(e => `<div class="jny-tf">${e.kind === "trial" ? "⚔" : "🛡"} ${escHtml(e.name)}`
         + (e.note ? ` <span class="muted small">· ${escHtml(e.note)}</span>` : "") + `</div>`).join(""),
       foes.length
