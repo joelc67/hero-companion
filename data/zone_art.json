@@ -1,0 +1,138 @@
+{
+  "_source": "bin/map.bin (zone code \u2194 asset name) + texture_library/maps/*.texture, extracted from the game client by tools/extract_zone_art.py",
+  "_note": "asset_name is the DEV-ERA name from the .tga and is sometimes historical (Baumton = Boomtown, Overbrook = Faultline). Match a zone name you already have TO these entries; never read a display name OUT of them.",
+  "_coverage": {
+    "zones_in_map_bin": 38,
+    "with_art": 11,
+    "without_art": [
+      "City_01_03",
+      "City_01_02",
+      "City_02_01",
+      "City_02_02",
+      "City_04_01",
+      "City_04_02",
+      "Hazard_04_01",
+      "City_02_05",
+      "Trial_03_01",
+      "City_05_01",
+      "Hazard_01_02",
+      "Hazard_03_02",
+      "City_03_03",
+      "V_City_01_02",
+      "V_City_02_01",
+      "V_City_03_01",
+      "V_City_03_02",
+      "V_City_04_01",
+      "V_Trial_04_02",
+      "V_PvP_02_01",
+      "V_PvP_04_01",
+      "V_PvP_05_01",
+      "War_05_01",
+      "Coop_06_01",
+      "Trial_04_02",
+      "P_City_00_02",
+      "P_City_00_03"
+    ]
+  },
+  "zones": [
+    {
+      "code": "City_01_01",
+      "asset_name": "Atlas Park",
+      "file": "atlas-park.png",
+      "w": 512,
+      "h": 512,
+      "bytes": 457156,
+      "source": "texture_library/maps/static/map_city_01_01.texture"
+    },
+    {
+      "code": "City_03_01",
+      "asset_name": "Talos Island",
+      "file": "talos-island.png",
+      "w": 512,
+      "h": 1024,
+      "bytes": 330811,
+      "source": "texture_library/maps/static/map_city_03_01.texture"
+    },
+    {
+      "code": "City_03_02",
+      "asset_name": "Independence Port",
+      "file": "independence-port.png",
+      "w": 256,
+      "h": 1024,
+      "bytes": 316974,
+      "source": "texture_library/maps/static/map_city_03_02.texture"
+    },
+    {
+      "code": "Hazard_01_01",
+      "asset_name": "Perez Park",
+      "file": "perez-park.png",
+      "w": 512,
+      "h": 512,
+      "bytes": 341367,
+      "source": "texture_library/maps/static/map_hazard_01_01.texture"
+    },
+    {
+      "code": "Hazard_02_01",
+      "asset_name": "Baumton",
+      "file": "baumton.png",
+      "w": 1024,
+      "h": 1024,
+      "bytes": 1212766,
+      "source": "texture_library/maps/static/map_hazard_02_01.texture"
+    },
+    {
+      "code": "Trial_04_01",
+      "asset_name": "Woodvale",
+      "file": "woodvale.png",
+      "w": 1024,
+      "h": 512,
+      "bytes": 286357,
+      "source": "texture_library/maps/static/map_trial_04_01.texture"
+    },
+    {
+      "code": "V_City_01_01",
+      "asset_name": "Mercy Island",
+      "file": "mercy-island.png",
+      "w": 512,
+      "h": 512,
+      "bytes": 308217,
+      "source": "texture_library/v_maps/static/map_v_city_01_01.texture"
+    },
+    {
+      "code": "V_City_05_01",
+      "asset_name": "Grandville",
+      "file": "grandville.png",
+      "w": 1024,
+      "h": 1024,
+      "bytes": 948563,
+      "source": "texture_library/v_maps/static/map_v_city_05_01.texture"
+    },
+    {
+      "code": "V_PvP_03_01",
+      "asset_name": "Sirens Call",
+      "file": "sirens-call.png",
+      "w": 512,
+      "h": 512,
+      "bytes": 187311,
+      "source": "texture_library/v_maps/static/map_v_pvp_03_01.texture"
+    },
+    {
+      "code": "City_05_03",
+      "asset_name": "Kallisti Wharf",
+      "file": "kallisti-wharf.png",
+      "w": 512,
+      "h": 512,
+      "bytes": 634008,
+      "source": "texture_library/maps/static/map_city_05_03.texture"
+    },
+    {
+      "code": "P_City_00_01",
+      "asset_name": "Nova Praetoria",
+      "file": "nova-praetoria.png",
+      "w": 256,
+      "h": 256,
+      "bytes": 58880,
+      "source": "texture_library/static_cubemaps/p_city_00_01/p_city_00_01_grpcubemap167412_face0.texture"
+    }
+  ]
+}

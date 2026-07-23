@@ -600,6 +600,16 @@ def journey_places():
                         "hero": story.get("hero", {}), "villain": story.get("villain", {})}
     except Exception:  # noqa: BLE001 — the route still stands without the story layer
         pass
+    # Zone art extracted from the client (tools/extract_zone_art.py). Keyed by a
+    # normalised asset name so the client can match a zone it already names; the
+    # 27 zones with no map texture in the client simply aren't in here.
+    try:
+        with open(os.path.join(base, "data", "zone_art.json"), encoding="utf-8") as f:
+            art = json.load(f)
+        out["art"] = {"".join(c for c in z["asset_name"].lower() if c.isalnum()): z["file"]
+                      for z in art.get("zones", [])}
+    except Exception:  # noqa: BLE001 — no art file, no art; the slot says so
+        pass
     return jsonify(out)
 
 

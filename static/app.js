@@ -906,13 +906,36 @@ function _zoneRewardsHtml(zoneNames) {
   }).join("");
 }
 
-// The art slot. There is no zone art yet — extracting it from the game's pigg
-// archives is its own job — so it says what it IS rather than showing a broken
-// frame or, worse, a picture of the wrong place.
-function _zoneArtHtml(zoneName) {
-  return `<div class="jny-art">`
-    + (zoneName ? `<div class="jny-art-name">${escHtml(zoneName)}</div>` : "")
-    + `<div class="jny-art-pending">zone art pending<br><span class="muted small">arrives with the game-art pass</span></div>`
+// The art slot: the game's OWN zone map, extracted from the client's pigg
+// archives (tools/extract_zone_art.py). Only 11 of the game's 38 mapped zones
+// ship a map texture, so most levels have no art — and that slot says so rather
+// than showing a picture of the wrong place.
+// Art lookup tolerates the same near-miss the badge join does: the route says
+// "Talos", the asset is "TalosIsland". Exact first, then a prefix either way,
+// guarded at 5 characters so nothing short over-matches.
+function _artFileFor(name) {
+  const art = (JOURNEY_PLACES || {}).art || {};
+  const n = _zoneNorm(name);
+  if (!n) return null;
+  if (art[n]) return art[n];
+  const k = Object.keys(art).find(key =>
+    key.length >= 5 && n.length >= 5 && (n.startsWith(key) || key.startsWith(n)));
+  return k ? art[k] : null;
+}
+
+function _zoneArtHtml(names) {
+  // Show the first zone at this level that HAS art, not just the first zone —
+  // level 1 lists "Tutorial" before "Atlas Park", and only one of them is a
+  // place with a map.
+  const zoneName = names.find(n => _artFileFor(n)) || names[0] || "";
+  const file = _artFileFor(zoneName);
+  return `<div class="jny-art${file ? " has-art" : ""}">`
+    + (file
+        ? `<img src="/static/zone_art/${encodeURIComponent(file)}" alt="${escHtml(zoneName)} map"
+             title="${escHtml(zoneName)} — the game's own zone map">`
+        : (zoneName ? `<div class="jny-art-name">${escHtml(zoneName)}</div>` : "")
+          + `<div class="jny-art-pending">no map art for this zone<br>`
+          + `<span class="muted small">the client ships one for 11 zones only</span></div>`)
     + `</div>`;
 }
 
@@ -926,14 +949,17 @@ function renderJourneyLevelPanel() {
   const zones = storyAt[i];
   // The art follows the story zone when there is one, otherwise the route's
   // first named place — the thing a player would actually be looking at.
-  const artName = zones.length ? zones[0].zone : (band && band.places[0]) || "";
+  // Every zone this level sends you to, story names first, deduped by normalised
+  // name — one list feeds both the art slot and the badge/accolade block.
+  const zoneNames = _dedupeZoneNames(zones.map(z => z.zone)
+    .concat((band ? band.places : []).map(_placeZoneName)));
   const lb = lvBadges[s.level];
   const deltas = _LVL_STATS.map(([k, lab, u]) => {
     const dv = (s.delta || {})[k]; if (!dv || Math.abs(dv) < 1) return "";
     return `<span class="rt-delta ${dv > 0 ? "up" : "down"}">${dv > 0 ? "+" : ""}${dv}${u} ${lab}</span>`;
   }).filter(Boolean).join(" ");
 
-  host.innerHTML = _zoneArtHtml(artName)
+  host.innerHTML = _zoneArtHtml(zoneNames)
     + `<div class="jny-panel-info">`
     + `<h4 class="jny-panel-h">Level ${s.level}`
     + (i === hereIdx ? ` <span class="jny-panel-here">★ you are here</span>`
@@ -957,8 +983,7 @@ function renderJourneyLevelPanel() {
     // Deduped by NORMALISED name: the story layer says "The Hollows" and the
     // route says "Hollows missions", and those are one zone, listed once. Story
     // names come first so the fuller wording wins.
-    + _zoneRewardsHtml(_dedupeZoneNames(zones.map(z => z.zone)
-        .concat((band ? band.places : []).map(_placeZoneName))))
+    + _zoneRewardsHtml(zoneNames)
     + (zones.some(z => z.xp_pause) && _JNY_CTX.xpMacro.text
         ? `<div class="jny-tip">⏸ XP toggle macro: <code>${escHtml(_JNY_CTX.xpMacro.text)}</code></div>` : "")
     + `</div>`;

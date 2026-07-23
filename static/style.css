@@ -1615,6 +1615,8 @@ body { overflow: hidden; }
 .jny-art { flex: none; width: 230px; border-radius: 8px; border: 1px dashed var(--border);
   background: var(--bg); display: flex; flex-direction: column; align-items: center;
   justify-content: center; gap: 6px; text-align: center; padding: 10px; }
+.jny-art.has-art { padding: 0; border-style: solid; overflow: hidden; }
+.jny-art.has-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .jny-art-name { font-weight: 600; font-size: 13px; }
 .jny-art-pending { font-size: 11px; color: var(--muted); }
 @media (max-width: 780px) { .jny-panel { flex-direction: column; height: auto; max-height: 60vh; }
