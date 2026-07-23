@@ -1011,9 +1011,9 @@ function _modernHtml(level) {
       // PvP is stated before anything else about the zone. "Other players can
       // attack you" is not a detail to discover after walking in.
       z.pvp ? `<div class="jny-warn">⚔ <b>PvP zone.</b> ${escHtml(z.pvp_note || "")}</div>` : "",
-      // A separate starting path is not a place you visit — it is a different
-      // road entirely, and saying so first stops it reading as a detour.
-      z.alt_start ? `<div class="jny-altstart">🧭 <b>A different road.</b> ${escHtml(z.alt_start_note || "")}</div>` : "",
+      // Flashback-only legacy content — NOT a startable road on Homecoming
+      // (Joel). Say so first so it never reads as a place a new character begins.
+      z.alt_start ? `<div class="jny-altstart">🌀 <b>Flashback content.</b> ${escHtml(z.alt_start_note || "")}</div>` : "",
       // Yellow/Orange/Red is the wiki's own difficulty marking, and it answers
       // the question the game's tram board never does: you CAN go in, but is it
       // a fight you want at this level? (Joel's Positron case, per-neighbourhood.)
