@@ -910,6 +910,38 @@ function _zoneRewardsHtml(zoneNames) {
 // archives (tools/extract_zone_art.py). Only 11 of the game's 38 mapped zones
 // ship a map texture, so most levels have no art — and that slot says so rather
 // than showing a picture of the wrong place.
+// Zones that arrived AFTER Gulbasaur wrote the guides. Shown on the levels they
+// cover, in their own block, with their own source line — the road should not
+// quietly end at 2020.
+function _modernHtml(level) {
+  const m = (JOURNEY_PLACES || {}).modern || {};
+  const hits = (m.zones || []).filter(z => level >= z.from && level <= z.to);
+  if (!hits.length) return "";
+  return hits.map((z) => {
+    // Neighbourhoods carry their OWN level bands, which is the finest-grained
+    // "where should I actually be standing" the Journey has — so only the ones
+    // that fit this level are shown.
+    const hoods = (z.neighborhoods || []).filter(n => level >= n.from && level <= n.to);
+    const events = (z.events || []).filter(e => !e.min || (level >= e.min && level <= (e.max || 50)));
+    const foes = z.enemies || [];
+    const parts = [
+      `<div class="jny-modern"><b>🆕 ${escHtml(z.zone)}</b> `
+        + `<span class="muted small">${escHtml(z.kind || "")} · ${z.from}–${z.to}`
+        + (z.since ? ` · ${escHtml(z.since)}` : "") + `</span>`,
+      hoods.length
+        ? `<div class="jny-route-places">At your level: ${hoods.map(n => escHtml(n.name)).join(" · ")}</div>` : "",
+      events.map(e => `<div class="jny-tf">${e.kind === "trial" ? "⚔" : "🛡"} ${escHtml(e.name)}`
+        + (e.note ? ` <span class="muted small">· ${escHtml(e.note)}</span>` : "") + `</div>`).join(""),
+      foes.length
+        ? `<div class="muted small">Who you'll fight: ${foes.slice(0, 8).map(escHtml).join(", ")}`
+          + (foes.length > 8 ? `, +${foes.length - 8} more` : "") + `</div>` : "",
+      z.note ? `<div class="muted small">${escHtml(z.note)}</div>` : "",
+      `</div>`,
+    ];
+    return parts.join("");
+  }).join("") + `<div class="jny-route-src">newer than the guides: ${escHtml(m.provenance)}</div>`;
+}
+
 // Art lookup tolerates the same near-miss the badge join does: the route says
 // "Talos", the asset is "TalosIsland". Exact first, then a prefix either way,
 // guarded at 5 characters so nothing short over-matches.
@@ -984,6 +1016,7 @@ function renderJourneyLevelPanel() {
     // route says "Hollows missions", and those are one zone, listed once. Story
     // names come first so the fuller wording wins.
     + _zoneRewardsHtml(zoneNames)
+    + _modernHtml(s.level)
     + (zones.some(z => z.xp_pause) && _JNY_CTX.xpMacro.text
         ? `<div class="jny-tip">⏸ XP toggle macro: <code>${escHtml(_JNY_CTX.xpMacro.text)}</code></div>` : "")
     + `</div>`;

@@ -1,0 +1,43 @@
+{
+  "_source": "homecoming.wiki zone pages, supplied by Joel (the wiki blocks automated reads; every entry here was pasted by him).",
+  "_why": "Gulbasaur's guides were written in 2020 and are excellent, but Homecoming has kept shipping zones and content since. This file is where content NEWER than the guides lives, so the road can mention it at the right level instead of quietly ending at 2020.",
+  "_provenance_label": "homecoming.wiki (post-2020 content)",
+  "_ruling": "Joel's standing rule keeps the wiki-bridge CLOSED for game numbers we could get from the client. These are not those: zone level ranges and TF gates are server-side and absent from every client bin (searched 2026-07-22), and he supplied these himself. Every entry is labelled as wiki-sourced on the surface — never blended into the game-first data.",
+  "zones": [
+    {
+      "zone": "Kallisti Wharf",
+      "from": 40, "to": 50,
+      "kind": "Co-op city zone",
+      "since": "Issue 25; extensively updated in Issue 28 Page 2",
+      "note": "Not in either of Gulbasaur's guides — it arrived after they were written. Reachable by the Paragon City Monorail (station in Christie Square) or the Smuggler's Submarine in Old Slough. No connecting zones on foot.",
+      "events": [
+        { "name": "Market Crash", "kind": "trial", "min": 40, "max": 50, "note": "from Ada Wellington" },
+        { "name": "Marigold 'Zoe' Langston's Task Force", "kind": "tf", "min": 40, "max": 50, "note": "hero" }
+      ],
+      "neighborhoods": [
+        { "name": "Christie Square", "from": 40, "to": 44 },
+        { "name": "Kallisti Medical Center", "from": 40, "to": 44 },
+        { "name": "Kallisti Marina", "from": 40, "to": 44 },
+        { "name": "Maxwell Stadium", "from": 40, "to": 44 },
+        { "name": "Theatre Row", "from": 40, "to": 44 },
+        { "name": "Paragon University Medical Campus", "from": 45, "to": 48 },
+        { "name": "New Flagtown", "from": 45, "to": 48 },
+        { "name": "Flagtown Memorial Park", "from": 45, "to": 48 },
+        { "name": "Collier Industrial Park", "from": 45, "to": 48 },
+        { "name": "Adamstown", "from": 45, "to": 50 },
+        { "name": "Paragon Trade Center", "from": 49, "to": 54 },
+        { "name": "Blackwing Headquarters", "from": 49, "to": 54 },
+        { "name": "Old Slough", "from": 49, "to": 54 }
+      ],
+      "enemies": ["Blackwing Industries", "Freaklok", "Crey", "Freakshow", "Warriors", "Skulls",
+                  "The Awakened", "Unified People's Army", "Wyvern", "Malta Operatives",
+                  "The Family", "Gold Brickers", "Nemesis Automatons", "Port Noble Citizen's Brigade",
+                  "Sky Raiders", "Tsoo", "Vanguard Shield", "Vanguard Sword"],
+      "exploration_badges": ["On the Shoulders of Giants", "In Their Prime", "Protest Too Much",
+                             "Fueled by Greed", "Raving Mad", "Marked Out", "Quay to the City",
+                             "Tourist Trapped"],
+      "plaque_badges": ["Patron of the Arts", "Flagtown Memorialist", "Christie Consolidation"],
+      "url": "https://homecoming.wiki/wiki/Kallisti_Wharf"
+    }
+  ]
+}

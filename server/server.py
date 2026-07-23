@@ -600,6 +600,15 @@ def journey_places():
                         "hero": story.get("hero", {}), "villain": story.get("villain", {})}
     except Exception:  # noqa: BLE001 — the route still stands without the story layer
         pass
+    # Content newer than the 2020 guides — wiki-sourced and labelled as such,
+    # never blended into the game-first layers.
+    try:
+        with open(os.path.join(base, "data", "zone_modern.json"), encoding="utf-8") as f:
+            modern = json.load(f)
+        out["modern"] = {"provenance": modern.get("_provenance_label", ""),
+                         "zones": modern.get("zones", [])}
+    except Exception:  # noqa: BLE001
+        pass
     # Zone art extracted from the client (tools/extract_zone_art.py). Keyed by a
     # normalised asset name so the client can match a zone it already names; the
     # 27 zones with no map texture in the client simply aren't in here.
