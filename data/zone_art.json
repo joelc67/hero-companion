@@ -3,136 +3,389 @@
   "_note": "asset_name is the DEV-ERA name from the .tga and is sometimes historical (Baumton = Boomtown, Overbrook = Faultline). Match a zone name you already have TO these entries; never read a display name OUT of them.",
   "_coverage": {
     "zones_in_map_bin": 38,
-    "with_art": 11,
-    "without_art": [
-      "City_01_03",
-      "City_01_02",
-      "City_02_01",
-      "City_02_02",
-      "City_04_01",
-      "City_04_02",
-      "Hazard_04_01",
-      "City_02_05",
-      "Trial_03_01",
-      "City_05_01",
-      "Hazard_01_02",
-      "Hazard_03_02",
-      "City_03_03",
-      "V_City_01_02",
-      "V_City_02_01",
-      "V_City_03_01",
-      "V_City_03_02",
-      "V_City_04_01",
-      "V_Trial_04_02",
-      "V_PvP_02_01",
-      "V_PvP_04_01",
-      "V_PvP_05_01",
-      "War_05_01",
-      "Coop_06_01",
-      "Trial_04_02",
-      "P_City_00_02",
-      "P_City_00_03"
-    ]
+    "with_art": 38,
+    "without_art": []
   },
   "zones": [
     {
       "code": "City_01_01",
       "asset_name": "Atlas Park",
-      "file": "atlas-park.png",
+      "file": "atlas-park.jpg",
       "w": 512,
       "h": 512,
-      "bytes": 457156,
-      "source": "texture_library/maps/static/map_city_01_01.texture"
+      "bytes": 56827,
+      "source": "texture_library/maps/static/map_city_01_01.texture",
+      "asset_set": "live"
+    },
+    {
+      "code": "City_01_03",
+      "asset_name": "Galaxy City",
+      "file": "galaxy-city.jpg",
+      "w": 512,
+      "h": 512,
+      "bytes": 44318,
+      "source": "texture_library/MAPS/static/map_city_01_03.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "City_01_02",
+      "asset_name": "Kings Row",
+      "file": "kings-row.jpg",
+      "w": 512,
+      "h": 1024,
+      "bytes": 30778,
+      "source": "texture_library/MAPS/static/map_city_01_02.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "City_02_01",
+      "asset_name": "Steel Canyon",
+      "file": "steel-canyon.jpg",
+      "w": 512,
+      "h": 1024,
+      "bytes": 30356,
+      "source": "texture_library/MAPS/static/map_city_02_01.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "City_02_02",
+      "asset_name": "Skyway City",
+      "file": "skyway-city.jpg",
+      "w": 512,
+      "h": 1024,
+      "bytes": 34909,
+      "source": "texture_library/MAPS/static/map_city_02_02.texture",
+      "asset_set": "issue24"
     },
     {
       "code": "City_03_01",
       "asset_name": "Talos Island",
-      "file": "talos-island.png",
+      "file": "talos-island.jpg",
       "w": 512,
       "h": 1024,
-      "bytes": 330811,
-      "source": "texture_library/maps/static/map_city_03_01.texture"
+      "bytes": 24036,
+      "source": "texture_library/maps/static/map_city_03_01.texture",
+      "asset_set": "live"
     },
     {
       "code": "City_03_02",
       "asset_name": "Independence Port",
-      "file": "independence-port.png",
+      "file": "independence-port.jpg",
       "w": 256,
       "h": 1024,
-      "bytes": 316974,
-      "source": "texture_library/maps/static/map_city_03_02.texture"
+      "bytes": 23277,
+      "source": "texture_library/maps/static/map_city_03_02.texture",
+      "asset_set": "live"
+    },
+    {
+      "code": "City_04_01",
+      "asset_name": "Founders Falls",
+      "file": "founders-falls.jpg",
+      "w": 1024,
+      "h": 1024,
+      "bytes": 38234,
+      "source": "texture_library/MAPS/static/map_city_04_01.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "City_04_02",
+      "asset_name": "Brickstown",
+      "file": "brickstown.jpg",
+      "w": 512,
+      "h": 512,
+      "bytes": 48984,
+      "source": "texture_library/MAPS/static/map_city_04_02.texture",
+      "asset_set": "issue24"
     },
     {
       "code": "Hazard_01_01",
       "asset_name": "Perez Park",
-      "file": "perez-park.png",
+      "file": "perez-park.jpg",
       "w": 512,
       "h": 512,
-      "bytes": 341367,
-      "source": "texture_library/maps/static/map_hazard_01_01.texture"
+      "bytes": 38017,
+      "source": "texture_library/maps/static/map_hazard_01_01.texture",
+      "asset_set": "live"
     },
     {
       "code": "Hazard_02_01",
       "asset_name": "Baumton",
-      "file": "baumton.png",
+      "file": "baumton.jpg",
       "w": 1024,
       "h": 1024,
-      "bytes": 1212766,
-      "source": "texture_library/maps/static/map_hazard_02_01.texture"
+      "bytes": 62674,
+      "source": "texture_library/maps/static/map_hazard_02_01.texture",
+      "asset_set": "live"
+    },
+    {
+      "code": "Hazard_04_01",
+      "asset_name": "Venice",
+      "file": "venice.jpg",
+      "w": 1024,
+      "h": 512,
+      "bytes": 33389,
+      "source": "texture_library/MAPS/static/map_hazard_04_01.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "City_02_05",
+      "asset_name": "Overbrook",
+      "file": "overbrook.jpg",
+      "w": 512,
+      "h": 512,
+      "bytes": 20830,
+      "source": "texture_library/MAPS/static/map_city_02_05.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "Trial_03_01",
+      "asset_name": "Terra Volta",
+      "file": "terra-volta.jpg",
+      "w": 1024,
+      "h": 512,
+      "bytes": 38997,
+      "source": "texture_library/MAPS/static/map_trial_03_01.texture",
+      "asset_set": "issue24"
     },
     {
       "code": "Trial_04_01",
       "asset_name": "Woodvale",
-      "file": "woodvale.png",
+      "file": "woodvale.jpg",
       "w": 1024,
       "h": 512,
-      "bytes": 286357,
-      "source": "texture_library/maps/static/map_trial_04_01.texture"
+      "bytes": 28195,
+      "source": "texture_library/maps/static/map_trial_04_01.texture",
+      "asset_set": "live"
+    },
+    {
+      "code": "City_05_01",
+      "asset_name": "Peregrine Island",
+      "file": "peregrine-island.jpg",
+      "w": 512,
+      "h": 768,
+      "bytes": 18364,
+      "source": "texture_library/MAPS/static/map_city_05_01.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "Hazard_01_02",
+      "asset_name": "The Hollows",
+      "file": "the-hollows.jpg",
+      "w": 512,
+      "h": 1024,
+      "bytes": 41909,
+      "source": "texture_library/MAPS/static/map_hazard_01_02.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "Hazard_03_02",
+      "asset_name": "Striga Isle",
+      "file": "striga-isle.jpg",
+      "w": 1024,
+      "h": 512,
+      "bytes": 30633,
+      "source": "texture_library/MAPS/static/map_hazard_03_02.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "City_03_03",
+      "asset_name": "Croatoa",
+      "file": "croatoa.jpg",
+      "w": 512,
+      "h": 512,
+      "bytes": 27340,
+      "source": "texture_library/MAPS/static/map_city_03_03.texture",
+      "asset_set": "issue24"
     },
     {
       "code": "V_City_01_01",
       "asset_name": "Mercy Island",
-      "file": "mercy-island.png",
+      "file": "mercy-island.jpg",
       "w": 512,
       "h": 512,
-      "bytes": 308217,
-      "source": "texture_library/v_maps/static/map_v_city_01_01.texture"
+      "bytes": 36188,
+      "source": "texture_library/v_maps/static/map_v_city_01_01.texture",
+      "asset_set": "live"
+    },
+    {
+      "code": "V_City_01_02",
+      "asset_name": "Port Oakes",
+      "file": "port-oakes.jpg",
+      "w": 512,
+      "h": 512,
+      "bytes": 35325,
+      "source": "texture_library/V_MAPS/Static/map_V_City_01_02.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "V_City_02_01",
+      "asset_name": "Cap Au Diable",
+      "file": "cap-au-diable.jpg",
+      "w": 512,
+      "h": 512,
+      "bytes": 35486,
+      "source": "texture_library/V_MAPS/Static/map_V_City_02_01.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "V_City_03_01",
+      "asset_name": "Sharkhead Isle",
+      "file": "sharkhead-isle.jpg",
+      "w": 512,
+      "h": 512,
+      "bytes": 33589,
+      "source": "texture_library/V_MAPS/Static/map_V_city_03_01.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "V_City_03_02",
+      "asset_name": "Nerva Archipelago",
+      "file": "nerva-archipelago.jpg",
+      "w": 1024,
+      "h": 1024,
+      "bytes": 42417,
+      "source": "texture_library/V_MAPS/Static/map_V_City_03_02.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "V_City_04_01",
+      "asset_name": "St Martial",
+      "file": "st-martial.jpg",
+      "w": 512,
+      "h": 512,
+      "bytes": 44166,
+      "source": "texture_library/V_MAPS/Static/map_V_City_04_01.texture",
+      "asset_set": "issue24"
     },
     {
       "code": "V_City_05_01",
       "asset_name": "Grandville",
-      "file": "grandville.png",
+      "file": "grandville.jpg",
       "w": 1024,
       "h": 1024,
-      "bytes": 948563,
-      "source": "texture_library/v_maps/static/map_v_city_05_01.texture"
+      "bytes": 49372,
+      "source": "texture_library/v_maps/static/map_v_city_05_01.texture",
+      "asset_set": "live"
+    },
+    {
+      "code": "V_Trial_04_02",
+      "asset_name": "Abyss",
+      "file": "abyss.jpg",
+      "w": 512,
+      "h": 512,
+      "bytes": 24671,
+      "source": "texture_library/V_MAPS/Static/map_V_Trial_04_02.texture",
+      "asset_set": "issue24"
     },
     {
       "code": "V_PvP_03_01",
       "asset_name": "Sirens Call",
-      "file": "sirens-call.png",
+      "file": "sirens-call.jpg",
       "w": 512,
       "h": 512,
-      "bytes": 187311,
-      "source": "texture_library/v_maps/static/map_v_pvp_03_01.texture"
+      "bytes": 22517,
+      "source": "texture_library/v_maps/static/map_v_pvp_03_01.texture",
+      "asset_set": "live"
+    },
+    {
+      "code": "V_PvP_02_01",
+      "asset_name": "Bloody Bay",
+      "file": "bloody-bay.jpg",
+      "w": 512,
+      "h": 512,
+      "bytes": 41226,
+      "source": "texture_library/V_MAPS/Static/map_V_PvP_02_01.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "V_PvP_04_01",
+      "asset_name": "Warburg",
+      "file": "warburg.jpg",
+      "w": 512,
+      "h": 512,
+      "bytes": 33734,
+      "source": "texture_library/V_MAPS/Static/map_V_PvP_04_01.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "V_PvP_05_01",
+      "asset_name": "white",
+      "file": "white.jpg",
+      "w": 512,
+      "h": 512,
+      "bytes": 45045,
+      "source": "texture_library/V_MAPS/Static/map_V_PvP_05_01.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "War_05_01",
+      "asset_name": "White Plains",
+      "file": "white-plains.jpg",
+      "w": 512,
+      "h": 1024,
+      "bytes": 35571,
+      "source": "texture_library/MAPS/static/map_War_05_01.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "Coop_06_01",
+      "asset_name": "Dark Astoria",
+      "file": "dark-astoria.jpg",
+      "w": 512,
+      "h": 256,
+      "bytes": 17059,
+      "source": "texture_library/MAPS/Dark_Astoria_makeover/map_Coop_06_01.texture",
+      "asset_set": "issue24"
     },
     {
       "code": "City_05_03",
       "asset_name": "Kallisti Wharf",
-      "file": "kallisti-wharf.png",
+      "file": "kallisti-wharf.jpg",
       "w": 512,
       "h": 512,
-      "bytes": 634008,
-      "source": "texture_library/maps/static/map_city_05_03.texture"
+      "bytes": 60246,
+      "source": "texture_library/maps/static/map_city_05_03.texture",
+      "asset_set": "live"
+    },
+    {
+      "code": "Trial_04_02",
+      "asset_name": "The Hive",
+      "file": "the-hive.jpg",
+      "w": 512,
+      "h": 512,
+      "bytes": 49200,
+      "source": "texture_library/MAPS/static/map_trial_04_02.texture",
+      "asset_set": "issue24"
     },
     {
       "code": "P_City_00_01",
       "asset_name": "Nova Praetoria",
-      "file": "nova-praetoria.png",
+      "file": "nova-praetoria.jpg",
       "w": 256,
       "h": 256,
-      "bytes": 58880,
-      "source": "texture_library/static_cubemaps/p_city_00_01/p_city_00_01_grpcubemap167412_face0.texture"
+      "bytes": 11973,
+      "source": "texture_library/static_cubemaps/p_city_00_01/p_city_00_01_grpcubemap167412_face0.texture",
+      "asset_set": "live"
+    },
+    {
+      "code": "P_City_00_02",
+      "asset_name": "Imperial City",
+      "file": "imperial-city.jpg",
+      "w": 512,
+      "h": 1024,
+      "bytes": 46756,
+      "source": "texture_library/MAPS/static/map_P_City_00_02.texture",
+      "asset_set": "issue24"
+    },
+    {
+      "code": "P_City_00_03",
+      "asset_name": "Neutropolis",
+      "file": "neutropolis.jpg",
+      "w": 1024,
+      "h": 1024,
+      "bytes": 69239,
+      "source": "texture_library/MAPS/static/map_P_City_00_03.texture",
+      "asset_set": "issue24"
     }
   ]
 }

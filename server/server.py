@@ -606,8 +606,13 @@ def journey_places():
     try:
         with open(os.path.join(base, "data", "zone_art.json"), encoding="utf-8") as f:
             art = json.load(f)
-        out["art"] = {"".join(c for c in z["asset_name"].lower() if c.isalnum()): z["file"]
-                      for z in art.get("zones", [])}
+        # Same normalisation the client uses (_zoneNorm): a leading "the"/"echo:"
+        # is dropped on BOTH sides, or "The Hollows" never finds "the-hollows".
+        def _zn(s):
+            s = re.sub(r"^(the|echo:)\s+", "", str(s or "").lower())
+            return "".join(c for c in s if c.isalnum())
+
+        out["art"] = {_zn(z["asset_name"]): z["file"] for z in art.get("zones", [])}
     except Exception:  # noqa: BLE001 — no art file, no art; the slot says so
         pass
     return jsonify(out)
