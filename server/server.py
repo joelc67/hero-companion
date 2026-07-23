@@ -627,7 +627,8 @@ def journey_places():
             zp = json.load(f)
         out["zone_levels"] = [
             {"zone": z["zone"], "from": z.get("from"), "to": z.get("to"),
-             "kind": z.get("kind"), "enemies": (z.get("enemies") or [])[:6]}
+             "kind": z.get("kind"), "enemies": (z.get("enemies") or [])[:6],
+             "url": z.get("url")}
             for z in zp.get("zones", []) if z.get("from") is not None]
     except Exception:  # noqa: BLE001
         pass

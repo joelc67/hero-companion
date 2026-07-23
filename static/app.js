@@ -962,6 +962,7 @@ function _modernHtml(level) {
       (z.contacts || []).length
         ? `<div class="muted small">Contacts: ${z.contacts.map(escHtml).join(" · ")}</div>` : "",
       z.note ? `<div class="muted small">${escHtml(z.note)}</div>` : "",
+      z.url ? `<div><a class="jny-wiki" href="${escHtml(z.url)}" target="_blank" rel="noopener">↗ full zone details on the wiki</a></div>` : "",
       `</div>`,
     ];
     return parts.join("");
@@ -1074,6 +1075,7 @@ function _zonesForLevelHtml(level) {
     + `<span class="muted small">${fit.length} — every zone whose range fits, not just the route</span></summary>`
     + fit.map(z => `<div class="jny-fitzone"><b>${escHtml(z.zone)}</b> `
         + `<span class="muted small">${z.from}–${z.to}${z.kind ? " · " + escHtml(z.kind) : ""}</span>`
+        + (z.url ? ` <a class="jny-wiki" href="${escHtml(z.url)}" target="_blank" rel="noopener">↗ wiki</a>` : "")
         + (z.enemies && z.enemies.length
             ? `<div class="muted small">${z.enemies.map(escHtml).join(", ")}</div>` : "") + `</div>`).join("")
     + `<div class="jny-route-src">zone ranges: homecoming.wiki</div></details>`;
