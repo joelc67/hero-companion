@@ -855,10 +855,16 @@ function _alignNote(al) {
   switch (al) {
     case "vigilante":
       return "Vigilante — a hero who bends the rules. You level in Paragon City "
-        + "like a hero, but can also cross into the Rogue Isles for villain-side content.";
+        + "like a hero, and can also cross into the Rogue Isles for villain-side "
+        + "content. Note: teaming across factions has rules — to team with villains "
+        + "you generally need to be in a co-op zone (Pocket D, Rikti War Zone, "
+        + "Cimerora…), not just standing in enemy territory.";
     case "rogue":
       return "Rogue — a villain with a code. You level in the Rogue Isles like a "
-        + "villain, but can also cross into Paragon City for hero-side content.";
+        + "villain, and can also cross into Paragon City for hero-side content. "
+        + "Note: teaming across factions has rules — to team with heroes you "
+        + "generally need to be in a co-op zone (Pocket D, Rikti War Zone, "
+        + "Cimerora…), not just standing in enemy territory.";
     case "praetorian":
       return "Praetoria — Emperor Cole's separate world. ⚠ On Homecoming you can NOT "
         + "start a character here; it is legacy content, replayed only through "
