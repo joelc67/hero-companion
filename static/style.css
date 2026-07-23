@@ -1519,14 +1519,14 @@ body { overflow: hidden; }
    lit while the road is out, and it pulses after an ✕/Esc close so users
    learn where to reopen it. */
 .journey-pill { width: auto; padding: 0 9px; display: inline-flex; align-items: center; gap: 4px; }
-.journey-pill-label { font-size: 12px; font-weight: 600; }
+.journey-pill-label { font-size: 14px; font-weight: 600; }
 .journey-pill.journey-open { border-color: var(--warn); color: var(--warn); }
 .journey-pill.journey-pulse { animation: jnybtnpulse 0.85s ease-in-out 3; }
 @keyframes jnybtnpulse {
   50% { border-color: var(--warn); box-shadow: 0 0 10px rgba(217, 164, 65, .55); }
 }
 .jny-intro { background: var(--bg); border: 1px solid var(--accent); border-radius: 10px;
-  padding: 12px 14px; margin: 10px 0 4px; font-size: 13px; }
+  padding: 12px 14px; margin: 10px 0 4px; font-size: 15px; }
 .jny-intro .gl-help { margin-top: 8px; }
 /* NOT float:right — that was Joel's "panel on the right with nothing on it".
    The road strip has overflow-x:auto, which makes it a block formatting context,
@@ -1586,72 +1586,72 @@ body { overflow: hidden; }
   background: var(--border); transform: translateX(-50%); top: calc(50% + 12px); }
 .jny-stop.here .jny-card { border-color: var(--warn); }
 .jny-youare { position: absolute; left: 50%; bottom: calc(50% + 24px); transform: translateX(-50%);
-  color: var(--warn); font-size: 10px; white-space: nowrap; letter-spacing: .04em; z-index: 2; }
-.jny-lv { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
-.jny-pick { margin: 5px 0 2px; font-size: 13px; }
+  color: var(--warn); font-size: 12.5px; white-space: nowrap; letter-spacing: .04em; z-index: 2; }
+.jny-lv { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
+.jny-pick { margin: 5px 0 2px; font-size: 15px; }
 .jny-slots { display: flex; align-items: center; gap: 4px; margin: 5px 0 2px; }
 .jny-slots span.new { width: 13px; height: 13px; border-radius: 50%;
   border: 2px solid var(--warn); display: inline-block;
   box-shadow: 0 0 5px rgba(217, 164, 65, .5); flex: none; }
-.jny-chip { display: inline-block; font-size: 10.5px; border: 1px solid; border-radius: 9px;
+.jny-chip { display: inline-block; font-size: 13px; border: 1px solid; border-radius: 9px;
   padding: 1px 7px; margin: 5px 5px 0 0; }
 .jny-chip.badge { border-color: #b48ee0; color: #b48ee0; }
-.jny-ms { margin-top: 5px; font-size: 12px; color: var(--warn); }
+.jny-ms { margin-top: 5px; font-size: 14px; color: var(--warn); }
 /* WHERE TO PLAY — the route block on a stop. Visually distinct from the plan's
    own picks/slots because it is a different KIND of claim: the picks come from
    the optimizer, this comes from a person's recommendation. */
 .jny-route { margin-top: 6px; padding-top: 5px; border-top: 1px dashed var(--border); }
-.jny-route-places { font-size: 11.5px; line-height: 1.45; margin-top: 2px; }
-.jny-tf { font-size: 11.5px; margin-top: 3px; color: var(--accent); }
-.jny-route-src { font-size: 10px; color: var(--muted); font-style: italic; margin-top: 4px; }
+.jny-route-places { font-size: 13.5px; line-height: 1.45; margin-top: 2px; }
+.jny-tf { font-size: 13.5px; margin-top: 3px; color: var(--accent); }
+.jny-route-src { font-size: 12.5px; color: var(--muted); font-style: italic; margin-top: 4px; }
 /* THE LEVEL PANEL — art left, everything else right, and the RIGHT side scrolls
    in its own window. A fixed-height panel is what stops the road growing every
    time a level has a lot going on (the level-40 stop carries ten Task Forces). */
 .jny-panel { display: flex; gap: 14px; margin-top: 10px; height: 250px;
   background: var(--panel2); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
 .jny-panel-info { flex: 1; overflow-y: auto; min-width: 0; }
-.jny-panel-h { margin: 0 0 6px; font-size: 14px; }
-.jny-panel-here { color: var(--warn); font-size: 11px; }
+.jny-panel-h { margin: 0 0 6px; font-size: 16px; }
+.jny-panel-here { color: var(--warn); font-size: 13px; }
 .jny-art { flex: none; width: 230px; border-radius: 8px; border: 1px dashed var(--border);
   background: var(--bg); display: flex; flex-direction: column; align-items: center;
   justify-content: center; gap: 6px; text-align: center; padding: 10px; }
 .jny-art.has-art { padding: 0; border-style: solid; overflow: hidden; }
 .jny-art.has-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.jny-art-name { font-weight: 600; font-size: 13px; }
-.jny-art-pending { font-size: 11px; color: var(--muted); }
+.jny-art-name { font-weight: 600; font-size: 15px; }
+.jny-art-pending { font-size: 13px; color: var(--muted); }
 @media (max-width: 780px) { .jny-panel { flex-direction: column; height: auto; max-height: 60vh; }
   .jny-art { width: 100%; height: 90px; } }
 /* the selected stop, so the road shows which level the panel is describing */
 .jny-card.sel { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(77, 163, 255, .25); }
-.jny-marks { margin-top: 4px; font-size: 12px; letter-spacing: 2px; }
+.jny-marks { margin-top: 4px; font-size: 14px; letter-spacing: 2px; }
 /* On the road a milestone is a headline, not the paragraph — the level-50 stop's
    Incarnate write-up alone made its card 220px and the road follows its tallest
    card. The full text is in the panel, where there's room to read it. */
 .jny-card .jny-ms { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   overflow: hidden; }
-.jny-storychip { font-size: 11px; margin-top: 4px; color: var(--gold, var(--warn)); }
-.jny-story { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 11.5px; }
+.jny-storychip { font-size: 13px; margin-top: 4px; color: var(--gold, var(--warn)); }
+.jny-story { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 13.5px; }
 .jny-story-chain { margin: 3px 0; line-height: 1.5; }
-.jny-warn { color: var(--warn); font-size: 11px; margin-top: 3px; }
-.jny-rewards { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 11.5px; }
+.jny-warn { color: var(--warn); font-size: 13px; margin-top: 3px; }
+.jny-rewards { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 13.5px; }
 .jny-acc { margin-top: 3px; color: var(--gold, var(--warn)); }
 .jny-detail { display: none; margin-top: 6px; border-top: 1px solid var(--border); padding-top: 6px; }
 .jny-card.open .jny-detail { display: block; }
-.jny-tip { color: var(--muted); font-size: 11.5px; margin-top: 3px; }
+.jny-tip { color: var(--muted); font-size: 13.5px; margin-top: 3px; }
 .jny-zones { margin-top: 10px; border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; }
 .jny-zones > summary { cursor: pointer; }
 .jny-zonegrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 6px 14px; margin-top: 8px; }
 .jny-zone { border-left: 2px solid var(--border); padding-left: 8px; }
-.jny-zone > summary { cursor: pointer; font-size: 12.5px; }
+.jny-zone > summary { cursor: pointer; font-size: 14px; }
 .jny-zbadge { margin: 5px 0 5px 4px; }
-.jny-prov { font-size: 10px; color: var(--muted); opacity: .85; margin-top: 8px; font-style: italic; }
+.jny-prov { font-size: 12.5px; color: var(--muted); opacity: .85; margin-top: 8px; font-style: italic; }
 /* Content newer than the 2020 guides — visually distinct because its source is
    different (the wiki, supplied by hand) from every game-first layer above it. */
-.jny-modern { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--accent); font-size: 11.5px; }
+.jny-modern { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--accent); font-size: 13.5px; }
 /* The wiki's own neighbourhood difficulty marking. Colour-coded AND labelled in
    words — colour alone is not information for everyone reading this. */
-.jny-risk { font-size: 9.5px; border: 1px solid; border-radius: 8px; padding: 0 5px;
+.jny-risk { font-size: 12px; border: 1px solid; border-radius: 8px; padding: 0 5px;
   text-transform: uppercase; letter-spacing: .04em; vertical-align: middle; }
 .risk-yellow { color: #d9c04a; border-color: #d9c04a; }
 .risk-orange { color: #e08a3c; border-color: #e08a3c; }
@@ -1663,16 +1663,16 @@ body { overflow: hidden; }
 /* Green = the safest band the wiki marks; and a separate starting path, which
    is a different road rather than a detour off this one. */
 .risk-green { color: #6fbf73; border-color: #6fbf73; }
-.jny-altstart { margin-top: 4px; color: var(--accent); font-size: 11.5px; }
+.jny-altstart { margin-top: 4px; color: var(--accent); font-size: 13.5px; }
 /* Badge directions from the community location DB — the actually-useful bit,
    given the game has no paste-to-navigate. Set off from the flavour text. */
-.jny-where { font-size: 11.5px; margin: 2px 0; color: var(--accent); }
+.jny-where { font-size: 13.5px; margin: 2px 0; color: var(--accent); }
 /* Master-of / iTrial challenge badge attached to a task force or trial. */
-.jny-master { font-size: 11px; margin: 2px 0 4px 14px; color: var(--gold, var(--warn)); }
+.jny-master { font-size: 13px; margin: 2px 0 4px 14px; color: var(--gold, var(--warn)); }
 /* Neighbourhood con-read (CoH's own difficulty colours vs YOUR level). */
 .jny-hoods { margin: 4px 0; }
-.jny-hood { font-size: 11.5px; margin: 1px 0; }
-.jny-con { font-size: 10px; border: 1px solid; border-radius: 8px; padding: 0 5px; margin-left: 3px; }
+.jny-hood { font-size: 13.5px; margin: 1px 0; }
+.jny-con { font-size: 12.5px; border: 1px solid; border-radius: 8px; padding: 0 5px; margin-left: 3px; }
 .con-grey   { color: #9aa0a6; border-color: #9aa0a6; }
 .con-green  { color: #6fbf73; border-color: #6fbf73; }
 .con-white  { color: #d5d9de; border-color: #d5d9de; }
@@ -1681,6 +1681,18 @@ body { overflow: hidden; }
 .con-red    { color: #e05c5c; border-color: #e05c5c; }
 .con-purple { color: #b98ee0; border-color: #b98ee0; }
 /* Zones-open-to-you at this level (auto-placed from the full level table). */
-.jny-fit { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 11.5px; }
+.jny-fit { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 13.5px; }
 .jny-fit > summary { cursor: pointer; }
 .jny-fitzone { margin: 4px 0 4px 6px; }
+
+/* READABILITY (Joel: "font is way too small"). Scope a comfortable base to the
+   Journey surfaces only, so the rest of the app is untouched. The .small spans
+   (used 168x across the panel) get bumped here rather than globally. */
+.jny-panel-info, .jny-zones, .jny-fit, .jny-zonegrid, #journey-body .jny-head {
+  font-size: 14px; line-height: 1.5;
+}
+.jny-panel-info .small, .jny-zones .small, .jny-fit .small,
+.jny-panel-info .muted.small, .jny-zones .muted.small, .jny-fit .muted.small { font-size: 13px; }
+.jny-panel-h { font-size: 17px !important; }
+.jny-hood, .jny-fitzone, .jny-where, .jny-master, .jny-tf, .jny-story, .jny-route-places { font-size: 14px; }
+.jny-con, .jny-risk { font-size: 12px; }

@@ -72,21 +72,30 @@ def art_name(code: str, asset: str) -> str:
     return re.sub(r"(?<=[a-z])(?=[A-Z])", " ", tail.replace("_", " ")).strip()
 
 
-def find_texture(col: PiggCollection, code: str) -> str | None:
-    """The shipped map texture for a zone code, if the client has one."""
-    want = f"map_{code}.texture".lower()
+def find_splash(col: PiggCollection, code: str) -> str | None:
+    """The loading-screen SPLASH plate for a zone (the recognizable comic-panel
+    art — City Hall, the Atlas statue). Joel's call: the flat top-down map is
+    unreadable at thumbnail size; the splash reads at a glance."""
+    want = f"{code.lower()}.texture"
     for p in col.list_paths():
         low = p.lower()
-        # "maps/" not "/maps/": the Rogue Isles art lives under v_maps/
-        if not low.endswith(".texture") or "maps/" not in low:
-            continue
-        if low.rsplit("/", 1)[-1] == want:
+        if ("loading_screen" in low and "city_zones/" in low
+                and "#base" not in low and low.rsplit("/", 1)[-1] == want):
             return p
-    # a few ship under a descriptive name instead: city_03_02_independenceport
-    stem = code.lower()
+    return None
+
+
+def find_map(col: PiggCollection, code: str) -> str | None:
+    """The top-down street map — fallback only, for zones with no splash."""
+    cl = code.lower()
+    want = f"map_{cl}.texture"
     for p in col.list_paths():
         low = p.lower()
-        if low.endswith(".texture") and "maps/" in low and low.rsplit("/", 1)[-1].startswith(stem):
+        if low.endswith(".texture") and "maps/" in low and low.rsplit("/", 1)[-1] == want:
+            return p
+    for p in col.list_paths():
+        low = p.lower()
+        if low.endswith(".texture") and "maps/" in low and low.rsplit("/", 1)[-1].startswith(cl):
             return p
     return None
 
@@ -132,19 +141,24 @@ def main() -> int:
     rows, missing = [], []
     for code, asset in pairs:
         name = art_name(code, asset)
-        # live first, then the archived i24 set — a revamped zone shows its
-        # CURRENT map, and only zones live has dropped fall back to i24.
+        # SPLASH first across BOTH asset sets, THEN the map across both. Splash
+        # beats map everywhere — so a zone whose splash is only in i24 uses it
+        # rather than falling to live's top-down map. Within a kind, live wins
+        # (current art). A result under MIN_SIDE is a UI icon, not real art.
         found = None
-        for label, col in cols:
-            path = find_texture(col, code)
-            if not path:
-                continue
-            data = col.extract(path)
-            info = tx.get_texture_info(data)
-            if min(info.get("width") or 0, info.get("height") or 0) < MIN_SIDE:
-                continue   # a UI icon, not a map — keep looking in the next set
-            found = (label, col, path, data, info)
-            break
+        for finder in (find_splash, find_map):
+            for label, col in cols:
+                path = finder(col, code)
+                if not path:
+                    continue
+                data = col.extract(path)
+                info = tx.get_texture_info(data)
+                if min(info.get("width") or 0, info.get("height") or 0) < MIN_SIDE:
+                    continue
+                found = (label, col, path, data, info)
+                break
+            if found:
+                break
         if not found:
             missing.append((code, name))
             continue
