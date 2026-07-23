@@ -1330,6 +1330,49 @@
         "Savant IV-V"
       ],
       "url": "https://homecoming.wiki/wiki/Eden"
+    },
+    {
+      "zone": "Monster Island",
+      "from": 45,
+      "to": 50,
+      "kind": "Villain hazard zone",
+      "since": "Issue 9",
+      "note": "A copy of the northern reaches of Peregrine Island, reached only by the Smuggler's Submarine from Grandville. Villains come here to farm Essence of the Earth for Hamidon raids, and to beat Rikti Monkeys for the Zookeeper badge. No contacts at all — it is a hunting ground, not a story.",
+      "neighborhoods": [
+        {
+          "name": "Cutlass Isles — Rikti Monkeys",
+          "from": 48,
+          "to": 50,
+          "risk": "Red"
+        },
+        {
+          "name": "Tempest Quay — Devouring Earth monsters",
+          "from": 45,
+          "to": 50,
+          "risk": "Red",
+          "level_note": "the wiki gives no level band for this one, so the zone's own 45-50 stands in"
+        }
+      ],
+      "enemies": [
+        "Devouring Earth (Monsters)",
+        "Rikti (Monkeys)"
+      ],
+      "drops": [
+        "Essence of the Earth",
+        "Uncanny Insight",
+        "Second Wind"
+      ],
+      "exploration_badges": [
+        "Monster Islander",
+        "The Roar of the Beast",
+        "Rikti Monkey Island",
+        "Monsters' Playthings",
+        "Dark Garden",
+        "Grim Fandango",
+        "Misfit Monstrosity",
+        "Monster Factory"
+      ],
+      "url": "https://homecoming.wiki/wiki/Monster_Island"
     }
   ],
   "_verification": {
