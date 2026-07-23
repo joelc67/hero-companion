@@ -1,0 +1,3231 @@
+{
+  "_source": "homecoming.wiki zone pages, fetched by tools/fetch_zone_pages.py",
+  "_why": "zone level ranges, neighbourhood bands and difficulty marks — the one content class absent from every client bin (searched 2026-07-22).",
+  "_provenance_label": "homecoming.wiki",
+  "_verify_with": "tools/verify_zone_pages.py — every listed badge must exist in badges.bin",
+  "_coverage": {
+    "requested": 47,
+    "parsed": 47,
+    "failed": [],
+    "no_bands": [
+      "Galaxy_City",
+      "The_Hive",
+      "Kallisti_Wharf",
+      "Cimerora",
+      "Ouroboros",
+      "Mercy_Island",
+      "Nerva_Archipelago",
+      "The_Abyss",
+      "Warburg"
+    ]
+  },
+  "zones": [
+    {
+      "zone": "Atlas Park",
+      "wiki_title": "Atlas_Park",
+      "kind": "Hero City Zone",
+      "from": 1,
+      "to": 6,
+      "neighborhoods": [
+        {
+          "name": "Argosy Industrial Park",
+          "risk": "Red",
+          "from": 5,
+          "to": 6
+        },
+        {
+          "name": "Atlas Plaza",
+          "risk": "Green",
+          "from": 1,
+          "to": 2
+        },
+        {
+          "name": "Downside",
+          "risk": "Red",
+          "from": 5,
+          "to": 6
+        },
+        {
+          "name": "Hyperion Way",
+          "risk": "Orange",
+          "from": 3,
+          "to": 6
+        },
+        {
+          "name": "The Promenade",
+          "risk": "Yellow",
+          "from": 3,
+          "to": 4
+        },
+        {
+          "name": "Prometheus Park",
+          "risk": "Yellow",
+          "from": 1,
+          "to": 4
+        }
+      ],
+      "exploration_badges": [
+        "Freedom",
+        "Hero Corps Insider",
+        "Patriot",
+        "Rookie",
+        "Top Dog",
+        "Undefeated",
+        "Edge of Chaos",
+        "Observant",
+        "Tried and True I"
+      ],
+      "enemies": [
+        "Clockwork",
+        "Hellions",
+        "Infected",
+        "Skulls",
+        "Vahzilok"
+      ],
+      "tf_contacts": "Longbow Sewer Inspector, Mairenn MacGregor",
+      "connecting": [
+        "Hollows",
+        "Skyway City",
+        "Steel Canyon",
+        "Perez Park",
+        "Sewer Network",
+        "Recluse's Victory",
+        "Rikti War Zone",
+        "Fort Trident",
+        "Pocket D"
+      ],
+      "transits": "Paragon City Monorail, TUNNEL System",
+      "url": "https://homecoming.wiki/wiki/Atlas_Park"
+    },
+    {
+      "zone": "Galaxy City",
+      "wiki_title": "Galaxy_City",
+      "kind": "Hero City Zone",
+      "from": 1,
+      "to": 2,
+      "neighborhoods": [],
+      "enemies": [
+        "Neo-Shivans"
+      ],
+      "connecting": [
+        "Atlas Park",
+        "Mercy Island"
+      ],
+      "url": "https://homecoming.wiki/wiki/Galaxy_City"
+    },
+    {
+      "zone": "Kings Row",
+      "wiki_title": "Kings_Row",
+      "kind": "Hero City Zone",
+      "from": 5,
+      "to": 10,
+      "neighborhoods": [
+        {
+          "name": "Aqueduct",
+          "risk": "Orange",
+          "from": 5,
+          "to": 7
+        },
+        {
+          "name": "Freedom Plaza",
+          "risk": "Yellow",
+          "from": 5,
+          "to": 7
+        },
+        {
+          "name": "The Gish",
+          "risk": "Orange",
+          "from": 5,
+          "to": 8
+        },
+        {
+          "name": "High Park",
+          "risk": "Red",
+          "from": 8,
+          "to": 9
+        },
+        {
+          "name": "Industrial Avenue",
+          "risk": "Orange",
+          "from": 5,
+          "to": 8
+        },
+        {
+          "name": "King Garment Works",
+          "risk": "Orange",
+          "from": 6,
+          "to": 8
+        },
+        {
+          "name": "Royal Refinery",
+          "risk": "Orange",
+          "from": 6,
+          "to": 8
+        }
+      ],
+      "safe_havens": [
+        "Crowne Memorial"
+      ],
+      "exploration_badges": [
+        "Summoned",
+        "Upgraded",
+        "Mystic King",
+        "Keen Sighted",
+        "Smokey",
+        "Wentworth History Buff",
+        "Pwned",
+        "Man of Vengeance",
+        "Thrill Seeker"
+      ],
+      "enemies": [
+        "Circle of Thorns",
+        "Clockwork",
+        "Lost",
+        "Skulls",
+        "Vahzilok"
+      ],
+      "events": "Paladin Construction",
+      "connecting": [
+        "Independence Port",
+        "Perez Park",
+        "Pocket D",
+        "Sewer Network",
+        "Skyway City"
+      ],
+      "transits": "Paragon City Monorail, Free Fire Zone Transport",
+      "url": "https://homecoming.wiki/wiki/Kings_Row"
+    },
+    {
+      "zone": "Steel Canyon",
+      "wiki_title": "Steel_Canyon",
+      "kind": "Hero City Zone",
+      "from": 10,
+      "to": 19,
+      "neighborhoods": [
+        {
+          "name": "Blyde Square",
+          "risk": "Orange",
+          "from": 12,
+          "to": 18
+        },
+        {
+          "name": "Bronze Way",
+          "risk": "Yellow",
+          "from": 10,
+          "to": 14
+        },
+        {
+          "name": "Copper District",
+          "risk": "Yellow",
+          "from": 11,
+          "to": 14
+        },
+        {
+          "name": "The Fools Gold District",
+          "risk": "Orange",
+          "from": 12,
+          "to": 18
+        },
+        {
+          "name": "Gimry Ridge",
+          "risk": "Yellow",
+          "from": 11,
+          "to": 14
+        },
+        {
+          "name": "Platinum Lake",
+          "risk": "Orange",
+          "from": 10,
+          "to": 18
+        },
+        {
+          "name": "Royal Overlook",
+          "risk": "Red",
+          "from": 13,
+          "to": 19
+        },
+        {
+          "name": "Silver Lake",
+          "risk": "Red",
+          "from": 11,
+          "to": 18
+        }
+      ],
+      "safe_havens": [
+        "Steel Canyon Medical Center"
+      ],
+      "exploration_badges": [
+        "Secret Admirer",
+        "Hero Corps Recruit",
+        "Nimble Mynx",
+        "Bright Star",
+        "Dance Legend",
+        "Controversial",
+        "Pet Project",
+        "Dirty Attorney",
+        "Thrill Seeker"
+      ],
+      "enemies": [
+        "5th Column",
+        "Circle of Thorns",
+        "Clockwork",
+        "Council",
+        "Outcasts",
+        "Trolls",
+        "Tsoo",
+        "Vahzilok"
+      ],
+      "events": "Hellion Arson",
+      "tf_contacts": "Positron",
+      "connecting": [
+        "Atlas Park",
+        "Boomtown",
+        "Independence Port",
+        "Midnighter Club",
+        "Paragon Dance Party",
+        "Perez Park",
+        "Sewer Network",
+        "Siren's Call"
+      ],
+      "transits": "Paragon City Monorail",
+      "url": "https://homecoming.wiki/wiki/Steel_Canyon"
+    },
+    {
+      "zone": "Skyway City",
+      "wiki_title": "Skyway_City",
+      "kind": "Hero City Zone",
+      "from": 10,
+      "to": 19,
+      "neighborhoods": [
+        {
+          "name": "Astral District",
+          "risk": "Yellow",
+          "from": 10,
+          "to": 15
+        },
+        {
+          "name": "Aerie Plaza",
+          "risk": "Green",
+          "from": 10,
+          "to": 12
+        },
+        {
+          "name": "The Gruff",
+          "risk": "Orange",
+          "from": 13,
+          "to": 16
+        },
+        {
+          "name": "Hide Park",
+          "risk": "Red",
+          "from": 15,
+          "to": 19
+        },
+        {
+          "name": "Land of the Lost",
+          "risk": "Red",
+          "from": 15,
+          "to": 19
+        },
+        {
+          "name": "Vista Plaza",
+          "risk": "Yellow",
+          "from": 10,
+          "to": 16
+        }
+      ],
+      "safe_havens": [
+        "Lagrange Medical Center"
+      ],
+      "exploration_badges": [
+        "Purifier",
+        "Solace",
+        "Dauntless",
+        "Healing Node",
+        "Better Days",
+        "Room for Expansion",
+        "Left Behind",
+        "Bridge to Nowhere",
+        "Thrill Seeker"
+      ],
+      "enemies": [
+        "Clockwork",
+        "The Lost",
+        "Trolls"
+      ],
+      "events": "Troll Rave",
+      "tf_contacts": "Synapse",
+      "connecting": [
+        "Atlas Park",
+        "Faultline",
+        "Hollows",
+        "Kings Row",
+        "Perez Park",
+        "Sewer Network",
+        "Talos Island"
+      ],
+      "transits": "Paragon City Monorail, Free Fire Zone Transport",
+      "url": "https://homecoming.wiki/wiki/Skyway_City"
+    },
+    {
+      "zone": "The Hollows",
+      "wiki_title": "The_Hollows",
+      "kind": "Hero Hazard Zone",
+      "from": 5,
+      "to": 15,
+      "neighborhoods": [
+        {
+          "name": "Cherry Hills",
+          "risk": "Green",
+          "from": 5,
+          "to": 7
+        },
+        {
+          "name": "Eastgate Heights",
+          "risk": "Red",
+          "from": 13,
+          "to": 15
+        },
+        {
+          "name": "Eastgate Park",
+          "risk": "Orange",
+          "from": 10,
+          "to": 12
+        },
+        {
+          "name": "Four Seasons",
+          "risk": "Yellow",
+          "from": 8,
+          "to": 10
+        },
+        {
+          "name": "Grendel's Gulch",
+          "risk": "Red",
+          "from": 13,
+          "to": 15
+        },
+        {
+          "name": "Red River",
+          "risk": "Yellow",
+          "from": 8,
+          "to": 10
+        }
+      ],
+      "exploration_badges": [
+        "Parapsychologist",
+        "Seeker of Monsters",
+        "Geologist",
+        "Backwoodsman",
+        "Gangland Fury",
+        "Graffiti Communicator",
+        "Circle Seeker",
+        "Ironic"
+      ],
+      "enemies": [
+        "Circle of Thorns",
+        "Coralax",
+        "Devouring Earth",
+        "Hellions",
+        "Hydra",
+        "The Lost",
+        "Minions of Igneous",
+        "Outcasts",
+        "Skulls",
+        "Trolls",
+        "Tsoo",
+        "Vahzilok"
+      ],
+      "tf_contacts": "Karsis",
+      "connecting": [
+        "Atlas Park",
+        "Skyway City",
+        "Tunnels"
+      ],
+      "url": "https://homecoming.wiki/wiki/The_Hollows"
+    },
+    {
+      "zone": "Perez Park",
+      "wiki_title": "Perez_Park",
+      "kind": "Hero Hazard Zone",
+      "from": 7,
+      "to": 14,
+      "neighborhoods": [
+        {
+          "name": "Boneyard",
+          "risk": "Yellow",
+          "from": 7,
+          "to": 10
+        },
+        {
+          "name": "Bettis Hills",
+          "risk": "Red",
+          "from": 7,
+          "to": 14
+        },
+        {
+          "name": "Everett Lake",
+          "risk": "Orange",
+          "from": 8,
+          "to": 14
+        },
+        {
+          "name": "Gaiman Woods",
+          "risk": "Red",
+          "from": 7,
+          "to": 14
+        },
+        {
+          "name": "Hell's Highway",
+          "risk": "Yellow",
+          "from": 7,
+          "to": 10
+        },
+        {
+          "name": "Perez Park",
+          "risk": "Orange",
+          "from": 7,
+          "to": 11
+        }
+      ],
+      "exploration_badges": [
+        "Territorial",
+        "Avatar",
+        "Around the Bendis",
+        "Doc Whedon",
+        "Justice Avenger",
+        "Nebula's Memory",
+        "Blood Moss",
+        "Ophelia's Final Scene"
+      ],
+      "enemies": [
+        "Circle of Thorns",
+        "Clockwork",
+        "Hellions",
+        "Hydra",
+        "The Lost",
+        "Skulls",
+        "Vahzilok"
+      ],
+      "events": "Kraken",
+      "connecting": [
+        "Atlas Park",
+        "Kings Row",
+        "Skyway City",
+        "Steel Canyon"
+      ],
+      "url": "https://homecoming.wiki/wiki/Perez_Park"
+    },
+    {
+      "zone": "Boomtown",
+      "wiki_title": "Boomtown",
+      "kind": "Hero Hazard Zone",
+      "from": 11,
+      "to": 19,
+      "neighborhoods": [
+        {
+          "name": "The Cannonade",
+          "risk": "Red",
+          "from": 14,
+          "to": 19
+        },
+        {
+          "name": "Council Base",
+          "risk": "Red",
+          "from": 14,
+          "to": 19
+        },
+        {
+          "name": "The Fuse",
+          "risk": "Yellow",
+          "from": 11,
+          "to": 14
+        },
+        {
+          "name": "Grenadier Village",
+          "risk": "Red",
+          "from": 14,
+          "to": 19
+        },
+        {
+          "name": "Powderkeg",
+          "risk": "Orange",
+          "from": 12,
+          "to": 16
+        },
+        {
+          "name": "Primer",
+          "risk": "Orange",
+          "from": 12,
+          "to": 16
+        }
+      ],
+      "exploration_badges": [
+        "Phalanxer",
+        "Regal",
+        "Vision of Despair",
+        "Destined for Valhalla",
+        "Towering Inferno",
+        "Boomtown Troglodyte",
+        "End of the Line",
+        "Corpse Box"
+      ],
+      "enemies": [
+        "5th Column",
+        "Clockwork",
+        "Council",
+        "Lost",
+        "Outcasts",
+        "Trolls",
+        "Vahzilok"
+      ],
+      "events": "Babbage, War Machine",
+      "connecting": [
+        "Sewer Network",
+        "Steel Canyon"
+      ],
+      "url": "https://homecoming.wiki/wiki/Boomtown"
+    },
+    {
+      "zone": "Faultline",
+      "wiki_title": "Faultline",
+      "kind": "Hero City Zone",
+      "from": 15,
+      "to": 25,
+      "neighborhoods": [
+        {
+          "name": "Aftershock",
+          "risk": "Orange",
+          "from": 18,
+          "to": 20
+        },
+        {
+          "name": "Arachnos Dig Site",
+          "risk": "Orange",
+          "from": 20,
+          "to": 21
+        },
+        {
+          "name": "New Overbrook",
+          "risk": "Yellow",
+          "from": 15,
+          "to": 17
+        },
+        {
+          "name": "Overbrook Dam",
+          "risk": "Red",
+          "from": 23,
+          "to": 25
+        },
+        {
+          "name": "Overflow",
+          "risk": "Orange",
+          "from": 20,
+          "to": 22
+        }
+      ],
+      "safe_havens": [
+        "Overbrook Medical Center"
+      ],
+      "exploration_badges": [
+        "Drowned Rat",
+        "Egg Hunter",
+        "Escape Artist",
+        "Old Fashioned",
+        "Riveting",
+        "Rock Bottom",
+        "Undammed",
+        "Upcycled"
+      ],
+      "enemies": [
+        "Arachnos",
+        "Clockwork",
+        "Freakshow",
+        "Hydra",
+        "Lost",
+        "Sky Raiders",
+        "Vahzilok"
+      ],
+      "connecting": [
+        "Skyway City",
+        "Pocket D"
+      ],
+      "url": "https://homecoming.wiki/wiki/Faultline"
+    },
+    {
+      "zone": "Independence Port",
+      "wiki_title": "Independence_Port",
+      "kind": "Hero City Zone",
+      "from": 20,
+      "to": 30,
+      "neighborhoods": [
+        {
+          "name": "Bell Point",
+          "risk": "Yellow",
+          "from": 20,
+          "to": 23
+        },
+        {
+          "name": "Crey Cove",
+          "risk": "Yellow",
+          "from": 20,
+          "to": 25
+        },
+        {
+          "name": "Industry Pier",
+          "risk": "Orange",
+          "from": 23,
+          "to": 28
+        },
+        {
+          "name": "Justice Quay",
+          "risk": "Red",
+          "from": 27,
+          "to": 29
+        },
+        {
+          "name": "Liberty Quay",
+          "risk": "Red",
+          "from": 25,
+          "to": 30
+        },
+        {
+          "name": "Patriot Wharf",
+          "risk": "Orange",
+          "from": 23,
+          "to": 28
+        },
+        {
+          "name": "Power Island",
+          "risk": "Orange",
+          "from": 23,
+          "to": 28
+        },
+        {
+          "name": "Steel Pier",
+          "risk": "Orange",
+          "from": 20,
+          "to": 26
+        },
+        {
+          "name": "Valor Bridge",
+          "risk": "Orange",
+          "from": 23,
+          "to": 28
+        },
+        {
+          "name": "Wave Landing",
+          "risk": "Yellow",
+          "from": 20,
+          "to": 23
+        }
+      ],
+      "safe_havens": [
+        "Bell Medical Center"
+      ],
+      "exploration_badges": [
+        "Crey Havoc",
+        "Valorous",
+        "Vigorous",
+        "Air Lifter",
+        "Dead End",
+        "Family Partier",
+        "Connector",
+        "Unlucky",
+        "Thrill Seeker"
+      ],
+      "enemies": [
+        "5th Column",
+        "Council",
+        "Devouring Earth",
+        "Family",
+        "Tsoo"
+      ],
+      "events": "Ghost Ship, Lusca",
+      "tf_contacts": "Jane Hallaway (Respec), Penelope Yin, Admiral Sutter, Ms. Liberty",
+      "connecting": [
+        "Brickstown",
+        "Founders' Falls",
+        "Kings Row",
+        "Paragon Dance Party",
+        "Skyway City",
+        "Striga Isle",
+        "Steel Canyon",
+        "Talos Island",
+        "Terra Volta"
+      ],
+      "transits": "Paragon City Monorail, Smuggler's Ship, Smuggler's Submarine",
+      "url": "https://homecoming.wiki/wiki/Independence_Port"
+    },
+    {
+      "zone": "Talos Island",
+      "wiki_title": "Talos_Island",
+      "kind": "Hero City Zone",
+      "from": 20,
+      "to": 27,
+      "neighborhoods": [
+        {
+          "name": "The Argo Highway",
+          "risk": "Orange",
+          "from": 20,
+          "to": 24
+        },
+        {
+          "name": "Circe Island",
+          "risk": "Orange",
+          "from": 23,
+          "to": 25
+        },
+        {
+          "name": "Eleusis",
+          "risk": "Red",
+          "from": 25,
+          "to": 27
+        },
+        {
+          "name": "Helen Point",
+          "risk": "Yellow",
+          "from": 20,
+          "to": 22
+        },
+        {
+          "name": "Ithaca Island",
+          "risk": "Yellow",
+          "from": 20,
+          "to": 22
+        },
+        {
+          "name": "The northeast corner of the main island is New Corinth",
+          "risk": "Orange",
+          "from": 21,
+          "to": 26
+        },
+        {
+          "name": "New Sparta",
+          "risk": "Red",
+          "from": 21,
+          "to": 27
+        },
+        {
+          "name": "New Thebes",
+          "risk": "Yellow",
+          "from": 20,
+          "to": 24
+        },
+        {
+          "name": "New Troy",
+          "risk": "Orange",
+          "from": 22,
+          "to": 27
+        },
+        {
+          "name": "Scylla Island",
+          "risk": "Red",
+          "from": 25,
+          "to": 27
+        },
+        {
+          "name": "The Serpent's Teeth",
+          "risk": "Red",
+          "from": 25,
+          "to": 27
+        }
+      ],
+      "exploration_badges": [
+        "Minotaur",
+        "Nature Lover",
+        "Whitecap",
+        "Last Line of Defense",
+        "The Old Me",
+        "Bridge Holder",
+        "Overtime Worker",
+        "Spanky's Competitor",
+        "Thrill Seeker"
+      ],
+      "enemies": [
+        "Banished Pantheon",
+        "Circle of Thorns",
+        "Devouring Earth",
+        "Freakshow",
+        "Tsoo",
+        "Warriors"
+      ],
+      "events": "Ghost Ship",
+      "tf_contacts": "Citadel",
+      "connecting": [
+        "Dark Astoria",
+        "Founders' Falls",
+        "Paragon Dance Party",
+        "Peregrine Island",
+        "Pocket D",
+        "Skyway City",
+        "Striga Isle",
+        "Underground Imperial"
+      ],
+      "transits": "Paragon City Monorail, TUNNEL System",
+      "url": "https://homecoming.wiki/wiki/Talos_Island"
+    },
+    {
+      "zone": "Striga Isle",
+      "wiki_title": "Striga_Isle",
+      "kind": "Co-op Hazard Zone",
+      "from": 20,
+      "to": 29,
+      "neighborhoods": [
+        {
+          "name": "The Bog",
+          "risk": "Orange",
+          "from": 23,
+          "to": 25
+        },
+        {
+          "name": "Bonny Morass",
+          "risk": "Orange",
+          "from": 23,
+          "to": 25
+        },
+        {
+          "name": "Council Base",
+          "risk": "Red",
+          "from": 26,
+          "to": 29
+        },
+        {
+          "name": "The Maw",
+          "risk": "Yellow",
+          "from": 21,
+          "to": 23
+        },
+        {
+          "name": "Port Noble",
+          "risk": "Yellow",
+          "from": 20,
+          "to": 22
+        },
+        {
+          "name": "The Wolf's Throat",
+          "risk": "Red",
+          "from": 24,
+          "to": 27
+        }
+      ],
+      "exploration_badges": [
+        "Super Spy",
+        "Sea Dog",
+        "Vulcanologist",
+        "The Wolf's Snarl",
+        "Words of the Warrior",
+        "The Unnamed",
+        "The Wolf's Maw",
+        "Vampyri Watcher"
+      ],
+      "enemies": [
+        "Banished Pantheon",
+        "Council",
+        "Family",
+        "Sky Raiders",
+        "Turrets",
+        "Warriors"
+      ],
+      "tf_contacts": "Ernesto Hess, Moonfire",
+      "connecting": [
+        "Grandville",
+        "Independence Port",
+        "Kallisti Wharf",
+        "Monster Island",
+        "Port Oakes",
+        "Peregrine Island",
+        "Sharkhead Isle",
+        "Talos Island",
+        "The Abyss"
+      ],
+      "transits": "Smuggler's Ship, Smuggler's Submarine",
+      "url": "https://homecoming.wiki/wiki/Striga_Isle"
+    },
+    {
+      "zone": "Croatoa",
+      "wiki_title": "Croatoa",
+      "kind": "Hero City Zone",
+      "from": 25,
+      "to": 34,
+      "neighborhoods": [
+        {
+          "name": "Salamanca",
+          "risk": "Yellow",
+          "from": 25,
+          "to": 27
+        },
+        {
+          "name": "The Broken Teeth",
+          "risk": "Orange",
+          "from": 29,
+          "to": 31
+        },
+        {
+          "name": "The Grim Vale",
+          "risk": "Red",
+          "from": 31,
+          "to": 34
+        },
+        {
+          "name": "The Misty Wood",
+          "risk": "Orange",
+          "from": 27,
+          "to": 29
+        },
+        {
+          "name": "New Connaught",
+          "risk": "Orange",
+          "from": 26,
+          "to": 28
+        },
+        {
+          "name": "Sunset Ridge",
+          "risk": "Orange",
+          "from": 29,
+          "to": 31
+        }
+      ],
+      "exploration_badges": [
+        "Grim Wanderer",
+        "Spiritual",
+        "Ensorcelled",
+        "Barrier Holder",
+        "Sally Sightseer",
+        "Jack's Wrath",
+        "Waylon's Observer",
+        "Midnighter's Perseverance"
+      ],
+      "enemies": [
+        "Cabal",
+        "Fir Bolg",
+        "Ghosts",
+        "Red Caps",
+        "Tuatha de Dannan"
+      ],
+      "events": "Croatoa War, Eochai, Jack in Irons, Sally",
+      "tf_contacts": "Katie Hannon",
+      "connecting": [
+        "Midnighter Club (and all monorail zones)"
+      ],
+      "transits": "Paragon City Monorail",
+      "url": "https://homecoming.wiki/wiki/Croatoa"
+    },
+    {
+      "zone": "Founders' Falls",
+      "wiki_title": "Founders'_Falls",
+      "kind": "Hero City Zone",
+      "from": 31,
+      "to": 40,
+      "neighborhoods": [
+        {
+          "name": "Blackstone Hills",
+          "risk": "Red",
+          "from": 37,
+          "to": 40
+        },
+        {
+          "name": "The Gaspee",
+          "risk": "Red",
+          "from": 35,
+          "to": 40
+        },
+        {
+          "name": "Hutchinson Park",
+          "risk": "Red",
+          "from": 31,
+          "to": 40
+        },
+        {
+          "name": "Liberty Town",
+          "risk": "Orange",
+          "from": 34,
+          "to": 37
+        },
+        {
+          "name": "Louis Forest",
+          "risk": "Orange",
+          "from": 34,
+          "to": 37
+        },
+        {
+          "name": "The Red River",
+          "risk": "Orange",
+          "from": 34,
+          "to": 37
+        },
+        {
+          "name": "Williams Square",
+          "risk": "Yellow",
+          "from": 31,
+          "to": 33
+        }
+      ],
+      "safe_havens": [
+        "Harvey Medical Center"
+      ],
+      "exploration_badges": [
+        "Foggy",
+        "Chaotician",
+        "Guardian Angel",
+        "Losing Paradise",
+        "Watchful Eyes",
+        "Hamidon's Fury",
+        "Founders' Hero",
+        "Misunderstood",
+        "Thrill Seeker"
+      ],
+      "enemies": [
+        "5th Column",
+        "Circle of Thorns",
+        "Council",
+        "Crey",
+        "Devouring Earth",
+        "Nemesis",
+        "Rikti"
+      ],
+      "tf_contacts": "Captain James Harlan (TV), Numina, Dr. Kahn",
+      "connecting": [
+        "Eden",
+        "Midnighter Club",
+        "Pocket D",
+        "Talos Island",
+        "Rikti War Zone"
+      ],
+      "transits": "Paragon City Monorail, TUNNEL System",
+      "url": "https://homecoming.wiki/wiki/Founders'_Falls"
+    },
+    {
+      "zone": "Brickstown",
+      "wiki_title": "Brickstown",
+      "kind": "Hero City Zone",
+      "from": 30,
+      "to": 38,
+      "neighborhoods": [
+        {
+          "name": "The Abyss Towers",
+          "risk": "Red",
+          "from": 30,
+          "to": 35
+        },
+        {
+          "name": "The Chasm",
+          "risk": "Red",
+          "from": 30,
+          "to": 35
+        },
+        {
+          "name": "The Crescent",
+          "risk": "Orange",
+          "from": 30,
+          "to": 32
+        },
+        {
+          "name": "Dark Waters",
+          "risk": "Red",
+          "from": 33,
+          "to": 35
+        },
+        {
+          "name": "The Mashu Bridge",
+          "risk": "Yellow",
+          "from": 30,
+          "to": 32
+        },
+        {
+          "name": "Prison Power Station",
+          "risk": "Orange",
+          "from": 30,
+          "to": 35
+        },
+        {
+          "name": "Seven Gates",
+          "risk": "Orange",
+          "from": 30,
+          "to": 38
+        },
+        {
+          "name": "The Ziggurat",
+          "risk": "Red",
+          "from": 33,
+          "to": 38
+        }
+      ],
+      "safe_havens": [
+        "Brickstown Infirmary"
+      ],
+      "exploration_badges": [
+        "Mystic",
+        "Inmate",
+        "Flying Shark",
+        "Fugitive",
+        "Forward Thinker",
+        "Secret Path",
+        "Sixth Passenger",
+        "Unsubtle",
+        "Thrill Seeker"
+      ],
+      "enemies": [
+        "5th Column",
+        "Crey",
+        "Council",
+        "Prisoners",
+        "Freakshow"
+      ],
+      "events": "Prison Break",
+      "tf_contacts": "Manticore",
+      "connecting": [
+        "Independence Port",
+        "Crey's Folly"
+      ],
+      "transits": "Paragon City Monorail",
+      "url": "https://homecoming.wiki/wiki/Brickstown"
+    },
+    {
+      "zone": "Crey's Folly",
+      "wiki_title": "Crey's_Folly",
+      "kind": "Hero Hazard Zone",
+      "from": 31,
+      "to": 39,
+      "neighborhoods": [
+        {
+          "name": "The Blight",
+          "risk": "Orange",
+          "from": 34,
+          "to": 36
+        },
+        {
+          "name": "Carnival Town",
+          "risk": "Red",
+          "from": 37,
+          "to": 39
+        },
+        {
+          "name": "The Circus",
+          "risk": "Red",
+          "from": 37,
+          "to": 39
+        },
+        {
+          "name": "Crey Factories",
+          "risk": "Yellow",
+          "from": 31,
+          "to": 33
+        },
+        {
+          "name": "Paragon Water Works",
+          "risk": "Yellow",
+          "from": 31,
+          "to": 33
+        },
+        {
+          "name": "Portal Industries",
+          "risk": "Orange",
+          "from": 34,
+          "to": 36
+        },
+        {
+          "name": "Tangle Town",
+          "risk": "Orange",
+          "from": 34,
+          "to": 36
+        }
+      ],
+      "exploration_badges": [
+        "Crey Watcher",
+        "Burning the Midnight Oil",
+        "Eyes of Nemesis",
+        "Hammer of the Rikti",
+        "Veni",
+        "Vidi",
+        "Vici",
+        "Crey Cares",
+        "Freak's Folly",
+        "Cirque du'Freak"
+      ],
+      "enemies": [
+        "Crey",
+        "Devouring Earth",
+        "Freakshow",
+        "Nemesis",
+        "Rikti"
+      ],
+      "events": "Jurassik",
+      "connecting": [
+        "Brickstown",
+        "Rikti War Zone"
+      ],
+      "url": "https://homecoming.wiki/wiki/Crey's_Folly"
+    },
+    {
+      "zone": "Terra Volta",
+      "wiki_title": "Terra_Volta",
+      "kind": "Hero Trial Zone",
+      "from": 20,
+      "to": 29,
+      "neighborhoods": [
+        {
+          "name": "Carter Engineering",
+          "risk": "Red",
+          "from": 27,
+          "to": 29
+        },
+        {
+          "name": "Challenger Technology",
+          "risk": "Yellow",
+          "from": 21,
+          "to": 27
+        },
+        {
+          "name": "Coroman Manufacturing",
+          "risk": "Yellow",
+          "from": 23,
+          "to": 25
+        },
+        {
+          "name": "Gordon Trench",
+          "risk": "Red",
+          "from": 23,
+          "to": 27
+        },
+        {
+          "name": "Raysun Petroleum",
+          "risk": "Yellow",
+          "from": 21,
+          "to": 27
+        },
+        {
+          "name": "Rogers Industries",
+          "risk": "Orange",
+          "from": 25,
+          "to": 27
+        },
+        {
+          "name": "Savage Waste Disposal",
+          "risk": "Red",
+          "from": 27,
+          "to": 29
+        },
+        {
+          "name": "Terra Volta Reactor",
+          "risk": "Red",
+          "from": 27,
+          "to": 29
+        },
+        {
+          "name": "Walker Energy",
+          "risk": "Orange",
+          "from": 25,
+          "to": 27
+        }
+      ],
+      "exploration_badges": [
+        "Conjunction Junction",
+        "Meltdown",
+        "Nervous Dreck",
+        "Guardian of the Volts",
+        "Danger! Danger!",
+        "Scrapheap of History",
+        "Power Walker",
+        "High Voltage!"
+      ],
+      "enemies": [
+        "Devouring Earth",
+        "Freakshow",
+        "Lost",
+        "Sky Raiders"
+      ],
+      "tf_contacts": "Jane Hallaway (IP), Captain James Harlan (FF), Major Richard Flagg (PI)",
+      "connecting": [
+        "Independence Port"
+      ],
+      "url": "https://homecoming.wiki/wiki/Terra_Volta"
+    },
+    {
+      "zone": "Eden",
+      "wiki_title": "Eden",
+      "kind": "Hero Trial Zone",
+      "from": 33,
+      "to": 39,
+      "neighborhoods": [
+        {
+          "name": "Arcadia",
+          "risk": "Yellow",
+          "from": 33,
+          "to": 36
+        },
+        {
+          "name": "Adeva Towers",
+          "risk": "Orange",
+          "from": 35,
+          "to": 36
+        },
+        {
+          "name": "The Cascades",
+          "risk": "Red",
+          "from": 37,
+          "to": 39
+        },
+        {
+          "name": "The Hive",
+          "risk": "Red",
+          "from": 37,
+          "to": 39
+        },
+        {
+          "name": "The Pit",
+          "risk": "Yellow",
+          "from": 33,
+          "to": 36
+        },
+        {
+          "name": "The Serpentine",
+          "risk": "Orange",
+          "from": 35,
+          "to": 37
+        },
+        {
+          "name": "The Utopia Complex",
+          "risk": "Yellow",
+          "from": 33,
+          "to": 35
+        }
+      ],
+      "exploration_badges": [
+        "Crey Fish",
+        "Unspoiled",
+        "Call of Nature",
+        "Nature's Wrath",
+        "Natural Law",
+        "The Devouring Earth Abides",
+        "Hive Mind",
+        "Natural Selection"
+      ],
+      "enemies": [
+        "Crey",
+        "Devouring Earth",
+        "Nemesis"
+      ],
+      "tf_contacts": "Woodsman",
+      "connecting": [
+        "Hive",
+        "Founders' Falls"
+      ],
+      "url": "https://homecoming.wiki/wiki/Eden"
+    },
+    {
+      "zone": "The Hive",
+      "wiki_title": "The_Hive",
+      "kind": "Co-op Trial Zone",
+      "from": 45,
+      "to": 50,
+      "neighborhoods": [],
+      "exploration_badges": [
+        "Time Bandit",
+        "Heart of the Hamidon",
+        "Babe in the Woods",
+        "The Wounded Earth",
+        "Wild At Heart",
+        "Among the Giants",
+        "The Sound of Thunder",
+        "Forest of Stone"
+      ],
+      "enemies": [
+        "Devouring Earth"
+      ],
+      "events": "Hamidon",
+      "connecting": [
+        "Eden"
+      ],
+      "transits": "Black Helicopter Line",
+      "url": "https://homecoming.wiki/wiki/The_Hive"
+    },
+    {
+      "zone": "Peregrine Island",
+      "wiki_title": "Peregrine_Island",
+      "kind": "Hero City Zone",
+      "from": 41,
+      "to": 50,
+      "neighborhoods": [
+        {
+          "name": "Bayside Docks",
+          "risk": "Yellow",
+          "from": 41,
+          "to": 43
+        },
+        {
+          "name": "Curry Cove",
+          "risk": "Orange",
+          "from": 44,
+          "to": 47
+        },
+        {
+          "name": "Cutlass Isles",
+          "risk": "Red",
+          "from": 48,
+          "to": 50
+        },
+        {
+          "name": "Mera Heights",
+          "risk": "Red",
+          "from": 48,
+          "to": 50
+        },
+        {
+          "name": "Nelson Borough",
+          "risk": "Orange",
+          "from": 44,
+          "to": 47
+        },
+        {
+          "name": "Portal Court",
+          "risk": "Red",
+          "from": 48,
+          "to": 50
+        },
+        {
+          "name": "Poseidon Square",
+          "risk": "Red",
+          "from": 48,
+          "to": 50
+        }
+      ],
+      "safe_havens": [
+        "Aquarius Medical Center",
+        "Tempest Quay"
+      ],
+      "exploration_badges": [
+        "Portal Parter",
+        "Use Might for Right",
+        "Cause for Concern",
+        "Genetically Altered",
+        "Rikti Gone Wild",
+        "Shades of Arachnos",
+        "All-Seeing",
+        "Dark Omen",
+        "Thrill Seeker"
+      ],
+      "enemies": [
+        "Carnies",
+        "Circle of Thorns",
+        "Devouring Earth",
+        "Malta",
+        "Nemesis",
+        "Rikti"
+      ],
+      "connecting": [
+        "Firebase Zulu",
+        "Talos Island",
+        "Rikti War Zone"
+      ],
+      "transits": "Smuggler's Submarine, TUNNEL System, Free Fire Zone Transport",
+      "url": "https://homecoming.wiki/wiki/Peregrine_Island"
+    },
+    {
+      "zone": "Dark Astoria",
+      "wiki_title": "Dark_Astoria",
+      "kind": "Co-op Hazard Zone",
+      "from": 50,
+      "to": 54,
+      "neighborhoods": [
+        {
+          "name": "Barca Plaza",
+          "risk": "Orange",
+          "from": 50,
+          "to": 54
+        },
+        {
+          "name": "Dido's View",
+          "risk": "Orange",
+          "from": 50,
+          "to": 54
+        },
+        {
+          "name": "Moth Cemetery",
+          "risk": "Orange",
+          "from": 50,
+          "to": 54
+        },
+        {
+          "name": "Raimi Arcade",
+          "risk": "Orange",
+          "from": 50,
+          "to": 54
+        },
+        {
+          "name": "Romero Heights",
+          "risk": "Orange",
+          "from": 50,
+          "to": 54
+        },
+        {
+          "name": "Toffet Terrace",
+          "risk": "Orange",
+          "from": 50,
+          "to": 54
+        }
+      ],
+      "exploration_badges": [
+        "Auspice Avernus",
+        "Death's Head Supplicant",
+        "Folly's Victim",
+        "Life out of Death",
+        "Palace of Stone Leaves",
+        "Of Things Unclean",
+        "Walker on the Profane Ascent",
+        "Witness of Oaths"
+      ],
+      "enemies": [
+        "Banished Pantheon",
+        "Circle of Thorns",
+        "Knives of Artemis",
+        "Knives of Vengeance",
+        "Talons of Vengeance",
+        "Tsoo"
+      ],
+      "connecting": [
+        "Talos Island"
+      ],
+      "transits": "TUNNEL System",
+      "url": "https://homecoming.wiki/wiki/Dark_Astoria"
+    },
+    {
+      "zone": "Kallisti Wharf",
+      "wiki_title": "Kallisti_Wharf",
+      "kind": "Co-op City Zone",
+      "from": 40,
+      "to": 50,
+      "neighborhoods": [],
+      "exploration_badges": [
+        "On the Shoulders of Giants",
+        "In Their Prime",
+        "Protest Too Much",
+        "Fueled by Greed",
+        "Raving Mad",
+        "Marked Out",
+        "Quay to the City",
+        "Tourist Trapped"
+      ],
+      "enemies": [
+        "Blackwing Industries",
+        "Freaklok",
+        "Crey",
+        "Freakshow",
+        "Warriors",
+        "Skulls",
+        "The Awakened",
+        "Unified People's Army",
+        "Wyvern",
+        "Malta Operatives"
+      ],
+      "events": "P.E.A.C.E. Keeper",
+      "tf_contacts": "Ada Wellington, Princess Zoe",
+      "transits": "Paragon City Monorail, Smuggler's Submarine",
+      "url": "https://homecoming.wiki/wiki/Kallisti_Wharf"
+    },
+    {
+      "zone": "Rikti War Zone",
+      "wiki_title": "Rikti_War_Zone",
+      "kind": "Co-op Trial Zone",
+      "from": 35,
+      "to": 50,
+      "neighborhoods": [
+        {
+          "name": "Bloody Lane",
+          "risk": "Orange",
+          "from": 43,
+          "to": 44
+        },
+        {
+          "name": "The Bulge",
+          "risk": "Green",
+          "from": 35,
+          "to": 37
+        },
+        {
+          "name": "The Crash Site",
+          "risk": "Red",
+          "from": 50,
+          "to": 54
+        },
+        {
+          "name": "Heartbreak Ridge",
+          "risk": "Orange",
+          "from": 44,
+          "to": 46
+        },
+        {
+          "name": "Little Round Top",
+          "risk": "Orange",
+          "from": 42,
+          "to": 43
+        },
+        {
+          "name": "Pavia",
+          "risk": "Green",
+          "from": 37,
+          "to": 39
+        },
+        {
+          "name": "Point du Hoc",
+          "risk": "Orange",
+          "from": 48,
+          "to": 50
+        },
+        {
+          "name": "Pork Chop Hill",
+          "risk": "Yellow",
+          "from": 40,
+          "to": 42
+        },
+        {
+          "name": "Sunken Road",
+          "risk": "Orange",
+          "from": 46,
+          "to": 48
+        },
+        {
+          "name": "The Thin Red Line",
+          "risk": "Yellow",
+          "from": 39,
+          "to": 40
+        }
+      ],
+      "safe_havens": [
+        "Vanguard Compound"
+      ],
+      "exploration_badges": [
+        "Vanguard Operative",
+        "Trespasser",
+        "Lifesaver",
+        "Base Jumper",
+        "Homewrecker",
+        "Luscious",
+        "Junkyard Dog",
+        "Unabashed",
+        "Thrill Seeker"
+      ],
+      "enemies": [
+        "Arachnos",
+        "Circle of Thorns",
+        "Council",
+        "Crey",
+        "Devouring Earth",
+        "Knives of Artemis",
+        "Malta Operatives",
+        "Nemesis",
+        "Paragon Police Department (and Drones)",
+        "Rikti"
+      ],
+      "events": "Rikti Mothership Raid",
+      "tf_contacts": "Apex, The Lady Grey, Tin Mage Mark II",
+      "connecting": [
+        "Atlas Park",
+        "Crey's Folly",
+        "Founders' Falls",
+        "Peregrine Island(2x)",
+        "Firebase Zulu",
+        "Cap au Diable",
+        "Grandville",
+        "St. Martial"
+      ],
+      "url": "https://homecoming.wiki/wiki/Rikti_War_Zone"
+    },
+    {
+      "zone": "Cimerora",
+      "wiki_title": "Cimerora",
+      "kind": "Co-op Trial Zone",
+      "from": 35,
+      "to": 50,
+      "neighborhoods": [],
+      "exploration_badges": [
+        "Depths of Time",
+        "Battle-Hardened",
+        "Sanctuary",
+        "Voice of the Oracle",
+        "Out of Bounds",
+        "Human Nature",
+        "Vision of Ambition",
+        "Darkness Unleashed"
+      ],
+      "enemies": [
+        "Cimeroran Traitors"
+      ],
+      "tf_contacts": "Imperious",
+      "connecting": [
+        "Midnighter Club"
+      ],
+      "url": "https://homecoming.wiki/wiki/Cimerora"
+    },
+    {
+      "zone": "Ouroboros",
+      "wiki_title": "Ouroboros",
+      "kind": "Co-op Social Zone",
+      "from": 15,
+      "to": 50,
+      "neighborhoods": [],
+      "exploration_badges": [
+        "Chrononaut"
+      ],
+      "connecting": [
+        "Atlas Park",
+        "Founders' Falls",
+        "Independence Port",
+        "Peregrine Island",
+        "Talos Island",
+        "Cap au Diable",
+        "Sharkhead Isle",
+        "Nerva Archipelago",
+        "St. Martial",
+        "Grandville",
+        "Echo: Atlas Park",
+        "Echo: Dark Astoria",
+        "Echo: Faultline",
+        "Echo: Galaxy City",
+        "Echo: Rikti Crash Site",
+        "Cimerora"
+      ],
+      "url": "https://homecoming.wiki/wiki/Ouroboros"
+    },
+    {
+      "zone": "First Ward",
+      "wiki_title": "First_Ward",
+      "kind": "Co-op City Zone",
+      "from": 20,
+      "to": 30,
+      "neighborhoods": [
+        {
+          "name": "Eltentown",
+          "risk": "Green",
+          "from": 20,
+          "to": 22
+        },
+        {
+          "name": "Free-Fire Zone",
+          "risk": "Yellow",
+          "from": 22,
+          "to": 24
+        },
+        {
+          "name": "Mercyview",
+          "risk": "Yellow",
+          "from": 24,
+          "to": 26
+        },
+        {
+          "name": "Sunken City",
+          "risk": "Orange",
+          "from": 26,
+          "to": 28
+        },
+        {
+          "name": "Forbidden Crags",
+          "risk": "Red",
+          "from": 28,
+          "to": 30
+        },
+        {
+          "name": "Mother of Mercy Hospital",
+          "risk": "Red",
+          "from": 28,
+          "to": 30
+        }
+      ],
+      "exploration_badges": [
+        "Dearly Departed",
+        "Eye of the Vortex",
+        "Fearless Insurgent",
+        "Shell Shocked",
+        "Mayhem's Prodigal",
+        "Shadow Walker",
+        "Vengeance Seeker",
+        "Witness for the Fallen"
+      ],
+      "enemies": [
+        "Apparitions",
+        "The Awakened",
+        "Carnival of Light",
+        "Carnival of Vengeance",
+        "Carnival of War",
+        "D.U.S.T.",
+        "Talons of Vengeance",
+        "Seers",
+        "Resistance",
+        "Ghouls"
+      ],
+      "events": "The Seed of Hamidon",
+      "connecting": [
+        "Night Ward",
+        "Underground Imperial"
+      ],
+      "transits": "TUNNEL System",
+      "url": "https://homecoming.wiki/wiki/First_Ward"
+    },
+    {
+      "zone": "Night Ward",
+      "wiki_title": "Night_Ward",
+      "kind": "Co-op City Zone",
+      "from": 25,
+      "to": 30,
+      "neighborhoods": [
+        {
+          "name": "The Arcane Quarter",
+          "risk": "Green",
+          "from": 25,
+          "to": 26
+        },
+        {
+          "name": "Lamplight Junction",
+          "risk": "Yellow",
+          "from": 26,
+          "to": 27
+        },
+        {
+          "name": "The Digs",
+          "risk": "Yellow",
+          "from": 27,
+          "to": 28
+        },
+        {
+          "name": "City of Souls",
+          "risk": "Orange",
+          "from": 28,
+          "to": 29
+        },
+        {
+          "name": "The Howling Vale",
+          "risk": "Red",
+          "from": 29,
+          "to": 30
+        },
+        {
+          "name": "Bedlam",
+          "risk": "Red",
+          "from": 30,
+          "to": 30
+        }
+      ],
+      "exploration_badges": [
+        "Abandoned Soul",
+        "Dead but Dreaming",
+        "Follow the Light",
+        "Happy Camper",
+        "House Hunter",
+        "Monolithic",
+        "Nocturnal Pilgrim; Stargazer"
+      ],
+      "enemies": [
+        "Apparitions",
+        "Talons of Vengeance",
+        "Animus Arcana",
+        "Drudges",
+        "The Black Knights",
+        "Spirit Stalkers"
+      ],
+      "events": "Exploration Badges:",
+      "connecting": [
+        "First Ward"
+      ],
+      "transits": "TUNNEL System",
+      "url": "https://homecoming.wiki/wiki/Night_Ward"
+    },
+    {
+      "zone": "Mercy Island",
+      "wiki_title": "Mercy_Island",
+      "kind": "Villain City Zone",
+      "from": 1,
+      "to": 8,
+      "neighborhoods": [],
+      "exploration_badges": [
+        "Cesspool",
+        "Snake Charmer",
+        "Chum",
+        "Fortified",
+        "The Next Big Thing",
+        "Widower",
+        "First Rule",
+        "Tiki Fan",
+        "Thrill Seeker"
+      ],
+      "enemies": [
+        "Arachnos",
+        "Hellions",
+        "Infected",
+        "Legacy Chain",
+        "Longbow",
+        "Rogue Island Police",
+        "Skulls",
+        "Snakes"
+      ],
+      "connecting": [
+        "Normal Rogue Isles zones",
+        "all TUNNEL System zones",
+        "Pocket D"
+      ],
+      "transits": "Black Helicopter Line, Rogue Isles Ferry, TUNNEL System",
+      "url": "https://homecoming.wiki/wiki/Mercy_Island"
+    },
+    {
+      "zone": "Port Oakes",
+      "wiki_title": "Port_Oakes",
+      "kind": "Villain City Zone",
+      "from": 7,
+      "to": 12,
+      "neighborhoods": [
+        {
+          "name": "Arena District",
+          "risk": "Green",
+          "from": 7,
+          "to": 9
+        },
+        {
+          "name": "Dockside",
+          "risk": "Yellow",
+          "from": 7,
+          "to": 9
+        },
+        {
+          "name": "Fort Hades",
+          "risk": "Orange",
+          "from": 9,
+          "to": 11
+        },
+        {
+          "name": "Marconeville",
+          "risk": "Yellow",
+          "from": 8,
+          "to": 9
+        },
+        {
+          "name": "Oil Spill",
+          "risk": "Orange",
+          "from": 9,
+          "to": 11
+        },
+        {
+          "name": "Villa Montrose",
+          "risk": "Red",
+          "from": 10,
+          "to": 12
+        }
+      ],
+      "exploration_badges": [
+        "Scurvy Dog",
+        "Washed Up",
+        "Powder Monkey",
+        "Driller",
+        "Long Walk",
+        "Big Spider",
+        "Commuter's Woe",
+        "Hidden Getaway",
+        "Thrill Seeker"
+      ],
+      "enemies": [
+        "Arachnos",
+        "Coralax",
+        "Council",
+        "The Family",
+        "Hellions",
+        "The Lost",
+        "Mooks",
+        "Snakes",
+        "Spectral Pirates",
+        "Turrets"
+      ],
+      "events": "Spirit Trapping",
+      "connecting": [
+        "Normal Rogue Isles zones",
+        "Pocket D",
+        "The Abyss",
+        "Monster Island",
+        "and Kallisti Wharf (and Independence Port",
+        "Peregrine Island",
+        "and Striga Isle for Rogues and Vigilantes)."
+      ],
+      "transits": "Rogue Isles Ferries, Smuggler's Submarine",
+      "url": "https://homecoming.wiki/wiki/Port_Oakes"
+    },
+    {
+      "zone": "Cap au Diable",
+      "wiki_title": "Cap_au_Diable",
+      "kind": "Villain City Zone",
+      "from": 8,
+      "to": 20,
+      "neighborhoods": [
+        {
+          "name": "Aeon City",
+          "risk": "Orange",
+          "from": 13,
+          "to": 16
+        },
+        {
+          "name": "Devil's Coat Tails",
+          "risk": "Orange",
+          "from": 8,
+          "to": 12
+        },
+        {
+          "name": "Haven",
+          "risk": "Orange",
+          "from": 12,
+          "to": 14
+        },
+        {
+          "name": "Mount Diable",
+          "risk": "Red",
+          "from": 16,
+          "to": 20
+        },
+        {
+          "name": "New Haven",
+          "risk": "Orange",
+          "from": 15,
+          "to": 17
+        },
+        {
+          "name": "Vagabond Hills",
+          "risk": "Red",
+          "from": 16,
+          "to": 19
+        }
+      ],
+      "exploration_badges": [
+        "Sparky",
+        "Media Junky",
+        "Egghead",
+        "Steamed",
+        "Sweet Tooth",
+        "Doom Sayer",
+        "Master of Science",
+        "Circle Gazer",
+        "Thrill Seeker"
+      ],
+      "enemies": [
+        "Arachnos",
+        "Cap au Diable Demons",
+        "Circle of Thorns",
+        "Clockwork",
+        "Gold Brickers",
+        "Luddites",
+        "Vahzilok"
+      ],
+      "events": "Deathsurge",
+      "tf_contacts": "Virgil Tarikoss, Dr. Aeon",
+      "connecting": [
+        "Normal Rogue Isles zones",
+        "all TUNNEL System zones",
+        "Underground Imperial"
+      ],
+      "transits": "Black Helicopter Line, Rogue Isles Ferries, Free Fire Zone Transport",
+      "url": "https://homecoming.wiki/wiki/Cap_au_Diable"
+    },
+    {
+      "zone": "Sharkhead Isle",
+      "wiki_title": "Sharkhead_Isle",
+      "kind": "Villain City Zone",
+      "from": 20,
+      "to": 30,
+      "neighborhoods": [
+        {
+          "name": "Hell Forge",
+          "risk": "Orange",
+          "from": 21,
+          "to": 25
+        },
+        {
+          "name": "Port Recluse",
+          "risk": "Yellow",
+          "from": 20,
+          "to": 22
+        },
+        {
+          "name": "Potter's Field",
+          "risk": "Red",
+          "from": 27,
+          "to": 30
+        },
+        {
+          "name": "The Crush",
+          "risk": "Orange",
+          "from": 21,
+          "to": 25
+        },
+        {
+          "name": "The Pit",
+          "risk": "Orange",
+          "from": 23,
+          "to": 27
+        },
+        {
+          "name": "Villa Requin",
+          "risk": "Red",
+          "from": 24,
+          "to": 27
+        }
+      ],
+      "exploration_badges": [
+        "Razor Toothed",
+        "Forged by Hellfire",
+        "Freak of Nature",
+        "Pit Viper",
+        "Sky Chaser",
+        "Unwelcome Guest",
+        "Sky Trader",
+        "Carping the Diem",
+        "Thrill Seeker"
+      ],
+      "enemies": [
+        "5th Column",
+        "Arachnos",
+        "Banished Pantheon",
+        "Cage Consortium",
+        "Circle of Thorns",
+        "Coralax",
+        "Council",
+        "Family",
+        "Freakshow",
+        "Scrapyarders",
+        "Sky Raiders",
+        "Slag Golems",
+        "Turrets"
+      ],
+      "events": "Ghost of Scrapyard",
+      "tf_contacts": "Operative Renault, Mortimer Kal",
+      "connecting": [
+        "Normal Rogue Isles zones",
+        "Pocket D",
+        "The Abyss",
+        "Monster Island",
+        "and Kallisti Wharf (and Independence Port",
+        "Peregrine Island",
+        "and Striga Isle for Rogues and Vigilantes)."
+      ],
+      "transits": "Black Helicopter Line, Rogue Isles Ferry, Smuggler's Submarine, Free Fire Zone Transport",
+      "url": "https://homecoming.wiki/wiki/Sharkhead_Isle"
+    },
+    {
+      "zone": "Nerva Archipelago",
+      "wiki_title": "Nerva_Archipelago",
+      "kind": "Villain City Zone",
+      "from": 25,
+      "to": 40,
+      "neighborhoods": [],
+      "exploration_badges": [
+        "Watcher on the Knoll",
+        "Locked and Loaded",
+        "Nerva Wreck",
+        "Primal Instinct",
+        "Tree Hugger",
+        "Unethical Tourist",
+        "Blind Eye",
+        "Soother",
+        "Thrill Seeker"
+      ],
+      "enemies": [
+        "5th Column",
+        "Arachnos",
+        "Circle of Thorns",
+        "Coralax",
+        "Council",
+        "Crey",
+        "Devouring Earth",
+        "Family",
+        "Hellions",
+        "Legacy Chain",
+        "Longbow",
+        "Lost",
+        "Snakes",
+        "Spectral Pirates",
+        "Turrets",
+        "Wyvern"
+      ],
+      "events": "Caleb",
+      "tf_contacts": "Sparcetriel, Trepsarciel, Ractespriel",
+      "connecting": [
+        "Normal Rogue Isles zones",
+        "all TUNNEL System zones"
+      ],
+      "transits": "Rogue Isles Ferry, Black Helicopter Line, TUNNEL System",
+      "url": "https://homecoming.wiki/wiki/Nerva_Archipelago"
+    },
+    {
+      "zone": "St. Martial",
+      "wiki_title": "St._Martial",
+      "kind": "Villain City Zone",
+      "from": 29,
+      "to": 40,
+      "neighborhoods": [
+        {
+          "name": "Black Mariah",
+          "risk": "Yellow",
+          "from": 29,
+          "to": 35
+        },
+        {
+          "name": "Double Down",
+          "risk": "Green",
+          "from": 29,
+          "to": 32
+        },
+        {
+          "name": "The Flop",
+          "risk": "Orange",
+          "from": 35,
+          "to": 37
+        },
+        {
+          "name": "Fortune's Wheel",
+          "risk": "Yellow",
+          "from": 34,
+          "to": 37
+        },
+        {
+          "name": "The Hard Way",
+          "risk": "Red",
+          "from": 37,
+          "to": 40
+        },
+        {
+          "name": "Jackpot",
+          "risk": "Orange",
+          "from": 35,
+          "to": 37
+        }
+      ],
+      "safe_havens": [
+        "Babylon"
+      ],
+      "exploration_badges": [
+        "Deuces Wild",
+        "Crimelord",
+        "Stonekeeper",
+        "Camel Snot",
+        "Dead Man's Tree",
+        "Slumlord",
+        "Infamous Rubble",
+        "Showstopper",
+        "Thrill Seeker"
+      ],
+      "enemies": [
+        "Arachnos",
+        "Carnies",
+        "Circle of Thorns",
+        "Devouring Earth",
+        "Dockworkers",
+        "Family",
+        "Freakshow",
+        "Rogue Arachnos",
+        "Tsoo",
+        "Wailers"
+      ],
+      "events": "The Family Raid, Ballista",
+      "tf_contacts": "Ice Mistral",
+      "connecting": [
+        "Normal Rogue Isles zones",
+        "Pocket D",
+        "Rikti War Zone"
+      ],
+      "transits": "Rogue Isles Ferry, Black Helicopter Line, Free Fire Zone Transport",
+      "url": "https://homecoming.wiki/wiki/St._Martial"
+    },
+    {
+      "zone": "Grandville",
+      "wiki_title": "Grandville",
+      "kind": "Villain City Zone",
+      "from": 40,
+      "to": 50,
+      "neighborhoods": [
+        {
+          "name": "Spider City",
+          "risk": "Yellow",
+          "from": 40,
+          "to": 43
+        },
+        {
+          "name": "The Gutter",
+          "risk": "Orange",
+          "from": 43,
+          "to": 46
+        },
+        {
+          "name": "The Tangle",
+          "risk": "Orange",
+          "from": 46,
+          "to": 47
+        }
+      ],
+      "safe_havens": [
+        "The Fab"
+      ],
+      "exploration_badges": [
+        "Overlord",
+        "Sewer Dweller",
+        "Guttersnipe",
+        "Master of the Airwaves",
+        "Passing Fab",
+        "Image Crasher",
+        "Line Holder",
+        "Gutter Bait"
+      ],
+      "enemies": [
+        "Arachnoids",
+        "Arachnos",
+        "Circle of Thorns",
+        "Crey",
+        "Knives of Artemis",
+        "Longbow",
+        "Nemesis"
+      ],
+      "events": "Arachnos Flier",
+      "tf_contacts": "Lord Recluse",
+      "connecting": [
+        "Normal Rogue Isles zones",
+        "all TUNNEL System zones",
+        "Abyss",
+        "Monster Island",
+        "Rikti War Zone",
+        "Recluse's Victory",
+        "and Kallisti Wharf (and Independence Port",
+        "Peregrine Island",
+        "and Striga Isle for Rogues and Vigilantes)."
+      ],
+      "transits": "Rogue Isles Ferry, Black Helicopter Line, TUNNEL System, Smuggler's Submarine",
+      "url": "https://homecoming.wiki/wiki/Grandville"
+    },
+    {
+      "zone": "Monster Island",
+      "wiki_title": "Monster_Island",
+      "kind": "Villain Hazard Zone",
+      "from": 45,
+      "to": 50,
+      "neighborhoods": [
+        {
+          "name": "Cutlass Isles",
+          "risk": "Red",
+          "from": 48,
+          "to": 50,
+          "extra": "Rikti Monkeys"
+        }
+      ],
+      "safe_havens": [
+        "Tempest Quay"
+      ],
+      "exploration_badges": [
+        "Monster Islander",
+        "The Roar of the Beast",
+        "Rikti Monkey Island",
+        "Monsters' Playthings",
+        "Dark Garden",
+        "Grim Fandango",
+        "Misfit Monstrosity",
+        "Monster Factory"
+      ],
+      "enemies": [
+        "Devouring Earth (Monsters)",
+        "Rikti (Monkeys)"
+      ],
+      "connecting": [
+        "Grandville",
+        "The Abyss",
+        "Port Oakes",
+        "Sharkhead Isle",
+        "and Kallisti Wharf (and Independence Port",
+        "Peregrine Island",
+        "and Striga Isle for Rogues and Vigilantes)."
+      ],
+      "url": "https://homecoming.wiki/wiki/Monster_Island"
+    },
+    {
+      "zone": "The Abyss",
+      "wiki_title": "The_Abyss",
+      "kind": "Co-op Trial Zone",
+      "from": 45,
+      "to": 50,
+      "neighborhoods": [],
+      "exploration_badges": [
+        "Reborn",
+        "Geneticist",
+        "Here Be Dragons",
+        "Caged Beast",
+        "No Escape",
+        "Hamidon's Ire",
+        "The Tree of Woe",
+        "Abyssal Gaze"
+      ],
+      "enemies": [
+        "Devouring Earth"
+      ],
+      "events": "Hamidon",
+      "connecting": [
+        "Grandville",
+        "Monster Island",
+        "Port Oakes",
+        "Sharkhead Isle",
+        "and Kallisti Wharf (and Independence Port",
+        "Peregrine Island",
+        "and Striga Isle for Rogues",
+        "Vigilantes",
+        "and Heroes)."
+      ],
+      "transits": "Smuggler's Submarine",
+      "url": "https://homecoming.wiki/wiki/The_Abyss"
+    },
+    {
+      "zone": "Bloody Bay",
+      "wiki_title": "Bloody_Bay",
+      "kind": "PvP Zone",
+      "from": 25,
+      "to": 25,
+      "neighborhoods": [
+        {
+          "name": "Arachnos Base",
+          "risk": "Purple",
+          "from": 25,
+          "to": 27
+        },
+        {
+          "name": "Boardwalk",
+          "risk": "Orange",
+          "from": 25,
+          "to": 27
+        },
+        {
+          "name": "Dead Coast",
+          "risk": "Orange",
+          "from": 25,
+          "to": 27
+        },
+        {
+          "name": "Forgotten Forest",
+          "risk": "Orange",
+          "from": 25,
+          "to": 27
+        },
+        {
+          "name": "Freedom Base",
+          "risk": "Blue",
+          "from": 25,
+          "to": 27
+        },
+        {
+          "name": "Green Nugget",
+          "risk": "Orange",
+          "from": 25,
+          "to": 27
+        },
+        {
+          "name": "Ground Zero",
+          "risk": "Orange",
+          "from": 25,
+          "to": 27
+        },
+        {
+          "name": "Water Street",
+          "risk": "Orange",
+          "from": 25,
+          "to": 27
+        }
+      ],
+      "exploration_badges": [
+        "Lobbyist / Crooked Politician",
+        "Hungry / All Consuming",
+        "Imploding",
+        "Ghoulish",
+        "What Lurks Beyond",
+        "Burgermeister",
+        "Mostly Harmless",
+        "Restless"
+      ],
+      "enemies": [
+        "Arachnos",
+        "Banished Pantheon",
+        "Circle of Thorns",
+        "Freakshow",
+        "Longbow",
+        "Shivans",
+        "Spectral Pirates",
+        "Turrets"
+      ],
+      "events": "Shiva Strike",
+      "transits": "Free Fire Zone Transport",
+      "url": "https://homecoming.wiki/wiki/Bloody_Bay"
+    },
+    {
+      "zone": "Siren's Call",
+      "wiki_title": "Siren's_Call",
+      "kind": "PvP Zone",
+      "from": 30,
+      "to": 30,
+      "neighborhoods": [
+        {
+          "name": "Buildville",
+          "risk": "Orange",
+          "from": 30,
+          "to": 32
+        },
+        {
+          "name": "Fossburg",
+          "risk": "Orange",
+          "from": 30,
+          "to": 32
+        },
+        {
+          "name": "Randall's Ruins",
+          "risk": "Orange",
+          "from": 30,
+          "to": 32
+        },
+        {
+          "name": "Talos Park",
+          "risk": "Orange",
+          "from": 30,
+          "to": 32
+        }
+      ],
+      "exploration_badges": [
+        "Hangman",
+        "Politician",
+        "Broad Shoulders",
+        "Piratical",
+        "Wasted Resources",
+        "Hot Dog",
+        "Still Standing",
+        "Volatile"
+      ],
+      "enemies": [
+        "Arachnos",
+        "Clockwork",
+        "Longbow",
+        "Sky Raiders",
+        "Tsoo",
+        "Warriors"
+      ],
+      "events": "Bounty, Hotspots",
+      "connecting": [
+        "Steel Canyon"
+      ],
+      "transits": "Free Fire Zone Transport",
+      "url": "https://homecoming.wiki/wiki/Siren's_Call"
+    },
+    {
+      "zone": "Warburg",
+      "wiki_title": "Warburg",
+      "kind": "PvP Zone",
+      "from": 38,
+      "to": 38,
+      "neighborhoods": [],
+      "exploration_badges": [
+        "Weapon Inspector / Weapon of Mass Destruction",
+        "Tunnel Rat",
+        "Triumphant",
+        "Disassembled",
+        "Forcibly Evicted",
+        "Herculean",
+        "Nuclear",
+        "Game Over"
+      ],
+      "enemies": [
+        "Arachnoids",
+        "Arachnos",
+        "Longbow",
+        "Malta Operatives",
+        "Rogue Arachnos",
+        "Turrets"
+      ],
+      "events": "Missile Launch",
+      "transits": "Free Fire Zone Transport",
+      "url": "https://homecoming.wiki/wiki/Warburg"
+    },
+    {
+      "zone": "Recluse's Victory",
+      "wiki_title": "Recluse's_Victory",
+      "kind": "PvP Zone",
+      "from": 50,
+      "to": 50,
+      "neighborhoods": [
+        {
+          "name": "Sector 1",
+          "risk": "Orange",
+          "from": 50,
+          "to": 50,
+          "extra": ", 54"
+        },
+        {
+          "name": "Sector 2",
+          "risk": "Orange",
+          "from": 50,
+          "to": 50,
+          "extra": ", 54"
+        },
+        {
+          "name": "Sector 3",
+          "risk": "Orange",
+          "from": 50,
+          "to": 50,
+          "extra": ", 54"
+        },
+        {
+          "name": "Sector 4",
+          "risk": "Orange",
+          "from": 50,
+          "to": 50,
+          "extra": ", 54"
+        },
+        {
+          "name": "Sector 5",
+          "risk": "Orange",
+          "from": 50,
+          "to": 50,
+          "extra": ", 54"
+        }
+      ],
+      "exploration_badges": [
+        "Globetrotter",
+        "Ragnarok",
+        "Temporal Fighter / Dark Victory",
+        "Last Stand",
+        "A Scar in Time",
+        "True Neutral",
+        "Sick of Time Travel",
+        "Watch Your Back"
+      ],
+      "enemies": [
+        "Arachnos",
+        "Longbow",
+        "Turrets"
+      ],
+      "events": "Temporal Anchors, Signature Hero/Villain Reinforcements, Temporal Reversion",
+      "connecting": [
+        "Atlas Park",
+        "Grandville"
+      ],
+      "url": "https://homecoming.wiki/wiki/Recluse's_Victory"
+    },
+    {
+      "zone": "Nova Praetoria",
+      "wiki_title": "Nova_Praetoria",
+      "kind": "Praetorian City Zone",
+      "from": 1,
+      "to": 9,
+      "neighborhoods": [
+        {
+          "name": "Elyssian Avenue",
+          "risk": "Yellow",
+          "from": 2,
+          "to": 4
+        },
+        {
+          "name": "Magisterium",
+          "risk": "Green",
+          "from": 1,
+          "to": 2
+        },
+        {
+          "name": "North Aetna",
+          "risk": "Orange",
+          "from": 5,
+          "to": 6
+        },
+        {
+          "name": "South Aetna",
+          "risk": "Red",
+          "from": 5,
+          "to": 8
+        }
+      ],
+      "exploration_badges": [
+        "Ambitious",
+        "Citizen Cole",
+        "Civic Minded",
+        "Guardians of Justice",
+        "Into the Wild",
+        "Technophile",
+        "Un-Civil Society",
+        "On the Waterfront",
+        "River Rat",
+        "Rail Rider"
+      ],
+      "enemies": [
+        "Destroyers",
+        "Praetorian Police Department",
+        "Praetorian Clockwork",
+        "The Resistance",
+        "Seers",
+        "Angry Citizens"
+      ],
+      "events": "The Protest",
+      "connecting": [
+        "Imperial City",
+        "Underground Nova",
+        "Pocket D"
+      ],
+      "transits": "Cole Transportation Authority",
+      "url": "https://homecoming.wiki/wiki/Nova_Praetoria"
+    },
+    {
+      "zone": "Imperial City",
+      "wiki_title": "Imperial_City",
+      "kind": "Praetorian City Zone",
+      "from": 9,
+      "to": 15,
+      "neighborhoods": [
+        {
+          "name": "Aureas",
+          "risk": "Yellow",
+          "from": 11,
+          "to": 12,
+          "extra": ", Orange – Level 12-13"
+        },
+        {
+          "name": "Behavioral Adjustment Facility",
+          "risk": "Red",
+          "from": 13,
+          "to": 15
+        },
+        {
+          "name": "Four Gables",
+          "risk": "Red",
+          "from": 13,
+          "to": 14
+        },
+        {
+          "name": "Industry Avenue",
+          "risk": "Yellow",
+          "from": 11,
+          "to": 12
+        },
+        {
+          "name": "Logos",
+          "risk": "Green",
+          "from": 9,
+          "to": 10
+        },
+        {
+          "name": "People's Park",
+          "risk": "Green",
+          "from": 9,
+          "to": 10
+        },
+        {
+          "name": "Tiberian Bluff",
+          "risk": "Red",
+          "from": 14,
+          "to": 15
+        }
+      ],
+      "exploration_badges": [
+        "Gold Digger",
+        "Mercy Missionary",
+        "Park Ranger",
+        "Praetorian of Privilege",
+        "Seen",
+        "Seer",
+        "Tiberian Overseer",
+        "Tuned In",
+        "Going Rouge",
+        "River Rat",
+        "Rail Rider"
+      ],
+      "enemies": [
+        "Destroyers",
+        "The Resistance",
+        "Praetorian Police Department",
+        "Syndicate",
+        "Praetorian Clockwork",
+        "Seers"
+      ],
+      "events": "Syndicate Takedown",
+      "connecting": [
+        "Nova Praetoria",
+        "Neutropolis",
+        "Underground Imperial",
+        "Pocket D"
+      ],
+      "transits": "Cole Transportation Authority, TUNNEL System",
+      "url": "https://homecoming.wiki/wiki/Imperial_City"
+    },
+    {
+      "zone": "Neutropolis",
+      "wiki_title": "Neutropolis",
+      "kind": "Praetorian City Zone",
+      "from": 15,
+      "to": 20,
+      "neighborhoods": [
+        {
+          "name": "Keyes Island",
+          "risk": "Red",
+          "from": 19,
+          "to": 20
+        },
+        {
+          "name": "Lambda Sector",
+          "risk": "Yellow",
+          "from": 18,
+          "to": 19
+        },
+        {
+          "name": "Neuron's Reach",
+          "risk": "Green",
+          "from": 16,
+          "to": 17
+        }
+      ],
+      "exploration_badges": [
+        "Airlift",
+        "Don't Drink It",
+        "Eyes to the Future",
+        "Longshoreman",
+        "Moar Power",
+        "Stockpiling",
+        "Stuff of Life",
+        "Urban Renewal",
+        "River Rat",
+        "Rail Rider"
+      ],
+      "enemies": [
+        "Praetorian Police Department",
+        "Praetorian Clockwork",
+        "Neuron's Clockwork",
+        "Anti-Matter's Clockwork",
+        "Resistance Clockwork",
+        "Resistance",
+        "Seers",
+        "Syndicate",
+        "Ghouls"
+      ],
+      "events": "The Great Escape",
+      "connecting": [
+        "Imperial City",
+        "Nova Praetoria",
+        "Underground Neutropolis"
+      ],
+      "transits": "Cole Transportation Authority",
+      "url": "https://homecoming.wiki/wiki/Neutropolis"
+    },
+    {
+      "zone": "Firebase Zulu",
+      "wiki_title": "Firebase_Zulu",
+      "kind": "Hero Hazard Zone",
+      "from": 40,
+      "to": 44,
+      "neighborhoods": [
+        {
+          "name": "Point Alpha",
+          "risk": "Yellow",
+          "from": 41,
+          "to": 44
+        },
+        {
+          "name": "Point Bravo",
+          "risk": "Yellow",
+          "from": 41,
+          "to": 44
+        },
+        {
+          "name": "Point Charlie",
+          "risk": "Yellow",
+          "from": 41,
+          "to": 44
+        },
+        {
+          "name": "Point Echo",
+          "risk": "Yellow",
+          "from": 40,
+          "to": 44
+        },
+        {
+          "name": "Point Foxtrot",
+          "risk": "Yellow",
+          "from": 40,
+          "to": 44
+        },
+        {
+          "name": "Point Sierra",
+          "risk": "Yellow",
+          "from": 40,
+          "to": 44
+        },
+        {
+          "name": "Point Tango",
+          "risk": "Yellow",
+          "from": 40,
+          "to": 44
+        },
+        {
+          "name": "Point Victor",
+          "risk": "Yellow",
+          "from": 40,
+          "to": 44
+        },
+        {
+          "name": "Point X-Ray",
+          "risk": "Yellow",
+          "from": 40,
+          "to": 44
+        },
+        {
+          "name": "Tempest Sector",
+          "risk": "Yellow",
+          "from": 41,
+          "to": 44
+        }
+      ],
+      "safe_havens": [
+        "Firebase November",
+        "Firebase Zulu"
+      ],
+      "exploration_badges": [
+        "Defying Gravity",
+        "Dimensional Sojourner",
+        "Stormwatcher",
+        "Alpha Ranger",
+        "Shadow Architect",
+        "X-Ray Spectator",
+        "Dancer with Death",
+        "Shard Leaper"
+      ],
+      "enemies": [
+        "Crey",
+        "Nemesis",
+        "Rularuu",
+        "Shadow Shard Reflections"
+      ],
+      "tf_contacts": "Dr. Quaterfield",
+      "connecting": [
+        "Cascade Archipelago",
+        "Chantry",
+        "Peregrine Island",
+        "Storm Palace"
+      ],
+      "transits": "TUNNEL System",
+      "url": "https://homecoming.wiki/wiki/Firebase_Zulu"
+    },
+    {
+      "zone": "Cascade Archipelago",
+      "wiki_title": "Cascade_Archipelago",
+      "kind": "Hero Hazard Zone",
+      "from": 40,
+      "to": 44,
+      "neighborhoods": [
+        {
+          "name": "The Air Shoals",
+          "risk": "Yellow",
+          "from": 40,
+          "to": 44
+        },
+        {
+          "name": "The Chanting Islands",
+          "risk": "Yellow",
+          "from": 40,
+          "to": 44
+        },
+        {
+          "name": "Crimson Falls",
+          "risk": "Yellow",
+          "from": 40,
+          "to": 44
+        },
+        {
+          "name": "The Marooned Shores",
+          "risk": "Yellow",
+          "from": 40,
+          "to": 44
+        },
+        {
+          "name": "The One-Way Path",
+          "risk": "Yellow",
+          "from": 40,
+          "to": 44
+        },
+        {
+          "name": "Tyrant's Rock",
+          "risk": "Yellow",
+          "from": 40,
+          "to": 44
+        }
+      ],
+      "exploration_badges": [
+        "Castaway",
+        "Peace Walker",
+        "Being and Nothingness",
+        "Hearing Voices",
+        "Liquid Memory",
+        "Usurper of Worlds",
+        "No Turning Back Now",
+        "The Heart of Memory"
+      ],
+      "enemies": [
+        "Circle of Thorns",
+        "Nemesis",
+        "Rularuu",
+        "Shadow Shard Reflections"
+      ],
+      "tf_contacts": "Sara Moore",
+      "connecting": [
+        "Firebase Zulu",
+        "Chantry"
+      ],
+      "url": "https://homecoming.wiki/wiki/Cascade_Archipelago"
+    },
+    {
+      "zone": "The Chantry",
+      "wiki_title": "The_Chantry",
+      "kind": "Hero Hazard Zone",
+      "from": 44,
+      "to": 47,
+      "neighborhoods": [
+        {
+          "name": "Bastion of Denial",
+          "risk": "Orange",
+          "from": 44,
+          "to": 47
+        },
+        {
+          "name": "Bastion of Guilt",
+          "risk": "Orange",
+          "from": 44,
+          "to": 47
+        },
+        {
+          "name": "Bastion of Pain",
+          "risk": "Orange",
+          "from": 44,
+          "to": 47
+        },
+        {
+          "name": "Bastion of Regret",
+          "risk": "Orange",
+          "from": 44,
+          "to": 47
+        },
+        {
+          "name": "Bastion of Shame",
+          "risk": "Orange",
+          "from": 44,
+          "to": 47
+        },
+        {
+          "name": "Bastion of Sorrow",
+          "risk": "Orange",
+          "from": 44,
+          "to": 47
+        },
+        {
+          "name": "Chantry",
+          "risk": "Orange",
+          "from": 44,
+          "to": 47
+        },
+        {
+          "name": "Path of Rage",
+          "risk": "Orange",
+          "from": 44,
+          "to": 47
+        },
+        {
+          "name": "Path of Tears",
+          "risk": "Orange",
+          "from": 44,
+          "to": 47
+        }
+      ],
+      "exploration_badges": [
+        "King of Pain / Queen of Pain",
+        "Unfettered",
+        "Penitent",
+        "Misbegotten",
+        "Bereaved",
+        "Dispossessed",
+        "Red Fog",
+        "Demiurge"
+      ],
+      "enemies": [
+        "Circle of Thorns",
+        "Rularuu",
+        "Shadow Shard Reflections"
+      ],
+      "tf_contacts": "Faathim the Kind, Justin Augustine",
+      "connecting": [
+        "Cascade Archipelago",
+        "Firebase Zulu",
+        "Storm Palace"
+      ],
+      "url": "https://homecoming.wiki/wiki/The_Chantry"
+    },
+    {
+      "zone": "Storm Palace",
+      "wiki_title": "Storm_Palace",
+      "kind": "Hero Trial Zone",
+      "from": 48,
+      "to": 53,
+      "neighborhoods": [
+        {
+          "name": "Lock of Anger",
+          "risk": "Red",
+          "from": 48,
+          "to": 53
+        },
+        {
+          "name": "Lock of Destruction",
+          "risk": "Red",
+          "from": 48,
+          "to": 53
+        },
+        {
+          "name": "Lock of Fury",
+          "risk": "Red",
+          "from": 48,
+          "to": 53
+        },
+        {
+          "name": "Lock of Hatred",
+          "risk": "Red",
+          "from": 48,
+          "to": 53
+        },
+        {
+          "name": "Lock of Malice",
+          "risk": "Red",
+          "from": 48,
+          "to": 53
+        },
+        {
+          "name": "Lock of Torment",
+          "risk": "Red",
+          "from": 48,
+          "to": 53
+        },
+        {
+          "name": "Path of Madness",
+          "risk": "Red",
+          "from": 48,
+          "to": 53
+        },
+        {
+          "name": "Storm Palace",
+          "risk": "Red",
+          "from": 48,
+          "to": 53
+        }
+      ],
+      "exploration_badges": [
+        "Courting Madness",
+        "Acolyte of Anger",
+        "Malice Aforethought",
+        "Tormented",
+        "Hate Machine",
+        "Fist of Fury",
+        "Eve of Destruction",
+        "Lord of Storms"
+      ],
+      "enemies": [
+        "Lanaruu",
+        "Rularuu"
+      ],
+      "connecting": [
+        "Chantry",
+        "Firebase Zulu"
+      ],
+      "url": "https://homecoming.wiki/wiki/Storm_Palace"
+    }
+  ]
+}
