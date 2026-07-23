@@ -587,9 +587,20 @@ def journey_places():
             data = json.load(f)
     except Exception:  # noqa: BLE001 — no file, no route section; never a broken page
         return jsonify({"ok": False})
-    return jsonify({"ok": True,
-                    "provenance": data.get("_provenance_label", "the author's recommended route"),
-                    "hero": data.get("hero", []), "villain": data.get("villain", [])})
+    out = {"ok": True,
+           "provenance": data.get("_provenance_label", "the author's recommended route"),
+           "hero": data.get("hero", []), "villain": data.get("villain", [])}
+    # The story layer is a SEPARATE source with a SEPARATE credit line — two
+    # different people's recommendations must never blur into one voice.
+    try:
+        with open(os.path.join(base, "data", "leveling_story.json"), encoding="utf-8") as f:
+            story = json.load(f)
+        out["story"] = {"provenance": story.get("_provenance_label", ""),
+                        "urls": story.get("_urls", {}), "xp_macro": story.get("xp_macro", {}),
+                        "hero": story.get("hero", {}), "villain": story.get("villain", {})}
+    except Exception:  # noqa: BLE001 — the route still stands without the story layer
+        pass
+    return jsonify(out)
 
 
 @app.route("/accolades")

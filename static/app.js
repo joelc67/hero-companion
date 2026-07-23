@@ -789,6 +789,30 @@ function _routeForStops(steps, bands) {
   return out;
 }
 
+// Same landing rule as the route: an item whose level isn't a stop lands on the
+// last stop at or before it.
+function _attachByLevel(steps, items) {
+  const out = steps.map(() => []);
+  const at = (lv) => { let k = 0; for (let i = 0; i < steps.length; i++) { if (steps[i].level <= lv) k = i; else break; } return k; };
+  (items || []).forEach(it => out[at(it.from)].push(it));
+  return out;
+}
+
+// The story layer lives in the card's DETAIL, not on its face: a contact chain
+// is a paragraph, and a paragraph on every stop is the wall we just removed.
+// The face carries only the zone name, so you know there's something to open.
+function _storyHtml(zones) {
+  return (zones || []).map(z =>
+    `<div class="jny-story"><b>📖 ${escHtml(z.zone)}</b> <span class="muted small">levels ${z.from}–${z.to}</span>`
+    + (z.contacts && z.contacts.length
+        ? `<div class="jny-story-chain">${z.contacts.map(escHtml).join(" → ")}</div>` : "")
+    + (z.unlocks ? `<div class="jny-tip">🔓 ${escHtml(z.unlocks)}</div>` : "")
+    + (z.xp_pause ? `<div class="jny-tip">⏸ pause XP at ${z.xp_pause.join(", then ")}</div>` : "")
+    + (z.content_warning ? `<div class="jny-warn">⚠ ${escHtml(z.content_warning)}</div>` : "")
+    + (z.note ? `<div class="muted small">${escHtml(z.note)}</div>` : "")
+    + `</div>`).join("");
+}
+
 function _routeBandAt(level, bands) {
   return (bands || []).find(b => level >= b.from && level <= b.to) || null;
 }
@@ -997,6 +1021,8 @@ function renderJourney() {
   const align = (localStorage.getItem("cohAlignment") || "hero") === "villain" ? "villain" : "hero";
   const bands = (JOURNEY_PLACES || {})[align] || [];
   const route = _routeForStops(steps, bands);
+  const storyLayer = (JOURNEY_PLACES || {}).story || {};
+  const storyAt = _attachByLevel(steps, (storyLayer[align] || {}).zones || []);
 
   const stops = steps.map((s, i) => {
     const state = i < hereIdx ? "done" : i === hereIdx ? "here" : "";
@@ -1019,7 +1045,10 @@ function renderJourney() {
       return `<span class="rt-delta ${dv > 0 ? "up" : "down"}">${dv > 0 ? "+" : ""}${dv}${u} ${lab}</span>`;
     }).filter(Boolean).join(" ");
     const detail = (deltas ? `<div class="jny-detail-deltas">${deltas}</div>` : "")
-      + (s.tips || []).map(t => `<div class="jny-tip">💡 ${escHtml(t)}</div>`).join("");
+      + (s.tips || []).map(t => `<div class="jny-tip">💡 ${escHtml(t)}</div>`).join("")
+      + _storyHtml(storyAt[i]);
+    const storyChip = storyAt[i].length
+      ? `<div class="jny-storychip">📖 ${storyAt[i].map(z => escHtml(z.zone)).join(" · ")}</div>` : "";
     return `<div class="jny-stop ${state}"><div class="jny-node">${s.level}</div>`
       + (state === "here" ? `<div class="jny-youare">★ you are here</div>` : "")
       // The stop you're ON opens itself: the full "what this level gives you"
@@ -1035,6 +1064,7 @@ function renderJourney() {
       // road, which is what made the old drawers a wall.
       + _routeHtml(route[i].band || (state === "here" ? _routeBandAt(s.level, bands) : null),
                    route[i].events, true)
+      + storyChip
       + (detail ? `<div class="jny-detail">${detail}</div>` : "")
       + `</div></div>`;
   }).join("");

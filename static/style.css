@@ -1570,7 +1570,12 @@ body { overflow: hidden; }
    lane has to reserve room for the tallest card, one open card was setting the
    height of the entire road. A detail panel that outgrows the screen is a wall
    of text anyway (Joel's word for it); past the cap it scrolls inside itself. */
-.jny-card.open { z-index: 5; max-height: 240px; overflow-y: auto; }
+/* EVERY card is capped, not just opened ones — the level-40 stop carries ten
+   Task Forces and grew to 389px on its face alone, and the lane reserves room
+   for its tallest card, so one busy stop was sizing the whole road again. Past
+   the cap a card scrolls inside itself; the road stays a fixed, readable band. */
+.jny-card { max-height: 240px; overflow-y: auto; }
+.jny-card.open { z-index: 5; }
 /* ONE SIDE, not two (Joel: "the layout is not efficient with space" — he had to
    zoom to 67% to screenshot it). Alternating cards above AND below made the road
    permanently two card-heights tall for one line of information. All cards hang
@@ -1599,6 +1604,10 @@ body { overflow: hidden; }
 .jny-route-places { font-size: 11.5px; line-height: 1.45; margin-top: 2px; }
 .jny-tf { font-size: 11.5px; margin-top: 3px; color: var(--accent); }
 .jny-route-src { font-size: 10px; color: var(--muted); font-style: italic; margin-top: 4px; }
+.jny-storychip { font-size: 11px; margin-top: 4px; color: var(--gold, var(--warn)); }
+.jny-story { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 11.5px; }
+.jny-story-chain { margin: 3px 0; line-height: 1.5; }
+.jny-warn { color: var(--warn); font-size: 11px; margin-top: 3px; }
 .jny-detail { display: none; margin-top: 6px; border-top: 1px solid var(--border); padding-top: 6px; }
 .jny-card.open .jny-detail { display: block; }
 .jny-tip { color: var(--muted); font-size: 11.5px; margin-top: 3px; }
