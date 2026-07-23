@@ -18,7 +18,7 @@ try:
                 # own 5000 while the launched dist exe fell back to 5001 - accept a
                 # port ONLY if it is the exe we just launched (version pin match).
                 m = json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}/meta", timeout=2))
-                if m.get("app_version") != "0.12.24":
+                if m.get("app_version") != "0.12.25":
                     continue
                 base = f"http://127.0.0.1:{port}"; break
             except Exception: pass
@@ -31,7 +31,7 @@ try:
     meta = json.load(urllib.request.urlopen(base+"/meta", timeout=5))
     print("version:", meta["app_version"], "model:", meta["model_version"], "packaged:", meta["packaged"])
     # Update these pins per release (like smoke_release's version expectation).
-    ok_all = meta["app_version"] == "0.12.24" and meta["model_version"] == 36
+    ok_all = meta["app_version"] == "0.12.25" and meta["model_version"] == 36
     if not ok_all:
         print("  VERSION/MODEL PIN MISMATCH — update the pins for this release")
     # THE GOLD TEST: every champion context, served to a frozen END USER via autopick.

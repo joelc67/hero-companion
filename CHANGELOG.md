@@ -2,27 +2,61 @@
 
 ## Unreleased
 
-- **The Journey opens the moment your 1–50 build finishes.** Four field
-  reports, one lesson: the greeting used to wait for clicks that never came
-  — first only the two "see the build" buttons, then any wizard exit, and
-  only once per browser ever. Now the road opens by itself the instant
-  "Build my kit" completes (the wizard's result waits underneath), and it
-  does so for every new or resumed leveling character. Closing it is just
-  closing it. If you'd rather it never open itself, the road's header has
-  the switch: "open automatically for new 1–50 characters" — remembered,
-  and reversible right there. The what-is-this introduction shows until
-  you press "Got it".
-- **The road drags like a map.** Grab it with the mouse and pan left/right —
-  clicks on cards still work (a real drag never counts as a click).
-- **Open cards never hide under the title bar.** More headroom on the road and
-  an opened card always paints on top (the level-7 card clipping report).
-- **Accolades on the Journey.** A new "Accolades worth working toward" drawer
-  lists the build-affecting accolades with their permanent bonuses and, where
-  the game data carries it, how to earn them — with a pointer to the
-  Accolades panel where owned ones get ticked.
-- The Zones & badges drawer's "coming with server data" note now names
-  per-zone enemies explicitly alongside zone names, level ranges, and task
-  forces.
+## 0.12.25 — 2026-07-23 — The Journey grows up
+
+The Leveling Journey went from a road with placeholder labels to a full
+1–50 field guide. Everything below is on the road now.
+
+- **Every zone shows its game picture.** The comic-panel splash plate for each
+  zone (City Hall for Atlas Park, the Rogue Isles for Mercy Island) sits on the
+  level's card, with the zone name printed across it. Pulled straight from the
+  game client, 38 zones covered.
+- **Where every badge is, in plain English.** Each exploration badge now carries
+  its location and a written direction ("on top of the casino, 120 yards due
+  east of Meteor Do"), plus its coordinates. Over 350 badges, with a pointer to
+  the VidiotMaps in-game overlay for the visual finder. Badge location data by
+  Gulbasaur's community effort via the public-domain content database.
+- **When each Task Force and Strike Force opens.** Every TF, SF, and trial on
+  the road shows "available at N" — Positron at 8, Synapse at 15, Lord Recluse
+  at 45, all fifty of them.
+- **Master and Incarnate-trial challenge badges.** Each task force and iTrial
+  shows its Master badge and the exact challenge sub-badges you need
+  ("Master of the B.A.F. — earn: Not On My Watch, Alarm Raiser, Gotta Keep 'Em
+  Separated, Strong & Pretty").
+- **A readiness check for every part of a zone.** Each neighborhood is read
+  against your level using the game's own con system: "Challenger Technology
+  21–27, tough" if you can go now, "come back at 27" if it is over your head.
+  So you know not just where to go, but whether you are ready for it.
+- **Every zone that fits your level, at a glance.** At any level the road lists
+  all the zones open to you, computed from the full 47-zone level table — not
+  just the ones on a written route.
+- **Where to level, level by level.** Each stop names the zones and story arcs
+  worth doing there, in order, with the XP-pause tips that keep you from
+  outlevelling a story — a hero and a villain route, condensed from the
+  community "Good Missions" and "Mean Missions" guides by Gulbasaur.
+- **See any side's content.** A Hero / Vigilante / Rogue / Villain / Flashback
+  switch on the road lets you browse the other side's leveling path without
+  touching your character — it is preview only, your build never changes.
+  A "Want to switch sides?" note explains how Null the Gull actually does it
+  in-game, and the Flashback view explains Ouroboros replay and its level
+  requirements.
+- **Every zone's foes, level range, and a wiki link.** Each zone entry names
+  who you will fight there and links to its full wiki page.
+- **Bigger, clearer, and it lights up.** Larger fonts throughout, the zone title
+  in the game's own heavy comic-title style, and the level you are looking at
+  glows gold on the road.
+
+Earlier in this cycle:
+
+- **The Journey opens the moment your 1–50 build finishes**, for every new or
+  resumed leveling character. Closing it is just closing it; the header switch
+  ("open automatically for new characters") turns the auto-open off, remembered
+  and reversible.
+- **The road drags like a map** — grab and pan; card clicks still work.
+- **Open cards never hide under the title bar**, and the panel scrolls in its
+  own window instead of stretching the road.
+- **Accolades on the Journey** — a drawer of the build-affecting accolades with
+  their permanent bonuses and how to earn them.
 
 ## 0.12.24 — 2026-07-22
 
