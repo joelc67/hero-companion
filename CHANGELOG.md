@@ -1,7 +1,25 @@
 # Hero Companion — What's New
 
-## Unreleased
+## 0.12.24 — 2026-07-22
 
+- **The Leveling Journey.** Your whole 1–50 as a road you scroll like a map —
+  every level a stop with its power pick, new enhancement slots, and
+  milestones; click a card for what that level buys you (stat gains and
+  tips). Security-level badges sit at 10/20/30/40/50 with the game's own
+  descriptions, and a "Zones & badges" drawer holds the full
+  exploration-badge catalog straight from the game's files, find-hints
+  included. The **🗺️ Journey button in the header is its on/off switch** —
+  click to open, click again to close (✕ and Esc work too, and the button
+  glows while the road is out). Zone display names, level ranges, and task
+  force suggestions are labeled as coming (they need server-side game data,
+  in progress) — nothing on the road is a guess.
+- **A 1–50 character's Journey starts ON.** Build or resume a leveling
+  character and the road opens itself the first time, introducing what it's
+  for, how to close and reopen it, and how to turn on the game's chat log —
+  with the full 2-minute setup steps right there — so your Play Log fills
+  while you play. Then it's your call: close it once (or press "Got it") and
+  it never opens itself again. Builds that aren't leveling see the same
+  introduction the first time they open the road themselves.
 - **The wizard never asks a question twice.** Starting a new character used to
   show the "tell me your aim" recommender and the "How do you play?" section
   with the same three questions — anyone picking their own archetype saw both.
@@ -9,27 +27,13 @@
   Mostly-in / You-fight-from answers and lives right below them ("Not sure
   what to roll? … 🔍 Find my character"). Asking it with Role unanswered
   flags the question instead of quietly assuming damage.
-- **A 1–50 character's Journey starts ON.** Build or resume a leveling
-  character and the road opens itself the first time, introducing what it's
-  for, how to close and reopen it (the 🗺️ Journey switch in the header), and
-  how to turn on the game's chat log — with the full 2-minute setup steps
-  right there — so your Play Log fills while you play. Then it's your call:
-  close it once (or press "Got it") and it never opens itself again. Builds
-  that aren't leveling see the same introduction the first time they open the
-  road themselves.
-- **The Leveling Journey (first cut).** A new "🗺️ See the journey" view on the
-  wizard's build result: your whole 1–50 rolls past left-to-right like a map —
-  every level a stop on the road with its power pick, new enhancement slots,
-  and milestones. Click a card for what that level buys you (stat gains and
-  tips); the security-level badges sit at 10/20/30/40/50 with the game's own
-  descriptions. A "Zones & badges" drawer holds the full exploration-badge
-  catalog straight from the game's files — badge names and their find-hint
-  descriptions grouped by zone. Zone display names, level ranges, and task
-  force suggestions are labeled as coming (they need server-side game data,
-  in progress) — nothing on the road is a guess.
-
-## 0.12.24 — 2026-07-22
-
+- **Farm advice works for the real farm choices again.** When the generic
+  "Fire Farm" option was split into AFK and Active in 0.12.22, eight pieces
+  of server-side farm guidance kept listening for the old name only — the
+  archetype recommender's farm ranking, farm build warnings, flame-epic
+  preference, farm incarnate advice, and the proc treatment for support-role
+  farm builds had all quietly stopped applying. All of them now recognize
+  both farm choices (and the old name, for older saved characters).
 - **Your archetype's hidden mechanics are now in the math AND on the screen
   (model v36).** Fury, Domination, Defiance, Vigilance, Scourge, Containment
   and the other built-in meters were silently absent from scoring; each is now
