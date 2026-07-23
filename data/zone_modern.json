@@ -596,6 +596,32 @@
                              "Towering Inferno", "Boomtown Troglodyte", "End of the Line", "Corpse Box"],
       "plaque_badges": ["Disciple III-V", "Just Said No to Superadine IV", "Scholar IV"],
       "url": "https://homecoming.wiki/wiki/Boomtown"
+    },
+    {
+      "zone": "Faultline",
+      "from": 15,
+      "to": 25,
+      "kind": "Hero city zone",
+      "since": "Rebuilt in Issue 8 (the pre-revamp zone is Echo: Faultline)",
+      "art_key": "overbrook",
+      "art_key_why": "The client ships this zone's map as 'Overbrook', the town that stood here before the archvillain Faultline destroyed it — the wiki states 'The ruins of Overbrook adopted his name', which sources the link. Second instance of the historical-name case after Boomtown/Baumton; same rule, declared in the data with its reason, never inferred.",
+      "note": "Gulbasaur's guide already routes you here at 15 and calls it where the modern game begins — this entry adds what his guide does not carry: which parts of it suit which level. The Overbrook Medical Center has no enemies at all.",
+      "contacts": ["Jim Temblor (15-19)", "Penelope Yin (15-19)", "Doc Delilah (20-24)", "Agent G (20-24)",
+                   "Detective Frasenbacker / Detective Kowaccio (police band, 15-25)"],
+      "neighborhoods": [
+        { "name": "New Overbrook", "from": 15, "to": 17, "risk": "Yellow" },
+        { "name": "Aftershock", "from": 18, "to": 20, "risk": "Orange" },
+        { "name": "Arachnos Dig Site", "from": 20, "to": 21, "risk": "Orange" },
+        { "name": "Overflow", "from": 20, "to": 22, "risk": "Orange" },
+        { "name": "Overbrook Dam", "from": 23, "to": 25, "risk": "Red" }
+      ],
+      "safe_havens": ["Overbrook Medical Center"],
+      "safe_havens_note": "marked Green with no enemies at all",
+      "enemies": ["Arachnos", "Clockwork", "Freakshow", "Hydra", "The Lost", "Sky Raiders", "Vahzilok"],
+      "exploration_badges": ["Drowned Rat", "Egg Hunter", "Escape Artist", "Old Fashioned",
+                             "Riveting", "Rock Bottom", "Undammed", "Upcycled"],
+      "plaque_badges": ["Disciple VI-VII", "Just Said No to Superadine V", "Scholar V"],
+      "url": "https://homecoming.wiki/wiki/Faultline"
     }
   ]
 }
