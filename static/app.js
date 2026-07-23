@@ -840,11 +840,11 @@ function _contentSide(al) {
 }
 // The alignments, in Null-the-Gull order, with their in-game colours.
 const _ALIGNMENTS = [
-  { key: "hero", label: "🦸 Hero", css: "al-hero" },
-  { key: "vigilante", label: "🛡️ Vigilante", css: "al-vig" },
-  { key: "rogue", label: "😈 Rogue", css: "al-rogue" },
-  { key: "villain", label: "🦹 Villain", css: "al-villain" },
-  { key: "praetorian", label: "🌀 Flashback", css: "al-prae" },
+  { key: "hero", label: "🦸 Hero", css: "al-hero", tip: "Paragon City, 1–50" },
+  { key: "vigilante", label: "🛡️ Vigilante", css: "al-vig", tip: "Hero-side, can visit villain content" },
+  { key: "rogue", label: "😈 Rogue", css: "al-rogue", tip: "Villain-side, can visit hero content" },
+  { key: "villain", label: "🦹 Villain", css: "al-villain", tip: "The Rogue Isles, 1–50" },
+  { key: "praetorian", label: "🌀 Flashback", css: "al-prae", tip: "Ouroboros: replay legacy Praetoria content" },
 ];
 window.setJourneyAlign = function (al) {
   _JNY_ALIGN = al;
@@ -1363,6 +1363,11 @@ function closeJourneyView(teach = true) {
   if (jb) jb.classList.remove("journey-open");
   if (teach) teachJourneyPill();
   _journeyAutoOpened = false;   // closing is just closing — no decision recorded
+  // The alignment preview is per-viewing: drop it on close so reopening always
+  // shows the character's REAL side, and nothing about the preview outlives the
+  // road. (It never touched the build to begin with — it only sets a local
+  // view flag and never writes cohAlignment / applyAlignment / build.)
+  _JNY_ALIGN = null;
 }
 
 function toggleJourneyView() {
@@ -1520,10 +1525,13 @@ function renderJourney() {
     + (journeyIntroDone() ? "" : _journeyIntroHtml())
     + `<div class="jny-head"><span class="muted small">Scroll or drag the road — click a card for what that level buys you.</span>`
     // See either side's content without changing your character's theme.
-    + ` <span class="jny-align" title="See any alignment's content">`
+    + ` <span class="jny-align">`
     + _ALIGNMENTS.map(a => `<button class="${a.css}${align === a.key ? " on" : ""}"`
-        + ` onclick="setJourneyAlign('${a.key}')">${a.label}</button>`).join("")
+        + ` title="${escHtml(a.tip)}" onclick="setJourneyAlign('${a.key}')">${a.label}</button>`).join("")
     + `</span>`
+    // Reassure: this only changes what you're LOOKING AT. Nothing about the
+    // character — powers, IO sets, badges, its real alignment — is touched.
+    + `<span class="jny-align-preview">preview only — your build is unchanged</span>`
     // Plain-English note for the alignment currently shown — because "Praetorian"
     // means nothing to a new player (Joel), and Vigilante/Rogue need their
     // cross-over spelled out.

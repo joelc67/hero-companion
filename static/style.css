@@ -1782,3 +1782,11 @@ body { overflow: hidden; }
 .jny-align button.al-prae.on    { border-color: #d9b34a; color: #d9b34a; }   /* imperial gold */
 .jny-align button.on { font-weight: 700; }
 .jny-align-note { margin: 4px 0 2px; font-style: italic; }
+
+/* Alignment buttons: inactive = DULL but READABLE (the label was dark-on-dark,
+   invisible — only the emoji showed). Now the text is legible when idle and the
+   active one lights up in its colour. */
+.jny-align button { color: var(--ink); opacity: .62; transition: opacity .12s ease; }
+.jny-align button:hover { opacity: 1; }
+.jny-align button.on { opacity: 1; }
+.jny-align-preview { margin-left: 8px; font-size: 12px; color: var(--muted); font-style: italic; }
