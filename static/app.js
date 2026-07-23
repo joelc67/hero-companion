@@ -813,6 +813,72 @@ function _storyHtml(zones) {
     + `</div>`).join("");
 }
 
+// ── THE LEVEL PANEL (Joel's layout ruling, 2026-07-24) ──────────────────────
+// "Zone image on left, then all info on right. Able to be scrolled down within
+// its window instead of maxing the whole time line size." So the road went back
+// to being a slim timetable and everything that used to fatten the cards lives
+// here, in one fixed-height window that scrolls itself.
+let _JNY_SEL = null;   // selected stop index
+let _JNY_CTX = null;   // {steps, route, storyAt, ...} — set by renderJourney
+
+window.selectJourneyStop = function (i) {
+  _JNY_SEL = i;
+  document.querySelectorAll("#journey-body .jny-card").forEach((c, k) =>
+    c.classList.toggle("sel", k === i));
+  renderJourneyLevelPanel();
+};
+
+// The art slot. There is no zone art yet — extracting it from the game's pigg
+// archives is its own job — so it says what it IS rather than showing a broken
+// frame or, worse, a picture of the wrong place.
+function _zoneArtHtml(zoneName) {
+  return `<div class="jny-art">`
+    + (zoneName ? `<div class="jny-art-name">${escHtml(zoneName)}</div>` : "")
+    + `<div class="jny-art-pending">zone art pending<br><span class="muted small">arrives with the game-art pass</span></div>`
+    + `</div>`;
+}
+
+function renderJourneyLevelPanel() {
+  const host = document.getElementById("jny-panel");
+  if (!host || !_JNY_CTX) return;
+  const { steps, route, storyAt, bands, lvBadges, hereIdx } = _JNY_CTX;
+  const i = _JNY_SEL, s = steps[i];
+  if (!s) { host.innerHTML = ""; return; }
+  const band = route[i].band || _routeBandAt(s.level, bands);
+  const zones = storyAt[i];
+  // The art follows the story zone when there is one, otherwise the route's
+  // first named place — the thing a player would actually be looking at.
+  const artName = zones.length ? zones[0].zone : (band && band.places[0]) || "";
+  const lb = lvBadges[s.level];
+  const deltas = _LVL_STATS.map(([k, lab, u]) => {
+    const dv = (s.delta || {})[k]; if (!dv || Math.abs(dv) < 1) return "";
+    return `<span class="rt-delta ${dv > 0 ? "up" : "down"}">${dv > 0 ? "+" : ""}${dv}${u} ${lab}</span>`;
+  }).filter(Boolean).join(" ");
+
+  host.innerHTML = _zoneArtHtml(artName)
+    + `<div class="jny-panel-info">`
+    + `<h4 class="jny-panel-h">Level ${s.level}`
+    + (i === hereIdx ? ` <span class="jny-panel-here">★ you are here</span>`
+       : i < hereIdx ? ` <span class="muted small">— reached</span>` : "")
+    + `</h4>`
+    + (s.picks || []).map(pk => pk.temp
+        ? `<div class="jny-pick"><b>Your choice</b> <span class="muted small">temporary — the level-24 respec re-places it</span></div>`
+        : `<div class="jny-pick"><b>${escHtml(pk.name)}</b> <span class="muted small">${escHtml(pk.powerset)}</span></div>`).join("")
+    + (s.slots ? `<div class="muted small">${s.slots} new slot${s.slots > 1 ? "s" : ""} — ${s.slots_running} / ${LEVELING_TOTAL} placed</div>` : "")
+    + (s.milestone ? `<div class="jny-ms">⭐ ${escHtml(s.milestone)}</div>` : "")
+    + (lb ? `<div class="jny-zbadge"><b>🏅 ${escHtml(lb.display_hero)}</b>`
+        + `<div class="muted small">${escHtml(lb.desc_hero || lb.desc_villain || "")}</div></div>` : "")
+    + (deltas ? `<div class="jny-detail-deltas">${deltas}</div>` : "")
+    + (s.tips || []).map(t => `<div class="jny-tip">💡 ${escHtml(t)}</div>`).join("")
+    + _routeHtml(band, route[i].events, true)
+    + (band ? `<div class="jny-route-src">where to play: ${escHtml(_JNY_CTX.routeProv)}</div>` : "")
+    + _storyHtml(zones)
+    + (zones.length ? `<div class="jny-route-src">story route: ${escHtml(_JNY_CTX.storyProv)}</div>` : "")
+    + (zones.some(z => z.xp_pause) && _JNY_CTX.xpMacro.text
+        ? `<div class="jny-tip">⏸ XP toggle macro: <code>${escHtml(_JNY_CTX.xpMacro.text)}</code></div>` : "")
+    + `</div>`;
+}
+
 function _routeBandAt(level, bands) {
   return (bands || []).find(b => level >= b.from && level <= b.to) || null;
 }
@@ -955,12 +1021,6 @@ function teachJourneyPill() {
   setTimeout(() => jb.classList.remove("journey-pulse"), 2600);
 }
 
-function toggleJourneyCard(i) {
-  const el = document.getElementById(`jny-card-${i}`);
-  if (el) el.classList.toggle("open");
-  _fitJourneyLane();   // an opened card is taller — give it room, then take it back
-}
-
 // The road claims exactly the height its cards need, no more. Cards sit above
 // and below the line, so the lane must reserve room for the tallest one; every
 // fixed guess has been wrong in one direction or the other (190px clipped an
@@ -1044,30 +1104,28 @@ function renderJourney() {
       const dv = (s.delta || {})[k]; if (!dv || Math.abs(dv) < 1) return "";
       return `<span class="rt-delta ${dv > 0 ? "up" : "down"}">${dv > 0 ? "+" : ""}${dv}${u} ${lab}</span>`;
     }).filter(Boolean).join(" ");
-    const detail = (deltas ? `<div class="jny-detail-deltas">${deltas}</div>` : "")
-      + (s.tips || []).map(t => `<div class="jny-tip">💡 ${escHtml(t)}</div>`).join("")
-      + _storyHtml(storyAt[i]);
-    const storyChip = storyAt[i].length
-      ? `<div class="jny-storychip">📖 ${storyAt[i].map(z => escHtml(z.zone)).join(" · ")}</div>` : "";
+    // THE ROAD IS A TIMETABLE, NOT A NOTICEBOARD (Joel's layout ruling): the
+    // stop carries only what fits at a glance — the level, its picks, its slots
+    // and a marker that there's more. Everything else moves to the panel below,
+    // which scrolls in its own window instead of stretching the whole road.
+    const marks = (route[i].band ? "📍" : "") + (route[i].events.length ? "🛡" : "")
+      + (storyAt[i].length ? "📖" : "");
     return `<div class="jny-stop ${state}"><div class="jny-node">${s.level}</div>`
       + (state === "here" ? `<div class="jny-youare">★ you are here</div>` : "")
-      // The stop you're ON opens itself: the full "what this level gives you"
-      // panel sits beside where you are, and the road ahead is just numbers
-      // until you click one (Joel's tram model — the game's own zone list leads
-      // with where you should be, not with everything everywhere).
-      + `<div class="jny-card${detail ? " has-detail" : ""}${state === "here" && detail ? " open" : ""}" id="jny-card-${i}"`
-      + (detail ? ` onclick="toggleJourneyCard(${i})" title="click for what this level buys you"` : "")
-      + `><div class="jny-lv">Level ${s.level}${state === "done" ? " — reached ✓" : state === "here" ? " — now" : ""}</div>`
+      + `<div class="jny-card${i === _JNY_SEL ? " sel" : ""}" id="jny-card-${i}"`
+      + ` onclick="selectJourneyStop(${i})" title="click to see this level in full">`
+      + `<div class="jny-lv">Level ${s.level}${state === "done" ? " — reached ✓" : state === "here" ? " — now" : ""}</div>`
       + picks + slotDots + ms + badgeChip
-      // Where to PLAY this level, beside the level itself. Shown where a band
-      // begins and on the stop you're standing on — not repeated down the whole
-      // road, which is what made the old drawers a wall.
-      + _routeHtml(route[i].band || (state === "here" ? _routeBandAt(s.level, bands) : null),
-                   route[i].events, true)
-      + storyChip
-      + (detail ? `<div class="jny-detail">${detail}</div>` : "")
+      + (marks ? `<div class="jny-marks">${marks}</div>` : "")
       + `</div></div>`;
   }).join("");
+
+  // Panel context — the panel re-renders on click without rebuilding the road.
+  _JNY_CTX = { steps, route, storyAt, bands, lvBadges, hereIdx,
+               storyProv: (storyLayer.provenance || ""), storyUrls: storyLayer.urls || {},
+               xpMacro: storyLayer.xp_macro || {},
+               routeProv: (JOURNEY_PLACES || {}).provenance || "" };
+  if (_JNY_SEL == null || _JNY_SEL >= steps.length) _JNY_SEL = hereIdx >= 0 ? hereIdx : 0;
 
   const zones = (jb.zones || []).map(z =>
     `<details class="jny-zone"><summary><b>${escHtml(z.zone_key)}</b>
@@ -1102,6 +1160,7 @@ function renderJourney() {
         open automatically for new characters</label>`
     + `</div>`
     + `<div class="jny-viewport"><div class="jny-strip"><div class="jny-lane">${stops}</div></div></div>`
+    + `<div class="jny-panel" id="jny-panel"></div>`
     + (zones
         ? `<details class="jny-zones"><summary>🧭 <b>Zones & badges</b> <span class="muted small">— the grounded
            catalog from the game's own files. ${escHtml(jb.pending || "")}</span></summary>
@@ -1116,6 +1175,7 @@ function renderJourney() {
     + `</div>`;
   _wireJourneyDrag();
   _fitJourneyLane();
+  renderJourneyLevelPanel();
 }
 
 // ── Level tracking + absence flag (leveling builds only) ────────────────────

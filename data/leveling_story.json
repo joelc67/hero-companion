@@ -1,11 +1,12 @@
 {
   "_source": "Two Homecoming forum guides, supplied by Joel: 'The Good Missions Guide — a heroic levelling journey through story arcs' (topic 13961, blueside) and 'The Mean Missions Guide — a villainous levelling journey through story arcs' (topic 21898, redside).",
-  "_credit_note": "EDITORIAL, and not ours. These are another player's guides, condensed to contact chains and level bands. The forums return 403 to automated reads, so this was transcribed from Joel's paste. ⚠ THE AUTHOR'S FORUM HANDLE IS NOT YET RECORDED — Joel to supply it, and it belongs in CREDITS.md and on the surface before this ships publicly. Crediting a guide by its title alone is not crediting its author.",
+  "_author": "Gulbasaur",
+  "_credit_note": "EDITORIAL, and not ours. Both guides are by Gulbasaur (the Mean guide's own text refers to 'my blueside guide', so the pair share an author), condensed here to contact chains and level bands. The forums return 403 to automated reads, so this was transcribed from Joel's paste. Credited in CREDITS.md and named on the surface wherever this layer is shown — a guide's judgement is its author's work, not a data file we parsed.",
   "_urls": {
     "hero": "https://forums.homecomingservers.com/topic/13961-the-good-missions-guide-a-heroic-levelling-journey-through-story-arcs/",
     "villain": "https://forums.homecomingservers.com/topic/21898-the-mean-missions-guide-a-villainous-levelling-journey-through-story-arcs/"
   },
-  "_provenance_label": "The Good / Mean Missions Guides (player-written)",
+  "_provenance_label": "The Good / Mean Missions Guides, by Gulbasaur",
   "xp_macro": {
     "text": "/macro_image \"DayJob_XPBoost\" \"XP Toggle\" \"option_toggle noxp\"",
     "why": "The guides route you through zones whose contacts have narrow level bands, and modern XP is faster than those zones were designed for. This macro makes a button that pauses and resumes XP so you don't outlevel a story mid-arc. Rule of thumb: pause at levels ending in 4 or 9."

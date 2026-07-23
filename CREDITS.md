@@ -45,4 +45,15 @@ tool understands was learned from, or verified against, these sources:
   to generate builds, compare them against the real game, and write up exactly what
   was wrong. Feedback of that quality is a gift.
 
+## The Guide Writer
+- **Gulbasaur** — author of *The Good Missions Guide: a heroic levelling journey through
+  story arcs* (https://forums.homecomingservers.com/topic/13961-the-good-missions-guide-a-heroic-levelling-journey-through-story-arcs/)
+  and *The Mean Missions Guide: a villainous levelling journey through story arcs*
+  (https://forums.homecomingservers.com/topic/21898-the-mean-missions-guide-a-villainous-levelling-journey-through-story-arcs/).
+  The Leveling Journey's story layer — which contacts to see, in which order, in which
+  zone, and where to pause your XP so a story arc doesn't slip out from under you — is
+  his work, condensed. The game will tell you where you're *allowed* to go; Gulbasaur
+  wrote down where it's worth going, and why. That judgement is not in any data file
+  we could parse.
+
 This tool is free and noncommercial, forever. See LICENSE.

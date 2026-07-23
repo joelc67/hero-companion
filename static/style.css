@@ -1604,6 +1604,29 @@ body { overflow: hidden; }
 .jny-route-places { font-size: 11.5px; line-height: 1.45; margin-top: 2px; }
 .jny-tf { font-size: 11.5px; margin-top: 3px; color: var(--accent); }
 .jny-route-src { font-size: 10px; color: var(--muted); font-style: italic; margin-top: 4px; }
+/* THE LEVEL PANEL — art left, everything else right, and the RIGHT side scrolls
+   in its own window. A fixed-height panel is what stops the road growing every
+   time a level has a lot going on (the level-40 stop carries ten Task Forces). */
+.jny-panel { display: flex; gap: 14px; margin-top: 10px; height: 250px;
+  background: var(--panel2); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+.jny-panel-info { flex: 1; overflow-y: auto; min-width: 0; }
+.jny-panel-h { margin: 0 0 6px; font-size: 14px; }
+.jny-panel-here { color: var(--warn); font-size: 11px; }
+.jny-art { flex: none; width: 230px; border-radius: 8px; border: 1px dashed var(--border);
+  background: var(--bg); display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 6px; text-align: center; padding: 10px; }
+.jny-art-name { font-weight: 600; font-size: 13px; }
+.jny-art-pending { font-size: 11px; color: var(--muted); }
+@media (max-width: 780px) { .jny-panel { flex-direction: column; height: auto; max-height: 60vh; }
+  .jny-art { width: 100%; height: 90px; } }
+/* the selected stop, so the road shows which level the panel is describing */
+.jny-card.sel { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(77, 163, 255, .25); }
+.jny-marks { margin-top: 4px; font-size: 12px; letter-spacing: 2px; }
+/* On the road a milestone is a headline, not the paragraph — the level-50 stop's
+   Incarnate write-up alone made its card 220px and the road follows its tallest
+   card. The full text is in the panel, where there's room to read it. */
+.jny-card .jny-ms { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; }
 .jny-storychip { font-size: 11px; margin-top: 4px; color: var(--gold, var(--warn)); }
 .jny-story { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 11.5px; }
 .jny-story-chain { margin: 3px 0; line-height: 1.5; }
