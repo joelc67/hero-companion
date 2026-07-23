@@ -1668,6 +1668,15 @@ let META = null;
 let AI_ON = true;   // flipped by /health; standalone builds report ai_enabled:false
 const _urlReady = (u) => !!u && !u.includes("REPLACE-ME");
 
+// Which app.js did THIS browser actually load? The URL carries the server's
+// cache-busting token, so a stale cached script shows an old token here even
+// when the server reports a new commit — the two halves of "is this fresh".
+function jsAssetToken() {
+  const s = document.querySelector('script[src*="app.js"]');
+  return s ? `app.js ${new URL(s.src, location.href).searchParams.get("v") || "(untokenized)"}`
+           : "app.js (not found)";
+}
+
 async function loadMeta() {
   try { META = await api("/meta"); } catch { META = null; }
   const f = $("app-version-foot");
@@ -1676,7 +1685,12 @@ async function loadMeta() {
   // the Mids data build lives in the About dialog it opens. (UX item 2026-07-16)
   const hv = $("app-ver");
   if (hv && META) {
-    hv.textContent = `v${META.app_version} ⓘ`;
+    // Build stamp: the server's commit next to the version, so "which code is
+    // this tab running" is answerable by eye. Only source checkouts have a
+    // commit — installed copies just show the version, as before.
+    hv.textContent = META.build_commit
+      ? `v${META.app_version} · ${META.build_commit} ⓘ` : `v${META.app_version} ⓘ`;
+    hv.title = `server ${META.build_commit || "(packaged)"} · ${jsAssetToken()}`;
     hv.hidden = false;
     hv.onclick = showAbout;
   }
@@ -1720,6 +1734,10 @@ function showAbout() {
       ${escHtml(META.db_version || "")}, with the values that drive the optimizer
       checked against the game client's own files</span></div>
     ${roster}
+    <div class="about-row"><b>This build</b><span>server
+      ${escHtml(META.build_commit || "(packaged — no source commit)")}, browser loaded
+      ${escHtml(jsAssetToken())}. If those two ever look out of step with a change you
+      were expecting, the page is running older code than the server.</span></div>
     <p class="about-links">${links}</p>`;
   $("about-modal").classList.remove("hidden");
 }

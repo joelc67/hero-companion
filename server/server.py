@@ -145,6 +145,22 @@ try:
         APP_VERSION = _vf.read().strip()
 except OSError:
     APP_VERSION = "0.0.0"
+# Build stamp: which source commit is this process actually running? Answerable by
+# eye in the header chip, so "did my change reach that tab" never needs a guess
+# again (2026-07-23, the Journey-greeting harness-vs-reality gap). Empty in frozen
+# builds — no repo, no git; the version number is the identity there.
+BUILD_COMMIT = ""
+try:
+    if getattr(sys, "frozen", False):
+        raise RuntimeError("packaged build — no repo, and no console flash to risk")
+    import subprocess as _sp
+    # --exclude='*' suppresses tag descriptions so this is just the hash, plus
+    # "-dirty" when the working tree has uncommitted edits (the mid-session case).
+    BUILD_COMMIT = _sp.check_output(
+        ["git", "describe", "--always", "--dirty", "--exclude=*", "--abbrev=7"],
+        cwd=ROOT, stderr=_sp.DEVNULL, text=True, timeout=5).strip()
+except Exception:  # noqa: BLE001 — no git / not a checkout / frozen: stamp stays blank
+    BUILD_COMMIT = ""
 try:
     with open(os.path.join(ROOT, "client_config.json"), encoding="utf-8") as _cf:
         CLIENT_CONFIG = json.load(_cf)
@@ -665,7 +681,8 @@ def meta():
             autostart = {"supported": True, "enabled": None}
     else:
         autostart = {"supported": False}
-    return jsonify({"ok": True, "app_version": APP_VERSION, "model_version": fp.MODEL_VERSION,
+    return jsonify({"ok": True, "app_version": APP_VERSION, "build_commit": BUILD_COMMIT,
+                    "model_version": fp.MODEL_VERSION,
                     "db_name": DB_NAME, "db_version": DB_VERSION,
                     "packaged": bool(getattr(sys, "frozen", False)),
                     "form_champions": has_forms,
