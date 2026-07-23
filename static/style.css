@@ -1592,6 +1592,13 @@ body { overflow: hidden; }
   padding: 1px 7px; margin: 5px 5px 0 0; }
 .jny-chip.badge { border-color: #b48ee0; color: #b48ee0; }
 .jny-ms { margin-top: 5px; font-size: 12px; color: var(--warn); }
+/* WHERE TO PLAY — the route block on a stop. Visually distinct from the plan's
+   own picks/slots because it is a different KIND of claim: the picks come from
+   the optimizer, this comes from a person's recommendation. */
+.jny-route { margin-top: 6px; padding-top: 5px; border-top: 1px dashed var(--border); }
+.jny-route-places { font-size: 11.5px; line-height: 1.45; margin-top: 2px; }
+.jny-tf { font-size: 11.5px; margin-top: 3px; color: var(--accent); }
+.jny-route-src { font-size: 10px; color: var(--muted); font-style: italic; margin-top: 4px; }
 .jny-detail { display: none; margin-top: 6px; border-top: 1px solid var(--border); padding-top: 6px; }
 .jny-card.open .jny-detail { display: block; }
 .jny-tip { color: var(--muted); font-size: 11.5px; margin-top: 3px; }

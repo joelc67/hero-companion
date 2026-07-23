@@ -768,6 +768,49 @@ function renderLevelStep() {
 // and every content entry rides its provenance string.
 let JOURNEY_BADGES = null;
 let JOURNEY_ACCS = null;   // /accolades rows, fetched once for the accolades drawer
+let JOURNEY_PLACES = null; // /journey/places — the author's route (see the endpoint's docstring)
+
+// Map the route's level bands onto the road's stops. A band starts at a level
+// that may not BE a stop (stops only exist where the plan does something), so
+// each band and each Task Force lands on the last stop at or before its level —
+// nothing is silently dropped for want of an exact match.
+function _routeForStops(steps, bands) {
+  const out = steps.map(() => ({ events: [] }));
+  if (!Array.isArray(bands) || !bands.length) return out;
+  const stopAtOrBefore = (lv) => {
+    let k = 0;
+    for (let i = 0; i < steps.length; i++) { if (steps[i].level <= lv) k = i; else break; }
+    return k;
+  };
+  bands.forEach((b) => {
+    out[stopAtOrBefore(b.from)].band = b;
+    (b.events || []).forEach(ev => out[stopAtOrBefore(ev.min || b.from)].events.push(ev));
+  });
+  return out;
+}
+
+function _routeBandAt(level, bands) {
+  return (bands || []).find(b => level >= b.from && level <= b.to) || null;
+}
+
+// One block: where this level plays, and what opens up here. Kept to a few
+// lines on purpose — this is a signpost, not the wall of everything-everywhere
+// the drawers used to be.
+function _routeHtml(band, events, showPlaces) {
+  const bits = [];
+  if (band && showPlaces) {
+    bits.push(`<div class="jny-route"><b>📍 Levels ${band.from}–${band.to}</b>`
+      + `<div class="jny-route-places">${band.places.map(escHtml).join(" · ")}</div>`
+      + (band.advice ? `<div class="jny-tip">💡 ${escHtml(band.advice)}</div>` : "")
+      + `</div>`);
+  }
+  events.forEach((ev) => {
+    const range = ev.min ? ` <span class="muted small">(${ev.min}${ev.max ? `–${ev.max}` : "+"})</span>` : "";
+    const note = ev.note ? ` <span class="muted small">· ${escHtml(ev.note)}</span>` : "";
+    bits.push(`<div class="jny-tf">${ev.kind === "trial" ? "⚔" : "🛡"} ${escHtml(ev.name)}${range}${note}</div>`);
+  });
+  return bits.join("");
+}
 
 async function openJourneyView(auto = false) {
   // The road gets its own full-width overlay (a 720px wizard box cramps a
@@ -792,6 +835,7 @@ async function openJourneyView(auto = false) {
   }
   if (!JOURNEY_BADGES) JOURNEY_BADGES = (await api("/journey/badges")) || {};
   if (!JOURNEY_ACCS) JOURNEY_ACCS = (await api("/accolades")) || {};
+  if (!JOURNEY_PLACES) JOURNEY_PLACES = (await api("/journey/places")) || {};
   renderJourney();
   // greet the player at their level: center the you-are-here stop
   const here = document.querySelector(".jny-stop.here");
@@ -949,6 +993,10 @@ function renderJourney() {
   const hereIdx = hereLv != null ? _stepIndexForLevel(hereLv) : -1;
   const jb = JOURNEY_BADGES || {};
   const lvBadges = jb.level_badges || {};
+  // The route follows the character's side — the Rogue Isles are a different road.
+  const align = (localStorage.getItem("cohAlignment") || "hero") === "villain" ? "villain" : "hero";
+  const bands = (JOURNEY_PLACES || {})[align] || [];
+  const route = _routeForStops(steps, bands);
 
   const stops = steps.map((s, i) => {
     const state = i < hereIdx ? "done" : i === hereIdx ? "here" : "";
@@ -982,6 +1030,11 @@ function renderJourney() {
       + (detail ? ` onclick="toggleJourneyCard(${i})" title="click for what this level buys you"` : "")
       + `><div class="jny-lv">Level ${s.level}${state === "done" ? " — reached ✓" : state === "here" ? " — now" : ""}</div>`
       + picks + slotDots + ms + badgeChip
+      // Where to PLAY this level, beside the level itself. Shown where a band
+      // begins and on the stop you're standing on — not repeated down the whole
+      // road, which is what made the old drawers a wall.
+      + _routeHtml(route[i].band || (state === "here" ? _routeBandAt(s.level, bands) : null),
+                   route[i].events, true)
       + (detail ? `<div class="jny-detail">${detail}</div>` : "")
       + `</div></div>`;
   }).join("");

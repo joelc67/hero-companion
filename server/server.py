@@ -561,6 +561,37 @@ def journey_badges():
     })
 
 
+@app.route("/journey/places")
+def journey_places():
+    """Where a character of a given level actually has a good time — the ROUTE.
+
+    This is the one part of the Journey that is deliberately NOT game-first, and
+    it says so on every card it feeds. Zone level ranges, TF gates and spawn
+    tables are server-side data we do not have (see /journey/badges' pending
+    note), but "where should a level-8 go" was never a data question in the
+    first place: the game's own tram board answers it as guidance, and so does
+    every player who has levelled a character. data/leveling_places.json is
+    Joel's own route, written from play, labelled as the author's
+    recommendation — never as a rule the game enforces.
+
+    When the i24 archive lands, the game's real gates arrive ALONGSIDE this, not
+    instead of it: a gate says what the game permits, a route says what's worth
+    doing. Positron is the case that needs both — the game lets a level-8 in,
+    and the route says Steel Canyon is not where a level-8 wants to be fighting.
+    """
+    try:
+        base = getattr(sys, "_MEIPASS", None) or os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "..")
+        with open(os.path.join(base, "data", "leveling_places.json"),
+                  encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:  # noqa: BLE001 — no file, no route section; never a broken page
+        return jsonify({"ok": False})
+    return jsonify({"ok": True,
+                    "provenance": data.get("_provenance_label", "the author's recommended route"),
+                    "hero": data.get("hero", []), "villain": data.get("villain", [])})
+
+
 @app.route("/accolades")
 def accolades_roster():
     """v34 accolade panel — DISPLAY-ONLY scaffold (v33 rides nothing from this).

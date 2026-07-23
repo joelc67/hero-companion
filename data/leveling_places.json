@@ -1,0 +1,143 @@
+{
+  "_source": "Joel Chambers (Pulsekin) — the author's own leveling route, written from play experience.",
+  "_note": "This file is EDITORIAL, not extracted. It is not from the game's client bins and not from a wiki: it is the author's recommendation of where a character of a given level has a good time. Task Force / Strike Force / Trial level ranges given in parentheses are the author's stated ranges; where he gave none, none is claimed. When the i24 server-data archive lands, the game's own zone level ranges and TF gates arrive alongside this — they do not replace it. A route is a recommendation; a gate is a rule. Keep both, and label which is which.",
+  "_provenance_label": "the author's recommended route",
+  "hero": [
+    {
+      "from": 1, "to": 5,
+      "places": ["Atlas Park missions", "street sweeping", "sewer runs"],
+      "events": [{ "name": "Death from Below Trial", "kind": "trial" }]
+    },
+    {
+      "from": 5, "to": 10,
+      "places": ["Hollows missions", "Kings Row missions/radios"],
+      "events": []
+    },
+    {
+      "from": 10, "to": 15,
+      "places": ["Hollows missions", "Steel Canyon missions/radios", "Skyway City missions/radios"],
+      "events": [
+        { "name": "Positron TF 1 & 2", "kind": "tf" },
+        { "name": "Cavern of Transcendence Trial", "kind": "trial", "min": 12, "max": 15 }
+      ]
+    },
+    {
+      "from": 15, "to": 20,
+      "places": ["Faultline missions", "Steel Canyon missions/radios", "Skyway City missions/radios"],
+      "events": [
+        { "name": "Synapse TF", "kind": "tf" },
+        { "name": "Drowning in Blood Trial", "kind": "trial", "min": 15, "max": 50 }
+      ]
+    },
+    {
+      "from": 20, "to": 25,
+      "places": ["Faultline missions", "Striga Isle missions", "Talos missions/radios", "Independence Port missions/radios"],
+      "events": [
+        { "name": "Penelope Yin TF", "kind": "tf" },
+        { "name": "Moonfire TF", "kind": "tf", "min": 23, "max": 28 }
+      ]
+    },
+    {
+      "from": 25, "to": 30,
+      "places": ["Striga Isle missions", "Croatoa missions", "Talos missions/radios", "Independence Port missions/radios"],
+      "events": [
+        { "name": "Citadel TF", "kind": "tf" },
+        { "name": "Ernesto Hess TF", "kind": "tf" },
+        { "name": "Twilight's Son TF", "kind": "tf", "min": 25, "max": 34, "note": "Ouroboros" },
+        { "name": "Terra Volta Respec Trial 1", "kind": "trial", "min": 24, "max": 33 }
+      ]
+    },
+    {
+      "from": 30, "to": 35,
+      "places": ["Croatoa missions", "Founders Falls missions/radios", "Brickstown missions/radios"],
+      "events": [
+        { "name": "Katie Hannon TF", "kind": "tf" },
+        { "name": "Manticore TF", "kind": "tf" },
+        { "name": "Mender Lazarus TF", "kind": "tf", "min": 30, "max": 39, "note": "Ouroboros" }
+      ]
+    },
+    {
+      "from": 35, "to": 40,
+      "places": ["Founders Falls missions/radios", "Brickstown missions/radios"],
+      "advice": "A good point to start running Task Forces if you haven't already.",
+      "events": [
+        { "name": "Numina TF", "kind": "tf" },
+        { "name": "Imperious TF", "kind": "tf", "min": 35, "max": 50 },
+        { "name": "Lady Grey TF", "kind": "tf", "min": 35, "max": 50 },
+        { "name": "Terra Volta Respec Trial 2", "kind": "trial", "min": 34, "max": 44 },
+        { "name": "Abandoned Sewers Trial", "kind": "trial", "min": 38, "max": 40 },
+        { "name": "Eden Trial", "kind": "trial", "min": 39, "max": 41 }
+      ]
+    },
+    {
+      "from": 40, "to": 50,
+      "places": ["Ouroboros missions", "Peregrine Island missions", "Task Forces you haven't run yet", "end-game content"],
+      "events": [
+        { "name": "Ms. Liberty TF", "kind": "tf", "min": 45, "max": 50 },
+        { "name": "Dr. Kahn TF", "kind": "tf" },
+        { "name": "Mender Silos", "kind": "tf", "min": 46, "max": 50, "note": "Ouroboros" },
+        { "name": "Terra Volta Respec Trial 3", "kind": "trial", "min": 44, "max": 50 },
+        { "name": "Apex TF", "kind": "tf", "note": "Incarnate content" },
+        { "name": "Tin Mage TF", "kind": "tf", "note": "Incarnate content" },
+        { "name": "Dr. Quaterfield TF", "kind": "tf", "note": "Shadow Shard" },
+        { "name": "Sara Moore TF", "kind": "tf", "note": "Shadow Shard" },
+        { "name": "Justin Augustine TF", "kind": "tf", "note": "Shadow Shard" },
+        { "name": "Faathim the Kind TF", "kind": "tf", "note": "Shadow Shard" }
+      ]
+    }
+  ],
+  "villain": [
+    {
+      "from": 1, "to": 5,
+      "places": ["Mercy Island"],
+      "events": [{ "name": "Death from Below Trial", "kind": "trial" }]
+    },
+    { "from": 5, "to": 10, "places": ["Mercy Island", "Port Oakes"], "events": [] },
+    { "from": 10, "to": 15, "places": ["Port Oakes", "Cap au Diable"], "events": [] },
+    {
+      "from": 15, "to": 20,
+      "places": ["Cap au Diable"],
+      "events": [
+        { "name": "Virgil Tarikoss Strike Force", "kind": "sf" },
+        { "name": "Drowning in Blood Trial", "kind": "trial", "min": 15, "max": 50 }
+      ]
+    },
+    {
+      "from": 20, "to": 25,
+      "places": ["Sharkhead Isle"],
+      "events": [
+        { "name": "Silver Mantis Strike Force", "kind": "sf" },
+        { "name": "Tree of Thorns Respec Trial 1", "kind": "trial", "min": 24, "max": 33 }
+      ]
+    },
+    {
+      "from": 25, "to": 30,
+      "places": ["Sharkhead Isle", "Nerva Archipelago"],
+      "events": [
+        { "name": "Renault Strike Force", "kind": "sf" },
+        { "name": "Mortimer Kal Strike Force", "kind": "sf", "min": 20, "max": 40 }
+      ]
+    },
+    {
+      "from": 30, "to": 40,
+      "places": ["Nerva Archipelago", "St. Martial"],
+      "events": [
+        { "name": "Ice Mistral Strike Force", "kind": "sf" },
+        { "name": "Tree of Thorns Respec Trial 2", "kind": "trial", "min": 34, "max": 44 },
+        { "name": "Imperious Task Force", "kind": "tf", "min": 35, "max": 50 },
+        { "name": "Lady Grey Task Force", "kind": "tf", "min": 35, "max": 50 }
+      ]
+    },
+    {
+      "from": 40, "to": 50,
+      "places": ["Grandville"],
+      "events": [
+        { "name": "Barracuda Strike Force", "kind": "sf", "min": 45, "max": 50 },
+        { "name": "Lord Recluse Strike Force", "kind": "sf", "min": 45, "max": 50 },
+        { "name": "Tree of Thorns Respec Trial 3", "kind": "trial", "min": 44, "max": 50 },
+        { "name": "Apex", "kind": "tf", "note": "Incarnate content" },
+        { "name": "Tin Mage", "kind": "tf", "note": "Incarnate content" }
+      ]
+    }
+  ]
+}
