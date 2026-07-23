@@ -352,24 +352,89 @@
       "kind": "Hero trial zone",
       "since": "Issue 0 — one of the originals",
       "note": "The reactor complex, and the way in to the Terra Volta Respecification Trials. Entered through the gate in the north wall from Independence Port. The zone's own level spread is unusually wide for its size — the neighbourhoods below are the real guide to where you belong.",
-      "contacts": ["Jane Hallaway (Independence Port)", "Captain James Harlan (Founders' Falls)",
-                   "Major Richard Flagg (Peregrine Island)"],
-      "neighborhoods": [
-        { "name": "Challenger Technology", "from": 21, "to": 27, "risk": "Yellow" },
-        { "name": "Raysun Petroleum", "from": 21, "to": 27, "risk": "Yellow" },
-        { "name": "Coroman Manufacturing", "from": 23, "to": 25, "risk": "Yellow" },
-        { "name": "Rogers Industries", "from": 25, "to": 27, "risk": "Orange" },
-        { "name": "Walker Energy", "from": 25, "to": 27, "risk": "Orange" },
-        { "name": "Gordon Trench", "from": 23, "to": 27, "risk": "Red" },
-        { "name": "Carter Engineering", "from": 27, "to": 29, "risk": "Red" },
-        { "name": "Savage Waste Disposal", "from": 27, "to": 29, "risk": "Red" },
-        { "name": "Terra Volta Reactor", "from": 27, "to": 29, "risk": "Red" }
+      "contacts": [
+        "Jane Hallaway (Independence Port)",
+        "Captain James Harlan (Founders' Falls)",
+        "Major Richard Flagg (Peregrine Island)"
       ],
-      "enemies": ["Devouring Earth", "Freakshow", "The Lost", "Sky Raiders"],
-      "exploration_badges": ["Conjunction Junction", "Meltdown", "Nervous Dreck",
-                             "Guardian of the Volts", "Danger! Danger!", "Scrapheap of History",
-                             "Power Walker", "High Voltage!"],
-      "plaque_badges": ["Authority V", "Historian IV", "Historian V", "Researcher VI"],
+      "neighborhoods": [
+        {
+          "name": "Challenger Technology",
+          "from": 21,
+          "to": 27,
+          "risk": "Yellow"
+        },
+        {
+          "name": "Raysun Petroleum",
+          "from": 21,
+          "to": 27,
+          "risk": "Yellow"
+        },
+        {
+          "name": "Coroman Manufacturing",
+          "from": 23,
+          "to": 25,
+          "risk": "Yellow"
+        },
+        {
+          "name": "Rogers Industries",
+          "from": 25,
+          "to": 27,
+          "risk": "Orange"
+        },
+        {
+          "name": "Walker Energy",
+          "from": 25,
+          "to": 27,
+          "risk": "Orange"
+        },
+        {
+          "name": "Gordon Trench",
+          "from": 23,
+          "to": 27,
+          "risk": "Red"
+        },
+        {
+          "name": "Carter Engineering",
+          "from": 27,
+          "to": 29,
+          "risk": "Red"
+        },
+        {
+          "name": "Savage Waste Disposal",
+          "from": 27,
+          "to": 29,
+          "risk": "Red"
+        },
+        {
+          "name": "Terra Volta Reactor",
+          "from": 27,
+          "to": 29,
+          "risk": "Red"
+        }
+      ],
+      "enemies": [
+        "Devouring Earth",
+        "Freakshow",
+        "The Lost",
+        "Sky Raiders"
+      ],
+      "exploration_badges": [
+        "Conjunction Junction",
+        "Meltdown",
+        "Nervous Dreck",
+        "Guardian of the Volts",
+        "Danger! Danger!",
+        "Scrapheap of History",
+        "Power Walker",
+        "High Voltage!"
+      ],
+      "plaque_badges": [
+        "Authority V",
+        "Historian IV",
+        "Historian V",
+        "Researcher VI"
+      ],
       "url": "https://homecoming.wiki/wiki/Terra_Volta"
     },
     {
@@ -379,13 +444,30 @@
       "kind": "Co-op trial zone",
       "since": "Issue 0 — one of the originals",
       "note": "Where the Hamidon raid happens. Deep in the wild reaches of Eden and wall-to-wall Devouring Earth — the wiki's own warning is that few have gone in alone and come out, so bring a league. Reached from Eden, or by the Black Helicopter Line.",
-      "events": [{ "name": "Hamidon", "kind": "event", "note": "the raid — a league, not a team" }],
-      "safe_havens": ["The abandoned Portal Corporation facility (northwest corner)"],
+      "events": [
+        {
+          "name": "Hamidon",
+          "kind": "event",
+          "note": "the raid — a league, not a team"
+        }
+      ],
+      "safe_havens": [
+        "The abandoned Portal Corporation facility (northwest corner)"
+      ],
       "safe_havens_note": "relatively free of the Devouring Earth that patrol everywhere else — the one place to regroup",
-      "enemies": ["Devouring Earth"],
-      "exploration_badges": ["Time Bandit", "Heart of the Hamidon", "Babe in the Woods",
-                             "The Wounded Earth", "Wild At Heart", "Among the Giants",
-                             "The Sound of Thunder", "Forest of Stone"],
+      "enemies": [
+        "Devouring Earth"
+      ],
+      "exploration_badges": [
+        "Time Bandit",
+        "Heart of the Hamidon",
+        "Babe in the Woods",
+        "The Wounded Earth",
+        "Wild At Heart",
+        "Among the Giants",
+        "The Sound of Thunder",
+        "Forest of Stone"
+      ],
       "url": "https://homecoming.wiki/wiki/The_Hive"
     },
     {
@@ -397,25 +479,92 @@
       "pvp_note": "Other players can attack you here. ANY level may enter and everyone is set to combat level 25 — under 25 you are sidekicked up, over 25 you are exemplared down and lose the powers you gained since. Shown at 25 because that is the level you actually fight at.",
       "since": "Issue 6",
       "note": "The first of the four PvP zones. Longbow and Arachnos are both here mining the Shiva meteor fragments, and the Shiva Strike mission is how you get a Shivan pet. Reached by helicopter — Skyway City for heroes, Cap au Diable for villains.",
-      "events": [{ "name": "Shiva Strike", "kind": "event", "note": "collect meteor fragments, earn a Shivan" }],
-      "contacts": ["Scientist (hero)", "Warzone Agent Eckman (hero)",
-                   "Evil Scientist (villain)", "Warzone Operative Oudot (villain)"],
-      "neighborhoods": [
-        { "name": "Freedom Base", "from": 25, "to": 27, "risk": "Blue" },
-        { "name": "Arachnos Base", "from": 25, "to": 27, "risk": "Purple" },
-        { "name": "Boardwalk", "from": 25, "to": 27, "risk": "Orange" },
-        { "name": "Dead Coast", "from": 25, "to": 27, "risk": "Orange" },
-        { "name": "Forgotten Forest", "from": 25, "to": 27, "risk": "Orange" },
-        { "name": "Green Nugget", "from": 25, "to": 27, "risk": "Orange" },
-        { "name": "Ground Zero", "from": 25, "to": 27, "risk": "Orange" },
-        { "name": "Water Street", "from": 25, "to": 27, "risk": "Orange" }
+      "events": [
+        {
+          "name": "Shiva Strike",
+          "kind": "event",
+          "note": "collect meteor fragments, earn a Shivan"
+        }
       ],
-      "enemies": ["Arachnos", "Banished Pantheon", "Circle of Thorns", "Freakshow",
-                  "Longbow", "Shivans", "Spectral Pirates", "Turrets"],
-      "exploration_badges": ["Lobbyist / Crooked Politician", "Hungry / All Consuming", "Imploding",
-                             "Ghoulish", "What Lurks Beyond", "Burgermeister", "Mostly Harmless",
-                             "Restless"],
-      "plaque_badges": ["Swashbuckler II"],
+      "contacts": [
+        "Scientist (hero)",
+        "Warzone Agent Eckman (hero)",
+        "Evil Scientist (villain)",
+        "Warzone Operative Oudot (villain)"
+      ],
+      "neighborhoods": [
+        {
+          "name": "Freedom Base",
+          "from": 25,
+          "to": 27,
+          "risk": "Blue"
+        },
+        {
+          "name": "Arachnos Base",
+          "from": 25,
+          "to": 27,
+          "risk": "Purple"
+        },
+        {
+          "name": "Boardwalk",
+          "from": 25,
+          "to": 27,
+          "risk": "Orange"
+        },
+        {
+          "name": "Dead Coast",
+          "from": 25,
+          "to": 27,
+          "risk": "Orange"
+        },
+        {
+          "name": "Forgotten Forest",
+          "from": 25,
+          "to": 27,
+          "risk": "Orange"
+        },
+        {
+          "name": "Green Nugget",
+          "from": 25,
+          "to": 27,
+          "risk": "Orange"
+        },
+        {
+          "name": "Ground Zero",
+          "from": 25,
+          "to": 27,
+          "risk": "Orange"
+        },
+        {
+          "name": "Water Street",
+          "from": 25,
+          "to": 27,
+          "risk": "Orange"
+        }
+      ],
+      "enemies": [
+        "Arachnos",
+        "Banished Pantheon",
+        "Circle of Thorns",
+        "Freakshow",
+        "Longbow",
+        "Shivans",
+        "Spectral Pirates",
+        "Turrets"
+      ],
+      "exploration_badges": [
+        "Lobbyist / Crooked Politician",
+        "Hungry / All Consuming",
+        "Imploding",
+        "Ghoulish",
+        "What Lurks Beyond",
+        "Burgermeister/meisterin",
+        "Mostly Harmless",
+        "Restless"
+      ],
+      "plaque_badges": [
+        "Swashbuckler II"
+      ],
       "url": "https://homecoming.wiki/wiki/Bloody_Bay"
     },
     {
@@ -428,20 +577,68 @@
       "since": "Issue 6",
       "note": "The second of the four PvP zones, and the one with a war going on in it: Longbow and Arachnos armies fight over hotspots, and whichever faction controls the zone unlocks temporary powers from its merchant. Bounty pays you for hunting player enemies. Heroes enter through the Steel Canyon gate on the eastern war wall.",
       "events": [
-        { "name": "Battle for Siren's Call", "kind": "event", "note": "Longbow vs Arachnos at hotspots — controls the zone" },
-        { "name": "Bounty", "kind": "event", "note": "hunt player enemies for spendable points" }
+        {
+          "name": "Battle for Siren's Call",
+          "kind": "event",
+          "note": "Longbow vs Arachnos at hotspots — controls the zone"
+        },
+        {
+          "name": "Bounty",
+          "kind": "event",
+          "note": "hunt player enemies for spendable points"
+        }
       ],
-      "contacts": ["Warzone Agent Brinson (hero)", "Warzone Operative Massey (villain)"],
+      "contacts": [
+        "Warzone Agent Brinson (hero)",
+        "Warzone Operative Massey (villain)"
+      ],
       "neighborhoods": [
-        { "name": "Buildville", "from": 30, "to": 32, "risk": "Orange" },
-        { "name": "Fossburg", "from": 30, "to": 32, "risk": "Orange" },
-        { "name": "Randall's Ruins", "from": 30, "to": 32, "risk": "Orange" },
-        { "name": "Talos Park", "from": 30, "to": 32, "risk": "Orange" }
+        {
+          "name": "Buildville",
+          "from": 30,
+          "to": 32,
+          "risk": "Orange"
+        },
+        {
+          "name": "Fossburg",
+          "from": 30,
+          "to": 32,
+          "risk": "Orange"
+        },
+        {
+          "name": "Randall's Ruins",
+          "from": 30,
+          "to": 32,
+          "risk": "Orange"
+        },
+        {
+          "name": "Talos Park",
+          "from": 30,
+          "to": 32,
+          "risk": "Orange"
+        }
       ],
-      "enemies": ["Arachnos", "Clockwork", "Longbow", "Sky Raiders", "Tsoo", "Warriors"],
-      "exploration_badges": ["Hangman", "Politician", "Broad Shoulders", "Piratical",
-                             "Wasted Resources", "Hot Dog", "Still Standing", "Volatile"],
-      "plaque_badges": ["Swashbuckler III"],
+      "enemies": [
+        "Arachnos",
+        "Clockwork",
+        "Longbow",
+        "Sky Raiders",
+        "Tsoo",
+        "Warriors"
+      ],
+      "exploration_badges": [
+        "Hangman/woman",
+        "Politician",
+        "Broad Shoulders",
+        "Piratical",
+        "Wasted Resources",
+        "Hot Dog",
+        "Still Standing",
+        "Volatile"
+      ],
+      "plaque_badges": [
+        "Swashbuckler III"
+      ],
       "url": "https://homecoming.wiki/wiki/Siren%27s_Call"
     },
     {
@@ -453,20 +650,66 @@
       "pvp_note": "FREE-FOR-ALL, not hero-versus-villain: any player may attack any other player here, including your own side. Any level may enter and everyone is set to combat level 38. Shown at 38 because that is the level you actually fight at.",
       "since": "Issue 6",
       "note": "Marshal Blitz took the island and started firing warheads at Paragon City; Longbow and Arachnos are both here trying to stop him, and neither trusts the other. The Missile Launch mission is the draw — launching the Warburg Rocket ten times earns Rocketman. The WEB is the Council's old underground weapons labs.",
-      "events": [{ "name": "Missile Launch", "kind": "event", "note": "launch the Warburg Rocket — ten launches earns Rocketman" }],
-      "contacts": ["Longbow Special Op (hero)", "Warzone Agent Goddard (hero)",
-                   "Arachnos Technician (villain)", "Warzone Operative Braun (villain)"],
-      "neighborhoods": [
-        { "name": "Hero Base", "from": 38, "to": 40, "risk": "Blue" },
-        { "name": "Villain Base", "from": 38, "to": 40, "risk": "Purple" },
-        { "name": "Warburg", "from": 38, "to": 40, "risk": "Orange" },
-        { "name": "The WEB", "from": 38, "to": 40, "risk": "Orange" }
+      "events": [
+        {
+          "name": "Missile Launch",
+          "kind": "event",
+          "note": "launch the Warburg Rocket — ten launches earns Rocketman"
+        }
       ],
-      "enemies": ["Arachnoids", "Arachnos", "Longbow", "Malta Operatives", "Rogue Arachnos", "Turrets"],
-      "exploration_badges": ["Weapon Inspector / Weapon of Mass Destruction", "Tunnel Rat",
-                             "Triumphant", "Disassembled", "Forcibly Evicted", "Herculean",
-                             "Nuclear", "Game Over"],
-      "plaque_badges": ["Arachnos Rising III"],
+      "contacts": [
+        "Longbow Special Op (hero)",
+        "Warzone Agent Goddard (hero)",
+        "Arachnos Technician (villain)",
+        "Warzone Operative Braun (villain)"
+      ],
+      "neighborhoods": [
+        {
+          "name": "Hero Base",
+          "from": 38,
+          "to": 40,
+          "risk": "Blue"
+        },
+        {
+          "name": "Villain Base",
+          "from": 38,
+          "to": 40,
+          "risk": "Purple"
+        },
+        {
+          "name": "Warburg",
+          "from": 38,
+          "to": 40,
+          "risk": "Orange"
+        },
+        {
+          "name": "The WEB",
+          "from": 38,
+          "to": 40,
+          "risk": "Orange"
+        }
+      ],
+      "enemies": [
+        "Arachnoids",
+        "Arachnos",
+        "Longbow",
+        "Malta Operatives",
+        "Rogue Arachnos",
+        "Turrets"
+      ],
+      "exploration_badges": [
+        "Weapon Inspector / Weapon of Mass Destruction",
+        "Tunnel Rat",
+        "Triumphant",
+        "Disassembled",
+        "Forcibly Evicted",
+        "Herculean",
+        "Nuclear",
+        "Game Over"
+      ],
+      "plaque_badges": [
+        "Arachnos Rising III"
+      ],
       "url": "https://homecoming.wiki/wiki/Warburg"
     },
     {
@@ -477,10 +720,26 @@
       "kind": "Co-op trial zone",
       "since": "Issue 9 (villains only at first; became co-op later)",
       "note": "Entirely Devouring Earth. Hamidon sits in the watery bowl in the north, and while it is there it is the ONLY enemy in the zone; when it is away, Thorn, Stropharia, Lattice and Quarry monsters roam instead, and killing them earns Essence of the Earth inspirations. One way in only: the Smuggler's Submarine.",
-      "events": [{ "name": "Hamidon", "kind": "event", "note": "in the northern bowl, surrounded by its mitochondria" }],
-      "enemies": ["Devouring Earth"],
-      "exploration_badges": ["Reborn", "Geneticist", "Here Be Dragons", "Caged Beast", "No Escape",
-                             "Hamidon's Ire", "The Tree of Woe", "Abyssal Gaze"],
+      "events": [
+        {
+          "name": "Hamidon",
+          "kind": "event",
+          "note": "in the northern bowl, surrounded by its mitochondria"
+        }
+      ],
+      "enemies": [
+        "Devouring Earth"
+      ],
+      "exploration_badges": [
+        "Reborn",
+        "Geneticist",
+        "Here Be Dragons",
+        "Caged Beast",
+        "No Escape",
+        "Hamidon's Ire",
+        "The Tree of Woe",
+        "Abyssal Gaze"
+      ],
       "url": "https://homecoming.wiki/wiki/The_Abyss"
     },
     {
@@ -492,23 +751,69 @@
       "alt_start": true,
       "alt_start_note": "Praetoria is a SEPARATE STARTING PATH, not a side trip. A character created here levels through Praetoria instead of Paragon City and is neither hero nor villain until they leave — so the hero and villain routes above do not apply to a Praetorian until then.",
       "note": "Cole's showcase district: Cole Tower, the Magisterium, and a police presence that is the point rather than the backdrop. Your contacts split by allegiance — Resistance (Warden arc) or Loyalist (Power and Responsibility arcs) — and that choice is the story. Bridges and the Cole Transportation Authority lead to Imperial City; sewer covers lead to the Underground; a manhole in the Magisterium goes to Pocket D.",
-      "events": [{ "name": "The Protest", "kind": "event" }],
-      "contacts": ["Praetor White", "Robert Flores / Tunnel Rat / Doctor Arvin (Resistance, Warden arc)",
-                   "Provost Marchand (Loyalist)",
-                   "Deputy Assistant of Information / Warrant / Reese (Loyalist, Power arc)",
-                   "Chief Interrogator Washington / Cleopatra (Loyalist, Responsibility arc)"],
-      "neighborhoods": [
-        { "name": "Magisterium", "from": 1, "to": 2, "risk": "Green" },
-        { "name": "Elyssian Avenue", "from": 2, "to": 4, "risk": "Yellow" },
-        { "name": "North Aetna", "from": 5, "to": 6, "risk": "Orange" },
-        { "name": "South Aetna", "from": 5, "to": 8, "risk": "Red" }
+      "events": [
+        {
+          "name": "The Protest",
+          "kind": "event"
+        }
       ],
-      "enemies": ["Destroyers", "Praetorian Police Department", "Praetorian Clockwork",
-                  "The Resistance", "Seers", "Angry Citizens"],
-      "exploration_badges": ["Ambitious", "Citizen Cole", "Civic Minded", "Guardians of Justice",
-                             "Into the Wild", "Technophile", "Un-Civil Society", "On the Waterfront",
-                             "River Rat", "Rail Rider"],
-      "plaque_badges": ["Starstruck I-VI", "Headjuiced (5 Resistance lessons)"],
+      "contacts": [
+        "Praetor White",
+        "Robert Flores / Tunnel Rat / Doctor Arvin (Resistance, Warden arc)",
+        "Provost Marchand (Loyalist)",
+        "Deputy Assistant of Information / Warrant / Reese (Loyalist, Power arc)",
+        "Chief Interrogator Washington / Cleopatra (Loyalist, Responsibility arc)"
+      ],
+      "neighborhoods": [
+        {
+          "name": "Magisterium",
+          "from": 1,
+          "to": 2,
+          "risk": "Green"
+        },
+        {
+          "name": "Elyssian Avenue",
+          "from": 2,
+          "to": 4,
+          "risk": "Yellow"
+        },
+        {
+          "name": "North Aetna",
+          "from": 5,
+          "to": 6,
+          "risk": "Orange"
+        },
+        {
+          "name": "South Aetna",
+          "from": 5,
+          "to": 8,
+          "risk": "Red"
+        }
+      ],
+      "enemies": [
+        "Destroyers",
+        "Praetorian Police Department",
+        "Praetorian Clockwork",
+        "The Resistance",
+        "Seers",
+        "Angry Citizens"
+      ],
+      "exploration_badges": [
+        "Ambitious",
+        "Citizen Cole",
+        "Civic Minded",
+        "Guardians of Justice",
+        "Into the Wild",
+        "Technophile",
+        "Un-Civil Society",
+        "On the Waterfront",
+        "River Rat",
+        "Rail Rider"
+      ],
+      "plaque_badges": [
+        "Starstruck I-VI",
+        "Headjuiced (5 Resistance lessons)"
+      ],
       "url": "https://homecoming.wiki/wiki/Nova_Praetoria"
     },
     {
@@ -520,27 +825,92 @@
       "alt_start": true,
       "alt_start_note": "The second leg of the Praetorian path, not a Paragon City zone. Continues from Nova Praetoria; Neutropolis follows.",
       "note": "The entertainment and commercial hub — TPN's tower, the Aureas theatre district, People's Park where Cole beat back the Devouring Earth. The Behavioral Adjustment Facility is here, holding Tellurian Plague victims, and the Syndicate runs the corruption the PPD would rather you did not see. Your Resistance-or-Loyalist choice keeps splitting the contacts.",
-      "events": [{ "name": "Syndicate Takedown", "kind": "event" }],
-      "contacts": ["Jessica Flores / Luke Larson / Dr. Steffard / Seer 1381 (Resistance, Warden arc)",
-                   "Mr. G / Transmuter / Tami Baker / Praetor Sinclair (Loyalist, Power arc)",
-                   "Interrogator Kang / Alec Parson / Investigator Whitworth / Chance McKnight (Loyalist, Responsibility arc)",
-                   "Bobcat (Loyalist, Power arc, 15-20)"],
-      "neighborhoods": [
-        { "name": "Logos", "from": 9, "to": 10, "risk": "Green" },
-        { "name": "People's Park", "from": 9, "to": 10, "risk": "Green" },
-        { "name": "Aureas", "from": 11, "to": 12, "risk": "Yellow" },
-        { "name": "Industry Avenue", "from": 11, "to": 12, "risk": "Yellow" },
-        { "name": "Aureas (eastern end)", "from": 12, "to": 13, "risk": "Orange" },
-        { "name": "Four Gables", "from": 13, "to": 14, "risk": "Red" },
-        { "name": "Behavioral Adjustment Facility", "from": 13, "to": 15, "risk": "Red" },
-        { "name": "Tiberian Bluff", "from": 14, "to": 15, "risk": "Red" }
+      "events": [
+        {
+          "name": "Syndicate Takedown",
+          "kind": "event"
+        }
       ],
-      "enemies": ["Destroyers", "The Resistance", "Praetorian Police Department", "Syndicate",
-                  "Praetorian Clockwork", "Seers"],
-      "exploration_badges": ["Gold Digger", "Mercy Missionary", "Park Ranger",
-                             "Praetorian of Privilege", "Seen", "Seer", "Tiberian Overseer",
-                             "Tuned In", "Going Rouge", "River Rat", "Rail Rider"],
-      "plaque_badges": ["Headjuiced VI-X"],
+      "contacts": [
+        "Jessica Flores / Luke Larson / Dr. Steffard / Seer 1381 (Resistance, Warden arc)",
+        "Mr. G / Transmuter / Tami Baker / Praetor Sinclair (Loyalist, Power arc)",
+        "Interrogator Kang / Alec Parson / Investigator Whitworth / Chance McKnight (Loyalist, Responsibility arc)",
+        "Bobcat (Loyalist, Power arc, 15-20)"
+      ],
+      "neighborhoods": [
+        {
+          "name": "Logos",
+          "from": 9,
+          "to": 10,
+          "risk": "Green"
+        },
+        {
+          "name": "People's Park",
+          "from": 9,
+          "to": 10,
+          "risk": "Green"
+        },
+        {
+          "name": "Aureas",
+          "from": 11,
+          "to": 12,
+          "risk": "Yellow"
+        },
+        {
+          "name": "Industry Avenue",
+          "from": 11,
+          "to": 12,
+          "risk": "Yellow"
+        },
+        {
+          "name": "Aureas (eastern end)",
+          "from": 12,
+          "to": 13,
+          "risk": "Orange"
+        },
+        {
+          "name": "Four Gables",
+          "from": 13,
+          "to": 14,
+          "risk": "Red"
+        },
+        {
+          "name": "Behavioral Adjustment Facility",
+          "from": 13,
+          "to": 15,
+          "risk": "Red"
+        },
+        {
+          "name": "Tiberian Bluff",
+          "from": 14,
+          "to": 15,
+          "risk": "Red"
+        }
+      ],
+      "enemies": [
+        "Destroyers",
+        "The Resistance",
+        "Praetorian Police Department",
+        "Syndicate",
+        "Praetorian Clockwork",
+        "Seers"
+      ],
+      "exploration_badges": [
+        "Gold Digger",
+        "Mercy Missionary",
+        "Park Ranger",
+        "Praetorian of Privilege",
+        "Seen",
+        "Seer",
+        "Tiberian Overseer",
+        "Tuned In",
+        "Going Rouge",
+        "River Rat",
+        "Rail Rider"
+      ],
+      "plaque_badges": [
+        "Headjuiced VI-X"
+      ],
       "url": "https://homecoming.wiki/wiki/Imperial_City"
     },
     {
@@ -552,22 +922,63 @@
       "alt_start": true,
       "alt_start_note": "The last leg of the Praetorian path. At 20 a Praetorian leaves for Primal Earth and picks a side — from there the hero or villain route above takes over.",
       "note": "Praetoria's industrial back end: three antimatter reactors, Clockwork foundries, and the last of First Ward's refugees living among the fumes. Ghouls hunt from the manholes and the government is not curious about the missing. Two names here become Incarnate trials later — Lambda Sector and the Keyes Island Reactor.",
-      "events": [{ "name": "The Great Escape", "kind": "event" }],
-      "contacts": ["Aaron Walker / Penelope Yin / Dark Watcher (Resistance, Warden arc)",
-                   "Dr. Hetzfeld / Neuron (Loyalist, Power arc)",
-                   "IVy / Mother Mayhem / Anti-Matter (Loyalist, Responsibility arc)"],
-      "neighborhoods": [
-        { "name": "Neuron's Reach", "from": 16, "to": 17, "risk": "Green" },
-        { "name": "Lambda Sector", "from": 18, "to": 19, "risk": "Yellow" },
-        { "name": "Keyes Island", "from": 19, "to": 20, "risk": "Red" }
+      "events": [
+        {
+          "name": "The Great Escape",
+          "kind": "event"
+        }
       ],
-      "enemies": ["Praetorian Police Department", "Praetorian Clockwork", "Neuron's Clockwork",
-                  "Anti-Matter's Clockwork", "Resistance Clockwork", "The Resistance", "Seers",
-                  "Syndicate", "Ghouls"],
-      "exploration_badges": ["Airlift", "Don't Drink It", "Eyes to the Future", "Longshoreman",
-                             "Moar Power", "Stockpiling", "Stuff of Life", "Urban Renewal",
-                             "River Rat", "Rail Rider"],
-      "plaque_badges": ["Headjuiced XI-XV"],
+      "contacts": [
+        "Aaron Walker / Penelope Yin / Dark Watcher (Resistance, Warden arc)",
+        "Dr. Hetzfeld / Neuron (Loyalist, Power arc)",
+        "IVy / Mother Mayhem / Anti-Matter (Loyalist, Responsibility arc)"
+      ],
+      "neighborhoods": [
+        {
+          "name": "Neuron's Reach",
+          "from": 16,
+          "to": 17,
+          "risk": "Green"
+        },
+        {
+          "name": "Lambda Sector",
+          "from": 18,
+          "to": 19,
+          "risk": "Yellow"
+        },
+        {
+          "name": "Keyes Island",
+          "from": 19,
+          "to": 20,
+          "risk": "Red"
+        }
+      ],
+      "enemies": [
+        "Praetorian Police Department",
+        "Praetorian Clockwork",
+        "Neuron's Clockwork",
+        "Anti-Matter's Clockwork",
+        "Resistance Clockwork",
+        "The Resistance",
+        "Seers",
+        "Syndicate",
+        "Ghouls"
+      ],
+      "exploration_badges": [
+        "Airlift",
+        "Don't Drink It",
+        "Eyes to the Future",
+        "Longshoreman/woman",
+        "Moar Power",
+        "Stockpiling",
+        "Stuff of Life",
+        "Urban Renewal",
+        "River Rat",
+        "Rail Rider"
+      ],
+      "plaque_badges": [
+        "Headjuiced XI-XV"
+      ],
       "url": "https://homecoming.wiki/wiki/Neutropolis"
     },
     {
@@ -580,21 +991,79 @@
       "art_key_why": "The client ships this zone's map as 'Baumton', its pre-Rikti name — the wiki's own overview opens 'the once peaceful burgh of Baumton became…', which is what makes the link sourced rather than assumed. This is the exact historical-name trap flagged when the art was extracted; it is closed here for this zone only, with its reason recorded.",
       "note": "Baumton after the Rikti levelled it: toppled skyscrapers, smoking craters, and a stalemate the PPD fights from behind a wall. A hazard zone, so the spawns are bigger than the street outside. In from Steel Canyon's north gate or up from the Sewer Network.",
       "events": [
-        { "name": "Babbage", "kind": "event", "note": "giant monster, along the northern wall" },
-        { "name": "War Machine", "kind": "event", "note": "the Council's fortified base in the south-east, behind mass-produced War Walkers" }
+        {
+          "name": "Babbage",
+          "kind": "event",
+          "note": "giant monster, along the northern wall"
+        },
+        {
+          "name": "War Machine",
+          "kind": "event",
+          "note": "the Council's fortified base in the south-east, behind mass-produced War Walkers"
+        }
       ],
       "neighborhoods": [
-        { "name": "The Fuse", "from": 11, "to": 14, "risk": "Yellow" },
-        { "name": "Powderkeg", "from": 12, "to": 16, "risk": "Orange" },
-        { "name": "Primer", "from": 12, "to": 16, "risk": "Orange" },
-        { "name": "The Cannonade", "from": 14, "to": 19, "risk": "Red" },
-        { "name": "Grenadier Village", "from": 14, "to": 19, "risk": "Red" },
-        { "name": "Council Base", "from": 14, "to": 19, "risk": "Red" }
+        {
+          "name": "The Fuse",
+          "from": 11,
+          "to": 14,
+          "risk": "Yellow"
+        },
+        {
+          "name": "Powderkeg",
+          "from": 12,
+          "to": 16,
+          "risk": "Orange"
+        },
+        {
+          "name": "Primer",
+          "from": 12,
+          "to": 16,
+          "risk": "Orange"
+        },
+        {
+          "name": "The Cannonade",
+          "from": 14,
+          "to": 19,
+          "risk": "Red"
+        },
+        {
+          "name": "Grenadier Village",
+          "from": 14,
+          "to": 19,
+          "risk": "Red"
+        },
+        {
+          "name": "Council Base",
+          "from": 14,
+          "to": 19,
+          "risk": "Red"
+        }
       ],
-      "enemies": ["5th Column", "Clockwork", "Council", "The Lost", "Outcasts", "Trolls", "Vahzilok"],
-      "exploration_badges": ["Phalanxer", "Regal", "Vision of Despair", "Destined for Valhalla",
-                             "Towering Inferno", "Boomtown Troglodyte", "End of the Line", "Corpse Box"],
-      "plaque_badges": ["Disciple III-V", "Just Said No to Superadine IV", "Scholar IV"],
+      "enemies": [
+        "5th Column",
+        "Clockwork",
+        "Council",
+        "The Lost",
+        "Outcasts",
+        "Trolls",
+        "Vahzilok"
+      ],
+      "exploration_badges": [
+        "Phalanxer",
+        "Regal",
+        "Vision of Despair",
+        "Destined for Valhalla",
+        "Towering Inferno",
+        "Boomtown Troglodyte",
+        "End of the Line",
+        "Corpse Box"
+      ],
+      "plaque_badges": [
+        "Disciple III-V",
+        "Just Said No to Superadine IV",
+        "Scholar IV"
+      ],
       "url": "https://homecoming.wiki/wiki/Boomtown"
     },
     {
@@ -606,22 +1075,81 @@
       "art_key": "overbrook",
       "art_key_why": "The client ships this zone's map as 'Overbrook', the town that stood here before the archvillain Faultline destroyed it — the wiki states 'The ruins of Overbrook adopted his name', which sources the link. Second instance of the historical-name case after Boomtown/Baumton; same rule, declared in the data with its reason, never inferred.",
       "note": "Gulbasaur's guide already routes you here at 15 and calls it where the modern game begins — this entry adds what his guide does not carry: which parts of it suit which level. The Overbrook Medical Center has no enemies at all.",
-      "contacts": ["Jim Temblor (15-19)", "Penelope Yin (15-19)", "Doc Delilah (20-24)", "Agent G (20-24)",
-                   "Detective Frasenbacker / Detective Kowaccio (police band, 15-25)"],
-      "neighborhoods": [
-        { "name": "New Overbrook", "from": 15, "to": 17, "risk": "Yellow" },
-        { "name": "Aftershock", "from": 18, "to": 20, "risk": "Orange" },
-        { "name": "Arachnos Dig Site", "from": 20, "to": 21, "risk": "Orange" },
-        { "name": "Overflow", "from": 20, "to": 22, "risk": "Orange" },
-        { "name": "Overbrook Dam", "from": 23, "to": 25, "risk": "Red" }
+      "contacts": [
+        "Jim Temblor (15-19)",
+        "Penelope Yin (15-19)",
+        "Doc Delilah (20-24)",
+        "Agent G (20-24)",
+        "Detective Frasenbacker / Detective Kowaccio (police band, 15-25)"
       ],
-      "safe_havens": ["Overbrook Medical Center"],
+      "neighborhoods": [
+        {
+          "name": "New Overbrook",
+          "from": 15,
+          "to": 17,
+          "risk": "Yellow"
+        },
+        {
+          "name": "Aftershock",
+          "from": 18,
+          "to": 20,
+          "risk": "Orange"
+        },
+        {
+          "name": "Arachnos Dig Site",
+          "from": 20,
+          "to": 21,
+          "risk": "Orange"
+        },
+        {
+          "name": "Overflow",
+          "from": 20,
+          "to": 22,
+          "risk": "Orange"
+        },
+        {
+          "name": "Overbrook Dam",
+          "from": 23,
+          "to": 25,
+          "risk": "Red"
+        }
+      ],
+      "safe_havens": [
+        "Overbrook Medical Center"
+      ],
       "safe_havens_note": "marked Green with no enemies at all",
-      "enemies": ["Arachnos", "Clockwork", "Freakshow", "Hydra", "The Lost", "Sky Raiders", "Vahzilok"],
-      "exploration_badges": ["Drowned Rat", "Egg Hunter", "Escape Artist", "Old Fashioned",
-                             "Riveting", "Rock Bottom", "Undammed", "Upcycled"],
-      "plaque_badges": ["Disciple VI-VII", "Just Said No to Superadine V", "Scholar V"],
+      "enemies": [
+        "Arachnos",
+        "Clockwork",
+        "Freakshow",
+        "Hydra",
+        "The Lost",
+        "Sky Raiders",
+        "Vahzilok"
+      ],
+      "exploration_badges": [
+        "Drowned Rat",
+        "Egg Hunter",
+        "Escape Artist",
+        "Old Fashioned",
+        "Riveting",
+        "Rock Bottom",
+        "Undammed",
+        "Upcycled"
+      ],
+      "plaque_badges": [
+        "Disciple VI-VII",
+        "Just Said No to Superadine V",
+        "Scholar V"
+      ],
       "url": "https://homecoming.wiki/wiki/Faultline"
     }
-  ]
+  ],
+  "_verification": {
+    "method": "Every exploration badge each wiki page lists was matched against badges.bin, exported from the LIVE game client. A zone whose badges are all present is content that exists in the game today; a zone whose badges are absent would be a stale wiki page and must not ship.",
+    "result": "119 of 119 listed exploration badges found in the live client, across all 14 zones.",
+    "date": "2026-07-24",
+    "note": "This check also caught three transcription errors of mine: the client names those badges Hangman/woman, Burgermeister/meisterin and Longshoreman/woman, and the game strings now win over the wiki summary formatting.",
+    "art_rule": "Zone art is served only when its asset name is corroborated as a current zone (badges.bin key, or an art_key a zone declares with a written reason). Withheld: Woodvale, Venice, White Plains, white."
+  }
 }

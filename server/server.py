@@ -621,7 +621,46 @@ def journey_places():
             s = re.sub(r"^(the|echo:)\s+", "", str(s or "").lower())
             return "".join(c for c in s if c.isalnum())
 
-        out["art"] = {_zn(z["asset_name"]): z["file"] for z in art.get("zones", [])}
+        # ⚠ ONLY ART FOR ZONES THAT STILL EXIST (Joel's ruling, 2026-07-24).
+        # map.bin's asset names are DEV-ERA: some are zones the live game no
+        # longer has under that name (Woodvale, Venice, White Plains) and one is
+        # a literal placeholder ("white"). Showing a picture labelled with a name
+        # no player can find is worse than showing none. So an asset is served
+        # only when its name is corroborated as a current zone, by either:
+        #   (a) matching a zone key from badges.bin — live client content, or
+        #   (b) being explicitly claimed by a zone_modern entry's art_key, which
+        #       carries a written reason (Boomtown←Baumton, Faultline←Overbrook).
+        # Everything else is withheld and counted, never quietly shipped.
+        live = set()
+        try:
+            with open(os.path.join(base, "data", "journey_badges.json"), encoding="utf-8") as f:
+                for b in json.load(f).get("badges", []):
+                    if b.get("zone_key"):
+                        live.add(_zn(b["zone_key"]))
+        except Exception:  # noqa: BLE001
+            pass
+        for z in (out.get("modern") or {}).get("zones", []):
+            live.add(_zn(z.get("zone")))
+
+        def _is_current(name):
+            n = _zn(name)
+            if not n or n in live:
+                return True
+            # "The Hive" vs the key "TheHive", "Talos" vs "TalosIsland"
+            return any(len(k) >= 5 and len(n) >= 5 and (k.startswith(n) or n.startswith(k))
+                       for k in live)
+
+        claimed = {z["art_key"] for z in (out.get("modern") or {}).get("zones", [])
+                   if z.get("art_key")}
+        served, withheld = {}, []
+        for z in art.get("zones", []):
+            key = _zn(z["asset_name"])
+            if _is_current(z["asset_name"]) or key in claimed:
+                served[key] = z["file"]
+            else:
+                withheld.append(z["asset_name"])
+        out["art"] = served
+        out["art_withheld"] = sorted(withheld)
     except Exception:  # noqa: BLE001 — no art file, no art; the slot says so
         pass
     return jsonify(out)
