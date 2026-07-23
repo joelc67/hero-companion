@@ -371,6 +371,22 @@
                              "Power Walker", "High Voltage!"],
       "plaque_badges": ["Authority V", "Historian IV", "Historian V", "Researcher VI"],
       "url": "https://homecoming.wiki/wiki/Terra_Volta"
+    },
+    {
+      "zone": "The Hive",
+      "from": 45,
+      "to": 50,
+      "kind": "Co-op trial zone",
+      "since": "Issue 0 — one of the originals",
+      "note": "Where the Hamidon raid happens. Deep in the wild reaches of Eden and wall-to-wall Devouring Earth — the wiki's own warning is that few have gone in alone and come out, so bring a league. Reached from Eden, or by the Black Helicopter Line.",
+      "events": [{ "name": "Hamidon", "kind": "event", "note": "the raid — a league, not a team" }],
+      "safe_havens": ["The abandoned Portal Corporation facility (northwest corner)"],
+      "safe_havens_note": "relatively free of the Devouring Earth that patrol everywhere else — the one place to regroup",
+      "enemies": ["Devouring Earth"],
+      "exploration_badges": ["Time Bandit", "Heart of the Hamidon", "Babe in the Woods",
+                             "The Wounded Earth", "Wild At Heart", "Among the Giants",
+                             "The Sound of Thunder", "Forest of Stone"],
+      "url": "https://homecoming.wiki/wiki/The_Hive"
     }
   ]
 }
