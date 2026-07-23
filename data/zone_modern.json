@@ -542,6 +542,33 @@
                              "Tuned In", "Going Rouge", "River Rat", "Rail Rider"],
       "plaque_badges": ["Headjuiced VI-X"],
       "url": "https://homecoming.wiki/wiki/Imperial_City"
+    },
+    {
+      "zone": "Neutropolis",
+      "from": 15,
+      "to": 20,
+      "kind": "Praetorian city zone",
+      "since": "Issue 18 (Going Rogue)",
+      "alt_start": true,
+      "alt_start_note": "The last leg of the Praetorian path. At 20 a Praetorian leaves for Primal Earth and picks a side — from there the hero or villain route above takes over.",
+      "note": "Praetoria's industrial back end: three antimatter reactors, Clockwork foundries, and the last of First Ward's refugees living among the fumes. Ghouls hunt from the manholes and the government is not curious about the missing. Two names here become Incarnate trials later — Lambda Sector and the Keyes Island Reactor.",
+      "events": [{ "name": "The Great Escape", "kind": "event" }],
+      "contacts": ["Aaron Walker / Penelope Yin / Dark Watcher (Resistance, Warden arc)",
+                   "Dr. Hetzfeld / Neuron (Loyalist, Power arc)",
+                   "IVy / Mother Mayhem / Anti-Matter (Loyalist, Responsibility arc)"],
+      "neighborhoods": [
+        { "name": "Neuron's Reach", "from": 16, "to": 17, "risk": "Green" },
+        { "name": "Lambda Sector", "from": 18, "to": 19, "risk": "Yellow" },
+        { "name": "Keyes Island", "from": 19, "to": 20, "risk": "Red" }
+      ],
+      "enemies": ["Praetorian Police Department", "Praetorian Clockwork", "Neuron's Clockwork",
+                  "Anti-Matter's Clockwork", "Resistance Clockwork", "The Resistance", "Seers",
+                  "Syndicate", "Ghouls"],
+      "exploration_badges": ["Airlift", "Don't Drink It", "Eyes to the Future", "Longshoreman",
+                             "Moar Power", "Stockpiling", "Stuff of Life", "Urban Renewal",
+                             "River Rat", "Rail Rider"],
+      "plaque_badges": ["Headjuiced XI-XV"],
+      "url": "https://homecoming.wiki/wiki/Neutropolis"
     }
   ]
 }
