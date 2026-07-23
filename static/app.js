@@ -761,10 +761,12 @@ function renderLevelStep() {
 // and every content entry rides its provenance string.
 let JOURNEY_BADGES = null;
 
-async function openJourneyView() {
+async function openJourneyView(auto = false) {
   // The road gets its own full-width overlay (a 720px wizard box cramps a
   // horizontal journey) — so it opens identically from the wizard's result
-  // button, the header 🗺️, or a resumed character.
+  // button, the header 🗺️, or a resumed character. `auto` marks a first-
+  // meeting self-open (maybeAutoOpenJourney) — only THAT close is a decision.
+  _journeyAutoOpened = auto;
   const modal = $("journey-modal"), out = $("journey-body");
   modal.classList.remove("hidden");
   const jb = $("journey-btn");
@@ -794,8 +796,16 @@ async function openJourneyView() {
 // never force it open again. Non-leveling builds aren't auto-opened, but
 // their first manual open shows the same intro, so the basics are always
 // somewhere.
-function journeyIntroDone() { return !!localStorage.getItem("journeyIntroDone"); }
-function markJourneyIntroDone() { try { localStorage.setItem("journeyIntroDone", "1"); } catch (e) { /* private mode */ } }
+// The remembered decision is tied to the FIRST MEETING itself: it is made by
+// pressing "Got it", or by closing a journey that opened ITSELF. A casual
+// pill open/close (exploring the toggle) never counts — Joel's field report
+// 2026-07-22: his toggle exploration recorded a "decision" and the tank
+// build's first landing greeted him with nothing. The storage key is new
+// ("journeyMet", not the old journeyIntroDone) so anyone wrongly marked by
+// the old semantics re-meets the intro once.
+let _journeyAutoOpened = false;
+function journeyIntroDone() { return !!localStorage.getItem("journeyMet"); }
+function markJourneyIntroDone() { try { localStorage.setItem("journeyMet", "1"); } catch (e) { /* private mode */ } }
 window.journeyIntroGotIt = function () {
   markJourneyIntroDone();
   const card = document.getElementById("jny-intro");
@@ -805,7 +815,7 @@ function maybeAutoOpenJourney() {
   if (!isLevelingBuild()) return;                    // 1-50 starts ON; others opt in
   if (!(build.powers || []).length) return;
   if (journeyIntroDone()) return;                    // they've decided already
-  openJourneyView();
+  openJourneyView(true);
 }
 function _journeyIntroHtml() {
   return `<div class="jny-intro" id="jny-intro">
@@ -834,7 +844,10 @@ function closeJourneyView(teach = true) {
   const jb = $("journey-btn");
   if (jb) jb.classList.remove("journey-open");
   if (teach) teachJourneyPill();
-  markJourneyIntroDone();   // closing IS the decision — never auto-open again
+  // Only closing the FIRST MEETING (a self-opened journey) is the remembered
+  // decision — a casual pill open/close never suppresses the future greeting.
+  if (_journeyAutoOpened) markJourneyIntroDone();
+  _journeyAutoOpened = false;
 }
 
 function toggleJourneyView() {
