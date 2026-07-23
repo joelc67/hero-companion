@@ -1772,3 +1772,13 @@ body { overflow: hidden; }
 .jny-pick, .jny-pick b { font-size: 15px; }
 /* TF/SF availability level — the "available at N" tag on a run. */
 .jny-avail { font-size: 13px; color: var(--accent); font-weight: 600; }
+
+/* The four true alignments + Praetoria, each in its in-game colour when active
+   (Joel: Rogue should have "that amber look"). Inactive = neutral outline. */
+.jny-align button.al-hero.on    { border-color: #4da3ff; color: #4da3ff; }
+.jny-align button.al-vig.on     { border-color: #7fc7e0; color: #7fc7e0; }
+.jny-align button.al-rogue.on   { border-color: #e0a63c; color: #e0a63c; }   /* amber */
+.jny-align button.al-villain.on { border-color: #e05c5c; color: #e05c5c; }
+.jny-align button.al-prae.on    { border-color: #d9b34a; color: #d9b34a; }   /* imperial gold */
+.jny-align button.on { font-weight: 700; }
+.jny-align-note { margin: 4px 0 2px; font-style: italic; }

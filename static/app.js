@@ -828,10 +828,47 @@ let _JNY_ALIGN = null;
 function _journeyAlign() {
   return _JNY_ALIGN || (localStorage.getItem("cohAlignment") || "hero");
 }
+// CoH's four true alignments map onto two leveling ROADS: a Vigilante levels in
+// Paragon City like a Hero, a Rogue levels in the Rogue Isles like a Villain —
+// the difference is the OTHER side's content they can also reach. Praetoria is
+// its own start. This maps an alignment to the content road it walks.
+function _contentSide(al) {
+  al = al || _journeyAlign();
+  if (al === "vigilante") return "hero";
+  if (al === "rogue") return "villain";
+  return al;   // hero, villain, praetorian
+}
+// The alignments, in Null-the-Gull order, with their in-game colours.
+const _ALIGNMENTS = [
+  { key: "hero", label: "🦸 Hero", css: "al-hero" },
+  { key: "vigilante", label: "🛡️ Vigilante", css: "al-vig" },
+  { key: "rogue", label: "😈 Rogue", css: "al-rogue" },
+  { key: "villain", label: "🦹 Villain", css: "al-villain" },
+  { key: "praetorian", label: "⚖️ Praetoria", css: "al-prae" },
+];
 window.setJourneyAlign = function (al) {
   _JNY_ALIGN = al;
   renderJourney();
 };
+// One plain sentence about the alignment being shown — no jargon.
+function _alignNote(al) {
+  switch (al) {
+    case "vigilante":
+      return "Vigilante — a hero who bends the rules. You level in Paragon City "
+        + "like a hero, but can also cross into the Rogue Isles for villain-side content.";
+    case "rogue":
+      return "Rogue — a villain with a code. You level in the Rogue Isles like a "
+        + "villain, but can also cross into Paragon City for hero-side content.";
+    case "praetorian":
+      return "Praetoria — Emperor Cole's separate world. ⚠ On Homecoming you can NOT "
+        + "start a character here; it is legacy content, replayed only through "
+        + "Ouroboros flashback. Shown for the curious, not as a leveling path.";
+    case "villain":
+      return "Villain — the Rogue Isles, level 1 to 50.";
+    default:
+      return "Hero — Paragon City, level 1 to 50.";
+  }
+}
 
 window.selectJourneyStop = function (i) {
   _JNY_SEL = i;
@@ -1096,15 +1133,15 @@ function renderJourneyLevelPanel() {
 function _zonesForLevelHtml(level) {
   const zl = (JOURNEY_PLACES || {}).zone_levels || [];
   if (!zl.length) return "";
-  const align = _journeyAlign();
+  const side = _contentSide();   // vigilante→hero, rogue→villain
   const fit = zl.filter(z => level >= z.from && level <= z.to
     && !/pvp/i.test(z.kind || "")
     // Praetoria is its own path: its view shows ONLY Praetorian zones, and the
-    // hero/villain views never show them.
-    && (align === "praetorian"
+    // other views never show them.
+    && (side === "praetorian"
         ? /praetorian/i.test(z.kind || "")
         : !/praetorian/i.test(z.kind || "")
-          && (align === "hero" ? !/villain/i.test(z.kind || "") : !/^hero/i.test(z.kind || ""))))
+          && (side === "hero" ? !/villain/i.test(z.kind || "") : !/^hero/i.test(z.kind || ""))))
     .sort((a, b) => a.from - b.from);
   if (!fit.length) return "";
   return `<details class="jny-fit"><summary>🧭 <b>Zones open to you at ${level}</b> `
@@ -1391,11 +1428,12 @@ function renderJourney() {
   // The route follows the character's side — hero, villain, or the separate
   // Praetorian path. Praetoria has no hero/villain route bands (its zones come
   // through the modern layer), so bands is empty there and that's correct.
-  const align = _journeyAlign();
-  const bands = (JOURNEY_PLACES || {})[align] || [];
+  const align = _journeyAlign();          // raw: for the switch UI + crossover note
+  const side = _contentSide(align);       // the road walked: hero / villain / praetorian
+  const bands = (JOURNEY_PLACES || {})[side] || [];
   const route = _routeForStops(steps, bands);
   const storyLayer = (JOURNEY_PLACES || {}).story || {};
-  const storyAt = _attachByLevel(steps, (storyLayer[align] || {}).zones || []);
+  const storyAt = _attachByLevel(steps, (storyLayer[side] || {}).zones || []);
 
   const stops = steps.map((s, i) => {
     const state = i < hereIdx ? "done" : i === hereIdx ? "here" : "";
@@ -1472,10 +1510,14 @@ function renderJourney() {
     + (journeyIntroDone() ? "" : _journeyIntroHtml())
     + `<div class="jny-head"><span class="muted small">Scroll or drag the road — click a card for what that level buys you.</span>`
     // See either side's content without changing your character's theme.
-    + ` <span class="jny-align" title="See hero, villain, or Praetorian content">`
-    + `<button class="${align === "hero" ? "on" : ""}" onclick="setJourneyAlign('hero')">🦸 Hero</button>`
-    + `<button class="${align === "villain" ? "on" : ""}" onclick="setJourneyAlign('villain')">🦹 Villain</button>`
-    + `<button class="${align === "praetorian" ? "on" : ""}" onclick="setJourneyAlign('praetorian')">⚖️ Praetorian</button></span>`
+    + ` <span class="jny-align" title="See any alignment's content">`
+    + _ALIGNMENTS.map(a => `<button class="${a.css}${align === a.key ? " on" : ""}"`
+        + ` onclick="setJourneyAlign('${a.key}')">${a.label}</button>`).join("")
+    + `</span>`
+    // Plain-English note for the alignment currently shown — because "Praetorian"
+    // means nothing to a new player (Joel), and Vigilante/Rogue need their
+    // cross-over spelled out.
+    + `<div class="jny-align-note muted small">${_alignNote(align)}</div>`
     + (wizOpen ? ` <button class="linkbtn" onclick="closeJourneyView(); openLevelStepper()">▶ step-by-step view</button>` : "")
     + ` <label class="muted small jny-autoopen"><input type="checkbox" id="jny-autoopen"
         ${journeyAutoOff() ? "" : "checked"} onchange="setJourneyAutoOpen(this.checked)">
