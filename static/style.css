@@ -1631,6 +1631,8 @@ body { overflow: hidden; }
 .jny-story { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 11.5px; }
 .jny-story-chain { margin: 3px 0; line-height: 1.5; }
 .jny-warn { color: var(--warn); font-size: 11px; margin-top: 3px; }
+.jny-rewards { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 11.5px; }
+.jny-acc { margin-top: 3px; color: var(--gold, var(--warn)); }
 .jny-detail { display: none; margin-top: 6px; border-top: 1px solid var(--border); padding-top: 6px; }
 .jny-card.open .jny-detail { display: block; }
 .jny-tip { color: var(--muted); font-size: 11.5px; margin-top: 3px; }

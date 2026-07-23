@@ -828,6 +828,84 @@ window.selectJourneyStop = function (i) {
   renderJourneyLevelPanel();
 };
 
+// ── ZONE ↔ BADGE ↔ ACCOLADE JOIN ────────────────────────────────────────────
+// Badges and accolades belong ON the level that sends you to their zone, not in
+// a wall underneath (Joel). Two grounded joins make that possible, and neither
+// invents a name:
+//   1. badges.bin groups exploration badges under zone keys that ARE the English
+//      names in CamelCase (AtlasPark, SharkheadIsle). Matching a name we already
+//      have TO a key is safe; GENERATING a name FROM a key is not, and we still
+//      don't do that (CreysFolley is not "Creys Folley").
+//   2. the accolade roster's own text says where each component badge lives —
+//      "Exploration badge in Sharkhead Isle" — so the zone name comes from the
+//      game's data, not from us.
+// Anything that doesn't match simply shows nothing. No guesses, no near-misses.
+const _zoneNorm = (s) => String(s || "").toLowerCase()
+  .replace(/^(the|echo:)\s+/g, "").replace(/[^a-z0-9]/g, "");
+
+function _zoneKeysFor(name, zones) {
+  const n = _zoneNorm(name);
+  if (!n) return [];
+  const exact = zones.filter(z => _zoneNorm(z.zone_key) === n);
+  if (exact.length) return exact;
+  // "Striga Isle" → Striga and "Talos" → TalosIsland: one is a prefix of the
+  // other, either direction. Guarded at 5 characters so short keys can't
+  // over-match ("Eden" must never swallow something else).
+  return zones.filter(z => {
+    const k = _zoneNorm(z.zone_key);
+    return k.length >= 5 && n.length >= 5 && (n.startsWith(k) || k.startsWith(n));
+  });
+}
+
+// Route places read "Atlas Park missions" / "Kings Row missions/radios" — the
+// zone is the part in front. Anything that isn't a place at all ("street
+// sweeping") simply fails to match, which is the correct outcome.
+const _placeZoneName = (p) => String(p || "")
+  .replace(/\s*missions?\b.*$/i, "").replace(/\s*\/\s*radios?\b/i, "").trim();
+
+// One zone, listed once, under its fullest name. The story layer says "The
+// Hollows" and the route says "Hollows"; first wins, and the story layer is
+// passed first on purpose.
+function _dedupeZoneNames(names) {
+  const seen = new Map();
+  names.filter(Boolean).forEach((n) => { const k = _zoneNorm(n); if (!seen.has(k)) seen.set(k, n); });
+  return [...seen.values()];
+}
+
+// accolade component badges, indexed by the zone the GAME says they're in
+function _accoladesByZone() {
+  const idx = {};
+  ((JOURNEY_ACCS || {}).rows || []).filter(a => a.tier === "passive").forEach((a) => {
+    (a.badge_chain || []).forEach((c) => {
+      const m = /badge in (.+?)\.?$/i.exec(c.tracks || "");
+      if (!m) return;
+      (idx[_zoneNorm(m[1])] = idx[_zoneNorm(m[1])] || []).push(
+        { accolade: a.display || a.key, badge: c.badge });
+    });
+  });
+  return idx;
+}
+
+function _zoneRewardsHtml(zoneNames) {
+  const zones = (JOURNEY_BADGES || {}).zones || [];
+  const accIdx = _accoladesByZone();
+  return zoneNames.map((name) => {
+    const keys = _zoneKeysFor(name, zones);
+    const badges = keys.flatMap(k => k.badges || []);
+    const accs = accIdx[_zoneNorm(name)] || [];
+    if (!badges.length && !accs.length) return "";
+    return `<div class="jny-rewards"><b>🏅 In ${escHtml(name)}</b>`
+      + (badges.length
+          ? `<div class="muted small">${badges.length} exploration badge${badges.length > 1 ? "s" : ""}: `
+            + badges.slice(0, 6).map(b => escHtml(b.display_hero || b.display_villain)).join(", ")
+            + (badges.length > 6 ? `, +${badges.length - 6} more` : "") + `</div>`
+          : "")
+      + accs.map(a => `<div class="jny-acc">⭐ <b>${escHtml(a.accolade)}</b> accolade — `
+          + `its <i>${escHtml(a.badge)}</i> badge is here</div>`).join("")
+      + `</div>`;
+  }).join("");
+}
+
 // The art slot. There is no zone art yet — extracting it from the game's pigg
 // archives is its own job — so it says what it IS rather than showing a broken
 // frame or, worse, a picture of the wrong place.
@@ -874,6 +952,13 @@ function renderJourneyLevelPanel() {
     + (band ? `<div class="jny-route-src">where to play: ${escHtml(_JNY_CTX.routeProv)}</div>` : "")
     + _storyHtml(zones)
     + (zones.length ? `<div class="jny-route-src">story route: ${escHtml(_JNY_CTX.storyProv)}</div>` : "")
+    // What's worth collecting where this level sends you — named here, not left
+    // in the catalogue below.
+    // Deduped by NORMALISED name: the story layer says "The Hollows" and the
+    // route says "Hollows missions", and those are one zone, listed once. Story
+    // names come first so the fuller wording wins.
+    + _zoneRewardsHtml(_dedupeZoneNames(zones.map(z => z.zone)
+        .concat((band ? band.places : []).map(_placeZoneName))))
     + (zones.some(z => z.xp_pause) && _JNY_CTX.xpMacro.text
         ? `<div class="jny-tip">⏸ XP toggle macro: <code>${escHtml(_JNY_CTX.xpMacro.text)}</code></div>` : "")
     + `</div>`;
