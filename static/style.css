@@ -1538,9 +1538,12 @@ body { overflow: hidden; }
 .jny-viewport::after { right: 0; background: linear-gradient(270deg, var(--panel), transparent); }
 .jny-strip { overflow-x: auto; scroll-snap-type: x proximity; padding: 6px 44px 10px;
   scrollbar-color: var(--border) transparent; }
-/* 240px headroom: an OPENED card (deltas + tips) outgrew 190px and slid under
-   the overlay's title bar (Joel's level-7 report) — the mock used 230. */
-.jny-lane { position: relative; display: flex; gap: 44px; width: max-content; padding: 240px 30px; }
+/* Headroom is MEASURED, not guessed (_fitJourneyLane): the cards are absolutely
+   positioned above/below the line, so the lane has to reserve room for the
+   tallest one — and a fixed number is either too small (Joel's level-7 card slid
+   under the title bar at 190px) or too big (240px claimed the whole screen even
+   with every card collapsed). This value is only the pre-measurement fallback. */
+.jny-lane { position: relative; display: flex; gap: 44px; width: max-content; padding: 170px 30px; }
 .jny-lane::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 5px;
   transform: translateY(-50%); border-radius: 3px; background: var(--border); }
 .jny-stop { position: relative; width: 212px; scroll-snap-align: center; flex: none; }

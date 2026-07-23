@@ -890,6 +890,20 @@ function teachJourneyPill() {
 function toggleJourneyCard(i) {
   const el = document.getElementById(`jny-card-${i}`);
   if (el) el.classList.toggle("open");
+  _fitJourneyLane();   // an opened card is taller — give it room, then take it back
+}
+
+// The road claims exactly the height its cards need, no more. Cards sit above
+// and below the line, so the lane must reserve room for the tallest one; every
+// fixed guess has been wrong in one direction or the other (190px clipped an
+// open card, 240px ate the screen with everything collapsed). Measure instead:
+// tallest card + the 34px stem that lifts it off the line + a little air.
+function _fitJourneyLane() {
+  const lane = document.querySelector("#journey-body .jny-lane");
+  if (!lane) return;
+  let tallest = 0;
+  lane.querySelectorAll(".jny-card").forEach(c => { tallest = Math.max(tallest, c.offsetHeight); });
+  if (tallest) lane.style.paddingTop = lane.style.paddingBottom = `${Math.ceil(tallest) + 46}px`;
 }
 
 // Grab-and-drag panning (Joel's report: the road wouldn't drag with the mouse
@@ -1009,6 +1023,7 @@ function renderJourney() {
         : "")
     + `</div>`;
   _wireJourneyDrag();
+  _fitJourneyLane();
 }
 
 // ── Level tracking + absence flag (leveling builds only) ────────────────────
