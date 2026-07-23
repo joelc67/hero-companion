@@ -805,25 +805,32 @@ async function openJourneyView(auto = false) {
 // never force it open again. Non-leveling builds aren't auto-opened, but
 // their first manual open shows the same intro, so the basics are always
 // somewhere.
-// The remembered decision is tied to the FIRST MEETING itself: it is made by
-// pressing "Got it", or by closing a journey that opened ITSELF. A casual
-// pill open/close (exploring the toggle) never counts — Joel's field report
-// 2026-07-22: his toggle exploration recorded a "decision" and the tank
-// build's first landing greeted him with nothing. The storage key is new
-// ("journeyMet", not the old journeyIntroDone) so anyone wrongly marked by
-// the old semantics re-meets the intro once.
+// SEMANTICS (Joel, third field report 2026-07-23 — the once-per-browser
+// greeting was the bug all along): the road opens for EVERY new 1-50
+// character. Closing is just closing — it never records a decision. The
+// remembered, reversible "no" is an EXPLICIT visible checkbox in the road's
+// header ("open automatically for new 1–50 characters" → journeyAutoOff).
+// The intro card shows until "Got it" is actually pressed (journeyIntroSeen
+// — a fresh key: the old ones recorded closes-as-decisions, which closes no
+// longer mean).
 let _journeyAutoOpened = false;
-function journeyIntroDone() { return !!localStorage.getItem("journeyMet"); }
-function markJourneyIntroDone() { try { localStorage.setItem("journeyMet", "1"); } catch (e) { /* private mode */ } }
+function journeyIntroDone() { return !!localStorage.getItem("journeyIntroSeen"); }
+function journeyAutoOff() { return !!localStorage.getItem("journeyAutoOff"); }
 window.journeyIntroGotIt = function () {
-  markJourneyIntroDone();
+  try { localStorage.setItem("journeyIntroSeen", "1"); } catch (e) { /* private mode */ }
   const card = document.getElementById("jny-intro");
   if (card) card.remove();
+};
+window.setJourneyAutoOpen = function (on) {
+  try {
+    if (on) localStorage.removeItem("journeyAutoOff");
+    else localStorage.setItem("journeyAutoOff", "1");
+  } catch (e) { /* private mode */ }
 };
 function maybeAutoOpenJourney() {
   if (!isLevelingBuild()) return;                    // 1-50 starts ON; others opt in
   if (!(build.powers || []).length) return;
-  if (journeyIntroDone()) return;                    // they've decided already
+  if (journeyAutoOff()) return;                      // the explicit, reversible "no"
   openJourneyView(true);
 }
 function _journeyIntroHtml() {
@@ -853,10 +860,7 @@ function closeJourneyView(teach = true) {
   const jb = $("journey-btn");
   if (jb) jb.classList.remove("journey-open");
   if (teach) teachJourneyPill();
-  // Only closing the FIRST MEETING (a self-opened journey) is the remembered
-  // decision — a casual pill open/close never suppresses the future greeting.
-  if (_journeyAutoOpened) markJourneyIntroDone();
-  _journeyAutoOpened = false;
+  _journeyAutoOpened = false;   // closing is just closing — no decision recorded
 }
 
 function toggleJourneyView() {
@@ -975,8 +979,11 @@ function renderJourney() {
   $("journey-body").innerHTML =
     `<div class="jny">`
     + (journeyIntroDone() ? "" : _journeyIntroHtml())
-    + `<div class="jny-head"><span class="muted small">Scroll the road — every stop is a level your plan does something. Click a card for what it buys you.</span>`
+    + `<div class="jny-head"><span class="muted small">Scroll or drag the road — every stop is a level your plan does something. Click a card for what it buys you.</span>`
     + (wizOpen ? ` <button class="linkbtn" onclick="closeJourneyView(); openLevelStepper()">▶ step-by-step view</button>` : "")
+    + ` <label class="muted small jny-autoopen"><input type="checkbox" id="jny-autoopen"
+        ${journeyAutoOff() ? "" : "checked"} onchange="setJourneyAutoOpen(this.checked)">
+        open automatically for new 1–50 characters</label>`
     + `</div>`
     + `<div class="jny-viewport"><div class="jny-strip"><div class="jny-lane">${stops}</div></div></div>`
     + (zones

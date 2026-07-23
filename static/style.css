@@ -1529,6 +1529,8 @@ body { overflow: hidden; }
   padding: 12px 14px; margin: 10px 0 4px; font-size: 13px; }
 .jny-intro .gl-help { margin-top: 8px; }
 .jny-head { margin: 10px 0 2px; }
+.jny-autoopen { white-space: nowrap; float: right; }
+.jny-autoopen input { vertical-align: middle; }
 .jny-viewport { position: relative; margin-top: 4px; }
 .jny-viewport::before, .jny-viewport::after { content: ""; position: absolute; top: 0;
   bottom: 12px; width: 54px; z-index: 3; pointer-events: none; }
