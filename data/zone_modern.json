@@ -510,6 +510,38 @@
                              "River Rat", "Rail Rider"],
       "plaque_badges": ["Starstruck I-VI", "Headjuiced (5 Resistance lessons)"],
       "url": "https://homecoming.wiki/wiki/Nova_Praetoria"
+    },
+    {
+      "zone": "Imperial City",
+      "from": 9,
+      "to": 15,
+      "kind": "Praetorian city zone",
+      "since": "Issue 18 (Going Rogue)",
+      "alt_start": true,
+      "alt_start_note": "The second leg of the Praetorian path, not a Paragon City zone. Continues from Nova Praetoria; Neutropolis follows.",
+      "note": "The entertainment and commercial hub — TPN's tower, the Aureas theatre district, People's Park where Cole beat back the Devouring Earth. The Behavioral Adjustment Facility is here, holding Tellurian Plague victims, and the Syndicate runs the corruption the PPD would rather you did not see. Your Resistance-or-Loyalist choice keeps splitting the contacts.",
+      "events": [{ "name": "Syndicate Takedown", "kind": "event" }],
+      "contacts": ["Jessica Flores / Luke Larson / Dr. Steffard / Seer 1381 (Resistance, Warden arc)",
+                   "Mr. G / Transmuter / Tami Baker / Praetor Sinclair (Loyalist, Power arc)",
+                   "Interrogator Kang / Alec Parson / Investigator Whitworth / Chance McKnight (Loyalist, Responsibility arc)",
+                   "Bobcat (Loyalist, Power arc, 15-20)"],
+      "neighborhoods": [
+        { "name": "Logos", "from": 9, "to": 10, "risk": "Green" },
+        { "name": "People's Park", "from": 9, "to": 10, "risk": "Green" },
+        { "name": "Aureas", "from": 11, "to": 12, "risk": "Yellow" },
+        { "name": "Industry Avenue", "from": 11, "to": 12, "risk": "Yellow" },
+        { "name": "Aureas (eastern end)", "from": 12, "to": 13, "risk": "Orange" },
+        { "name": "Four Gables", "from": 13, "to": 14, "risk": "Red" },
+        { "name": "Behavioral Adjustment Facility", "from": 13, "to": 15, "risk": "Red" },
+        { "name": "Tiberian Bluff", "from": 14, "to": 15, "risk": "Red" }
+      ],
+      "enemies": ["Destroyers", "The Resistance", "Praetorian Police Department", "Syndicate",
+                  "Praetorian Clockwork", "Seers"],
+      "exploration_badges": ["Gold Digger", "Mercy Missionary", "Park Ranger",
+                             "Praetorian of Privilege", "Seen", "Seer", "Tiberian Overseer",
+                             "Tuned In", "Going Rouge", "River Rat", "Rail Rider"],
+      "plaque_badges": ["Headjuiced VI-X"],
+      "url": "https://homecoming.wiki/wiki/Imperial_City"
     }
   ]
 }
