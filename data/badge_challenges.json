@@ -1,0 +1,211 @@
+{
+  "_source": "n15g/coh-content-db-homecoming (Unlicense). Master/iTrial challenge badges + their required sub-badges.",
+  "_provenance_label": "challenge badges by n15g (coh-content-db)",
+  "_join": "keyed by normalised task-force / trial name; the client matches it to an event it already lists on the road.",
+  "_note": "These badges are earned by COMPLETING a TF/trial under challenge conditions, not at a location — hence attached to the run, not a zone.",
+  "_coverage": {
+    "master_badges": 23,
+    "itrials": 8
+  },
+  "challenges": {
+    "airwaves": {
+      "master_badge": "Master of the Airwaves",
+      "challenge_badges": [],
+      "kind": "taskforce",
+      "text": "Top of the world! You have climbed to the top of the radio tower in Grandville."
+    },
+    "science": {
+      "master_badge": "Master of Science",
+      "challenge_badges": [],
+      "kind": "taskforce",
+      "text": "Dr. Aeon designed this giant globe of an atom to signify the advances that science has brought to Cap au Diable."
+    },
+    "imperious": {
+      "master_badge": "Master of the Imperious Task Force",
+      "challenge_badges": [],
+      "kind": "taskforce",
+      "text": "You have proven yourself Master of the Imperious Task Force"
+    },
+    "ladygrey": {
+      "master_badge": "Master of Lady Grey's Task Force",
+      "challenge_badges": [],
+      "kind": "taskforce",
+      "text": "You have proven yourself Master of Lady Grey's Task Force."
+    },
+    "msliberty": {
+      "master_badge": "Master of Ms. Liberty's Task Force",
+      "challenge_badges": [],
+      "kind": "taskforce",
+      "text": "You have proven yourself Master of Ms. Liberty's Task Force."
+    },
+    "lordrecluse": {
+      "master_badge": "Master of Lord Recluse's Strike Force",
+      "challenge_badges": [],
+      "kind": "taskforce",
+      "text": "You have proven yourself Master of Lord Recluse's Strike Force."
+    },
+    "5thcolumn": {
+      "master_badge": "Master of the 5th Column Strike Force",
+      "challenge_badges": [],
+      "kind": "taskforce",
+      "text": "You have proven yourself Master of the 5th Column Strike Force"
+    },
+    "draeon": {
+      "master_badge": "Master of Dr. Aeon's Strike Force",
+      "challenge_badges": [
+        "Can't Touch This",
+        "Power Overwhelming",
+        "Ripple Raider",
+        "Unfriendly Fire"
+      ],
+      "kind": "taskforce",
+      "text": "You have proven yourself Master of Dr. Aeon's Strike Force."
+    },
+    "apex": {
+      "master_badge": "Master of Apex's Task Force",
+      "challenge_badges": [
+        "Drone Protector",
+        "Burden Bearer",
+        "Already Dead"
+      ],
+      "kind": "taskforce",
+      "text": "You have gone through the Alpha and the Omega of Apex's Task Force."
+    },
+    "tinmage": {
+      "master_badge": "Master of Tin Mage's Task Force",
+      "challenge_badges": [
+        "Hacker",
+        "Midnight Dodger What Dodges At Midnight",
+        "Kitty's Got Claws",
+        "Army of Neu"
+      ],
+      "kind": "taskforce",
+      "text": "You have gone through the Alpha and the Omega of Tin Mage's Task Force."
+    },
+    "zoe": {
+      "master_badge": "Master of Zoe's Task Force",
+      "challenge_badges": [
+        "Jailbreaker",
+        "Knockback King",
+        "Snow Warning",
+        "Subterranean Striker"
+      ],
+      "kind": "taskforce",
+      "text": "You have proven yourself Master of Marigold 'Zoe' Langston's Task Force."
+    },
+    "prisonersofeden": {
+      "master_badge": "Master of the Prisoners of Eden",
+      "challenge_badges": [],
+      "kind": "taskforce",
+      "text": "You have proven yourself Master of the Prisoners of Eden Trial."
+    },
+    "descenttothehydra": {
+      "master_badge": "Master of the Descent to the Hydra",
+      "challenge_badges": [],
+      "kind": "taskforce",
+      "text": "You have proven yourself Master of the Descent to the Hydra Trial."
+    },
+    "marketcrash": {
+      "master_badge": "Master of the Market Crash",
+      "challenge_badges": [],
+      "kind": "taskforce",
+      "text": "You have proven yourself Master of the Market Crash Trial."
+    },
+    "baf": {
+      "master_badge": "Master of the B.A.F.",
+      "challenge_badges": [
+        "Not On My Watch",
+        "Alarm Raiser",
+        "Gotta Keep 'Em Separated",
+        "Strong & Pretty"
+      ],
+      "kind": "itrial",
+      "text": "You have mastered the Incarnate Trial: Behavioral Adjustment Facility."
+    },
+    "lambdasector": {
+      "master_badge": "Master of the Lambda Sector",
+      "challenge_badges": [
+        "Synchronized",
+        "Well-Stocked",
+        "Antacid",
+        "Lambda Looter"
+      ],
+      "kind": "itrial",
+      "text": "You have mastered the Incarnate Trial: Lambda Sector."
+    },
+    "keyesislandreactor": {
+      "master_badge": "Master of the Keyes Island Reactor",
+      "challenge_badges": [
+        "Anti-Anti-Matter",
+        "Bunker Buster",
+        "Loves a Challenge",
+        "Avoids the Green Stuff"
+      ],
+      "kind": "itrial",
+      "text": "You have mastered the Incarnate Trial: Keyes Island Reactor."
+    },
+    "underground": {
+      "master_badge": "Master of the Underground",
+      "challenge_badges": [
+        "Regenerate This",
+        "Tour Guide",
+        "Preservation Specialist",
+        "Avatar Assassin"
+      ],
+      "kind": "itrial",
+      "text": "You have mastered the Incarnate Trial: Underground."
+    },
+    "tpncampus": {
+      "master_badge": "Master of the TPN Campus",
+      "challenge_badges": [
+        "Spin Doctor",
+        "News Flash",
+        "Fair & Balanced",
+        "Television Addict",
+        "Tonight's Top Story"
+      ],
+      "kind": "itrial",
+      "text": "You have mastered the Incarnate Trial: TPN Campus."
+    },
+    "mindsofmayhem": {
+      "master_badge": "Master of the Minds of Mayhem",
+      "challenge_badges": [
+        "Mental Voyager",
+        "Dreamwalker",
+        "A Perfect Storm",
+        "Daylight Saver",
+        "Lost Connection to Server"
+      ],
+      "kind": "itrial",
+      "text": "You have mastered the Incarnate Trial: The Minds of Mayhem."
+    },
+    "dilemmadiabolique": {
+      "master_badge": "Master of Dilemma Diabolique",
+      "challenge_badges": [
+        "Spinebreaker",
+        "Sentinel Smasher",
+        "Sacrificial Lamb",
+        "Life and Death"
+      ],
+      "kind": "itrial",
+      "text": "You have mastered the Incarnate Trial: Dilemma Diabolique."
+    },
+    "magisterium": {
+      "master_badge": "Master of the Magisterium",
+      "challenge_badges": [
+        "Triple Threat",
+        "Ready to Rumble",
+        "Shadow Master",
+        "The Hard Way"
+      ],
+      "kind": "itrial",
+      "text": "You have mastered the Incarnate Trial: Magisterium."
+    },
+    "olympus": {
+      "master_badge": "Master of Olympus",
+      "challenge_badges": [],
+      "kind": "taskforce",
+      "text": "You have destroyed the Kronos Titan, showing Malta that the Heroes of Paragon City defend their turf."
+    }
+  }
+}

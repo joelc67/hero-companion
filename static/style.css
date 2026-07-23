@@ -1667,3 +1667,5 @@ body { overflow: hidden; }
 /* Badge directions from the community location DB — the actually-useful bit,
    given the game has no paste-to-navigate. Set off from the flavour text. */
 .jny-where { font-size: 11.5px; margin: 2px 0; color: var(--accent); }
+/* Master-of / iTrial challenge badge attached to a task force or trial. */
+.jny-master { font-size: 11px; margin: 2px 0 4px 14px; color: var(--gold, var(--warn)); }

@@ -947,8 +947,7 @@ function _modernHtml(level) {
               + (n.risk ? ` <span class="jny-risk risk-${n.risk.toLowerCase()}">${escHtml(n.risk)}</span>` : ""))
               .join(" · ")
           + `</div>` : "",
-      events.map(e => `<div class="jny-tf">${e.kind === "trial" ? "⚔" : "🛡"} ${escHtml(e.name)}`
-        + (e.note ? ` <span class="muted small">· ${escHtml(e.note)}</span>` : "") + `</div>`).join(""),
+      events.map(_eventHtml).join(""),
       foes.length
         ? `<div class="muted small">Who you'll fight: ${foes.slice(0, 8).map(escHtml).join(", ")}`
           + (foes.length > 8 ? `, +${foes.length - 8} more` : "") + `</div>` : "",
@@ -1051,6 +1050,40 @@ function renderJourneyLevelPanel() {
     + `</div>`;
 }
 
+// The Master-of / iTrial challenge badge for a task force or trial, matched by
+// name to the events the road already lists. "Apex TF" → "apex", "Lambda Sector
+// (LAM)" → "lambdasector", "Behavioral Adjustment Facility (BAF)" → its acronym
+// "baf". Returns null when a run has no Master badge (most low-level TFs).
+function _challengeFor(eventName) {
+  const ch = (JOURNEY_PLACES || {}).challenges || {};
+  if (!eventName) return null;
+  const paren = /\(([^)]+)\)/.exec(eventName);           // the (BAF) acronym, if any
+  const acr = paren ? _zoneNorm(paren[1]) : "";
+  const base = _zoneNorm(eventName.replace(/\([^)]*\)/, "")
+    .replace(/\b(task force|strike force|trial|tf|sf)\b/gi, ""));
+  for (const [key, rec] of Object.entries(ch)) {
+    if (key === base || key === acr) return rec;
+    if (key.length >= 5 && base.length >= 5 && (key.startsWith(base) || base.startsWith(key))) return rec;
+  }
+  return null;
+}
+
+// One event line, plus its Master badge and challenge checklist if it has one.
+function _eventHtml(ev) {
+  const range = ev.min ? ` <span class="muted small">(${ev.min}${ev.max ? `–${ev.max}` : "+"})</span>` : "";
+  const note = ev.note ? ` <span class="muted small">· ${escHtml(ev.note)}</span>` : "";
+  let html = `<div class="jny-tf">${ev.kind === "trial" ? "⚔" : "🛡"} ${escHtml(ev.name)}${range}${note}</div>`;
+  const c = _challengeFor(ev.name);
+  if (c) {
+    html += `<div class="jny-master">🏆 <b>${escHtml(c.master_badge)}</b>`
+      + (c.challenge_badges && c.challenge_badges.length
+          ? ` — earn: ${c.challenge_badges.map(escHtml).join(", ")}`
+          : "")
+      + `</div>`;
+  }
+  return html;
+}
+
 function _routeBandAt(level, bands) {
   return (bands || []).find(b => level >= b.from && level <= b.to) || null;
 }
@@ -1066,11 +1099,7 @@ function _routeHtml(band, events, showPlaces) {
       + (band.advice ? `<div class="jny-tip">💡 ${escHtml(band.advice)}</div>` : "")
       + `</div>`);
   }
-  events.forEach((ev) => {
-    const range = ev.min ? ` <span class="muted small">(${ev.min}${ev.max ? `–${ev.max}` : "+"})</span>` : "";
-    const note = ev.note ? ` <span class="muted small">· ${escHtml(ev.note)}</span>` : "";
-    bits.push(`<div class="jny-tf">${ev.kind === "trial" ? "⚔" : "🛡"} ${escHtml(ev.name)}${range}${note}</div>`);
-  });
+  events.forEach((ev) => bits.push(_eventHtml(ev)));
   return bits.join("");
 }
 

@@ -620,6 +620,16 @@ def journey_places():
                         "hero": story.get("hero", {}), "villain": story.get("villain", {})}
     except Exception:  # noqa: BLE001 — the route still stands without the story layer
         pass
+    # Master-of / iTrial challenge badges, attached to the TF/trial they belong
+    # to rather than a zone (n15g's coh-content-db). Served so the client can
+    # match each to an event it already lists on the road.
+    try:
+        with open(os.path.join(base, "data", "badge_challenges.json"), encoding="utf-8") as f:
+            ch = json.load(f)
+        out["challenges"] = ch.get("challenges", {})
+        out["challenge_credit"] = ch.get("_provenance_label", "")
+    except Exception:  # noqa: BLE001
+        pass
     # Content newer than the 2020 guides — wiki-sourced and labelled as such,
     # never blended into the game-first layers.
     try:
