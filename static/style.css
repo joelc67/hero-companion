@@ -1528,8 +1528,13 @@ body { overflow: hidden; }
 .jny-intro { background: var(--bg); border: 1px solid var(--accent); border-radius: 10px;
   padding: 12px 14px; margin: 10px 0 4px; font-size: 13px; }
 .jny-intro .gl-help { margin-top: 8px; }
-.jny-head { margin: 10px 0 2px; }
-.jny-autoopen { white-space: nowrap; float: right; }
+/* NOT float:right — that was Joel's "panel on the right with nothing on it".
+   The road strip has overflow-x:auto, which makes it a block formatting context,
+   and a BFC box shrinks to get out of a float's way: the road was surrendering
+   exactly the checkbox label's width (measured 1189px → 964px of usable road).
+   Flex puts the label right without taking anything from the road. */
+.jny-head { margin: 10px 0 2px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.jny-autoopen { white-space: nowrap; margin-left: auto; }
 .jny-autoopen input { vertical-align: middle; }
 .jny-viewport { position: relative; margin-top: 4px; }
 .jny-viewport::before, .jny-viewport::after { content: ""; position: absolute; top: 0;
