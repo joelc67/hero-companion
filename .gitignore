@@ -45,3 +45,4 @@ champions_refresh_err.txt
 data/inbox_key.bin
 champions_refresh_*.txt
 tools/gamedata/_wiki_cache/
+tools/gamedata/_coh_content_db.json

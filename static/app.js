@@ -1299,10 +1299,14 @@ function renderJourney() {
                routeProv: (JOURNEY_PLACES || {}).provenance || "" };
   if (_JNY_SEL == null || _JNY_SEL >= steps.length) _JNY_SEL = hereIdx >= 0 ? hereIdx : 0;
 
+  const badgeLocCredit = jb.location_credit || "";
   const zones = (jb.zones || []).map(z =>
     `<details class="jny-zone"><summary><b>${escHtml(z.zone_key)}</b>
        <span class="muted small">${z.badges.length} exploration badge${z.badges.length > 1 ? "s" : ""}</span></summary>`
     + z.badges.map(b => `<div class="jny-zbadge"><b>${escHtml(b.display_hero || b.display_villain)}</b>`
+        // WHERE it is (n15g's directions) leads; the flavour text follows.
+        + (b.where ? `<div class="jny-where">📍 ${escHtml(b.where)}`
+            + (b.coords ? ` <span class="muted small">(${b.coords.join(", ")})</span>` : "") + `</div>` : "")
         + (b.find_hint ? `<div class="muted small">${escHtml(b.find_hint)}</div>` : "")
         + `</div>`).join("")
     + `</details>`).join("");
@@ -1337,7 +1341,9 @@ function renderJourney() {
         ? `<details class="jny-zones"><summary>🧭 <b>Zones & badges</b> <span class="muted small">— the grounded
            catalog from the game's own files. ${escHtml(jb.pending || "")}</span></summary>
            <div class="jny-zonegrid">${zones}</div>
-           <div class="jny-prov">source: ${escHtml(jb.provenance || "badges.bin")}</div></details>`
+           <div class="jny-prov">badge identity: ${escHtml(jb.provenance || "badges.bin")}`
+           + (badgeLocCredit ? ` · 📍 ${escHtml(badgeLocCredit)}` : "")
+           + ` · visual finder: the VidiotMaps in-game map overlay</div></details>`
         : "")
     + (accs
         ? `<details class="jny-zones"><summary>🏅 <b>Accolades worth working toward</b> <span class="muted small">—

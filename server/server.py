@@ -533,6 +533,19 @@ def journey_badges():
     except Exception:  # noqa: BLE001
         return jsonify({"ok": False})
     import re as _re
+    # WHERE each badge physically is — coordinates + plain-English directions
+    # from n15g's coh-content-db (public domain), joined on the game's own badge
+    # id. The client owns the badge's identity; this only says where to walk.
+    loc_by_id = {}
+    loc_credit = ""
+    try:
+        with open(os.path.join(base, "data", "badge_locations.json"), encoding="utf-8") as lf:
+            _bl = json.load(lf)
+        loc_by_id = _bl.get("locations", {})
+        loc_credit = _bl.get("_provenance_label", "")
+    except Exception:  # noqa: BLE001 — no location file, no directions; badges still list
+        pass
+
     level_badges = {}
     zones = {}
     for b in data.get("badges", []):
@@ -543,18 +556,25 @@ def journey_badges():
                 "desc_hero": b["desc_hero"], "desc_villain": b["desc_villain"]}
         zk = b.get("zone_key")
         if zk:
-            zones.setdefault(zk, []).append({
+            entry = {
                 "name": b["name"], "display_hero": b["display_hero"],
                 "display_villain": b["display_villain"],
-                # the badge's own description IS the find hint (game text:
+                # the badge's own description IS the flavour hint (game text:
                 # "You have seen the statue of Cassiopeia…")
-                "find_hint": b["desc_hero"] or b["desc_villain"]})
+                "find_hint": b["desc_hero"] or b["desc_villain"]}
+            loc = loc_by_id.get(b["name"])
+            if loc:
+                if loc.get("hint"):
+                    entry["where"] = loc["hint"]          # the human directions
+                if loc.get("locations"):
+                    entry["coords"] = loc["locations"][0].get("coords")
+            zones.setdefault(zk, []).append(entry)
     return jsonify({
         "ok": True,
         "provenance": "badges.bin (client game data), export 2026-07-22",
+        "location_credit": loc_credit,
         "pending": "zone names, level ranges, who you'll fight in each zone, "
-                   "TF/SF rosters and badge coordinates arrive with the i24 "
-                   "server-data pass",
+                   "TF/SF rosters arrive with the i24 server-data pass",
         "level_badges": level_badges,
         "zones": [{"zone_key": k, "badges": v} for k, v in sorted(zones.items())
                   if k != "other"],

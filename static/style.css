@@ -1664,3 +1664,6 @@ body { overflow: hidden; }
    is a different road rather than a detour off this one. */
 .risk-green { color: #6fbf73; border-color: #6fbf73; }
 .jny-altstart { margin-top: 4px; color: var(--accent); font-size: 11.5px; }
+/* Badge directions from the community location DB — the actually-useful bit,
+   given the game has no paste-to-navigate. Set off from the flavour text. */
+.jny-where { font-size: 11.5px; margin: 2px 0; color: var(--accent); }
