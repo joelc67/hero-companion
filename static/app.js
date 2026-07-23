@@ -844,7 +844,7 @@ const _ALIGNMENTS = [
   { key: "vigilante", label: "🛡️ Vigilante", css: "al-vig" },
   { key: "rogue", label: "😈 Rogue", css: "al-rogue" },
   { key: "villain", label: "🦹 Villain", css: "al-villain" },
-  { key: "praetorian", label: "⚖️ Praetoria", css: "al-prae" },
+  { key: "praetorian", label: "🌀 Flashback", css: "al-prae" },
 ];
 window.setJourneyAlign = function (al) {
   _JNY_ALIGN = al;
@@ -866,9 +866,13 @@ function _alignNote(al) {
         + "generally need to be in a co-op zone (Pocket D, Rikti War Zone, "
         + "Cimerora…), not just standing in enemy territory.";
     case "praetorian":
-      return "Praetoria — Emperor Cole's separate world. ⚠ On Homecoming you can NOT "
-        + "start a character here; it is legacy content, replayed only through "
-        + "Ouroboros flashback. Shown for the curious, not as a leveling path.";
+      return "Ouroboros flashback — replay old story arcs (including all the "
+        + "Praetoria content below) at their original level; the game exemplars you "
+        + "down to the arc's range. To use it: unlock Ouroboros with the History "
+        + "in the Making or Temporal Strife badge, then reach it with the Ouroboros "
+        + "Portal power (or a teammate's Mission Transporter). You must be at least "
+        + "level 15 to teleport to a flashback contact, and every mission has its "
+        + "own minimum level. The Pilgrim's arc in Ouroboros walks you through it.";
     case "villain":
       return "Villain — the Rogue Isles, level 1 to 50.";
     default:
