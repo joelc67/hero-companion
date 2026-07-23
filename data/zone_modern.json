@@ -1174,6 +1174,86 @@
         "Scholar V"
       ],
       "url": "https://homecoming.wiki/wiki/Faultline"
+    },
+    {
+      "zone": "Recluse's Victory",
+      "from": 50,
+      "to": 50,
+      "kind": "PvP zone",
+      "pvp": true,
+      "pvp_note": "Other players can attack you here. ANY level may enter and everyone is set to combat level 50. This is the fourth and highest of the PvP zones.",
+      "since": "City of Villains era",
+      "note": "An alternate future of Atlas Park where Arachnos and Longbow fight over Temporal Anchors. Capture a pillbox by clearing its four turrets and holding the panel; six captures wins the zone for your side and the landscape itself changes to match. 1,000 zone points before the reversion earns you a Heavy mech. Worth knowing even if you never fight here: simply ENTERING grants Entrusted with the Secret and the Ouroboros Portal outright.",
+      "events": [
+        {
+          "name": "Temporal Anchors",
+          "kind": "event",
+          "note": "capture pillboxes to hold the timeline"
+        },
+        {
+          "name": "Signature Hero/Villain Reinforcements",
+          "kind": "event",
+          "note": "spawn when a side takes its fourth pillbox"
+        },
+        {
+          "name": "Temporal Reversion",
+          "kind": "event",
+          "note": "five minutes after a side wins, everything resets to neutral"
+        }
+      ],
+      "contacts": [
+        "D.A.T.A. Orientation Adjutant / Commander Murat / D.A.T.A. Tech Congreves (hero)",
+        "Arachnos Orientation Adjutant / Arbiter Minos / Arbiter Uller (villain)"
+      ],
+      "neighborhoods": [
+        {
+          "name": "Sector 1 — Hero Base, Alpha anchor",
+          "from": 50,
+          "to": 50,
+          "risk": "Orange"
+        },
+        {
+          "name": "Sector 2 — Foxtrot anchor",
+          "from": 50,
+          "to": 50,
+          "risk": "Orange"
+        },
+        {
+          "name": "Sector 3 — Delta anchor",
+          "from": 50,
+          "to": 50,
+          "risk": "Orange"
+        },
+        {
+          "name": "Sector 4 — Echo anchor",
+          "from": 50,
+          "to": 50,
+          "risk": "Orange"
+        },
+        {
+          "name": "Sector 5 — Bravo, Charlie, Golf anchors",
+          "from": 50,
+          "to": 50,
+          "risk": "Orange"
+        }
+      ],
+      "enemies": [
+        "Arachnos",
+        "Longbow",
+        "Turrets",
+        "Contaminated"
+      ],
+      "exploration_badges": [
+        "Globetrotter",
+        "Ragnarok",
+        "Dark Victory / Temporal Fighter",
+        "Last Stand",
+        "A Scar in Time",
+        "True Neutral",
+        "Sick of Time Travel",
+        "Watch Your Back"
+      ],
+      "url": "https://homecoming.wiki/wiki/Recluse%27s_Victory"
     }
   ],
   "_verification": {
