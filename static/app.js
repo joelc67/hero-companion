@@ -972,6 +972,12 @@ function _artFileFor(name) {
   const art = (JOURNEY_PLACES || {}).art || {};
   const n = _zoneNorm(name);
   if (!n) return null;
+  // A zone may declare which art asset is its own, for the cases where the
+  // client ships it under a historical name (Boomtown's map is "Baumton").
+  // Only ever from the data, with a stated reason — never inferred here.
+  const declared = ((JOURNEY_PLACES || {}).modern || {}).zones || [];
+  const owner = declared.find(z => z.art_key && _zoneNorm(z.zone) === n);
+  if (owner && art[owner.art_key]) return art[owner.art_key];
   if (art[n]) return art[n];
   const k = Object.keys(art).find(key =>
     key.length >= 5 && n.length >= 5 && (n.startsWith(key) || key.startsWith(n)));

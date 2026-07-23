@@ -569,6 +569,33 @@
                              "River Rat", "Rail Rider"],
       "plaque_badges": ["Headjuiced XI-XV"],
       "url": "https://homecoming.wiki/wiki/Neutropolis"
+    },
+    {
+      "zone": "Boomtown",
+      "from": 11,
+      "to": 19,
+      "kind": "Hero hazard zone",
+      "since": "Issue 0 (the Council Base and War Machine arrived in Issue 25)",
+      "art_key": "baumton",
+      "art_key_why": "The client ships this zone's map as 'Baumton', its pre-Rikti name — the wiki's own overview opens 'the once peaceful burgh of Baumton became…', which is what makes the link sourced rather than assumed. This is the exact historical-name trap flagged when the art was extracted; it is closed here for this zone only, with its reason recorded.",
+      "note": "Baumton after the Rikti levelled it: toppled skyscrapers, smoking craters, and a stalemate the PPD fights from behind a wall. A hazard zone, so the spawns are bigger than the street outside. In from Steel Canyon's north gate or up from the Sewer Network.",
+      "events": [
+        { "name": "Babbage", "kind": "event", "note": "giant monster, along the northern wall" },
+        { "name": "War Machine", "kind": "event", "note": "the Council's fortified base in the south-east, behind mass-produced War Walkers" }
+      ],
+      "neighborhoods": [
+        { "name": "The Fuse", "from": 11, "to": 14, "risk": "Yellow" },
+        { "name": "Powderkeg", "from": 12, "to": 16, "risk": "Orange" },
+        { "name": "Primer", "from": 12, "to": 16, "risk": "Orange" },
+        { "name": "The Cannonade", "from": 14, "to": 19, "risk": "Red" },
+        { "name": "Grenadier Village", "from": 14, "to": 19, "risk": "Red" },
+        { "name": "Council Base", "from": 14, "to": 19, "risk": "Red" }
+      ],
+      "enemies": ["5th Column", "Clockwork", "Council", "The Lost", "Outcasts", "Trolls", "Vahzilok"],
+      "exploration_badges": ["Phalanxer", "Regal", "Vision of Despair", "Destined for Valhalla",
+                             "Towering Inferno", "Boomtown Troglodyte", "End of the Line", "Corpse Box"],
+      "plaque_badges": ["Disciple III-V", "Just Said No to Superadine IV", "Scholar IV"],
+      "url": "https://homecoming.wiki/wiki/Boomtown"
     }
   ]
 }
