@@ -1743,13 +1743,30 @@ body { overflow: hidden; }
 /* ZONE NAME on the splash (Joel: "None of the zone images have names"). */
 .jny-art { position: relative; }
 .jny-art-caption {
-  position: absolute; left: 0; right: 0; bottom: 0; padding: 6px 10px;
-  background: linear-gradient(transparent, rgba(0,0,0,.82));
-  color: #fff; font-weight: 700; font-size: 16px; text-align: left;
-  text-shadow: 0 1px 3px #000; letter-spacing: .01em;
+  /* Match the game: the zone name sits TOP-LEFT, indented, in a heavy
+     comic-title font (Joel). Impact/Haettenschweiler evoke the CoH plate; the
+     stack degrades to a condensed bold sans. */
+  position: absolute; left: 0; top: 0; right: 0; padding: 10px 14px 24px;
+  background: linear-gradient(rgba(0,0,0,.72), transparent);
+  color: #fff; text-align: left;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", "Franklin Gothic Bold", sans-serif;
+  font-size: 30px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  text-shadow: 0 2px 5px #000, 0 0 2px #000;
+  line-height: 1.05;
 }
 /* Journey alignment switch (see the other side's content). */
 .jny-align { display: inline-flex; gap: 2px; margin-left: 10px; vertical-align: middle; }
 .jny-align button { width: auto; padding: 2px 9px; font-size: 12px; background: var(--bg);
   border: 1px solid var(--border); cursor: pointer; }
 .jny-align button.on { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
+/* FONTS third pass (Joel: "still a little small"). Another step up across the
+   Journey — body and cards. */
+.jny-panel-info, .jny-zones, .jny-fit, .jny-zonegrid { font-size: 16px; line-height: 1.55; }
+.jny-panel-info .small, .jny-zones .small, .jny-fit .small,
+.jny-panel-info .muted.small, .jny-zones .muted.small, .jny-fit .muted.small { font-size: 14.5px; }
+.jny-panel-h { font-size: 20px !important; }
+.jny-hood, .jny-fitzone, .jny-where, .jny-master, .jny-tf, .jny-story, .jny-route-places,
+.jny-note, .jny-tip, .jny-modern, .jny-rewards { font-size: 15.5px; }
+.jny-lv { font-size: 12.5px !important; }
+.jny-pick, .jny-pick b { font-size: 15px; }
