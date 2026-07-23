@@ -1254,6 +1254,82 @@
         "Watch Your Back"
       ],
       "url": "https://homecoming.wiki/wiki/Recluse%27s_Victory"
+    },
+    {
+      "zone": "Eden",
+      "from": 33,
+      "to": 39,
+      "kind": "Hero trial zone",
+      "since": "Issue 0 — one of the originals",
+      "art_key": "woodvale",
+      "art_key_why": "The client ships this zone's map as 'Woodvale', the suburb that stood here before the Devouring Earth took it. The wiki sources it directly: 'Once, Eden was a beautiful suburb of Paragon City called Woodvale.' Third instance of the historical-name case after Boomtown/Baumton and Faultline/Overbrook — declared with its reason, never inferred.",
+      "note": "Woodvale after the Devouring Earth buried it: a sprawling wilderness where nature is finishing the job. Woodsman's spirit runs the Eden Trial from here, and the trial's second mission entrance is on the slopes of the largest hive spire beside him. Gates west to The Hive and east to Founders' Falls.",
+      "contacts": [
+        "Woodsman (Eden Trial contact — a spirit)"
+      ],
+      "neighborhoods": [
+        {
+          "name": "Arcadia",
+          "from": 33,
+          "to": 36,
+          "risk": "Yellow"
+        },
+        {
+          "name": "The Pit",
+          "from": 33,
+          "to": 36,
+          "risk": "Yellow"
+        },
+        {
+          "name": "The Utopia Complex",
+          "from": 33,
+          "to": 35,
+          "risk": "Yellow"
+        },
+        {
+          "name": "Adeva Towers",
+          "from": 35,
+          "to": 36,
+          "risk": "Orange"
+        },
+        {
+          "name": "The Serpentine",
+          "from": 35,
+          "to": 37,
+          "risk": "Orange"
+        },
+        {
+          "name": "The Cascades",
+          "from": 37,
+          "to": 39,
+          "risk": "Red"
+        },
+        {
+          "name": "The Hive (Eden's own)",
+          "from": 37,
+          "to": 39,
+          "risk": "Red"
+        }
+      ],
+      "enemies": [
+        "Crey",
+        "Devouring Earth",
+        "Nemesis"
+      ],
+      "exploration_badges": [
+        "Crey Fish",
+        "Unspoiled",
+        "Call of Nature",
+        "Nature's Wrath",
+        "Natural Law",
+        "The Devouring Earth Abides",
+        "Hive Mind",
+        "Natural Selection"
+      ],
+      "plaque_badges": [
+        "Savant IV-V"
+      ],
+      "url": "https://homecoming.wiki/wiki/Eden"
     }
   ],
   "_verification": {
