@@ -821,6 +821,18 @@ function _storyHtml(zones) {
 let _JNY_SEL = null;   // selected stop index
 let _JNY_CTX = null;   // {steps, route, storyAt, ...} — set by renderJourney
 
+// Journey-local alignment: lets a player see EITHER side's content without
+// changing the whole app's theme (Joel). Defaults to the app alignment; the
+// switch in the road header overrides it for this view only.
+let _JNY_ALIGN = null;
+function _journeyAlign() {
+  return _JNY_ALIGN || (localStorage.getItem("cohAlignment") || "hero");
+}
+window.setJourneyAlign = function (al) {
+  _JNY_ALIGN = al;
+  renderJourney();
+};
+
 window.selectJourneyStop = function (i) {
   _JNY_SEL = i;
   document.querySelectorAll("#journey-body .jny-card").forEach((c, k) =>
@@ -996,11 +1008,12 @@ function _zoneArtHtml(names) {
   const file = _artFileFor(zoneName);
   return `<div class="jny-art${file ? " has-art" : ""}">`
     + (file
-        ? `<img src="/static/zone_art/${encodeURIComponent(file)}" alt="${escHtml(zoneName)} map"
-             title="${escHtml(zoneName)} — the game's own zone map">`
+        ? `<img src="/static/zone_art/${encodeURIComponent(file)}" alt="${escHtml(zoneName)}"`
+          + ` title="${escHtml(zoneName)}">`
+          // The zone name ON the image (Joel: "none of the zone images have names").
+          + `<div class="jny-art-caption">${escHtml(zoneName)}</div>`
         : (zoneName ? `<div class="jny-art-name">${escHtml(zoneName)}</div>` : "")
-          + `<div class="jny-art-pending">no map art for this zone<br>`
-          + `<span class="muted small">the client ships one for 11 zones only</span></div>`)
+          + `<div class="jny-art-pending">zone art pending</div>`)
     + `</div>`;
 }
 
@@ -1063,7 +1076,7 @@ function renderJourneyLevelPanel() {
 function _zonesForLevelHtml(level) {
   const zl = (JOURNEY_PLACES || {}).zone_levels || [];
   if (!zl.length) return "";
-  const align = (localStorage.getItem("cohAlignment") || "hero") === "villain" ? "villain" : "hero";
+  const align = _journeyAlign() === "villain" ? "villain" : "hero";
   const fit = zl.filter(z => level >= z.from && level <= z.to
     // hide the other faction's and the always-open social/pvp sprawl from the
     // plain "where can I level" list; a hero doesn't level in the Rogue Isles.
@@ -1334,7 +1347,7 @@ function renderJourney() {
   const jb = JOURNEY_BADGES || {};
   const lvBadges = jb.level_badges || {};
   // The route follows the character's side — the Rogue Isles are a different road.
-  const align = (localStorage.getItem("cohAlignment") || "hero") === "villain" ? "villain" : "hero";
+  const align = _journeyAlign() === "villain" ? "villain" : "hero";
   const bands = (JOURNEY_PLACES || {})[align] || [];
   const route = _routeForStops(steps, bands);
   const storyLayer = (JOURNEY_PLACES || {}).story || {};
@@ -1413,12 +1426,28 @@ function renderJourney() {
   $("journey-body").innerHTML =
     `<div class="jny">`
     + (journeyIntroDone() ? "" : _journeyIntroHtml())
-    + `<div class="jny-head"><span class="muted small">Scroll or drag the road — every stop is a level your plan does something. Click a card for what it buys you.</span>`
+    + `<div class="jny-head"><span class="muted small">Scroll or drag the road — click a card for what that level buys you.</span>`
+    // See either side's content without changing your character's theme.
+    + ` <span class="jny-align" title="See hero or villain content">`
+    + `<button class="${align === "hero" ? "on" : ""}" onclick="setJourneyAlign('hero')">🦸 Hero</button>`
+    + `<button class="${align === "villain" ? "on" : ""}" onclick="setJourneyAlign('villain')">🦹 Villain</button></span>`
     + (wizOpen ? ` <button class="linkbtn" onclick="closeJourneyView(); openLevelStepper()">▶ step-by-step view</button>` : "")
     + ` <label class="muted small jny-autoopen"><input type="checkbox" id="jny-autoopen"
         ${journeyAutoOff() ? "" : "checked"} onchange="setJourneyAutoOpen(this.checked)">
         open automatically for new characters</label>`
     + `</div>`
+    // How to actually change sides in-game — the switch above only changes what
+    // you're VIEWING; Null the Gull is how a character crosses over.
+    + `<details class="jny-fit jny-gull"><summary>🕊️ <b>Want to switch sides?</b> `
+    + `<span class="muted small">how to change your alignment in-game</span></summary>`
+    + `<div class="muted small" style="margin:4px 0 0 6px">`
+    + `The toggle above just previews the other side's content. To actually change a character's `
+    + `alignment, visit <b>Null the Gull</b> in <b>Pocket D</b> — reachable from almost any zone `
+    + `(look for the Pocket D / monorail portal, or use the Base/Ouroboros teleporters). `
+    + `Talk to Null, a floating seagull near the middle, and he'll flip you between Hero, Vigilante, `
+    + `Rogue and Villain for free — he can also toggle XP, inspiration drops, and a few other quality-of-life `
+    + `settings. Heroes and Villains who go Vigilante or Rogue can then play <i>both</i> sides' content.`
+    + `</div></details>`
     + `<div class="jny-viewport"><div class="jny-strip"><div class="jny-lane">${stops}</div></div></div>`
     + `<div class="jny-panel" id="jny-panel"></div>`
     + (zones
