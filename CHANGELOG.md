@@ -2,15 +2,16 @@
 
 ## Unreleased
 
-- **The Journey opens for every new 1–50 character.** Two field reports, one
-  fix each: the greeting used to fire only from the two "see the build"
-  buttons (now it fires however you leave the wizard), and it used to show
-  only once per browser ever — build a second leveling character and the
-  road stayed silent. Now every new or resumed leveling character starts
-  with the road open. Closing it is just closing it. If you'd rather it
-  never open itself, the road's header has the switch: "open automatically
-  for new 1–50 characters" — remembered, and reversible right there. The
-  what-is-this introduction shows until you press "Got it".
+- **The Journey opens the moment your 1–50 build finishes.** Four field
+  reports, one lesson: the greeting used to wait for clicks that never came
+  — first only the two "see the build" buttons, then any wizard exit, and
+  only once per browser ever. Now the road opens by itself the instant
+  "Build my kit" completes (the wizard's result waits underneath), and it
+  does so for every new or resumed leveling character. Closing it is just
+  closing it. If you'd rather it never open itself, the road's header has
+  the switch: "open automatically for new 1–50 characters" — remembered,
+  and reversible right there. The what-is-this introduction shows until
+  you press "Got it".
 - **The road drags like a map.** Grab it with the mouse and pan left/right —
   clicks on cards still work (a real drag never counts as a click).
 - **Open cards never hide under the title bar.** More headroom on the road and
