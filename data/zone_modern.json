@@ -443,6 +443,31 @@
                              "Wasted Resources", "Hot Dog", "Still Standing", "Volatile"],
       "plaque_badges": ["Swashbuckler III"],
       "url": "https://homecoming.wiki/wiki/Siren%27s_Call"
+    },
+    {
+      "zone": "Warburg",
+      "from": 38,
+      "to": 40,
+      "kind": "PvP zone",
+      "pvp": true,
+      "pvp_note": "FREE-FOR-ALL, not hero-versus-villain: any player may attack any other player here, including your own side. Any level may enter and everyone is set to combat level 38. Shown at 38 because that is the level you actually fight at.",
+      "since": "Issue 6",
+      "note": "Marshal Blitz took the island and started firing warheads at Paragon City; Longbow and Arachnos are both here trying to stop him, and neither trusts the other. The Missile Launch mission is the draw — launching the Warburg Rocket ten times earns Rocketman. The WEB is the Council's old underground weapons labs.",
+      "events": [{ "name": "Missile Launch", "kind": "event", "note": "launch the Warburg Rocket — ten launches earns Rocketman" }],
+      "contacts": ["Longbow Special Op (hero)", "Warzone Agent Goddard (hero)",
+                   "Arachnos Technician (villain)", "Warzone Operative Braun (villain)"],
+      "neighborhoods": [
+        { "name": "Hero Base", "from": 38, "to": 40, "risk": "Blue" },
+        { "name": "Villain Base", "from": 38, "to": 40, "risk": "Purple" },
+        { "name": "Warburg", "from": 38, "to": 40, "risk": "Orange" },
+        { "name": "The WEB", "from": 38, "to": 40, "risk": "Orange" }
+      ],
+      "enemies": ["Arachnoids", "Arachnos", "Longbow", "Malta Operatives", "Rogue Arachnos", "Turrets"],
+      "exploration_badges": ["Weapon Inspector / Weapon of Mass Destruction", "Tunnel Rat",
+                             "Triumphant", "Disassembled", "Forcibly Evicted", "Herculean",
+                             "Nuclear", "Game Over"],
+      "plaque_badges": ["Arachnos Rising III"],
+      "url": "https://homecoming.wiki/wiki/Warburg"
     }
   ]
 }
