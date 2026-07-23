@@ -898,22 +898,17 @@ function toggleJourneyCard(i) {
 // fixed guess has been wrong in one direction or the other (190px clipped an
 // open card, 240px ate the screen with everything collapsed). Measure instead:
 // tallest card + the 34px stem that lifts it off the line + a little air.
-// Measured PER SIDE, not once: cards alternate above and below the line, so one
-// tall card was inflating BOTH halves and the road claimed twice the room it
-// needed (Joel had to zoom to 67% to fit a screenshot). Odd stops hang above,
-// even stops below — each side reserves only its own tallest card.
+// Every card hangs BELOW the line now, so the lane reserves room on one side
+// only: above it there is just the ★ marker. Measured, never guessed — a fixed
+// number has been wrong in both directions here (190px clipped an open card,
+// 240px ate the screen with everything collapsed).
 function _fitJourneyLane() {
   const lane = document.querySelector("#journey-body .jny-lane");
   if (!lane) return;
-  let above = 0, below = 0;
-  lane.querySelectorAll(".jny-stop").forEach((stop, i) => {
-    const card = stop.querySelector(".jny-card");
-    if (!card) return;
-    if (i % 2 === 0) above = Math.max(above, card.offsetHeight);   // :nth-child(odd)
-    else below = Math.max(below, card.offsetHeight);
-  });
-  if (above) lane.style.paddingTop = `${Math.ceil(above) + 46}px`;
-  if (below) lane.style.paddingBottom = `${Math.ceil(below) + 46}px`;
+  let tallest = 0;
+  lane.querySelectorAll(".jny-card").forEach(c => { tallest = Math.max(tallest, c.offsetHeight); });
+  lane.style.paddingTop = "56px";                                    // ★ marker + air
+  if (tallest) lane.style.paddingBottom = `${Math.ceil(tallest) + 46}px`;
 }
 
 // Grab-and-drag panning (Joel's report: the road wouldn't drag with the mouse

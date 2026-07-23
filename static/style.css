@@ -1543,7 +1543,7 @@ body { overflow: hidden; }
    tallest one — and a fixed number is either too small (Joel's level-7 card slid
    under the title bar at 190px) or too big (240px claimed the whole screen even
    with every card collapsed). This value is only the pre-measurement fallback. */
-.jny-lane { position: relative; display: flex; gap: 44px; width: max-content; padding: 170px 30px; }
+.jny-lane { position: relative; display: flex; gap: 44px; width: max-content; padding: 56px 30px 200px; }
 .jny-lane::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 5px;
   transform: translateY(-50%); border-radius: 3px; background: var(--border); }
 .jny-stop { position: relative; width: 212px; scroll-snap-align: center; flex: none; }
@@ -1560,17 +1560,23 @@ body { overflow: hidden; }
   border: 1px solid var(--border); border-radius: 10px; padding: 9px 11px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, .35); }
 .jny-card.has-detail { cursor: pointer; }
-.jny-card.open { z-index: 5; }   /* an opened card paints over neighbors + header, never under */
-.jny-stop:nth-child(odd) .jny-card { bottom: calc(50% + 34px); }
-.jny-stop:nth-child(even) .jny-card { top: calc(50% + 34px); }
+/* An opened card paints over its neighbours, never under — and it is CAPPED.
+   Measured: the level-1 card opened to 603px of deltas and tips, and since the
+   lane has to reserve room for the tallest card, one open card was setting the
+   height of the entire road. A detail panel that outgrows the screen is a wall
+   of text anyway (Joel's word for it); past the cap it scrolls inside itself. */
+.jny-card.open { z-index: 5; max-height: 240px; overflow-y: auto; }
+/* ONE SIDE, not two (Joel: "the layout is not efficient with space" — he had to
+   zoom to 67% to screenshot it). Alternating cards above AND below made the road
+   permanently two card-heights tall for one line of information. All cards hang
+   below the line now; above it there is only the road and the ★ marker, so the
+   whole thing is roughly half as tall and reads left-to-right like a timetable. */
+.jny-card { top: calc(50% + 34px); }
 .jny-stop::after { content: ""; position: absolute; left: 50%; width: 2px; height: 22px;
-  background: var(--border); transform: translateX(-50%); }
-.jny-stop:nth-child(odd)::after { bottom: calc(50% + 12px); }
-.jny-stop:nth-child(even)::after { top: calc(50% + 12px); }
+  background: var(--border); transform: translateX(-50%); top: calc(50% + 12px); }
 .jny-stop.here .jny-card { border-color: var(--warn); }
-.jny-youare { position: absolute; left: 50%; top: calc(50% + 26px); transform: translateX(-50%);
+.jny-youare { position: absolute; left: 50%; bottom: calc(50% + 24px); transform: translateX(-50%);
   color: var(--warn); font-size: 10px; white-space: nowrap; letter-spacing: .04em; z-index: 2; }
-.jny-stop:nth-child(even) .jny-youare { top: auto; bottom: calc(50% + 26px); }
 .jny-lv { font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
 .jny-pick { margin: 5px 0 2px; font-size: 13px; }
 .jny-slots { display: flex; align-items: center; gap: 4px; margin: 5px 0 2px; }
