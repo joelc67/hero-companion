@@ -714,12 +714,11 @@
     },
     {
       "zone": "The Abyss",
-      "from": null,
-      "to": null,
-      "_needs": "LEVEL RANGE. The paste began at Exploration Badges, so the 'Co-op Trial Zone (XX-YY)' header line is missing — and a level range is the one field that must never be guessed, since it is the whole basis for placing a zone on the road. Everything else below is recorded and waiting. Zones with a null range are skipped by the client on purpose.",
+      "from": 45,
+      "to": 50,
       "kind": "Co-op trial zone",
       "since": "Issue 9 (villains only at first; became co-op later)",
-      "note": "Entirely Devouring Earth. Hamidon sits in the watery bowl in the north, and while it is there it is the ONLY enemy in the zone; when it is away, Thorn, Stropharia, Lattice and Quarry monsters roam instead, and killing them earns Essence of the Earth inspirations. One way in only: the Smuggler's Submarine.",
+      "note": "An archipelago of abandoned genetic and biological experiments that the Devouring Earth moved into after the humans left. Hamidon appears in the sinkhole; while it is there it is the ONLY enemy in the zone. When it is away, Thorn, Stropharia, Lattice and Quarry monsters roam instead, and killing them earns Essence of the Earth inspirations. One way in only: the Smuggler's Submarine.",
       "events": [
         {
           "name": "Hamidon",
@@ -740,7 +739,39 @@
         "The Tree of Woe",
         "Abyssal Gaze"
       ],
-      "url": "https://homecoming.wiki/wiki/The_Abyss"
+      "url": "https://homecoming.wiki/wiki/The_Abyss",
+      "not_pvp_note": "Co-op trial zone, NOT a PvP zone. The four PvP zones are Bloody Bay, Siren's Call, Warburg and Recluse's Victory.",
+      "team": "The zone's own recon officer suggests 5 to 8 people, and says 'The Abyss is no place to wander alone'.",
+      "neighborhoods": [
+        {
+          "name": "Abandoned Compounds",
+          "from": 45,
+          "to": 50,
+          "risk": "Red"
+        },
+        {
+          "name": "Abandoned Bio Lab",
+          "from": 45,
+          "to": 50,
+          "risk": "Red"
+        },
+        {
+          "name": "Staging Rocks",
+          "from": 45,
+          "to": 50,
+          "risk": "Red"
+        },
+        {
+          "name": "The Sinkhole",
+          "from": 45,
+          "to": 50,
+          "risk": "Red"
+        }
+      ],
+      "safe_havens": [
+        "Landing Area"
+      ],
+      "safe_havens_note": "the recon officer calls it 'probably the only one'"
     },
     {
       "zone": "Nova Praetoria",
