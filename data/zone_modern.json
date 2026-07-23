@@ -468,6 +468,20 @@
                              "Nuclear", "Game Over"],
       "plaque_badges": ["Arachnos Rising III"],
       "url": "https://homecoming.wiki/wiki/Warburg"
+    },
+    {
+      "zone": "The Abyss",
+      "from": null,
+      "to": null,
+      "_needs": "LEVEL RANGE. The paste began at Exploration Badges, so the 'Co-op Trial Zone (XX-YY)' header line is missing — and a level range is the one field that must never be guessed, since it is the whole basis for placing a zone on the road. Everything else below is recorded and waiting. Zones with a null range are skipped by the client on purpose.",
+      "kind": "Co-op trial zone",
+      "since": "Issue 9 (villains only at first; became co-op later)",
+      "note": "Entirely Devouring Earth. Hamidon sits in the watery bowl in the north, and while it is there it is the ONLY enemy in the zone; when it is away, Thorn, Stropharia, Lattice and Quarry monsters roam instead, and killing them earns Essence of the Earth inspirations. One way in only: the Smuggler's Submarine.",
+      "events": [{ "name": "Hamidon", "kind": "event", "note": "in the northern bowl, surrounded by its mitochondria" }],
+      "enemies": ["Devouring Earth"],
+      "exploration_badges": ["Reborn", "Geneticist", "Here Be Dragons", "Caged Beast", "No Escape",
+                             "Hamidon's Ire", "The Tree of Woe", "Abyssal Gaze"],
+      "url": "https://homecoming.wiki/wiki/The_Abyss"
     }
   ]
 }

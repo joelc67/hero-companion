@@ -915,7 +915,11 @@ function _zoneRewardsHtml(zoneNames) {
 // quietly end at 2020.
 function _modernHtml(level) {
   const m = (JOURNEY_PLACES || {}).modern || {};
-  const hits = (m.zones || []).filter(z => level >= z.from && level <= z.to);
+  // A zone with no level range is NOT placed. A range is the whole basis for
+  // putting a zone in front of someone at a given level, so a missing one is
+  // recorded in the data and skipped here — never approximated.
+  const hits = (m.zones || []).filter(z => z.from != null && z.to != null
+    && level >= z.from && level <= z.to);
   if (!hits.length) return "";
   return hits.map((z) => {
     // Neighbourhoods carry their OWN level bands, which is the finest-grained
