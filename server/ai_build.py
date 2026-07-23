@@ -372,6 +372,12 @@ CONTENT_PRESETS = {
     },
 }
 
+# The fire-farm CONTENT FAMILY. "fire_farm" was retired from the picker in 0.12.22
+# (the wizard sends farm_afk/farm_active) but the backend still accepts it from
+# older saves — so every "is this a farm?" gate must match the whole family, never
+# the retired key alone (the _discover Corruptor nudge silently died this way).
+FARM_CONTENTS = ("fire_farm", "farm_afk", "farm_active")
+
 # Armor sets whose native defense is POSITIONAL — characters built on these chase
 # 35% Melee/Ranged/AoE instead of typed S/L/F/C (the typed targets would fight the
 # armor's own geometry). Matched on the set's short name, lowercased.
@@ -640,7 +646,7 @@ def recommend_incarnates(archetype, content, role, totals, targets=None, res_cap
     # is applied AFTER summing buffs+debuffs). So whether stacking resilience past cap is
     # worth it depends on whether the CONTENT debuffs:
     debuff_content = content in ("itrial", "team", "av")   # league/iTrial/AV: -res/-def common -> overcap cushion is real
-    farm_content = content == "fire_farm"                  # raw damage, ~no debuffs -> overcap res is dead weight; sustain instead
+    farm_content = content in FARM_CONTENTS                # raw damage, ~no debuffs -> overcap res is dead weight; sustain instead
     is_mm = archetype == "Class_Mastermind"   # a MM's damage is its henchmen — Musculature/Lore/Assault buff the PETS
     rech_cur = (totals.get("recharge") or {}).get("value", 0)
     rech_tgt = targets.get("recharge", 0)
@@ -810,10 +816,10 @@ def recommend_incarnates(archetype, content, role, totals, targets=None, res_cap
                      "why": "single-target fight — Void adds -Damage so the AV hits softer; the nuke itself is secondary.",
                      "always_on": False})
     else:
-        fam = "Pyronic" if content == "fire_farm" else "Ion"
+        fam = "Pyronic" if content in FARM_CONTENTS else "Ion"
         recs.append({"slot": "Judgement", "full_name": _judg(fam),
                      "display": f"{fam} Radial Final Judgement",
-                     "why": ("big fire AoE to wipe packed farm spawns." if content == "fire_farm"
+                     "why": ("big fire AoE to wipe packed farm spawns." if content in FARM_CONTENTS
                              else "chaining AoE nuke for spawn/add clear."),
                      "always_on": False})
 
@@ -855,7 +861,7 @@ def recommend_incarnates(archetype, content, role, totals, targets=None, res_cap
 
 
 def incarnate_loadouts(archetype, role, totals, res_cap=75,
-                       contents=("fire_farm", "itrial", "av")):
+                       contents=("farm_active", "itrial", "av")):
     """Per-CONTENT incarnate loadouts for the SAME build — incarnates are swappable
     per encounter, so a farmed-out character carries different T4s for different nights.
     Each content re-runs the recommender against THAT content's preset targets, so the

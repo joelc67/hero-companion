@@ -47,6 +47,9 @@ _PREMIUM_HINTS = ("Superior", "Armageddon", "Hecatomb", "Ragnarok", "Apocalypse"
                   "Winter", "Overwhelming Presence", "Mako", "Gladiator's Javelin")
 _OFFENSE_ROLES = {"damage", "tank"}
 _CONTROL_ROLES = {"controller", "control", "dominator", "debuffer"}
+# Farm content family (fire_farm = the pre-0.12.22 key, still accepted from older
+# saves). A support-role farm mule earns the proc pass through CONTENT, not role.
+_FARM_CONTENTS = {"fire_farm", "farm_afk", "farm_active"}
 # Premium sets that are DAMAGE sets: their enhancement is WASTED on a non-damage role, so on a
 # controller's AoE attack we proc-bomb right over them (Containment procs > a dead damage set).
 # Premium CONTROL/role homes (Gravitational Anchor, ATOs, etc.) are NOT here — those stay intact.
@@ -185,7 +188,7 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general",
     the target's substance. guard=None preserves the old unguarded behavior
     for callers with no targets in scope."""
     role = role or "damage"
-    if not (role in _OFFENSE_ROLES or role in _CONTROL_ROLES or content == "fire_farm"):
+    if not (role in _OFFENSE_ROLES or role in _CONTROL_ROLES or content in _FARM_CONTENTS):
         return powers
     try:
         cat = _catalog()
@@ -336,7 +339,7 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general",
         # pulse (spawn-wide, the Venomous Gas standard) > a spammed click (the Envenom
         # standard). Pet summons are excluded — the swap would break their pet set, and
         # the pet, not the player, owns the rolls.
-        if role in _CONTROL_ROLES or role in _OFFENSE_ROLES or content == "fire_farm":
+        if role in _CONTROL_ROLES or role in _OFFENSE_ROLES or content in _FARM_CONTENTS:
             _PET_CATS = {"Pet Damage", "Recharge Intensive Pets"}
             # EVERY −res proc is a team amplifier (Achilles/Annihilation/Fury of the
             # Gladiator): each goes into the best host accepting its category — debuff
@@ -381,7 +384,7 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general",
         # a frequently-cycled knockback attack sustains a real average global-recharge
         # uplift (the engine prices it: chance × 5s ÷ cycle). Best host = the SPAMMED
         # attack (shortest cycle = most rolls per minute), non-premium, last-piece swap.
-        if role in _OFFENSE_ROLES or role in _CONTROL_ROLES or content == "fire_farm":
+        if role in _OFFENSE_ROLES or role in _CONTROL_ROLES or content in _FARM_CONTENTS:
             for pcat, procs in (cat.get("rech_procs") or {}).items():
                 proc = next((x for x in procs if x.get("uid")
                              and x["uid"] not in used), None)

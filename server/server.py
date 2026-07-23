@@ -1141,7 +1141,7 @@ def _explain_content(archetype, content, primary, secondary, res_cap):
         parts.append("Everyday content, solo or casual teams: a balanced 35% typed "
                      "defense, 50% S/L resistance, and +70% recharge — sturdy "
                      "everywhere without over-committing to one enemy type.")
-    if positional and pos_set and content != "fire_farm":
+    if positional and pos_set and content not in ai_build.FARM_CONTENTS:
         parts.append(f"Because {pos_set} is POSITIONAL armor, the planner chases "
                      "Melee/Ranged/AoE defense instead of typed — building typed "
                      "defense would fight your own armor's geometry.")
@@ -4661,7 +4661,7 @@ def _build_warnings(powers, archetype, totals, content, role, exposure=None):
                         "heavily toward ~45% positional defense (+ a sustain if the set has one), keep a "
                         "team tank holding aggro, or fight from RANGE where distance is your defense — "
                         "more damage doesn't help if you're on the floor."})
-        if content == "fire_farm":
+        if content in ai_build.FARM_CONTENTS:
             aoe = 0
             for power in powers:
                 rec = POWER_BY_FULL.get(power.get("full_name")) or {}
@@ -4675,7 +4675,7 @@ def _build_warnings(powers, archetype, totals, content, role, exposure=None):
                             "will clear noticeably slower."})
         # Weak epic/ancillary POWER PICKS for an offense build — single-target control where the
         # same set offers AoE / -resistance. (Re-solving keeps imported powers, so flag it.)
-        if role in ("damage", "tank") or content == "fire_farm":
+        if role in ("damage", "tank") or content in ai_build.FARM_CONTENTS:
             by_ps = {}
             for power in powers:
                 rec = POWER_BY_FULL.get(power.get("full_name"))
@@ -5867,12 +5867,14 @@ def _pick_epic(archetype, content, role="damage", exposure="flex"):
     if not epics:
         return []
     # "pyre" added so a fire farmer's Pyre Mastery matches (the set name has no "fire"/"flame").
-    pref = {"fire_farm": ("flame", "fire", "pyre"), "av": ("dark", "soul", "mu", "elec"),
+    _flame = ("flame", "fire", "pyre")
+    pref = {"fire_farm": _flame, "farm_afk": _flame, "farm_active": _flame,
+            "av": ("dark", "soul", "mu", "elec"),
             "itrial": ("dark", "soul", "elec")}.get(content, ())
-    offense = role in ("damage", "tank") or content == "fire_farm"
+    offense = role in ("damage", "tank") or content in ai_build.FARM_CONTENTS
     # Control/debuff/buff role: pick the epic for the LAYER it adds (robust hold, -res/-def/-tohit,
     # Power Boost), not damage. _epic_support_value scores that; offense path is unchanged.
-    support = role in _SUPPORT_EPIC_ROLES and content != "fire_farm"
+    support = role in _SUPPORT_EPIC_ROLES and content not in ai_build.FARM_CONTENTS
     val = (lambda p: _epic_support_value(p)) if support else (lambda p: _epic_power_value(p, exposure))
 
     def parts(ps):
@@ -6854,7 +6856,7 @@ def _discover(role, exposure=None, content=None):
     ranked = _ROLE_RANK[role]
     # content nudge: a fire farm rewards a support that ALSO adds damage (Corruptor)
     order = list(ranked)
-    if content == "fire_farm" and role in ("buffer", "healer") and "Class_Corruptor" in order:
+    if content in ai_build.FARM_CONTENTS and role in ("buffer", "healer") and "Class_Corruptor" in order:
         order.remove("Class_Corruptor"); order.insert(0, "Class_Corruptor")
     solo = content in _SOLO_CONTENT
     if solo:                    # durability leads solo; honor the ranged/melee vector too
