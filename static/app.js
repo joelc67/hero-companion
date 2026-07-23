@@ -1452,9 +1452,17 @@ async function buildRespec() {
       + `<div id="wiz-plan-out"></div>`;
     $("wiz-plan-out").innerHTML = levelingPlanHtml();   // show the full in-game respec order up front
     const _reveal = () => {
-      closeRespecWizard();      // fires the first-meeting greet itself (any-exit seam)
+      closeRespecWizard();      // any-exit seam stays as the backstop
       $("builder").scrollIntoView({ behavior: "smooth", block: "start" });
     };
+    // THE TRIGGER IS THE BUILD FINISHING, not the wizard exit (Joel's fourth
+    // report finally isolated it: he builds, then WAITS for the promised road
+    // — no exit ever happens). A 1-50 start "starts ON": the road opens right
+    // now, over the wizard; closing it lands on the result underneath.
+    if (_WIZ_BUILT_LEVELING) {
+      _WIZ_BUILT_LEVELING = false;
+      maybeAutoOpenJourney();
+    }
     $("wiz-reveal").addEventListener("click", _reveal);
     $("wiz-open").addEventListener("click", _reveal);
     $("wiz-step").addEventListener("click", openLevelStepper);
