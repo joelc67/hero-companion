@@ -9,6 +9,14 @@
   Mostly-in / You-fight-from answers and lives right below them ("Not sure
   what to roll? … 🔍 Find my character"). Asking it with Role unanswered
   flags the question instead of quietly assuming damage.
+- **A 1–50 character's Journey starts ON.** Build or resume a leveling
+  character and the road opens itself the first time, introducing what it's
+  for, how to close and reopen it (the 🗺️ Journey switch in the header), and
+  how to turn on the game's chat log — with the full 2-minute setup steps
+  right there — so your Play Log fills while you play. Then it's your call:
+  close it once (or press "Got it") and it never opens itself again. Builds
+  that aren't leveling see the same introduction the first time they open the
+  road themselves.
 - **The Leveling Journey (first cut).** A new "🗺️ See the journey" view on the
   wizard's build result: your whole 1–50 rolls past left-to-right like a map —
   every level a stop on the road with its power pick, new enhancement slots,

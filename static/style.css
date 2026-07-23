@@ -1525,6 +1525,9 @@ body { overflow: hidden; }
 @keyframes jnybtnpulse {
   50% { border-color: var(--warn); box-shadow: 0 0 10px rgba(217, 164, 65, .55); }
 }
+.jny-intro { background: var(--bg); border: 1px solid var(--accent); border-radius: 10px;
+  padding: 12px 14px; margin: 10px 0 4px; font-size: 13px; }
+.jny-intro .gl-help { margin-top: 8px; }
 .jny-head { margin: 10px 0 2px; }
 .jny-viewport { position: relative; margin-top: 4px; }
 .jny-viewport::before, .jny-viewport::after { content: ""; position: absolute; top: 0;

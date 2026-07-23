@@ -224,6 +224,7 @@ window.loadSave = async function (id) {
   _lastSavedSnapshot = buildSnapshot();   // just loaded — already clean
   hideEntry();
   recompute();
+  maybeAutoOpenJourney();       // resuming a 1-50 character leads with the road too
 };
 
 window.deleteSave = async function (id) {
@@ -786,6 +787,44 @@ async function openJourneyView() {
   if (here) here.scrollIntoView({ inline: "center", block: "nearest" });
 }
 
+// FIRST MEETING (Joel's ruling, 2026-07-22): a 1-50 character's journey view
+// STARTS ON — it is the point of a leveling wizard — and its first appearance
+// says what it is, how to toggle it, and how to hook up the chat log. Then
+// the user decides (choice doctrine): any close is a remembered decision, we
+// never force it open again. Non-leveling builds aren't auto-opened, but
+// their first manual open shows the same intro, so the basics are always
+// somewhere.
+function journeyIntroDone() { return !!localStorage.getItem("journeyIntroDone"); }
+function markJourneyIntroDone() { try { localStorage.setItem("journeyIntroDone", "1"); } catch (e) { /* private mode */ } }
+window.journeyIntroGotIt = function () {
+  markJourneyIntroDone();
+  const card = document.getElementById("jny-intro");
+  if (card) card.remove();
+};
+function maybeAutoOpenJourney() {
+  if (!isLevelingBuild()) return;                    // 1-50 starts ON; others opt in
+  if (!(build.powers || []).length) return;
+  if (journeyIntroDone()) return;                    // they've decided already
+  openJourneyView();
+}
+function _journeyIntroHtml() {
+  return `<div class="jny-intro" id="jny-intro">
+    <b>👋 This is your Leveling Journey</b> — the whole 1–50 as a road. Every stop
+    is a level where your plan does something: the power to pick, the enhancement
+    slots to place, milestones and badges along the way. Click any card to see
+    what that level buys you. The ★ marker is you — it moves when you update your
+    level in the plan.
+    <div class="muted small" style="margin-top:6px">Close it any time (✕ or Esc) and bring it
+    back with the <b>🗺️ Journey</b> button in the header — it's a simple on/off switch.</div>
+    <div style="margin-top:8px">💡 <b>Worth doing now:</b> turn on the game's chat log.
+    Hero Companion reads it (only on your machine, only with your say-so) and your
+    Play Log fills with what you actually earned — influence, drops with keep/sell
+    calls, session insights — while you just play.</div>
+    ${gamelogSetupHelp()}
+    <button class="secondary" style="width:auto;margin-top:8px" onclick="journeyIntroGotIt()">Got it — don't show this again</button>
+  </div>`;
+}
+
 // One switch, both directions: the header "🗺️ Journey" pill opens the road
 // and closes it again. When the overlay closes any OTHER way (✕, Esc,
 // clicking the dark backdrop), the pill pulses for a moment so the user
@@ -795,6 +834,7 @@ function closeJourneyView(teach = true) {
   const jb = $("journey-btn");
   if (jb) jb.classList.remove("journey-open");
   if (teach) teachJourneyPill();
+  markJourneyIntroDone();   // closing IS the decision — never auto-open again
 }
 
 function toggleJourneyView() {
@@ -868,6 +908,7 @@ function renderJourney() {
   const wizOpen = !document.getElementById("respec-wizard").classList.contains("hidden");
   $("journey-body").innerHTML =
     `<div class="jny">`
+    + (journeyIntroDone() ? "" : _journeyIntroHtml())
     + `<div class="jny-head"><span class="muted small">Scroll the road — every stop is a level your plan does something. Click a card for what it buys you.</span>`
     + (wizOpen ? ` <button class="linkbtn" onclick="closeJourneyView(); openLevelStepper()">▶ step-by-step view</button>` : "")
     + `</div>`
@@ -1326,7 +1367,11 @@ async function buildRespec() {
       + `<button id="wiz-open" class="solve-btn" style="width:auto">Open the full build →</button></div>`
       + `<div id="wiz-plan-out"></div>`;
     $("wiz-plan-out").innerHTML = levelingPlanHtml();   // show the full in-game respec order up front
-    const _reveal = () => { closeRespecWizard(); $("builder").scrollIntoView({ behavior: "smooth", block: "start" }); };
+    const _reveal = () => {
+      closeRespecWizard();
+      $("builder").scrollIntoView({ behavior: "smooth", block: "start" });
+      maybeAutoOpenJourney();   // a 1-50 character's first landing leads with the road
+    };
     $("wiz-reveal").addEventListener("click", _reveal);
     $("wiz-open").addEventListener("click", _reveal);
     $("wiz-step").addEventListener("click", openLevelStepper);
