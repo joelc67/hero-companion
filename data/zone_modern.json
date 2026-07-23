@@ -387,6 +387,62 @@
                              "The Wounded Earth", "Wild At Heart", "Among the Giants",
                              "The Sound of Thunder", "Forest of Stone"],
       "url": "https://homecoming.wiki/wiki/The_Hive"
+    },
+    {
+      "zone": "Bloody Bay",
+      "from": 25,
+      "to": 27,
+      "kind": "PvP zone",
+      "pvp": true,
+      "pvp_note": "Other players can attack you here. ANY level may enter and everyone is set to combat level 25 — under 25 you are sidekicked up, over 25 you are exemplared down and lose the powers you gained since. Shown at 25 because that is the level you actually fight at.",
+      "since": "Issue 6",
+      "note": "The first of the four PvP zones. Longbow and Arachnos are both here mining the Shiva meteor fragments, and the Shiva Strike mission is how you get a Shivan pet. Reached by helicopter — Skyway City for heroes, Cap au Diable for villains.",
+      "events": [{ "name": "Shiva Strike", "kind": "event", "note": "collect meteor fragments, earn a Shivan" }],
+      "contacts": ["Scientist (hero)", "Warzone Agent Eckman (hero)",
+                   "Evil Scientist (villain)", "Warzone Operative Oudot (villain)"],
+      "neighborhoods": [
+        { "name": "Freedom Base", "from": 25, "to": 27, "risk": "Blue" },
+        { "name": "Arachnos Base", "from": 25, "to": 27, "risk": "Purple" },
+        { "name": "Boardwalk", "from": 25, "to": 27, "risk": "Orange" },
+        { "name": "Dead Coast", "from": 25, "to": 27, "risk": "Orange" },
+        { "name": "Forgotten Forest", "from": 25, "to": 27, "risk": "Orange" },
+        { "name": "Green Nugget", "from": 25, "to": 27, "risk": "Orange" },
+        { "name": "Ground Zero", "from": 25, "to": 27, "risk": "Orange" },
+        { "name": "Water Street", "from": 25, "to": 27, "risk": "Orange" }
+      ],
+      "enemies": ["Arachnos", "Banished Pantheon", "Circle of Thorns", "Freakshow",
+                  "Longbow", "Shivans", "Spectral Pirates", "Turrets"],
+      "exploration_badges": ["Lobbyist / Crooked Politician", "Hungry / All Consuming", "Imploding",
+                             "Ghoulish", "What Lurks Beyond", "Burgermeister", "Mostly Harmless",
+                             "Restless"],
+      "plaque_badges": ["Swashbuckler II"],
+      "url": "https://homecoming.wiki/wiki/Bloody_Bay"
+    },
+    {
+      "zone": "Siren's Call",
+      "from": 30,
+      "to": 32,
+      "kind": "PvP zone",
+      "pvp": true,
+      "pvp_note": "Other players can attack you here. You must be at least level 20 to enter, and everyone inside is set to combat level 30 — raised or lowered. Shown at 30 because that is the level you actually fight at.",
+      "since": "Issue 6",
+      "note": "The second of the four PvP zones, and the one with a war going on in it: Longbow and Arachnos armies fight over hotspots, and whichever faction controls the zone unlocks temporary powers from its merchant. Bounty pays you for hunting player enemies. Heroes enter through the Steel Canyon gate on the eastern war wall.",
+      "events": [
+        { "name": "Battle for Siren's Call", "kind": "event", "note": "Longbow vs Arachnos at hotspots — controls the zone" },
+        { "name": "Bounty", "kind": "event", "note": "hunt player enemies for spendable points" }
+      ],
+      "contacts": ["Warzone Agent Brinson (hero)", "Warzone Operative Massey (villain)"],
+      "neighborhoods": [
+        { "name": "Buildville", "from": 30, "to": 32, "risk": "Orange" },
+        { "name": "Fossburg", "from": 30, "to": 32, "risk": "Orange" },
+        { "name": "Randall's Ruins", "from": 30, "to": 32, "risk": "Orange" },
+        { "name": "Talos Park", "from": 30, "to": 32, "risk": "Orange" }
+      ],
+      "enemies": ["Arachnos", "Clockwork", "Longbow", "Sky Raiders", "Tsoo", "Warriors"],
+      "exploration_badges": ["Hangman", "Politician", "Broad Shoulders", "Piratical",
+                             "Wasted Resources", "Hot Dog", "Still Standing", "Volatile"],
+      "plaque_badges": ["Swashbuckler III"],
+      "url": "https://homecoming.wiki/wiki/Siren%27s_Call"
     }
   ]
 }

@@ -928,6 +928,9 @@ function _modernHtml(level) {
       `<div class="jny-modern"><b>🆕 ${escHtml(z.zone)}</b> `
         + `<span class="muted small">${escHtml(z.kind || "")} · ${z.from}–${z.to}`
         + (z.since ? ` · ${escHtml(z.since)}` : "") + `</span>`,
+      // PvP is stated before anything else about the zone. "Other players can
+      // attack you" is not a detail to discover after walking in.
+      z.pvp ? `<div class="jny-warn">⚔ <b>PvP zone.</b> ${escHtml(z.pvp_note || "")}</div>` : "",
       // Yellow/Orange/Red is the wiki's own difficulty marking, and it answers
       // the question the game's tram board never does: you CAN go in, but is it
       // a fight you want at this level? (Joel's Positron case, per-neighbourhood.)

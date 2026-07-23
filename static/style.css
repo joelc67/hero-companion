@@ -1656,3 +1656,7 @@ body { overflow: hidden; }
 .risk-yellow { color: #d9c04a; border-color: #d9c04a; }
 .risk-orange { color: #e08a3c; border-color: #e08a3c; }
 .risk-red { color: #e05c5c; border-color: #e05c5c; }
+/* Faction bases in PvP zones — the wiki marks these separately from the
+   difficulty colours because they mean "whose ground is this", not "how hard". */
+.risk-blue { color: #5b9be0; border-color: #5b9be0; }
+.risk-purple { color: #a97fd6; border-color: #a97fd6; }
