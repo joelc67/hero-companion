@@ -828,10 +828,20 @@ window.setJourneyAutoOpen = function (on) {
   } catch (e) { /* private mode */ }
 };
 function maybeAutoOpenJourney() {
-  if (!isLevelingBuild()) return;                    // 1-50 starts ON; others opt in
-  if (!(build.powers || []).length) return;
-  if (journeyAutoOff()) return;                      // the explicit, reversible "no"
+  // Every gate says WHY out loud. Five rounds of "nothing happened" were five
+  // rounds of guessing which of these three returned early on a screen I can't
+  // see; the console now answers it in one line, from whichever of the three
+  // call sites ran (resume, wizard exit, build finish).
+  const why = !isLevelingBuild() ? `not a 1-50 build (mode=${build._mode})`
+    : !(build.powers || []).length ? "no powers in the build yet"
+    : journeyAutoOff() ? "auto-open is switched off (road header checkbox)"
+    : "";
+  console.log(`[journey] greet ${why ? "SKIPPED — " + why : "OPENING"}`,
+              { mode: build._mode, powers: (build.powers || []).length,
+                autoOff: journeyAutoOff(), introSeen: journeyIntroDone() });
+  if (why) return false;
   openJourneyView(true);
+  return true;
 }
 function _journeyIntroHtml() {
   return `<div class="jny-intro" id="jny-intro">
@@ -1459,10 +1469,10 @@ async function buildRespec() {
     // report finally isolated it: he builds, then WAITS for the promised road
     // — no exit ever happens). A 1-50 start "starts ON": the road opens right
     // now, over the wizard; closing it lands on the result underneath.
-    if (_WIZ_BUILT_LEVELING) {
-      _WIZ_BUILT_LEVELING = false;
-      maybeAutoOpenJourney();
-    }
+    // Called unconditionally: maybeAutoOpenJourney applies the SAME gates and
+    // now reports which one stopped it, so there is no second place to fail
+    // silently. The any-exit backstop arms only if this open did NOT happen.
+    _WIZ_BUILT_LEVELING = !maybeAutoOpenJourney();
     $("wiz-reveal").addEventListener("click", _reveal);
     $("wiz-open").addEventListener("click", _reveal);
     $("wiz-step").addEventListener("click", openLevelStepper);
