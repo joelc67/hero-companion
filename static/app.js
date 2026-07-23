@@ -898,12 +898,22 @@ function toggleJourneyCard(i) {
 // fixed guess has been wrong in one direction or the other (190px clipped an
 // open card, 240px ate the screen with everything collapsed). Measure instead:
 // tallest card + the 34px stem that lifts it off the line + a little air.
+// Measured PER SIDE, not once: cards alternate above and below the line, so one
+// tall card was inflating BOTH halves and the road claimed twice the room it
+// needed (Joel had to zoom to 67% to fit a screenshot). Odd stops hang above,
+// even stops below — each side reserves only its own tallest card.
 function _fitJourneyLane() {
   const lane = document.querySelector("#journey-body .jny-lane");
   if (!lane) return;
-  let tallest = 0;
-  lane.querySelectorAll(".jny-card").forEach(c => { tallest = Math.max(tallest, c.offsetHeight); });
-  if (tallest) lane.style.paddingTop = lane.style.paddingBottom = `${Math.ceil(tallest) + 46}px`;
+  let above = 0, below = 0;
+  lane.querySelectorAll(".jny-stop").forEach((stop, i) => {
+    const card = stop.querySelector(".jny-card");
+    if (!card) return;
+    if (i % 2 === 0) above = Math.max(above, card.offsetHeight);   // :nth-child(odd)
+    else below = Math.max(below, card.offsetHeight);
+  });
+  if (above) lane.style.paddingTop = `${Math.ceil(above) + 46}px`;
+  if (below) lane.style.paddingBottom = `${Math.ceil(below) + 46}px`;
 }
 
 // Grab-and-drag panning (Joel's report: the road wouldn't drag with the mouse
@@ -969,7 +979,11 @@ function renderJourney() {
       + (s.tips || []).map(t => `<div class="jny-tip">💡 ${escHtml(t)}</div>`).join("");
     return `<div class="jny-stop ${state}"><div class="jny-node">${s.level}</div>`
       + (state === "here" ? `<div class="jny-youare">★ you are here</div>` : "")
-      + `<div class="jny-card${detail ? " has-detail" : ""}" id="jny-card-${i}"`
+      // The stop you're ON opens itself: the full "what this level gives you"
+      // panel sits beside where you are, and the road ahead is just numbers
+      // until you click one (Joel's tram model — the game's own zone list leads
+      // with where you should be, not with everything everywhere).
+      + `<div class="jny-card${detail ? " has-detail" : ""}${state === "here" && detail ? " open" : ""}" id="jny-card-${i}"`
       + (detail ? ` onclick="toggleJourneyCard(${i})" title="click for what this level buys you"` : "")
       + `><div class="jny-lv">Level ${s.level}${state === "done" ? " — reached ✓" : state === "here" ? " — now" : ""}</div>`
       + picks + slotDots + ms + badgeChip
