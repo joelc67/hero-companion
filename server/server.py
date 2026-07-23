@@ -632,6 +632,12 @@ def journey_places():
             for z in zp.get("zones", []) if z.get("from") is not None]
     except Exception:  # noqa: BLE001
         pass
+    # When each Task Force / Strike Force / trial becomes available (content-db).
+    try:
+        with open(os.path.join(base, "data", "tf_levels.json"), encoding="utf-8") as f:
+            out["tf_levels"] = json.load(f).get("tf_levels", {})
+    except Exception:  # noqa: BLE001
+        pass
     # Master-of / iTrial challenge badges, attached to the TF/trial they belong
     # to rather than a zone (n15g's coh-content-db). Served so the client can
     # match each to an event it already lists on the road.

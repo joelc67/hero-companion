@@ -1,0 +1,310 @@
+{
+  "_source": "n15g/coh-content-db-homecoming missions (Unlicense).",
+  "_provenance_label": "TF/SF levels by n15g (coh-content-db)",
+  "_join": "keyed by normalised TF/SF name; the client matches its events.",
+  "_coverage": {
+    "runs": 50
+  },
+  "tf_levels": {
+    "abandonedsewers": {
+      "name": "Abandoned Sewers Trial",
+      "from": 38,
+      "to": 38,
+      "type": "trial"
+    },
+    "admiralsutter": {
+      "name": "Admiral Sutter Task Force",
+      "from": 20,
+      "to": 40,
+      "type": "task-force"
+    },
+    "apex": {
+      "name": "Apex Task Force",
+      "from": 50,
+      "to": 50,
+      "type": "task-force"
+    },
+    "barracuda": {
+      "name": "Barracuda Strike Force",
+      "from": 45,
+      "to": 45,
+      "type": "strike-force"
+    },
+    "behavioraladjustmentfacility": {
+      "name": "Behavioral Adjustment Facility Trial",
+      "from": 50,
+      "to": 50,
+      "type": "trial"
+    },
+    "cathedralofpain": {
+      "name": "Cathedral of Pain Trial",
+      "from": 40,
+      "to": 40,
+      "type": "trial"
+    },
+    "cavernoftranscendence": {
+      "name": "Cavern of Transcendence Trial",
+      "from": 12,
+      "to": 15,
+      "type": "trial"
+    },
+    "citadel": {
+      "name": "Citadel Task Force",
+      "from": 25,
+      "to": 30,
+      "type": "task-force"
+    },
+    "deathfrombelow": {
+      "name": "Death from Below",
+      "from": 1,
+      "to": 6,
+      "type": "trial"
+    },
+    "dilemmadiabolique": {
+      "name": "Dilemma Diabolique Trial",
+      "from": 50,
+      "to": 50,
+      "type": "trial"
+    },
+    "draeon": {
+      "name": "Dr. Aeon Strike Force",
+      "from": 35,
+      "to": 35,
+      "type": "strike-force"
+    },
+    "drkahn": {
+      "name": "Dr. Kahn Task Force",
+      "from": 45,
+      "to": 50,
+      "type": "task-force"
+    },
+    "drquaterfield": {
+      "name": "Dr. Quaterfield Task Force",
+      "from": 40,
+      "to": 45,
+      "type": "task-force"
+    },
+    "drowninginblood": {
+      "name": "Drowning in Blood",
+      "from": 15,
+      "to": 15,
+      "type": "trial"
+    },
+    "eden": {
+      "name": "Eden Trial",
+      "from": 39,
+      "to": 39,
+      "type": "trial"
+    },
+    "ernestohess": {
+      "name": "Ernesto Hess Task Force",
+      "from": 25,
+      "to": 30,
+      "type": "task-force"
+    },
+    "faathimthekind": {
+      "name": "Faathim the Kind Task Force",
+      "from": 44,
+      "to": 44,
+      "type": "task-force"
+    },
+    "firstterravoltarespecification": {
+      "name": "First Terra Volta Respecification Trial",
+      "from": 24,
+      "to": 33,
+      "type": "trial"
+    },
+    "firsttreeofthornsrespecification": {
+      "name": "First Tree of Thorns Respecification Trial",
+      "from": 24,
+      "to": 33,
+      "type": "trial"
+    },
+    "icemistral": {
+      "name": "Ice Mistral Strike Force",
+      "from": 35,
+      "to": 40,
+      "type": "strike-force"
+    },
+    "imperious": {
+      "name": "Imperious Task Force",
+      "from": 35,
+      "to": 35,
+      "type": "task-force"
+    },
+    "justinaugustine": {
+      "name": "Justin Augustine Task Force",
+      "from": 44,
+      "to": 44,
+      "type": "task-force"
+    },
+    "keyesislandreactor": {
+      "name": "Keyes Island Reactor Trial",
+      "from": 50,
+      "to": 50,
+      "type": "trial"
+    },
+    "lambdasector": {
+      "name": "Lambda Sector Trial",
+      "from": 50,
+      "to": 50,
+      "type": "trial"
+    },
+    "lordrecluse": {
+      "name": "Lord Recluse Strike Force",
+      "from": 45,
+      "to": 45,
+      "type": "strike-force"
+    },
+    "magisterium": {
+      "name": "Magisterium Trial",
+      "from": 50,
+      "to": 50,
+      "type": "trial"
+    },
+    "manticore": {
+      "name": "Manticore Task Force",
+      "from": 30,
+      "to": 35,
+      "type": "task-force"
+    },
+    "marketcrash": {
+      "name": "Market Crash Trial",
+      "from": 40,
+      "to": 40,
+      "type": "trial"
+    },
+    "mindsofmayhem": {
+      "name": "Minds of Mayhem Trial",
+      "from": 50,
+      "to": 50,
+      "type": "trial"
+    },
+    "moonfire": {
+      "name": "Moonfire Task Force",
+      "from": 23,
+      "to": 28,
+      "type": "task-force"
+    },
+    "mortimerkal": {
+      "name": "Mortimer Kal Strike Force",
+      "from": 20,
+      "to": 40,
+      "type": "strike-force"
+    },
+    "msliberty": {
+      "name": "Ms. Liberty Task Force",
+      "from": 45,
+      "to": 45,
+      "type": "task-force"
+    },
+    "numina": {
+      "name": "Numina Task Force",
+      "from": 35,
+      "to": 40,
+      "type": "task-force"
+    },
+    "operativerenault": {
+      "name": "Operative Renault Strike Force",
+      "from": 25,
+      "to": 30,
+      "type": "strike-force"
+    },
+    "penelopeyin": {
+      "name": "Penelope Yin Task Force",
+      "from": 20,
+      "to": 25,
+      "type": "task-force"
+    },
+    "positron": {
+      "name": "Positron Task Force",
+      "from": 8,
+      "to": 16,
+      "type": "task-force"
+    },
+    "saramoore": {
+      "name": "Sara Moore Task Force",
+      "from": 40,
+      "to": 40,
+      "type": "task-force"
+    },
+    "secondterravoltarespecification": {
+      "name": "Second Terra Volta Respecification Trial",
+      "from": 34,
+      "to": 43,
+      "type": "trial"
+    },
+    "secondtreeofthornsrespecification": {
+      "name": "Second Tree of Thorns Respecification Trial",
+      "from": 34,
+      "to": 43,
+      "type": "trial"
+    },
+    "silvermantis": {
+      "name": "Silver Mantis Strike Force",
+      "from": 20,
+      "to": 25,
+      "type": "strike-force"
+    },
+    "sisterpsyche": {
+      "name": "Sister Psyche Task Force",
+      "from": 20,
+      "to": 25,
+      "type": "task-force"
+    },
+    "synapse": {
+      "name": "Synapse Task Force",
+      "from": 15,
+      "to": 20,
+      "type": "task-force"
+    },
+    "tpncampus": {
+      "name": "TPN Campus Trial",
+      "from": 50,
+      "to": 50,
+      "type": "trial"
+    },
+    "ladygrey": {
+      "name": "The Lady Grey Task Force",
+      "from": 45,
+      "to": 45,
+      "type": "task-force"
+    },
+    "underground": {
+      "name": "The Underground Trial",
+      "from": 50,
+      "to": 50,
+      "type": "trial"
+    },
+    "thirdterravoltarespecification": {
+      "name": "Third Terra Volta Respecification Trial",
+      "from": 44,
+      "to": 44,
+      "type": "trial"
+    },
+    "thirdtreeofthornsrespecification": {
+      "name": "Third Tree of Thorns Respecification Trial",
+      "from": 44,
+      "to": 44,
+      "type": "trial"
+    },
+    "tinmagemarkii": {
+      "name": "Tin Mage Mark II Task Force",
+      "from": 50,
+      "to": 50,
+      "type": "task-force"
+    },
+    "virgiltarikoss": {
+      "name": "Virgil Tarikoss Strike Force",
+      "from": 15,
+      "to": 20,
+      "type": "strike-force"
+    },
+    "zoe": {
+      "name": "Zoe Task Force",
+      "from": 40,
+      "to": 50,
+      "type": "task-force"
+    }
+  }
+}

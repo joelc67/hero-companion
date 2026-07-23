@@ -930,8 +930,14 @@ function _modernHtml(level) {
   // A zone with no level range is NOT placed. A range is the whole basis for
   // putting a zone in front of someone at a given level, so a missing one is
   // recorded in the data and skipped here — never approximated.
+  // Praetoria is its OWN path — a Praetorian is neither hero nor villain until
+  // they leave at 20 (Joel: Nova Praetoria doesn't belong on the hero side).
+  // So alt_start (Praetorian) zones show ONLY in the Praetorian view, and the
+  // Praetorian view shows ONLY them.
+  const prae = _journeyAlign() === "praetorian";
   const hits = (m.zones || []).filter(z => z.from != null && z.to != null
-    && level >= z.from && level <= z.to);
+    && level >= z.from && level <= z.to
+    && (prae ? z.alt_start : !z.alt_start));
   if (!hits.length) return "";
   return hits.map((z) => {
     // ALL of a zone's areas, each con-read against your level — so you see both
@@ -1076,12 +1082,15 @@ function renderJourneyLevelPanel() {
 function _zonesForLevelHtml(level) {
   const zl = (JOURNEY_PLACES || {}).zone_levels || [];
   if (!zl.length) return "";
-  const align = _journeyAlign() === "villain" ? "villain" : "hero";
+  const align = _journeyAlign();
   const fit = zl.filter(z => level >= z.from && level <= z.to
-    // hide the other faction's and the always-open social/pvp sprawl from the
-    // plain "where can I level" list; a hero doesn't level in the Rogue Isles.
     && !/pvp/i.test(z.kind || "")
-    && (align === "hero" ? !/villain/i.test(z.kind || "") : !/^hero/i.test(z.kind || "")))
+    // Praetoria is its own path: its view shows ONLY Praetorian zones, and the
+    // hero/villain views never show them.
+    && (align === "praetorian"
+        ? /praetorian/i.test(z.kind || "")
+        : !/praetorian/i.test(z.kind || "")
+          && (align === "hero" ? !/villain/i.test(z.kind || "") : !/^hero/i.test(z.kind || ""))))
     .sort((a, b) => a.from - b.from);
   if (!fit.length) return "";
   return `<details class="jny-fit"><summary>🧭 <b>Zones open to you at ${level}</b> `
@@ -1112,11 +1121,30 @@ function _challengeFor(eventName) {
   return null;
 }
 
-// One event line, plus its Master badge and challenge checklist if it has one.
+// A TF/SF/trial's availability level, matched by name to what the content-db
+// carries (Joel: "no mention of when each Task Force becomes available").
+function _tfLevel(eventName) {
+  const tl = (JOURNEY_PLACES || {}).tf_levels || {};
+  const n = _zoneNorm(eventName.replace(/\([^)]*\)/, "")
+    .replace(/\b(task force|strike force|trial|tf|sf|part \w+)\b/gi, ""));
+  if (tl[n]) return tl[n];
+  for (const [k, v] of Object.entries(tl)) {
+    if (k.length >= 5 && n.length >= 5 && (k.startsWith(n) || n.startsWith(k))) return v;
+  }
+  return null;
+}
+
+// One event line, plus its availability level, Master badge and checklist.
 function _eventHtml(ev) {
-  const range = ev.min ? ` <span class="muted small">(${ev.min}${ev.max ? `–${ev.max}` : "+"})</span>` : "";
+  // Prefer the data's own min/max; fall back to the content-db TF-level match.
+  let avail = "";
+  if (ev.min) avail = ` <span class="jny-avail">available at ${ev.min}${ev.max && ev.max !== ev.min ? `–${ev.max}` : "+"}</span>`;
+  else {
+    const t = _tfLevel(ev.name);
+    if (t) avail = ` <span class="jny-avail">available at ${t.from}${t.to !== t.from ? `–${t.to}` : "+"}</span>`;
+  }
   const note = ev.note ? ` <span class="muted small">· ${escHtml(ev.note)}</span>` : "";
-  let html = `<div class="jny-tf">${ev.kind === "trial" ? "⚔" : "🛡"} ${escHtml(ev.name)}${range}${note}</div>`;
+  let html = `<div class="jny-tf">${ev.kind === "trial" ? "⚔" : "🛡"} ${escHtml(ev.name)}${avail}${note}</div>`;
   const c = _challengeFor(ev.name);
   if (c) {
     html += `<div class="jny-master">🏆 <b>${escHtml(c.master_badge)}</b>`
@@ -1346,8 +1374,10 @@ function renderJourney() {
   const hereIdx = hereLv != null ? _stepIndexForLevel(hereLv) : -1;
   const jb = JOURNEY_BADGES || {};
   const lvBadges = jb.level_badges || {};
-  // The route follows the character's side — the Rogue Isles are a different road.
-  const align = _journeyAlign() === "villain" ? "villain" : "hero";
+  // The route follows the character's side — hero, villain, or the separate
+  // Praetorian path. Praetoria has no hero/villain route bands (its zones come
+  // through the modern layer), so bands is empty there and that's correct.
+  const align = _journeyAlign();
   const bands = (JOURNEY_PLACES || {})[align] || [];
   const route = _routeForStops(steps, bands);
   const storyLayer = (JOURNEY_PLACES || {}).story || {};
@@ -1428,9 +1458,10 @@ function renderJourney() {
     + (journeyIntroDone() ? "" : _journeyIntroHtml())
     + `<div class="jny-head"><span class="muted small">Scroll or drag the road — click a card for what that level buys you.</span>`
     // See either side's content without changing your character's theme.
-    + ` <span class="jny-align" title="See hero or villain content">`
+    + ` <span class="jny-align" title="See hero, villain, or Praetorian content">`
     + `<button class="${align === "hero" ? "on" : ""}" onclick="setJourneyAlign('hero')">🦸 Hero</button>`
-    + `<button class="${align === "villain" ? "on" : ""}" onclick="setJourneyAlign('villain')">🦹 Villain</button></span>`
+    + `<button class="${align === "villain" ? "on" : ""}" onclick="setJourneyAlign('villain')">🦹 Villain</button>`
+    + `<button class="${align === "praetorian" ? "on" : ""}" onclick="setJourneyAlign('praetorian')">⚖️ Praetorian</button></span>`
     + (wizOpen ? ` <button class="linkbtn" onclick="closeJourneyView(); openLevelStepper()">▶ step-by-step view</button>` : "")
     + ` <label class="muted small jny-autoopen"><input type="checkbox" id="jny-autoopen"
         ${journeyAutoOff() ? "" : "checked"} onchange="setJourneyAutoOpen(this.checked)">
