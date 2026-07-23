@@ -1,5 +1,24 @@
 # Hero Companion — What's New
 
+## Unreleased
+
+- **The Journey greets you however you leave the wizard.** The first-meeting
+  used to fire only from the two "see the build" buttons — close the wizard
+  with ✕ and a new 1–50 character never met the road (field report from a
+  fresh install). Now building a leveling character is what arms the greeting,
+  and it fires on any exit.
+- **The road drags like a map.** Grab it with the mouse and pan left/right —
+  clicks on cards still work (a real drag never counts as a click).
+- **Open cards never hide under the title bar.** More headroom on the road and
+  an opened card always paints on top (the level-7 card clipping report).
+- **Accolades on the Journey.** A new "Accolades worth working toward" drawer
+  lists the build-affecting accolades with their permanent bonuses and, where
+  the game data carries it, how to earn them — with a pointer to the
+  Accolades panel where owned ones get ticked.
+- The Zones & badges drawer's "coming with server data" note now names
+  per-zone enemies explicitly alongside zone names, level ranges, and task
+  forces.
+
 ## 0.12.24 — 2026-07-22
 
 - **The Leveling Journey.** Your whole 1–50 as a road you scroll like a map —

@@ -487,7 +487,14 @@ async function openWizard(mode) {
   wizGateBuild();
   wizExplain(null);   // renders only what's actually been answered
 }
-function closeRespecWizard() { $("respec-wizard").classList.add("hidden"); }
+let _WIZ_BUILT_LEVELING = false;   // set by buildRespec, consumed on ANY wizard exit
+function closeRespecWizard() {
+  $("respec-wizard").classList.add("hidden");
+  if (_WIZ_BUILT_LEVELING) {
+    _WIZ_BUILT_LEVELING = false;
+    maybeAutoOpenJourney();   // the greet fires however the wizard was left
+  }
+}
 
 // DISCOVERY: ranked archetypes from the "How do you play?" answers (ONE-COPY
 // RULE — the recommender owns no questions; it reads wiz-role/content/exposure).
@@ -760,6 +767,7 @@ function renderLevelStep() {
 // names, level fit, TF/SF rosters and badge coordinates are labeled pending,
 // and every content entry rides its provenance string.
 let JOURNEY_BADGES = null;
+let JOURNEY_ACCS = null;   // /accolades rows, fetched once for the accolades drawer
 
 async function openJourneyView(auto = false) {
   // The road gets its own full-width overlay (a 720px wizard box cramps a
@@ -783,6 +791,7 @@ async function openJourneyView(auto = false) {
     LEVELING_TOTAL = res.total_slots || 67;
   }
   if (!JOURNEY_BADGES) JOURNEY_BADGES = (await api("/journey/badges")) || {};
+  if (!JOURNEY_ACCS) JOURNEY_ACCS = (await api("/accolades")) || {};
   renderJourney();
   // greet the player at their level: center the you-are-here stop
   const here = document.querySelector(".jny-stop.here");
@@ -869,6 +878,37 @@ function toggleJourneyCard(i) {
   if (el) el.classList.toggle("open");
 }
 
+// Grab-and-drag panning (Joel's report: the road wouldn't drag with the mouse
+// — only wheel/keys scrolled it; a map you scroll like a map should drag like
+// one). Click-vs-drag discrimination at 5px so card clicks still work, and
+// the click that ends a real drag is swallowed so it can't toggle a card.
+function _wireJourneyDrag() {
+  const strip = document.querySelector("#journey-body .jny-strip");
+  if (!strip) return;
+  let down = null, dragged = false;
+  strip.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    down = { x: e.clientX, left: strip.scrollLeft }; dragged = false;
+  });
+  strip.addEventListener("pointermove", (e) => {
+    if (!down) return;
+    const dx = e.clientX - down.x;
+    if (!dragged && Math.abs(dx) > 5) {
+      dragged = true;
+      strip.classList.add("jny-grabbing");
+      try { strip.setPointerCapture(e.pointerId); } catch (err) { /* older engines */ }
+    }
+    if (dragged) strip.scrollLeft = down.left - dx;
+  });
+  const end = () => {
+    if (dragged) strip.addEventListener("click",
+      (ce) => { ce.stopPropagation(); ce.preventDefault(); }, { capture: true, once: true });
+    down = null; dragged = false; strip.classList.remove("jny-grabbing");
+  };
+  strip.addEventListener("pointerup", end);
+  strip.addEventListener("pointercancel", end);
+}
+
 function renderJourney() {
   const steps = LEVELING_STEPS;
   // a leveling character starts the road at level 1 even before their first sync
@@ -917,6 +957,19 @@ function renderJourney() {
         + `</div>`).join("")
     + `</details>`).join("");
 
+  // Accolades drawer — the build-affecting (passive) tier from the game-first
+  // roster the Accolades panel already ships; attainment text rides where the
+  // game data carries it, and its absence is stated, never papered over.
+  const accRows = ((JOURNEY_ACCS || {}).rows || []).filter(a => a.tier === "passive");
+  const accs = accRows.map(a =>
+    `<details class="jny-zone"><summary><b>${escHtml(a.display || a.key)}</b>
+       <span class="muted small">${escHtml(a.effect_short || "")}${a.standard_assumed ? " · one of the standard four" : ""}</span></summary>
+     <div class="jny-zbadge">${a.attain_summary || a.attain
+        ? `<div class="muted small">${escHtml(a.attain_summary || a.attain)}</div>`
+        : `<div class="muted small">How to earn it isn't in the game's client files — attainment text arrives with the server-data pass.</div>`}
+     ${(a.badge_chain || []).length ? `<div class="muted small">Badge chain: ${a.badge_chain.map(escHtml).join(" → ")}</div>` : ""}
+     </div></details>`).join("");
+
   // step-by-step lives in the wizard modal — only offer the jump when it's open
   const wizOpen = !document.getElementById("respec-wizard").classList.contains("hidden");
   $("journey-body").innerHTML =
@@ -932,7 +985,13 @@ function renderJourney() {
            <div class="jny-zonegrid">${zones}</div>
            <div class="jny-prov">source: ${escHtml(jb.provenance || "badges.bin")}</div></details>`
         : "")
+    + (accs
+        ? `<details class="jny-zones"><summary>🏅 <b>Accolades worth working toward</b> <span class="muted small">—
+           permanent build bonuses; tick the ones you own in the Accolades panel and the totals follow.</span></summary>
+           <div class="jny-zonegrid">${accs}</div></details>`
+        : "")
     + `</div>`;
+  _wireJourneyDrag();
 }
 
 // ── Level tracking + absence flag (leveling builds only) ────────────────────
@@ -1354,6 +1413,11 @@ async function buildRespec() {
     // The wizard ALREADY gathered + showed the role/content/exposure intent, so skip the
     // confirm gate (its button would render behind this modal and hang the flow).
     await solveSlotting(null, { skipConfirm: true });
+    // The first-meeting greet keys on "a leveling build WAS BUILT", not on which
+    // button dismisses the wizard afterward — Joel's gaming-box report: leave
+    // the wizard any way other than the two reveal buttons and the greeting
+    // never fired. closeRespecWizard consumes this flag on ANY exit.
+    _WIZ_BUILT_LEVELING = isLevelingBuild();
     $("wiz-result").classList.remove("hidden");
     // 0.12.20 eyeball fix (Joel: clicking Build looked like nothing happened —
     // the result rendered below the fold INSIDE this pop-up, with the pop-up
@@ -1381,9 +1445,8 @@ async function buildRespec() {
       + `<div id="wiz-plan-out"></div>`;
     $("wiz-plan-out").innerHTML = levelingPlanHtml();   // show the full in-game respec order up front
     const _reveal = () => {
-      closeRespecWizard();
+      closeRespecWizard();      // fires the first-meeting greet itself (any-exit seam)
       $("builder").scrollIntoView({ behavior: "smooth", block: "start" });
-      maybeAutoOpenJourney();   // a 1-50 character's first landing leads with the road
     };
     $("wiz-reveal").addEventListener("click", _reveal);
     $("wiz-open").addEventListener("click", _reveal);

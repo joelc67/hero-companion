@@ -1536,7 +1536,9 @@ body { overflow: hidden; }
 .jny-viewport::after { right: 0; background: linear-gradient(270deg, var(--panel), transparent); }
 .jny-strip { overflow-x: auto; scroll-snap-type: x proximity; padding: 6px 44px 10px;
   scrollbar-color: var(--border) transparent; }
-.jny-lane { position: relative; display: flex; gap: 44px; width: max-content; padding: 190px 30px; }
+/* 240px headroom: an OPENED card (deltas + tips) outgrew 190px and slid under
+   the overlay's title bar (Joel's level-7 report) — the mock used 230. */
+.jny-lane { position: relative; display: flex; gap: 44px; width: max-content; padding: 240px 30px; }
 .jny-lane::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 5px;
   transform: translateY(-50%); border-radius: 3px; background: var(--border); }
 .jny-stop { position: relative; width: 212px; scroll-snap-align: center; flex: none; }
@@ -1553,6 +1555,7 @@ body { overflow: hidden; }
   border: 1px solid var(--border); border-radius: 10px; padding: 9px 11px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, .35); }
 .jny-card.has-detail { cursor: pointer; }
+.jny-card.open { z-index: 5; }   /* an opened card paints over neighbors + header, never under */
 .jny-stop:nth-child(odd) .jny-card { bottom: calc(50% + 34px); }
 .jny-stop:nth-child(even) .jny-card { top: calc(50% + 34px); }
 .jny-stop::after { content: ""; position: absolute; left: 50%; width: 2px; height: 22px;

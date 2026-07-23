@@ -536,8 +536,9 @@ def journey_badges():
     return jsonify({
         "ok": True,
         "provenance": "badges.bin (client game data), export 2026-07-22",
-        "pending": "zone names, level ranges, TF/SF rosters and badge "
-                   "coordinates arrive with the i24 server-data pass",
+        "pending": "zone names, level ranges, who you'll fight in each zone, "
+                   "TF/SF rosters and badge coordinates arrive with the i24 "
+                   "server-data pass",
         "level_badges": level_badges,
         "zones": [{"zone_key": k, "badges": v} for k, v in sorted(zones.items())
                   if k != "other"],
