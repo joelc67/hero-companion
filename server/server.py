@@ -620,6 +620,17 @@ def journey_places():
                         "hero": story.get("hero", {}), "villain": story.get("villain", {})}
     except Exception:  # noqa: BLE001 — the route still stands without the story layer
         pass
+    # Every zone's level range (all 47, wiki-fetched) so the road can auto-place
+    # the zones that fit ANY level — not just the ones on a written route.
+    try:
+        with open(os.path.join(base, "data", "zone_pages.json"), encoding="utf-8") as f:
+            zp = json.load(f)
+        out["zone_levels"] = [
+            {"zone": z["zone"], "from": z.get("from"), "to": z.get("to"),
+             "kind": z.get("kind"), "enemies": (z.get("enemies") or [])[:6]}
+            for z in zp.get("zones", []) if z.get("from") is not None]
+    except Exception:  # noqa: BLE001
+        pass
     # Master-of / iTrial challenge badges, attached to the TF/trial they belong
     # to rather than a zone (n15g's coh-content-db). Served so the client can
     # match each to an event it already lists on the road.

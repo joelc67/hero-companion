@@ -1669,3 +1669,18 @@ body { overflow: hidden; }
 .jny-where { font-size: 11.5px; margin: 2px 0; color: var(--accent); }
 /* Master-of / iTrial challenge badge attached to a task force or trial. */
 .jny-master { font-size: 11px; margin: 2px 0 4px 14px; color: var(--gold, var(--warn)); }
+/* Neighbourhood con-read (CoH's own difficulty colours vs YOUR level). */
+.jny-hoods { margin: 4px 0; }
+.jny-hood { font-size: 11.5px; margin: 1px 0; }
+.jny-con { font-size: 10px; border: 1px solid; border-radius: 8px; padding: 0 5px; margin-left: 3px; }
+.con-grey   { color: #9aa0a6; border-color: #9aa0a6; }
+.con-green  { color: #6fbf73; border-color: #6fbf73; }
+.con-white  { color: #d5d9de; border-color: #d5d9de; }
+.con-yellow { color: #d9c04a; border-color: #d9c04a; }
+.con-orange { color: #e08a3c; border-color: #e08a3c; }
+.con-red    { color: #e05c5c; border-color: #e05c5c; }
+.con-purple { color: #b98ee0; border-color: #b98ee0; }
+/* Zones-open-to-you at this level (auto-placed from the full level table). */
+.jny-fit { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 11.5px; }
+.jny-fit > summary { cursor: pointer; }
+.jny-fitzone { margin: 4px 0 4px 6px; }

@@ -922,10 +922,11 @@ function _modernHtml(level) {
     && level >= z.from && level <= z.to);
   if (!hits.length) return "";
   return hits.map((z) => {
-    // Neighbourhoods carry their OWN level bands, which is the finest-grained
-    // "where should I actually be standing" the Journey has — so only the ones
-    // that fit this level are shown.
-    const hoods = (z.neighborhoods || []).filter(n => level >= n.from && level <= n.to);
+    // ALL of a zone's areas, each con-read against your level — so you see both
+    // "go here now" and "come back at N", which is the actual answer to "what
+    // level should I be before I hunt here". Sorted easiest-first.
+    const hoods = (z.neighborhoods || []).slice()
+      .sort((a, b) => (a.from || 0) - (b.from || 0));
     const events = (z.events || []).filter(e => !e.min || (level >= e.min && level <= (e.max || 50)));
     const foes = z.enemies || [];
     const parts = [
@@ -942,11 +943,14 @@ function _modernHtml(level) {
       // the question the game's tram board never does: you CAN go in, but is it
       // a fight you want at this level? (Joel's Positron case, per-neighbourhood.)
       hoods.length
-        ? `<div class="jny-route-places">At your level: `
-          + hoods.map(n => escHtml(n.name)
-              + (n.risk ? ` <span class="jny-risk risk-${n.risk.toLowerCase()}">${escHtml(n.risk)}</span>` : ""))
-              .join(" · ")
-          + `</div>` : "",
+        ? `<div class="jny-hoods">${hoods.map((n) => {
+            const c = _conRead(level, n.from, n.to);
+            const con = c
+              ? ` <span class="jny-con ${c.cls}">${c.ready ? c.range + " " + c.word
+                  : "come back at " + c.comeBackAt}</span>` : "";
+            return `<div class="jny-hood"><b>${escHtml(n.name)}</b> `
+              + `<span class="muted small">${n.from}–${n.to}</span>${con}</div>`;
+          }).join("")}</div>` : "",
       events.map(_eventHtml).join(""),
       foes.length
         ? `<div class="muted small">Who you'll fight: ${foes.slice(0, 8).map(escHtml).join(", ")}`
@@ -1030,6 +1034,7 @@ function renderJourneyLevelPanel() {
         : `<div class="jny-pick"><b>${escHtml(pk.name)}</b> <span class="muted small">${escHtml(pk.powerset)}</span></div>`).join("")
     + (s.slots ? `<div class="muted small">${s.slots} new slot${s.slots > 1 ? "s" : ""} — ${s.slots_running} / ${LEVELING_TOTAL} placed</div>` : "")
     + (s.milestone ? `<div class="jny-ms">⭐ ${escHtml(s.milestone)}</div>` : "")
+    + _zonesForLevelHtml(s.level)
     + (lb ? `<div class="jny-zbadge"><b>🏅 ${escHtml(lb.display_hero)}</b>`
         + `<div class="muted small">${escHtml(lb.desc_hero || lb.desc_villain || "")}</div></div>` : "")
     + (deltas ? `<div class="jny-detail-deltas">${deltas}</div>` : "")
@@ -1048,6 +1053,30 @@ function renderJourneyLevelPanel() {
     + (zones.some(z => z.xp_pause) && _JNY_CTX.xpMacro.text
         ? `<div class="jny-tip">⏸ XP toggle macro: <code>${escHtml(_JNY_CTX.xpMacro.text)}</code></div>` : "")
     + `</div>`;
+}
+
+// EVERY zone that fits this level, computed from the full 47-zone level table —
+// not just the written route. "At 22 you can be in: Talos (20-27), Independence
+// Port (20-30), Faultline (15-25), Striga (20-29), Terra Volta (20-29)…" This
+// is the auto-placement Joel asked for: the data already carries every range.
+function _zonesForLevelHtml(level) {
+  const zl = (JOURNEY_PLACES || {}).zone_levels || [];
+  if (!zl.length) return "";
+  const align = (localStorage.getItem("cohAlignment") || "hero") === "villain" ? "villain" : "hero";
+  const fit = zl.filter(z => level >= z.from && level <= z.to
+    // hide the other faction's and the always-open social/pvp sprawl from the
+    // plain "where can I level" list; a hero doesn't level in the Rogue Isles.
+    && !/pvp/i.test(z.kind || "")
+    && (align === "hero" ? !/villain/i.test(z.kind || "") : !/^hero/i.test(z.kind || "")))
+    .sort((a, b) => a.from - b.from);
+  if (!fit.length) return "";
+  return `<details class="jny-fit"><summary>🧭 <b>Zones open to you at ${level}</b> `
+    + `<span class="muted small">${fit.length} — every zone whose range fits, not just the route</span></summary>`
+    + fit.map(z => `<div class="jny-fitzone"><b>${escHtml(z.zone)}</b> `
+        + `<span class="muted small">${z.from}–${z.to}${z.kind ? " · " + escHtml(z.kind) : ""}</span>`
+        + (z.enemies && z.enemies.length
+            ? `<div class="muted small">${z.enemies.map(escHtml).join(", ")}</div>` : "") + `</div>`).join("")
+    + `<div class="jny-route-src">zone ranges: homecoming.wiki</div></details>`;
 }
 
 // The Master-of / iTrial challenge badge for a task force or trial, matched by
@@ -1082,6 +1111,30 @@ function _eventHtml(ev) {
       + `</div>`;
   }
   return html;
+}
+
+// CoH's own con system: how a level band sizes up against YOUR level. The road
+// knows your level (the stop), so "should I be here yet" becomes a personal
+// read instead of a static number. delta = foe level − you.
+function _conRead(you, from, to) {
+  if (you == null || from == null) return null;
+  const lo = from - you, hi = to - you;
+  // The word/colour read off the TYPICAL foe (band midpoint), not the ceiling —
+  // an area spans a level range and most spawns sit near the middle, so judging
+  // it by its single toughest foe overstates the danger. The full spread is
+  // still shown so the ceiling isn't hidden.
+  const mid = Math.round((from + to) / 2) - you;
+  let cls, word;
+  if (mid <= -3) { cls = "con-grey"; word = "trivial"; }
+  else if (mid <= -1) { cls = "con-green"; word = "easy"; }
+  else if (mid === 0) { cls = "con-white"; word = "even"; }
+  else if (mid === 1) { cls = "con-yellow"; word = "moderate"; }
+  else if (mid === 2) { cls = "con-orange"; word = "tough"; }
+  else if (mid === 3) { cls = "con-red"; word = "very hard"; }
+  else { cls = "con-purple"; word = "dangerous"; }
+  const sign = (d) => (d >= 0 ? "+" : "") + d;
+  const range = lo === hi ? sign(hi) : `${sign(lo)} to ${sign(hi)}`;
+  return { cls, word, range, ready: from <= you, comeBackAt: from };
 }
 
 function _routeBandAt(level, bands) {
