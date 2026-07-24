@@ -2485,13 +2485,16 @@ async function submitBugReport() {
     + `App: ${META.app_version}\nModel: v${META.model_version}\n`
     + `Game data: ${META.db_name} ${META.db_version}\nCharacter: ${_bugContext()}`;
   if ($("bug-attach") && $("bug-attach").checked && build.archetype) {
+    // Attach a real Mids .mbd — the standard, LOADABLE format — not a raw dump,
+    // so the exact build can be reopened in the planner (or Mids) to reproduce.
     try {
-      message += "\n\nBuild:\n" + JSON.stringify({
-        archetype: build.archetype, primary: build.primary, secondary: build.secondary,
-        pools: build.pools, epic: build.epic, level: build.level_reached,
-        powers: (build.powers || []).map(p => ({ n: p.full_name, slots: (p.slots || []).map(s => s.enh || s.full_name || s) })),
-      });
-    } catch (e) { /* build too odd to serialize — send the report without it */ }
+      const payload = buildPayload(); payload.name = "Bug report build";
+      const ex = await api("/build/export", postJson(payload));
+      if (ex && ex.ok && ex.mbd) {
+        message += "\n\n--- Build (.mbd — save this block as a .mbd file and open it in the "
+          + "planner or Mids Reborn to load the exact build) ---\n" + JSON.stringify(ex.mbd);
+      }
+    } catch (e) { /* export failed — send the report without the build */ }
   }
   const payload = { access_key: key, subject: "[Hero Companion] Bug report",
                     from_name: "Hero Companion bug report", message };
