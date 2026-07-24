@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Filled in 667 missing power icons.** Newer powersets (Bio Armor, Staff
+  Fighting, Dual Pistols ammo, Radiation Blast and many more) were showing blank
+  where the game has an icon — the icon files were already bundled, the lookup
+  table just didn't reference them. Sourced from the game's own per-power icon
+  field. A smaller set of textures still needs extracting from the client (noted
+  for a follow-up).
+
 - **Removed the "Power colors & glow → .powerCust" export.** A leftover from the
   shelved costume/appearance idea, never verified in-game. Gone from the import
   screen.
