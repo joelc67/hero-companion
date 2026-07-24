@@ -1,5 +1,7 @@
 {
   "_comment": "Where this install looks for its online home (the joelc67/hero-companion GitHub repository). Every phone-home feature (bug reports, champion submissions, update checks) fires only on a user click - the app never sends anything on its own.",
+  "_bug_report_key_comment": "Web3Forms PUBLIC access key. It can ONLY deliver a message to the developer's verified inbox - it cannot send elsewhere or expose anything, so it is safe in this public client. Lets anyone report a bug with no account. Empty = fall back to the GitHub issue link.",
+  "bug_report_key": "6f63568a-2ad3-485c-b021-eedc1e2eb658",
   "urls": {
     "project_home": "https://github.com/joelc67/hero-companion",
     "releases": "https://github.com/joelc67/hero-companion/releases",

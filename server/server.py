@@ -840,6 +840,7 @@ def meta():
                     "form_champions": has_forms,
                     "champion_count": champion_count,
                     "autostart": autostart,
+                    "bug_report_key": CLIENT_CONFIG.get("bug_report_key", ""),
                     "urls": CLIENT_CONFIG.get("urls", {})})
 
 

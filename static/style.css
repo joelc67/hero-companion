@@ -932,6 +932,12 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .endgame-label { font-weight: 600; margin-bottom: 6px; }
 .endgame-block select { width: 100%; }
 .modal-box { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; width: min(560px, 92vw); max-height: 80vh; display: flex; flex-direction: column; padding: 14px; }
+.bug-field { display: block; margin: 8px 0 2px; }
+.bug-inc { display: flex; align-items: center; gap: 7px; margin: 8px 0; font-size: 13px; color: var(--muted); }
+.bug-inc input { width: auto; flex: 0 0 auto; margin: 0; }
+.bug-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+.bug-actions button { width: auto; padding: 7px 16px; }
+#bug-status { margin-top: 6px; }
 .modal-head { display: flex; justify-content: space-between; align-items: center; }
 .modal-head button { width: auto; background: transparent; color: var(--muted); font-size: 16px; }
 .modal-sets { overflow-y: auto; margin-top: 8px; }

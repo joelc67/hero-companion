@@ -2437,26 +2437,103 @@ async function manualUpdateCheck() {
 }
 window._ubHide = _ubHide;
 
+// Bug reports go straight to the developer's inbox via Web3Forms (a form-to-email
+// relay whose PUBLIC key can only deliver to that one verified address — safe in a
+// public client). No GitHub account, no email client needed: fill the form, Send.
+// If no key is configured, fall back to the old pre-filled GitHub issue link so the
+// button never dead-ends.
+function _bugContext() {
+  return build.archetype
+    ? `${build.archetype} · ${build.primary || "?"} / ${build.secondary || "?"}`
+      + ` · role ${build.role || "?"} · ${(build.powers || []).length} powers`
+    : "(none loaded)";
+}
 function reportBug() {
   if (!META) return;
+  if (!META.bug_report_key) return _reportBugViaGitHub();   // graceful fallback
+  let m = $("bug-modal");
+  if (!m) { m = document.createElement("div"); m.id = "bug-modal"; m.className = "modal hidden"; document.body.appendChild(m); }
+  m.innerHTML =
+    `<div class="modal-box">
+       <div class="modal-head"><b>🐞 Report a bug</b><button title="Close" onclick="closeBugModal()">✕</button></div>
+       <p class="muted small">Goes straight to the developer — no account needed. Nothing is sent until you press Send.</p>
+       <label class="bug-field"><b>What happened?</b>
+         <textarea id="bug-what" rows="5" placeholder="What you did, what you expected, and what actually happened."></textarea></label>
+       <label class="bug-field">Your email <span class="muted small">— optional, only if you'd like a reply</span>
+         <input id="bug-email" type="email" placeholder="you@example.com"></label>
+       <label class="bug-inc"><input type="checkbox" id="bug-attach"${build.archetype ? " checked" : " disabled"}>
+         Include my current build <span class="muted small">(archetype, sets, powers &amp; slots — helps a lot)</span></label>
+       <p class="muted small">Auto-included: app ${escHtml(META.app_version)}, model v${escHtml(String(META.model_version))}, game data ${escHtml(META.db_name || "")} ${escHtml(String(META.db_version || ""))}, character ${escHtml(_bugContext())}.</p>
+       <div id="bug-status" class="small"></div>
+       <div class="bug-actions">
+         <button class="secondary" onclick="closeBugModal()">Cancel</button>
+         <button id="bug-send" onclick="submitBugReport()">Send</button></div>
+     </div>`;
+  m.classList.remove("hidden");
+  const ta = $("bug-what"); if (ta) ta.focus();
+}
+window.closeBugModal = function () { const m = $("bug-modal"); if (m) m.classList.add("hidden"); };
+
+async function submitBugReport() {
+  const key = (META || {}).bug_report_key;
+  const status = $("bug-status"), btn = $("bug-send");
+  const what = ($("bug-what").value || "").trim();
+  if (!what) { status.innerHTML = `<span class="v-err">Please describe what happened first.</span>`; return; }
+  const email = ($("bug-email").value || "").trim();
+  btn.disabled = true; status.textContent = "Sending…";
+  let message = what + "\n\n---\n"
+    + `App: ${META.app_version}\nModel: v${META.model_version}\n`
+    + `Game data: ${META.db_name} ${META.db_version}\nCharacter: ${_bugContext()}`;
+  if ($("bug-attach") && $("bug-attach").checked && build.archetype) {
+    try {
+      message += "\n\nBuild:\n" + JSON.stringify({
+        archetype: build.archetype, primary: build.primary, secondary: build.secondary,
+        pools: build.pools, epic: build.epic, level: build.level_reached,
+        powers: (build.powers || []).map(p => ({ n: p.full_name, slots: (p.slots || []).map(s => s.enh || s.full_name || s) })),
+      });
+    } catch (e) { /* build too odd to serialize — send the report without it */ }
+  }
+  const payload = { access_key: key, subject: "[Hero Companion] Bug report",
+                    from_name: "Hero Companion bug report", message };
+  if (email) payload.replyto = email;
+  try {
+    const r = await fetch("https://api.web3forms.com/submit",
+      { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload) });
+    const j = await r.json().catch(() => ({}));
+    if (r.ok && j.success) {
+      status.innerHTML = `✓ Sent — thank you, this genuinely helps.`;
+      setTimeout(window.closeBugModal, 1800);
+    } else {
+      status.innerHTML = `<span class="v-err">Couldn't send (${escHtml(j.message || r.status)}).</span> `
+        + `<button class="linkbtn" onclick="_reportBugViaGitHub()">Post it on GitHub instead</button>`;
+      btn.disabled = false;
+    }
+  } catch (e) {
+    status.innerHTML = `<span class="v-err">Couldn't reach the reporting service (offline?).</span> `
+      + `<button class="linkbtn" onclick="_reportBugViaGitHub()">Post it on GitHub instead</button>`;
+    btn.disabled = false;
+  }
+}
+window.submitBugReport = submitBugReport;
+
+// Fallback path (no key configured, or the relay is unreachable): the original
+// pre-filled GitHub issue. Requires a GitHub account, hence it's the backup only.
+function _reportBugViaGitHub() {
   const url = (META.urls || {}).bug_report;
   if (!_urlReady(url)) {
-    alert("The project's GitHub home isn't set up yet — once it exists, this button opens a "
-        + "pre-filled bug report there. (Dev note: set the real repo in client_config.json.)");
+    alert("The bug reporter isn't reachable right now. You can email the developer at joel717421@gmail.com.");
     return;
   }
-  const ctx = build.archetype
-    ? `\n**Character:** ${build.archetype} · ${build.primary || "?"} / ${build.secondary || "?"}`
-      + ` · role ${build.role || "?"} · ${(build.powers || []).length} powers`
-    : "\n**Character:** (none loaded)";
   const body =
     "**What happened?**\n(describe the bug — what you did, what you expected, what you got)\n\n"
     + "**Versions** (auto-filled)\n"
     + `- App: ${META.app_version}\n- Model: v${META.model_version}\n- Game data: ${META.db_name} ${META.db_version}`
-    + ctx + "\n\n**Build export** (optional but very helpful)\n"
+    + `\n**Character:** ${_bugContext()}` + "\n\n**Build export** (optional but very helpful)\n"
     + "Paste your Mids export or attach your save file here.\n";
   window.open(`${url}?title=${encodeURIComponent("[bug] ")}&body=${encodeURIComponent(body)}`, "_blank");
 }
+window._reportBugViaGitHub = _reportBugViaGitHub;
 
 async function submitChampion() {
   if (!build.archetype || !(build.powers || []).length) {

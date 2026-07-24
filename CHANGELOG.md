@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Report a bug without a GitHub account.** The 🐞 button now opens a short
+  in-app form — what happened, an optional email if you want a reply — and sends
+  it straight to the developer. Your app version, model, game data and character
+  are attached automatically, with an option to include your full build. Nothing
+  leaves your machine until you press Send. (If the reporting service is ever
+  unreachable, it falls back to the old GitHub issue link.)
+
 - **Incarnate powers show their real icon on the tray.** Ageless, Ion, Control
   and the other slotted incarnates were drawing a plain glyph in the tray layout
   (the summary row already showed the real art); the tray now uses the same icon.
