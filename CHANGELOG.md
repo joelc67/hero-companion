@@ -6,6 +6,11 @@
   auto-opens only for a character still leveling to 50 — a fresh 1-50 plan, or an
   imported character below 50. A brand-new level-50 kit goes straight to the
   build page. Reopen the road any time with the 🗺️ Journey button.
+- **Clearer Leveling Journey header.** The auto-open checkbox now sits on its own
+  row with its full label showing (it was getting clipped off the right edge, so
+  the box looked unlabeled). The step-by-step link reads "Switch to the
+  step-by-step list view" so it's clear it changes the view, and the "Want to
+  switch sides?" alignment help now shows a "click to expand" cue.
 
 ## 0.12.25 — 2026-07-23 — The Journey grows up
 

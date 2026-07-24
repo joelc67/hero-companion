@@ -1532,19 +1532,27 @@ function renderJourney() {
     // Reassure: this only changes what you're LOOKING AT. Nothing about the
     // character — powers, IO sets, badges, its real alignment — is touched.
     + `<span class="jny-align-preview">preview only — your build is unchanged</span>`
+    + `</div>`
     // Plain-English note for the alignment currently shown — because "Praetorian"
     // means nothing to a new player (Joel), and Vigilante/Rogue need their
     // cross-over spelled out.
     + `<div class="jny-align-note muted small">${_alignNote(align)}</div>`
-    + (wizOpen ? ` <button class="linkbtn" onclick="closeJourneyView(); openLevelStepper()">▶ step-by-step view</button>` : "")
-    + ` <label class="muted small jny-autoopen"><input type="checkbox" id="jny-autoopen"
-        ${journeyAutoOff() ? "" : "checked"} onchange="setJourneyAutoOpen(this.checked)">
-        open automatically while leveling to 50</label>`
+    // Controls get their OWN row (Joel's report): the auto-open label used to
+    // sit in the flex header with margin-left:auto + nowrap, so a wrapped row
+    // pushed it off the right edge — only the checkbox and a stray letter showed.
+    // Its own line keeps the whole label visible; "Switch to…" makes clear the
+    // step-by-step link changes the VIEW, it doesn't just close this one.
+    + `<div class="jny-controls">`
+    +   `<label class="jny-autoopen" title="When on, this road opens by itself whenever you load a character still leveling to 50.">`
+    +     `<input type="checkbox" id="jny-autoopen" ${journeyAutoOff() ? "" : "checked"} onchange="setJourneyAutoOpen(this.checked)">`
+    +     `<span>Open this road automatically while leveling to 50</span></label>`
+    +   (wizOpen ? `<button class="linkbtn" onclick="closeJourneyView(); openLevelStepper()">🔀 Switch to the step-by-step list view</button>` : "")
     + `</div>`
     // How to actually change sides in-game — the switch above only changes what
     // you're VIEWING; Null the Gull is how a character crosses over.
     + `<details class="jny-fit jny-gull"><summary>🕊️ <b>Want to switch sides?</b> `
-    + `<span class="muted small">how to change your alignment in-game</span></summary>`
+    + `<span class="muted small">how to change your alignment in-game</span>`
+    + `<span class="jny-expand-cue">click to expand ▾</span></summary>`
     + `<div class="muted small" style="margin:4px 0 0 6px">`
     + `The toggle above just previews the other side's content. To actually change a character's `
     + `alignment, visit <b>Null the Gull</b> in <b>Pocket D</b> — reachable from almost any zone `

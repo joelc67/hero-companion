@@ -1534,8 +1534,9 @@ body { overflow: hidden; }
    exactly the checkbox label's width (measured 1189px → 964px of usable road).
    Flex puts the label right without taking anything from the road. */
 .jny-head { margin: 10px 0 2px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.jny-autoopen { white-space: nowrap; margin-left: auto; }
-.jny-autoopen input { vertical-align: middle; }
+.jny-controls { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 5px 0 2px; }
+.jny-autoopen { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; cursor: pointer; }
+.jny-autoopen input { vertical-align: middle; margin: 0; }
 .jny-viewport { position: relative; margin-top: 4px; }
 .jny-viewport::before, .jny-viewport::after { content: ""; position: absolute; top: 0;
   bottom: 12px; width: 54px; z-index: 3; pointer-events: none; }
@@ -1710,10 +1711,13 @@ body { overflow: hidden; }
 .jny-fit > summary::-webkit-details-marker { display: none; }
 .jny-zones > summary::before, .jny-zone > summary::before, .jny-fit > summary::before {
   content: "▸"; position: absolute; left: 2px; color: var(--accent);
-  transition: transform .12s ease; display: inline-block;
+  transition: transform .12s ease; display: inline-block; font-size: 1.1em;
 }
 .jny-zones[open] > summary::before, .jny-zone[open] > summary::before,
 .jny-fit[open] > summary::before { transform: rotate(90deg); }
+/* Explicit affordance on the alignment drawer — Joel didn't know it opened. */
+.jny-expand-cue { margin-left: 8px; color: var(--accent); font-size: 12px; font-weight: 600; white-space: nowrap; }
+.jny-fit[open] > summary .jny-expand-cue { display: none; }
 .jny-zones > summary:hover, .jny-zone > summary:hover, .jny-fit > summary:hover { color: var(--accent); }
 /* External links to the wiki — underlined, arrowed, unmistakably clickable. */
 .jny-wiki { color: var(--accent); text-decoration: underline; white-space: nowrap; }
