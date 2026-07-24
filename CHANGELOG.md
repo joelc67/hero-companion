@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **Removed the "Power colors & glow → .powerCust" export.** A leftover from the
+  shelved costume/appearance idea, never verified in-game. Gone from the import
+  screen.
+
 - **The Leveling Journey no longer covers a new level-50 build.** The road
   auto-opens only for a character still leveling to 50 — a fresh 1-50 plan, or an
   imported character below 50. A brand-new level-50 kit goes straight to the

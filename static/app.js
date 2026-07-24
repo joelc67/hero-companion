@@ -2645,9 +2645,6 @@ async function init() {
   $("start-over-btn").addEventListener("click", showEntry);
   refreshContinueCard();   // overlay shows on load — reveal Continue if saves exist
   setInterval(autoSaveTick, 120000);   // background auto-save every 2 min (only if changed)
-  $("powercolor").addEventListener("toggle", (e) => { if (e.target.open) renderPowerColorRows(); });
-  $("pc-preview-btn").addEventListener("click", () => previewPowerColors());
-  $("pc-download-btn").addEventListener("click", downloadPowerCust);
   $("incarnate-peak-toggle").addEventListener("change", (e) => {
     // warn-but-allow (Joel's choice-doctrine ruling): the player may preview
     // incarnates below 50; recompute() surfaces the endgame warning if so.
@@ -6100,98 +6097,6 @@ async function applyProposedRespec() {
   if (status) status.textContent = "✓ Applied the full respec — export it, or tweak the goal and re-solve.";
 }
 window.applyProposedRespec = applyProposedRespec;
-
-// ---------------------------------------------------------------------------
-// Power colors / glow -> Homecoming .powerCust
-// ---------------------------------------------------------------------------
-function hexToRgb(h) {
-  const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(h || "");
-  return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : [255, 255, 255];
-}
-function rgbCss(rgb) { return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`; }
-
-// Distinct powersets in the build, with display names.
-function buildPowersets() {
-  const seen = new Map();
-  for (const p of build.powers) {
-    if (!seen.has(p.powerset_full_name)) {
-      const label = p.powerset_full_name.split(".").slice(-1)[0].replace(/_/g, " ");
-      seen.set(p.powerset_full_name, label);
-    }
-  }
-  return [...seen.entries()];   // [[full, label], ...]
-}
-
-function renderPowerColorRows() {
-  const host = $("pc-powersets");
-  if (!host) return;
-  const sets = buildPowersets();
-  if (!sets.length) { host.innerHTML = `<p class="muted small">Add powers first.</p>`; return; }
-  const def1 = document.querySelector(".pc-default .pc-c1").value;
-  const def2 = document.querySelector(".pc-default .pc-c2").value;
-  host.innerHTML = sets.map(([full, label]) => `
-    <div class="pc-scheme" data-ps="${full}">
-      <label class="pc-ov"><input type="checkbox" class="pc-override"> ${label}</label>
-      <label>Primary <input type="color" class="pc-c1" value="${def1}" disabled></label>
-      <label>Glow <input type="color" class="pc-c2" value="${def2}" disabled></label>
-      <select class="pc-bright" disabled>
-        <option value="dark">Dark</option><option value="default" selected>Default</option><option value="bright">Bright</option>
-      </select>
-    </div>`).join("");
-  host.querySelectorAll(".pc-scheme").forEach(row => {
-    const cb = row.querySelector(".pc-override");
-    cb.addEventListener("change", () => {
-      row.querySelectorAll("input[type=color],select").forEach(el => { el.disabled = !cb.checked; });
-    });
-  });
-}
-
-function collectColorSchemes() {
-  const d = document.querySelector(".pc-default");
-  const def = { c1: hexToRgb(d.querySelector(".pc-c1").value),
-                c2: hexToRgb(d.querySelector(".pc-c2").value),
-                brightness: d.querySelector(".pc-bright").value };
-  const by = {};
-  document.querySelectorAll("#pc-powersets .pc-scheme").forEach(row => {
-    if (row.querySelector(".pc-override").checked) {
-      by[row.dataset.ps] = { c1: hexToRgb(row.querySelector(".pc-c1").value),
-                             c2: hexToRgb(row.querySelector(".pc-c2").value),
-                             brightness: row.querySelector(".pc-bright").value };
-    }
-  });
-  const powers = build.powers.map(p => ({ full_name: p.full_name, powerset_full_name: p.powerset_full_name }));
-  return { powers, default: def, by_powerset: by };
-}
-
-async function previewPowerColors() {
-  if (!build.powers.length) { $("pc-preview").innerHTML = `<p class="muted small">Add powers first.</p>`; return; }
-  try {
-    const res = await api("/build/powercust", postJson(collectColorSchemes()));
-    if (!res.ok) { $("pc-preview").innerHTML = `<p class="v-err">${res.response}</p>`; return null; }
-    const byName = {}; build.powers.forEach(p => { byName[p.full_name] = p.display_name; });
-    $("pc-preview").innerHTML = res.preview.map(p =>
-      `<div class="pc-swatch"><span class="pc-dot" style="background:${rgbCss(p.c1)}"></span>`
-      + `<span class="pc-dot glow" style="background:${rgbCss(p.c2)}"></span>`
-      + `<span class="pc-pwr">${byName[p.full_name] || p.full_name}</span></div>`).join("");
-    return res;
-  } catch (e) { $("pc-preview").innerHTML = `<p class="v-err">Preview error: ${e}</p>`; return null; }
-}
-
-async function downloadPowerCust() {
-  const res = await previewPowerColors();
-  if (!res || !res.ok) return;
-  const blob = new Blob([res.text], { type: "text/plain" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = res.filename || "coh_colors.powerCust";
-  document.body.appendChild(a); a.click(); a.remove();
-  URL.revokeObjectURL(a.href);
-  $("pc-howto").innerHTML =
-    `✓ Saved <strong>${res.filename}</strong> (${res.count} powers). To use it: drop it in `
-    + `<code>C:\\Games\\Homecoming\\powercust\\</code>, then in-game open <strong>Powers → `
-    + `Customize</strong> and click <strong>Load</strong> (or preview your character in `
-    + `<strong>Titan Icon</strong>). If colors don't apply, tell me — we may need the power's numeric id.`;
-}
 
 // ---------------------------------------------------------------------------
 // "Build this for me" — generate a full build with Claude and apply it

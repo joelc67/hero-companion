@@ -30,7 +30,6 @@ import mids_export                 # noqa: E402
 import mids_import                 # noqa: E402
 import ingame_import               # noqa: E402
 import proc_pass                   # noqa: E402
-import mids_powercust              # noqa: E402
 import solver                      # noqa: E402
 import leveling_schedule          # noqa: E402
 import converter                   # noqa: E402
@@ -5341,28 +5340,6 @@ def build_import():
                     "totals": totals, "critique": critique, "note": note,
                     "unresolved_enh": parsed["unresolved_enh"],
                     "unresolved_powers": parsed["unresolved_powers"]})
-
-
-@app.route("/build/powercust", methods=["POST"])
-def build_powercust():
-    """Produce a Homecoming .powerCust (power color/glow customization) for the
-    build's powers from a color scheme. Color1 = primary tint, Color2 = glow."""
-    body = request.get_json(force=True) or {}
-    powers = body.get("powers") or []
-    default_scheme = body.get("default") or {}
-    by_powerset = body.get("by_powerset") or {}
-    if not powers:
-        return jsonify({"ok": False, "response": "Add some powers first."}), 400
-    blocks = mids_powercust.scheme_blocks(powers, default_scheme, by_powerset)
-    if not blocks:
-        return jsonify({"ok": False, "response": "Pick at least one color scheme."})
-    text = mids_powercust.build_powercust(blocks)
-    name = (body.get("name") or "coh_colors").strip().replace(" ", "_") or "coh_colors"
-    # resolved per-power colors for the preview
-    preview = [{"full_name": b["full_name"], "c1": b["c1"][:3], "c2": b["c2"][:3]}
-               for b in blocks]
-    return jsonify({"ok": True, "filename": f"{name}.powerCust", "text": text,
-                    "preview": preview, "count": len(blocks)})
 
 
 @app.route("/ai/query", methods=["POST"])
