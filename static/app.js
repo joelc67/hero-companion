@@ -1532,15 +1532,17 @@ function renderJourney() {
   $("journey-body").innerHTML =
     `<div class="jny">`
     + (journeyIntroDone() ? "" : _journeyIntroHtml())
-    + `<div class="jny-head"><span class="muted small">Scroll or drag the road — click a card for what that level buys you.</span>`
-    // See either side's content without changing your character's theme.
+    + `<div class="jny-head"><span class="muted small">Scroll or drag the road — click a card for what that level buys you.</span></div>`
+    // The alignment switcher previews another side's leveling path. A leading
+    // "Preview another side:" label makes the trailing reassurance read as one
+    // thought — Joel: the bare "preview only — your build is unchanged" floating
+    // after the buttons made no sense. Nothing about the character is touched.
+    + `<div class="jny-alignbar"><span class="muted small">Preview another side:</span>`
     + ` <span class="jny-align">`
     + _ALIGNMENTS.map(a => `<button class="${a.css}${align === a.key ? " on" : ""}"`
         + ` title="${escHtml(a.tip)}" onclick="setJourneyAlign('${a.key}')">${a.label}</button>`).join("")
     + `</span>`
-    // Reassure: this only changes what you're LOOKING AT. Nothing about the
-    // character — powers, IO sets, badges, its real alignment — is touched.
-    + `<span class="jny-align-preview">preview only — your build is unchanged</span>`
+    + `<span class="jny-align-preview">(your character is unchanged)</span>`
     + `</div>`
     // Plain-English note for the alignment currently shown — because "Praetorian"
     // means nothing to a new player (Joel), and Vigilante/Rogue need their

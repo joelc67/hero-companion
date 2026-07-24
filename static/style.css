@@ -1535,8 +1535,11 @@ body { overflow: hidden; }
    Flex puts the label right without taking anything from the road. */
 .jny-head { margin: 10px 0 2px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .jny-controls { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin: 5px 0 2px; }
-.jny-autoopen { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; cursor: pointer; }
-.jny-autoopen input { vertical-align: middle; margin: 0; }
+.jny-autoopen { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); font-size: 13px; cursor: pointer; white-space: nowrap; }
+/* width:auto defeats the global `input { width:100% }`, which otherwise made the
+   checkbox full-width and wrapped the label into a narrow column (Joel). */
+.jny-autoopen input { width: auto; flex: 0 0 auto; margin: 0; }
+.jny-alignbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 6px 0 2px; }
 .jny-viewport { position: relative; margin-top: 4px; }
 .jny-viewport::before, .jny-viewport::after { content: ""; position: absolute; top: 0;
   bottom: 12px; width: 54px; z-index: 3; pointer-events: none; }

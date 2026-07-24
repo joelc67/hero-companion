@@ -6,11 +6,13 @@
   auto-opens only for a character still leveling to 50 — a fresh 1-50 plan, or an
   imported character below 50. A brand-new level-50 kit goes straight to the
   build page. Reopen the road any time with the 🗺️ Journey button.
-- **Clearer Leveling Journey header.** The auto-open checkbox now sits on its own
-  row with its full label showing (it was getting clipped off the right edge, so
-  the box looked unlabeled). The step-by-step link reads "Switch to the
-  step-by-step list view" so it's clear it changes the view, and the "Want to
-  switch sides?" alignment help now shows a "click to expand" cue.
+- **Clearer Leveling Journey header.** The auto-open checkbox now sits on one line
+  with its full label right beside it ("Open this road automatically while
+  leveling to 50") — it was previously clipped, then briefly wrapped into a narrow
+  column. The alignment switcher now reads "Preview another side: [buttons] (your
+  character is unchanged)" so the reassurance makes sense. The step-by-step link
+  reads "Switch to the step-by-step list view", and the "Want to switch sides?"
+  alignment help shows a "click to expand" cue.
 - **The Leveling Journey now shows the character you're actually on.** Opening the
   road after switching to a different character used to show the previous one's
   powers — the road is now rebuilt for the current character every time it opens.
