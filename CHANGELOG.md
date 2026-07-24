@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Pulse Board updates reach phones on their own.** The board is a live page, but
+  browsers (iOS Safari especially) were serving a cached copy after an update. It
+  now sends a no-cache hint and reloads itself if the browser restores it from the
+  back/forward cache, so the latest board shows up within a moment instead of
+  needing a manual refresh.
+
 - **Pulse Board section titles no longer clip on phones.** On a narrow screen the
   banner graphic (e.g. "INCARNATE TRIALS") was centred and scaled so the left side,
   where the title sits, ran off-screen ("...RIALS"). The banner art is now anchored

@@ -1025,7 +1025,16 @@ def build(state_dir=None, public=False):
                   if public and _newest_ts else "")
     page = f"""<!doctype html><html><head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
-<title>CoH Pulse Boards</title><style>{CSS}</style></head><body>
+<meta http-equiv='Cache-Control' content='no-cache'>
+<title>CoH Pulse Boards</title><style>{CSS}</style>
+<script>
+/* A LIVE board must never serve a stale copy. iOS Safari's back/forward cache
+   (bfcache) kept showing an old render after an update, so force a fresh load
+   when the page is restored from bfcache. `persisted` is only true on a bfcache
+   restore, and reload() navigates fresh (persisted=false), so there is no loop. */
+addEventListener('pageshow',function(e){{if(e.persisted)location.reload();}});
+</script>
+</head><body>
 <div id='stale-note' data-built='{_built_iso}' data-fresh='{_fresh_iso}' style='display:none;background:#5a2e12;
 color:#ffd9a0;padding:8px 14px;text-align:center;font-weight:600'></div>
 {_data_note}
