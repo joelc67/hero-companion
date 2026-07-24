@@ -124,10 +124,36 @@ def upload_owner():
 
 
 # ── discovery ────────────────────────────────────────────────────────────────
+def _dedupe_accounts(raw):
+    """Collapse case-variant account folders into one entry per real account.
+
+    Account LOGINS are case-insensitive, and a machine with two Homecoming
+    installs can hold the SAME account folder in two casings ("FiloFinFain" and
+    "filofinfain") — so a player with two accounts was shown FOUR watch chips
+    (Joel's field report; first fixed in the v35 UX pass, regressed since). We
+    group by case-folded name and keep the RIGHT variant: the one that has logs,
+    then the MOST RECENTLY active one (the install actually being played — this is
+    what stops a stale prior-install dir from winning and Lite then skipping it as
+    inactive), then more log files, then a properly-cased name over all-lowercase.
+    That last tie-break is cosmetic — it only decides display casing when neither
+    variant has logs; the watch always targets the kept entry's real log_dir.
+    """
+    def rank(e):
+        return (e["has_logs"], e.get("_newest", 0.0), e["log_files"],
+                any(c.isupper() for c in e["account"]))
+    best = {}
+    for e in raw:
+        k = e["account"].casefold()
+        if k not in best or rank(e) > rank(best[k]):
+            best[k] = e
+    return sorted(best.values(), key=lambda e: e["account"].casefold())
+
+
 def find_log_accounts(accounts_dirs):
     """Every account folder with (or without) a Logs dir, so the UI can offer the
-    choice — the user has multiple accounts and picks the one they actually play."""
-    out = []
+    choice — the user has multiple accounts and picks the one they actually play.
+    Case-variant duplicates across installs are collapsed (_dedupe_accounts)."""
+    raw = []
     for base in accounts_dirs or []:
         try:
             entries = sorted(os.listdir(base))
@@ -138,12 +164,18 @@ def find_log_accounts(accounts_dirs):
             if not os.path.isdir(acct):
                 continue
             logdir = os.path.join(acct, "Logs")
-            files = []
+            files, newest = [], 0.0
             if os.path.isdir(logdir):
-                files = [f for f in os.listdir(logdir) if f.lower().endswith(".txt")]
-            out.append({"account": name, "dir": acct, "log_dir": logdir,
-                        "has_logs": bool(files), "log_files": len(files)})
-    return out
+                for f in os.listdir(logdir):
+                    if f.lower().endswith(".txt"):
+                        files.append(f)
+                        try:
+                            newest = max(newest, os.path.getmtime(os.path.join(logdir, f)))
+                        except OSError:
+                            pass
+            raw.append({"account": name, "dir": acct, "log_dir": logdir,
+                        "has_logs": bool(files), "log_files": len(files), "_newest": newest})
+    return _dedupe_accounts(raw)
 
 
 # ── parsing (VALIDATED against real Homecoming logs, 2026-07-05) ─────────────

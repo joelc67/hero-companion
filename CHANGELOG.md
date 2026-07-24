@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Play Log no longer shows the same account twice.** If you have two Homecoming
+  installs, the same account folder can exist under both in different casing
+  (`FiloFinFain` / `filofinfain`), which made two accounts appear as four "watch"
+  chips. Account logins are case-insensitive, so these are now collapsed to one
+  chip each — keeping the install you're actually playing (most recently active).
+
 - **Report a bug without a GitHub account.** The 🐞 button now opens a short
   in-app form — what happened, an optional email if you want a reply — and sends
   it straight to the developer. Your app version, model, game data and character

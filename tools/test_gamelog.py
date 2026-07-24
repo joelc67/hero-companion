@@ -90,6 +90,28 @@ gamelog.STATE_DIR = os.path.join(tmp, "state")
 
 accts = gamelog.find_log_accounts([os.path.join(tmp, "accounts")])
 check("both accounts discovered", len(accts) == 2)
+
+# case-variant folders across two installs must collapse to ONE chip per real
+# account — Joel's four-vs-two field report (two accounts shown as four because
+# "FiloFinFain" and "filofinfain" counted separately). _dedupe_accounts is the gate.
+_dd = gamelog._dedupe_accounts([
+    {"account": "filofinfain", "dir": "a", "log_dir": "a/Logs", "has_logs": False, "log_files": 0},
+    {"account": "FiloFinFain", "dir": "b", "log_dir": "b/Logs", "has_logs": True, "log_files": 3},
+    {"account": "kalicous", "dir": "c", "log_dir": "c/Logs", "has_logs": False, "log_files": 0},
+    {"account": "Kalicous", "dir": "d", "log_dir": "d/Logs", "has_logs": False, "log_files": 0},
+])
+_ddn = {e["account"] for e in _dd}
+check("case-variant accounts collapse 4->2", len(_dd) == 2, str([e["account"] for e in _dd]))
+check("kept the variant WITH logs", "FiloFinFain" in _ddn and "filofinfain" not in _ddn)
+check("no-logs tie prefers proper casing", "Kalicous" in _ddn and "kalicous" not in _ddn)
+# both variants have logs: the RECENTLY-active install wins over the stale one
+# (even if the stale one has more old files) so Lite tails the played account.
+_rec = gamelog._dedupe_accounts([
+    {"account": "Alt", "dir": "stale", "log_dir": "stale/Logs", "has_logs": True, "log_files": 9, "_newest": 100.0},
+    {"account": "alt", "dir": "live", "log_dir": "live/Logs", "has_logs": True, "log_files": 1, "_newest": 999.0},
+])
+check("recently-active install wins over stale (more files)",
+      len(_rec) == 1 and _rec[0]["log_dir"] == "live/Logs", str(_rec))
 st = {"log_dir": logdir, "offsets": {}}
 ev1, rep1 = gamelog.ingest(logdir, st)
 check("ingest parsed the sample", rep1["parsed"] >= 15, f"{rep1['parsed']} events")
