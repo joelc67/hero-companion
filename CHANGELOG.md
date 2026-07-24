@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Pulse Board section titles no longer clip on phones.** On a narrow screen the
+  banner graphic (e.g. "INCARNATE TRIALS") was centred and scaled so the left side,
+  where the title sits, ran off-screen ("...RIALS"). The banner art is now anchored
+  to the left, so the title always shows and only the right-side flourish crops.
+
 - **Play Log no longer shows the same account twice.** If you have two Homecoming
   installs, the same account folder can exist under both in different casing
   (`FiloFinFain` / `filofinfain`), which made two accounts appear as four "watch"

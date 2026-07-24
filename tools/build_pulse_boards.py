@@ -421,7 +421,12 @@ def _banner(key, label):
         "other": ("<g fill='#ffffff1d'><rect x='680' y='14' rx='8' width='70' height='30'/>"
                   "<path d='M694 44 l0 12 14 -12z'/></g>"),
     }[key]
-    return (f"<svg class='banner' viewBox='0 0 800 56' preserveAspectRatio='xMidYMid"
+    # Anchor the art to the LEFT (xMin), not centre (xMid): the title sits at x=18
+    # and the decorative motif at x~700, so on a narrow phone `xMidYMid slice`
+    # showed the centre-right and pushed the title off the left edge ("INCARNATE
+    # TRIALS" -> "…RIALS"). xMin keeps the title always visible; only the
+    # right-side flourish crops when there isn't room for the full 800-wide art.
+    return (f"<svg class='banner' viewBox='0 0 800 56' preserveAspectRatio='xMinYMid"
             f" slice' xmlns='http://www.w3.org/2000/svg'>"
             f"<defs><linearGradient id='g_{key}' x1='0' y1='0' x2='1' y2='0'>"
             f"<stop offset='0' stop-color='{grad[0]}'/>"
