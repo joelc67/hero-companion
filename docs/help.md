@@ -159,8 +159,9 @@ Use, License, and Credits links at the bottom of the app.
 ## Credits
 
 Built on the work of the City of Heroes community: NCSoft (the game, all rights
-theirs), Homecoming Servers, Mids Reborn (all game data, parsed from your own
-install), the Unofficial Homecoming Wiki, City of Data v2, the Homecoming Forums, the
+theirs), Homecoming Servers — whose game client this tool now reads its data directly
+from — Mids Reborn (the build planner it was built on, and stays `.mbd` import/export
+compatible with), the Unofficial Homecoming Wiki, City of Data v2, the Homecoming Forums, the
 Paragon Wiki Archive — Guyver [SoV] of the Sovereign supergroup, whose openly
 shared master builds were the standard this tool's optimizer had to honestly beat —
 and Maelwys, whose expert forum reviews caught what our own tests missed, round

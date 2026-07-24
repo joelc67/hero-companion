@@ -10,12 +10,18 @@ tool understands was learned from, or verified against, these sources:
   City of Heroes since 2019, operating under official agreement with NCSoft since 2024.
 
 ## Data
-- **Mids Reborn** (https://midsreborn.com) — the community build planner whose
-  Homecoming database (.mhd files) is the source of every power, enhancement set, and
-  archetype number in this tool. This tool parses the Mids database installed on your
-  own machine; the database itself is the Mids Reborn team's compilation of
-  Homecoming's game data. Export/import compatibility with Mids Reborn is intentional
-  and gratefully acknowledged.
+- **The Homecoming game client** — the authoritative source. Hero Companion reads its
+  game data directly from the client files installed on your own machine: powers,
+  enhancement sets and their bonuses, archetype modifier tables, enhancement-converter
+  costs, badges, and power icons all come from Homecoming's own bins and texture
+  archives. That means the tool reflects the live game rather than a second-hand copy,
+  and when the client disagrees with any other source, the client wins.
+- **Mids Reborn** (https://midsreborn.com) — the community build planner Hero Companion
+  was built on. The Mids Reborn team's Homecoming database was this tool's original
+  data foundation, and it is why the numbers lined up on day one. The tool has since
+  moved to pulling its data straight from the game client (above), but it started here —
+  and `.mbd` export/import compatibility with Mids Reborn is intentional and gratefully
+  kept, so builds move freely between the two.
 
 ## Knowledge & Verification
 - **Unofficial Homecoming Wiki** (https://homecoming.wiki) — the mechanics reference
