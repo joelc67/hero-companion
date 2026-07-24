@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.12.26 — 2026-07-24 — Full power icons and in-app bug reports
+
 - **Pulse Board updates reach phones on their own.** The board is a live page, but
   browsers (iOS Safari especially) were serving a cached copy after an update. It
   now sends a no-cache hint and reloads itself if the browser restores it from the
