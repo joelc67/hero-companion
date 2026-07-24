@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- **Incarnate powers show their real icon on the tray.** Ageless, Ion, Control
+  and the other slotted incarnates were drawing a plain glyph in the tray layout
+  (the summary row already showed the real art); the tray now uses the same icon.
 - **Filled in the missing power icons.** Newer powersets (Bio Armor, Psionic
   Armor, Staff Fighting, Dual Pistols ammo, Marine Affinity, Seismic Blast, Stone
   Armor and many more) were showing blank. Most icons were already bundled, just

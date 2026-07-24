@@ -6826,7 +6826,11 @@ def _tray_layout(powers, incarnates=None, archetype=None, role=None, totals=None
             continue
         t, glyph = info
         disp = v.get("display_name") or slotname
+        # Real incarnate art (same as the summary chips) instead of a bare glyph —
+        # the tray entries were the only place incarnates showed a Tabler glyph.
+        # glyph stays as the fallback for anything _incarnate_icon can't resolve.
         trays[t].append({"label": disp, "short": disp, "glyph": glyph,
+                         "icon": _incarnate_icon(v.get("full_name"), disp),
                          "title": f"{disp} ({slotname} incarnate)",
                          # Judgement = the nuke, pinned last; Destiny/Lore = utility band
                          "_o": 900 if t == 1 else (5 if t == 3 else 0), "_dpa": 0})
