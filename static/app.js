@@ -1271,7 +1271,13 @@ async function openJourneyView(auto = false) {
   const jb = $("journey-btn");
   if (jb) jb.classList.add("journey-open");   // the pill reads as "on" while the road is out
   out.innerHTML = "<p class='muted small'>Rolling out the road…</p>";
-  if (!LEVELING_STEPS) {
+  // The road is CHARACTER-SPECIFIC (built from THIS build's archetype + powers),
+  // so re-fetch it every open. Caching it (the old `if (!LEVELING_STEPS)`) meant
+  // switching characters showed the last one's road — Joel created/imported a new
+  // character, opened the Journey, and saw the old powers. The stepper view
+  // already re-fetches every time; the road now matches. The reference layers
+  // below (badges, accolades, routes) ARE character-independent and stay cached.
+  {
     const res = await api("/build/leveling-steps",
       postJson({ archetype: build.archetype, powers: build.powers }));
     if (!res || !res.ok || !res.steps || !res.steps.length) {
@@ -1280,6 +1286,9 @@ async function openJourneyView(auto = false) {
     }
     LEVELING_STEPS = res.steps;
     LEVELING_TOTAL = res.total_slots || 67;
+    LEVELING_IS_EAT = !!res.is_eat;
+    LEVELING_EAT_TYPE = res.eat_type || null;
+    _JNY_SEL = null;   // fresh character → let renderJourney re-center on its "here"
   }
   if (!JOURNEY_BADGES) JOURNEY_BADGES = (await api("/journey/badges")) || {};
   if (!JOURNEY_ACCS) JOURNEY_ACCS = (await api("/accolades")) || {};

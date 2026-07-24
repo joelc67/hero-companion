@@ -11,6 +11,11 @@
   the box looked unlabeled). The step-by-step link reads "Switch to the
   step-by-step list view" so it's clear it changes the view, and the "Want to
   switch sides?" alignment help now shows a "click to expand" cue.
+- **The Leveling Journey now shows the character you're actually on.** Opening the
+  road after switching to a different character used to show the previous one's
+  powers — the road is now rebuilt for the current character every time it opens.
+- **Clearer "start over" button.** The ↺ button at the top right now reads "Load
+  another character, or make a new one".
 
 ## 0.12.25 — 2026-07-23 — The Journey grows up
 
