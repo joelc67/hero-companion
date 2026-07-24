@@ -1324,7 +1324,7 @@ function maybeAutoOpenJourney() {
   // rounds of guessing which of these three returned early on a screen I can't
   // see; the console now answers it in one line, from whichever of the three
   // call sites ran (resume, wizard exit, build finish).
-  const why = !isNewCharacterPlan() ? `not a new character (mode=${build._mode})`
+  const why = !isLevelingJourneyPlan() ? `not a sub-50 leveling character (mode=${build._mode}, level=${build.level_reached})`
     : !(build.powers || []).length ? "no powers in the build yet"
     : journeyAutoOff() ? "auto-open is switched off (road header checkbox)"
     : "";
@@ -1539,7 +1539,7 @@ function renderJourney() {
     + (wizOpen ? ` <button class="linkbtn" onclick="closeJourneyView(); openLevelStepper()">▶ step-by-step view</button>` : "")
     + ` <label class="muted small jny-autoopen"><input type="checkbox" id="jny-autoopen"
         ${journeyAutoOff() ? "" : "checked"} onchange="setJourneyAutoOpen(this.checked)">
-        open automatically for new characters</label>`
+        open automatically while leveling to 50</label>`
     + `</div>`
     // How to actually change sides in-game — the switch above only changes what
     // you're VIEWING; Null the Gull is how a character crosses over.
@@ -1584,13 +1584,19 @@ function renderJourney() {
 const SYNC_DRIFT_LEVELS = 5;   // gap that triggers a "let's re-sync" nudge
 
 function isLevelingBuild() { return build._mode === "new"; }
-// A character that does NOT exist in the game yet — whether the plan walks 1-50
-// or targets the end-game kit. BOTH still have to be levelled from 1, so both
-// get the road (Joel's field report: he reached for "Build a new level-50
-// character", built, and got silence — the greet was gated on the 1-50 card
-// alone). Imported/respec'd characters are real and already somewhere; their
-// greeting waits for the Leveling Companion catch-up rung.
-function isNewCharacterPlan() { return build._mode === "new" || build._mode === "new50"; }
+// The road auto-opens only for a character still CLIMBING to 50 (Joel,
+// 2026-07-24): a 1-50 leveling plan, or an imported/respec'd character whose
+// save carries a level below 50. A brand-new LEVEL-50 kit is already at the end
+// — Joel built one, hit Show Build, and the road covered it — so it gets no
+// auto-open (startNew50 sets level_reached=50, which fails this gate). Most
+// imports carry no level (build_save has none → level_reached is null, and
+// `typeof null !== "number"` keeps them out); they wait for the Leveling
+// Companion catch-up rung until a real level lands. The manual 🗺️ button still
+// opens the road for anyone.
+function isLevelingJourneyPlan() {
+  return isLevelingBuild()
+    || (typeof build.level_reached === "number" && build.level_reached < 50);
+}
 
 // GAME RULE (Joel, 2026-07-17): endgame content unlocks by level — Epic /
 // Ancillary powers at level 35 (Patron pools ALSO require completing their

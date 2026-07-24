@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **The Leveling Journey no longer covers a new level-50 build.** The road
+  auto-opens only for a character still leveling to 50 — a fresh 1-50 plan, or an
+  imported character below 50. A brand-new level-50 kit goes straight to the
+  build page. Reopen the road any time with the 🗺️ Journey button.
+
 ## 0.12.25 — 2026-07-23 — The Journey grows up
 
 The Leveling Journey went from a road with placeholder labels to a full
