@@ -4481,7 +4481,7 @@ def build_solve():
     # press a button and it would give me power suggestions". An unmet target is
     # an unmet target whatever door it came through; the doctrine is refuse-WITH-
     # remedy, so it now runs off the report's unmet rows regardless of source.
-    remedies = _ask_remedies(archetype, sol["powers"], report, ctx, res_cap)
+    remedies = _ask_remedies(archetype, sol["powers"], report, ctx, res_cap, targets)
     return jsonify({"ok": True, "powers": sol["powers"], "respec_plan": respec_plan,
                     "warnings": _warnings,
                     "slots_used": sol["slots_used"],
@@ -4604,7 +4604,7 @@ def _solve_report(targets, totals):
     return rows
 
 
-def _ask_remedies(archetype, powers, report, ctx, res_cap):
+def _ask_remedies(archetype, powers, report, ctx, res_cap, targets=None):
     """v35 (#15): REFUSE-WITH-REMEDY. For each DECLARED def/res ask the solve
     left short (report rows with met:false), find real UNPICKED powers the
     character could still take — its own primary/secondary leftovers plus the
@@ -4614,8 +4614,24 @@ def _ask_remedies(archetype, powers, report, ctx, res_cap):
     never an auto-pick: 'best reachable is N; adding X would add ~M — add it?'"""
     out = []
     try:
-        short = [r for r in report
-                 if not r.get("met") and (" Def" in r["stat"] or " Res" in r["stat"])]
+        # PROMISES ONLY. The preset's def/res numbers are harvest proxies, not
+        # things the user asked for; advising on those manufactures a gap. An axis
+        # earns advice when the user declared it (targets editor -> _declared) or
+        # stated it (softcap goal / exposure -> _stated, set in preset_targets).
+        _t = targets or {}
+        promised = {"defense": set(), "resistance": set()}
+        for src in (_t.get("_declared") or {}, _t.get("_stated") or {}):
+            for kind in ("defense", "resistance"):
+                promised[kind].update(src.get(kind) or ())
+        if not (promised["defense"] or promised["resistance"]):
+            return out
+        short = []
+        for r in report:
+            if r.get("met") or not (" Def" in r["stat"] or " Res" in r["stat"]):
+                continue
+            ty, kind = r["stat"].rsplit(" ", 1)
+            if ty in promised["defense" if kind == "Def" else "resistance"]:
+                short.append(r)
         if not short:
             return out
         picked = {p.get("full_name") for p in powers}

@@ -419,26 +419,41 @@ _ap_r = c.post("/build/autopick", json={
     "archetype": "Class_Blaster", "primary": "Blaster_Ranged.Fire_Blast",
     "secondary": "Blaster_Support.Energy_Manipulation",
     "content": "general", "role": "damage"}).get_json()
-_sv_r = c.post("/build/solve", json={
-    "archetype": "Class_Blaster", "primary": "Blaster_Ranged.Fire_Blast",
-    "secondary": "Blaster_Support.Energy_Manipulation",
-    "powers": _ap_r["powers"], "content": "general", "role": "damage"}).get_json()
+def _solve_r(extra):
+    body = {"archetype": "Class_Blaster", "primary": "Blaster_Ranged.Fire_Blast",
+            "secondary": "Blaster_Support.Energy_Manipulation",
+            "powers": _ap_r["powers"], "content": "general", "role": "damage"}
+    body.update(extra)
+    return c.post("/build/solve", json=body).get_json()
+
+# POSITIVE: an ask the user actually declared, which a Blaster cannot reach.
+_sv_r = _solve_r({"custom_targets": {"resistance": {"Smashing": 70}}})
 _unmet_r = [x for x in (_sv_r.get("report") or [])
+            if not x.get("met") and x.get("stat") == "Smashing Res"]
+_rem_r = _sv_r.get("ask_remedies") or []
+check("REMEDY ON A DECLARED ASK: an unreachable ask comes back with numbers AND "
+      "a next move, never a bare refusal",
+      bool(_unmet_r) and any(x.get("stat") == "Smashing Res"
+                             and (x.get("remedy") or "").strip() for x in _rem_r),
+      f"{len(_unmet_r)} unmet, remedies: "
+      f"{[x.get('stat') for x in _rem_r] if _rem_r else 'NONE'}")
+
+# NEGATIVE CONTROL (standing rule): the preset's def/res numbers are HARVEST
+# PROXIES, not promises. A solve that declares nothing must stay silent - advising
+# on a proxy shortfall invents a gap the user never asked about.
+_sv_n = _solve_r({})
+_unmet_n = [x for x in (_sv_n.get("report") or [])
             if not x.get("met") and (" Def" in x.get("stat", "")
                                      or " Res" in x.get("stat", ""))]
-_rem_r = _sv_r.get("ask_remedies") or []
-_rem_stats = {x.get("stat") for x in _rem_r}
-check("REMEDY ON THE GOAL PATH: no custom_targets, yet every unmet def/res row "
-      "carries a remedy (never a bare refusal)",
-      bool(_unmet_r) and all(x["stat"] in _rem_stats for x in _unmet_r)
-      and all((x.get("remedy") or "").strip() for x in _rem_r),
-      f"{len(_unmet_r)} unmet rows, {len(_rem_r)} remedies: "
-      f"{sorted(_rem_stats) if _rem_stats else 'NONE'}")
+check("REMEDY NEGATIVE CONTROL: proxy-only shortfalls generate no advice",
+      bool(_unmet_n) and not (_sv_n.get("ask_remedies") or []),
+      f"{len(_unmet_n)} proxy rows short, "
+      f"{len(_sv_n.get('ask_remedies') or [])} remedies (must be 0)")
 
 # COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
 # check — a crash or skipped section that silently shrinks the list must fail, not
 # pass by absence. Bump EXPECTED_CHECKS when adding a check.
-EXPECTED_CHECKS = 22
+EXPECTED_CHECKS = 23
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
 if len(results) != EXPECTED_CHECKS:

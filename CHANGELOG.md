@@ -13,7 +13,11 @@
   suggestions. Two more faults fixed behind it: the Concealment pool was looked
   up under a name the game does not use, so Stealth could never be suggested,
   and a character with no unpicked candidates returned nothing at all rather
-  than the honest "this ask may be unreachable on this pairing".
+  than the honest "this ask may be unreachable on this pairing". This advice is
+  deliberately limited to goals *you* set. The preset defense and resistance
+  numbers behind a Content and Role choice are internal aiming points rather
+  than promises, so the tool no longer offers to close a gap you never asked
+  about.
 
 ## 0.12.26 — 2026-07-24 — Full power icons and in-app bug reports
 

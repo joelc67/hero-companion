@@ -490,6 +490,15 @@ def preset_targets(content, role, res_cap=75, exposure=None,
     base = CONTENT_PRESETS.get(content) or {}
     rolespec = ROLE_PRESETS.get(role) or {}
     out = {"defense": {}, "resistance": {}}
+    # ADVICE-ONLY provenance (2026-07-26). The def/res numbers above are HARVEST
+    # PROXIES (see the note in this docstring), not promises to the user - so
+    # falling short of them must NOT generate "here is how to close the gap"
+    # advice, or we counsel people about a gap we invented. Axes the USER actually
+    # asked for (a softcap goal, a declared exposure) are different: those are
+    # promises and they earn a remedy. Tracked in a separate key from _declared
+    # BECAUSE solver.py reads _declared for target seniority - writing there
+    # would change the objective and move every certified champion's score.
+    stated = {"defense": set(), "resistance": set()}
     for t, v in base.get("defense", {}).items():
         out["defense"][t] = v
     # meta-baseline reshaping (never touches fire_farm's hard 45 floor)
@@ -497,6 +506,7 @@ def preset_targets(content, role, res_cap=75, exposure=None,
     if goal and wants_classic_softcap(goal):
         for t, v in _CLASSIC_DEF.items():
             out["defense"][t] = max(out["defense"].get(t, 0), v)
+        stated["defense"].update(_CLASSIC_DEF)      # the user asked for softcap
     elif _meta_quad and positional_build(primary, secondary):
         for t in ("Smashing", "Lethal", "Fire", "Cold"):
             del out["defense"][t]
@@ -505,9 +515,11 @@ def preset_targets(content, role, res_cap=75, exposure=None,
     # liner is hit in melee (aim Melee def), a backliner by ranged/AoE (aim Ranged+AoE).
     if exposure == "front":
         out["defense"]["Melee"] = max(out["defense"].get("Melee", 0), 45)
+        stated["defense"].add("Melee")
     elif exposure == "back":
         out["defense"]["Ranged"] = max(out["defense"].get("Ranged", 0), 45)
         out["defense"]["AoE"] = max(out["defense"].get("AoE", 0), 45)
+        stated["defense"].update(("Ranged", "AoE"))
     # A1 STATUS (work order A): the ILP's positional-vector blindness (the
     # certified Stalker's bare Tough/Weave, melee 39 with softcap 6 away) is
     # REAL — but the flat fix (Melee/Ranged 45 asks on every preset) was
@@ -549,6 +561,9 @@ def preset_targets(content, role, res_cap=75, exposure=None,
     # normalize_targets ignores unknown fields.
     if content in CONTENT_PRESETS:
         out["scenario"] = content
+    # advice-only; normalize_targets ignores unknown fields and the solver never
+    # reads this key (that is _declared's job, deliberately kept separate)
+    out["_stated"] = {k: sorted(v) for k, v in stated.items() if v}
     return {"targets": out, "roles": rolespec.get("roles", ["survival"]),
             "perk_focus": rolespec.get("perk_focus")}
 
