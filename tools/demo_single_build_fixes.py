@@ -408,10 +408,37 @@ check("METER FLOOR: Defiance chain-derived, Vigilance solo-not-team, Scourge +30
       f"Defiance {_mb:.3f}, Vigilance solo {_md_solo:.3f}/team {_md_team:.3f}, "
       f"Scourge {_mc:.3f}, Containment-vs-AV {_mct_av:.3f}")
 
+# ── REFUSE-WITH-REMEDY pin (field report 2026-07-26, legendaryjman): "you made it
+# sound like I could press a button and it would give me power suggestions for how
+# I could reach my goal". Every unmet def/res ask must come back with a remedy, on
+# the GOAL path as well as the targets-editor path. Three defects made it silent:
+# the remedy was gated on custom_targets, "Pool.Concealment" was a dead key, and an
+# empty candidate list returned early instead of emitting the honest refusal.
+print("\nrefuse-with-remedy — every unmet def/res ask names a next move:")
+_ap_r = c.post("/build/autopick", json={
+    "archetype": "Class_Blaster", "primary": "Blaster_Ranged.Fire_Blast",
+    "secondary": "Blaster_Support.Energy_Manipulation",
+    "content": "general", "role": "damage"}).get_json()
+_sv_r = c.post("/build/solve", json={
+    "archetype": "Class_Blaster", "primary": "Blaster_Ranged.Fire_Blast",
+    "secondary": "Blaster_Support.Energy_Manipulation",
+    "powers": _ap_r["powers"], "content": "general", "role": "damage"}).get_json()
+_unmet_r = [x for x in (_sv_r.get("report") or [])
+            if not x.get("met") and (" Def" in x.get("stat", "")
+                                     or " Res" in x.get("stat", ""))]
+_rem_r = _sv_r.get("ask_remedies") or []
+_rem_stats = {x.get("stat") for x in _rem_r}
+check("REMEDY ON THE GOAL PATH: no custom_targets, yet every unmet def/res row "
+      "carries a remedy (never a bare refusal)",
+      bool(_unmet_r) and all(x["stat"] in _rem_stats for x in _unmet_r)
+      and all((x.get("remedy") or "").strip() for x in _rem_r),
+      f"{len(_unmet_r)} unmet rows, {len(_rem_r)} remedies: "
+      f"{sorted(_rem_stats) if _rem_stats else 'NONE'}")
+
 # COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
 # check — a crash or skipped section that silently shrinks the list must fail, not
 # pass by absence. Bump EXPECTED_CHECKS when adding a check.
-EXPECTED_CHECKS = 21
+EXPECTED_CHECKS = 22
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
 if len(results) != EXPECTED_CHECKS:

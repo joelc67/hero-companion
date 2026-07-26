@@ -12,6 +12,7 @@ import os
 import time
 import re
 import sys
+import traceback
 from collections import defaultdict, Counter
 
 from flask import Flask, jsonify, request, send_from_directory
@@ -4473,8 +4474,14 @@ def build_solve():
     # unreachable is refused, WITH numbers and a remedy): for every DECLARED
     # ask still short after the solve, name real unpicked powers that natively
     # supply that axis and what they'd roughly add.
-    remedies = _ask_remedies(archetype, sol["powers"], report, ctx, res_cap) \
-        if custom else []
+    # FIELD FIX (2026-07-26, legendaryjman): this used to run `if custom else []`,
+    # so the remedy only ever appeared for asks typed into the targets editor. A
+    # user who states the same ask through the wizard/goal path got the refusal
+    # ("best reached 39.5") with NO next move - "you made it sound like I could
+    # press a button and it would give me power suggestions". An unmet target is
+    # an unmet target whatever door it came through; the doctrine is refuse-WITH-
+    # remedy, so it now runs off the report's unmet rows regardless of source.
+    remedies = _ask_remedies(archetype, sol["powers"], report, ctx, res_cap)
     return jsonify({"ok": True, "powers": sol["powers"], "respec_plan": respec_plan,
                     "warnings": _warnings,
                     "slots_used": sol["slots_used"],
@@ -4612,11 +4619,16 @@ def _ask_remedies(archetype, powers, report, ctx, res_cap):
         if not short:
             return out
         picked = {p.get("full_name") for p in powers}
-        pools = ("Pool.Fighting", "Pool.Leadership", "Pool.Concealment")
+        # "Pool.Concealment" was a DEAD KEY - the game's set is Pool.Invisibility
+        # (Stealth lives there), so a third of the remedy pool never existed.
+        pools = ("Pool.Fighting", "Pool.Leadership", "Pool.Invisibility")
         own = {p.get("powerset_full_name") for p in powers
                if (p.get("powerset_full_name") or "").split(".")[0]
                not in ("Pool", "Epic", "Inherent")}
-        cand_sets = [ps for ps in (list(own) + list(pools)) if ps]
+        # Pools FIRST: the cands[:12] cap below is a real cap, and the def/res
+        # pools are the answer for positional defense far more often than a
+        # character's own leftovers are. Own-sets-first let the cap eat them.
+        cand_sets = [ps for ps in (list(pools) + list(own)) if ps]
         cands = []
         for ps in cand_sets:
             for rec in (POWERS.get(ps) or []):
@@ -4626,8 +4638,10 @@ def _ask_remedies(archetype, powers, report, ctx, res_cap):
                 if rec.get("power_type") in (1, 2) and (
                         "defense buff" in acc or "resist damage" in acc):
                     cands.append(rec)
-        if not cands:
-            return out
+        # NO early return on an empty candidate list. "There is nothing left on
+        # this character that supplies it" IS the advice the doctrine asks for -
+        # bailing here is what turned an honest refusal into silence, which is
+        # exactly what the field report describes.
         # price each candidate's base contribution once
         based = []
         for rec in cands[:12]:                     # bounded — advice, not a search
@@ -4657,6 +4671,9 @@ def _ask_remedies(archetype, powers, report, ctx, res_cap):
                                   "this pairing; lowering it is the honest move")
             out.append(item)
     except Exception:  # noqa: BLE001 — remedies are advice; never fail a solve
+        # ...but a SILENT swallow is how this stayed broken in the field. Advice
+        # still never breaks a solve; it just stops disappearing without a trace.
+        traceback.print_exc()
         return out
     return out
 

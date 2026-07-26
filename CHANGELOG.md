@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- **When a target is out of reach, the tool now tells you what to do about it.**
+  If a defense or resistance goal comes up short, you get the numbers *and* a
+  concrete next move: the actual unpicked powers on your character that supply
+  that stat and roughly what each would add ("adding Stealth (~7.0% base, more
+  enhanced) and re-solving would close part of the gap"). When nothing is left
+  that supplies it, it says so plainly instead of going quiet. Previously this
+  advice only appeared if you had used the "Customize build targets" editor, so
+  anyone who stated the same goal through the wizard got a bare refusal with no
+  suggestions. Two more faults fixed behind it: the Concealment pool was looked
+  up under a name the game does not use, so Stealth could never be suggested,
+  and a character with no unpicked candidates returned nothing at all rather
+  than the honest "this ask may be unreachable on this pairing".
+
 ## 0.12.26 — 2026-07-24 — Full power icons and in-app bug reports
 
 - **Pulse Board updates reach phones on their own.** The board is a live page, but
