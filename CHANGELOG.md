@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- **"Reset to imported build" no longer throws away your targets without
+  saying so.** That button restores the build exactly as it came in, which
+  also clears custom build targets and your front/back line and travel
+  answers. It did that silently, so a solve afterwards quietly went back to
+  the preset targets for your Content and Role, which reads as the tool
+  overriding you. It now tells you what is about to be cleared and lets you
+  back out, and if you go ahead it says what was cleared and where to set it
+  again. Nothing prompts if you had nothing set.
+
 - **When a target is out of reach, the tool now tells you what to do about it.**
   If a defense or resistance goal comes up short, you get the numbers *and* a
   concrete next move: the actual unpicked powers on your character that supply

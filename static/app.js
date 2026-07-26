@@ -5947,6 +5947,23 @@ function resetToImported() {
   // reset means reset (0.12.20 eyeball rule): the import didn't carry custom
   // targets, exposure, travel answers, or boost previews — restoring "exactly
   // as it came in" clears them too, same as every other start-over path.
+  // FIELD FIX (2026-07-26, Troo): the wipe stays, the SILENCE does not. This
+  // button reads as "try a different goal/options without re-importing", so a
+  // stated ask vanishing here is invisible — his report was "my targets keep
+  // getting overridden", and what he was actually seeing was the preset build
+  // coming back (typed def 35 landing at ~32, and Ageless recommended again)
+  // because his 40/40/40 + res 90 had been silently dropped by this path.
+  // Doctrine: honor the request, and state what it costs.
+  const losing = [];
+  if (hasTargetValues(build._custom_targets)) losing.push("your custom build targets");
+  if (build._exposure) losing.push("your front/back line answer");
+  if (build._travel) losing.push("your travel answer");
+  if (losing.length && !confirm(
+      "Reset to the imported build?\n\nThis also clears " + losing.join(", ")
+      + ".\n\nThe powers and slotting go back exactly as imported, and the "
+      + "solver returns to the preset targets for your Content and Role.")) {
+    return;                                  // he keeps his ask — nothing happens
+  }
   resetBuildScopedState();
   build.powers = JSON.parse(JSON.stringify(IMPORTED_POWERS));
   build.imported = true;
@@ -5956,9 +5973,12 @@ function resetToImported() {
   renderPowers();
   recompute();
   const out = $("ai-response");
-  if (out) { out.classList.add("muted"); out.innerHTML = "Reset to your imported build. Adjust the goal/options and Solve again."; }
+  const lostNote = losing.length
+    ? ` Also cleared ${losing.join(", ")} — set them again from "Customize build targets" before you Solve, or the preset targets are what the solver chases.`
+    : "";
+  if (out) { out.classList.add("muted"); out.innerHTML = escHtml("Reset to your imported build. Adjust the goal/options and Solve again." + lostNote); }
   const status = $("gen-status");
-  if (status) status.textContent = "↺ Reset to imported build.";
+  if (status) status.textContent = "↺ Reset to imported build." + lostNote;
 }
 window.resetToImported = resetToImported;
 
