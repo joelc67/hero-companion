@@ -1,6 +1,10 @@
 # Hero Companion — What's New
 
-## Unreleased
+## 0.12.27 — 2026-07-26 — Targets you set, and honest advice when they fall short
+
+Both fixes in this release came from reports in the forum thread. Game data is
+unchanged from 0.12.26 (Homecoming 2026.1.1242), and the optimizer's model stays
+at v36, so every certified champion carries the same score it did last release.
 
 - **"Reset to imported build" no longer throws away your targets without
   saying so.** That button restores the build exactly as it came in, which
