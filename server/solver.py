@@ -24,6 +24,8 @@ import math
 import os
 from collections import defaultdict, Counter
 
+import diag
+
 try:
     import pulp
 except ImportError:  # ILP unavailable -> solve_ilp raises; install pulp
@@ -1643,7 +1645,7 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
                                     for k, v in objective_targets.items()},
                     }) + "\n")
         except Exception:  # noqa: BLE001 — diagnostics never break a solve
-            pass
+            diag.swallowed("solver: objective diagnostics dump")
 
     if os.environ.get("HC_SOLVER_DEBUG_OBJ"):
         DEBUG_OBJ.append(pulp.value(prob.objective))

@@ -24,6 +24,7 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(ROOT, "ai"))
 
+import diag                        # noqa: E402
 import engine                      # noqa: E402
 import claude_bridge               # noqa: E402
 import ai_build                    # noqa: E402
@@ -544,7 +545,7 @@ def journey_badges():
         loc_by_id = _bl.get("locations", {})
         loc_credit = _bl.get("_provenance_label", "")
     except Exception:  # noqa: BLE001 — no location file, no directions; badges still list
-        pass
+        diag.swallowed("journey: badge locations", "badges list without directions")
 
     level_badges = {}
     zones = {}
@@ -619,7 +620,7 @@ def journey_places():
                         "urls": story.get("_urls", {}), "xp_macro": story.get("xp_macro", {}),
                         "hero": story.get("hero", {}), "villain": story.get("villain", {})}
     except Exception:  # noqa: BLE001 — the route still stands without the story layer
-        pass
+        diag.swallowed("journey: story layer", "route served without it")
     # Every zone's level range (all 47, wiki-fetched) so the road can auto-place
     # the zones that fit ANY level — not just the ones on a written route.
     try:
@@ -631,13 +632,13 @@ def journey_places():
              "url": z.get("url")}
             for z in zp.get("zones", []) if z.get("from") is not None]
     except Exception:  # noqa: BLE001
-        pass
+        diag.swallowed("journey: zone level ranges")
     # When each Task Force / Strike Force / trial becomes available (content-db).
     try:
         with open(os.path.join(base, "data", "tf_levels.json"), encoding="utf-8") as f:
             out["tf_levels"] = json.load(f).get("tf_levels", {})
     except Exception:  # noqa: BLE001
-        pass
+        diag.swallowed("journey: tf/sf availability levels")
     # Master-of / iTrial challenge badges, attached to the TF/trial they belong
     # to rather than a zone (n15g's coh-content-db). Served so the client can
     # match each to an event it already lists on the road.
@@ -647,7 +648,7 @@ def journey_places():
         out["challenges"] = ch.get("challenges", {})
         out["challenge_credit"] = ch.get("_provenance_label", "")
     except Exception:  # noqa: BLE001
-        pass
+        diag.swallowed("journey: master/iTrial challenge badges")
     # Content newer than the 2020 guides — wiki-sourced and labelled as such,
     # never blended into the game-first layers.
     try:
@@ -656,7 +657,7 @@ def journey_places():
         out["modern"] = {"provenance": modern.get("_provenance_label", ""),
                          "zones": modern.get("zones", [])}
     except Exception:  # noqa: BLE001
-        pass
+        diag.swallowed("journey: modern (post-2020) zones")
     # Zone art extracted from the client (tools/extract_zone_art.py). Keyed by a
     # normalised asset name so the client can match a zone it already names; the
     # 27 zones with no map texture in the client simply aren't in here.
@@ -686,7 +687,7 @@ def journey_places():
                     if b.get("zone_key"):
                         live.add(_zn(b["zone_key"]))
         except Exception:  # noqa: BLE001
-            pass
+            diag.swallowed("journey: live zone keys from badges")
         for z in (out.get("modern") or {}).get("zones", []):
             live.add(_zn(z.get("zone")))
 
@@ -710,7 +711,7 @@ def journey_places():
         out["art"] = served
         out["art_withheld"] = sorted(withheld)
     except Exception:  # noqa: BLE001 — no art file, no art; the slot says so
-        pass
+        diag.swallowed("journey: zone art")
     return jsonify(out)
 
 
@@ -2519,7 +2520,7 @@ def build_calculate():
                 if _sv is not None and abs(_sv - _row.get("value", 0)) > 0.05:
                     _row["in_combat"] = _sv
         except Exception:  # noqa: BLE001 — the companion number is a nicety
-            pass
+            diag.swallowed("calculate: in-combat defense companion values")
     # Self-heal pick levels on every recompute: saved builds from older versions carry
     # naive assignments (both Poison powers at level 1) or none at all — re-seat them
     # and hand the corrected levels back so the build grid never shows an illegal order.
@@ -3842,7 +3843,8 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
                 f.write(json.dumps({"archetype": archetype, "primary": primary,
                                     "secondary": secondary, "content": content, **line}) + "\n")
     except Exception:  # noqa: BLE001
-        pass
+        diag.swallowed("deep_optimize: exploration-log append",
+                       "this run's exploration is NOT recorded")
     sc_b, cur_b, solved_b, ev_b = best
     champion_picks = [p["full_name"] for p in cur_b]
     # NODE-CAP FINALE: restore the exact-solve contract, then re-solve the
@@ -3909,7 +3911,8 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
         learn.save_champion(archetype, primary, secondary, content, champion_picks, sc_b, cert,
                             form=form)
     except Exception:  # noqa: BLE001
-        pass
+        diag.swallowed("deep_optimize: save_champion",
+                       "THE CHAMPION WAS NOT SAVED - hours of convergence lost")
     # THE RETROSPECTIVE ("why did I miss those fits 693 times?"): score the heuristic proposer's
     # own build under this model, count how many explored builds beat it (the misses), diff the
     # proposer's picks vs the proven champion, and persist the lessons — seed_adjustments() feeds
@@ -3923,7 +3926,7 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
         retrospective["heuristic_score"] = h_sc
         retrospective["champion_score"] = sc_b
     except Exception:  # noqa: BLE001
-        pass
+        diag.swallowed("deep_optimize: retrospective")
     return solved_b, {"score": sc_b, "breakdown": ev_b, "path": path, "certificate": cert,
                       "builds_explored": len(explored), "solves": n_solves[0],
                       "seed": seed_src, "learned_moves": len(lm),
@@ -4916,7 +4919,7 @@ def _build_warnings(powers, archetype, totals, content, role, exposure=None):
                         "for Combat Jumping (a Luck of the Gambler +recharge mule), worth ~14% global "
                         "recharge + some defense. Keep your travel if you prefer it; just know the cost."})
     except Exception:  # noqa: BLE001 — warnings must never break a solve/import
-        pass
+        diag.swallowed("build warnings")
     return out
 
 

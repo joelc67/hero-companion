@@ -29,6 +29,7 @@ import sys
 import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import diag  # noqa: E402
 import gamelog  # noqa: E402
 
 TERMS_VERSION = 2   # keep in lockstep with run_lite.py — same consent, one version
@@ -120,7 +121,7 @@ def _inbox_put(path, data, message, need_sha=False):
         try:
             body["sha"] = _gh_request("GET", f"contents/{path}").get("sha")
         except Exception:  # noqa: BLE001 — file doesn't exist yet: create it
-            pass
+            diag.swallowed("pulse_feed: sha lookup", "expected on first write")
     _gh_request("PUT", f"contents/{path}", body)
 
 

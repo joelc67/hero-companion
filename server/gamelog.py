@@ -16,6 +16,8 @@ import os
 import re
 import time
 
+import diag
+
 STATE_DIR = None      # set by server.py -> %APPDATA%\HeroCompanion\gamelog
 
 
@@ -65,7 +67,7 @@ def acquire_ingest(tag):
         if cur.get("pid") != me["pid"] and (now - float(cur.get("ts", 0))) < _OWNER_TTL:
             return False                 # someone else holds it, and their heartbeat is fresh
     except Exception:  # noqa: BLE001 — no owner file yet
-        pass
+        diag.swallowed("gamelog: watch-owner claim", "expected on first claim")
     with open(_owner_path(), "w", encoding="utf-8") as f:
         json.dump(me, f)
     return True
@@ -79,7 +81,7 @@ def ingest_owner():
         if (time.time() - float(cur.get("ts", 0))) < _OWNER_TTL:
             return cur
     except Exception:  # noqa: BLE001
-        pass
+        diag.swallowed("gamelog: watch-owner read", "reporting no owner")
     return None
 
 
@@ -105,7 +107,7 @@ def acquire_upload(tag):
         if cur.get("pid") != me["pid"] and (now - float(cur.get("ts", 0))) < _OWNER_TTL:
             return False
     except Exception:  # noqa: BLE001 — no owner file yet
-        pass
+        diag.swallowed("gamelog: upload-owner claim", "expected on first claim")
     with open(_upload_owner_path(), "w", encoding="utf-8") as f:
         json.dump(me, f)
     return True
@@ -119,7 +121,7 @@ def upload_owner():
         if (time.time() - float(cur.get("ts", 0))) < _OWNER_TTL:
             return cur
     except Exception:  # noqa: BLE001
-        pass
+        diag.swallowed("gamelog: upload-owner read", "reporting no owner")
     return None
 
 
@@ -461,7 +463,7 @@ def _collect_format_candidate(line):
         with open(path, "a", encoding="utf-8") as f:
             f.write(line + "\n")
     except Exception:  # noqa: BLE001 — the hunter never breaks capture
-        pass
+        diag.swallowed("gamelog: format-candidate capture")
 
 
 def ingest(log_dir, state):

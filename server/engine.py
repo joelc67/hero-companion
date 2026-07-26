@@ -17,6 +17,8 @@ such, so "how close to the soft cap am I from set bonuses" is accurate.
 import os
 from collections import defaultdict
 
+import diag
+
 # ---- Hardcoded CoH constants (Step 6) ----
 DEFENSE_SOFT_CAP = 45.0       # %
 RESISTANCE_HARD_CAP = 75.0    # % (most ATs; Tanker/Brute differ but spec says 75)
@@ -1598,7 +1600,7 @@ def hp_bonus_fraction(val, ctx):
         if hs and col is not None and 0 <= col < len(hs) and base:
             return val * hs[col] / base
     except Exception:  # noqa: BLE001
-        pass
+        diag.swallowed("engine: AT hp-column scaling", "falling back to val*0.1")
     return val * 0.1
 
 

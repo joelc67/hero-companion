@@ -20,6 +20,8 @@ import json
 import os
 import sys
 
+import diag
+
 if getattr(sys, "frozen", False):
     # Packaged app: the gold-standard champions SHIP in the bundle (read-only) so end
     # users get the converged builds instead of the heuristic fallback. Anything the
@@ -60,7 +62,8 @@ def _load_log():
                     try:
                         rows.append(json.loads(line))
                     except Exception:  # noqa: BLE001
-                        pass
+                        diag.swallowed("learn: exploration-log line",
+                                       "skipping one unparseable row")
     except FileNotFoundError:
         pass
     return rows
@@ -129,7 +132,7 @@ def record_lessons(archetype, primary, secondary, content, heuristic_picks, cham
         with open(LESSONS_PATH, "a", encoding="utf-8") as f:
             f.write(json.dumps(line) + "\n")
     except Exception:  # noqa: BLE001
-        pass
+        diag.swallowed("learn: lesson append", "the lesson is NOT persisted")
     return line
 
 
