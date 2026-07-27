@@ -2,12 +2,12 @@
 
 ## 0.12.28 — 2026-07-27 — The security release
 
-Four security fixes and two field-reported bugs. Nothing about how you use the
+Five security fixes and one field-reported bug. Nothing about how you use the
 app changes, and nothing here alters build results: game data is unchanged from
 0.12.26 (Homecoming 2026.1.1242) and the optimizer's model stays at v36, so every
 certified champion carries the same score.
 
-Automated code scanning now runs on this project continuously. The four fixes
+Automated code scanning now runs on this project continuously. The security fixes
 below came out of its first pass, and none of them were being exploited: they
 were found by looking, not by anyone getting hurt.
 
@@ -18,6 +18,16 @@ were found by looking, not by anyone getting hurt.
   name containing a double quote could break out and attach itself to the
   interface. Now escaped properly. Names still display exactly as they are
   written, quotes and all.
+
+- **Security: a search you type can no longer run as code.** The "nothing
+  matches" message in the enhancement picker put your search text straight into
+  the page without escaping it first.
+
+- **Security: the in-game build reader can no longer be walked out of your game
+  folder.** It already refused paths outside your accounts folder, but the check
+  compared the path as written rather than where it actually leads, so a
+  shortcut-style link placed inside that folder could point anywhere on your
+  drive and still pass. It now resolves links before deciding.
 
 - **Security: the app no longer sends internal error details to the page.** When
   something failed, the raw error, including folder paths from your machine, was
