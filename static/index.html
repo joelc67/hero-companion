@@ -195,6 +195,9 @@
       <div class="legend">
         <span id="autosave-ind" class="muted small" title="Auto-saves in the background when something changes"></span>
         <button id="journey-btn" class="iconbtn journey-pill" title="The Leveling Journey — your 1-50 as a road. Click to open, click again to close." style="display:none">🗺️ <span class="journey-pill-label">Journey</span></button>
+        <!-- Sits next to the Journey button so the two "show me around" controls
+             live together. Opens the section chooser, never a tour directly. -->
+        <button id="tour-btn" class="iconbtn" title="Guided tour — pick a section and I'll explain it">🧭</button>
         <button id="save-btn" class="iconbtn" title="Save this character's plan + progress so you can resume later">💾</button>
         <a id="help-btn" class="iconbtn" href="/static/help/HeroCompanion-Help.pdf" target="_blank"
            rel="noopener" title="User guide + release notes (PDF)">❓</a>
@@ -210,7 +213,7 @@
   <main>
     <!-- LEFT RAIL, top: character setup (archetype, sets, pools, epic, incarnates) -->
     <section id="setup" class="panel">
-      <h2>Build<button class="tour-help" onclick="startTour('build')" title="Show me how this section works">Need help?</button></h2>
+      <h2>Build<button class="tour-help" onclick="startTour('build')" aria-label="Explain this section" title="Explain this section">?</button></h2>
 
       <label>Archetype
         <select id="sel-archetype"></select>
@@ -258,7 +261,7 @@
          no build yet the Play Log rises up to fill the wide right area (no dead space). -->
     <div class="build-col">
     <section id="builder" class="panel">
-      <h2>Powers &amp; Slots<button class="tour-help" onclick="startTour('powers')" title="Show me how this section works">Need help?</button></h2>
+      <h2>Powers &amp; Slots<button class="tour-help" onclick="startTour('powers')" aria-label="Explain this section" title="Explain this section">?</button></h2>
       <div id="edit-bar" class="edit-bar">
         <button id="undo-btn" class="ghost-btn" type="button" onclick="undoEdit()" disabled
           title="Revert your last edit (add/remove power, slot change, enhancement swap, pool change) — or just press Ctrl+Z">↶ Undo (Ctrl+Z)</button>
@@ -315,7 +318,7 @@
     <!-- RIGHT RAIL: live stats + AI controls in ONE sticky column; the page scrolls under it -->
     <aside class="rail">
     <section id="stats" class="panel">
-      <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span><button class="tour-help" onclick="startTour('stats')" title="Show me how this section works">Need help?</button></h2>
+      <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span><button class="tour-help" onclick="startTour('stats')" aria-label="Explain this section" title="Explain this section">?</button></h2>
       <div class="cap-chips">
         <span class="chip cap-def">Defense soft cap 45%</span>
         <span class="chip cap-res" id="res-cap-chip">Resistance hard cap 75%</span>
@@ -367,7 +370,7 @@
            assistant-title's innerHTML when the Build Assistant renders, which
            would silently delete anything nested inside it. -->
       <h2 id="assistant-title">AI Assistant</h2>
-      <button class="tour-help" onclick="startTour('solve')" title="Show me how this section works">Need help?</button>
+      <button class="tour-help" onclick="startTour('solve')" aria-label="Explain this section" title="Explain this section">?</button>
 
       <div class="generate">
         <!-- v35 UX batch (Joel's Build-Assistant work order): the panel KNOWS

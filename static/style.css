@@ -1833,10 +1833,30 @@ body { overflow: hidden; }
 .tour-offer-txt b { color: var(--ink); }
 /* The per-panel repeat entry. Quiet by default so it never competes with the
    panel's own controls, obvious on hover when someone is actually looking. */
+/* The per-section ? circle. Deliberately small and quiet: it sits beside a
+   heading without competing with it, and grows a ring on hover so it is
+   obviously clickable when someone is actually looking for help. */
 .tour-help {
-  width: auto; margin-top: 0;              /* opt out of the global width:100% */
-  background: none; border: 1px solid transparent; color: var(--muted);
-  font-size: 12px; font-weight: normal; padding: 2px 8px; border-radius: 999px;
-  cursor: pointer; margin-left: 8px; vertical-align: middle;
+  width: 18px; height: 18px; padding: 0; margin: 0 0 0 8px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: none; border: 1px solid var(--border); border-radius: 50%;
+  color: var(--muted); font-size: 11px; font-weight: 700; line-height: 1;
+  cursor: pointer; vertical-align: middle;
 }
-.tour-help:hover { color: var(--accent); border-color: var(--border); }
+.tour-help:hover { color: var(--accent); border-color: var(--accent); background: none; filter: none; }
+
+/* The section chooser */
+.tour-menu-box { max-width: 620px; }
+.tour-menu-list { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.tour-menu-row {
+  width: 100%; margin: 0; text-align: left; display: grid;
+  grid-template-columns: 1fr auto; gap: 2px 12px; align-items: baseline;
+  padding: 10px 12px; border-radius: 7px;
+  background: var(--panel2); color: var(--ink); border: 1px solid var(--border);
+  font-weight: 400;
+}
+.tour-menu-row:hover { border-color: var(--accent); filter: none; }
+.tour-menu-row b { grid-column: 1; font-size: 14px; }
+.tour-menu-row .small { grid-column: 1; }
+.tour-menu-n { grid-column: 2; grid-row: 1 / span 2; color: var(--muted); font-size: 12px; white-space: nowrap; }
+.tour-menu-all { margin-bottom: 10px; border-color: var(--accent); }

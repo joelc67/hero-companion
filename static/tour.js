@@ -34,6 +34,19 @@ const TOUR_CHAPTERS = {
   header:    "Saving, updates and help",
 };
 
+// One line per section for the chooser. Deliberately a separate map from
+// TOUR_CHAPTERS: the audit parses that block to know which chapters exist, and
+// turning it into objects would break the thing that keeps this honest.
+const TOUR_CHAPTER_BLURB = {
+  start:  "The opening screen and what each of the five ways in actually does.",
+  build:  "Archetype, powersets, and the two choices that steer everything: Content and Role.",
+  powers: "Taking powers, spending your 67 slots, and locking what you have already decided.",
+  stats:  "Reading the bars, the cap lines, and the second number that appears in combat.",
+  solve:  "Letting it work out the slotting, and how to read what it gives you back.",
+  extras: "The Leveling Journey, the enhancement converter, and the Play Log.",
+  header: "Saving, alignment, updates, and reporting something that looks wrong.",
+};
+
 // `target`  - the element this step explains (id selector).
 // `absent`  - what to say when that element is not on screen right now.
 // `spine`   - true = part of the short first-run tour.
@@ -401,31 +414,84 @@ window.startTour = function (chapter) {
   _driver.drive();
 };
 
-// The first-run OFFER. One line, dismissible, and dismissing it only stops the
-// OFFER - the tour stays reachable from every 'Need help?' link forever.
-window.maybeOfferTour = function () {
+// ── The chooser: where do you want to start? ─────────────────────────────────
+// Requesting help does not drop you straight into a 30-step walk. It asks which
+// part you care about, because someone confused about slots does not want six
+// cards about the opening screen first. "Everything" is offered at the top for
+// people who do want the lot, labelled with its real length rather than a
+// comfortable fiction.
+window.closeTourMenu = function () {
+  const m = document.getElementById("tour-menu");
+  if (m) m.remove();
+};
+
+window.openTourMenu = function () {
+  closeTourMenu();
+  endTour();
+  const total = TOUR_STEPS.length;
+  const rows = Object.keys(TOUR_CHAPTERS).map(k => {
+    const n = TOUR_STEPS.filter(s => s.chapter === k).length;
+    return `<button class="tour-menu-row" onclick="closeTourMenu(); startTour('${k}');">
+              <b>${escHtml(TOUR_CHAPTERS[k])}</b>
+              <span class="muted small">${escHtml(TOUR_CHAPTER_BLURB[k] || "")}</span>
+              <span class="tour-menu-n">${n} step${n === 1 ? "" : "s"}</span>
+            </button>`;
+  }).join("");
+  const wrap = document.createElement("div");
+  wrap.id = "tour-menu";
+  wrap.className = "modal";
+  wrap.innerHTML =
+    `<div class="entry-box tour-menu-box">
+       <div class="wizard-head">
+         <h2>🧭 What would you like explained?</h2>
+         <button class="linkchip" onclick="closeTourMenu()">✕ Close</button>
+       </div>
+       <p class="muted small">Pick a section, or take the lot. Nothing you see here changes
+         your build, and you can leave at any point with Esc or the ✕ on the card.</p>
+       <button class="tour-menu-row tour-menu-all" onclick="closeTourMenu(); startTour('all');">
+         <b>The complete tour</b>
+         <span class="muted small">Every section, start to finish, in order.</span>
+         <span class="tour-menu-n">${total} steps</span>
+       </button>
+       <div class="tour-menu-list">${rows}</div>
+     </div>`;
+  document.body.appendChild(wrap);
+  wrap.addEventListener("click", e => { if (e.target === wrap) closeTourMenu(); });
+};
+
+// ── The first-run offer ──────────────────────────────────────────────────────
+// WHO GETS OFFERED (Joel's rule): a fresh install. If the machine already has
+// saved characters, the person has clearly used this before and does not need to
+// be asked -- the ? circles and the header compass are there when they want them.
+// That is a better signal than a "have I shown this yet" flag, because it
+// survives clearing browser storage and reinstalls.
+window.maybeOfferTour = async function () {
   if (_tourFinished() || _tourLater()) return;
   if (document.querySelector(".tour-offer")) return;   // called from init AND showEntry
   const host = document.getElementById("entry-cards");
   if (!host || !_tourVisible(host)) return;
+  try {
+    const res = await api("/saves");
+    if (((res && res.saves && res.saves.length) || 0) > 0) return;   // not a new user
+  } catch (e) { return; }        // cannot tell: say nothing rather than nag
+  if (document.querySelector(".tour-offer")) return;   // may have raced while awaiting
   const bar = document.createElement("div");
   bar.className = "tour-offer";
-  // Say what it IS and what it costs. Joel's walk: "I'm not sure why I would
-  // even choose 'not now' - it's not obvious this is a tour." If the offer does
-  // not explain itself, declining it is a coin flip.
   bar.innerHTML =
     `<span class="tour-offer-ico">🧭</span>
-     <span class="tour-offer-txt"><b>First time here?</b> Take a two minute guided tour —
-       it points at each part of the app and explains what it does. Nothing is changed
-       or built along the way, and you can leave at any point.</span>
-     <button onclick="this.closest('.tour-offer').remove(); startTour();">Start the tour</button>
+     <span class="tour-offer-txt"><b>New here?</b> Take a guided tour — it points at each part
+       of the app and explains what it does. Nothing is changed or built along the way, and
+       you can leave at any point.</span>
+     <button onclick="this.closest('.tour-offer').remove(); openTourMenu();">Show me around</button>
      <button class="secondary" onclick="_tourMarkLater(); this.closest('.tour-offer').remove();"
-       title="Hides it for now. It will offer again next time you open the app, and every panel has a 'Need help?' link.">Maybe later</button>`;
+       title="Hides it for now. The compass in the header and the ? next to each section will still explain anything, any time.">Maybe later</button>`;
   host.parentNode.insertBefore(bar, host);
 };
 
-// A 'Need help?' link for a panel, wired to that panel's chapter.
+// The per-section entry point: a quiet ? circle that explains just that section.
+// Small on purpose -- it sits beside a heading without competing with it.
 window.tourHelpLink = function (chapter) {
   return `<button class="tour-help" onclick="startTour('${chapter}')" `
-       + `title="Show me how this section works">Need help?</button>`;
+       + `aria-label="Explain this section" `
+       + `title="Explain this section">?</button>`;
 };

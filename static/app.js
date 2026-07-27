@@ -2715,6 +2715,8 @@ async function init() {
   $("journey-modal").addEventListener("click", (e) => {
     if (e.target === $("journey-modal")) closeJourneyView();
   });
+  if ($("tour-btn")) $("tour-btn").addEventListener("click",
+    () => { if (typeof openTourMenu === "function") openTourMenu(); });
   if ($("bug-btn")) $("bug-btn").addEventListener("click", reportBug);
   if ($("champ-btn")) $("champ-btn").addEventListener("click", submitChampion);
   if ($("update-check")) $("update-check").addEventListener("click", checkUpdates);
