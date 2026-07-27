@@ -493,7 +493,16 @@ function closeRespecWizard() {
   if (_WIZ_BUILT_LEVELING) {
     _WIZ_BUILT_LEVELING = false;
     maybeAutoOpenJourney();   // the greet fires however the wizard was left
+    return;
   }
+  // FIELD FIX (Joel, 2026-07-26): closing the wizard dropped you on whatever was
+  // behind it — and if you arrived from an entry card, there is NOTHING behind
+  // it: hideEntry() ran on the way in, so you land on a bare builder with no
+  // character, which reads as the app breaking. Backing out of "how do you want
+  // to start" means "changed my mind", not "start me a blank build", so it
+  // returns you to the door you came in through. If a real build IS loaded,
+  // closing still returns to it exactly as before.
+  if (!(build.powers || []).length) showEntry();
 }
 
 // DISCOVERY: ranked archetypes from the "How do you play?" answers (ONE-COPY

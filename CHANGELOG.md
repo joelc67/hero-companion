@@ -1,5 +1,13 @@
 # Hero Companion — What's New
 
+## Unreleased
+
+- **Backing out of the "new level 50" wizard takes you back to the start screen.**
+  Picking an entry card and then changing your mind used to close the wizard onto
+  an empty builder with no character in it, which looks like the app broke. Closing
+  now returns you to "How do you want to start?", the screen you came in from. If
+  you already had a character open, closing still returns you to it as before.
+
 ## 0.12.27 — 2026-07-26 — Targets you set, and honest advice when they fall short
 
 Both fixes in this release came from reports in the forum thread. Game data is
