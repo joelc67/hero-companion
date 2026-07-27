@@ -2152,7 +2152,7 @@ function renderRoleFocusSplit() {
     `<option value="${escHtml(o)}" ${roleFocus.secondary === o ? "selected" : ""}>${escHtml(ROLE_LABELS[o] || o)}</option>`).join("");
   box.innerHTML =
     `<div class="muted small">Your picks support more than one role — <b>how do you want to split your focus?</b></div>
-     <label class="small">${ROLE_LABELS[r] || r} <b><span id="rf-pct">${roleFocus.pct}</span>%</b>
+     <label class="small">${escHtml(ROLE_LABELS[r] || r)} <b><span id="rf-pct">${roleFocus.pct}</span>%</b>
        <input type="range" id="rf-slider" min="50" max="100" step="5" value="${roleFocus.pct}">
        <select id="rf-secondary"><option value="">— all-in (100%) —</option>${opts}</select>
        <span id="rf-note" class="muted small"></span></label>`;
