@@ -1029,7 +1029,23 @@ function _tourToDriverStep(s, i, all) {
   };
 }
 
+// ONE rule for stray clicks, everywhere (Joel's field find, 2026-07-28: with
+// big targets an outside click advanced, with small ones the SAME click
+// silently ended the tour -- driver routes clicks ON the highlighted element
+// to overlayClickBehavior but clicks anywhere else to close). Capture-phase,
+// so driver never sees an outside click: it always advances, never exits.
+// Leaving is always explicit: Esc, the ✕, or the exit row on every card.
+function _tourDocClick(e) {
+  if (!_driver) return;
+  if (e.target.closest(".driver-popover")) return;   // the card's own controls
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  if (_driver.isActive() && _driver.hasNextStep()) _driver.moveNext();
+  // Last step: do nothing -- finishing is Done/Esc/Exit, a conscious act.
+}
+
 window.endTour = function () {
+  document.removeEventListener("click", _tourDocClick, true);
   if (_driver && _driver.isActive()) _driver.destroy();
   _driver = null;
   _closeTourMock();
@@ -1092,7 +1108,10 @@ window.startTour = function (chapter, atIndex) {
     },
     // Esc / ✕ / Done all pass through destroy; the mock must never outlive
     // the tour, or it would sit as a full-screen lid over the real app.
-    onDestroyed: () => { _closeTourMock(); _driver = null; },
+    onDestroyed: () => {
+      document.removeEventListener("click", _tourDocClick, true);
+      _closeTourMock(); _driver = null;
+    },
     // EVERY card carries an explicit way out (Joel: "there should always be a
     // save favorite, or exit"): save your spot and leave -- the 🧭 chooser
     // offers to resume there -- or just leave.
@@ -1120,6 +1139,7 @@ window.startTour = function (chapter, atIndex) {
       if (chapter === "all" || chapter === undefined) { _tourMarkFinished(); _tourClearSpot(); }
     },
   });
+  document.addEventListener("click", _tourDocClick, true);
   _driver.drive(Math.max(0, Math.min(atIndex | 0, live.length - 1)));
 };
 
