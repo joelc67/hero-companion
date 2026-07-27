@@ -553,7 +553,7 @@ const TOUR_STEPS = [
         + "The examples in this tour describe a Brute built as a damage dealer, "
         + "so the set names and numbers stay consistent as you read. Your own "
         + "character will show its own powers; everything works the same way." },
-  { chapter: "powers", target: "#builder", diagram: "powerCard",
+  { chapter: "powers", target: "#builder", diagram: "powerCard", key: "power-card",
     title: "What is on a power card",
     body: "Along the top: the power's icon and name, then an information button "
         + "that opens its full details -- what it does, its recharge, its "
@@ -1153,4 +1153,17 @@ window.tourHelpLink = function (chapter) {
   return `<button class="tour-help" onclick="startTour('${chapter}')" `
        + `aria-label="Explain this section" `
        + `title="Explain this section">?</button>`;
+};
+
+// DEEP LINK: a ? sitting ON a thing jumps to the exact step that explains
+// that thing (Joel, 2026-07-27: standing on a power with slots, one click
+// should land on that area defined -- not on page one of a chapter). Steps
+// opt in with a stable `key`; audit_tour.py verifies every explainStep()
+// reference in the app resolves to a real key. From the landing step, Next
+// continues through the rest of that chapter as usual.
+window.explainStep = function (key, ev) {
+  if (ev && ev.stopPropagation) ev.stopPropagation();
+  const s = TOUR_STEPS.find(x => x.key === key);
+  if (!s) { openTourMenu(); return; }   // unknown key: degrade to the chooser
+  startTour(s.chapter, TOUR_STEPS.filter(x => x.chapter === s.chapter).indexOf(s));
 };

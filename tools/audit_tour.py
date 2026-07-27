@@ -94,6 +94,18 @@ check(f"every step target has a mock stand-in ({len(steps) - len(unmocked)} of {
       not unmocked,
       ("no data-for in the mock: " + ", ".join(unmocked)) if unmocked else "")
 
+# 1c. every deep link in the app resolves. A ? placed ON a control calls
+# explainStep('<key>'); the key must belong to exactly one step or the click
+# lands on the generic chooser instead of the promised explanation.
+keys = re.findall(r'key:\s*"([a-z0-9-]+)"', tour)
+links = set(re.findall(r"explainStep\('([a-z0-9-]+)'", html + appjs))
+dup_keys = sorted({k for k in keys if keys.count(k) > 1})
+dead_links = sorted(links - set(keys))
+check(f"every deep link resolves to a unique step key ({len(links)} links, {len(keys)} keys)",
+      not dead_links and not dup_keys,
+      (("dead links: " + ", ".join(dead_links) + "  ") if dead_links else "")
+      + (("duplicate keys: " + ", ".join(dup_keys)) if dup_keys else ""))
+
 # 2. chapters used are declared
 used = {c for c, _t in steps}
 undeclared = used - chapters_declared

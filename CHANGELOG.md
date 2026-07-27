@@ -11,7 +11,10 @@
   pace, and small controls get annotated drawings — which button is the
   padlock, where the cap line sits on a stat bar, which circular arrow checks
   for updates and which one leaves. A fresh install offers the tour once;
-  after that it waits behind the compass and the ? beside each section.
+  after that it waits behind the compass and the ? beside each section — and
+  every power card carries its own ?, which jumps straight to the card
+  explained, controls labeled, no chapter to walk first. Every tour card also
+  has "Save my spot & exit"; the compass offers to resume exactly there.
 
 - **The user guide grew.** The Hero/Villain section now explains that
   switching sides also switches which accolades are assumed and recalculates
