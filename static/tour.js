@@ -176,7 +176,7 @@ const TOUR_MOCK_HTML = `
       <label>Archetype <select data-for="sel-archetype" disabled><option>Brute</option></select></label>
       <label>Primary <select data-for="sel-primary" disabled><option>Super Strength</option></select></label>
       <label>Secondary <select disabled><option>Willpower</option></select></label>
-      <details open><summary>Power Pools (up to 4)</summary>
+      <details open onclick="event.preventDefault()"><summary>Power Pools (up to 4)</summary>
         <div data-for="pool-selectors">
           <label>Pool 1 <select disabled><option>Fighting</option></select></label>
           <label>Pool 2 <select disabled><option>Leaping</option></select></label>
@@ -239,7 +239,7 @@ const TOUR_MOCK_HTML = `
         <div class="set-summary"><span class="muted small">sets:</span> Unbreakable Guard ×3 · Steadfast Protection</div>
       </div>
 
-      <details class="conv-guide" open><summary>💰 Get expensive IOs cheap — enhancement converters</summary>
+      <details class="conv-guide" open onclick="event.preventDefault()"><summary>💰 Get expensive IOs cheap — enhancement converters</summary>
         <div data-for="conv-tool">
           <p class="muted small">"How do I get this IO cheaply?" — a concrete path per enhancement,
             with the converter and merit cost. "Is this drop worth anything?" — paste your drops:
@@ -980,6 +980,11 @@ window.startTour = function (chapter, atIndex) {
     smoothScroll: true,
     stagePadding: 6,
     stageRadius: 8,
+    // NO dark overlay (Joel, 2026-07-27: with the green outline doing the
+    // pointing, blacking out the rest of the screen was a "where am I?"
+    // moment). The overlay element stays -- it is what makes a stray click
+    // advance instead of interacting -- it is just fully transparent.
+    overlayOpacity: 0,
     allowClose: true,               // Esc and the ✕ both leave, deliberately
     // NOT "close": a stray click outside used to end the tour and leave the user
     // "in limbo" (Joel's walk). Advancing is recoverable; exiting silently is not.
