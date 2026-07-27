@@ -1807,13 +1807,13 @@ body { overflow: hidden; }
   width: var(--hw); height: var(--hh);
   inset: auto;
   border-radius: 8px;
-  box-shadow: 0 0 0 4px var(--accent, #4a8aca), 0 0 0 9999px rgba(0, 0, 0, .55);
+  box-shadow: 0 0 0 4px var(--accent), 0 0 0 9999px rgba(0, 0, 0, .55);
 }
 .tour-tip {
   position: fixed; z-index: 9001;
   width: min(360px, calc(100vw - 24px));
-  background: var(--panel, #fff); color: var(--fg, #222);
-  border: 1px solid var(--line, #ccc); border-radius: 10px;
+  background: var(--panel); color: var(--ink);
+  border: 1px solid var(--border); border-radius: 10px;
   box-shadow: 0 8px 28px rgba(0, 0, 0, .35);
   padding: 14px 16px; line-height: 1.5;
 }
@@ -1834,10 +1834,12 @@ body { overflow: hidden; }
 .tour-offer {
   display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
   margin: 0 0 14px; padding: 10px 14px;
-  border: 1px solid var(--line, #ccc); border-radius: 8px;
-  background: var(--panel-alt, rgba(74, 138, 202, .08));
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--panel2);
 }
-.tour-offer span { flex: 1 1 auto; min-width: 160px; }
+.tour-offer-ico { flex: 0 0 auto; font-size: 20px; line-height: 1; }
+.tour-offer-txt { flex: 1 1 260px; min-width: 200px; font-size: 13px; color: var(--muted); }
+.tour-offer-txt b { color: var(--ink); }
 /* Same opt-out as .tour-nav button: modest inline choices, not banners. */
 .tour-offer button {
   width: auto; flex: 0 0 auto; margin-top: 0;
@@ -1848,8 +1850,8 @@ body { overflow: hidden; }
    panel's own controls, obvious on hover when someone is actually looking. */
 .tour-help {
   width: auto; margin-top: 0;              /* opt out of the global width:100% */
-  background: none; border: 1px solid transparent; color: var(--muted, #777);
+  background: none; border: 1px solid transparent; color: var(--muted);
   font-size: 12px; font-weight: normal; padding: 2px 8px; border-radius: 999px;
   cursor: pointer; margin-left: 8px; vertical-align: middle;
 }
-.tour-help:hover { color: var(--accent, #4a8aca); border-color: var(--line, #ccc); }
+.tour-help:hover { color: var(--accent); border-color: var(--border); }

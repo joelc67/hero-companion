@@ -251,11 +251,23 @@ const TOUR_STEPS = [
 // ── Engine ───────────────────────────────────────────────────────────────────
 let _tourSteps = [], _tourAt = 0, _tourOpen = false;
 
-const _tourSeen = () => {
-  try { return localStorage.getItem("cohTourOffered") === "1"; } catch (e) { return false; }
+// Two different states, deliberately kept apart (Joel's rule: closing is not a
+// decision). FINISHED is permanent and only earned by reaching the last step --
+// you have seen the tour, so it stops offering. LATER is this-session-only, so
+// "maybe later" genuinely means later rather than never. Merely STARTING the
+// tour marks nothing: a tour someone opened and abandoned (or that was broken,
+// as it was on 2026-07-27) must still be offered next time.
+const _tourFinished = () => {
+  try { return localStorage.getItem("cohTourFinished") === "1"; } catch (e) { return false; }
 };
-const _tourMarkOffered = () => {
-  try { localStorage.setItem("cohTourOffered", "1"); } catch (e) {}
+const _tourMarkFinished = () => {
+  try { localStorage.setItem("cohTourFinished", "1"); } catch (e) {}
+};
+const _tourLater = () => {
+  try { return sessionStorage.getItem("cohTourLater") === "1"; } catch (e) { return false; }
+};
+window._tourMarkLater = () => {
+  try { sessionStorage.setItem("cohTourLater", "1"); } catch (e) {}
 };
 
 function _tourVisible(el) {
@@ -348,7 +360,10 @@ function _tourPlace(step) {
 window.tourStep = function (delta) {
   const next = _tourAt + delta;
   if (next < 0) return;
-  if (next >= _tourSteps.length) return endTour();
+  if (next >= _tourSteps.length) {       // walked it to the end: stop offering
+    _tourMarkFinished();
+    return endTour();
+  }
   _tourAt = next;
   _tourPlace(_tourSteps[_tourAt]);
 };
@@ -376,7 +391,6 @@ window.startTour = function (chapter) {
       : TOUR_STEPS.filter(s => s.spine);
   if (!_tourSteps.length) return;
   _tourAt = 0; _tourOpen = true;
-  _tourMarkOffered();
   _tourEls();
   _tourPlace(_tourSteps[0]);
   document.addEventListener("keydown", _tourKeys);
@@ -385,19 +399,25 @@ window.startTour = function (chapter) {
 // The first-run OFFER. One line, dismissible, and dismissing it only stops the
 // OFFER - the tour stays reachable from every 'Need help?' link forever.
 window.maybeOfferTour = function () {
-  if (_tourSeen()) return;
+  if (_tourFinished() || _tourLater()) return;
   if (document.querySelector(".tour-offer")) return;   // called from init AND showEntry
   const host = document.getElementById("entry-cards");
   if (!host || !_tourVisible(host)) return;
   const bar = document.createElement("div");
   bar.className = "tour-offer";
+  // Say what it IS and what it costs. Joel's walk: "I'm not sure why I would
+  // even choose 'not now' - it's not obvious this is a tour." If the offer does
+  // not explain itself, declining it is a coin flip.
   bar.innerHTML =
-    `<span>New here? Take the two minute tour.</span>
-     <button onclick="startTour(); this.parentNode.remove();">Show me around</button>
-     <button class="secondary" onclick="_tourMarkOffered(); this.parentNode.remove();">No thanks</button>`;
+    `<span class="tour-offer-ico">🧭</span>
+     <span class="tour-offer-txt"><b>First time here?</b> Take a two minute guided tour —
+       it points at each part of the app and explains what it does. Nothing is changed
+       or built along the way, and you can leave at any point.</span>
+     <button onclick="this.closest('.tour-offer').remove(); startTour();">Start the tour</button>
+     <button class="secondary" onclick="_tourMarkLater(); this.closest('.tour-offer').remove();"
+       title="Hides it for now. It will offer again next time you open the app, and every panel has a 'Need help?' link.">Maybe later</button>`;
   host.parentNode.insertBefore(bar, host);
 };
-window._tourMarkOffered = _tourMarkOffered;
 
 // A 'Need help?' link for a panel, wired to that panel's chapter.
 window.tourHelpLink = function (chapter) {

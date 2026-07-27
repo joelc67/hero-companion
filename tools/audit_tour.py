@@ -83,5 +83,29 @@ check(f"the first-run tour covers every chapter ({len(set(spine_blocks))} of {le
       not spine_missing,
       ("not in the short tour: " + ", ".join(sorted(spine_missing))) if spine_missing else "")
 
+# 5. every CSS variable the tour styles use is actually DEFINED.
+# This one exists because of a real failure (2026-07-27): the tour card used
+# var(--fg) and var(--line), which this app has never defined -- the real names
+# are --ink and --border. CSS falls back silently, so the card rendered near-
+# black text on a dark navy panel and looked completely blank. Nothing errored,
+# nothing logged; it just could not be read. An undefined variable in a themed
+# app is a bug, so it fails here now.
+css = (ROOT / "static" / "style.css").read_text(encoding="utf-8")
+marker = "/* ── Guided tour"
+if marker not in css:
+    check("tour style block present", False, "could not find the guided-tour CSS block")
+else:
+    defined = set(re.findall(r"(--[a-z0-9-]+)\s*:", css))
+    block = css[css.index(marker):]
+    # --h* are set from JS at runtime (the spotlight rect), so they are expected
+    # to be absent from the stylesheet.
+    used_vars = {v for v in re.findall(r"var\((--[a-z0-9-]+)", block)
+                 if not v.startswith("--h")}
+    undefined = sorted(used_vars - defined)
+    check(f"every themed colour the tour uses is defined ({len(used_vars)} used)",
+          not undefined,
+          ("UNDEFINED, will fall back silently and may render invisible: "
+           + ", ".join(undefined)) if undefined else "")
+
 print(f"\n{'ALL TOUR CHECKS PASS' if not fails else 'TOUR AUDIT FAILURES: ' + ', '.join(fails)}\n")
 sys.exit(1 if fails else 0)
