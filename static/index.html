@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hero Companion — City of Heroes</title>
+  <!-- driver.js (MIT, pinned 1.8.0) powers the guided tour's spotlight and
+       tooltip placement. Vendored locally, never a CDN, so the app works with no
+       network at all. Licence: static/vendor/driver.js.LICENSE.txt -->
+  <link rel="stylesheet" href="/static/vendor/driver.css">
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
@@ -556,6 +560,9 @@
   </footer>
   </div><!-- /page-scroll -->
   <script src="/static/app.js"></script>
+  <!-- driver.js before tour.js: tour.js checks for it and degrades with a warning
+       rather than throwing if it is ever missing. -->
+  <script src="/static/vendor/driver.js.iife.js"></script>
   <!-- Loaded AFTER app.js: the tour reuses escHtml and only ever reads app state,
        never writes to it. See the header comment in tour.js for the three rules. -->
   <script src="/static/tour.js"></script>

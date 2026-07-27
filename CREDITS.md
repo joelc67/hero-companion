@@ -62,4 +62,14 @@ tool understands was learned from, or verified against, these sources:
   wrote down where it's worth going, and why. That judgement is not in any data file
   we could parse.
 
+## Bundled Software
+- **driver.js** by **Kamran Ahmed** (https://driverjs.com) — MIT licensed, vendored at
+  version 1.8.0 in `static/vendor/`, with its licence alongside it. It draws the
+  spotlight and the explanation card in the app's guided tour, and it handles the
+  fiddly parts of that job: placing a card so it never runs off the screen, scrolling
+  the right control into view, and keeping the highlight aligned when the window
+  changes size. We wrote our own version of this first and it was worse; the honest
+  thing is to say so and credit the person who did it properly. No network is involved
+  — the copy in this app is local and the tour works fully offline.
+
 This tool is free and noncommercial, forever. See LICENSE.

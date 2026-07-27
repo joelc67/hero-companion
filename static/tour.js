@@ -248,15 +248,12 @@ const TOUR_STEPS = [
     absent: "The 🐞 button in the header." },
 ];
 
-// ── Engine ───────────────────────────────────────────────────────────────────
-let _tourSteps = [], _tourAt = 0, _tourOpen = false;
 
-// Two different states, deliberately kept apart (Joel's rule: closing is not a
-// decision). FINISHED is permanent and only earned by reaching the last step --
-// you have seen the tour, so it stops offering. LATER is this-session-only, so
-// "maybe later" genuinely means later rather than never. Merely STARTING the
-// tour marks nothing: a tour someone opened and abandoned (or that was broken,
-// as it was on 2026-07-27) must still be offered next time.
+// ── State the tour keeps, and what counts as "seen" ──────────────────────────
+// Two different states, deliberately kept apart (closing is not a decision).
+// FINISHED is permanent and only earned by reaching the last step. LATER is
+// this-session-only, so "maybe later" genuinely means later. Merely STARTING the
+// tour marks nothing: one someone opened and abandoned must still be offered.
 const _tourFinished = () => {
   try { return localStorage.getItem("cohTourFinished") === "1"; } catch (e) { return false; }
 };
@@ -272,32 +269,21 @@ window._tourMarkLater = () => {
 
 function _tourVisible(el) {
   if (!el) return false;
-  // Two traps here, both found by driving this in a real browser rather than
-  // reasoning about it:
-  //   - width>0 && height>0 is wrong: a flex/grid container can compute to zero
-  //     WIDTH while being fully visible and full height (#entry-cards does), so
-  //     the tour offer never appeared.
-  //   - offsetParent !== null is wrong: it is ALWAYS null for position:fixed
-  //     elements, so every modal and overlay read as invisible and lost its
-  //     spotlight -- including the opening screen, the tour's own first step.
-  // getClientRects() is empty for display:none and for detached nodes, which is
-  // the question actually being asked.
+  // Two traps, both found by driving this in a real browser:
+  //   - width>0 && height>0 is wrong: a flex container can compute to zero WIDTH
+  //     while fully visible (#entry-cards does), which hid the offer entirely.
+  //   - offsetParent !== null is wrong: it is ALWAYS null for position:fixed, so
+  //     every modal and overlay read as invisible.
   const cs = getComputedStyle(el);
   return cs.display !== "none" && cs.visibility !== "hidden"
       && el.getClientRects().length > 0;
 }
 
-// Being in the DOM and being POINTABLE are different things, and conflating them
-// is what produced the nonsense in Joel's walk (2026-07-27): the builder panels
-// sit BEHIND the entry overlay, so they were "visible" by every CSS test while
-// being completely covered. The tour drew a highlight over something the user
-// could not see and explained it as though it were in front of them.
-//
-// Three conditions, all necessary:
-//   - big enough to mean anything (a 4px-wide sliver is the blue line he saw)
-//   - actually on screen, not scrolled away
-//   - nothing painted on top of it: hit-test the centre and check we land on the
-//     element or something inside it
+// Being in the DOM and being POINTABLE are different things. The builder panels
+// sit BEHIND the entry overlay: visible by every CSS test, yet completely
+// covered. Highlighting those produced the meaningless slivers in Joel's walk.
+// driver.js positions whatever we hand it -- deciding what is worth pointing at
+// in THIS app's layout is still our job.
 function _tourPointable(el) {
   if (!_tourVisible(el)) return false;
   const r = el.getBoundingClientRect();
@@ -308,120 +294,21 @@ function _tourPointable(el) {
   const cx = Math.min(Math.max(r.left + r.width / 2, 1), (vw || r.right) - 1);
   const cy = Math.min(Math.max(r.top + r.height / 2, 1), (vh || r.bottom) - 1);
   const hit = document.elementFromPoint(cx, cy);
-  if (!hit) return true;                      // cannot hit-test: do not block
-  if (hit.closest && hit.closest(".tour-shade, .tour-tip")) return true;
+  if (!hit) return true;                       // cannot hit-test: do not block
+  if (hit.closest && hit.closest(".driver-popover, .driver-overlay")) return true;
   return el.contains(hit) || hit.contains(el);
 }
 
-function _tourEls() {
-  let sh = document.getElementById("tour-shade");
-  if (!sh) {
-    sh = document.createElement("div"); sh.id = "tour-shade"; sh.className = "tour-shade";
-    document.body.appendChild(sh);
-    const tip = document.createElement("div"); tip.id = "tour-tip"; tip.className = "tour-tip";
-    document.body.appendChild(tip);
-    // NO click-to-close on the shade. It used to end the tour, which meant a
-    // stray click anywhere dropped you out with no explanation -- "kind of leaves
-    // you in limbo" (Joel, 2026-07-27). Leaving should be something you MEANT:
-    // the Close button, or Esc. Both are on screen and both are announced.
-  }
-  return { shade: sh, tip: document.getElementById("tour-tip") };
-}
-
-function _tourPlace(step) {
-  const { shade, tip } = _tourEls();
-  const el = step.target ? document.querySelector(step.target) : null;
-  const here = _tourPointable(el);
-  // ON SCREEN and WORTH SPOTLIGHTING are different questions. A full-screen
-  // overlay reports a rect covering everything (and #entry-overlay reports zero
-  // width outright), and cutting a hole around the entire viewport communicates
-  // nothing while looking broken. Those steps get a centred card and the normal
-  // explanation -- the subject IS present, it just cannot be pointed AT.
-  const r0 = here ? el.getBoundingClientRect() : null;
-  const area = r0 ? r0.width * r0.height : 0;
-  // Never trust the viewport to be reportable. Some embedded/headless browsers
-  // return 0 for window.innerWidth, and dividing by that silently disabled every
-  // spotlight in testing. If we cannot measure the screen, fall back to "has
-  // area, so point at it" rather than to "point at nothing".
-  const vw = window.innerWidth || document.documentElement.clientWidth || 0;
-  const vh = window.innerHeight || document.documentElement.clientHeight || 0;
-  const screen = vw * vh;
-  const spot = here && area > 0 && (screen === 0 || area < screen * 0.7);
-  const total = _tourSteps.length;
-  const body = (here ? step.body : (step.absent || step.body))
-    .split("\n\n").map(p => `<p>${escHtml(p)}</p>`).join("");
-  tip.innerHTML =
-    `<div class="tour-head"><b>${escHtml(step.title)}</b>
-       <span class="muted small">${_tourAt + 1} of ${total}</span></div>
-     ${body}
-     ${here ? "" : `<p class="tour-note">↑ Not on screen yet. Pick a starting point above and
-        this appears. Every panel then has its own <b>Need help?</b> link that reopens the
-        tour right there.</p>`}
-     <div class="tour-nav">
-       <button class="secondary" onclick="endTour()">Close</button>
-       <span class="tour-spacer"></span>
-       <button class="secondary" onclick="tourStep(-1)"${_tourAt === 0 ? " disabled" : ""}>← Back</button>
-       <button onclick="tourStep(1)">${_tourAt === total - 1 ? "Done" : "Next →"}</button>
-     </div>`;
-
-  if (spot) {
-    el.scrollIntoView({ block: "center", behavior: "smooth" });
-    const r = el.getBoundingClientRect(), pad = 6;
-    shade.style.setProperty("--hx", `${r.left - pad}px`);
-    shade.style.setProperty("--hy", `${r.top - pad}px`);
-    shade.style.setProperty("--hw", `${r.width + pad * 2}px`);
-    shade.style.setProperty("--hh", `${r.height + pad * 2}px`);
-    shade.classList.add("tour-has-hole");
-    // Put the card where it does not cover what it is describing, then CLAMP it
-    // into the viewport. Without the clamp the "place it above" branch pushed the
-    // card off the top of the screen whenever the target was near the top, which
-    // is why Joel's step 2 and 4 showed only a stray row of buttons.
-    tip.style.top = "0px"; tip.style.bottom = "auto";   // measure at a known spot
-    const th = tip.getBoundingClientRect().height || 200;
-    const tw = tip.getBoundingClientRect().width || 360;
-    const roomBelow = vh - r.bottom, roomAbove = r.top;
-    let top = (roomBelow >= th + 16 || roomBelow >= roomAbove) ? r.bottom + 12 : r.top - th - 12;
-    top = Math.max(8, Math.min(top, Math.max(8, vh - th - 8)));
-    let left = r.left;
-    left = Math.max(8, Math.min(left, Math.max(8, vw - tw - 8)));
-    tip.style.top = `${top}px`;
-    tip.style.left = `${left}px`;
-  } else {
-    shade.classList.remove("tour-has-hole");
-    tip.style.left = "50%"; tip.style.top = "50%"; tip.style.bottom = "auto";
-    tip.style.transform = "translate(-50%, -50%)";
-  }
-  if (spot) tip.style.transform = "none";
-}
-
-window.tourStep = function (delta) {
-  const next = _tourAt + delta;
-  if (next < 0) return;
-  if (next >= _tourSteps.length) {       // walked it to the end: stop offering
-    _tourMarkFinished();
-    return endTour();
-  }
-  _tourAt = next;
-  _tourPlace(_tourSteps[_tourAt]);
+// "Are we on the opening screen?" is a VISIBILITY question, not a pointability
+// one, and conflating them was a real bug: #entry-cards computes to zero WIDTH,
+// so asking _tourPointable about it answered "no" while the overlay was plainly
+// on screen, and the tour walked the builder spine instead of the entry cards.
+// Ask about the overlay, and only whether it is showing.
+const _onEntryScreen = () => {
+  const ov = document.getElementById("entry-overlay");
+  return !!ov && !ov.classList.contains("hidden") && _tourVisible(ov);
 };
 
-window.endTour = function () {
-  _tourOpen = false;
-  const sh = document.getElementById("tour-shade"), tip = document.getElementById("tour-tip");
-  if (sh) sh.remove();
-  if (tip) tip.remove();
-  document.removeEventListener("keydown", _tourKeys);
-};
-
-function _tourKeys(e) {
-  if (!_tourOpen) return;
-  if (e.key === "Escape") { e.preventDefault(); endTour(); }
-  else if (e.key === "ArrowRight") tourStep(1);
-  else if (e.key === "ArrowLeft") tourStep(-1);
-}
-
-// chapter: undefined = the short first-run tour; a chapter key = that section
-// only; "all" = every step.
 // The closing card of the entry-screen tour: says where the rest of it lives, so
 // nobody is left wondering whether that was all of it.
 const _TOUR_HANDOFF = {
@@ -429,28 +316,89 @@ const _TOUR_HANDOFF = {
   title: "That is the starting screen",
   body: "Pick whichever card fits and the builder opens behind this. From there, "
       + "every panel has its own \"Need help?\" link that explains that panel the "
-      + "same way — powers and slots, your numbers, letting it build for you. "
-      + "Nothing you have seen here changed anything.",
+      + "same way. Nothing you have seen here changed anything.",
   absent: "Pick a card above to open the builder. Every panel there has its own "
         + "\"Need help?\" link.",
 };
 
+// ── Engine: driver.js ────────────────────────────────────────────────────────
+// The spotlight, tooltip placement, viewport clamping, scroll-into-view and
+// keyboard handling are driver.js's job now (static/vendor, MIT, pinned 1.8.0,
+// zero dependencies, loaded locally so the app stays offline).
+//
+// WHY THE SWITCH (2026-07-27): this engine was hand-rolled first, and its
+// POSITIONING failed in the field three times running -- a card pushed off the
+// top of the screen, a 4px spotlight sliver over an obscured panel, an offer
+// that rendered invisible. Those are exactly the edge cases a mature library has
+// already solved. What stayed ours is everything the library has no opinion on:
+// the step catalogue, the audit that keeps it true, the never-touch-your-work
+// rule, the persistence rules, and deciding what is actually POINTABLE in this
+// app's own layout.
+
+let _driver = null;
+
+function _tourHtml(text) {
+  return String(text).split("\n\n").map(p => `<p>${escHtml(p)}</p>`).join("");
+}
+
+// Turn one catalogue entry into a driver.js step. A step with NO `element` is
+// rendered by driver.js as a centred card, which is exactly what we want for
+// something the user cannot see yet -- so "not on screen" needs no special case.
+function _tourToDriverStep(s) {
+  const el = s.target ? document.querySelector(s.target) : null;
+  const pointable = _tourPointable(el);
+  const desc = _tourHtml(pointable ? s.body : (s.absent || s.body))
+    + (pointable ? "" :
+      `<p class="tour-note">Not on screen yet. Pick a starting point first, and every
+        panel then has its own <b>Need help?</b> link that reopens the tour right there.</p>`);
+  const step = { popover: { title: s.title, description: desc } };
+  if (pointable) step.element = el;
+  return step;
+}
+
+window.endTour = function () {
+  if (_driver && _driver.isActive()) _driver.destroy();
+  _driver = null;
+};
+
+// chapter: undefined = the context-aware first tour; a chapter key = that
+// section only; "all" = every step.
 window.startTour = function (chapter) {
-  // CONTEXT MATTERS (Joel's walk, 2026-07-27). Started from the entry screen, a
-  // spine tour spends six of eight steps pointing at builder panels that are
-  // still hidden behind the overlay -- "step 3 just completely lost on what is
-  // going on". So when the opening screen is what is actually in front of the
-  // user, tour THAT, and hand off to the per-panel links for the rest.
-  const onEntry = _tourPointable(document.getElementById("entry-cards"));
-  _tourSteps = chapter === "all" ? TOUR_STEPS.slice()
+  if (!(window.driver && window.driver.js && window.driver.js.driver)) {
+    console.warn("[tour] driver.js did not load; tour unavailable");
+    return;
+  }
+  const onEntry = _onEntryScreen();
+  const chosen = chapter === "all" ? TOUR_STEPS.slice()
     : chapter ? TOUR_STEPS.filter(s => s.chapter === chapter)
       : onEntry ? TOUR_STEPS.filter(s => s.chapter === "start").concat(_TOUR_HANDOFF)
         : TOUR_STEPS.filter(s => s.spine);
-  if (!_tourSteps.length) return;
-  _tourAt = 0; _tourOpen = true;
-  _tourEls();
-  _tourPlace(_tourSteps[0]);
-  document.addEventListener("keydown", _tourKeys);
+  if (!chosen.length) return;
+
+  endTour();
+  _driver = window.driver.js.driver({
+    steps: chosen.map(_tourToDriverStep),
+    showProgress: true,
+    progressText: "{{current}} of {{total}}",
+    nextBtnText: "Next →",
+    prevBtnText: "← Back",
+    doneBtnText: "Done",
+    smoothScroll: true,
+    stagePadding: 6,
+    stageRadius: 8,
+    allowClose: true,               // Esc and the ✕ both leave, deliberately
+    // NOT "close": a stray click outside used to end the tour and leave the user
+    // "in limbo" (Joel's walk). Advancing is recoverable; exiting silently is not.
+    overlayClickBehavior: "nextStep",
+    // The tour is READ-ONLY. Blocking interaction with the highlighted control
+    // means a click during the tour cannot change the user's build by accident.
+    disableActiveInteraction: true,
+    onHighlighted: () => {
+      // Reaching the last step counts as having seen it: stop offering.
+      if (_driver && !_driver.hasNextStep()) _tourMarkFinished();
+    },
+  });
+  _driver.drive();
 };
 
 // The first-run OFFER. One line, dismissible, and dismissing it only stops the
