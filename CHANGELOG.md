@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.12.29 — 2026-07-27 — The guided tour
+
+Game data is unchanged from 0.12.26 (Homecoming 2026.1.1242) and the
+optimizer's model stays at v36, so every certified champion carries the same
+score. This release is the guided tour, a security hardening, and a better
+user guide.
+
 - **A guided tour of the whole app.** New here, or never sure what a button
   does? A 🧭 compass in the header opens a chooser: pick one section or take
   the complete tour. The tour walks a drawn example screen — a Brute damage

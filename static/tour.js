@@ -1171,7 +1171,7 @@ function _tourToDriverStep(s, i, all) {
   };
 }
 
-// ONE rule for stray clicks, everywhere (Joel's ruling, 2026-07-28 second
+// ONE rule for stray clicks, everywhere (Joel's ruling, 2026-07-27 second
 // pass): a click outside the card does NOTHING. Advancing is Next, the
 // arrow keys, or the space bar; leaving is Exit, the ✕, or Esc -- every
 // move is a deliberate press, never a stray click. Capture-phase, so
