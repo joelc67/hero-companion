@@ -94,6 +94,20 @@ check(f"every step target has a mock stand-in ({len(steps) - len(unmocked)} of {
       not unmocked,
       ("no data-for in the mock: " + ", ".join(unmocked)) if unmocked else "")
 
+# 1b2. every step anchor exists in the mock. Anchors are "[data-tm=x]" BY
+# CONVENTION so this stays auditable; any other shape fails here rather than
+# silently escaping the check.
+anchor_raw = re.findall(r'anchor:\s*"([^"]+)"', tour)
+anchor_tms = [m.group(1) for a in anchor_raw
+              for m in [re.fullmatch(r"\[data-tm=([a-z0-9-]+)\]", a)] if m]
+tm_defined = set(re.findall(r'data-tm="([a-z0-9-]+)"', tour))
+bad_shape = [a for a in anchor_raw if not re.fullmatch(r"\[data-tm=[a-z0-9-]+\]", a)]
+bad_tm = sorted(set(anchor_tms) - tm_defined)
+check(f"every step anchor exists in the mock ({len(anchor_raw)} anchors)",
+      not bad_shape and not bad_tm,
+      (("not [data-tm=...] shaped: " + ", ".join(bad_shape) + "  ") if bad_shape else "")
+      + (("missing from mock: " + ", ".join(bad_tm)) if bad_tm else ""))
+
 # 1c. every deep link in the app resolves. A ? placed ON a control calls
 # explainStep('<key>'); the key must belong to exactly one step or the click
 # lands on the generic chooser instead of the promised explanation.

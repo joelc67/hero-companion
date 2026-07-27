@@ -1817,7 +1817,10 @@ body { overflow: hidden; }
 }
 .driver-popover-navigation-btns button:hover { filter: brightness(1.08); background: var(--accent); }
 /* The arrow is green too, so the pointer from card to control reads as one
-   green line instead of a panel-coloured sliver that vanishes on panels. */
+   green line instead of a panel-coloured sliver that vanishes on panels --
+   and twice driver's default size, because a 5px arrow was invisible in
+   Joel's screenshots. */
+.driver-popover-arrow { border-width: 10px !important; }
 .driver-popover-arrow-side-left.driver-popover-arrow { border-left-color: #22c55e; }
 .driver-popover-arrow-side-right.driver-popover-arrow { border-right-color: #22c55e; }
 .driver-popover-arrow-side-top.driver-popover-arrow { border-top-color: #22c55e; }
@@ -1939,6 +1942,9 @@ body { overflow: hidden; }
 #tour-mock .power-card { margin-top: 8px; }
 #tour-mock .solve-btn, #tour-mock .changes-btn, #tour-mock .reset-btn,
 #tour-mock [data-for="gen-btn"] { display: block; width: 100%; margin-top: 8px; }
+/* The fake set-picker sits LEFT of centre so the explanation card has real
+   room beside it -- centred, a 400px card could only land on top of it. */
+#tour-mock .tm-modal { justify-content: flex-start; padding-left: 5vw; }
 #tour-mock .tm-set-row {
   padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px;
   margin-top: 6px; display: flex; flex-direction: column; gap: 2px;

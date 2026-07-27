@@ -116,7 +116,7 @@ const TOUR_MOCK_HTML = `
 <div class="tour-mock-badge">EXAMPLE — a Brute damage build, drawn for this tour. Nothing here is your character.</div>
 
 <div class="tour-mock-screen tm-center" data-tm-screen="entry">
-  <div class="entry-box" data-for="entry-overlay">
+  <div class="entry-box" data-tm="entry-box" data-for="entry-overlay">
     <h2>How do you want to start?</h2>
     <p class="muted">Pick a starting point — you can switch any time from the header.</p>
     <div class="entry-cards">
@@ -172,7 +172,7 @@ const TOUR_MOCK_HTML = `
 
   <div class="tm-main">
     <section class="panel tm-setup" data-for="setup">
-      <h2>Build</h2>
+      <h2 data-tm="setup-head">Build</h2>
       <label>Archetype <select data-for="sel-archetype" disabled><option>Brute</option></select></label>
       <label>Primary <select data-for="sel-primary" disabled><option>Super Strength</option></select></label>
       <label>Secondary <select disabled><option>Willpower</option></select></label>
@@ -193,14 +193,14 @@ const TOUR_MOCK_HTML = `
 
     <div class="tm-buildcol">
     <section class="panel" data-for="builder">
-      <h2>Powers &amp; Slots</h2>
+      <h2 data-tm="builder-head">Powers &amp; Slots</h2>
       <div class="edit-bar">
         <button class="ghost-btn" type="button">↶ Undo (Ctrl+Z)</button>
         <span class="slot-tally" data-for="slot-tally">67 / 67 slots</span>
       </div>
-      <div class="power-card">
+      <div class="power-card" data-tm="card1">
         <div class="pc-head"><span class="pc-title"><span class="pname">Knockout Blow</span><span class="pc-info-glyph">ⓘ</span></span></div>
-        <div class="pc-sub">
+        <div class="pc-sub" data-tm="card1-tools">
           <span class="pick-lvl">L6</span>
           <span class="pc-tools">
             <button class="mini lock-btn" type="button">🔓</button>
@@ -217,14 +217,14 @@ const TOUR_MOCK_HTML = `
           <div class="slot filled"><img src="/static/icons/enh/SAO_Brute2.png" alt=""><span class="slot-lvl">50</span></div>
           <div class="slot filled unique"><img src="/static/icons/enh/SAO_Brute2.png" alt=""><span class="slot-lvl">50</span></div>
         </div>
-        <div class="set-summary"><span class="muted small">sets:</span> Superior Unrelenting Fury ×6</div>
+        <div class="set-summary" data-tm="card1-sets"><span class="muted small">sets:</span> Superior Unrelenting Fury ×6</div>
       </div>
-      <div class="power-card pc-locked">
+      <div class="power-card pc-locked" data-tm="card2">
         <div class="pc-head"><span class="pc-title"><span class="pname">High Pain Tolerance</span><span class="pc-info-glyph">ⓘ</span></span></div>
         <div class="pc-sub">
           <span class="pick-lvl">L4</span>
           <span class="pc-tools">
-            <button class="mini lock-btn locked" type="button">🔒</button>
+            <button class="mini lock-btn locked" data-tm="card2-lock" type="button">🔒</button>
             <button class="mini" type="button">−</button>
             <button class="mini" type="button">+</button>
             <button class="remove-power" type="button">✕</button>
@@ -239,7 +239,7 @@ const TOUR_MOCK_HTML = `
         <div class="set-summary"><span class="muted small">sets:</span> Unbreakable Guard ×3 · Steadfast Protection</div>
       </div>
 
-      <details class="conv-guide" open onclick="event.preventDefault()"><summary>💰 Get expensive IOs cheap — enhancement converters</summary>
+      <details class="conv-guide" open onclick="event.preventDefault()"><summary data-tm="conv-summary">💰 Get expensive IOs cheap — enhancement converters</summary>
         <div data-for="conv-tool">
           <p class="muted small">"How do I get this IO cheaply?" — a concrete path per enhancement,
             with the converter and merit cost. "Is this drop worth anything?" — paste your drops:
@@ -249,7 +249,7 @@ const TOUR_MOCK_HTML = `
     </section>
 
     <section class="panel" data-for="gamelog">
-      <h2>📜 Play Log <span class="muted small">— insights from your game sessions</span></h2>
+      <h2 data-tm="gamelog-head">📜 Play Log <span class="muted small">— insights from your game sessions</span></h2>
       <p class="muted small">Off until you turn it on. Reads your own chat logs, on your machine,
         and shows your sessions, characters and drops. Sharing anything is a separate choice.</p>
     </section>
@@ -257,7 +257,7 @@ const TOUR_MOCK_HTML = `
 
     <div class="tm-rail">
     <section class="panel" data-for="stats">
-      <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span></h2>
+      <h2 data-tm="stats-head">Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span></h2>
       <div class="cap-chips">
         <span class="chip cap-def">Defense soft cap 45%</span>
         <span class="chip cap-res">Resistance hard cap 90%</span>
@@ -284,7 +284,7 @@ const TOUR_MOCK_HTML = `
         <div class="o-row"><span>Max HP <span class="aoe-tag">CAP</span></span><span>+21.4% <span class="muted small">= 3212 HP</span></span></div>
       </div>
       <div data-for="offense-section">
-        <h3>Offense <span class="muted small">damage / debuffs / buffs</span></h3>
+        <h3 data-tm="offense-head">Offense <span class="muted small">damage / debuffs / buffs</span></h3>
         <div class="offense">
           <div class="o-row"><span>Single-target DPS</span><span>187</span></div>
           <div class="o-row"><span>AoE throughput</span><span>412 dmg / 10s</span></div>
@@ -302,7 +302,7 @@ const TOUR_MOCK_HTML = `
       <button data-for="gen-btn" type="button">Generate 3 builds</button>
       <button class="changes-btn" data-for="changes-btn" type="button">📋 What changed? (open / close anytime)</button>
       <button class="reset-btn" data-for="reset-btn" type="button">↺ Reset to imported build (try again)</button>
-      <div class="tm-response" data-for="ai-response">
+      <div class="tm-response" data-tm="response" data-for="ai-response">
         <b>Solved for: Task forces · Damage dealer.</b>
         Smashing/Lethal resistance reached 90% — your cap. Melee defense reached
         41.3% of the 45% asked; an unpicked power on this character would close
@@ -326,7 +326,7 @@ const TOUR_MOCK_HTML = `
   </div>
 
   <div class="modal tm-modal" data-for="modal" style="display:none">
-    <div class="modal-box">
+    <div class="modal-box" data-tm="modal-box">
       <div class="modal-head"><strong>Knockout Blow — choose an enhancement</strong><button type="button">✕</button></div>
       <p class="muted small">Only sets this power can actually take are offered — it accepts Melee Damage sets.</p>
       <input placeholder="Filter sets…" disabled>
@@ -408,7 +408,7 @@ const TOUR_CHAPTER_BLURB = {
 // `spine`   - true = part of the short first-run tour.
 const TOUR_STEPS = [
   // ── Getting started ────────────────────────────────────────────────────────
-  { chapter: "start", target: "#entry-overlay", spine: true,
+  { chapter: "start", target: "#entry-overlay", spine: true, anchor: "[data-tm=entry-box]",
     title: "Five ways in",
     body: "Everything starts here, and which card you pick decides how much you "
         + "have to type: two build a character from nothing, two read one you "
@@ -469,7 +469,7 @@ const TOUR_STEPS = [
     absent: "One of the cards on the opening screen." },
 
   // ── Choosing your character ────────────────────────────────────────────────
-  { chapter: "build", target: "#setup", spine: true,
+  { chapter: "build", target: "#setup", spine: true, anchor: "[data-tm=setup-head]", side: "right",
     title: "The Build panel",
     body: "Your character's identity lives here: archetype, primary and secondary "
         + "powersets, pools and epic. Change anything and everything below it -- "
@@ -477,7 +477,7 @@ const TOUR_STEPS = [
         + "As in the Powers section, the examples in this chapter follow a Brute "
         + "built as a damage dealer, so the details stay consistent as you read.",
     absent: "The 'Build' panel, once you are past the opening screen." },
-  { chapter: "build", target: "#sel-archetype",
+  { chapter: "build", target: "#sel-archetype", side: "right",
     title: "Archetype first",
     body: "Everything else follows from this one choice. The archetype decides "
         + "which powersets exist for you, the resistance cap your bars are "
@@ -486,7 +486,7 @@ const TOUR_STEPS = [
         + "Our example Brute is melee damage with a 90% resistance cap -- pick a "
         + "Defender instead and the whole panel reshapes around buffs and debuffs.",
     absent: "The first dropdown in the Build panel." },
-  { chapter: "build", target: "#sel-primary",
+  { chapter: "build", target: "#sel-primary", side: "right",
     title: "Primary and secondary",
     body: "The primary set is your archetype's main job and the secondary is its "
         + "supporting half. On the Brute that means attacks first and armour "
@@ -496,7 +496,7 @@ const TOUR_STEPS = [
         + "offered is a choice the game will allow -- including the special cases, "
         + "like Kheldian form powers living inside their own sets.",
     absent: "The primary and secondary dropdowns in the Build panel." },
-  { chapter: "build", target: "#pool-selectors",
+  { chapter: "build", target: "#pool-selectors", side: "right",
     title: "Power pools",
     body: "Pools add what your sets lack: travel, extra toughness like Tough and "
         + "Weave, utility. The game allows four at most, opening from level 4, and "
@@ -505,7 +505,7 @@ const TOUR_STEPS = [
         + "You do not have to fill these by hand: the Build action later in this "
         + "tour picks pools too, following exactly the rules the game enforces.",
     absent: "The pool dropdowns in the Build panel." },
-  { chapter: "build", target: "#sel-epic",
+  { chapter: "build", target: "#sel-epic", side: "right",
     title: "Epic pools",
     body: "Epic and patron pools open at level 35 and reach outside your "
         + "archetype's normal toolkit -- armour for a damage dealer, or a ranged "
@@ -514,7 +514,7 @@ const TOUR_STEPS = [
         + "special cases are honoured: Kheldians have no epic at all, so none is "
         + "ever offered.",
     absent: "The epic dropdown in the Build panel." },
-  { chapter: "build", target: "#preset-content",
+  { chapter: "build", target: "#preset-content", side: "right",
     title: "Content: where you play",
     body: "General play, task forces, incarnate trials, farming, PvP. This sets "
         + "what the build has to survive and what it needs to deliver -- an "
@@ -524,7 +524,7 @@ const TOUR_STEPS = [
         + "so the same character solved for different content comes out slotted "
         + "differently.",
     absent: "A dropdown in the Build panel, next to Role." },
-  { chapter: "build", target: "#preset-role",
+  { chapter: "build", target: "#preset-role", side: "right",
     title: "Role: what you are there to do",
     body: "Damage, tanking, support, control, healing. The optimizer maximises "
         + "your role's output rather than a generic score.\n\n"
@@ -533,7 +533,7 @@ const TOUR_STEPS = [
         + "how often they are up -- not on how well it survives alone. The aim is "
         + "characters that get noticed as contributors.",
     absent: "A dropdown in the Build panel, next to Content." },
-  { chapter: "build", target: "#custom-targets-btn",
+  { chapter: "build", target: "#custom-targets-btn", side: "right",
     title: "Your own targets",
     body: "If you have exact numbers in mind, set them here: defence by type or "
         + "position, resistance, recharge, recovery and more. A target you set "
@@ -546,20 +546,19 @@ const TOUR_STEPS = [
     absent: "A button on the build summary card, labelled 'Customize build targets'." },
 
   // -- Powers and slots ------------------------------------------------------
-  { chapter: "powers", target: "#builder", spine: true,
+  { chapter: "powers", target: "#builder", spine: true, anchor: "[data-tm=builder-head]", side: "left",
     title: "Powers and slots",
     body: "This is where a build is actually built. Every power you have taken "
         + "gets a card, and the card shows the enhancement slots in it.\n\n"
         + "The examples in this tour describe a Brute built as a damage dealer, "
         + "so the set names and numbers stay consistent as you read. Your own "
         + "character will show its own powers; everything works the same way." },
-  { chapter: "powers", target: "#builder", diagram: "powerCard", key: "power-card",
+  { chapter: "powers", target: "#builder", diagram: "powerCard", key: "power-card", anchor: "[data-tm=card1-tools]", side: "bottom",
     title: "What is on a power card",
-    body: "Along the top: the power's icon and name, then an information button "
-        + "that opens its full details -- what it does, its recharge, its "
-        + "endurance cost, and every enhancement category it will accept.\n\n"
-        + "Below that, the level you take it at, then the controls: the padlock, "
-        + "minus and plus to move slots out or in, and a cross to drop the power." },
+    body: "The drawing labels everything on a card: the power's name with the ⓘ "
+        + "that opens its full details, the level you take it at, the padlock, "
+        + "the − and + that move slots out and in, the ✕ that drops the power, "
+        + "and the enhancement slots along the bottom." },
   { chapter: "powers", target: "#slot-tally",
     title: "The 67 slots, and why they are the whole game",
     body: "The game gives you 67 placeable slots across a career, plus one free "
@@ -568,7 +567,7 @@ const TOUR_STEPS = [
         + "That budget is what makes build planning interesting. Six slots in one "
         + "attack are six not spread across three others, and at 67 of 67 the "
         + "only way to improve anything is to take a slot from somewhere else." },
-  { chapter: "powers", target: "#power-info", scene: "info",
+  { chapter: "powers", target: "#power-info", scene: "info", side: "left",
     title: "What the ⓘ opens",
     body: "Click a power's name or its ⓘ and this panel opens beside the build "
         + "-- exactly here, on the right. It shows what the power does, its "
@@ -577,7 +576,7 @@ const TOUR_STEPS = [
         + "It is also where enhancement details live: click a slotted piece and "
         + "you get the piece, its set, and the set's bonuses -- the same numbers "
         + "the game uses." },
-  { chapter: "powers", target: "#modal", scene: "picker",
+  { chapter: "powers", target: "#modal", scene: "picker", anchor: "[data-tm=modal-box]", side: "right",
     title: "Filling a slot, and why the list is short",
     body: "Click a slot and this chooser opens, offering the sets that power can "
         + "actually take, not every set in the game. An armour toggle offers "
@@ -586,7 +585,7 @@ const TOUR_STEPS = [
         + "Right-click a slot to empty it. Minus and plus on the card move slots "
         + "between powers, so a slot sitting in something over-invested can go "
         + "where it earns more." },
-  { chapter: "powers", target: "#builder",
+  { chapter: "powers", target: "#builder", anchor: "[data-tm=card1-sets]", side: "bottom",
     title: "Set bonuses: why six of one set beats six good pieces",
     body: "Slotting several pieces of the SAME set earns set bonuses -- recharge, "
         + "defence, health -- on top of what each piece does. That is why a card "
@@ -594,7 +593,7 @@ const TOUR_STEPS = [
         + "You will also see Partial set, Frankenslot (pieces from different sets "
         + "picked purely for raw numbers), and Global mules: a power taken mainly "
         + "to carry one always-on unique, such as Luck of the Gambler's recharge." },
-  { chapter: "powers", target: "#builder",
+  { chapter: "powers", target: "#builder", anchor: "[data-tm=card2-lock]", side: "left",
     title: "The padlock: open or closed",
     body: "Open means the optimizer may re-slot that power. Closed means hands "
         + "off, and it means it absolutely: a locked power returns from a "
@@ -604,20 +603,20 @@ const TOUR_STEPS = [
         + "not want a plan that assumes you re-buy them; you want a particular "
         + "proc in a particular power; or you are asking what would change if "
         + "this part stayed fixed." },
-  { chapter: "powers", target: "#builder",
+  { chapter: "powers", target: "#builder", anchor: "[data-tm=card2]", side: "left",
     title: "When a lock is costing you",
     body: "Locks constrain the answer. A locked power that is slotted poorly caps "
         + "how good everything around it can be, and a lower result afterwards is "
         + "the solver being honest rather than failing.\n\n"
         + "So when a target you used to reach suddenly falls short, check your "
         + "locks first. Unlock, re-solve, compare." },
-  { chapter: "powers", target: "#preserve-toggle",
+  { chapter: "powers", target: "#preserve-toggle", side: "right",
     title: "Preserve my IO sets",
     body: "The broad-stroke alternative to locking, and usually the right choice "
         + "for a character you actually play: keep every set you have already "
         + "paid for, and let the optimizer improve only the generic enhancements "
         + "and the empty slots around them." },
-  { chapter: "powers", target: "#builder",
+  { chapter: "powers", target: "#builder", anchor: "[data-tm=response]", side: "right",
     title: "Chasing a number, in practice",
     body: "Say you want 45% ranged defence on that Brute. Set it under Customize "
         + "build targets, then Solve. The optimizer works out which sets in which "
@@ -629,7 +628,7 @@ const TOUR_STEPS = [
         + "accept the lower number, or unlock whatever is in the way." },
 
   // ── Reading your numbers ───────────────────────────────────────────────────
-  { chapter: "stats", target: "#stats", spine: true,
+  { chapter: "stats", target: "#stats", spine: true, anchor: "[data-tm=stats-head]", side: "right",
     title: "Your numbers, live",
     body: "Defence, resistance, recharge, recovery, damage. These update as you "
         + "change anything, and they include your enhancements, your set bonuses, "
@@ -638,7 +637,7 @@ const TOUR_STEPS = [
         + "game ever disagree, the game is right -- and that is a bug worth "
         + "reporting with the 🐞 button.",
     absent: "The 'Stats' panel, once a character is loaded." },
-  { chapter: "stats", target: "#defense-bars", diagram: "statBar",
+  { chapter: "stats", target: "#defense-bars", diagram: "statBar", side: "right",
     title: "How to read a bar",
     body: "Every bar tells you three things at once, marked on the drawing above: "
         + "the filled part is what you have, the bright line is the number that "
@@ -649,7 +648,7 @@ const TOUR_STEPS = [
         + "defence switches off in combat, and the ⚔ number is the one to plan "
         + "around, because it is what you have when it counts.",
     absent: "The Defence rows in the Stats panel." },
-  { chapter: "stats", target: "#res-cap-label",
+  { chapter: "stats", target: "#res-cap-label", side: "right",
     title: "Caps are per archetype",
     body: "Resistance stops counting at your archetype's cap: 90% for Tankers and "
         + "Brutes, 85% for Kheldians and the Arachnos archetypes, 75% for everyone "
@@ -658,7 +657,7 @@ const TOUR_STEPS = [
         + "them: a slot buying resistance past the cap is a slot better spent "
         + "anywhere else on the build.",
     absent: "Shown beside the Resistance heading in the Stats panel." },
-  { chapter: "stats", target: "#suppression-toggle",
+  { chapter: "stats", target: "#suppression-toggle", side: "right",
     title: "The in-combat view",
     body: "Powers like Stealth lose part of their defence the moment you attack, "
         + "get hit, or take damage -- the game calls this suppression. This switch "
@@ -667,7 +666,7 @@ const TOUR_STEPS = [
         + "way. Turn it on when you want the honest in-combat picture, which is "
         + "usually the one worth planning around.",
     absent: "A checkbox under the stat bars, once a character is loaded." },
-  { chapter: "stats", target: "#incarnate-peak-toggle",
+  { chapter: "stats", target: "#incarnate-peak-toggle", side: "right",
     title: "What-if switches",
     body: "Two more switches live beside the in-combat view. Include incarnates "
         + "folds your Destiny and Hybrid buffs into the totals, matching the "
@@ -677,7 +676,7 @@ const TOUR_STEPS = [
         + "remember which switches are on before comparing numbers with someone "
         + "else's build.",
     absent: "Checkboxes under the stat bars, once a character is loaded." },
-  { chapter: "stats", target: "#offense-section",
+  { chapter: "stats", target: "#offense-section", anchor: "[data-tm=offense-head]", side: "right",
     title: "The output half",
     body: "Below the defensive bars, the panel speaks your role's language: a "
         + "damage dealer sees single-target and area damage throughput, a "
@@ -689,7 +688,7 @@ const TOUR_STEPS = [
     absent: "The Offense section of the Stats panel, once a character is loaded." },
 
   // ── Letting it build for you ───────────────────────────────────────────────
-  { chapter: "solve", target: "#solve-btn", spine: true,
+  { chapter: "solve", target: "#solve-btn", spine: true, side: "right",
     title: "Solve the slotting",
     body: "This works out the best enhancement layout it can find for the powers "
         + "you have taken, aimed at your Content, Role and any targets you set. It "
@@ -700,7 +699,7 @@ const TOUR_STEPS = [
         + "and it obeys your padlocks and the Preserve setting from the Powers "
         + "section.",
     absent: "The solve button, once a character is loaded." },
-  { chapter: "solve", target: "#gen-btn",
+  { chapter: "solve", target: "#gen-btn", side: "right",
     title: "Or have it pick the powers too",
     body: "Build goes further than Solve: it chooses which powers to take as well "
         + "as how to slot them -- pools, epic and incarnates included -- following "
@@ -710,7 +709,7 @@ const TOUR_STEPS = [
         + "from there rather than from nothing. And whatever it produces, you can "
         + "still change anything by hand afterwards.",
     absent: "The build button, near the solve controls." },
-  { chapter: "solve", target: "#ai-response",
+  { chapter: "solve", target: "#ai-response", side: "right",
     title: "Achieved versus target",
     body: "After a solve you get the result in plain terms: what you asked for, "
         + "what it reached, and what it changed. If something fell short it does "
@@ -720,7 +719,7 @@ const TOUR_STEPS = [
         + "plainly too. A goal you cannot reach is worth knowing about rather than "
         + "chasing.",
     absent: "Appears below the build once you have run a solve." },
-  { chapter: "solve", target: "#changes-btn",
+  { chapter: "solve", target: "#changes-btn", side: "right",
     title: "What changed?",
     body: "For imported characters: a window listing exactly what the solve "
         + "changed from the build you brought in, so you can see the difference "
@@ -728,7 +727,7 @@ const TOUR_STEPS = [
         + "Open and close it as often as you like -- it is a report, not a "
         + "confirmation step.",
     absent: "Appears after you solve an imported build." },
-  { chapter: "solve", target: "#reset-btn",
+  { chapter: "solve", target: "#reset-btn", side: "right",
     title: "Reset to imported",
     body: "Puts an imported build back exactly as it came in, so you can try a "
         + "different goal, role or options without re-importing.\n\n"
@@ -737,7 +736,7 @@ const TOUR_STEPS = [
         + "the app tells you first and cancelling keeps it -- nothing is dropped "
         + "silently.",
     absent: "Appears once you have imported a build." },
-  { chapter: "solve", target: "#validation",
+  { chapter: "solve", target: "#validation", side: "right",
     title: "The rules check",
     body: "Anything the game would not allow shows up here: too many pools, an "
         + "enhancement in a power that cannot take it, a power taken before its "
@@ -762,7 +761,7 @@ const TOUR_STEPS = [
         + "a preview of where somebody on that side would level; it changes "
         + "nothing about your character.",
     absent: "The 🗺️ button in the header, once a character is loaded." },
-  { chapter: "extras", target: "#conv-tool",
+  { chapter: "extras", target: "#conv-tool", anchor: "[data-tm=conv-summary]", side: "left",
     title: "Enhancement Converter",
     body: "Answers the two money questions. 'How do I get this enhancement "
         + "cheaply' gives a concrete path: which piece to buy or craft, which "
@@ -773,7 +772,7 @@ const TOUR_STEPS = [
         + "cheap-pool-to-purple shortcut, because the game won't allow one, and "
         + "the tool never pretends otherwise.",
     absent: "The Converter panel." },
-  { chapter: "extras", target: "#gamelog",
+  { chapter: "extras", target: "#gamelog", anchor: "[data-tm=gamelog-head]", side: "left",
     title: "Play Log",
     body: "Reads your own game chat logs, on your machine, and turns them into a "
         + "picture of what you have actually been doing -- your characters, your "
@@ -784,7 +783,7 @@ const TOUR_STEPS = [
     absent: "The 📜 Play Log panel, shown when you enable it." },
 
   // ── Saving, updates and help ───────────────────────────────────────────────
-  { chapter: "header", target: "#masthead", diagram: "headerRow",
+  { chapter: "header", target: "#masthead", diagram: "headerRow", side: "bottom",
     title: "The header's small buttons",
     body: "Nine small buttons share the header, and the drawing above names the "
         + "pair people mix up: the two circular arrows. ⟳ checks for updates; ↺ "
@@ -903,8 +902,18 @@ function _tourVisible(el) {
 // Where a step's highlight actually lands: the mock's stand-in for the real
 // control. The step's `target` keeps naming the REAL id (that is what the
 // audit verifies against the app); the mock marks its copy with data-for.
-function _tourMockEl(target) {
-  return _mockEl ? _mockEl.querySelector(`[data-for="${target.replace(/^#/, "")}"]`) : null;
+//
+// `anchor` narrows the highlight WITHIN the mock (always "[data-tm=...]",
+// which the audit verifies exists). It exists because of Joel's screenshots
+// (2026-07-27): a step whose subject is a whole panel or a full-screen
+// wrapper put the green box around everything -- or around nothing visible --
+// and the card then sat on top of the very content it was explaining. The
+// anchor points at the set-summary line, the actual padlock, the modal BOX
+// rather than its full-screen backdrop.
+function _tourMockEl(s) {
+  if (!_mockEl) return null;
+  if (s.anchor) return _mockEl.querySelector(s.anchor);
+  return _mockEl.querySelector(`[data-for="${s.target.replace(/^#/, "")}"]`);
 }
 
 
@@ -940,11 +949,15 @@ function _tourToDriverStep(s, i, all) {
   const crumb = `<p class="tour-crumb">${escHtml(label)} · ${nth} of ${inChapter.length}</p>`;
   const art = s.diagram && TOUR_DIAGRAMS[s.diagram] ? TOUR_DIAGRAMS[s.diagram] : "";
   return {
-    element: _tourMockEl(s.target),
+    element: _tourMockEl(s),
     __tmScene: s.scene || (s.chapter === "start" ? "entry" : "build"),
+    // `side` steers the card into empty space instead of over the subject
+    // (rail steps open rightward into the build column, build-column steps
+    // open leftward over the rail) -- driver still flips it if it won't fit.
     popover: { title: s.title,
                description: crumb + art + _tourHtml(s.body),
-               popoverClass: s.diagram ? "tour-wide" : "" },
+               popoverClass: s.diagram ? "tour-wide" : "",
+               side: s.side, align: s.align },
   };
 }
 
@@ -997,6 +1010,16 @@ window.startTour = function (chapter, atIndex) {
     // when measured.
     onHighlightStarted: (el, step) => {
       if (step && step.__tmScene) _mockShowScene(step.__tmScene);
+      // Pre-scroll the subject into the UPPER THIRD of the screen. driver
+      // centres it, which leaves ~half a screen below -- less than a card,
+      // so the card got clamped upward OVER the subject (Joel's screenshots:
+      // the set-bonuses card buried the sets line it described). With the
+      // subject high, every card fits cleanly beneath. The picker modal is
+      // fixed-position, so scrolling would only shift the backdrop -- skip.
+      if (el && _mockEl && !el.closest(".tm-modal")) {
+        const r = el.getBoundingClientRect();
+        _mockEl.scrollTop += r.top - window.innerHeight * 0.22;
+      }
     },
     // Esc / ✕ / Done all pass through destroy; the mock must never outlive
     // the tour, or it would sit as a full-screen lid over the real app.
