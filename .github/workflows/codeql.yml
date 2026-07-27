@@ -1,0 +1,62 @@
+name: CodeQL
+
+# SCOPED DELIBERATELY - do not "simplify" this to a bare `on: push`.
+# The Pulse Boards pipeline pushes to master ~30 times a DAY and every one of
+# those commits touches only docs/pulse/index.html. A default CodeQL setup would
+# therefore run ~30 scans a day over rendered board HTML, produce nothing, and
+# mail a failure notice on every hiccup. So:
+#   push      -> only when CODE actually changes (paths below)
+#   schedule  -> one full scan a week catches anything the paths filter misses
+#   dispatch  -> run it by hand any time
+# This repo is PUBLIC, so Actions minutes here are free and unmetered.
+on:
+  push:
+    branches: [master]
+    paths:
+      - "server/**"
+      - "static/**.js"
+      - "tools/**"
+      - "run_lite.py"
+      - "*.py"
+      - ".github/workflows/codeql.yml"
+  schedule:
+    - cron: "23 7 * * 1"        # Mondays, off-peak
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [python, javascript-typescript]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Initialise CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # Keep the scan on OUR code. These directories are generated output,
+          # game data, or third-party bundles - scanning them is noise and slow.
+          config: |
+            paths-ignore:
+              - graphify-out
+              - data
+              - benchmarks
+              - dist
+              - build
+              - docs
+              - static/icons
+              - _archive_costume
+
+      - name: Analyse
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
