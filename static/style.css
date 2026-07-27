@@ -1876,3 +1876,16 @@ body { overflow: hidden; }
   background: var(--panel2);
 }
 .entry-card .entry-q:hover { color: var(--accent); border-color: var(--accent); }
+
+/* Section crumb on each tour card: which section, and how far through it. */
+.driver-popover-description .tour-crumb {
+  margin: 0 0 8px; font-size: 11px; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--muted);
+}
+/* The "carry on into the builder" offer at the end of a truncated complete tour */
+.tour-continue { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.tour-continue p { margin: 0 0 8px; }
+.tour-continue button {
+  width: auto; margin-top: 0; padding: 5px 12px; font-size: 13px;
+  background: var(--accent); color: #06121f; font-weight: 600; border: none; border-radius: 5px;
+}

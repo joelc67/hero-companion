@@ -353,10 +353,23 @@ function _tourHtml(text) {
 // Turn one catalogue entry into a driver.js step. A step with NO `element` is
 // rendered by driver.js as a centred card, which is exactly what we want for
 // something the user cannot see yet -- so "not on screen" needs no special case.
-function _tourToDriverStep(s) {
+function _tourToDriverStep(s, i, all) {
+  // Say WHICH section this is and how far through it you are. On a 29-step
+  // complete tour, "12 of 29" alone tells you nothing about whether you are
+  // nearly done with a topic or just starting one.
+  const inChapter = all.filter(x => x.chapter === s.chapter);
+  const nth = inChapter.indexOf(s) + 1;
+  const label = TOUR_CHAPTERS[s.chapter] || "";
+  const crumb = `<p class="tour-crumb">${escHtml(label)} · ${nth} of ${inChapter.length}</p>`;
+  const extra = s._continue
+    ? `<div class="tour-continue">
+         <button onclick="tourContinueIntoBuilder()">Open the builder and carry on →</button>
+       </div>`
+    : "";
   return {
     element: document.querySelector(s.target),
-    popover: { title: s.title, description: _tourHtml(s.body) },
+    popover: { title: s.title,
+               description: (s._continue ? "" : crumb) + _tourHtml(s.body) + extra },
   };
 }
 
@@ -388,6 +401,20 @@ window.startTour = function (chapter, atIndex) {
 
   // Only steps that can actually be highlighted survive.
   const live = _tourShowableSteps(chosen);
+  // A COMPLETE tour begun on the opening screen can only show that screen, so it
+  // would otherwise stop dead at step 5 with no way onward (Joel: "ends on slide
+  // six with no way of getting past it"). Add a real closing step offering to
+  // open the builder and continue -- a step, not a hook, so its timing is ours.
+  if (chapter === "all" && live.length && live.length < chosen.length) {
+    live.push({
+      chapter: live[live.length - 1].chapter,
+      target: live[live.length - 1].target,
+      title: "Ready for the rest?",
+      body: "That is the opening screen covered. Everything else in this tour is "
+          + "about the builder, which is behind this menu.",
+      _continue: true,
+    });
+  }
   if (!live.length) {
     // Nothing in this section is on screen. Say where it lives rather than
     // opening an empty tour -- and name the door, so this is still useful.
@@ -402,7 +429,7 @@ window.startTour = function (chapter, atIndex) {
 
   endTour();
   _driver = window.driver.js.driver({
-    steps: live.map(_tourToDriverStep),
+    steps: live.map((s, i) => _tourToDriverStep(s, i, live)),
     showProgress: true,
     progressText: "{{current}} of {{total}}",
     nextBtnText: "Next →",
@@ -419,7 +446,14 @@ window.startTour = function (chapter, atIndex) {
     // means a click during the tour cannot change the user's build by accident.
     disableActiveInteraction: true,
     onHighlighted: () => {
-      if (_driver && !_driver.hasNextStep()) _tourMarkFinished();
+      if (!_driver || _driver.hasNextStep()) return;
+      // Last step. If this was the COMPLETE tour started from the opening
+      // screen, the builder half was never showable, so ending here is a dead
+      // end rather than a finish (Joel: "ends on slide six with no way of
+      // getting past it"). Offer to carry on, and only count it FINISHED when
+      // the tour genuinely covered everything.
+      // Only a tour that actually covered everything counts as finished.
+      if (!(chapter === "all" && live.length < TOUR_STEPS.length)) _tourMarkFinished();
     },
   });
   _driver.drive(Math.max(0, Math.min(atIndex | 0, live.length - 1)));
@@ -434,6 +468,12 @@ window.explainEntry = function (elementId, ev) {
   const live = _tourShowableSteps(TOUR_STEPS.filter(s => s.chapter === "start"));
   const idx = live.findIndex(s => s.target === "#" + elementId);
   startTour("start", idx < 0 ? 0 : idx);
+};
+
+window.tourContinueIntoBuilder = function () {
+  endTour();
+  if (typeof hideEntry === "function") hideEntry();   // user asked for this
+  setTimeout(() => startTour("all"), 120);
 };
 
 // ── The chooser: where do you want to start? ─────────────────────────────────
