@@ -1,5 +1,5 @@
 flask==2.3.3
-flask-cors==4.0.0
+flask-cors==6.0.0
 requests==2.31.0
 Werkzeug==2.3.7
 pulp==3.3.2          # ILP constraint solver (server/solver.py); bundles CBC
