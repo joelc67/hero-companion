@@ -85,6 +85,15 @@ check(f"every step target exists ({len(steps) - len(missing)} of {len(steps)} re
       not missing,
       ("STALE: " + ", ".join(sorted(set(missing)))) if missing else "")
 
+# 1b. every step target has a stand-in on the tour's mock screen. The tour
+# highlights the MOCK (data-for="<real id>"), so a target the app has but the
+# mock lacks would render a card pointing at nothing.
+mock_for = set(re.findall(r'data-for="([A-Za-z0-9_-]+)"', tour))
+unmocked = sorted({t.lstrip("#") for _c, t in steps} - mock_for)
+check(f"every step target has a mock stand-in ({len(steps) - len(unmocked)} of {len(steps)})",
+      not unmocked,
+      ("no data-for in the mock: " + ", ".join(unmocked)) if unmocked else "")
+
 # 2. chapters used are declared
 used = {c for c, _t in steps}
 undeclared = used - chapters_declared

@@ -1,28 +1,37 @@
 // ── THE GUIDED TOUR ──────────────────────────────────────────────────────────
 // A self-paced walkthrough of every area of the app.
 //
+// THE TOUR RUNS OVER A FAKE SCREEN, NEVER THE LIVE APP (Joel, 2026-07-27,
+// second ruling — the first design toured the live page and dead-ended
+// whenever the thing a step described was not on screen, which on a fresh
+// install was almost everything). When any tour starts, this file paints a
+// full-screen MOCK: a made-up Brute damage build with every panel populated,
+// plus a copy of the opening menu for the Getting-started chapter. Every step
+// highlights its subject on that mock, so part, some, or all of the tour works
+// from anywhere, in any app state, with nothing loaded at all.
+//
 // THREE RULES THIS FILE IS BUILT AROUND (Joel, 2026-07-27):
 //
-//  1. IT NEVER TOUCHES YOUR WORK. Nothing in here writes to `build`, opens a
-//     character, runs a solve, or changes a setting. It only points at things
-//     and explains them. A tour that disturbs work in progress is worse than no
-//     tour, so the engine simply has no code path that mutates app state. If a
-//     step's subject is not on screen right now, it says when you would see it
-//     instead of forcing the app into that state.
+//  1. IT NEVER TOUCHES YOUR WORK. The mock is a picture. Nothing in here
+//     writes to `build`, opens a character, runs a solve, or changes a
+//     setting -- when the tour closes, the app is exactly as you left it.
 //
 //  2. YOU SET THE PACE. Nothing advances on a timer. Next, Back, Esc, and a
 //     visible position count, because people read at different speeds and a
 //     walkthrough that moves on its own is a walkthrough nobody finishes.
 //
-//  3. IT MUST STAY TRUE AS THE APP CHANGES. Every step names the element it
-//     describes by id, and tools/audit_tour.py fails the build if any of those
-//     ids stops existing. Rename a control and the audit tells you which step
-//     went stale, in the same run that renamed it. That is the whole mechanism
-//     keeping this honest: documentation that cannot silently rot.
+//  3. IT MUST STAY TRUE AS THE APP CHANGES. Every step's `target` still names
+//     the REAL control's id, and the mock marks its stand-in for that control
+//     with data-for="<that id>". tools/audit_tour.py fails if a step's real id
+//     stops existing in the app (the content went stale) OR if the mock has no
+//     stand-in for it (the tour would point at nothing). Rename a control and
+//     the audit says which step went stale, in the same run that renamed it.
+//     (`absent` fields on steps are legacy from the live-page design and are
+//     no longer rendered.)
 //
-// ADDING OR CHANGING A STEP: edit TOUR_STEPS below, then run
+// ADDING OR CHANGING A STEP: edit TOUR_STEPS below, give the mock a
+// data-for element for the target, then run
 //   python tools/audit_tour.py
-// It checks every target resolves and every chapter is reachable.
 
 
 // ── Annotated diagrams ───────────────────────────────────────────────────────
@@ -90,6 +99,236 @@ const TOUR_DIAGRAMS = {
   <path d="M389 174 L389 113" class="d-arrow"/><text x="389" y="188" class="d-lbl d-mid">start over</text>
 </svg>`,
 };
+
+// ── The fake screen the tour walks ───────────────────────────────────────────
+// A made-up Super Strength / Willpower Brute, built as a damage dealer -- the
+// same example character the step text describes. Hand-written from the app's
+// REAL markup shapes (powerCardHtml, barRow, the static panels in index.html)
+// and painted by the app's real stylesheet, so it looks like the app without
+// being the app. Every element a step points at carries data-for="<real id>".
+// Numbers are plausible for the pairing but illustrative -- the corner badge
+// says so on screen.
+//
+// Two screens, switched per step: the opening menu (Getting-started chapter)
+// and the build screen (everything else).
+const TOUR_MOCK_HTML = `
+<div class="tour-mock-badge">EXAMPLE — a Brute damage build, drawn for this tour. Nothing here is your character.</div>
+
+<div class="tour-mock-screen tm-center" data-tm-screen="entry">
+  <div class="entry-box" data-for="entry-overlay">
+    <h2>How do you want to start?</h2>
+    <p class="muted">Pick a starting point — you can switch any time from the header.</p>
+    <div class="entry-cards">
+      <div class="entry-card" data-for="entry-continue">
+        <div class="entry-ico">⏯️</div>
+        <h3>Continue where you left off</h3>
+        <p>Pick up a character you're partway through — leveling one from scratch is weeks of play, so your plan and progress are saved.</p>
+        <span class="entry-go">3 saved — open →</span>
+      </div>
+      <div class="entry-card" data-for="entry-scratch">
+        <div class="entry-ico">✨</div>
+        <h3>Start a new character</h3>
+        <p>Not sure what to roll? Tell me what you want to do and where you'll play — I'll recommend an archetype and powers and walk each level's pick and slotting.</p>
+        <span class="entry-go">Pick my character →</span>
+      </div>
+      <div class="entry-card" data-for="entry-respec">
+        <div class="entry-ico">♻️</div>
+        <h3>Build a new level-50 character</h3>
+        <p>Planning an end-game build from scratch? Tell me your archetype and main powersets — I'll build the optimized level-50 kit: picks, slotting, caps, epic, incarnates.</p>
+        <span class="entry-go">Build a new 50 →</span>
+      </div>
+      <div class="entry-card" data-for="entry-mids">
+        <div class="entry-ico">📋</div>
+        <h3>Import a Mids Reborn build</h3>
+        <p>Already have a <code>.mbd</code>? Load it for a critique, then optimize the slotting toward a goal — keeping the sets you've already invested in.</p>
+        <span class="entry-go">Choose a .mbd file →</span>
+      </div>
+      <div class="entry-card entry-card-static" data-for="entry-ingame">
+        <div class="entry-ico">🎮</div>
+        <h3>Import a character you play</h3>
+        <p>In game, type <code>/build_save_file</code> in chat — then come back here:</p>
+        <span class="entry-go">🔍 Find my characters for me →</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tour-mock-screen" data-tm-screen="build">
+  <header class="tm-head" data-for="masthead">
+    <h1>🦸 Hero Companion <span class="muted small">— Bruiser Brawlwell · Brute · level 50</span></h1>
+    <div class="legend">
+      <button class="iconbtn journey-pill" data-for="journey-btn" type="button">🗺️ <span class="journey-pill-label">Journey</span></button>
+      <button class="iconbtn" type="button">🧭</button>
+      <button class="iconbtn" data-for="save-btn" type="button">💾</button>
+      <button class="iconbtn" data-for="help-btn" type="button">❓</button>
+      <button class="iconbtn" data-for="bug-btn" type="button">🐞</button>
+      <button class="iconbtn" data-for="champ-btn" type="button">🏆</button>
+      <button class="iconbtn" data-for="update-btn" type="button">⟳</button>
+      <button class="iconbtn" data-for="alignment-btn" type="button">🦸</button>
+      <button class="iconbtn" data-for="start-over-btn" type="button">↺</button>
+    </div>
+  </header>
+
+  <div class="tm-cols">
+    <section class="panel" data-for="setup">
+      <h2>Build</h2>
+      <label>Archetype <select data-for="sel-archetype" disabled><option>Brute</option></select></label>
+      <label>Primary <select data-for="sel-primary" disabled><option>Super Strength</option></select></label>
+      <label>Secondary <select disabled><option>Willpower</option></select></label>
+      <details open><summary>Power Pools (up to 4)</summary>
+        <div data-for="pool-selectors">
+          <label>Pool 1 <select disabled><option>Fighting</option></select></label>
+          <label>Pool 2 <select disabled><option>Leaping</option></select></label>
+          <label>Pool 3 <select disabled><option>Speed</option></select></label>
+        </div>
+      </details>
+      <label>Epic / Ancillary <select data-for="sel-epic" disabled><option>Energy Mastery</option></select></label>
+      <label>Content <select data-for="preset-content" disabled><option>Task forces &amp; trials</option></select></label>
+      <label>Role <select data-for="preset-role" disabled><option>Damage dealer</option></select></label>
+      <div class="custom-targets-row">
+        <button class="mini" data-for="custom-targets-btn" type="button">Customize build targets…</button>
+      </div>
+    </section>
+
+    <section class="panel" data-for="builder">
+      <h2>Powers &amp; Slots</h2>
+      <div class="edit-bar">
+        <button class="ghost-btn" type="button">↶ Undo (Ctrl+Z)</button>
+        <span class="slot-tally" data-for="slot-tally">67 / 67 slots</span>
+      </div>
+      <div class="power-card">
+        <div class="pc-head"><span class="pc-title"><span class="pname">Knockout Blow</span><span class="pc-info-glyph">ⓘ</span></span></div>
+        <div class="pc-sub">
+          <span class="pick-lvl">L6</span>
+          <span class="pc-tools">
+            <button class="mini lock-btn" type="button">🔓</button>
+            <button class="mini" type="button">−</button>
+            <button class="mini" type="button">+</button>
+            <button class="remove-power" type="button">✕</button>
+          </span>
+        </div>
+        <div class="slot-row">
+          <div class="slot filled"><span class="slot-abbr">Fu</span><span class="slot-lvl">50</span></div>
+          <div class="slot filled"><span class="slot-abbr">Fu</span><span class="slot-lvl">50</span></div>
+          <div class="slot filled"><span class="slot-abbr">Fu</span><span class="slot-lvl">50</span></div>
+          <div class="slot filled"><span class="slot-abbr">Fu</span><span class="slot-lvl">50</span></div>
+          <div class="slot filled"><span class="slot-abbr">Fu</span><span class="slot-lvl">50</span></div>
+          <div class="slot filled unique"><span class="slot-abbr">Fu</span><span class="slot-lvl">50</span></div>
+        </div>
+        <div class="set-summary"><span class="muted small">sets:</span> Superior Unrelenting Fury ×6</div>
+      </div>
+      <div class="power-card pc-locked">
+        <div class="pc-head"><span class="pc-title"><span class="pname">High Pain Tolerance</span><span class="pc-info-glyph">ⓘ</span></span></div>
+        <div class="pc-sub">
+          <span class="pick-lvl">L4</span>
+          <span class="pc-tools">
+            <button class="mini lock-btn locked" type="button">🔒</button>
+            <button class="mini" type="button">−</button>
+            <button class="mini" type="button">+</button>
+            <button class="remove-power" type="button">✕</button>
+          </span>
+        </div>
+        <div class="slot-row">
+          <div class="slot filled"><span class="slot-abbr">Un</span><span class="slot-lvl">50</span></div>
+          <div class="slot filled"><span class="slot-abbr">Un</span><span class="slot-lvl">50</span></div>
+          <div class="slot filled"><span class="slot-abbr">Un</span><span class="slot-lvl">50</span></div>
+          <div class="slot filled unique"><span class="slot-abbr">St</span><span class="slot-lvl">50</span></div>
+        </div>
+        <div class="set-summary"><span class="muted small">sets:</span> Unbreakable Guard ×3 · Steadfast Protection</div>
+      </div>
+
+      <label class="preserve-toggle"><input type="checkbox" data-for="preserve-toggle" checked disabled>
+        <span>Preserve my IO sets — 🔒 locks every power I hand-slotted; unlock exceptions on their cards</span></label>
+      <button class="solve-btn" data-for="solve-btn" type="button">🧮 Solve optimal slotting for goal (instant)</button>
+      <button data-for="gen-btn" type="button">Generate 3 builds</button>
+      <button class="changes-btn" data-for="changes-btn" type="button">📋 What changed? (open / close anytime)</button>
+      <button class="reset-btn" data-for="reset-btn" type="button">↺ Reset to imported build (try again)</button>
+      <div class="tm-response" data-for="ai-response">
+        <b>Solved for: Task forces · Damage dealer.</b>
+        Smashing/Lethal resistance reached 90% — your cap. Melee defense reached
+        41.3% of the 45% asked; an unpicked power on this character would close
+        the gap: Weave (about +5%).
+      </div>
+      <div class="validation" data-for="validation">✓ Legal build — nothing here breaks the game's rules.</div>
+    </section>
+
+    <section class="panel" data-for="stats">
+      <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span></h2>
+      <div class="cap-chips">
+        <span class="chip cap-def">Defense soft cap 45%</span>
+        <span class="chip cap-res">Resistance hard cap 90%</span>
+      </div>
+      <label class="incarnate-toggle"><input type="checkbox" data-for="incarnate-peak-toggle" disabled> Include incarnates (peak)</label>
+      <label class="incarnate-toggle"><input type="checkbox" disabled> Include accolades + amplifiers</label>
+      <label class="incarnate-toggle"><input type="checkbox" data-for="suppression-toggle" disabled> In-combat view (suppression)</label>
+      <h3>Defense <span class="muted small">soft cap 45%</span></h3>
+      <div class="bars" data-for="defense-bars">
+        <div class="bar-row"><span class="bar-label">Melee</span><div class="bar-track"><div class="bar-fill def" style="width:92%"></div></div><span class="bar-val">41.3%</span></div>
+        <div class="bar-row"><span class="bar-label">Ranged</span><div class="bar-track"><div class="bar-fill def" style="width:80%"></div></div><span class="bar-val">36.2% <span class="over">⚔ 31.9%</span></span></div>
+        <div class="bar-row"><span class="bar-label">AoE</span><div class="bar-track"><div class="bar-fill def" style="width:67%"></div></div><span class="bar-val">30.1%</span></div>
+      </div>
+      <h3>Resistance <span class="muted small" data-for="res-cap-label">hard cap 90%</span></h3>
+      <div class="bars">
+        <div class="bar-row"><span class="bar-label">S/L</span><div class="bar-track"><div class="bar-fill res capped" style="width:100%"></div></div><span class="bar-val capped">90%</span></div>
+        <div class="bar-row"><span class="bar-label">Energy</span><div class="bar-track"><div class="bar-fill res" style="width:51%"></div></div><span class="bar-val">46.2%</span></div>
+        <div class="bar-row"><span class="bar-label">Psionic</span><div class="bar-track"><div class="bar-fill res" style="width:35%"></div></div><span class="bar-val">31.8%</span></div>
+      </div>
+      <h3>Other</h3>
+      <div class="other">
+        <div class="o-row"><span>Recharge (global)</span><span>+72.5%</span></div>
+        <div class="o-row"><span>Recovery</span><span>+25% <span class="muted small">= 3.12 end/s</span></span></div>
+        <div class="o-row"><span>Max HP <span class="aoe-tag">CAP</span></span><span>+21.4% <span class="muted small">= 3212 HP</span></span></div>
+      </div>
+      <div data-for="offense-section">
+        <h3>Offense <span class="muted small">damage / debuffs / buffs</span></h3>
+        <div class="offense">
+          <div class="o-row"><span>Single-target DPS</span><span>187</span></div>
+          <div class="o-row"><span>AoE throughput</span><span>412 dmg / 10s</span></div>
+          <div class="o-row"><span>AoE alpha</span><span>498</span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="tm-cols2">
+    <section class="panel" data-for="conv-tool">
+      <h2>💰 Enhancement converters</h2>
+      <p class="muted small">"How do I get this IO cheaply?" — a concrete path per enhancement,
+        with the converter and merit cost. "Is this drop worth anything?" — paste your drops:
+        keep, craft, or sell.</p>
+    </section>
+    <section class="panel" data-for="gamelog">
+      <h2>📜 Play Log <span class="muted small">— insights from your game sessions</span></h2>
+      <p class="muted small">Off until you turn it on. Reads your own chat logs, on your machine,
+        and shows your sessions, characters and drops. Sharing anything is a separate choice.</p>
+    </section>
+  </div>
+</div>`;
+
+let _mockEl = null;
+
+function _openTourMock() {
+  if (_mockEl) return _mockEl;
+  _mockEl = document.createElement("div");
+  _mockEl.id = "tour-mock";
+  _mockEl.innerHTML = TOUR_MOCK_HTML;
+  document.body.appendChild(_mockEl);
+  return _mockEl;
+}
+
+function _closeTourMock() {
+  if (_mockEl) _mockEl.remove();
+  _mockEl = null;
+}
+
+// Show the mock screen a step belongs to. Only the Getting-started chapter
+// lives on the fake opening menu; every other chapter is on the fake build.
+function _mockShowScreen(which) {
+  if (!_mockEl) return;
+  _mockEl.querySelectorAll(".tour-mock-screen").forEach(sc => {
+    sc.style.display = (sc.dataset.tmScreen === which) ? "" : "none";
+  });
+}
 
 const TOUR_CHAPTERS = {
   start:     "Getting started",
@@ -589,42 +828,12 @@ function _tourVisible(el) {
       && el.getClientRects().length > 0;
 }
 
-// ONE QUESTION ONLY: can driver.js actually put a highlight on this?
-//
-// Joel, 2026-07-27: "If it is not seen or highlighted this whole tour is
-// worthless." He is right, and the elaborate pointability scoring that preceded
-// this was the problem, not the solution. It kept deciding that real controls
-// were unpointable -- below the fold, small, momentarily covered -- and
-// degrading to a centred card that explained something the user could not see.
-//
-// So the rule is now binary. If the element EXISTS and is DISPLAYED, we hand it
-// to driver.js, which scrolls it into view and highlights it. If it is not
-// displayed, the step is dropped from the tour entirely rather than shown as a
-// card pointing at nothing. Every card you see is attached to something lit up.
-function _tourShowable(el) {
-  if (!el) return false;
-  const cs = getComputedStyle(el);
-  if (cs.display === "none" || cs.visibility === "hidden") return false;
-  if (!el.getClientRects().length) return false;
-  const r = el.getBoundingClientRect();
-  if (!(r.width > 0 && r.height > 0)) return false;   // a zero-area box cannot be lit
-  // The opening overlay paints over the whole builder. Highlighting something
-  // behind it frames the overlay's backdrop, not the control -- which is exactly
-  // the meaningless blue outline from Joel's screenshots. While that screen is
-  // up, only things ON it can be shown.
-  if (_onEntryScreen() && !el.closest("#entry-overlay")) return false;
-  return true;
+// Where a step's highlight actually lands: the mock's stand-in for the real
+// control. The step's `target` keeps naming the REAL id (that is what the
+// audit verifies against the app); the mock marks its copy with data-for.
+function _tourMockEl(target) {
+  return _mockEl ? _mockEl.querySelector(`[data-for="${target.replace(/^#/, "")}"]`) : null;
 }
-
-// "Are we on the opening screen?" is a VISIBILITY question, not a pointability
-// one, and conflating them was a real bug: #entry-cards computes to zero WIDTH,
-// so asking whether it could be highlighted answered "no" while the overlay was plainly
-// on screen, and the tour walked the builder spine instead of the entry cards.
-// Ask about the overlay, and only whether it is showing.
-const _onEntryScreen = () => {
-  const ov = document.getElementById("entry-overlay");
-  return !!ov && !ov.classList.contains("hidden") && _tourVisible(ov);
-};
 
 
 // ── Engine: driver.js ────────────────────────────────────────────────────────
@@ -647,85 +856,46 @@ function _tourHtml(text) {
   return String(text).split("\n\n").map(p => `<p>${escHtml(p)}</p>`).join("");
 }
 
-// Turn one catalogue entry into a driver.js step. A step with NO `element` is
-// rendered by driver.js as a centred card, which is exactly what we want for
-// something the user cannot see yet -- so "not on screen" needs no special case.
+// Turn one catalogue entry into a driver.js step. The element is the MOCK's
+// stand-in; __tmScreen tells onHighlightStarted which fake screen to show.
 function _tourToDriverStep(s, i, all) {
-  // Say WHICH section this is and how far through it you are. On a 29-step
-  // complete tour, "12 of 29" alone tells you nothing about whether you are
+  // Say WHICH section this is and how far through it you are. On a 46-step
+  // complete tour, "12 of 46" alone tells you nothing about whether you are
   // nearly done with a topic or just starting one.
   const inChapter = all.filter(x => x.chapter === s.chapter);
   const nth = inChapter.indexOf(s) + 1;
   const label = TOUR_CHAPTERS[s.chapter] || "";
   const crumb = `<p class="tour-crumb">${escHtml(label)} · ${nth} of ${inChapter.length}</p>`;
-  const extra = s._continue
-    ? `<div class="tour-continue">
-         <button onclick="tourContinueIntoBuilder()">Open the builder and carry on →</button>
-       </div>`
-    : "";
   const art = s.diagram && TOUR_DIAGRAMS[s.diagram] ? TOUR_DIAGRAMS[s.diagram] : "";
   return {
-    element: document.querySelector(s.target),
-    popover: { title: s.title,
-               description: (s._continue ? "" : crumb) + art + _tourHtml(s.body) + extra },
+    element: _tourMockEl(s.target),
+    __tmScreen: s.chapter === "start" ? "entry" : "build",
+    popover: { title: s.title, description: crumb + art + _tourHtml(s.body) },
   };
-}
-
-// Drop any step whose subject is not on the page right now. This is what makes
-// "every card highlights something" true rather than aspirational -- and it also
-// means the opening-screen chapter simply is not part of the tour once you are
-// past that screen, instead of six cards about a menu you cannot see.
-function _tourShowableSteps(list) {
-  return list.filter(s => _tourShowable(document.querySelector(s.target)));
 }
 
 window.endTour = function () {
   if (_driver && _driver.isActive()) _driver.destroy();
   _driver = null;
+  _closeTourMock();
 };
 
-// chapter: undefined = the context-aware first tour; a chapter key = that
-// section only; "all" = every step.
+// chapter: undefined = the short first-run tour (the spine); a chapter key =
+// that section only; "all" = every step. Whatever the choice, the tour runs
+// over the mock, so every subset works from anywhere in any app state.
 window.startTour = function (chapter, atIndex) {
   if (!(window.driver && window.driver.js && window.driver.js.driver)) {
     console.warn("[tour] driver.js did not load; tour unavailable");
     return;
   }
-  const onEntry = _onEntryScreen();
-  const chosen = chapter === "all" ? TOUR_STEPS.slice()
+  const live = chapter === "all" ? TOUR_STEPS.slice()
     : chapter ? TOUR_STEPS.filter(s => s.chapter === chapter)
-      : onEntry ? TOUR_STEPS.filter(s => s.chapter === "start")
-        : TOUR_STEPS.filter(s => s.spine);
-
-  // Only steps that can actually be highlighted survive.
-  const live = _tourShowableSteps(chosen);
-  // A COMPLETE tour begun on the opening screen can only show that screen, so it
-  // would otherwise stop dead at step 5 with no way onward (Joel: "ends on slide
-  // six with no way of getting past it"). Add a real closing step offering to
-  // open the builder and continue -- a step, not a hook, so its timing is ours.
-  if (chapter === "all" && live.length && live.length < chosen.length) {
-    live.push({
-      chapter: live[live.length - 1].chapter,
-      target: live[live.length - 1].target,
-      title: "Ready for the rest?",
-      body: "That is the opening screen covered. Everything else in this tour is "
-          + "about the builder, which is behind this menu.",
-      _continue: true,
-    });
-  }
-  if (!live.length) {
-    // Nothing in this section is on screen. Say where it lives rather than
-    // opening an empty tour -- and name the door, so this is still useful.
-    const label = (chapter && TOUR_CHAPTERS[chapter]) || "That section";
-    alert(`${label} is not on screen at the moment.
-
-`
-        + `Open a character first (pick one from the ↺ button in the header), `
-        + `then use the ? beside that panel and it will walk you through it.`);
-    return;
-  }
+      : TOUR_STEPS.filter(s => s.spine);
+  if (!live.length) return;
 
   endTour();
+  _openTourMock();
+  _mockShowScreen(live[0].chapter === "start" ? "entry" : "build");
   _driver = window.driver.js.driver({
     steps: live.map((s, i) => _tourToDriverStep(s, i, live)),
     showProgress: true,
@@ -740,38 +910,36 @@ window.startTour = function (chapter, atIndex) {
     // NOT "close": a stray click outside used to end the tour and leave the user
     // "in limbo" (Joel's walk). Advancing is recoverable; exiting silently is not.
     overlayClickBehavior: "nextStep",
-    // The tour is READ-ONLY. Blocking interaction with the highlighted control
-    // means a click during the tour cannot change the user's build by accident.
+    // The mock is a picture -- blocking interaction keeps it one.
     disableActiveInteraction: true,
+    // Flip between the fake opening menu and the fake build screen as the
+    // complete tour crosses from the Getting-started chapter into the rest.
+    // Fires before positioning, so the element is visible when measured.
+    onHighlightStarted: (el, step) => {
+      if (step && step.__tmScreen) _mockShowScreen(step.__tmScreen);
+    },
+    // Esc / ✕ / Done all pass through destroy; the mock must never outlive
+    // the tour, or it would sit as a full-screen lid over the real app.
+    onDestroyed: () => { _closeTourMock(); _driver = null; },
     onHighlighted: () => {
       if (!_driver || _driver.hasNextStep()) return;
-      // Last step. If this was the COMPLETE tour started from the opening
-      // screen, the builder half was never showable, so ending here is a dead
-      // end rather than a finish (Joel: "ends on slide six with no way of
-      // getting past it"). Offer to carry on, and only count it FINISHED when
-      // the tour genuinely covered everything.
-      // Only a tour that actually covered everything counts as finished.
-      if (!(chapter === "all" && live.length < TOUR_STEPS.length)) _tourMarkFinished();
+      // Finished = reached the end of a tour that covered every chapter (the
+      // complete tour or the first-run spine). A single section does not count.
+      if (chapter === "all" || chapter === undefined) _tourMarkFinished();
     },
   });
   _driver.drive(Math.max(0, Math.min(atIndex | 0, live.length - 1)));
 };
 
 // Explain ONE card on the opening menu, then carry on through the rest of that
-// screen. The entry cards are themselves <button>s, so their ? has to be a span
+// chapter. The entry cards are themselves <button>s, so their ? has to be a span
 // that stops the click from reaching the card -- otherwise asking what a card
 // does would trigger it, which is the opposite of helpful.
 window.explainEntry = function (elementId, ev) {
   if (ev && ev.stopPropagation) ev.stopPropagation();
-  const live = _tourShowableSteps(TOUR_STEPS.filter(s => s.chapter === "start"));
-  const idx = live.findIndex(s => s.target === "#" + elementId);
+  const steps = TOUR_STEPS.filter(s => s.chapter === "start");
+  const idx = steps.findIndex(s => s.target === "#" + elementId);
   startTour("start", idx < 0 ? 0 : idx);
-};
-
-window.tourContinueIntoBuilder = function () {
-  endTour();
-  if (typeof hideEntry === "function") hideEntry();   // user asked for this
-  setTimeout(() => startTour("all"), 120);
 };
 
 // ── The chooser: where do you want to start? ─────────────────────────────────
