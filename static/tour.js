@@ -24,6 +24,41 @@
 //   python tools/audit_tour.py
 // It checks every target resolves and every chapter is reachable.
 
+
+// ── Annotated diagrams ───────────────────────────────────────────────────────
+// Some things cannot be explained in prose. "The + and - move slots between
+// powers" means nothing until you can SEE which button is which (Joel,
+// 2026-07-27: point at the buttons, "like a + or -, can be identified").
+//
+// Inline SVG rather than screenshots, deliberately: it stays sharp at any size,
+// it takes its colours from the app's theme so it is never a light-mode picture
+// on a dark panel, it adds no files to the install, and -- the reason that
+// matters most -- a screenshot of this app would be out of date within a release
+// or two, while a drawing of "a card with these controls on it" stays true.
+const TOUR_DIAGRAMS = {
+  powerCard: `
+<svg viewBox="0 0 440 210" class="tour-svg" role="img"
+     aria-label="An annotated power card showing its information button, level, padlock, minus, plus, drop button and enhancement slots"><defs><marker id="tourArrowHead" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" class="d-head"/></marker></defs>
+  <rect x="96" y="52" width="248" height="86" rx="8" class="d-card"/>
+  <circle cx="118" cy="72" r="9" class="d-ico"/>
+  <text x="134" y="77" class="d-name">Fire Blast</text>
+  <circle cx="196" cy="72" r="7" class="d-ctl"/><text x="196" y="76" class="d-glyph">i</text>
+  <rect x="106" y="88" width="26" height="14" rx="7" class="d-chip"/><text x="119" y="99" class="d-lvl">L6</text>
+  <rect x="246" y="86" width="18" height="18" rx="4" class="d-ctl"/><text x="255" y="99" class="d-glyph">•</text>
+  <rect x="268" y="86" width="18" height="18" rx="4" class="d-ctl"/><text x="277" y="100" class="d-glyph">–</text>
+  <rect x="290" y="86" width="18" height="18" rx="4" class="d-ctl"/><text x="299" y="100" class="d-glyph">+</text>
+  <rect x="312" y="86" width="18" height="18" rx="4" class="d-ctl"/><text x="321" y="100" class="d-glyph">x</text>
+  <circle cx="118" cy="122" r="8" class="d-slot"/><circle cx="140" cy="122" r="8" class="d-slot"/>
+  <circle cx="162" cy="122" r="8" class="d-slot"/><circle cx="184" cy="122" r="8" class="d-slot"/>
+  <path d="M196 40 L196 62" class="d-arrow"/><text x="196" y="32" class="d-lbl d-mid">its full details</text>
+  <path d="M60 96 L102 96" class="d-arrow"/><text x="56" y="99" class="d-lbl d-end">level</text>
+  <path d="M255 168 L255 108" class="d-arrow"/><text x="255" y="182" class="d-lbl d-mid">lock</text>
+  <path d="M300 168 L288 108" class="d-arrow"/><text x="312" y="182" class="d-lbl d-mid">slots -/+</text>
+  <path d="M370 96 L334 96" class="d-arrow"/><text x="374" y="99" class="d-lbl">drop it</text>
+  <path d="M150 168 L150 132" class="d-arrow"/><text x="150" y="182" class="d-lbl d-mid">enhancement slots</text>
+</svg>`,
+};
+
 const TOUR_CHAPTERS = {
   start:     "Getting started",
   build:     "Choosing your character",
@@ -133,7 +168,7 @@ const TOUR_STEPS = [
         + "The examples in this tour describe a Brute built as a damage dealer, "
         + "so the set names and numbers stay consistent as you read. Your own "
         + "character will show its own powers; everything works the same way." },
-  { chapter: "powers", target: "#builder",
+  { chapter: "powers", target: "#builder", diagram: "powerCard",
     title: "What is on a power card",
     body: "Along the top: the power's icon and name, then an information button "
         + "that opens its full details -- what it does, its recharge, its "
@@ -408,10 +443,11 @@ function _tourToDriverStep(s, i, all) {
          <button onclick="tourContinueIntoBuilder()">Open the builder and carry on →</button>
        </div>`
     : "";
+  const art = s.diagram && TOUR_DIAGRAMS[s.diagram] ? TOUR_DIAGRAMS[s.diagram] : "";
   return {
     element: document.querySelector(s.target),
     popover: { title: s.title,
-               description: (s._continue ? "" : crumb) + _tourHtml(s.body) + extra },
+               description: (s._continue ? "" : crumb) + art + _tourHtml(s.body) + extra },
   };
 }
 

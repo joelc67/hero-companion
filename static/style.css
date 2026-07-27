@@ -1889,3 +1889,21 @@ body { overflow: hidden; }
   width: auto; margin-top: 0; padding: 5px 12px; font-size: 13px;
   background: var(--accent); color: #06121f; font-weight: 600; border: none; border-radius: 5px;
 }
+
+/* Annotated tour diagrams. Every colour comes from the theme so the drawing can
+   never be a light-mode picture sitting on a dark panel. */
+.tour-svg { width: 100%; height: auto; margin: 0 0 10px; display: block; }
+.tour-svg .d-card { fill: var(--panel2); stroke: var(--accent); stroke-width: 1.5; }
+.tour-svg .d-ico  { fill: var(--accent); opacity: .55; }
+.tour-svg .d-slot { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: .8; }
+.tour-svg .d-ctl  { fill: var(--panel); stroke: var(--border); stroke-width: 1; }
+.tour-svg .d-chip { fill: var(--panel); stroke: var(--border); stroke-width: 1; }
+.tour-svg .d-name { fill: var(--ink); font-size: 12px; font-weight: 600; }
+.tour-svg .d-glyph{ fill: var(--ink); font-size: 10px; text-anchor: middle; }
+.tour-svg .d-lvl  { fill: var(--muted); font-size: 9px; text-anchor: middle; }
+.tour-svg .d-lbl  { fill: var(--muted); font-size: 10px; }
+.tour-svg .d-mid  { text-anchor: middle; }
+.tour-svg .d-end  { text-anchor: end; }
+.tour-svg .d-arrow{ stroke: var(--muted); stroke-width: 1.2; fill: none;
+                    marker-end: url(#tourArrowHead); }
+.tour-svg .d-head { fill: var(--muted); }
