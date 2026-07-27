@@ -239,6 +239,64 @@ const TOUR_MOCK_HTML = `
         <div class="set-summary"><span class="muted small">sets:</span> Unbreakable Guard ×3 · Steadfast Protection</div>
       </div>
 
+      <div class="info-course">
+        <div class="overview-card" data-for="overview-card">
+          <div class="ovc-head">BUILD VITALS</div>
+          <table class="ov-table">
+            <tr><th></th><th>S/L</th><th>F/C</th><th>E/N</th><th>Mel</th><th>Rng</th><th>AoE</th></tr>
+            <tr><th>DEF %</th><td>32</td><td>28</td><td>26</td><td class="ov-good">41</td><td>36</td><td>30</td></tr>
+            <tr><th>RES %</th><td class="ov-good">90</td><td>52</td><td>46</td><td class="ov-dim">—</td><td class="ov-dim">—</td><td class="ov-dim">—</td></tr>
+          </table>
+          <div class="ov-buildline">
+            <span>Recharge <b class="ov-good">+72.5%</b></span>
+            <span>Recovery <b>+25%</b></span>
+            <span>HP <b>+21.4%</b></span>
+            <span>DPS <b>187</b> ST / <b>41</b> AoE</span>
+          </div>
+        </div>
+        <div class="overview-card" data-for="bonuses-card">
+          <div class="ovc-head">SET BONUSES <span class="muted">(23 active)</span></div>
+          <div class="muted small">×3 Large Improved Recharge Bonus</div>
+          <div class="muted small">×2 Moderate Increased Health Bonus</div>
+          <div class="muted small">×2 Small Smashing/Lethal Defense Bonus</div>
+          <div class="muted small">… +18 more</div>
+        </div>
+        <div class="overview-card" data-for="uniques-card">
+          <div class="ovc-head">UNIQUES CARRIED</div>
+          <div class="muted small">✓ Steadfast Protection +Def</div>
+          <div class="muted small">✓ Gladiator's Armor +Def</div>
+          <div class="muted small">✓ Numina +Regen/+Recovery</div>
+          <div class="muted small">✓ Performance Shifter +End</div>
+        </div>
+        <div class="accolades-card" data-for="accolades-card">
+          <div class="ovc-head">ACCOLADES <span class="acc-count">2/28</span></div>
+          <div class="muted small">☑ Freedom Phalanx Reserve <b>+10% HP</b></div>
+          <div class="muted small">☑ Task Force Commander <b>+5% HP</b></div>
+          <div class="muted small">☐ Portal Jockey <b>+5% HP · +5 End</b> ⓘ</div>
+          <div class="muted small" style="opacity:.45">☐ Born In Battle — villain-side only</div>
+          <div class="muted small">👁 Preview all — your numbers with every accolade in hand</div>
+        </div>
+      </div>
+
+      <div class="add-powers-row" data-tm="addrow" data-for="powers-list">
+        <label>Add from Super Strength <select disabled><option>+ add power…</option></select></label>
+        <label>Add from Willpower <select disabled><option>+ add power…</option></select></label>
+        <label>Add from Fighting <select disabled><option>+ add power…</option></select></label>
+      </div>
+
+      <div class="order-out subpanel" data-for="tray-out">
+        <div class="ovc-head">IN-GAME TRAYS</div>
+        <p class="muted small">Tray 1 — the chain: Punch · Haymaker · Knockout Blow · Foot Stomp ·
+          Rage · Taunt&nbsp;&nbsp;|&nbsp;&nbsp;Tray 2 — toggles &amp; answers: Tough · Weave ·
+          Combat Jumping · High Pain Tolerance (auto)</p>
+      </div>
+      <div class="order-out subpanel" data-for="order-out">
+        <div class="ovc-head">RESPEC ORDER</div>
+        <p class="muted small">1 · Punch &nbsp; 2 · High Pain Tolerance &nbsp; 3 · Haymaker &nbsp;
+          4 · Mind Over Body &nbsp; 5 · Combat Jumping &nbsp; … every pick in the order the
+          respec screen will ask for it.</p>
+      </div>
+
       <details class="conv-guide" open onclick="event.preventDefault()"><summary data-tm="conv-summary">💰 Get expensive IOs cheap — enhancement converters</summary>
         <div data-for="conv-tool">
           <div data-tm="conv-body">
@@ -299,6 +357,15 @@ const TOUR_MOCK_HTML = `
           <div class="o-row"><span>AoE throughput</span><span>412 dmg / 10s</span></div>
           <div class="o-row"><span>AoE alpha</span><span>498</span></div>
         </div>
+        <div class="offense" data-tm="atk-table" data-for="offense-stats">
+          <div class="o-row"><span><b>Top attack</b> (damage / animation)</span><span>121.4</span></div>
+          <div class="o-row"><span>Knockout Blow</span><span class="muted small">243 dmg · 2.0s · 25s rech · 121.4 DPA</span></div>
+          <div class="o-row"><span>Haymaker</span><span class="muted small">98 dmg · 1.2s · 8s rech · 81.7 DPA</span></div>
+          <div class="o-row"><span>Foot Stomp <span class="aoe-tag">AoE</span></span><span class="muted small">86 dmg · 2.1s · 20s rech · 41.0 DPA</span></div>
+        </div>
+        <p class="muted small" data-tm="support-note">A support set, controller or Mastermind grows
+          this panel: per-pet damage, enemy debuffs (base, per application), and what your buffs
+          hand allies.</p>
       </div>
       <div class="validation" data-for="validation">✓ Legal build — nothing here breaks the game's rules.</div>
     </section>
@@ -612,6 +679,13 @@ const TOUR_STEPS = [
         + "The examples in this tour describe a Brute built as a damage dealer, "
         + "so the set names and numbers stay consistent as you read. Your own "
         + "character will show its own powers; everything works the same way." },
+  { chapter: "powers", target: "#powers-list", anchor: "[data-tm=addrow]", side: "left",
+    title: "Adding a power",
+    body: "Below the cards, every powerset you own has its own Add from… menu. "
+        + "Pick a power and its card appears above, ready to slot.\n\n"
+        + "Only legal picks are ever offered -- right tier, right level, real "
+        + "prerequisites -- so you cannot assemble a character the game would "
+        + "reject. Dropped something by accident? Undo, at the top of the panel." },
   { chapter: "powers", target: "#builder", diagram: "powerCard", key: "power-card", anchor: "[data-tm=card1]", side: "bottom", top: 0.08,
     title: "What is on a power card",
     body: "The drawing labels everything on a card: the power's name with the ⓘ "
@@ -746,6 +820,58 @@ const TOUR_STEPS = [
         + "you want to know whether a change helped, look here, not only at the "
         + "defensive bars.",
     absent: "The Offense section of the Stats panel, once a character is loaded." },
+  { chapter: "stats", target: "#offense-stats", anchor: "[data-tm=atk-table]", side: "right",
+    title: "Every attack, priced",
+    body: "Under the headline numbers, each attack you own is priced: its damage, "
+        + "how long its animation locks you in place, its recharge, and DPA -- "
+        + "damage per second of animation, the honest measure of an attack's "
+        + "worth. A huge hit with a slow animation can price out worse than a "
+        + "quick one, and this table is where that shows.\n\n"
+        + "The Top attack line names the best of them; a good attack chain is "
+        + "built from the top of this table down." },
+  { chapter: "stats", target: "#offense-stats", anchor: "[data-tm=support-note]", side: "right",
+    title: "When you play support",
+    body: "This example is a damage Brute, so the panel stays lean. Play a "
+        + "support set, a controller or a Mastermind and it grows: per-pet "
+        + "damage, your enemy debuffs at their base value per application, and "
+        + "what your buffs hand allies.\n\n"
+        + "Those numbers are the invisible half of the game made visible -- and "
+        + "for a support role they are exactly what the optimizer maximises: "
+        + "size times how often they are up." },
+  { chapter: "stats", target: "#overview-card", side: "left",
+    title: "Build Vitals: the report card",
+    body: "The summary band under your powers starts with the report card: "
+        + "defence and resistance by type AND position in one grid -- marked "
+        + "where a number is done -- with the build's pulse underneath: "
+        + "recharge, recovery, hit points, and damage per second single-target "
+        + "and area.\n\n"
+        + "It is the same truth as the Stats panel, folded small enough to read "
+        + "at a glance while you work the slots above it." },
+  { chapter: "stats", target: "#bonuses-card", side: "left",
+    title: "Set bonuses, totted up",
+    body: "Every set bonus currently active, aggregated -- ×3 of one, ×2 of "
+        + "another -- so you can see where your recharge and defence actually "
+        + "come from.\n\n"
+        + "When a number on the report card needs to move, look here first: "
+        + "this list says which bonuses you are stacking, and what disappears "
+        + "if you swap a set out." },
+  { chapter: "stats", target: "#uniques-card", side: "left",
+    title: "Uniques carried",
+    body: "The one-slot wonders: globals that give a build-wide effect from a "
+        + "single slot -- a +defense IO here, a +recovery proc there. This card "
+        + "lists every one you carry, so you always know what you already have.\n\n"
+        + "A solve parks them in low-priority powers where they cost nothing -- "
+        + "the Global mules pattern from the Powers section." },
+  { chapter: "stats", target: "#accolades-card", side: "left",
+    title: "Accolades",
+    body: "Accolades are permanent bonus powers the game awards for collections "
+        + "of badges -- real hit points and endurance. Tick the ones your "
+        + "character has earned and your totals recalculate; the greyed rows "
+        + "belong to the other side, which is exactly why flipping Hero/Villain "
+        + "moves your numbers.\n\n"
+        + "The ⓘ on each row tells you how to earn it in game, and Preview all "
+        + "shows your numbers with every accolade in hand -- a ceiling worth "
+        + "knowing about." },
 
   // ── Letting it build for you ───────────────────────────────────────────────
   { chapter: "solve", target: "#solve-btn", spine: true, side: "right",
@@ -798,6 +924,22 @@ const TOUR_STEPS = [
         + "the app tells you first and cancelling keeps it -- nothing is dropped "
         + "silently.",
     absent: "Appears once you have imported a build." },
+  { chapter: "solve", target: "#tray-out", side: "left",
+    title: "Your in-game trays",
+    body: "After a solve, the plan lands the way you will actually play it: a "
+        + "suggested layout for the game's power trays -- the attack chain "
+        + "together where your fingers live, toggles and autos parked out of "
+        + "the click path.\n\n"
+        + "Copy it into the game once and muscle memory does the rest.",
+    absent: "Appears under the powers once a solve has produced a layout." },
+  { chapter: "solve", target: "#order-out", side: "left",
+    title: "The respec order",
+    body: "The respec screen in game asks you to re-place every pick, in order, "
+        + "from level 1 up. This is that order, one line per pick, so at the "
+        + "trainer you just read down the list instead of reconstructing it "
+        + "from memory.\n\n"
+        + "It appears once there is a plan worth respeccing into.",
+    absent: "Appears under the powers when a plan differs from what you imported." },
   { chapter: "solve", target: "#validation", side: "right",
     title: "The rules check",
     body: "Anything the game would not allow shows up here: too many pools, an "
