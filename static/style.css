@@ -1951,6 +1951,17 @@ body { overflow: hidden; }
   padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px;
   margin-top: 6px; display: flex; flex-direction: column; gap: 2px;
 }
+/* The fake Journey: top-aligned wide box so its explanation card fits below,
+   and a simple road of level markers with the green ★ you-are-here. */
+#tour-mock .tm-journey { align-items: flex-start; padding-top: 30px; }
+#tour-mock .tm-journey .modal-box { width: min(900px, 92vw); }
+#tour-mock .tm-road { display: flex; gap: 10px; align-items: center; margin: 10px 0; }
+#tour-mock .tm-stop {
+  min-width: 30px; height: 30px; padding: 0 8px; border-radius: 15px;
+  border: 1px solid var(--border); background: var(--panel2);
+  display: flex; align-items: center; justify-content: center; font-size: 12px;
+}
+#tour-mock .tm-stop.here { border-color: #22c55e; color: #22c55e; font-weight: 600; }
 
 /* TOUR GREEN. The highlight colour is green ON PURPOSE: no app theme (hero
    blue/gold, villain crimson, neutral) uses it, so "what the tour is pointing

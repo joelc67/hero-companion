@@ -320,7 +320,7 @@ const TOUR_MOCK_HTML = `
     </section>
     </div>
 
-    <aside class="panel pinfo tm-info" data-for="power-info" style="display:none">
+    <aside class="panel pinfo tm-info" data-for="power-info" data-tm-overlay="info" style="display:none">
       <h2>Knockout Blow</h2>
       <div class="pi-tags"><span class="pi-tag">Click</span><span class="pi-tag">Melee</span><span class="pi-tag">Single target</span></div>
       <table>
@@ -334,7 +334,7 @@ const TOUR_MOCK_HTML = `
     </aside>
   </div>
 
-  <div class="modal tm-modal" data-for="modal" style="display:none">
+  <div class="modal tm-modal" data-for="modal" data-tm-overlay="picker" style="display:none">
     <div class="modal-box" data-tm="modal-box">
       <div class="modal-head"><strong>Knockout Blow — choose an enhancement</strong><button type="button">✕</button></div>
       <p class="muted small">Only sets this power can actually take are offered — it accepts Melee Damage sets.</p>
@@ -345,6 +345,56 @@ const TOUR_MOCK_HTML = `
         <div class="tm-set-row"><b>Kinetic Combat</b> <span class="muted small">4 pieces · prized for smashing/lethal defense</span></div>
         <div class="tm-set-row"><b>Crushing Impact</b> <span class="muted small">5 pieces · accuracy and recharge bonuses</span></div>
       </div>
+    </div>
+  </div>
+
+  <div class="modal tm-modal" data-tm-overlay="targets" style="display:none">
+    <div class="modal-box" data-tm="targets-box">
+      <div class="modal-head"><strong>Customize build targets</strong><button type="button">✕</button></div>
+      <p class="muted small">Anything you set here outranks the preset — it is what the optimizer chases first.</p>
+      <div class="tm-set-row"><b>Melee defense — 45%</b> <span class="muted small">your ask · reached 41.3% so far</span></div>
+      <div class="tm-set-row"><b>Smashing/Lethal resistance — 90%</b> <span class="muted small">your ask · reached, at your cap ✓</span></div>
+      <div class="tm-set-row"><b>Recharge — +70%</b> <span class="muted small">your ask · reached +72.5% ✓</span></div>
+      <div class="tm-set-row"><b>Ranged defense — 45%</b> <span class="muted small">best reachable on this character ≈ 36.2 — the unpicked
+        Weave would add about +5. Take it, lower the ask, or leave it: your call either way.</span></div>
+      <p class="muted small">💾 Save these as a named preset to reuse on other characters.</p>
+    </div>
+  </div>
+
+  <div class="modal tm-modal" data-tm-overlay="changes" style="display:none">
+    <div class="modal-box" data-tm="changes-box">
+      <div class="modal-head"><strong>📋 What the solve changed</strong><button type="button">✕</button></div>
+      <div class="tm-set-row"><b>Knockout Blow</b> <span class="muted small">Crushing Impact ×5 → Superior Unrelenting Fury ×6 (one slot added)</span></div>
+      <div class="tm-set-row"><b>Tough</b> <span class="muted small">generic resistance IO → Steadfast Protection: Resistance/+Def 3%</span></div>
+      <div class="tm-set-row"><b>Health</b> <span class="muted small">one slot moved out, to Knockout Blow</span></div>
+      <div class="tm-set-row"><b>What it bought</b> <span class="muted small">+4.2% melee defense · +10% recharge · same endurance</span></div>
+      <p class="muted small">⬇ Export as .mbd &nbsp;·&nbsp; Keep it &nbsp;·&nbsp; ↺ Reset to imported</p>
+    </div>
+  </div>
+
+  <div class="modal tm-modal tm-journey" data-tm-overlay="journey" style="display:none">
+    <div class="modal-box" data-tm="journey-box">
+      <div class="modal-head"><strong>🗺️ The Leveling Journey — Bruiser Brawlwell</strong><button type="button">✕</button></div>
+      <div class="tm-road">
+        <span class="tm-stop">1</span><span class="tm-stop">8</span><span class="tm-stop">15</span>
+        <span class="tm-stop here">★22</span><span class="tm-stop">30</span><span class="tm-stop">38</span>
+        <span class="tm-stop">44</span><span class="tm-stop">50</span>
+      </div>
+      <div class="tm-set-row"><b>Level 22 — your next stop</b>
+        <span class="muted small">Pick: Knockout Blow · a new enhancement slot arrives at 23 ·
+          zones that fit: Talos Island (20–27), Independence Port (20–30) — enemies there run even
+          with you · Citadel's Task Force opens at 25.</span></div>
+      <p class="muted small">Hero · Vigilante · Rogue · Villain · 🌀 Flashback — a preview of other routes; changes nothing.</p>
+    </div>
+  </div>
+
+  <div class="modal tm-modal" data-tm-overlay="bugreport" style="display:none">
+    <div class="modal-box" data-tm="bug-box">
+      <div class="modal-head"><strong>🐞 Report a bug</strong><button type="button">✕</button></div>
+      <p class="muted small">App 0.12.28 · model v36 · Homecoming 2026.1.1242 — filled in for you.</p>
+      <input placeholder="What happened?" disabled>
+      <label class="incarnate-toggle"><input type="checkbox" checked disabled> Attach this build (.mbd) so it can be reproduced</label>
+      <p class="muted small">Nothing leaves your machine until you press Send.</p>
     </div>
   </div>
 </div>`;
@@ -380,13 +430,12 @@ function _mockShowScene(scene) {
     sc.style.display = (sc.dataset.tmScreen === (entry ? "entry" : "build")) ? "" : "none";
   });
   const grid = _mockEl.querySelector(".tm-main");
-  const info = _mockEl.querySelector('[data-for="power-info"]');
-  if (grid && info) {
-    grid.classList.toggle("tm-has-info", scene === "info");
-    info.style.display = scene === "info" ? "" : "none";
-  }
-  const modal = _mockEl.querySelector('[data-for="modal"]');
-  if (modal) modal.style.display = scene === "picker" ? "" : "none";
+  if (grid) grid.classList.toggle("tm-has-info", scene === "info");
+  // Exactly one overlay (the ⓘ column, a chooser, the Journey, the report
+  // form...) is up at a time: the one whose data-tm-overlay names this scene.
+  _mockEl.querySelectorAll("[data-tm-overlay]").forEach(ov => {
+    ov.style.display = (ov.dataset.tmOverlay === scene) ? "" : "none";
+  });
 }
 
 const TOUR_CHAPTERS = {
@@ -542,15 +591,16 @@ const TOUR_STEPS = [
         + "how often they are up -- not on how well it survives alone. The aim is "
         + "characters that get noticed as contributors.",
     absent: "A dropdown in the Build panel, next to Content." },
-  { chapter: "build", target: "#custom-targets-btn", side: "right",
+  { chapter: "build", target: "#custom-targets-btn", scene: "targets", anchor: "[data-tm=targets-box]", side: "right", slim: true,
     title: "Your own targets",
-    body: "If you have exact numbers in mind, set them here: defence by type or "
-        + "position, resistance, recharge, recovery and more. A target you set "
-        + "outranks the preset -- it is what the optimizer chases first -- and you "
-        + "can save your settings as a named preset to reuse on other characters.\n\n"
-        + "If a target cannot be reached, it says so with numbers: how close it "
-        + "got, which unpicked powers would close the gap, and roughly what each "
-        + "would add. Your ask is honored either way -- the tool states what a "
+    body: "This is what Customize build targets opens. Each row is an ask -- "
+        + "defence by type or position, resistance, recharge, recovery and more "
+        + "-- and anything you set outranks the preset: it is what the optimizer "
+        + "chases first. The save line at the bottom keeps the whole set as a "
+        + "named preset for your other characters.\n\n"
+        + "The Ranged row shows the honest answer to an ask that cannot be "
+        + "reached: how close it can get, and which unpicked power would close "
+        + "the gap. Your ask is honored either way -- the tool states what a "
         + "goal costs rather than quietly overriding it.",
     absent: "A button on the build summary card, labelled 'Customize build targets'." },
 
@@ -729,13 +779,15 @@ const TOUR_STEPS = [
         + "plainly too. A goal you cannot reach is worth knowing about rather than "
         + "chasing.",
     absent: "Appears below the build once you have run a solve." },
-  { chapter: "solve", target: "#changes-btn", side: "right",
+  { chapter: "solve", target: "#changes-btn", scene: "changes", anchor: "[data-tm=changes-box]", side: "right", slim: true,
     title: "What changed?",
-    body: "For imported characters: a window listing exactly what the solve "
-        + "changed from the build you brought in, so you can see the difference "
-        + "before you commit to anything in game.\n\n"
-        + "Open and close it as often as you like -- it is a report, not a "
-        + "confirmation step.",
+    body: "For imported characters, the What changed? button opens this window: "
+        + "one line per power -- what was slotted, what it is now -- and a "
+        + "closing line saying what the changes bought you, so you can judge the "
+        + "trade before committing to anything in game.\n\n"
+        + "It is a report, not a confirmation: open and close it as often as you "
+        + "like. From here you can also export the result as a .mbd, keep it, or "
+        + "put everything back with Reset.",
     absent: "Appears after you solve an imported build." },
   { chapter: "solve", target: "#reset-btn", side: "right",
     title: "Reset to imported",
@@ -758,18 +810,18 @@ const TOUR_STEPS = [
     absent: "Appears when something about the build needs attention." },
 
   // ── The other tools ────────────────────────────────────────────────────────
-  { chapter: "extras", target: "#journey-btn", spine: true,
+  { chapter: "extras", target: "#journey-btn", spine: true, scene: "journey", anchor: "[data-tm=journey-box]", side: "bottom",
     title: "The Leveling Journey",
-    body: "A map of the whole road from 1 to 50 for this character: what you pick "
-        + "at each level, when slots arrive, and for each stretch the zones that "
-        + "suit your level, how the enemies there will feel for you, the badges "
-        + "within reach with plain directions, and which task forces have opened "
-        + "up.\n\n"
+    body: "Click the 🗺️ button in the header and this opens: your whole 1-to-50 "
+        + "as a road. Every marker is a level, and the ★ is where your character "
+        + "stands. The open stop reads like the one shown -- that level's pick, "
+        + "when the next slot arrives, the zones that fit you and how their "
+        + "enemies will feel, and which task forces have just opened.\n\n"
         + "It follows the game's real schedule, special careers included -- an "
         + "Arachnos character gets the mandatory level-24 respec walked properly, "
-        + "branch and all. The Hero / Vigilante / Rogue / Villain switch inside is "
-        + "a preview of where somebody on that side would level; it changes "
-        + "nothing about your character.",
+        + "branch and all. The alignment switch inside is a preview of where "
+        + "somebody on another side would level; it changes nothing about your "
+        + "character.",
     absent: "The 🗺️ button in the header, once a character is loaded." },
   { chapter: "extras", target: "#conv-tool", anchor: "[data-tm=conv-body]", side: "left",
     title: "Enhancement Converter",
@@ -857,13 +909,16 @@ const TOUR_STEPS = [
         + "On first run the app asks once whether to check automatically at "
         + "startup; say no and this button is the only check that ever runs.",
     absent: "The ⟳ button in the header." },
-  { chapter: "header", target: "#bug-btn", spine: true,
+  { chapter: "header", target: "#bug-btn", spine: true, scene: "bugreport", anchor: "[data-tm=bug-box]", side: "right", slim: true,
     title: "Something wrong? Say so",
-    body: "Sends a report straight to the developer with no account needed. Your "
-        + "version and character are attached automatically, and you can include "
-        + "the build itself. Nothing leaves your machine until you press Send.\n\n"
-        + "That is the tour. Every panel has a 'Need help?' link that brings you "
-        + "back to just that part, whenever you want it.",
+    body: "This is the form behind the 🐞 button, and it goes straight to the "
+        + "developer with no account needed. The hard part of a good report -- "
+        + "your version, model and game-data numbers -- is filled in for you; "
+        + "you describe what happened, and the checkbox attaches the build "
+        + "itself so the problem can be reproduced. Nothing leaves your machine "
+        + "until you press Send.\n\n"
+        + "That is the tour. Every panel has a ? that brings you back to just "
+        + "that part, and the 🧭 compass holds the rest, whenever you want it.",
     absent: "The 🐞 button in the header." },
 ];
 
