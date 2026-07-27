@@ -33,6 +33,32 @@ power to add or remove it, and use the slot controls to place enhancement slots
 The stat panel updates live: defense by position, resistance by type, recharge,
 recovery, damage. Caps are shown — defense soft cap 45%, resistance cap by archetype.
 
+## Reading the Numbers
+
+Every stat is drawn as a bar, and each bar tells you three things at once.
+
+- **The filled portion** is what your build actually has right now.
+- **The marked line** is the number that matters for that stat: 45% for defense
+  (the soft cap, where most incoming attacks start missing), or your archetype's
+  resistance cap, which is 90% for Tankers and Brutes, 85% for Kheldians and the
+  Arachnos archetypes, and 75% for everyone else. Past that line the game stops
+  counting, so points spent beyond it are wasted.
+- **The number itself**, so you never have to estimate from the picture.
+
+Two things on the bars are worth knowing about, because they surprise people:
+
+**"⚔ N%" on a defense row.** Some defense (anything from a Hide-style power)
+switches off the moment you attack. When that applies, the row shows both numbers:
+the resting one, and the in-combat one after the drop. The in-combat figure is the
+one to plan around, because that is what you have when it matters.
+
+**Achieved vs target.** After a solve you get a list comparing what you asked for
+against what the build reached. A row that fell short is not the tool failing
+quietly — it will also tell you which unpicked powers on your character would help
+and roughly how much each would add. If nothing on your character supplies that
+stat, it says so plainly, because a goal you cannot reach is worth knowing about
+rather than chasing.
+
 ## Content and Role
 
 These two dropdowns are the most important choice in the tool:
@@ -59,6 +85,38 @@ The "Optimize" actions run a real search over powers, pools, and slotting:
 
 If a suggestion looks odd, it earned its place in the math — but you always have the
 final say. Swap anything; the tool re-evaluates around your choices.
+
+## Locking a Power
+
+Every power card has a padlock: 🔓 open means the optimizer may change it, 🔒 closed
+means hands off.
+
+A lock is absolute. A locked power comes out of a re-solve **exactly** as you left
+it, down to the individual enhancements. Everything unlocked is re-slotted toward
+your goal around it.
+
+Use it when you have already decided something and want the tool to work with that
+decision rather than argue with it. Common cases: you have expensive sets already
+slotted in game and do not want a plan that assumes you will re-buy them; you have
+a favourite proc in a particular power; or you are exploring "what would change if
+this part stayed fixed".
+
+Two consequences worth knowing before you lock:
+
+- **An empty slot inside a locked power stays empty.** The lock means untouched,
+  not "untouched except the gaps". The tool will tell you when that has happened
+  rather than quietly leaving holes.
+- **Locking constrains the result.** A locked power that is slotted poorly limits
+  how good the rest can be, and the solve is being honest when it comes back lower.
+  If a target suddenly cannot be reached, your locks are the first thing to check.
+
+Locks are saved with the character, so resuming later finds everything exactly as
+you left it.
+
+If you want most of a build kept rather than specific powers, use **Preserve my IO
+sets** instead: that keeps the sets you have already invested in and only re-slots
+generic enhancements and empty slots. Locks are the scalpel; preserve is the broad
+stroke.
 
 ## Leveling from 1 to 50
 
@@ -109,8 +167,26 @@ The Converter panel answers two questions:
 
 ## Hero or Villain
 
-The alignment button in the banner reskins the whole app — Hero Companion in blue,
-Villain Companion in red. Pure style; your choice is remembered.
+The alignment button in the banner (🦸 / 🦹) switches the whole app between Hero
+Companion in blue and Villain Companion in red. Your choice is remembered.
+
+**It is not only a colour scheme.** Accolades are alignment-specific in game, so
+switching sides also switches which accolades your character is assumed to have:
+the ones the other side cannot earn are dropped, that side's standard set is
+assumed instead, and your totals are recalculated. Accolades carry real stats, so
+you may see your numbers move slightly when you flip the button. That is correct
+behaviour, not a glitch — a villain build should not be counting Freedom Phalanx
+Reserve.
+
+If you only wanted the different look, flip it back and your accolades return with
+it. Nothing else about your build is touched: powers, slotting and targets stay
+exactly as they were.
+
+**A separate control, easy to confuse with this one:** the Leveling Journey has its
+own Hero / Vigilante / Rogue / Villain / 🌀 Flashback switch. That one is a
+**preview** of somebody else's route through the game, so you can see where a
+villain would level. It changes nothing about your character and resets when you
+close the Journey.
 
 ## Bugs, Champions, and Updates
 
