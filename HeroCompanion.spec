@@ -33,7 +33,7 @@ hiddenimports = [
     "server", "engine", "solver", "first_principles", "role_output", "converter",
     "leveling_schedule", "learn", "proc_pass", "mids_export", "mids_import",
     "mids_powercust", "ingame_import", "ai_build", "claude_bridge", "pulse_feed",
-    "flask_cors", "requests",
+    "requests",
     "pystray", "pystray._win32",           # tray icon backend
 ]
 

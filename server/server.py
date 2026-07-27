@@ -16,7 +16,6 @@ import traceback
 from collections import defaultdict, Counter
 
 from flask import Flask, jsonify, request, send_from_directory
-from flask_cors import CORS
 
 # --- make sibling packages importable (ai/, server/) ---
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -46,7 +45,16 @@ DATA_DIR = os.path.join(ROOT, "data")
 STATIC_DIR = os.path.join(ROOT, "static")
 
 app = Flask(__name__, static_folder=None)
-CORS(app)
+# NO CORS, deliberately (2026-07-27 security pass). This server binds 127.0.0.1
+# and serves the SPA from the SAME origin as the API, so the app never needed
+# cross-origin permission. A bare CORS(app) sends Access-Control-Allow-Origin: *,
+# which let ANY website the user happened to have open read this API while the
+# tray app was running - /ingame/scan (game paths + account folder names),
+# /saves (their characters), /gamelog/* (play data), and POST /app/shutdown.
+# Traced before removing: the only cross-origin traffic we have is the browser
+# calling api.web3forms.com (governed by THEIR headers, not ours) and Python
+# calling GitHub server-side (not subject to CORS at all). Nothing in this
+# project needs it. Do not add it back without a same-origin reason.
 
 # After a self-update relaunch, run_app waits briefly for the OLD browser tab to
 # reconnect (its update poll) before deciding whether to open a new tab at all.

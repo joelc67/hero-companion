@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- **Security: other websites can no longer read your local Hero Companion data.**
+  The app's own server was sending a permission header that let *any* website you
+  happened to have open in your browser call it and read the answer while Hero
+  Companion was running. That exposed your game install paths and account folder
+  names, your saved characters, and your Play Log data, and let a page shut the
+  app down. The app never needed that permission in the first place, since its
+  page and its data come from the same place, so it has been removed. Nothing
+  about how you use the app changes.
+
 - **Backing out of the "new level 50" wizard takes you back to the start screen.**
   Picking an entry card and then changing your mind used to close the wizard onto
   an empty builder with no character in it, which looks like the app broke. Closing
