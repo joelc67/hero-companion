@@ -1954,6 +1954,18 @@ body { overflow: hidden; }
 .driver-popover { max-width: 400px; }
 .driver-popover.tour-wide { max-width: 480px; }
 
+/* Always-present ways out on every card: save your spot, or just leave. */
+.driver-popover .tour-exit-row {
+  display: flex; justify-content: space-between; gap: 8px;
+  padding: 6px 12px 10px; border-top: 1px solid var(--border); margin-top: 4px;
+}
+.driver-popover .tour-exit-row button {
+  background: none; border: none; cursor: pointer;
+  color: var(--muted); font-size: 12px; padding: 2px 4px;
+}
+.driver-popover .tour-exit-row button:hover { color: var(--ink); }
+.tour-menu-resume { border-color: #22c55e; }
+
 /* Annotated tour diagrams. Every colour comes from the theme so the drawing can
    never be a light-mode picture sitting on a dark panel. */
 .tour-svg { width: 100%; height: auto; margin: 0 0 10px; display: block; }

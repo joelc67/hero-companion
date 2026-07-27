@@ -874,6 +874,19 @@ const _tourLater = () => {
 window._tourMarkLater = () => {
   try { sessionStorage.setItem("cohTourLater", "1"); } catch (e) {}
 };
+// The saved SPOT (Joel, 2026-07-27: "there should always be a save favorite,
+// or exit"). Every card carries an explicit save-and-leave; the compass
+// chooser then offers to resume exactly there. Saving is the user's explicit
+// act -- a plain Esc/✕ exit stores nothing (closing is not a decision).
+const _tourSpot = () => {
+  try { return JSON.parse(localStorage.getItem("cohTourSpot") || "null"); } catch (e) { return null; }
+};
+const _tourSaveSpot = (chapter, index) => {
+  try { localStorage.setItem("cohTourSpot", JSON.stringify({ c: chapter || "", i: index | 0 })); } catch (e) {}
+};
+const _tourClearSpot = () => {
+  try { localStorage.removeItem("cohTourSpot"); } catch (e) {}
+};
 
 function _tourVisible(el) {
   if (!el) return false;
@@ -983,11 +996,31 @@ window.startTour = function (chapter, atIndex) {
     // Esc / ✕ / Done all pass through destroy; the mock must never outlive
     // the tour, or it would sit as a full-screen lid over the real app.
     onDestroyed: () => { _closeTourMock(); _driver = null; },
+    // EVERY card carries an explicit way out (Joel: "there should always be a
+    // save favorite, or exit"): save your spot and leave -- the 🧭 chooser
+    // offers to resume there -- or just leave.
+    onPopoverRender: (popover, opts) => {
+      const idx = (opts && opts.state && opts.state.activeIndex) | 0;
+      const row = document.createElement("div");
+      row.className = "tour-exit-row";
+      const save = document.createElement("button");
+      save.type = "button";
+      save.textContent = "★ Save my spot & exit";
+      save.title = "Leave the tour and keep your place — the 🧭 compass will offer to resume exactly here.";
+      save.onclick = () => { _tourSaveSpot(chapter, idx); endTour(); };
+      const exit = document.createElement("button");
+      exit.type = "button";
+      exit.textContent = "Exit tour";
+      exit.title = "Leave the tour (Esc works too)";
+      exit.onclick = () => endTour();
+      row.append(save, exit);
+      popover.wrapper.appendChild(row);
+    },
     onHighlighted: () => {
       if (!_driver || _driver.hasNextStep()) return;
       // Finished = reached the end of a tour that covered every chapter (the
       // complete tour or the first-run spine). A single section does not count.
-      if (chapter === "all" || chapter === undefined) _tourMarkFinished();
+      if (chapter === "all" || chapter === undefined) { _tourMarkFinished(); _tourClearSpot(); }
     },
   });
   _driver.drive(Math.max(0, Math.min(atIndex | 0, live.length - 1)));
@@ -1015,9 +1048,38 @@ window.closeTourMenu = function () {
   if (m) m.remove();
 };
 
+// Resume at a saved spot. The spot is cleared on resume -- saving again is
+// one click away on every card, so a stale bookmark never lingers.
+window.resumeTour = function () {
+  const s = _tourSpot();
+  if (!s) { openTourMenu(); return; }
+  _tourClearSpot();
+  startTour(s.c === "" ? undefined : s.c, s.i | 0);
+};
+
+// The list a saved spot refers to, or null if that selection no longer exists
+// (e.g. a chapter renamed between releases -- the row simply is not offered).
+function _tourSpotList(c) {
+  const list = c === "all" ? TOUR_STEPS
+    : c ? TOUR_STEPS.filter(s => s.chapter === c)
+      : TOUR_STEPS.filter(s => s.spine);
+  return list.length ? list : null;
+}
+
 window.openTourMenu = function () {
   closeTourMenu();
   endTour();
+  const spot = _tourSpot();
+  const spotList = spot ? _tourSpotList(spot.c === "" ? undefined : spot.c) : null;
+  const resumeRow = spotList
+    ? `<button class="tour-menu-row tour-menu-resume" onclick="closeTourMenu(); resumeTour();">
+         <b>★ Resume where you left off</b>
+         <span class="muted small">${escHtml(spot.c === "all" ? "The complete tour"
+           : spot.c ? (TOUR_CHAPTERS[spot.c] || spot.c) : "The short tour")}
+           · step ${Math.min((spot.i | 0) + 1, spotList.length)} of ${spotList.length}</span>
+         <span class="tour-menu-n">saved</span>
+       </button>`
+    : "";
   const total = TOUR_STEPS.length;
   const rows = Object.keys(TOUR_CHAPTERS).map(k => {
     const n = TOUR_STEPS.filter(s => s.chapter === k).length;
@@ -1037,7 +1099,9 @@ window.openTourMenu = function () {
          <button class="linkchip" onclick="closeTourMenu()">✕ Close</button>
        </div>
        <p class="muted small">Pick a section, or take the lot. Nothing you see here changes
-         your build, and you can leave at any point with Esc or the ✕ on the card.</p>
+         your build, and every card has "Save my spot &amp; exit" — leave any time and
+         resume right here.</p>
+       ${resumeRow}
        <button class="tour-menu-row tour-menu-all" onclick="closeTourMenu(); startTour('all');">
          <b>The complete tour</b>
          <span class="muted small">Every section, start to finish, in order.</span>
