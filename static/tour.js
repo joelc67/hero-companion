@@ -210,12 +210,12 @@ const TOUR_MOCK_HTML = `
           </span>
         </div>
         <div class="slot-row">
-          <div class="slot filled"><span class="slot-abbr">Fu</span><span class="slot-lvl">50</span></div>
-          <div class="slot filled"><span class="slot-abbr">Fu</span><span class="slot-lvl">50</span></div>
-          <div class="slot filled"><span class="slot-abbr">Fu</span><span class="slot-lvl">50</span></div>
-          <div class="slot filled"><span class="slot-abbr">Fu</span><span class="slot-lvl">50</span></div>
-          <div class="slot filled"><span class="slot-abbr">Fu</span><span class="slot-lvl">50</span></div>
-          <div class="slot filled unique"><span class="slot-abbr">Fu</span><span class="slot-lvl">50</span></div>
+          <div class="slot filled"><img src="/static/icons/enh/SAO_Brute2.png" alt="Superior Unrelenting Fury"><span class="slot-lvl">50</span></div>
+          <div class="slot filled"><img src="/static/icons/enh/SAO_Brute2.png" alt=""><span class="slot-lvl">50</span></div>
+          <div class="slot filled"><img src="/static/icons/enh/SAO_Brute2.png" alt=""><span class="slot-lvl">50</span></div>
+          <div class="slot filled"><img src="/static/icons/enh/SAO_Brute2.png" alt=""><span class="slot-lvl">50</span></div>
+          <div class="slot filled"><img src="/static/icons/enh/SAO_Brute2.png" alt=""><span class="slot-lvl">50</span></div>
+          <div class="slot filled unique"><img src="/static/icons/enh/SAO_Brute2.png" alt=""><span class="slot-lvl">50</span></div>
         </div>
         <div class="set-summary"><span class="muted small">sets:</span> Superior Unrelenting Fury ×6</div>
       </div>
@@ -231,10 +231,10 @@ const TOUR_MOCK_HTML = `
           </span>
         </div>
         <div class="slot-row">
-          <div class="slot filled"><span class="slot-abbr">Un</span><span class="slot-lvl">50</span></div>
-          <div class="slot filled"><span class="slot-abbr">Un</span><span class="slot-lvl">50</span></div>
-          <div class="slot filled"><span class="slot-abbr">Un</span><span class="slot-lvl">50</span></div>
-          <div class="slot filled unique"><span class="slot-abbr">St</span><span class="slot-lvl">50</span></div>
+          <div class="slot filled"><img src="/static/icons/enh/UnbreakableGuard.png" alt="Unbreakable Guard"><span class="slot-lvl">50</span></div>
+          <div class="slot filled"><img src="/static/icons/enh/UnbreakableGuard.png" alt=""><span class="slot-lvl">50</span></div>
+          <div class="slot filled"><img src="/static/icons/enh/UnbreakableGuard.png" alt=""><span class="slot-lvl">50</span></div>
+          <div class="slot filled unique"><img src="/static/icons/enh/sSteadfastProtection.png" alt="Steadfast Protection +Def"><span class="slot-lvl">50</span></div>
         </div>
         <div class="set-summary"><span class="muted small">sets:</span> Unbreakable Guard ×3 · Steadfast Protection</div>
       </div>
