@@ -71,13 +71,13 @@ const TOUR_DIAGRAMS = {
      aria-label="An annotated stat bar showing the filled portion, the cap line, the printed figure, and the in-combat figure"><defs><marker id="tourArrowHead" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" class="d-head"/></marker></defs>
   <text x="62" y="85" class="d-name d-end">Melee</text>
   <rect x="70" y="72" width="240" height="16" rx="4" class="d-chip"/>
-  <rect x="70" y="72" width="170" height="16" rx="4" class="d-ico d-hot"/>
-  <path d="M270 62 L270 98" class="d-slot d-hot"/>
+  <rect x="70" y="72" width="204" height="16" rx="4" class="d-ico d-hot"/>
+  <path d="M310 62 L310 98" class="d-slot d-hot"/>
   <text x="322" y="85" class="d-name">38.2%</text>
   <rect x="368" y="70" width="66" height="20" rx="4" class="d-hotbox"/>
   <text x="376" y="85" class="d-name">⚔ 31.9%</text>
   <path d="M130 138 L130 92" class="d-arrow"/><text x="130" y="152" class="d-lbl d-mid">what you have</text>
-  <path d="M270 30 L270 58" class="d-arrow"/><text x="270" y="22" class="d-lbl d-mid">the line that matters</text>
+  <path d="M310 30 L310 58" class="d-arrow"/><text x="300" y="22" class="d-lbl d-mid">the bar ends at 45%</text>
   <path d="M392 138 L392 94" class="d-arrow"/><text x="392" y="152" class="d-lbl d-mid">in combat</text>
 </svg>`,
   headerRow: `
@@ -159,7 +159,7 @@ const TOUR_MOCK_HTML = `
     <h1>🦸 Hero Companion <span class="muted small">— Bruiser Brawlwell · Brute · level 50</span></h1>
     <div class="legend">
       <button class="iconbtn journey-pill" data-for="journey-btn" type="button">🗺️ <span class="journey-pill-label">Journey</span></button>
-      <button class="iconbtn" type="button">🧭</button>
+      <button class="iconbtn" data-tm="compass" type="button">🧭</button>
       <button class="iconbtn" data-for="save-btn" type="button">💾</button>
       <button class="iconbtn" data-for="help-btn" type="button">❓</button>
       <button class="iconbtn" data-for="bug-btn" type="button">🐞</button>
@@ -241,17 +241,26 @@ const TOUR_MOCK_HTML = `
 
       <details class="conv-guide" open onclick="event.preventDefault()"><summary data-tm="conv-summary">💰 Get expensive IOs cheap — enhancement converters</summary>
         <div data-for="conv-tool">
-          <p class="muted small">"How do I get this IO cheaply?" — a concrete path per enhancement,
-            with the converter and merit cost. "Is this drop worth anything?" — paste your drops:
-            keep, craft, or sell.</p>
+          <div data-tm="conv-body">
+            <p class="muted small">You asked: <b>Luck of the Gambler: Defense/+Recharge</b></p>
+            <div class="tm-set-row"><b>Cheapest path found</b>
+              <span class="muted small">Craft a cheap rare defense recipe at level 50 · run
+                enhancement converters within Defense sets until it lands (≈ 4 converters,
+                ≈ 275k inf) · total ≈ 1.4M inf — versus ≈ 7M buying it outright.</span></div>
+          </div>
         </div>
       </details>
     </section>
 
     <section class="panel" data-for="gamelog">
       <h2 data-tm="gamelog-head">📜 Play Log <span class="muted small">— insights from your game sessions</span></h2>
-      <p class="muted small">Off until you turn it on. Reads your own chat logs, on your machine,
-        and shows your sessions, characters and drops. Sharing anything is a separate choice.</p>
+      <div class="gl-cards" data-tm="gl-body">
+        <div class="tm-set-row"><b>Last session · 2h 10m · Bruiser Brawlwell</b>
+          <span class="muted small">Levelled 22 → 24 · haul: 2 rare recipes, 41 salvage —
+            appraised: keep 2, craft 1, sell the rest</span></div>
+        <div class="tm-set-row"><b>This week</b>
+          <span class="muted small">3 characters played · busiest evening: Thursday</span></div>
+      </div>
     </section>
     </div>
 
@@ -262,16 +271,16 @@ const TOUR_MOCK_HTML = `
         <span class="chip cap-def">Defense soft cap 45%</span>
         <span class="chip cap-res">Resistance hard cap 90%</span>
       </div>
-      <label class="incarnate-toggle"><input type="checkbox" data-for="incarnate-peak-toggle" disabled> Include incarnates (peak)</label>
+      <label class="incarnate-toggle" data-tm="inc-label"><input type="checkbox" data-for="incarnate-peak-toggle" disabled> Include incarnates (peak)</label>
       <label class="incarnate-toggle"><input type="checkbox" disabled> Include accolades + amplifiers</label>
-      <label class="incarnate-toggle"><input type="checkbox" data-for="suppression-toggle" disabled> In-combat view (suppression)</label>
+      <label class="incarnate-toggle" data-tm="sup-label"><input type="checkbox" data-for="suppression-toggle" disabled> In-combat view (suppression)</label>
       <h3>Defense <span class="muted small">soft cap 45%</span></h3>
       <div class="bars" data-for="defense-bars">
         <div class="bar-row"><span class="bar-label">Melee</span><div class="bar-track"><div class="bar-fill def" style="width:92%"></div></div><span class="bar-val">41.3%</span></div>
         <div class="bar-row"><span class="bar-label">Ranged</span><div class="bar-track"><div class="bar-fill def" style="width:80%"></div></div><span class="bar-val">36.2% <span class="over">⚔ 31.9%</span></span></div>
         <div class="bar-row"><span class="bar-label">AoE</span><div class="bar-track"><div class="bar-fill def" style="width:67%"></div></div><span class="bar-val">30.1%</span></div>
       </div>
-      <h3>Resistance <span class="muted small" data-for="res-cap-label">hard cap 90%</span></h3>
+      <h3 data-tm="res-head">Resistance <span class="muted small" data-for="res-cap-label">hard cap 90%</span></h3>
       <div class="bars">
         <div class="bar-row"><span class="bar-label">S/L</span><div class="bar-track"><div class="bar-fill res capped" style="width:100%"></div></div><span class="bar-val capped">90%</span></div>
         <div class="bar-row"><span class="bar-label">Energy</span><div class="bar-track"><div class="bar-fill res" style="width:51%"></div></div><span class="bar-val">46.2%</span></div>
@@ -296,7 +305,7 @@ const TOUR_MOCK_HTML = `
 
     <section class="panel">
       <h2>AI Assistant</h2>
-      <label class="preserve-toggle"><input type="checkbox" data-for="preserve-toggle" checked disabled>
+      <label class="preserve-toggle" data-tm="preserve-label"><input type="checkbox" data-for="preserve-toggle" checked disabled>
         <span>Preserve my IO sets — 🔒 locks every power I hand-slotted; unlock exceptions on their cards</span></label>
       <button class="solve-btn" data-for="solve-btn" type="button">🧮 Solve optimal slotting for goal (instant)</button>
       <button data-for="gen-btn" type="button">Generate 3 builds</button>
@@ -553,7 +562,7 @@ const TOUR_STEPS = [
         + "The examples in this tour describe a Brute built as a damage dealer, "
         + "so the set names and numbers stay consistent as you read. Your own "
         + "character will show its own powers; everything works the same way." },
-  { chapter: "powers", target: "#builder", diagram: "powerCard", key: "power-card", anchor: "[data-tm=card1-tools]", side: "bottom",
+  { chapter: "powers", target: "#builder", diagram: "powerCard", key: "power-card", anchor: "[data-tm=card1]", side: "bottom", top: 0.08,
     title: "What is on a power card",
     body: "The drawing labels everything on a card: the power's name with the ⓘ "
         + "that opens its full details, the level you take it at, the padlock, "
@@ -576,7 +585,7 @@ const TOUR_STEPS = [
         + "It is also where enhancement details live: click a slotted piece and "
         + "you get the piece, its set, and the set's bonuses -- the same numbers "
         + "the game uses." },
-  { chapter: "powers", target: "#modal", scene: "picker", anchor: "[data-tm=modal-box]", side: "right",
+  { chapter: "powers", target: "#modal", scene: "picker", anchor: "[data-tm=modal-box]", side: "right", slim: true,
     title: "Filling a slot, and why the list is short",
     body: "Click a slot and this chooser opens, offering the sets that power can "
         + "actually take, not every set in the game. An armour toggle offers "
@@ -610,7 +619,7 @@ const TOUR_STEPS = [
         + "the solver being honest rather than failing.\n\n"
         + "So when a target you used to reach suddenly falls short, check your "
         + "locks first. Unlock, re-solve, compare." },
-  { chapter: "powers", target: "#preserve-toggle", side: "right",
+  { chapter: "powers", target: "#preserve-toggle", anchor: "[data-tm=preserve-label]", side: "right",
     title: "Preserve my IO sets",
     body: "The broad-stroke alternative to locking, and usually the right choice "
         + "for a character you actually play: keep every set you have already "
@@ -640,15 +649,16 @@ const TOUR_STEPS = [
   { chapter: "stats", target: "#defense-bars", diagram: "statBar", side: "right",
     title: "How to read a bar",
     body: "Every bar tells you three things at once, marked on the drawing above: "
-        + "the filled part is what you have, the bright line is the number that "
-        + "matters, and the exact figure is printed so you never have to estimate "
-        + "from a picture.\n\n"
-        + "For defence the line sits at 45% -- the soft cap, where most incoming "
+        + "the filled part is what you have, and the END of the bar is the number "
+        + "that matters -- each bar is drawn against its own target, so a full "
+        + "bar means done. The exact figure is printed too, so you never have to "
+        + "estimate from a picture.\n\n"
+        + "For defence the bar runs to 45% -- the soft cap, where most incoming "
         + "attacks start missing you. If a row also shows a ⚔ figure, part of that "
         + "defence switches off in combat, and the ⚔ number is the one to plan "
         + "around, because it is what you have when it counts.",
     absent: "The Defence rows in the Stats panel." },
-  { chapter: "stats", target: "#res-cap-label", side: "right",
+  { chapter: "stats", target: "#res-cap-label", anchor: "[data-tm=res-head]", side: "right",
     title: "Caps are per archetype",
     body: "Resistance stops counting at your archetype's cap: 90% for Tankers and "
         + "Brutes, 85% for Kheldians and the Arachnos archetypes, 75% for everyone "
@@ -657,7 +667,7 @@ const TOUR_STEPS = [
         + "them: a slot buying resistance past the cap is a slot better spent "
         + "anywhere else on the build.",
     absent: "Shown beside the Resistance heading in the Stats panel." },
-  { chapter: "stats", target: "#suppression-toggle", side: "right",
+  { chapter: "stats", target: "#suppression-toggle", anchor: "[data-tm=sup-label]", side: "right",
     title: "The in-combat view",
     body: "Powers like Stealth lose part of their defence the moment you attack, "
         + "get hit, or take damage -- the game calls this suppression. This switch "
@@ -666,7 +676,7 @@ const TOUR_STEPS = [
         + "way. Turn it on when you want the honest in-combat picture, which is "
         + "usually the one worth planning around.",
     absent: "A checkbox under the stat bars, once a character is loaded." },
-  { chapter: "stats", target: "#incarnate-peak-toggle", side: "right",
+  { chapter: "stats", target: "#incarnate-peak-toggle", anchor: "[data-tm=inc-label]", side: "right",
     title: "What-if switches",
     body: "Two more switches live beside the in-combat view. Include incarnates "
         + "folds your Destiny and Hybrid buffs into the totals, matching the "
@@ -761,29 +771,31 @@ const TOUR_STEPS = [
         + "a preview of where somebody on that side would level; it changes "
         + "nothing about your character.",
     absent: "The 🗺️ button in the header, once a character is loaded." },
-  { chapter: "extras", target: "#conv-tool", anchor: "[data-tm=conv-summary]", side: "left",
+  { chapter: "extras", target: "#conv-tool", anchor: "[data-tm=conv-body]", side: "left",
     title: "Enhancement Converter",
-    body: "Answers the two money questions. 'How do I get this enhancement "
-        + "cheaply' gives a concrete path: which piece to buy or craft, which "
-        + "converters to use, and what it costs in converters and merits. 'Is this "
-        + "drop worth anything' reads drops pasted straight from the game and "
-        + "answers keep, craft, or sell for each.\n\n"
-        + "Its paths only use conversions the game actually allows -- there is no "
-        + "cheap-pool-to-purple shortcut, because the game won't allow one, and "
-        + "the tool never pretends otherwise.",
+    body: "This is the converter planner, and the highlighted example is what an "
+        + "answer looks like: the piece to start from, the conversions to run, "
+        + "and the price -- so 'expensive' becomes a shopping list.\n\n"
+        + "Ask it the two money questions. 'How do I get this enhancement "
+        + "cheaply?' returns a path like the one shown. 'Is this drop worth "
+        + "anything?' reads drops pasted straight from the game and answers "
+        + "keep, craft, or sell for each. Its paths only use conversions the "
+        + "game actually allows -- there is no cheap-pool-to-purple shortcut, "
+        + "because the game won't allow one.",
     absent: "The Converter panel." },
-  { chapter: "extras", target: "#gamelog", anchor: "[data-tm=gamelog-head]", side: "left",
+  { chapter: "extras", target: "#gamelog", anchor: "[data-tm=gl-body]", side: "left",
     title: "Play Log",
-    body: "Reads your own game chat logs, on your machine, and turns them into a "
-        + "picture of what you have actually been doing -- your characters, your "
-        + "sessions, what dropped.\n\n"
-        + "It is entirely optional and off until you turn it on. And turning it on "
-        + "shares nothing: reading your logs locally and sharing anything anywhere "
-        + "are separate choices, each asked separately.",
+    body: "Turn it on and this is what it builds from your own chat logs, on "
+        + "your machine -- the highlighted cards are the shape of it: each "
+        + "session with who you played and what you levelled, and your haul "
+        + "appraised for you, so 'worth keeping?' is already answered.\n\n"
+        + "It is entirely optional and off until you turn it on. And turning it "
+        + "on shares nothing: reading your logs locally and sharing anything "
+        + "anywhere are separate choices, each asked separately.",
     absent: "The 📜 Play Log panel, shown when you enable it." },
 
   // ── Saving, updates and help ───────────────────────────────────────────────
-  { chapter: "header", target: "#masthead", diagram: "headerRow", side: "bottom",
+  { chapter: "header", target: "#masthead", diagram: "headerRow", anchor: "[data-tm=compass]", side: "bottom",
     title: "The header's small buttons",
     body: "Nine small buttons share the header, and the drawing above names the "
         + "pair people mix up: the two circular arrows. ⟳ checks for updates; ↺ "
@@ -951,12 +963,13 @@ function _tourToDriverStep(s, i, all) {
   return {
     element: _tourMockEl(s),
     __tmScene: s.scene || (s.chapter === "start" ? "entry" : "build"),
+    __tmTop: s.top,
     // `side` steers the card into empty space instead of over the subject
     // (rail steps open rightward into the build column, build-column steps
     // open leftward over the rail) -- driver still flips it if it won't fit.
     popover: { title: s.title,
                description: crumb + art + _tourHtml(s.body),
-               popoverClass: s.diagram ? "tour-wide" : "",
+               popoverClass: s.diagram ? "tour-wide" : (s.slim ? "tour-slim" : ""),
                side: s.side, align: s.align },
   };
 }
@@ -1018,7 +1031,8 @@ window.startTour = function (chapter, atIndex) {
       // fixed-position, so scrolling would only shift the backdrop -- skip.
       if (el && _mockEl && !el.closest(".tm-modal")) {
         const r = el.getBoundingClientRect();
-        _mockEl.scrollTop += r.top - window.innerHeight * 0.22;
+        // Steps with tall cards (diagrams) can ask for a higher perch (__tmTop).
+        _mockEl.scrollTop += r.top - window.innerHeight * (step.__tmTop || 0.22);
       }
     },
     // Esc / ✕ / Done all pass through destroy; the mock must never outlive

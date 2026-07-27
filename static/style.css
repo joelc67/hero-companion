@@ -1942,9 +1942,11 @@ body { overflow: hidden; }
 #tour-mock .power-card { margin-top: 8px; }
 #tour-mock .solve-btn, #tour-mock .changes-btn, #tour-mock .reset-btn,
 #tour-mock [data-for="gen-btn"] { display: block; width: 100%; margin-top: 8px; }
-/* The fake set-picker sits LEFT of centre so the explanation card has real
-   room beside it -- centred, a 400px card could only land on top of it. */
-#tour-mock .tm-modal { justify-content: flex-start; padding-left: 5vw; }
+/* Rail rows the tour anchors span the full rail width, so a side-right card
+   lands OUTSIDE the panel instead of on the rail's own content. */
+#tour-mock label.incarnate-toggle, #tour-mock label.preserve-toggle {
+  display: block; width: 100%;
+}
 #tour-mock .tm-set-row {
   padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px;
   margin-top: 6px; display: flex; flex-direction: column; gap: 2px;
@@ -1964,6 +1966,11 @@ body { overflow: hidden; }
    their labels are readable; diagram steps wider still. */
 .driver-popover { max-width: 400px; }
 .driver-popover.tour-wide { max-width: 480px; }
+/* Slim card for subjects boxed in by their surroundings (the set picker sits
+   centred with ~360px beside it). */
+.driver-popover.tour-slim { max-width: 300px; }
+/* Cap diagram height so a drawing card always fits BELOW its subject. */
+.driver-popover .tour-svg { max-height: 210px; }
 
 /* Always-present ways out on every card: save your spot, or just leave. */
 .driver-popover .tour-exit-row {
