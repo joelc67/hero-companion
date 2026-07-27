@@ -1,5 +1,15 @@
 # Hero Companion — What's New
 
+## Unreleased
+
+- **Security: another website can no longer make the app do things.** 0.12.28
+  stopped other sites *reading* from the app. This closes the other half: a page
+  in another tab could still *send* the app an instruction your browser would
+  faithfully deliver, such as telling it to close, even though that page never
+  saw a reply. The app now refuses anything that changes something unless the
+  request came from its own page. Nothing about normal use changes, and the
+  tools and Companion Lite that talk to it are unaffected.
+
 ## 0.12.28 — 2026-07-27 — The security release
 
 Five security fixes and one field-reported bug. Nothing about how you use the

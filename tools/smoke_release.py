@@ -141,10 +141,34 @@ try:
     print(f"autostart: supported={auto.get('supported')} enabled={auto.get('enabled')} "
           f"registry={reg_reality}", "OK" if ok8 else "MISMATCH")
 
-    allok = ok1 and ok2 and ok3 and ok4 and ok5 and ok6 and ok7 and ok8
+    # pinned case 7 (0.12.29, CSRF): the PACKAGED app must refuse a state-changing
+    # request that came from another site, and must still accept its own. This is
+    # invisible in normal use, so only a live probe can prove it did not regress.
+    # /app/shutdown is the probe on purpose: if the guard is broken the smoke's
+    # own server dies and every later check fails loudly rather than silently.
+    def _post_raw(path, headers):
+        req = urllib.request.Request(base + path, b"{}", {"Content-Type": "application/json", **headers})
+        try:
+            return urllib.request.urlopen(req, timeout=10).status
+        except urllib.error.HTTPError as e:
+            return e.code
+        except Exception:  # noqa: BLE001
+            return 0
+    cross = _post_raw("/app/shutdown", {"Origin": "https://evil.example"})
+    own = _post_raw("/build/calculate", {"Origin": base})   # base IS our own origin
+    still_up = 0
+    try:
+        still_up = urllib.request.urlopen(base + "/meta", timeout=5).status
+    except Exception:  # noqa: BLE001
+        pass
+    ok9 = cross == 403 and own == 200 and still_up == 200
+    print(f"CSRF guard: cross-site write={cross} (want 403), own write={own} (want 200), "
+          f"server alive after={still_up}", "OK" if ok9 else "BROKEN")
+
+    allok = ok1 and ok2 and ok3 and ok4 and ok5 and ok6 and ok7 and ok8 and ok9
     print("SMOKE:", "PASS" if allok else
           f"FAIL (L1={ok1} summons={ok2} ver={ok3} recompute={ok4} "
-          f"errsurface={ok5} farmpicker={ok6} importnav={ok7} autostart={ok8})")
+          f"errsurface={ok5} farmpicker={ok6} importnav={ok7} autostart={ok8} csrf={ok9})")
     sys.exit(0 if allok else 1)
 finally:
     proc.terminate()

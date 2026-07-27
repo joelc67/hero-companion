@@ -13,6 +13,7 @@ import time
 import re
 import sys
 import traceback
+from urllib.parse import urlparse
 from collections import defaultdict, Counter
 
 from flask import Flask, jsonify, request, send_from_directory
@@ -55,6 +56,38 @@ app = Flask(__name__, static_folder=None)
 # calling api.web3forms.com (governed by THEIR headers, not ours) and Python
 # calling GitHub server-side (not subject to CORS at all). Nothing in this
 # project needs it. Do not add it back without a same-origin reason.
+
+
+# CSRF GUARD (2026-07-27). Removing the CORS grant above stopped other sites
+# READING our answers. It did NOT stop them SENDING a request the user's browser
+# will happily deliver -- a hidden form posting to /app/shutdown closes the app
+# even though the attacking page never sees the reply. CORS never covered that.
+#
+# The guard is browser-shaped because the problem is: browsers LABEL a request
+# with where it came from, so we refuse anything that CHANGES STATE and did not
+# come from our own page. Two signals, belt and braces:
+#   Origin          - sent on cross-origin writes; a mismatch is decisive
+#   Sec-Fetch-Site  - covers same-site-different-port, which Origin alone allows
+#
+# Non-browser callers (release smokes, tools/, Companion Lite, curl, the test
+# client) send NEITHER header and are unaffected BY DESIGN. That is not a hole:
+# a program on this machine already has the user's own file access, so there is
+# nothing here for it to escalate to.
+_SAFE_METHODS = {"GET", "HEAD", "OPTIONS"}
+
+
+@app.before_request
+def _refuse_cross_site_writes():
+    if request.method in _SAFE_METHODS:
+        return None
+    origin = request.headers.get("Origin")
+    if origin:
+        if urlparse(origin).netloc != request.host:
+            return jsonify({"ok": False, "error": "Cross-site request refused."}), 403
+    elif request.headers.get("Sec-Fetch-Site") == "cross-site":
+        return jsonify({"ok": False, "error": "Cross-site request refused."}), 403
+    return None
+
 
 # After a self-update relaunch, run_app waits briefly for the OLD browser tab to
 # reconnect (its update poll) before deciding whether to open a new tab at all.
