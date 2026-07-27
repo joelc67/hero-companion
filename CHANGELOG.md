@@ -4,9 +4,11 @@
 
 - **A guided tour of the whole app.** New here, or never sure what a button
   does? A 🧭 compass in the header opens a chooser: pick one section or take
-  the complete tour. Every card points at and highlights the real control it
-  explains, you set the pace, and nothing about your build is ever touched
-  along the way. Small controls get annotated drawings — which button is the
+  the complete tour. The tour walks a drawn example screen — a Brute damage
+  build with every panel filled in — so any part of it works at any time,
+  even before you have loaded anything, and nothing about your own work is
+  ever touched. Every card highlights the control it explains, you set the
+  pace, and small controls get annotated drawings — which button is the
   padlock, where the cap line sits on a stat bar, which circular arrow checks
   for updates and which one leaves. A fresh install offers the tour once;
   after that it waits behind the compass and the ? beside each section.
