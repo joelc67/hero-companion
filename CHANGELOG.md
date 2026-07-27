@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- **Security: names from outside your machine can no longer inject anything into
+  the app.** Text the app did not write itself, an imported build's name, an
+  in-game export, and above all other players' character names picked up by the
+  Play Log, was not being fully escaped before being placed into the page. A
+  name containing a double quote could break out and attach itself to the
+  interface. Now escaped properly. Names still display exactly as they are
+  written, quotes and all.
+
+- **Security: the app no longer sends internal error details to the page.** When
+  something failed, the raw error, including folder paths from your machine, was
+  handed back to whatever asked. You now get a plain explanation of what went
+  wrong and what to do, and the technical detail stays on your machine.
+
 - **Security: other websites can no longer read your local Hero Companion data.**
   The app's own server was sending a permission header that let *any* website you
   happened to have open in your browser call it and read the answer while Hero

@@ -103,8 +103,17 @@ window.addEventListener("unhandledrejection", (e) => {
 // ---------------------------------------------------------------------------
 // Init
 // ---------------------------------------------------------------------------
+// The DOUBLE QUOTE matters as much as the angle brackets (2026-07-27 security
+// pass, CodeQL js/incomplete-html-attribute-sanitization x44). This app builds
+// markup with template literals and writes attributes double-quoted, e.g.
+// title="${escHtml(x)}" - so a value containing " escaped the attribute and could
+// add its own, onerror= included. Untrusted text really does reach here: imported
+// .mbd files, in-game save exports, and the Play Log, which parses OTHER PLAYERS'
+// character names out of chat. A page on localhost has same-origin access to this
+// app's whole API, so that was worth closing at the root rather than per caller.
 const escHtml = (s) => String(s == null ? "" : s)
-  .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&#39;");
+  .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+  .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
 // Collapse + EMPTY the transient build-specific panels (tray layout, respec order) so
 // they never carry a previous character's content into a new/restarted/loaded build.
