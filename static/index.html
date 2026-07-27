@@ -22,30 +22,35 @@
       </div>
       <div class="entry-cards" id="entry-cards">
         <button class="entry-card" id="entry-continue" style="display:none">
+          <span class="tour-help entry-q" role="button" tabindex="0" onclick="explainEntry('entry-continue', event)" title="What does this do?" aria-label="Explain: Continue where you left off">?</span>
           <div class="entry-ico">⏯️</div>
           <h3>Continue where you left off</h3>
           <p>Pick up a character you're partway through — leveling one from scratch is weeks of play, so your plan and progress are saved.</p>
           <span class="entry-go"><span id="continue-count"></span> saved — open →</span>
         </button>
         <button class="entry-card" id="entry-scratch">
+          <span class="tour-help entry-q" role="button" tabindex="0" onclick="explainEntry('entry-scratch', event)" title="What does this do?" aria-label="Explain: Start a new character">?</span>
           <div class="entry-ico">✨</div>
           <h3>Start a new character</h3>
           <p>Not sure what to roll? Tell me what you want to do and where you'll play — I'll recommend an archetype and powers, walk each level's pick and slotting, and show the end-game IO build, caps, epics, and incarnates you're building toward.</p>
           <span class="entry-go">Pick my character →</span>
         </button>
         <button class="entry-card" id="entry-respec">
+          <span class="tour-help entry-q" role="button" tabindex="0" onclick="explainEntry('entry-respec', event)" title="What does this do?" aria-label="Explain: Build a new level-50 character">?</span>
           <div class="entry-ico">♻️</div>
           <h3>Build a new level-50 character</h3>
           <p>Planning an end-game build from scratch? Just tell me your archetype and main powersets (e.g. <em>Defender · Kinetics · Dark Blast</em>) and where you play — I'll build a brand-new optimized level-50 kit: power picks, slotting, soft/hard caps, epic, and incarnates. No file needed, and you can freely swap archetype or powersets while you plan.</p>
           <span class="entry-go">Build a new 50 →</span>
         </button>
         <button class="entry-card" id="entry-mids">
+          <span class="tour-help entry-q" role="button" tabindex="0" onclick="explainEntry('entry-mids', event)" title="What does this do?" aria-label="Explain: Import a Mids Reborn build">?</span>
           <div class="entry-ico">📋</div>
           <h3>Import a Mids Reborn build</h3>
           <p>Already have a <code>.mbd</code>? Load it for a critique, then optimize the slotting toward a goal — keeping the sets you've already invested in.</p>
           <span class="entry-go">Choose a .mbd file →</span>
         </button>
         <div class="entry-card entry-card-static" id="entry-ingame">
+          <span class="tour-help entry-q" role="button" tabindex="0" onclick="explainEntry('entry-ingame', event)" title="What does this do?" aria-label="Explain: Import a character you play">?</span>
           <div class="entry-ico">🎮</div>
           <h3>Import a character you play</h3>
           <p>In game, type <code>/build_save_file</code> in chat — then come back here:</p>
@@ -56,6 +61,16 @@
           levels — import a Mids export (.mbd) to carry +1..+5 and HO levels.</p>
         </div>
       </div>
+      <!-- A permanent way into the tour from the opening screen. The header
+           compass and the ? circles sit BEHIND this overlay (it is z-index 50,
+           the header is 30), so on this screen they are dimmed and unreachable-
+           looking. Without this, a returning user sees "the menu, and nothing
+           else" and has no visible door. Always present, unlike the first-run
+           offer, which only greets a fresh install. -->
+      <div class="entry-tour-line">
+        <button class="linkchip" onclick="openTourMenu()">🧭 Show me around this app</button>
+      </div>
+
       <!-- saved characters list (shown when "Continue" is chosen) -->
       <div id="saves-panel" class="hidden">
         <div class="saves-head">

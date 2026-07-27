@@ -376,7 +376,7 @@ window.endTour = function () {
 
 // chapter: undefined = the context-aware first tour; a chapter key = that
 // section only; "all" = every step.
-window.startTour = function (chapter) {
+window.startTour = function (chapter, atIndex) {
   if (!(window.driver && window.driver.js && window.driver.js.driver)) {
     console.warn("[tour] driver.js did not load; tour unavailable");
     return;
@@ -411,7 +411,18 @@ window.startTour = function (chapter) {
       if (_driver && !_driver.hasNextStep()) _tourMarkFinished();
     },
   });
-  _driver.drive();
+  _driver.drive(Math.max(0, Math.min(atIndex | 0, chosen.length - 1)));
+};
+
+// Explain ONE card on the opening menu, then carry on through the rest of that
+// screen. The entry cards are themselves <button>s, so their ? has to be a span
+// that stops the click from reaching the card -- otherwise asking what a card
+// does would trigger it, which is the opposite of helpful.
+window.explainEntry = function (elementId, ev) {
+  if (ev && ev.stopPropagation) ev.stopPropagation();
+  const list = TOUR_STEPS.filter(s => s.chapter === "start");
+  const idx = list.findIndex(s => s.target === "#" + elementId);
+  startTour("start", idx < 0 ? 0 : idx);
 };
 
 // ── The chooser: where do you want to start? ─────────────────────────────────

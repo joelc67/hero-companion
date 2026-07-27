@@ -1860,3 +1860,19 @@ body { overflow: hidden; }
 .tour-menu-row .small { grid-column: 1; }
 .tour-menu-n { grid-column: 2; grid-row: 1 / span 2; color: var(--muted); font-size: 12px; white-space: nowrap; }
 .tour-menu-all { margin-bottom: 10px; border-color: var(--accent); }
+
+/* The always-present tour door on the opening screen. Quiet: it must not compete
+   with the five entry cards, which are the actual decision on that screen. */
+.entry-tour-line { margin: 14px 0 2px; text-align: center; }
+.entry-tour-line .linkchip { font-size: 13px; }
+
+/* The ? on each entry card. Pinned to the card's top-right corner and a SPAN
+   rather than a button, because the cards are themselves <button>s and nesting
+   one inside another is invalid and would fire the card. Its handler calls
+   stopPropagation so asking what a card does never triggers it. */
+.entry-card { position: relative; }
+.entry-card .entry-q {
+  position: absolute; top: 8px; right: 8px; margin: 0; z-index: 2;
+  background: var(--panel2);
+}
+.entry-card .entry-q:hover { color: var(--accent); border-color: var(--accent); }
