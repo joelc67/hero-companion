@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+- **A guided tour of the whole app.** New here, or never sure what a button
+  does? A 🧭 compass in the header opens a chooser: pick one section or take
+  the complete tour. Every card points at and highlights the real control it
+  explains, you set the pace, and nothing about your build is ever touched
+  along the way. Small controls get annotated drawings — which button is the
+  padlock, where the cap line sits on a stat bar, which circular arrow checks
+  for updates and which one leaves. A fresh install offers the tour once;
+  after that it waits behind the compass and the ? beside each section.
+
+- **The user guide grew.** The Hero/Villain section now explains that
+  switching sides also switches which accolades are assumed and recalculates
+  your totals (it was described as pure style, which was wrong), and new
+  "Locking a power" and "Reading the Numbers" sections cover the padlock and
+  how to read the bars.
+
 - **Security: another website can no longer make the app do things.** 0.12.28
   stopped other sites *reading* from the app. This closes the other half: a page
   in another tab could still *send* the app an instruction your browser would

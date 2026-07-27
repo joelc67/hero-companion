@@ -16,6 +16,7 @@ Checks, all with a stated denominator:
 Run after ANY change to tour.js, index.html ids, or panel structure.
 """
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -38,6 +39,21 @@ def check(name, ok, detail=""):
 tour = TOUR.read_text(encoding="utf-8")
 html = HTML.read_text(encoding="utf-8")
 appjs = APPJS.read_text(encoding="utf-8")
+
+# 0. the file actually PARSES. Every regex check below reads text, not syntax --
+# on 2026-07-27 this audit reported ALL PASS on a tour.js that had stopped
+# parsing entirely. A file that does not parse has zero working steps.
+try:
+    _syn = subprocess.run(["node", "--check", str(TOUR)],
+                          capture_output=True, text=True, timeout=30)
+    syn_ok, syn_detail = _syn.returncode == 0, (_syn.stderr or "").strip()
+except FileNotFoundError:
+    syn_ok, syn_detail = False, "node not found on PATH -- syntax cannot be verified, refusing to pass"
+print()
+check("tour.js parses as JavaScript (node --check)", syn_ok, syn_detail if not syn_ok else "")
+if not syn_ok:
+    print("\nTOUR AUDIT FAILURES: file does not parse; remaining checks are meaningless\n")
+    sys.exit(1)
 
 # ids that exist in the static page
 static_ids = set(re.findall(r'id="([A-Za-z0-9_-]+)"', html))

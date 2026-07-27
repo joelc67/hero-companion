@@ -57,6 +57,38 @@ const TOUR_DIAGRAMS = {
   <path d="M370 96 L334 96" class="d-arrow"/><text x="374" y="99" class="d-lbl">drop it</text>
   <path d="M150 168 L150 132" class="d-arrow"/><text x="150" y="182" class="d-lbl d-mid">enhancement slots</text>
 </svg>`,
+  statBar: `
+<svg viewBox="0 0 440 170" class="tour-svg" role="img"
+     aria-label="An annotated stat bar showing the filled portion, the cap line, the printed figure, and the in-combat figure"><defs><marker id="tourArrowHead" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" class="d-head"/></marker></defs>
+  <text x="62" y="85" class="d-name d-end">Melee</text>
+  <rect x="70" y="72" width="240" height="16" rx="4" class="d-chip"/>
+  <rect x="70" y="72" width="170" height="16" rx="4" class="d-ico"/>
+  <path d="M270 62 L270 98" class="d-slot"/>
+  <text x="322" y="85" class="d-name">38.2%</text>
+  <text x="376" y="85" class="d-name">⚔ 31.9%</text>
+  <path d="M130 138 L130 92" class="d-arrow"/><text x="130" y="152" class="d-lbl d-mid">what you have</text>
+  <path d="M270 30 L270 58" class="d-arrow"/><text x="270" y="22" class="d-lbl d-mid">the line that matters</text>
+  <path d="M392 138 L392 94" class="d-arrow"/><text x="392" y="152" class="d-lbl d-mid">in combat</text>
+</svg>`,
+  headerRow: `
+<svg viewBox="0 0 440 200" class="tour-svg" role="img"
+     aria-label="The header's row of small buttons: Journey, tour, save, help, bug report, champion, update check, alignment, and start over"><defs><marker id="tourArrowHead" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" class="d-head"/></marker></defs>
+  <rect x="20" y="78" width="400" height="40" rx="8" class="d-card"/>
+  <text x="34" y="102" class="d-name">Hero Companion</text>
+  <rect x="170" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="181" y="102" class="d-glyph">🗺️</text>
+  <rect x="196" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="207" y="102" class="d-glyph">🧭</text>
+  <rect x="222" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="233" y="102" class="d-glyph">💾</text>
+  <rect x="248" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="259" y="102" class="d-glyph">❓</text>
+  <rect x="274" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="285" y="102" class="d-glyph">🐞</text>
+  <rect x="300" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="311" y="102" class="d-glyph">🏆</text>
+  <rect x="326" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="337" y="102" class="d-glyph">⟳</text>
+  <rect x="352" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="363" y="102" class="d-glyph">🦸</text>
+  <rect x="378" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="389" y="102" class="d-glyph">↺</text>
+  <path d="M207 50 L207 83" class="d-arrow"/><text x="207" y="42" class="d-lbl d-mid">this tour</text>
+  <path d="M363 50 L363 83" class="d-arrow"/><text x="363" y="42" class="d-lbl d-mid">hero / villain</text>
+  <path d="M337 146 L337 113" class="d-arrow"/><text x="337" y="160" class="d-lbl d-mid">check for updates</text>
+  <path d="M389 174 L389 113" class="d-arrow"/><text x="389" y="188" class="d-lbl d-mid">start over</text>
+</svg>`,
 };
 
 const TOUR_CHAPTERS = {
@@ -89,75 +121,139 @@ const TOUR_STEPS = [
   // ── Getting started ────────────────────────────────────────────────────────
   { chapter: "start", target: "#entry-overlay", spine: true,
     title: "Five ways in",
-    body: "Everything starts here. Which card you pick decides how much you have "
-        + "to type: some build a character from nothing, others read one you "
-        + "already play. You can come back to this screen any time.",
+    body: "Everything starts here, and which card you pick decides how much you "
+        + "have to type: two build a character from nothing, two read one you "
+        + "already have, and one resumes earlier work.\n\n"
+        + "A rule of thumb: new to the game, take Start a new character. Know "
+        + "exactly what you want at 50, take Build a new level 50. Already playing "
+        + "the character, import it instead -- a plan is worth more when it is "
+        + "built around what you really own. You can come back to this screen any "
+        + "time.",
     absent: "This is the first screen you see when the app opens. Reach it again "
           + "with the ↺ button in the header." },
   { chapter: "start", target: "#entry-continue",
     title: "Continue where you left off",
-    body: "Levelling a character is weeks of real play, so the app saves your plan "
-        + "and your progress. This card lists everything you have saved and picks "
-        + "up exactly where you stopped.",
+    body: "Levelling a character is weeks of real play, so the app keeps the whole "
+        + "plan on your machine: powers, slotting, levelling progress, locks and "
+        + "targets. This card lists every character you have saved and reopens one "
+        + "exactly where you stopped.\n\n"
+        + "You rarely need to save by hand -- the app saves quietly in the "
+        + "background as you work, and a small note in the header tells you when "
+        + "it has.",
     absent: "Appears on the opening screen once you have saved at least one character." },
   { chapter: "start", target: "#entry-scratch",
     title: "Start a new character",
     body: "For a character that does not exist yet. If you are not sure what to "
-        + "roll, this is the one to pick: you answer a few questions about how you "
-        + "like to play and it suggests archetypes that fit, then walks every "
-        + "level from 1 to 50.",
+        + "roll, this is the one: you answer a few questions about how you like to "
+        + "play and it suggests archetypes that fit, with reasons.\n\n"
+        + "From there it walks the whole road on the game's real schedule -- a "
+        + "power on even levels, slots on odd ones, pools from level 4, epics at "
+        + "35 -- so at every level you know what to pick and where to put it.",
     absent: "One of the cards on the opening screen." },
   { chapter: "start", target: "#entry-respec",
     title: "Build a new level 50",
     body: "You already know what you want to play and you want the finished "
-        + "article: powers, slotting, caps, epic pool and incarnates. Tell it the "
-        + "archetype and your two sets and it does the rest.",
+        + "article: every power, every slot, epic pool and incarnates, ready to "
+        + "respec into.\n\n"
+        + "Tell it the archetype and your two powersets and it does the rest, "
+        + "aimed at your Content and Role -- both explained later in this tour. "
+        + "Anything it produces, you can still adjust by hand.",
     absent: "One of the cards on the opening screen." },
   { chapter: "start", target: "#entry-mids",
     title: "Import from Mids Reborn",
-    body: "Already have a build in Mids? Load the .mbd file and the app reads it, "
-        + "tells you what it thinks, and can improve the slotting while keeping "
-        + "the sets you have already paid for.",
+    body: "Already have a build in Mids? Load the .mbd file and the app reads it "
+        + "and tells you what it thinks of it first -- what is strong, what is "
+        + "loose -- before changing anything.\n\n"
+        + "From there it can improve the slotting while keeping the sets you have "
+        + "already paid for, and export the result back out as a .mbd that Mids "
+        + "can open. Your file is never touched.",
     absent: "One of the cards on the opening screen." },
   { chapter: "start", target: "#entry-ingame",
     title: "Import a character you actually play",
-    body: "Type /build_save_file in the game's chat box, then use this card. The "
-        + "app finds your Homecoming saves by itself and imports the character you "
-        + "pick, so the plan is built around what you really have.",
+    body: "The character straight from the game. Type /build_save_file in the "
+        + "game's chat box; Homecoming writes a small text file, and the app finds "
+        + "those saves by itself -- you just pick the character from a list.\n\n"
+        + "This is the most honest starting point there is: the plan is built "
+        + "around exactly the powers and enhancements you really have, and the "
+        + "Preserve setting (covered in the Powers section) keeps the sets you "
+        + "have already paid for.",
     absent: "One of the cards on the opening screen." },
 
   // ── Choosing your character ────────────────────────────────────────────────
   { chapter: "build", target: "#setup", spine: true,
     title: "The Build panel",
     body: "Your character's identity lives here: archetype, primary and secondary "
-        + "sets, pools and epic. Change anything and everything below updates.",
+        + "powersets, pools and epic. Change anything and everything below it -- "
+        + "the power list, the slots, the numbers -- updates to match.\n\n"
+        + "As in the Powers section, the examples in this chapter follow a Brute "
+        + "built as a damage dealer, so the details stay consistent as you read.",
     absent: "The 'Build' panel, once you are past the opening screen." },
   { chapter: "build", target: "#sel-archetype",
     title: "Archetype first",
-    body: "Everything else follows from this. The powerset choices, the resistance "
-        + "cap your bars are measured against, and which roles make sense are all "
-        + "decided by the archetype.",
+    body: "Everything else follows from this one choice. The archetype decides "
+        + "which powersets exist for you, the resistance cap your bars are "
+        + "measured against, which roles make sense, and how strongly your powers "
+        + "land at all.\n\n"
+        + "Our example Brute is melee damage with a 90% resistance cap -- pick a "
+        + "Defender instead and the whole panel reshapes around buffs and debuffs.",
     absent: "The first dropdown in the Build panel." },
+  { chapter: "build", target: "#sel-primary",
+    title: "Primary and secondary",
+    body: "The primary set is your archetype's main job and the secondary is its "
+        + "supporting half. On the Brute that means attacks first and armour "
+        + "second; a Defender is the reverse -- buffs and debuffs first, blasts "
+        + "second.\n\n"
+        + "Both lists are already filtered to your archetype, so everything "
+        + "offered is a choice the game will allow -- including the special cases, "
+        + "like Kheldian form powers living inside their own sets.",
+    absent: "The primary and secondary dropdowns in the Build panel." },
+  { chapter: "build", target: "#pool-selectors",
+    title: "Power pools",
+    body: "Pools add what your sets lack: travel, extra toughness like Tough and "
+        + "Weave, utility. The game allows four at most, opening from level 4, and "
+        + "only one of the five origin pools -- Sorcery, Experimentation, Force of "
+        + "Will, Gadgetry, Utility Belt.\n\n"
+        + "You do not have to fill these by hand: the Build action later in this "
+        + "tour picks pools too, following exactly the rules the game enforces.",
+    absent: "The pool dropdowns in the Build panel." },
+  { chapter: "build", target: "#sel-epic",
+    title: "Epic pools",
+    body: "Epic and patron pools open at level 35 and reach outside your "
+        + "archetype's normal toolkit -- armour for a damage dealer, or a ranged "
+        + "attack for our melee Brute.\n\n"
+        + "The list is per archetype and tiered like the game's own, and the "
+        + "special cases are honoured: Kheldians have no epic at all, so none is "
+        + "ever offered.",
+    absent: "The epic dropdown in the Build panel." },
   { chapter: "build", target: "#preset-content",
     title: "Content: where you play",
     body: "General play, task forces, incarnate trials, farming, PvP. This sets "
-        + "what the build has to survive and what it needs to deliver. It is not "
-        + "cosmetic: it changes what the optimizer aims for.",
+        + "what the build has to survive and what it needs to deliver -- an "
+        + "incarnate trial hits far harder than street sweeping, and a fire farmer "
+        + "cares mostly about a single damage type.\n\n"
+        + "It is not cosmetic: Content changes the targets the optimizer chases, "
+        + "so the same character solved for different content comes out slotted "
+        + "differently.",
     absent: "A dropdown in the Build panel, next to Role." },
   { chapter: "build", target: "#preset-role",
     title: "Role: what you are there to do",
     body: "Damage, tanking, support, control, healing. The optimizer maximises "
-        + "your role's output rather than a generic score, so a support character "
-        + "is judged on how much its buffs and debuffs change a fight, not on how "
-        + "well it survives alone.",
+        + "your role's output rather than a generic score.\n\n"
+        + "That matters most for support and control: a Defender is judged on how "
+        + "much its buffs and debuffs actually change a fight -- their size times "
+        + "how often they are up -- not on how well it survives alone. The aim is "
+        + "characters that get noticed as contributors.",
     absent: "A dropdown in the Build panel, next to Content." },
   { chapter: "build", target: "#custom-targets-btn",
     title: "Your own targets",
-    body: "If you have specific numbers in mind, set them here: defence by type or "
-        + "position, resistance, recharge, recovery. What you set is what the "
-        + "optimizer chases, and you can save your settings as a named preset to "
-        + "reuse. If a target cannot be reached it tells you, and names the powers "
-        + "that would help.",
+    body: "If you have exact numbers in mind, set them here: defence by type or "
+        + "position, resistance, recharge, recovery and more. A target you set "
+        + "outranks the preset -- it is what the optimizer chases first -- and you "
+        + "can save your settings as a named preset to reuse on other characters.\n\n"
+        + "If a target cannot be reached, it says so with numbers: how close it "
+        + "got, which unpicked powers would close the gap, and roughly what each "
+        + "would add. Your ask is honored either way -- the tool states what a "
+        + "goal costs rather than quietly overriding it.",
     absent: "A button on the build summary card, labelled 'Customize build targets'." },
 
   // -- Powers and slots ------------------------------------------------------
@@ -238,95 +334,219 @@ const TOUR_STEPS = [
   { chapter: "stats", target: "#stats", spine: true,
     title: "Your numbers, live",
     body: "Defence, resistance, recharge, recovery, damage. These update as you "
-        + "change anything, and they include your enhancements, set bonuses, and "
-        + "the toggles and auto powers you actually run.",
+        + "change anything, and they include your enhancements, your set bonuses, "
+        + "and the toggles and auto powers you would actually be running.\n\n"
+        + "Every figure is computed from the game's own data. If the app and the "
+        + "game ever disagree, the game is right -- and that is a bug worth "
+        + "reporting with the 🐞 button.",
     absent: "The 'Stats' panel, once a character is loaded." },
-  { chapter: "stats", target: "#defense-bars",
+  { chapter: "stats", target: "#defense-bars", diagram: "statBar",
     title: "How to read a bar",
-    body: "The filled part is what you have. The marked line is the number that "
-        + "matters: 45% for defence, where most attacks start missing you. The "
-        + "figure is printed too, so you never have to guess from the picture.\n\n"
-        + "If a defence row shows a second '⚔' number, that power switches off when "
-        + "you attack. The ⚔ figure is the one to plan around, because it is what "
-        + "you have when it counts.",
+    body: "Every bar tells you three things at once, marked on the drawing above: "
+        + "the filled part is what you have, the bright line is the number that "
+        + "matters, and the exact figure is printed so you never have to estimate "
+        + "from a picture.\n\n"
+        + "For defence the line sits at 45% -- the soft cap, where most incoming "
+        + "attacks start missing you. If a row also shows a ⚔ figure, part of that "
+        + "defence switches off in combat, and the ⚔ number is the one to plan "
+        + "around, because it is what you have when it counts.",
     absent: "The Defence rows in the Stats panel." },
   { chapter: "stats", target: "#res-cap-label",
     title: "Caps are per archetype",
     body: "Resistance stops counting at your archetype's cap: 90% for Tankers and "
         + "Brutes, 85% for Kheldians and the Arachnos archetypes, 75% for everyone "
-        + "else. Points past the line are wasted, which is why the app will not "
-        + "chase them.",
+        + "else.\n\n"
+        + "Points past the line are wasted, which is why the app will not chase "
+        + "them: a slot buying resistance past the cap is a slot better spent "
+        + "anywhere else on the build.",
     absent: "Shown beside the Resistance heading in the Stats panel." },
+  { chapter: "stats", target: "#suppression-toggle",
+    title: "The in-combat view",
+    body: "Powers like Stealth lose part of their defence the moment you attack, "
+        + "get hit, or take damage -- the game calls this suppression. This switch "
+        + "shows all your totals as they are mid-fight instead of at rest.\n\n"
+        + "It is a display choice only: Solve optimizes the same numbers either "
+        + "way. Turn it on when you want the honest in-combat picture, which is "
+        + "usually the one worth planning around.",
+    absent: "A checkbox under the stat bars, once a character is loaded." },
+  { chapter: "stats", target: "#incarnate-peak-toggle",
+    title: "What-if switches",
+    body: "Two more switches live beside the in-combat view. Include incarnates "
+        + "folds your Destiny and Hybrid buffs into the totals, matching the "
+        + "fully-buffed display Mids users know. The amplifiers switch adds the "
+        + "three buyable amplifier buffs and permanent accolades.\n\n"
+        + "Useful for answering 'what am I really at during a fight' -- just "
+        + "remember which switches are on before comparing numbers with someone "
+        + "else's build.",
+    absent: "Checkboxes under the stat bars, once a character is loaded." },
+  { chapter: "stats", target: "#offense-section",
+    title: "The output half",
+    body: "Below the defensive bars, the panel speaks your role's language: a "
+        + "damage dealer sees single-target and area damage throughput, a "
+        + "Mastermind sees pet damage, a support character sees what its debuffs "
+        + "and buffs are actually worth in a fight.\n\n"
+        + "This is the side the optimizer is maximising for your role -- so when "
+        + "you want to know whether a change helped, look here, not only at the "
+        + "defensive bars.",
+    absent: "The Offense section of the Stats panel, once a character is loaded." },
 
   // ── Letting it build for you ───────────────────────────────────────────────
   { chapter: "solve", target: "#solve-btn", spine: true,
     title: "Solve the slotting",
     body: "This works out the best enhancement layout it can find for the powers "
-        + "you have, aimed at your Content and Role. It is real arithmetic over the "
-        + "game's actual numbers, not a template, and it can take up to a minute on "
-        + "a complicated build. It will say so while it works.",
+        + "you have taken, aimed at your Content, Role and any targets you set. It "
+        + "is real arithmetic over the game's actual numbers, not a template, and "
+        + "it can take up to a minute on a complicated build. It will say so while "
+        + "it works.\n\n"
+        + "Two promises it always keeps: it never changes which powers you chose, "
+        + "and it obeys your padlocks and the Preserve setting from the Powers "
+        + "section.",
     absent: "The solve button, once a character is loaded." },
   { chapter: "solve", target: "#gen-btn",
     title: "Or have it pick the powers too",
     body: "Build goes further than Solve: it chooses which powers to take as well "
-        + "as how to slot them, including pools, epic and incarnates.",
+        + "as how to slot them -- pools, epic and incarnates included -- following "
+        + "the same rules the game enforces: four pools at most, one origin pool, "
+        + "real prerequisites and level availability.\n\n"
+        + "Where a certified champion build exists for your combination it starts "
+        + "from there rather than from nothing. And whatever it produces, you can "
+        + "still change anything by hand afterwards.",
     absent: "The build button, near the solve controls." },
   { chapter: "solve", target: "#ai-response",
     title: "Achieved versus target",
     body: "After a solve you get the result in plain terms: what you asked for, "
         + "what it reached, and what it changed. If something fell short it does "
-        + "not go quiet about it. It names the unpicked powers on your character "
-        + "that would close the gap and roughly what each would add, and if nothing "
-        + "would, it tells you the goal may not be reachable on this pairing.",
+        + "not go quiet about it -- it names the unpicked powers on your character "
+        + "that would close the gap and roughly what each would add.\n\n"
+        + "If nothing on your character supplies a stat at all, it says that "
+        + "plainly too. A goal you cannot reach is worth knowing about rather than "
+        + "chasing.",
     absent: "Appears below the build once you have run a solve." },
+  { chapter: "solve", target: "#changes-btn",
+    title: "What changed?",
+    body: "For imported characters: a window listing exactly what the solve "
+        + "changed from the build you brought in, so you can see the difference "
+        + "before you commit to anything in game.\n\n"
+        + "Open and close it as often as you like -- it is a report, not a "
+        + "confirmation step.",
+    absent: "Appears after you solve an imported build." },
+  { chapter: "solve", target: "#reset-btn",
+    title: "Reset to imported",
+    body: "Puts an imported build back exactly as it came in, so you can try a "
+        + "different goal, role or options without re-importing.\n\n"
+        + "Reset means reset: custom targets and similar settings attached to the "
+        + "build are cleared with it. When there is something like that to lose, "
+        + "the app tells you first and cancelling keeps it -- nothing is dropped "
+        + "silently.",
+    absent: "Appears once you have imported a build." },
   { chapter: "solve", target: "#validation",
     title: "The rules check",
     body: "Anything the game would not allow shows up here: too many pools, an "
-        + "enhancement that cannot go where you put it, a power taken too early. "
-        + "If this is clear, the build is legal.",
+        + "enhancement in a power that cannot take it, a power taken before its "
+        + "level, a second copy of a unique. If this is clear, the build is legal "
+        + "-- you can respec into it in game exactly as shown.\n\n"
+        + "The checks are the game's own rules, which is also why the app "
+        + "sometimes refuses a request: it will not plan something the game would "
+        + "reject.",
     absent: "Appears when something about the build needs attention." },
 
   // ── The other tools ────────────────────────────────────────────────────────
   { chapter: "extras", target: "#journey-btn", spine: true,
     title: "The Leveling Journey",
-    body: "A map of the whole road from 1 to 50: what you pick at each level, when "
-        + "slots arrive, which zones suit you, and the badges and task forces "
-        + "within reach. It has its own Hero / Vigilante / Rogue / Villain switch, "
-        + "which is only a preview of where somebody on that side would level. It "
-        + "changes nothing about your character.",
+    body: "A map of the whole road from 1 to 50 for this character: what you pick "
+        + "at each level, when slots arrive, and for each stretch the zones that "
+        + "suit your level, how the enemies there will feel for you, the badges "
+        + "within reach with plain directions, and which task forces have opened "
+        + "up.\n\n"
+        + "It follows the game's real schedule, special careers included -- an "
+        + "Arachnos character gets the mandatory level-24 respec walked properly, "
+        + "branch and all. The Hero / Vigilante / Rogue / Villain switch inside is "
+        + "a preview of where somebody on that side would level; it changes "
+        + "nothing about your character.",
     absent: "The 🗺️ button in the header, once a character is loaded." },
   { chapter: "extras", target: "#conv-tool",
     title: "Enhancement Converter",
-    body: "Answers two questions. 'How do I get this enhancement cheaply' gives you "
-        + "a concrete path with the converter and merit cost. 'Is this drop worth "
-        + "anything' takes your drops pasted straight from the game and tells you "
-        + "keep, craft, or sell.",
+    body: "Answers the two money questions. 'How do I get this enhancement "
+        + "cheaply' gives a concrete path: which piece to buy or craft, which "
+        + "converters to use, and what it costs in converters and merits. 'Is this "
+        + "drop worth anything' reads drops pasted straight from the game and "
+        + "answers keep, craft, or sell for each.\n\n"
+        + "Its paths only use conversions the game actually allows -- there is no "
+        + "cheap-pool-to-purple shortcut, because the game won't allow one, and "
+        + "the tool never pretends otherwise.",
     absent: "The Converter panel." },
   { chapter: "extras", target: "#gamelog",
     title: "Play Log",
     body: "Reads your own game chat logs, on your machine, and turns them into a "
-        + "picture of what you have actually been doing. Entirely optional and off "
-        + "until you turn it on.",
+        + "picture of what you have actually been doing -- your characters, your "
+        + "sessions, what dropped.\n\n"
+        + "It is entirely optional and off until you turn it on. And turning it on "
+        + "shares nothing: reading your logs locally and sharing anything anywhere "
+        + "are separate choices, each asked separately.",
     absent: "The 📜 Play Log panel, shown when you enable it." },
 
   // ── Saving, updates and help ───────────────────────────────────────────────
+  { chapter: "header", target: "#masthead", diagram: "headerRow",
+    title: "The header's small buttons",
+    body: "Nine small buttons share the header, and the drawing above names the "
+        + "pair people mix up: the two circular arrows. ⟳ checks for updates; ↺ "
+        + "leaves this character and returns to the opening screen.\n\n"
+        + "Left to right: the 🗺️ Journey, this tour's 🧭 compass, 💾 save, the ❓ "
+        + "user guide, 🐞 report a bug, 🏆 submit a champion, ⟳ updates, 🦸/🦹 "
+        + "alignment, and ↺ to load another character. The rest of this section "
+        + "takes the important ones in turn.",
+    absent: "The bar across the top of the app." },
+
   { chapter: "header", target: "#save-btn", spine: true,
     title: "Saving",
-    body: "Keeps the character's plan and levelling progress on your machine so you "
-        + "can resume. It also saves quietly in the background as you work.",
-    absent: "The save button in the header." },
+    body: "Keeps the character's plan and levelling progress on your machine so "
+        + "you can resume any time -- powers, slots, locks, targets, everything.\n\n"
+        + "You will rarely need it: the app also saves quietly in the background "
+        + "as you work, and a small note appears in the header when it does. The "
+        + "button is for peace of mind before you close.",
+    absent: "The 💾 button in the header." },
+  { chapter: "header", target: "#start-over-btn",
+    title: "Load another character",
+    body: "Returns to the opening screen -- the five cards from the start of this "
+        + "tour -- to continue another saved character, start a new one, or "
+        + "import.\n\n"
+        + "Nothing is lost on the way out: the character you are leaving has been "
+        + "saved in the background as you worked.",
+    absent: "The ↺ button at the right end of the header." },
   { chapter: "header", target: "#alignment-btn",
     title: "Hero or Villain",
     body: "Switches the whole app between blue and red. It is not only a colour "
         + "scheme: accolades are side-specific in game, so switching also swaps "
         + "which accolades your character is assumed to have and recalculates your "
-        + "totals. If your numbers move slightly when you flip it, that is correct. "
-        + "Flip it back and they return.",
+        + "totals. If your numbers move slightly when you flip it, that is "
+        + "correct; flip it back and they return.\n\n"
+        + "Do not confuse it with the Leveling Journey's own alignment switch -- "
+        + "that one is a preview of somebody else's route through the game and "
+        + "changes nothing at all.",
     absent: "The 🦸 / 🦹 button in the header." },
+  { chapter: "header", target: "#help-btn",
+    title: "The user guide",
+    body: "The full guide as a PDF: everything this tour covers and more, plus "
+        + "the release notes for every version. It is stored with the app, so it "
+        + "always matches the version you are actually running.",
+    absent: "The ❓ button in the header." },
+  { chapter: "header", target: "#champ-btn",
+    title: "Submit a champion",
+    body: "Think your build beats the shipped champion for its archetype, "
+        + "powersets and role? This saves it as a champion candidate. Every "
+        + "candidate is re-scored with the same math, and if yours genuinely wins "
+        + "it becomes the shipped champion in a future update -- with credit to "
+        + "you.\n\n"
+        + "Champions are how the optimizer starts smart: the best certified build "
+        + "for each combination ships with the app.",
+    absent: "The 🏆 button in the header." },
   { chapter: "header", target: "#update-btn",
     title: "Updates",
-    body: "Checks whether a newer version exists. Nothing is ever downloaded or "
-        + "installed without you saying so.",
+    body: "Checks whether a newer version exists -- it compares version numbers "
+        + "with the project's release page and sends nothing else. Nothing is "
+        + "ever downloaded or installed without you saying so.\n\n"
+        + "On first run the app asks once whether to check automatically at "
+        + "startup; say no and this button is the only check that ever runs.",
     absent: "The ⟳ button in the header." },
   { chapter: "header", target: "#bug-btn", spine: true,
     title: "Something wrong? Say so",
