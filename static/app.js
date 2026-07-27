@@ -2746,6 +2746,12 @@ async function init() {
     $(id).addEventListener("change", () => wizExplain(null)));
   $("start-over-btn").addEventListener("click", showEntry);
   refreshContinueCard();   // overlay shows on load — reveal Continue if saves exist
+  // ...and the tour offer belongs HERE too, not only in showEntry(). The overlay
+  // is visible from the markup on a fresh load, so showEntry() never runs for a
+  // FIRST-TIME visitor — the exact person the offer exists for. Putting it only
+  // there meant it appeared for people coming BACK and nobody else (Joel's walk,
+  // 2026-07-27: "the same menu with zero choice that could be made here").
+  if (typeof maybeOfferTour === "function") maybeOfferTour();
   setInterval(autoSaveTick, 120000);   // background auto-save every 2 min (only if changed)
   $("incarnate-peak-toggle").addEventListener("change", (e) => {
     // warn-but-allow (Joel's choice-doctrine ruling): the player may preview

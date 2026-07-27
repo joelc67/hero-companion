@@ -386,6 +386,7 @@ window.startTour = function (chapter) {
 // OFFER - the tour stays reachable from every 'Need help?' link forever.
 window.maybeOfferTour = function () {
   if (_tourSeen()) return;
+  if (document.querySelector(".tour-offer")) return;   // called from init AND showEntry
   const host = document.getElementById("entry-cards");
   if (!host || !_tourVisible(host)) return;
   const bar = document.createElement("div");
