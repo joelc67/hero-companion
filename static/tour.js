@@ -125,37 +125,79 @@ const TOUR_STEPS = [
         + "that would help.",
     absent: "A button on the build summary card, labelled 'Customize build targets'." },
 
-  // ── Powers and slots ───────────────────────────────────────────────────────
+  // -- Powers and slots ------------------------------------------------------
   { chapter: "powers", target: "#builder", spine: true,
     title: "Powers and slots",
-    body: "Every power you have taken, with its enhancement slots. Click a power to "
-        + "take or drop it. The game gives you 67 placeable slots across a whole "
-        + "career and the app enforces that limit, so what you see here is "
-        + "something you could really build.",
-    absent: "The 'Powers & Slots' panel, once a character is loaded." },
-  { chapter: "powers", target: "#slot-tally",
-    title: "Your slot budget",
-    body: "How many of your 67 slots are spent. This is the constraint that makes "
-        + "build planning interesting: every slot here is one not somewhere else.",
-    absent: "Shown in the Powers & Slots panel once a character is loaded." },
+    body: "This is where a build is actually built. Every power you have taken "
+        + "gets a card, and the card shows the enhancement slots in it.\n\n"
+        + "The examples in this tour describe a Brute built as a damage dealer, "
+        + "so the set names and numbers stay consistent as you read. Your own "
+        + "character will show its own powers; everything works the same way." },
   { chapter: "powers", target: "#builder",
-    title: "The padlock on each power",
-    body: "🔓 open means the optimizer may re-slot that power. 🔒 closed means hands "
-        + "off, and it means it absolutely: a locked power comes back from a "
+    title: "What is on a power card",
+    body: "Along the top: the power's icon and name, then an information button "
+        + "that opens its full details -- what it does, its recharge, its "
+        + "endurance cost, and every enhancement category it will accept.\n\n"
+        + "Below that, the level you take it at, then the controls: the padlock, "
+        + "minus and plus to move slots out or in, and a cross to drop the power." },
+  { chapter: "powers", target: "#slot-tally",
+    title: "The 67 slots, and why they are the whole game",
+    body: "The game gives you 67 placeable slots across a career, plus one free "
+        + "base slot in each power you take. This counter shows what you have "
+        + "spent.\n\n"
+        + "That budget is what makes build planning interesting. Six slots in one "
+        + "attack are six not spread across three others, and at 67 of 67 the "
+        + "only way to improve anything is to take a slot from somewhere else." },
+  { chapter: "powers", target: "#builder",
+    title: "Filling a slot, and why the list is short",
+    body: "Click a slot and you are offered the sets that power can actually "
+        + "take, not every set in the game. An armour toggle offers defence and "
+        + "resistance sets, an attack offers damage sets, because each power "
+        + "declares which categories it accepts.\n\n"
+        + "Right-click a slot to empty it. Minus and plus on the card move slots "
+        + "between powers, so a slot sitting in something over-invested can go "
+        + "where it earns more." },
+  { chapter: "powers", target: "#builder",
+    title: "Set bonuses: why six of one set beats six good pieces",
+    body: "Slotting several pieces of the SAME set earns set bonuses -- recharge, "
+        + "defence, health -- on top of what each piece does. That is why a card "
+        + "reads something like \"Superior Unrelenting Fury x6\" with a Full set tag.\n\n"
+        + "You will also see Partial set, Frankenslot (pieces from different sets "
+        + "picked purely for raw numbers), and Global mules: a power taken mainly "
+        + "to carry one always-on unique, such as Luck of the Gambler's recharge." },
+  { chapter: "powers", target: "#builder",
+    title: "The padlock: open or closed",
+    body: "Open means the optimizer may re-slot that power. Closed means hands "
+        + "off, and it means it absolutely: a locked power returns from a "
         + "re-solve exactly as you left it, down to individual enhancements, and "
         + "an empty slot inside it stays empty.\n\n"
-        + "Lock the things you have already decided, then let the optimizer work "
-        + "around them. If a target suddenly cannot be reached, your locks are the "
-        + "first thing to check, because a locked power that is slotted poorly "
-        + "limits everything else.",
-    absent: "Each power card carries a padlock button once a character is loaded." },
+        + "Lock what you have already decided. You own those sets in game and do "
+        + "not want a plan that assumes you re-buy them; you want a particular "
+        + "proc in a particular power; or you are asking what would change if "
+        + "this part stayed fixed." },
+  { chapter: "powers", target: "#builder",
+    title: "When a lock is costing you",
+    body: "Locks constrain the answer. A locked power that is slotted poorly caps "
+        + "how good everything around it can be, and a lower result afterwards is "
+        + "the solver being honest rather than failing.\n\n"
+        + "So when a target you used to reach suddenly falls short, check your "
+        + "locks first. Unlock, re-solve, compare." },
   { chapter: "powers", target: "#preserve-toggle",
     title: "Preserve my IO sets",
-    body: "The broad-stroke version of locking. It keeps the sets you have already "
-        + "invested in and only re-slots generic enhancements and empty slots. Use "
-        + "this when you want to improve a real character without being told to "
-        + "re-buy everything.",
-    absent: "A checkbox near the solve controls." },
+    body: "The broad-stroke alternative to locking, and usually the right choice "
+        + "for a character you actually play: keep every set you have already "
+        + "paid for, and let the optimizer improve only the generic enhancements "
+        + "and the empty slots around them." },
+  { chapter: "powers", target: "#builder",
+    title: "Chasing a number, in practice",
+    body: "Say you want 45% ranged defence on that Brute. Set it under Customize "
+        + "build targets, then Solve. The optimizer works out which sets in which "
+        + "powers get you there, because defence at that level comes mostly from "
+        + "set BONUSES rather than from the defence powers themselves.\n\n"
+        + "If it cannot reach the number it says so, tells you how close it got, "
+        + "and names unpicked powers that would close the gap and roughly what "
+        + "each would add. That is your decision point: take the extra power, "
+        + "accept the lower number, or unlock whatever is in the way." },
 
   // ── Reading your numbers ───────────────────────────────────────────────────
   { chapter: "stats", target: "#stats", spine: true,
