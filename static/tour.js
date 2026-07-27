@@ -1029,23 +1029,31 @@ function _tourToDriverStep(s, i, all) {
   };
 }
 
-// ONE rule for stray clicks, everywhere (Joel's field find, 2026-07-28: with
-// big targets an outside click advanced, with small ones the SAME click
-// silently ended the tour -- driver routes clicks ON the highlighted element
-// to overlayClickBehavior but clicks anywhere else to close). Capture-phase,
-// so driver never sees an outside click: it always advances, never exits.
-// Leaving is always explicit: Esc, the ✕, or the exit row on every card.
+// ONE rule for stray clicks, everywhere (Joel's ruling, 2026-07-28 second
+// pass): a click outside the card does NOTHING. Advancing is Next, the
+// arrow keys, or the space bar; leaving is Exit, the ✕, or Esc -- every
+// move is a deliberate press, never a stray click. Capture-phase, so
+// driver's own document handler (which would close on outside clicks with
+// small targets and advance with big ones) never sees them at all.
 function _tourDocClick(e) {
   if (!_driver) return;
   if (e.target.closest(".driver-popover")) return;   // the card's own controls
   e.preventDefault();
   e.stopImmediatePropagation();
+}
+
+// Space bar = Next (Joel's suggestion). Driver already handles the arrow
+// keys and Esc; space would otherwise just scroll the mock.
+function _tourKey(e) {
+  if (!_driver || e.key !== " ") return;
+  e.preventDefault();
+  e.stopImmediatePropagation();
   if (_driver.isActive() && _driver.hasNextStep()) _driver.moveNext();
-  // Last step: do nothing -- finishing is Done/Esc/Exit, a conscious act.
 }
 
 window.endTour = function () {
   document.removeEventListener("click", _tourDocClick, true);
+  document.removeEventListener("keydown", _tourKey, true);
   if (_driver && _driver.isActive()) _driver.destroy();
   _driver = null;
   _closeTourMock();
@@ -1083,9 +1091,9 @@ window.startTour = function (chapter, atIndex) {
     // advance instead of interacting -- it is just fully transparent.
     overlayOpacity: 0,
     allowClose: true,               // Esc and the ✕ both leave, deliberately
-    // NOT "close": a stray click outside used to end the tour and leave the user
-    // "in limbo" (Joel's walk). Advancing is recoverable; exiting silently is not.
-    overlayClickBehavior: "nextStep",
+    // No overlayClickBehavior: there is no overlay, and _tourDocClick swallows
+    // every outside click before driver sees it (Joel's ruling: stray clicks
+    // do nothing -- Next/space/arrows advance, Exit/✕/Esc leave).
     // The mock is a picture -- blocking interaction keeps it one.
     disableActiveInteraction: true,
     // Flip the mock to the step's scene -- opening menu, builder, the ⓘ
@@ -1110,6 +1118,7 @@ window.startTour = function (chapter, atIndex) {
     // the tour, or it would sit as a full-screen lid over the real app.
     onDestroyed: () => {
       document.removeEventListener("click", _tourDocClick, true);
+      document.removeEventListener("keydown", _tourKey, true);
       _closeTourMock(); _driver = null;
     },
     // EVERY card carries an explicit way out (Joel: "there should always be a
@@ -1140,6 +1149,7 @@ window.startTour = function (chapter, atIndex) {
     },
   });
   document.addEventListener("click", _tourDocClick, true);
+  document.addEventListener("keydown", _tourKey, true);
   _driver.drive(Math.max(0, Math.min(atIndex | 0, live.length - 1)));
 };
 
