@@ -47,7 +47,12 @@ dynamic_ids |= set(re.findall(r'id="([A-Za-z0-9_-]+)"', appjs))
 known = static_ids | dynamic_ids
 
 steps = re.findall(r'\{\s*chapter:\s*"([a-z]+)",\s*target:\s*"([^"]+)"', tour)
-chapters_declared = set(re.findall(r'^\s{2}([a-z]+):\s*"', tour, re.M))
+# Scope this to the TOUR_CHAPTERS block. A bare indent-anchored regex also matched
+# the keys of any other 2-space-indented object literal in the file (chapter:,
+# title:, body:...), which invented four phantom chapters.
+_chap_block = re.search(r"const TOUR_CHAPTERS\s*=\s*\{(.*?)\n\};", tour, re.S)
+chapters_declared = set(re.findall(r'^\s*([a-z]+):\s*"', _chap_block.group(1), re.M)) \
+    if _chap_block else set()
 spine_blocks = re.findall(r'chapter:\s*"([a-z]+)",\s*target:\s*"[^"]+",\s*spine:\s*true', tour)
 
 print(f"\ntour audit — {len(steps)} steps, {len(chapters_declared)} chapters declared\n")

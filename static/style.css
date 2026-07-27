@@ -1855,3 +1855,8 @@ body { overflow: hidden; }
   cursor: pointer; margin-left: 8px; vertical-align: middle;
 }
 .tour-help:hover { color: var(--accent); border-color: var(--border); }
+.tour-tip .tour-note {
+  background: var(--panel2); border-left: 3px solid var(--accent);
+  padding: 8px 10px; border-radius: 4px; font-size: 12px; color: var(--muted);
+}
+.tour-tip .tour-note b { color: var(--ink); }

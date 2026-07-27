@@ -287,6 +287,32 @@ function _tourVisible(el) {
       && el.getClientRects().length > 0;
 }
 
+// Being in the DOM and being POINTABLE are different things, and conflating them
+// is what produced the nonsense in Joel's walk (2026-07-27): the builder panels
+// sit BEHIND the entry overlay, so they were "visible" by every CSS test while
+// being completely covered. The tour drew a highlight over something the user
+// could not see and explained it as though it were in front of them.
+//
+// Three conditions, all necessary:
+//   - big enough to mean anything (a 4px-wide sliver is the blue line he saw)
+//   - actually on screen, not scrolled away
+//   - nothing painted on top of it: hit-test the centre and check we land on the
+//     element or something inside it
+function _tourPointable(el) {
+  if (!_tourVisible(el)) return false;
+  const r = el.getBoundingClientRect();
+  if (r.width < 40 || r.height < 20) return false;
+  const vw = window.innerWidth || document.documentElement.clientWidth || 0;
+  const vh = window.innerHeight || document.documentElement.clientHeight || 0;
+  if (vw && vh && (r.bottom < 0 || r.top > vh || r.right < 0 || r.left > vw)) return false;
+  const cx = Math.min(Math.max(r.left + r.width / 2, 1), (vw || r.right) - 1);
+  const cy = Math.min(Math.max(r.top + r.height / 2, 1), (vh || r.bottom) - 1);
+  const hit = document.elementFromPoint(cx, cy);
+  if (!hit) return true;                      // cannot hit-test: do not block
+  if (hit.closest && hit.closest(".tour-shade, .tour-tip")) return true;
+  return el.contains(hit) || hit.contains(el);
+}
+
 function _tourEls() {
   let sh = document.getElementById("tour-shade");
   if (!sh) {
@@ -294,9 +320,10 @@ function _tourEls() {
     document.body.appendChild(sh);
     const tip = document.createElement("div"); tip.id = "tour-tip"; tip.className = "tour-tip";
     document.body.appendChild(tip);
-    // Clicking the shade leaves the tour. Leaving is NOT a decision to never see
-    // it again (Joel's rule) - the offer setting is untouched by this.
-    sh.addEventListener("click", endTour);
+    // NO click-to-close on the shade. It used to end the tour, which meant a
+    // stray click anywhere dropped you out with no explanation -- "kind of leaves
+    // you in limbo" (Joel, 2026-07-27). Leaving should be something you MEANT:
+    // the Close button, or Esc. Both are on screen and both are announced.
   }
   return { shade: sh, tip: document.getElementById("tour-tip") };
 }
@@ -304,7 +331,7 @@ function _tourEls() {
 function _tourPlace(step) {
   const { shade, tip } = _tourEls();
   const el = step.target ? document.querySelector(step.target) : null;
-  const here = _tourVisible(el);
+  const here = _tourPointable(el);
   // ON SCREEN and WORTH SPOTLIGHTING are different questions. A full-screen
   // overlay reports a rect covering everything (and #entry-overlay reports zero
   // width outright), and cutting a hole around the entire viewport communicates
@@ -327,7 +354,9 @@ function _tourPlace(step) {
     `<div class="tour-head"><b>${escHtml(step.title)}</b>
        <span class="muted small">${_tourAt + 1} of ${total}</span></div>
      ${body}
-     ${here ? "" : `<p class="muted small">Not on screen right now, so there is nothing to point at yet.</p>`}
+     ${here ? "" : `<p class="tour-note">↑ Not on screen yet. Pick a starting point above and
+        this appears. Every panel then has its own <b>Need help?</b> link that reopens the
+        tour right there.</p>`}
      <div class="tour-nav">
        <button class="secondary" onclick="endTour()">Close</button>
        <span class="tour-spacer"></span>
@@ -343,12 +372,20 @@ function _tourPlace(step) {
     shade.style.setProperty("--hw", `${r.width + pad * 2}px`);
     shade.style.setProperty("--hh", `${r.height + pad * 2}px`);
     shade.classList.add("tour-has-hole");
-    // Put the card where it does not cover what it is describing.
-    const below = r.bottom + 12, above = r.top - 12;
-    const roomBelow = window.innerHeight - r.bottom;
-    tip.style.left = `${Math.max(12, Math.min(r.left, window.innerWidth - 380))}px`;
-    if (roomBelow > 220) { tip.style.top = `${below}px`; tip.style.bottom = "auto"; }
-    else { tip.style.top = "auto"; tip.style.bottom = `${window.innerHeight - above}px`; }
+    // Put the card where it does not cover what it is describing, then CLAMP it
+    // into the viewport. Without the clamp the "place it above" branch pushed the
+    // card off the top of the screen whenever the target was near the top, which
+    // is why Joel's step 2 and 4 showed only a stray row of buttons.
+    tip.style.top = "0px"; tip.style.bottom = "auto";   // measure at a known spot
+    const th = tip.getBoundingClientRect().height || 200;
+    const tw = tip.getBoundingClientRect().width || 360;
+    const roomBelow = vh - r.bottom, roomAbove = r.top;
+    let top = (roomBelow >= th + 16 || roomBelow >= roomAbove) ? r.bottom + 12 : r.top - th - 12;
+    top = Math.max(8, Math.min(top, Math.max(8, vh - th - 8)));
+    let left = r.left;
+    left = Math.max(8, Math.min(left, Math.max(8, vw - tw - 8)));
+    tip.style.top = `${top}px`;
+    tip.style.left = `${left}px`;
   } else {
     shade.classList.remove("tour-has-hole");
     tip.style.left = "50%"; tip.style.top = "50%"; tip.style.bottom = "auto";
@@ -385,10 +422,30 @@ function _tourKeys(e) {
 
 // chapter: undefined = the short first-run tour; a chapter key = that section
 // only; "all" = every step.
+// The closing card of the entry-screen tour: says where the rest of it lives, so
+// nobody is left wondering whether that was all of it.
+const _TOUR_HANDOFF = {
+  chapter: "start", target: "#entry-cards",
+  title: "That is the starting screen",
+  body: "Pick whichever card fits and the builder opens behind this. From there, "
+      + "every panel has its own \"Need help?\" link that explains that panel the "
+      + "same way — powers and slots, your numbers, letting it build for you. "
+      + "Nothing you have seen here changed anything.",
+  absent: "Pick a card above to open the builder. Every panel there has its own "
+        + "\"Need help?\" link.",
+};
+
 window.startTour = function (chapter) {
+  // CONTEXT MATTERS (Joel's walk, 2026-07-27). Started from the entry screen, a
+  // spine tour spends six of eight steps pointing at builder panels that are
+  // still hidden behind the overlay -- "step 3 just completely lost on what is
+  // going on". So when the opening screen is what is actually in front of the
+  // user, tour THAT, and hand off to the per-panel links for the rest.
+  const onEntry = _tourPointable(document.getElementById("entry-cards"));
   _tourSteps = chapter === "all" ? TOUR_STEPS.slice()
     : chapter ? TOUR_STEPS.filter(s => s.chapter === chapter)
-      : TOUR_STEPS.filter(s => s.spine);
+      : onEntry ? TOUR_STEPS.filter(s => s.chapter === "start").concat(_TOUR_HANDOFF)
+        : TOUR_STEPS.filter(s => s.spine);
   if (!_tourSteps.length) return;
   _tourAt = 0; _tourOpen = true;
   _tourEls();
