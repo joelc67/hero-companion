@@ -206,7 +206,7 @@
   <main>
     <!-- LEFT RAIL, top: character setup (archetype, sets, pools, epic, incarnates) -->
     <section id="setup" class="panel">
-      <h2>Build</h2>
+      <h2>Build<button class="tour-help" onclick="startTour('build')" title="Show me how this section works">Need help?</button></h2>
 
       <label>Archetype
         <select id="sel-archetype"></select>
@@ -254,7 +254,7 @@
          no build yet the Play Log rises up to fill the wide right area (no dead space). -->
     <div class="build-col">
     <section id="builder" class="panel">
-      <h2>Powers &amp; Slots</h2>
+      <h2>Powers &amp; Slots<button class="tour-help" onclick="startTour('powers')" title="Show me how this section works">Need help?</button></h2>
       <div id="edit-bar" class="edit-bar">
         <button id="undo-btn" class="ghost-btn" type="button" onclick="undoEdit()" disabled
           title="Revert your last edit (add/remove power, slot change, enhancement swap, pool change) — or just press Ctrl+Z">↶ Undo (Ctrl+Z)</button>
@@ -311,7 +311,7 @@
     <!-- RIGHT RAIL: live stats + AI controls in ONE sticky column; the page scrolls under it -->
     <aside class="rail">
     <section id="stats" class="panel">
-      <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span></h2>
+      <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span><button class="tour-help" onclick="startTour('stats')" title="Show me how this section works">Need help?</button></h2>
       <div class="cap-chips">
         <span class="chip cap-def">Defense soft cap 45%</span>
         <span class="chip cap-res" id="res-cap-chip">Resistance hard cap 75%</span>
@@ -359,7 +359,11 @@
 
     <!-- RIGHT: AI Assistant -->
     <section id="assistant" class="panel">
+      <!-- The Need help? button sits OUTSIDE this h2 on purpose: app.js rewrites
+           assistant-title's innerHTML when the Build Assistant renders, which
+           would silently delete anything nested inside it. -->
       <h2 id="assistant-title">AI Assistant</h2>
+      <button class="tour-help" onclick="startTour('solve')" title="Show me how this section works">Need help?</button>
 
       <div class="generate">
         <!-- v35 UX batch (Joel's Build-Assistant work order): the panel KNOWS
@@ -552,5 +556,8 @@
   </footer>
   </div><!-- /page-scroll -->
   <script src="/static/app.js"></script>
+  <!-- Loaded AFTER app.js: the tour reuses escHtml and only ever reads app state,
+       never writes to it. See the header comment in tour.js for the three rules. -->
+  <script src="/static/tour.js"></script>
 </body>
 </html>

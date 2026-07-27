@@ -1,0 +1,87 @@
+"""TOUR ACCURACY AUDIT — the thing that keeps the guided tour honest.
+
+The tour explains the app by pointing at real controls. That is only useful while
+the controls still exist, and a stale tour is worse than none: it teaches an
+interface the user cannot find. Documentation rots silently; this makes it rot
+LOUDLY, in the same run that renamed the control.
+
+Checks, all with a stated denominator:
+  1. every step's target resolves to an id that exists in index.html or is
+     created by app.js
+  2. every chapter named by a step is declared in TOUR_CHAPTERS
+  3. every declared chapter is reachable (has at least one step)
+  4. the short first-run tour (spine) covers every chapter, so nobody meets the
+     app through a tour that skips a whole area
+
+Run after ANY change to tour.js, index.html ids, or panel structure.
+"""
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+TOUR = ROOT / "static" / "tour.js"
+HTML = ROOT / "static" / "index.html"
+APPJS = ROOT / "static" / "app.js"
+
+fails = []
+
+
+def check(name, ok, detail=""):
+    print(f"  {'PASS' if ok else 'FAIL'}  {name}")
+    if detail:
+        print(f"        {detail}")
+    if not ok:
+        fails.append(name)
+
+
+tour = TOUR.read_text(encoding="utf-8")
+html = HTML.read_text(encoding="utf-8")
+appjs = APPJS.read_text(encoding="utf-8")
+
+# ids that exist in the static page
+static_ids = set(re.findall(r'id="([A-Za-z0-9_-]+)"', html))
+# ids app.js creates at runtime (el.id = "x", id="x" inside a template literal)
+dynamic_ids = set(re.findall(r'\.id\s*=\s*"([A-Za-z0-9_-]+)"', appjs))
+dynamic_ids |= set(re.findall(r'id="([A-Za-z0-9_-]+)"', appjs))
+known = static_ids | dynamic_ids
+
+steps = re.findall(r'\{\s*chapter:\s*"([a-z]+)",\s*target:\s*"([^"]+)"', tour)
+chapters_declared = set(re.findall(r'^\s{2}([a-z]+):\s*"', tour, re.M))
+spine_blocks = re.findall(r'chapter:\s*"([a-z]+)",\s*target:\s*"[^"]+",\s*spine:\s*true', tour)
+
+print(f"\ntour audit — {len(steps)} steps, {len(chapters_declared)} chapters declared\n")
+
+# 1. targets resolve
+missing = []
+for _ch, target in steps:
+    ident = target.lstrip("#")
+    if not target.startswith("#"):
+        missing.append(f"{target} (only id selectors are checkable)")
+    elif ident not in known:
+        missing.append(target)
+check(f"every step target exists ({len(steps) - len(missing)} of {len(steps)} resolve)",
+      not missing,
+      ("STALE: " + ", ".join(sorted(set(missing)))) if missing else "")
+
+# 2. chapters used are declared
+used = {c for c, _t in steps}
+undeclared = used - chapters_declared
+check(f"every chapter used is declared ({len(used)} used)",
+      not undeclared,
+      ("undeclared: " + ", ".join(sorted(undeclared))) if undeclared else "")
+
+# 3. declared chapters are reachable
+unreachable = chapters_declared - used
+check(f"every declared chapter has steps ({len(chapters_declared)} declared)",
+      not unreachable,
+      ("no steps: " + ", ".join(sorted(unreachable))) if unreachable else "")
+
+# 4. the short tour touches every area
+spine_missing = used - set(spine_blocks)
+check(f"the first-run tour covers every chapter ({len(set(spine_blocks))} of {len(used)})",
+      not spine_missing,
+      ("not in the short tour: " + ", ".join(sorted(spine_missing))) if spine_missing else "")
+
+print(f"\n{'ALL TOUR CHECKS PASS' if not fails else 'TOUR AUDIT FAILURES: ' + ', '.join(fails)}\n")
+sys.exit(1 if fails else 0)

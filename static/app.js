@@ -129,6 +129,10 @@ function showEntry() {
   $("saves-panel").classList.add("hidden");
   resetTrayPanels();          // restart → don't show the prior build's trays/order
   refreshContinueCard();
+  // Offer the tour on the entry screen, once, to someone who has never been
+  // offered it. Declining only silences the OFFER: every panel's "Need help?"
+  // link still starts it, so saying no is never a door closing.
+  if (typeof maybeOfferTour === "function") maybeOfferTour();
 }
 function hideEntry() { $("entry-overlay").classList.add("hidden"); }
 

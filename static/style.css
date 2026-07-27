@@ -1789,3 +1789,57 @@ body { overflow: hidden; }
 .jny-align button:hover { opacity: 1; }
 .jny-align button.on { opacity: 1; }
 .jny-align-preview { margin-left: 8px; font-size: 12px; color: var(--muted); font-style: italic; }
+
+/* ── Guided tour ──────────────────────────────────────────────────────────────
+   A shade over the page with a hole cut out of it, plus a card that explains
+   what is in the hole. The hole is drawn with box-shadow rather than four
+   separate panels, so there is one element to position and nothing can drift
+   out of alignment. Pointer events pass through the hole so the highlighted
+   control still looks alive rather than greyed out. */
+.tour-shade {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(0, 0, 0, .55);
+  transition: background .15s ease;
+}
+.tour-shade.tour-has-hole {
+  background: transparent;
+  left: var(--hx); top: var(--hy);
+  width: var(--hw); height: var(--hh);
+  inset: auto;
+  border-radius: 8px;
+  box-shadow: 0 0 0 4px var(--accent, #4a8aca), 0 0 0 9999px rgba(0, 0, 0, .55);
+}
+.tour-tip {
+  position: fixed; z-index: 9001;
+  width: min(360px, calc(100vw - 24px));
+  background: var(--panel, #fff); color: var(--fg, #222);
+  border: 1px solid var(--line, #ccc); border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .35);
+  padding: 14px 16px; line-height: 1.5;
+}
+.tour-tip p { margin: 0 0 10px; }
+.tour-tip p:last-of-type { margin-bottom: 12px; }
+.tour-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+.tour-head b { font-size: 15px; }
+.tour-head .small { margin-left: auto; white-space: nowrap; }
+.tour-nav { display: flex; align-items: center; gap: 8px; }
+.tour-nav .tour-spacer { flex: 1; }
+.tour-nav button { padding: 5px 12px; }
+
+/* The first-run offer. One line, two buttons, no modal, nothing trapped. */
+.tour-offer {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin: 0 0 14px; padding: 10px 14px;
+  border: 1px solid var(--line, #ccc); border-radius: 8px;
+  background: var(--panel-alt, rgba(74, 138, 202, .08));
+}
+.tour-offer span { flex: 1; min-width: 200px; }
+
+/* The per-panel repeat entry. Quiet by default so it never competes with the
+   panel's own controls, obvious on hover when someone is actually looking. */
+.tour-help {
+  background: none; border: 1px solid transparent; color: var(--muted, #777);
+  font-size: 12px; font-weight: normal; padding: 2px 8px; border-radius: 999px;
+  cursor: pointer; margin-left: 8px; vertical-align: middle;
+}
+.tour-help:hover { color: var(--accent, #4a8aca); border-color: var(--line, #ccc); }
