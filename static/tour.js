@@ -303,7 +303,12 @@ function _tourPointable(el) {
   if (r.width < 40 || r.height < 20) return false;
   const vw = window.innerWidth || document.documentElement.clientWidth || 0;
   const vh = window.innerHeight || document.documentElement.clientHeight || 0;
-  if (vw && vh && (r.bottom < 0 || r.top > vh || r.right < 0 || r.left > vw)) return false;
+  // SCROLLED OUT OF VIEW IS NOT ABSENT (Joel's walk, 2026-07-27). Content and
+  // Role sit further down the Build panel, and rejecting them for being below
+  // the fold made the tour claim "not on screen yet" about controls that were
+  // right there. driver.js scrolls a target into view, so an off-screen element
+  // is perfectly pointable; we just cannot hit-test it, so trust it.
+  if (vw && vh && (r.bottom < 0 || r.top > vh || r.right < 0 || r.left > vw)) return true;
   const cx = Math.min(Math.max(r.left + r.width / 2, 1), (vw || r.right) - 1);
   const cy = Math.min(Math.max(r.top + r.height / 2, 1), (vh || r.bottom) - 1);
   const hit = document.elementFromPoint(cx, cy);
@@ -360,10 +365,11 @@ function _tourHtml(text) {
 function _tourToDriverStep(s) {
   const el = s.target ? document.querySelector(s.target) : null;
   const pointable = _tourPointable(el);
-  const desc = _tourHtml(pointable ? s.body : (s.absent || s.body))
-    + (pointable ? "" :
-      `<p class="tour-note">Not on screen yet. Pick a starting point first, and every
-        panel then has its own <b>Need help?</b> link that reopens the tour right there.</p>`);
+  // When the subject is genuinely absent, the step's OWN `absent` line says where
+  // it lives -- "the first dropdown in the Build panel", "reach it again with the
+  // ↺ button". A blanket note on top of that contradicted it for anyone already
+  // past the opening screen.
+  const desc = _tourHtml(pointable ? s.body : (s.absent || s.body));
   const step = { popover: { title: s.title, description: desc } };
   if (pointable) step.element = el;
   return step;
