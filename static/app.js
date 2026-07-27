@@ -2149,7 +2149,7 @@ function renderRoleFocusSplit() {
   const others = legit.filter(x => x !== r);
   if (!(at && r && others.length)) { box.innerHTML = ""; roleFocus = { secondary: "", pct: 100 }; return; }
   const opts = others.map(o =>
-    `<option value="${o}" ${roleFocus.secondary === o ? "selected" : ""}>${ROLE_LABELS[o] || o}</option>`).join("");
+    `<option value="${escHtml(o)}" ${roleFocus.secondary === o ? "selected" : ""}>${escHtml(ROLE_LABELS[o] || o)}</option>`).join("");
   box.innerHTML =
     `<div class="muted small">Your picks support more than one role — <b>how do you want to split your focus?</b></div>
      <label class="small">${ROLE_LABELS[r] || r} <b><span id="rf-pct">${roleFocus.pct}</span>%</b>
@@ -4883,7 +4883,8 @@ function renderModalSets() {
     }
     html += `</div>`;
   }
-  host.innerHTML = (singles + html) || `<p class="muted">Nothing matches "${q}".</p>`;
+  host.innerHTML = (singles + html)
+    || `<p class="muted">Nothing matches "${escHtml(q)}".</p>`;   // q is typed by the user
 }
 
 // v35 UX batch §3 (Joel's ruling): hand edits to individual IOs recompute

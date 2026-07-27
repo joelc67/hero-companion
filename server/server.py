@@ -5042,8 +5042,12 @@ def ingame_read():
     """Read a build save the scan offered. The path must live under a known
     accounts directory — this endpoint is not a general file reader."""
     body = request.get_json(force=True) or {}
-    path = os.path.abspath(body.get("path") or "")
-    allowed = [os.path.normcase(a) for a in _find_accounts_dirs()]
+    # realpath, NOT abspath: abspath collapses ".." but does not resolve symlinks
+    # or NTFS junctions, so a link planted inside an accounts folder could point
+    # anywhere on disk and still pass a prefix check. Resolve BOTH sides so the
+    # containment test compares real locations.
+    path = os.path.realpath(body.get("path") or "")
+    allowed = [os.path.normcase(os.path.realpath(a)) for a in _find_accounts_dirs()]
     inside = any(os.path.normcase(path).startswith(a + os.sep) for a in allowed)
     if not (inside and path.lower().endswith(".txt") and os.path.isfile(path)):
         return jsonify({"ok": False, "response": "That file isn't in a known accounts folder — "
