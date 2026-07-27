@@ -51,14 +51,14 @@ const TOUR_DIAGRAMS = {
   <rect x="96" y="52" width="248" height="86" rx="8" class="d-card"/>
   <circle cx="118" cy="72" r="9" class="d-ico"/>
   <text x="134" y="77" class="d-name">Fire Blast</text>
-  <circle cx="196" cy="72" r="7" class="d-ctl"/><text x="196" y="76" class="d-glyph">i</text>
-  <rect x="106" y="88" width="26" height="14" rx="7" class="d-chip"/><text x="119" y="99" class="d-lvl">L6</text>
-  <rect x="246" y="86" width="18" height="18" rx="4" class="d-ctl"/><text x="255" y="99" class="d-glyph">•</text>
-  <rect x="268" y="86" width="18" height="18" rx="4" class="d-ctl"/><text x="277" y="100" class="d-glyph">–</text>
-  <rect x="290" y="86" width="18" height="18" rx="4" class="d-ctl"/><text x="299" y="100" class="d-glyph">+</text>
-  <rect x="312" y="86" width="18" height="18" rx="4" class="d-ctl"/><text x="321" y="100" class="d-glyph">x</text>
-  <circle cx="118" cy="122" r="8" class="d-slot"/><circle cx="140" cy="122" r="8" class="d-slot"/>
-  <circle cx="162" cy="122" r="8" class="d-slot"/><circle cx="184" cy="122" r="8" class="d-slot"/>
+  <circle cx="196" cy="72" r="7" class="d-ctl d-hot"/><text x="196" y="76" class="d-glyph">i</text>
+  <rect x="106" y="88" width="26" height="14" rx="7" class="d-chip d-hot"/><text x="119" y="99" class="d-lvl">L6</text>
+  <rect x="246" y="86" width="18" height="18" rx="4" class="d-ctl d-hot"/><text x="255" y="99" class="d-glyph">•</text>
+  <rect x="268" y="86" width="18" height="18" rx="4" class="d-ctl d-hot"/><text x="277" y="100" class="d-glyph">–</text>
+  <rect x="290" y="86" width="18" height="18" rx="4" class="d-ctl d-hot"/><text x="299" y="100" class="d-glyph">+</text>
+  <rect x="312" y="86" width="18" height="18" rx="4" class="d-ctl d-hot"/><text x="321" y="100" class="d-glyph">x</text>
+  <circle cx="118" cy="122" r="8" class="d-slot d-hot"/><circle cx="140" cy="122" r="8" class="d-slot d-hot"/>
+  <circle cx="162" cy="122" r="8" class="d-slot d-hot"/><circle cx="184" cy="122" r="8" class="d-slot d-hot"/>
   <path d="M196 40 L196 62" class="d-arrow"/><text x="196" y="32" class="d-lbl d-mid">its full details</text>
   <path d="M60 96 L102 96" class="d-arrow"/><text x="56" y="99" class="d-lbl d-end">level</text>
   <path d="M255 168 L255 108" class="d-arrow"/><text x="255" y="182" class="d-lbl d-mid">lock</text>
@@ -71,9 +71,10 @@ const TOUR_DIAGRAMS = {
      aria-label="An annotated stat bar showing the filled portion, the cap line, the printed figure, and the in-combat figure"><defs><marker id="tourArrowHead" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" class="d-head"/></marker></defs>
   <text x="62" y="85" class="d-name d-end">Melee</text>
   <rect x="70" y="72" width="240" height="16" rx="4" class="d-chip"/>
-  <rect x="70" y="72" width="170" height="16" rx="4" class="d-ico"/>
-  <path d="M270 62 L270 98" class="d-slot"/>
+  <rect x="70" y="72" width="170" height="16" rx="4" class="d-ico d-hot"/>
+  <path d="M270 62 L270 98" class="d-slot d-hot"/>
   <text x="322" y="85" class="d-name">38.2%</text>
+  <rect x="368" y="70" width="66" height="20" rx="4" class="d-hotbox"/>
   <text x="376" y="85" class="d-name">⚔ 31.9%</text>
   <path d="M130 138 L130 92" class="d-arrow"/><text x="130" y="152" class="d-lbl d-mid">what you have</text>
   <path d="M270 30 L270 58" class="d-arrow"/><text x="270" y="22" class="d-lbl d-mid">the line that matters</text>
@@ -85,14 +86,14 @@ const TOUR_DIAGRAMS = {
   <rect x="20" y="78" width="400" height="40" rx="8" class="d-card"/>
   <text x="34" y="102" class="d-name">Hero Companion</text>
   <rect x="170" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="181" y="102" class="d-glyph">🗺️</text>
-  <rect x="196" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="207" y="102" class="d-glyph">🧭</text>
+  <rect x="196" y="87" width="22" height="22" rx="4" class="d-ctl d-hot"/><text x="207" y="102" class="d-glyph">🧭</text>
   <rect x="222" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="233" y="102" class="d-glyph">💾</text>
   <rect x="248" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="259" y="102" class="d-glyph">❓</text>
   <rect x="274" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="285" y="102" class="d-glyph">🐞</text>
   <rect x="300" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="311" y="102" class="d-glyph">🏆</text>
-  <rect x="326" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="337" y="102" class="d-glyph">⟳</text>
-  <rect x="352" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="363" y="102" class="d-glyph">🦸</text>
-  <rect x="378" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="389" y="102" class="d-glyph">↺</text>
+  <rect x="326" y="87" width="22" height="22" rx="4" class="d-ctl d-hot"/><text x="337" y="102" class="d-glyph">⟳</text>
+  <rect x="352" y="87" width="22" height="22" rx="4" class="d-ctl d-hot"/><text x="363" y="102" class="d-glyph">🦸</text>
+  <rect x="378" y="87" width="22" height="22" rx="4" class="d-ctl d-hot"/><text x="389" y="102" class="d-glyph">↺</text>
   <path d="M207 50 L207 83" class="d-arrow"/><text x="207" y="42" class="d-lbl d-mid">this tour</text>
   <path d="M363 50 L363 83" class="d-arrow"/><text x="363" y="42" class="d-lbl d-mid">hero / villain</text>
   <path d="M337 146 L337 113" class="d-arrow"/><text x="337" y="160" class="d-lbl d-mid">check for updates</text>
@@ -169,8 +170,8 @@ const TOUR_MOCK_HTML = `
     </div>
   </header>
 
-  <div class="tm-cols">
-    <section class="panel" data-for="setup">
+  <div class="tm-main">
+    <section class="panel tm-setup" data-for="setup">
       <h2>Build</h2>
       <label>Archetype <select data-for="sel-archetype" disabled><option>Brute</option></select></label>
       <label>Primary <select data-for="sel-primary" disabled><option>Super Strength</option></select></label>
@@ -190,6 +191,7 @@ const TOUR_MOCK_HTML = `
       </div>
     </section>
 
+    <div class="tm-buildcol">
     <section class="panel" data-for="builder">
       <h2>Powers &amp; Slots</h2>
       <div class="edit-bar">
@@ -237,21 +239,23 @@ const TOUR_MOCK_HTML = `
         <div class="set-summary"><span class="muted small">sets:</span> Unbreakable Guard ×3 · Steadfast Protection</div>
       </div>
 
-      <label class="preserve-toggle"><input type="checkbox" data-for="preserve-toggle" checked disabled>
-        <span>Preserve my IO sets — 🔒 locks every power I hand-slotted; unlock exceptions on their cards</span></label>
-      <button class="solve-btn" data-for="solve-btn" type="button">🧮 Solve optimal slotting for goal (instant)</button>
-      <button data-for="gen-btn" type="button">Generate 3 builds</button>
-      <button class="changes-btn" data-for="changes-btn" type="button">📋 What changed? (open / close anytime)</button>
-      <button class="reset-btn" data-for="reset-btn" type="button">↺ Reset to imported build (try again)</button>
-      <div class="tm-response" data-for="ai-response">
-        <b>Solved for: Task forces · Damage dealer.</b>
-        Smashing/Lethal resistance reached 90% — your cap. Melee defense reached
-        41.3% of the 45% asked; an unpicked power on this character would close
-        the gap: Weave (about +5%).
-      </div>
-      <div class="validation" data-for="validation">✓ Legal build — nothing here breaks the game's rules.</div>
+      <details class="conv-guide" open><summary>💰 Get expensive IOs cheap — enhancement converters</summary>
+        <div data-for="conv-tool">
+          <p class="muted small">"How do I get this IO cheaply?" — a concrete path per enhancement,
+            with the converter and merit cost. "Is this drop worth anything?" — paste your drops:
+            keep, craft, or sell.</p>
+        </div>
+      </details>
     </section>
 
+    <section class="panel" data-for="gamelog">
+      <h2>📜 Play Log <span class="muted small">— insights from your game sessions</span></h2>
+      <p class="muted small">Off until you turn it on. Reads your own chat logs, on your machine,
+        and shows your sessions, characters and drops. Sharing anything is a separate choice.</p>
+    </section>
+    </div>
+
+    <div class="tm-rail">
     <section class="panel" data-for="stats">
       <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span></h2>
       <div class="cap-chips">
@@ -287,21 +291,52 @@ const TOUR_MOCK_HTML = `
           <div class="o-row"><span>AoE alpha</span><span>498</span></div>
         </div>
       </div>
+      <div class="validation" data-for="validation">✓ Legal build — nothing here breaks the game's rules.</div>
     </section>
+
+    <section class="panel">
+      <h2>AI Assistant</h2>
+      <label class="preserve-toggle"><input type="checkbox" data-for="preserve-toggle" checked disabled>
+        <span>Preserve my IO sets — 🔒 locks every power I hand-slotted; unlock exceptions on their cards</span></label>
+      <button class="solve-btn" data-for="solve-btn" type="button">🧮 Solve optimal slotting for goal (instant)</button>
+      <button data-for="gen-btn" type="button">Generate 3 builds</button>
+      <button class="changes-btn" data-for="changes-btn" type="button">📋 What changed? (open / close anytime)</button>
+      <button class="reset-btn" data-for="reset-btn" type="button">↺ Reset to imported build (try again)</button>
+      <div class="tm-response" data-for="ai-response">
+        <b>Solved for: Task forces · Damage dealer.</b>
+        Smashing/Lethal resistance reached 90% — your cap. Melee defense reached
+        41.3% of the 45% asked; an unpicked power on this character would close
+        the gap: Weave (about +5%).
+      </div>
+    </section>
+    </div>
+
+    <aside class="panel pinfo tm-info" data-for="power-info" style="display:none">
+      <h2>Knockout Blow</h2>
+      <div class="pi-tags"><span class="pi-tag">Click</span><span class="pi-tag">Melee</span><span class="pi-tag">Single target</span></div>
+      <table>
+        <tr><td>Damage</td><td>Superior (smashing)</td></tr>
+        <tr><td>Endurance cost</td><td>≈19</td></tr>
+        <tr><td>Recharge</td><td>25 s</td></tr>
+        <tr><td>Accepts</td><td>Melee Damage sets</td></tr>
+      </table>
+      <p class="pi-note">Slotted: Superior Unrelenting Fury ×6 — the full set, with its
+        +regeneration proc and the set's build-wide bonuses.</p>
+    </aside>
   </div>
 
-  <div class="tm-cols2">
-    <section class="panel" data-for="conv-tool">
-      <h2>💰 Enhancement converters</h2>
-      <p class="muted small">"How do I get this IO cheaply?" — a concrete path per enhancement,
-        with the converter and merit cost. "Is this drop worth anything?" — paste your drops:
-        keep, craft, or sell.</p>
-    </section>
-    <section class="panel" data-for="gamelog">
-      <h2>📜 Play Log <span class="muted small">— insights from your game sessions</span></h2>
-      <p class="muted small">Off until you turn it on. Reads your own chat logs, on your machine,
-        and shows your sessions, characters and drops. Sharing anything is a separate choice.</p>
-    </section>
+  <div class="modal tm-modal" data-for="modal" style="display:none">
+    <div class="modal-box">
+      <div class="modal-head"><strong>Knockout Blow — choose an enhancement</strong><button type="button">✕</button></div>
+      <p class="muted small">Only sets this power can actually take are offered — it accepts Melee Damage sets.</p>
+      <input placeholder="Filter sets…" disabled>
+      <div class="modal-sets">
+        <div class="tm-set-row"><b>Superior Unrelenting Fury</b> <span class="muted small">Brute ATO · 6 pieces · +regeneration proc, strong build-wide bonuses</span></div>
+        <div class="tm-set-row"><b>Hecatomb</b> <span class="muted small">Very rare · 6 pieces · big recharge and damage bonuses</span></div>
+        <div class="tm-set-row"><b>Kinetic Combat</b> <span class="muted small">4 pieces · prized for smashing/lethal defense</span></div>
+        <div class="tm-set-row"><b>Crushing Impact</b> <span class="muted small">5 pieces · accuracy and recharge bonuses</span></div>
+      </div>
+    </div>
   </div>
 </div>`;
 
@@ -321,13 +356,28 @@ function _closeTourMock() {
   _mockEl = null;
 }
 
-// Show the mock screen a step belongs to. Only the Getting-started chapter
-// lives on the fake opening menu; every other chapter is on the fake build.
-function _mockShowScreen(which) {
+// Show the mock SCENE a step belongs to. Scenes exist so the tour can show
+// what a choice actually DOES, in the place it actually happens (Joel,
+// 2026-07-27 third ruling: go to the action's location, and show the
+// consequence -- not everything squeezed onto one pane):
+//   entry  - the fake opening menu (Getting-started chapter)
+//   build  - the fake builder, laid out exactly like the real app's grid
+//   info   - build + the power-details column open, as after clicking ⓘ
+//   picker - build + the enhancement-set chooser open, as after clicking a slot
+function _mockShowScene(scene) {
   if (!_mockEl) return;
+  const entry = scene === "entry";
   _mockEl.querySelectorAll(".tour-mock-screen").forEach(sc => {
-    sc.style.display = (sc.dataset.tmScreen === which) ? "" : "none";
+    sc.style.display = (sc.dataset.tmScreen === (entry ? "entry" : "build")) ? "" : "none";
   });
+  const grid = _mockEl.querySelector(".tm-main");
+  const info = _mockEl.querySelector('[data-for="power-info"]');
+  if (grid && info) {
+    grid.classList.toggle("tm-has-info", scene === "info");
+    info.style.display = scene === "info" ? "" : "none";
+  }
+  const modal = _mockEl.querySelector('[data-for="modal"]');
+  if (modal) modal.style.display = scene === "picker" ? "" : "none";
 }
 
 const TOUR_CHAPTERS = {
@@ -518,12 +568,21 @@ const TOUR_STEPS = [
         + "That budget is what makes build planning interesting. Six slots in one "
         + "attack are six not spread across three others, and at 67 of 67 the "
         + "only way to improve anything is to take a slot from somewhere else." },
-  { chapter: "powers", target: "#builder",
+  { chapter: "powers", target: "#power-info", scene: "info",
+    title: "What the ⓘ opens",
+    body: "Click a power's name or its ⓘ and this panel opens beside the build "
+        + "-- exactly here, on the right. It shows what the power does, its "
+        + "endurance cost and recharge, the enhancement categories it accepts, "
+        + "and what is slotted in it right now.\n\n"
+        + "It is also where enhancement details live: click a slotted piece and "
+        + "you get the piece, its set, and the set's bonuses -- the same numbers "
+        + "the game uses." },
+  { chapter: "powers", target: "#modal", scene: "picker",
     title: "Filling a slot, and why the list is short",
-    body: "Click a slot and you are offered the sets that power can actually "
-        + "take, not every set in the game. An armour toggle offers defence and "
-        + "resistance sets, an attack offers damage sets, because each power "
-        + "declares which categories it accepts.\n\n"
+    body: "Click a slot and this chooser opens, offering the sets that power can "
+        + "actually take, not every set in the game. An armour toggle offers "
+        + "defence and resistance sets, an attack offers damage sets, because "
+        + "each power declares which categories it accepts.\n\n"
         + "Right-click a slot to empty it. Minus and plus on the card move slots "
         + "between powers, so a slot sitting in something over-invested can go "
         + "where it earns more." },
@@ -869,8 +928,10 @@ function _tourToDriverStep(s, i, all) {
   const art = s.diagram && TOUR_DIAGRAMS[s.diagram] ? TOUR_DIAGRAMS[s.diagram] : "";
   return {
     element: _tourMockEl(s.target),
-    __tmScreen: s.chapter === "start" ? "entry" : "build",
-    popover: { title: s.title, description: crumb + art + _tourHtml(s.body) },
+    __tmScene: s.scene || (s.chapter === "start" ? "entry" : "build"),
+    popover: { title: s.title,
+               description: crumb + art + _tourHtml(s.body),
+               popoverClass: s.diagram ? "tour-wide" : "" },
   };
 }
 
@@ -895,7 +956,7 @@ window.startTour = function (chapter, atIndex) {
 
   endTour();
   _openTourMock();
-  _mockShowScreen(live[0].chapter === "start" ? "entry" : "build");
+  _mockShowScene(live[0].scene || (live[0].chapter === "start" ? "entry" : "build"));
   _driver = window.driver.js.driver({
     steps: live.map((s, i) => _tourToDriverStep(s, i, live)),
     showProgress: true,
@@ -912,11 +973,12 @@ window.startTour = function (chapter, atIndex) {
     overlayClickBehavior: "nextStep",
     // The mock is a picture -- blocking interaction keeps it one.
     disableActiveInteraction: true,
-    // Flip between the fake opening menu and the fake build screen as the
-    // complete tour crosses from the Getting-started chapter into the rest.
-    // Fires before positioning, so the element is visible when measured.
+    // Flip the mock to the step's scene -- opening menu, builder, the ⓘ
+    // details column, or the set picker -- so each card is explained at the
+    // place it happens. Fires before positioning, so the element is visible
+    // when measured.
     onHighlightStarted: (el, step) => {
-      if (step && step.__tmScreen) _mockShowScreen(step.__tmScreen);
+      if (step && step.__tmScene) _mockShowScene(step.__tmScene);
     },
     // Esc / ✕ / Done all pass through destroy; the mock must never outlive
     // the tour, or it would sit as a full-screen lid over the real app.

@@ -1896,16 +1896,33 @@ body { overflow: hidden; }
   background: var(--panel2); color: var(--muted);
   border-bottom: 1px solid var(--border);
 }
-#tour-mock .tour-mock-screen { padding: 12px 16px 80px; max-width: 1280px; margin: 0 auto; }
+#tour-mock .tour-mock-screen { padding: 12px 16px 80px; max-width: 1440px; margin: 0 auto; }
 #tour-mock .tm-center { display: flex; justify-content: center; padding-top: 40px; }
 #tour-mock .tm-head { position: static; margin-bottom: 12px; padding: 7px 10px; }
-#tour-mock .tm-cols {
-  display: grid; grid-template-columns: 240px 1.5fr 1fr;
-  gap: 12px; align-items: start;
+/* The fake builder uses the REAL app's grid geography (main's template areas):
+   Build top-left, Stats + AI Assistant stacked under it, Powers wide on the
+   right, the ⓘ details column appearing as a third column -- so the tour never
+   teaches a layout the app does not have (Joel's third ruling). */
+#tour-mock .tm-main {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  grid-template-areas: "setup build" "rail build";
+  grid-template-rows: auto 1fr;
+  gap: 10px; align-items: start;
 }
-#tour-mock .tm-cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+#tour-mock .tm-main.tm-has-info {
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr) minmax(260px, 320px);
+  grid-template-areas: "setup build info" "rail build info";
+}
+#tour-mock .tm-setup { grid-area: setup; }
+#tour-mock .tm-buildcol { grid-area: build; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+#tour-mock .tm-rail { grid-area: rail; display: flex; flex-direction: column; gap: 10px; }
+#tour-mock .tm-info { grid-area: info; }
 @media (max-width: 980px) {
-  #tour-mock .tm-cols, #tour-mock .tm-cols2 { grid-template-columns: 1fr; }
+  #tour-mock .tm-main, #tour-mock .tm-main.tm-has-info {
+    grid-template-columns: 1fr;
+    grid-template-areas: "setup" "info" "build" "rail";
+  }
 }
 #tour-mock label { display: block; margin: 6px 0; font-size: 12px; }
 #tour-mock select { width: 100%; }
@@ -1917,6 +1934,25 @@ body { overflow: hidden; }
 #tour-mock .power-card { margin-top: 8px; }
 #tour-mock .solve-btn, #tour-mock .changes-btn, #tour-mock .reset-btn,
 #tour-mock [data-for="gen-btn"] { display: block; width: 100%; margin-top: 8px; }
+#tour-mock .tm-set-row {
+  padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px;
+  margin-top: 6px; display: flex; flex-direction: column; gap: 2px;
+}
+
+/* TOUR GREEN. The highlight colour is green ON PURPOSE: no app theme (hero
+   blue/gold, villain crimson, neutral) uses it, so "what the tour is pointing
+   at" can never be mistaken for theme chrome. Used only while a tour runs. */
+.driver-active-element {
+  outline: 3px solid #22c55e !important;
+  outline-offset: 3px; border-radius: 6px;
+}
+.tour-svg .d-hot { stroke: #22c55e !important; stroke-width: 2; }
+.tour-svg .d-hotbox { fill: none; stroke: #22c55e; stroke-width: 1.6; }
+
+/* Tour cards render wider than driver's 300px default so the diagrams and
+   their labels are readable; diagram steps wider still. */
+.driver-popover { max-width: 400px; }
+.driver-popover.tour-wide { max-width: 480px; }
 
 /* Annotated tour diagrams. Every colour comes from the theme so the drawing can
    never be a light-mode picture sitting on a dark panel. */
@@ -1926,12 +1962,14 @@ body { overflow: hidden; }
 .tour-svg .d-slot { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: .8; }
 .tour-svg .d-ctl  { fill: var(--panel); stroke: var(--border); stroke-width: 1; }
 .tour-svg .d-chip { fill: var(--panel); stroke: var(--border); stroke-width: 1; }
-.tour-svg .d-name { fill: var(--ink); font-size: 12px; font-weight: 600; }
-.tour-svg .d-glyph{ fill: var(--ink); font-size: 10px; text-anchor: middle; }
-.tour-svg .d-lvl  { fill: var(--muted); font-size: 9px; text-anchor: middle; }
-.tour-svg .d-lbl  { fill: var(--muted); font-size: 10px; }
+/* Sizes bumped 2026-07-27 (Joel: the icon/IO/−+ drawings were too small to
+   read). The SVGs scale with the card, so these are viewBox units. */
+.tour-svg .d-name { fill: var(--ink); font-size: 14px; font-weight: 600; }
+.tour-svg .d-glyph{ fill: var(--ink); font-size: 13px; text-anchor: middle; }
+.tour-svg .d-lvl  { fill: var(--muted); font-size: 11px; text-anchor: middle; }
+.tour-svg .d-lbl  { fill: var(--muted); font-size: 13px; }
 .tour-svg .d-mid  { text-anchor: middle; }
 .tour-svg .d-end  { text-anchor: end; }
-.tour-svg .d-arrow{ stroke: var(--muted); stroke-width: 1.2; fill: none;
+.tour-svg .d-arrow{ stroke: var(--muted); stroke-width: 1.6; fill: none;
                     marker-end: url(#tourArrowHead); }
 .tour-svg .d-head { fill: var(--muted); }
