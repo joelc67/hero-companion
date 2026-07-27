@@ -1824,7 +1824,11 @@ body { overflow: hidden; }
 .tour-head .small { margin-left: auto; white-space: nowrap; }
 .tour-nav { display: flex; align-items: center; gap: 8px; }
 .tour-nav .tour-spacer { flex: 1; }
-.tour-nav button { padding: 5px 12px; }
+/* Opt OUT of the global `select, input, textarea, button { width: 100% }` near
+   the top of this file. Without this every tour button stretches to fill its
+   row and wraps onto its own line, which is what made the first-run offer look
+   like two enormous banners. */
+.tour-nav button { width: auto; flex: 0 0 auto; margin-top: 0; padding: 5px 12px; font-size: 13px; }
 
 /* The first-run offer. One line, two buttons, no modal, nothing trapped. */
 .tour-offer {
@@ -1833,11 +1837,17 @@ body { overflow: hidden; }
   border: 1px solid var(--line, #ccc); border-radius: 8px;
   background: var(--panel-alt, rgba(74, 138, 202, .08));
 }
-.tour-offer span { flex: 1; min-width: 200px; }
+.tour-offer span { flex: 1 1 auto; min-width: 160px; }
+/* Same opt-out as .tour-nav button: modest inline choices, not banners. */
+.tour-offer button {
+  width: auto; flex: 0 0 auto; margin-top: 0;
+  padding: 5px 14px; font-size: 13px; white-space: nowrap;
+}
 
 /* The per-panel repeat entry. Quiet by default so it never competes with the
    panel's own controls, obvious on hover when someone is actually looking. */
 .tour-help {
+  width: auto; margin-top: 0;              /* opt out of the global width:100% */
   background: none; border: 1px solid transparent; color: var(--muted, #777);
   font-size: 12px; font-weight: normal; padding: 2px 8px; border-radius: 999px;
   cursor: pointer; margin-left: 8px; vertical-align: middle;
