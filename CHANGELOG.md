@@ -1,6 +1,15 @@
 # Hero Companion — What's New
 
-## Unreleased
+## 0.12.28 — 2026-07-27 — The security release
+
+Four security fixes and two field-reported bugs. Nothing about how you use the
+app changes, and nothing here alters build results: game data is unchanged from
+0.12.26 (Homecoming 2026.1.1242) and the optimizer's model stays at v36, so every
+certified champion carries the same score.
+
+Automated code scanning now runs on this project continuously. The four fixes
+below came out of its first pass, and none of them were being exploited: they
+were found by looking, not by anyone getting hurt.
 
 - **Security: names from outside your machine can no longer inject anything into
   the app.** Text the app did not write itself, an imported build's name, an
