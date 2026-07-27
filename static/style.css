@@ -1796,8 +1796,11 @@ body { overflow: hidden; }
    is dark, so without this the popover is white-on-white against our panels. */
 .driver-popover {
   background: var(--panel); color: var(--ink);
-  border: 1px solid var(--border); border-radius: 10px;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, .45);
+  /* Tour green on the CARD too (Joel, 2026-07-27): with no dark overlay, a
+     panel-on-panel card washed into the background. The same green as the
+     highlight ties the explanation to the thing it explains. */
+  border: 2px solid #22c55e; border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .55);
   max-width: 380px; line-height: 1.5;
 }
 .driver-popover-title { color: var(--ink); font-size: 15px; }
@@ -1813,10 +1816,12 @@ body { overflow: hidden; }
   border: none; border-radius: 5px; text-shadow: none;
 }
 .driver-popover-navigation-btns button:hover { filter: brightness(1.08); background: var(--accent); }
-.driver-popover-arrow-side-left.driver-popover-arrow { border-left-color: var(--panel); }
-.driver-popover-arrow-side-right.driver-popover-arrow { border-right-color: var(--panel); }
-.driver-popover-arrow-side-top.driver-popover-arrow { border-top-color: var(--panel); }
-.driver-popover-arrow-side-bottom.driver-popover-arrow { border-bottom-color: var(--panel); }
+/* The arrow is green too, so the pointer from card to control reads as one
+   green line instead of a panel-coloured sliver that vanishes on panels. */
+.driver-popover-arrow-side-left.driver-popover-arrow { border-left-color: #22c55e; }
+.driver-popover-arrow-side-right.driver-popover-arrow { border-right-color: #22c55e; }
+.driver-popover-arrow-side-top.driver-popover-arrow { border-top-color: #22c55e; }
+.driver-popover-arrow-side-bottom.driver-popover-arrow { border-bottom-color: #22c55e; }
 /* Opt OUT of the global `select, input, textarea, button { width: 100% }` near
    the top of this file. Without this every tour button stretches to fill its
    row and wraps onto its own line, which is what made the first-run offer look
