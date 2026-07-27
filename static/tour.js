@@ -292,34 +292,36 @@ function _tourVisible(el) {
       && el.getClientRects().length > 0;
 }
 
-// Being in the DOM and being POINTABLE are different things. The builder panels
-// sit BEHIND the entry overlay: visible by every CSS test, yet completely
-// covered. Highlighting those produced the meaningless slivers in Joel's walk.
-// driver.js positions whatever we hand it -- deciding what is worth pointing at
-// in THIS app's layout is still our job.
-function _tourPointable(el) {
-  if (!_tourVisible(el)) return false;
+// ONE QUESTION ONLY: can driver.js actually put a highlight on this?
+//
+// Joel, 2026-07-27: "If it is not seen or highlighted this whole tour is
+// worthless." He is right, and the elaborate pointability scoring that preceded
+// this was the problem, not the solution. It kept deciding that real controls
+// were unpointable -- below the fold, small, momentarily covered -- and
+// degrading to a centred card that explained something the user could not see.
+//
+// So the rule is now binary. If the element EXISTS and is DISPLAYED, we hand it
+// to driver.js, which scrolls it into view and highlights it. If it is not
+// displayed, the step is dropped from the tour entirely rather than shown as a
+// card pointing at nothing. Every card you see is attached to something lit up.
+function _tourShowable(el) {
+  if (!el) return false;
+  const cs = getComputedStyle(el);
+  if (cs.display === "none" || cs.visibility === "hidden") return false;
+  if (!el.getClientRects().length) return false;
   const r = el.getBoundingClientRect();
-  if (r.width < 40 || r.height < 20) return false;
-  const vw = window.innerWidth || document.documentElement.clientWidth || 0;
-  const vh = window.innerHeight || document.documentElement.clientHeight || 0;
-  // SCROLLED OUT OF VIEW IS NOT ABSENT (Joel's walk, 2026-07-27). Content and
-  // Role sit further down the Build panel, and rejecting them for being below
-  // the fold made the tour claim "not on screen yet" about controls that were
-  // right there. driver.js scrolls a target into view, so an off-screen element
-  // is perfectly pointable; we just cannot hit-test it, so trust it.
-  if (vw && vh && (r.bottom < 0 || r.top > vh || r.right < 0 || r.left > vw)) return true;
-  const cx = Math.min(Math.max(r.left + r.width / 2, 1), (vw || r.right) - 1);
-  const cy = Math.min(Math.max(r.top + r.height / 2, 1), (vh || r.bottom) - 1);
-  const hit = document.elementFromPoint(cx, cy);
-  if (!hit) return true;                       // cannot hit-test: do not block
-  if (hit.closest && hit.closest(".driver-popover, .driver-overlay")) return true;
-  return el.contains(hit) || hit.contains(el);
+  if (!(r.width > 0 && r.height > 0)) return false;   // a zero-area box cannot be lit
+  // The opening overlay paints over the whole builder. Highlighting something
+  // behind it frames the overlay's backdrop, not the control -- which is exactly
+  // the meaningless blue outline from Joel's screenshots. While that screen is
+  // up, only things ON it can be shown.
+  if (_onEntryScreen() && !el.closest("#entry-overlay")) return false;
+  return true;
 }
 
 // "Are we on the opening screen?" is a VISIBILITY question, not a pointability
 // one, and conflating them was a real bug: #entry-cards computes to zero WIDTH,
-// so asking _tourPointable about it answered "no" while the overlay was plainly
+// so asking whether it could be highlighted answered "no" while the overlay was plainly
 // on screen, and the tour walked the builder spine instead of the entry cards.
 // Ask about the overlay, and only whether it is showing.
 const _onEntryScreen = () => {
@@ -327,17 +329,6 @@ const _onEntryScreen = () => {
   return !!ov && !ov.classList.contains("hidden") && _tourVisible(ov);
 };
 
-// The closing card of the entry-screen tour: says where the rest of it lives, so
-// nobody is left wondering whether that was all of it.
-const _TOUR_HANDOFF = {
-  chapter: "start", target: "#entry-cards",
-  title: "That is the starting screen",
-  body: "Pick whichever card fits and the builder opens behind this. From there, "
-      + "every panel has its own \"Need help?\" link that explains that panel the "
-      + "same way. Nothing you have seen here changed anything.",
-  absent: "Pick a card above to open the builder. Every panel there has its own "
-        + "\"Need help?\" link.",
-};
 
 // ── Engine: driver.js ────────────────────────────────────────────────────────
 // The spotlight, tooltip placement, viewport clamping, scroll-into-view and
@@ -363,16 +354,18 @@ function _tourHtml(text) {
 // rendered by driver.js as a centred card, which is exactly what we want for
 // something the user cannot see yet -- so "not on screen" needs no special case.
 function _tourToDriverStep(s) {
-  const el = s.target ? document.querySelector(s.target) : null;
-  const pointable = _tourPointable(el);
-  // When the subject is genuinely absent, the step's OWN `absent` line says where
-  // it lives -- "the first dropdown in the Build panel", "reach it again with the
-  // ↺ button". A blanket note on top of that contradicted it for anyone already
-  // past the opening screen.
-  const desc = _tourHtml(pointable ? s.body : (s.absent || s.body));
-  const step = { popover: { title: s.title, description: desc } };
-  if (pointable) step.element = el;
-  return step;
+  return {
+    element: document.querySelector(s.target),
+    popover: { title: s.title, description: _tourHtml(s.body) },
+  };
+}
+
+// Drop any step whose subject is not on the page right now. This is what makes
+// "every card highlights something" true rather than aspirational -- and it also
+// means the opening-screen chapter simply is not part of the tour once you are
+// past that screen, instead of six cards about a menu you cannot see.
+function _tourShowableSteps(list) {
+  return list.filter(s => _tourShowable(document.querySelector(s.target)));
 }
 
 window.endTour = function () {
@@ -390,13 +383,26 @@ window.startTour = function (chapter, atIndex) {
   const onEntry = _onEntryScreen();
   const chosen = chapter === "all" ? TOUR_STEPS.slice()
     : chapter ? TOUR_STEPS.filter(s => s.chapter === chapter)
-      : onEntry ? TOUR_STEPS.filter(s => s.chapter === "start").concat(_TOUR_HANDOFF)
+      : onEntry ? TOUR_STEPS.filter(s => s.chapter === "start")
         : TOUR_STEPS.filter(s => s.spine);
-  if (!chosen.length) return;
+
+  // Only steps that can actually be highlighted survive.
+  const live = _tourShowableSteps(chosen);
+  if (!live.length) {
+    // Nothing in this section is on screen. Say where it lives rather than
+    // opening an empty tour -- and name the door, so this is still useful.
+    const label = (chapter && TOUR_CHAPTERS[chapter]) || "That section";
+    alert(`${label} is not on screen at the moment.
+
+`
+        + `Open a character first (pick one from the ↺ button in the header), `
+        + `then use the ? beside that panel and it will walk you through it.`);
+    return;
+  }
 
   endTour();
   _driver = window.driver.js.driver({
-    steps: chosen.map(_tourToDriverStep),
+    steps: live.map(_tourToDriverStep),
     showProgress: true,
     progressText: "{{current}} of {{total}}",
     nextBtnText: "Next →",
@@ -413,11 +419,10 @@ window.startTour = function (chapter, atIndex) {
     // means a click during the tour cannot change the user's build by accident.
     disableActiveInteraction: true,
     onHighlighted: () => {
-      // Reaching the last step counts as having seen it: stop offering.
       if (_driver && !_driver.hasNextStep()) _tourMarkFinished();
     },
   });
-  _driver.drive(Math.max(0, Math.min(atIndex | 0, chosen.length - 1)));
+  _driver.drive(Math.max(0, Math.min(atIndex | 0, live.length - 1)));
 };
 
 // Explain ONE card on the opening menu, then carry on through the rest of that
@@ -426,8 +431,8 @@ window.startTour = function (chapter, atIndex) {
 // does would trigger it, which is the opposite of helpful.
 window.explainEntry = function (elementId, ev) {
   if (ev && ev.stopPropagation) ev.stopPropagation();
-  const list = TOUR_STEPS.filter(s => s.chapter === "start");
-  const idx = list.findIndex(s => s.target === "#" + elementId);
+  const live = _tourShowableSteps(TOUR_STEPS.filter(s => s.chapter === "start"));
+  const idx = live.findIndex(s => s.target === "#" + elementId);
   startTour("start", idx < 0 ? 0 : idx);
 };
 
