@@ -875,8 +875,13 @@ def update_check():
         return jsonify({"ok": True, "current": APP_VERSION, "latest": latest,
                         "update_available": _t(latest) > _t(APP_VERSION),
                         "url": rel.get("html_url") or (CLIENT_CONFIG.get("urls") or {}).get("releases")})
-    except Exception as e:  # noqa: BLE001 — offline is a normal state, not an error page
-        return jsonify({"ok": False, "reason": "offline", "error": str(e)[:200]})
+    except Exception:  # noqa: BLE001 — offline is a normal state, not an error page
+        # The DETAIL goes to our console, never over the wire: raw exception text
+        # leaks local paths and internals to whatever called us (py/stack-trace-
+        # exposure). Same pattern at every handler below.
+        diag.swallowed("update check")
+        return jsonify({"ok": False, "reason": "offline",
+                        "error": "Couldn't reach the update server."})
 
 
 # Set by the packaged launcher (run_app) to a callable that stops the tray icon and exits.
@@ -979,8 +984,9 @@ def update_install():
         # Drop our own tray icon cleanly before the installer force-kills us (no ghost icon).
         _graceful_self_exit_for_update()
         return jsonify({"ok": True, "version": latest})
-    except Exception as e:  # noqa: BLE001 — fall back to the manual download page
-        return jsonify({"ok": False, "response": f"Auto-update failed ({str(e)[:160]}) — "
+    except Exception:  # noqa: BLE001 — fall back to the manual download page
+        diag.swallowed("self-update install")
+        return jsonify({"ok": False, "response": "Auto-update failed — "
                         "use the download page instead."})
 
 
@@ -1471,8 +1477,9 @@ def explain_intent():
                                          content, exposure, travel, res_cap,
                                          at_name),
         })
-    except Exception as e:  # noqa: BLE001 — explainer must never block the wizard
-        return jsonify({"ok": False, "error": str(e)})
+    except Exception:  # noqa: BLE001 — explainer must never block the wizard
+        diag.swallowed("explain_intent")
+        return jsonify({"ok": False, "error": "Couldn't build the explanation."})
 
 
 @app.route("/archetypes")
@@ -4352,8 +4359,10 @@ def build_solve():
                                    perk_focus=perk_focus, roles=roles, pvp=pvp,
                                    preserve=preserve, keep_layout=keep_layout, archetype=archetype,
                                    **_at_solve_phys(archetype))
-        except Exception as e:  # noqa: BLE001
-            return jsonify({"ok": False, "response": f"Solver failed: {e}"})
+        except Exception:  # noqa: BLE001
+            diag.swallowed("solver.solve_ilp")
+            return jsonify({"ok": False, "response": "The solver couldn't finish this "
+                            "build. Try again, or change a pick or target."})
 
         # Proc-bombing pass (doctrine §3): for offense builds, convert damage auras + filler
         # AoEs into proc bombs — the #1 master-build damage lever. Fails safe (no-op on error).
@@ -5043,8 +5052,10 @@ def ingame_read():
         with open(path, encoding="utf-8", errors="ignore") as f:
             return jsonify({"ok": True, "text": f.read(),
                             "name": os.path.splitext(os.path.basename(path))[0]})
-    except OSError as e:
-        return jsonify({"ok": False, "response": f"Couldn't read the file: {e}"}), 500
+    except OSError:
+        diag.swallowed("ingame read")
+        return jsonify({"ok": False, "response": "Couldn't read that file — check it "
+                        "still exists and isn't open in another program."}), 500
 
 
 # ── GAME-LOG CAPTURE (P1: import + insights; see server/gamelog.py) ─────────
@@ -5172,8 +5183,9 @@ def gamelog_board():
     built from your own capture store. Local data only, never uploaded."""
     try:
         return pulse_feed.build_board(public=False)
-    except Exception as e:  # noqa: BLE001
-        return jsonify({"ok": False, "response": f"Board build failed: {e}"}), 500
+    except Exception:  # noqa: BLE001
+        diag.swallowed("pulse board (private)")
+        return jsonify({"ok": False, "response": "Couldn't build your board."}), 500
 
 
 @app.route("/gamelog/board/public")
@@ -5182,8 +5194,9 @@ def gamelog_board_public():
     so the choice to feed is an informed one."""
     try:
         return pulse_feed.build_board(public=True)
-    except Exception as e:  # noqa: BLE001
-        return jsonify({"ok": False, "response": f"Board build failed: {e}"}), 500
+    except Exception:  # noqa: BLE001
+        diag.swallowed("pulse board (public preview)")
+        return jsonify({"ok": False, "response": "Couldn't build the shared preview."}), 500
 
 
 @app.route("/gamelog/feed", methods=["GET", "POST"])
@@ -5353,8 +5366,10 @@ def build_import():
         if isinstance(data, str):
             try:
                 data = json.loads(data)
-            except Exception as e:  # noqa: BLE001
-                return jsonify({"ok": False, "response": f"Not valid .mbd JSON: {e}"})
+            except Exception:  # noqa: BLE001
+                diag.swallowed("mbd import: JSON parse")
+                return jsonify({"ok": False, "response": "That file isn't valid .mbd JSON "
+                                "— re-export it from Mids Reborn and try again."})
         if not isinstance(data, dict):
             return jsonify({"ok": False, "response": "No build content provided."})
         parsed = mids_import.parse_build(data, _import_lookups())
@@ -5553,9 +5568,10 @@ def _generate_one(g, archetype, primary, secondary, goal, tier, focus=None):
         return {"ok": False, "tier": tier, "response": res["response"]}
     try:
         cjson = ai_build.extract_json(res["response"])
-    except Exception as e:  # noqa: BLE001
+    except Exception:  # noqa: BLE001
+        diag.swallowed("ai generate: extract_json")
         return {"ok": False, "tier": tier,
-                "response": f"Claude returned text that wasn't valid JSON: {e}",
+                "response": "Claude returned text that wasn't valid JSON.",
                 "raw": res["response"][:1500]}
 
     resolved = ai_build.resolve_build(cjson, g["power_index"], SET_BY_NAME,
@@ -5687,9 +5703,10 @@ def ai_generate_solved():
         return jsonify({"ok": False, "response": res["response"]})
     try:
         cjson = ai_build.extract_json(res["response"])
-    except Exception as e:  # noqa: BLE001
+    except Exception:  # noqa: BLE001
+        diag.swallowed("ai powers: extract_json")
         return jsonify({"ok": False,
-                        "response": f"Claude returned non-JSON power list: {e}",
+                        "response": "Claude returned a non-JSON power list.",
                         "raw": res["response"][:1500]})
     picked = ai_build.resolve_powers(cjson, g["power_index"], g["inc_index"])
     if not picked["powers"]:
@@ -5799,9 +5816,10 @@ def ai_refine_build():
         return jsonify({"ok": False, "response": res["response"]})
     try:
         cjson = ai_build.extract_json(res["response"])
-    except Exception as e:  # noqa: BLE001
+    except Exception:  # noqa: BLE001
+        diag.swallowed("ai refine: extract_json")
         return jsonify({"ok": False,
-                        "response": f"Claude returned non-JSON: {e}",
+                        "response": "Claude returned non-JSON.",
                         "raw": res["response"][:2000]})
     resolved = ai_build.resolve_build(cjson, g["power_index"], SET_BY_NAME,
                                       CAT_BY_ID, g["inc_index"], COMMON_IO_MAP)
