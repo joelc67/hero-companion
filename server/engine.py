@@ -1254,6 +1254,12 @@ def _debuff_buff_summary(build, ctx):
     pvp = bool(build.get("pvp"))
     deb = defaultdict(float)
     buf = defaultdict(float)
+    # Effects resolved through a *_Heal modifier table are HIT POINTS, not
+    # fractions — formatting them "×100 %" printed a ~798-HP heal total as
+    # "+79781.8%" (Joel's field find, 2026-07-28). The table name is the
+    # game's own unit declaration, so point-ness keys off it, never off
+    # effect names.
+    hp_keys = set()
     for power in build.get("powers", []):
         p = power_by_full.get(power.get("full_name"))
         if not p:
@@ -1263,13 +1269,19 @@ def _debuff_buff_summary(build, ctx):
                 continue
             row = mod_tables.get(d["modifier_table"])
             if row and col < len(row):
-                deb[(d["effect"], d["damage_type"])] += _resolve_mag(d, row, col)
+                key = (d["effect"], d["damage_type"])
+                if str(d.get("modifier_table", "")).endswith("_Heal"):
+                    hp_keys.add(key)
+                deb[key] += _resolve_mag(d, row, col)
         for d in p.get("buff_effects", []):
             if not _pv_ok(d.get("pv_mode", 0), pvp):
                 continue
             row = mod_tables.get(d["modifier_table"])
             if row and col < len(row):
-                buf[(d["effect"], d["damage_type"])] += _resolve_mag(d, row, col)
+                key = (d["effect"], d["damage_type"])
+                if str(d.get("modifier_table", "")).endswith("_Heal"):
+                    hp_keys.add(key)
+                buf[key] += _resolve_mag(d, row, col)
 
     def fmt(agg):
         # Collapse an effect that spans the whole elemental spread with one equal
@@ -1290,9 +1302,14 @@ def _debuff_buff_summary(build, ctx):
             for dt, v in by_dt.items():
                 if abs(v) < 1e-4:
                     continue
-                out.append({"effect": label, "type": dt if dt != "None" else None,
-                            "pct": round(v * 100, 1)})
-        out.sort(key=lambda r: abs(r["pct"]), reverse=True)
+                if (et, dt) in hp_keys:
+                    # hit points, one application of each contributing power
+                    out.append({"effect": label, "type": dt if dt != "None" else None,
+                                "hp": round(v, 1)})
+                else:
+                    out.append({"effect": label, "type": dt if dt != "None" else None,
+                                "pct": round(v * 100, 1)})
+        out.sort(key=lambda r: abs(r.get("pct", r.get("hp", 0))), reverse=True)
         return out
     return fmt(deb), fmt(buf)
 

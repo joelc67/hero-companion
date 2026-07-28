@@ -5748,13 +5748,20 @@ function renderOffense(off, t) {
         + `<div class="o-note muted small">Pets are modeled as always hitting — pet accuracy is not yet modeled (buff ToHit not credited).</div>`;
     }
   }
+  // Heal-class rows arrive as {hp} not {pct}: they are HIT POINTS (each
+  // contributing power cast once, unenhanced), never percentages.
+  const buffVal = d => d.hp != null
+    ? `<span title="hit points — each of your heals cast once, unenhanced. Not a percentage.">≈ ${d.hp} HP</span>`
+    : `${sign(d.pct)}%`;
   if ((off.debuffs || []).length) {
     html += `<div class="o-sub">Enemy debuffs <span class="muted small">(base, per application)</span></div>`
-      + off.debuffs.map(d => `<div class="o-row"><span>${d.effect}${d.type && d.type !== "all" ? " (" + d.type + ")" : d.type === "all" ? " (all)" : ""}</span><span class="deb">${sign(d.pct)}%</span></div>`).join("");
+      + off.debuffs.map(d => `<div class="o-row"><span>${d.effect}${d.type && d.type !== "all" ? " (" + d.type + ")" : d.type === "all" ? " (all)" : ""}</span><span class="deb">${buffVal(d)}</span></div>`).join("");
   }
   if ((off.buffs || []).length) {
+    const anyNeg = off.buffs.some(d => (d.pct ?? d.hp) < 0);
     html += `<div class="o-sub">Ally buffs <span class="muted small">(base, per application)</span></div>`
-      + off.buffs.map(d => `<div class="o-row"><span>${d.effect}${d.type && d.type !== "all" ? " (" + d.type + ")" : d.type === "all" ? " (all)" : ""}</span><span class="buf">${sign(d.pct)}%</span></div>`).join("");
+      + off.buffs.map(d => `<div class="o-row"><span>${d.effect}${d.type && d.type !== "all" ? " (" + d.type + ")" : d.type === "all" ? " (all)" : ""}</span><span class="buf">${buffVal(d)}</span></div>`).join("")
+      + (anyNeg ? `<div class="o-note muted small">Negative rows are a power's built-in cost to you (for example Absorb Pain's regeneration penalty), not a debuff on allies.</div>` : "");
   }
   // v36 (first-class display deliverable): the Inherent Mechanics block —
   // every meter family the AT (or slotted sets) carries, with its honest
