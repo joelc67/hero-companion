@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- **The optimizer can now propose Hamidon Origins.** The classic endgame move
+  — two or three enhancement aspects in one slot — was something you could
+  always slot by hand, but the optimizer never offered. For endgame content
+  (incarnate trials and farms) it now weighs HOs against set pieces where they
+  genuinely win: three Ribosomes in a resistance toggle carry a full set's
+  worth of resistance enhancement in half the slots, at the price of the set
+  bonuses. Every HO the tool places carries its attain note ("from Hamidon
+  raids or merit conversion"), the enhancement picker's guided-tour gained a
+  card explaining the trade, and the help guide gained a Hamidon Origins
+  section. Other content presets are untouched — a general or team solve is
+  byte-identical to before.
+
 - **Pet damage stops pretending pets always hit (model v38).** Pets and
   henchmen are now scored with their real chance to hit, at their own level:
   the game summons tier-1 henchmen two levels below you (tier 2 one, tier 3

@@ -415,6 +415,7 @@ const TOUR_MOCK_HTML = `
         <div class="tm-set-row"><b>Hecatomb</b> <span class="muted small">Very rare · 6 pieces · big recharge and damage bonuses</span></div>
         <div class="tm-set-row"><b>Kinetic Combat</b> <span class="muted small">4 pieces · prized for smashing/lethal defense</span></div>
         <div class="tm-set-row"><b>Crushing Impact</b> <span class="muted small">5 pieces · accuracy and recharge bonuses</span></div>
+        <div class="tm-set-row" data-tm="ho-row"><b>Hamidon Origin: Nucleolus</b> <span class="muted small">special · accuracy AND damage in one slot · from Hamidon raids or merits · no set bonuses</span></div>
       </div>
     </div>
   </div>
@@ -734,6 +735,18 @@ const TOUR_STEPS = [
         + "Right-click a slot to empty it. Minus and plus on the card move slots "
         + "between powers, so a slot sitting in something over-invested can go "
         + "where it earns more." },
+  { chapter: "powers", target: "#modal", scene: "picker", key: "ho-why",
+    anchor: "[data-tm=ho-row]", side: "right", slim: true,
+    title: "Hamidon Origins: two aspects in one slot",
+    body: "A Hamidon Origin is a special enhancement that carries two or three "
+        + "aspects at once -- accuracy AND damage, resistance AND endurance -- "
+        + "in a single slot. That is the classic endgame move: more raw "
+        + "enhancement per slot than any set piece.\n\n"
+        + "The price is that an HO earns no set bonuses, and they come from "
+        + "endgame play: Hamidon raids, or merit conversion. That is why the "
+        + "optimizer only proposes them for endgame content (incarnate trials "
+        + "and farms) -- and why every HO it places carries a note saying "
+        + "where it comes from. Slot them by hand anywhere you like." },
   { chapter: "powers", target: "#builder", anchor: "[data-tm=card1-sets]", side: "bottom",
     title: "Set bonuses: why six of one set beats six good pieces",
     body: "Slotting several pieces of the SAME set earns set bonuses -- recharge, "

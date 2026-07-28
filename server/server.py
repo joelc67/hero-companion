@@ -1751,6 +1751,60 @@ def sets_for_power():
                     "commons": commons, "specials": specials})
 
 
+# ── Piece 3 (R2 ruling, 2026-07-28): HAMIDON ORIGINS as solver options ──────
+# Champions/solves may propose HOs ONLY in endgame content presets — HOs come
+# from Hamidon raids or merit conversion, not every player raids (R2). R3 was
+# ruled moot/deferred: no tier gate. Titan/Hydra/D-Sync stay hand-slot only
+# (drop-specific content). The fire_farm key is the pre-0.12.22 spelling of
+# the farm family, still accepted from older saves.
+_HO_CONTENTS = {"itrial", "fire_farm", "farm_afk", "farm_active"}
+_HO_SOLVER_PIECES = None
+
+
+def _ho_solver_pieces():
+    """The solver's HO option inputs, built once from the SAME sources the
+    rest of the app trusts: legality = the manual picker's _special_accepts
+    rule; aspect values = engine piece_boosts (v27 registry); ED = the
+    engine's own schedules (single authority — the solver never re-derives
+    ED). Aspect-direction guard: a DeBuff piece's Defense aspect is
+    debuff-only (Enzyme/Lysosome), so def_ed is emitted only when the piece's
+    accepts include 'defense buff'; the game has no res-debuff HO, but the
+    same belt-and-braces uid check guards res_ed."""
+    global _HO_SOLVER_PIECES
+    if _HO_SOLVER_PIECES is None:
+        ctx = _stat_ctx(next(iter(ARCH_BY_NAME)))   # piece_boosts is class-free
+        pb = ctx.get("piece_boosts") or {}
+        mult_ed = ctx.get("mult_ed")
+
+        def _ed(aspect, val):
+            sched = engine.ED_SCHEDULE.get(aspect, 0)
+            return {n: round(engine.apply_ed_sched(sched, n * val, mult_ed), 4)
+                    for n in (1, 2, 3)}
+
+        pieces = []
+        for c in COMMON_IOS.get("special_ios", []):
+            u = c.get("uid") or ""
+            if not u.lower().startswith("hamidon_"):
+                continue
+            boosts = pb.get(u) or []
+            if not boosts:
+                continue
+            accepts = _special_accepts(u, c.get("enhances"))
+            asp = {b["aspect"]: b["value"] for b in boosts}
+            entry = {"uid": u, "name": c["name"], "accepts": sorted(accepts)}
+            debuff = "debuff" in u.lower()
+            if "Resistance" in asp and not debuff:
+                entry["res_ed"] = _ed("Resistance", asp["Resistance"])
+            if "Defense" in asp and "defense buff" in accepts:
+                entry["def_ed"] = _ed("Defense", asp["Defense"])
+            if "EnduranceDiscount" in asp:
+                entry["end_ed"] = _ed("EnduranceDiscount",
+                                      asp["EnduranceDiscount"])
+            pieces.append(entry)
+        _HO_SOLVER_PIECES = pieces
+    return _HO_SOLVER_PIECES
+
+
 # ── IO detail card + slotted-set progress (feature pair, display-only) ──────
 # data/set_details.json = AUTHENTIC in-game text extracted from the client bins
 # (tools/extract_set_details.py): piece titles, help TEMPLATES with
@@ -2811,7 +2865,7 @@ class _TargetGuard:
 
 
 def _assess_solve(archetype, powers_in, targets, tier, perk_focus, roles,
-                  pvp, preserve, keep_layout, with_powers=False):
+                  pvp, preserve, keep_layout, with_powers=False, content=None):
     """Run ONE solve and return the engine totals (for comparing routes) — or
     (totals, solved_powers) when with_powers, for the joint think-ahead loop. Mirrors
     /build/solve's core; returns None on any failure."""
@@ -2855,6 +2909,8 @@ def _assess_solve(archetype, powers_in, targets, tier, perk_focus, roles,
                                base, slot_cap=67 + len(powers), tier=tier,
                                perk_focus=perk_focus, roles=roles, pvp=pvp,
                                preserve=preserve, keep_layout=keep_layout, archetype=archetype,
+                               ho_pieces=(_ho_solver_pieces()
+                                          if content in _HO_CONTENTS else None),
                                **_at_solve_phys(archetype))
     except Exception:  # noqa: BLE001
         return None
@@ -2917,7 +2973,8 @@ def joint_refine(archetype, primary, secondary, role, content, powers_in,
     def solve(pws):
         import copy as _c
         r = _assess_solve(archetype, _c.deepcopy(pws), _c.deepcopy(targets), "premium",
-                          perk, roles, False, False, False, with_powers=True)
+                          perk, roles, False, False, False, with_powers=True,
+                          content=content)
         return r if r else (None, None)
 
     def fp_score(solved_powers):
@@ -3556,7 +3613,8 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
             n_solves[0] += 1        # claim the budget slot BEFORE the solve —
             #                         exact accounting under parallel sweeps
         r = _assess_solve(archetype, _c.deepcopy(pws), _c.deepcopy(targets), "premium",
-                          perk, roles, False, False, False, with_powers=True)
+                          perk, roles, False, False, False, with_powers=True,
+                          content=content)
         if not r:
             cache[key] = (None, None, None)
             return cache[key]
@@ -3920,7 +3978,7 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
                             len(solver.CAPPED_SOLVES) - _capped_before}
     r = _assess_solve(archetype, _c.deepcopy(cur_b), _c.deepcopy(targets),
                       "premium", perk, roles, False, False, False,
-                      with_powers=True)
+                      with_powers=True, content=content)
     if r:
         _tot2, solved2 = r
         solved2 = proc_pass.apply_proc_pass(solved2, POWER_BY_FULL,
@@ -4073,13 +4131,14 @@ def build_assess():
     if not (archetype and powers_in and targets):
         return jsonify({"ok": False})
     cur = _assess_solve(archetype, powers_in, targets, tier, perk_focus, roles,
-                        pvp, preserve, keep_layout)
+                        pvp, preserve, keep_layout, content=content)
     if not cur:
         return jsonify({"ok": False})
     alternatives = []
     for emph in _alt_routes(targets, res_cap):
         alt = _assess_solve(archetype, powers_in, emph["targets"], tier,
-                            emph.get("perk_focus", perk_focus), roles, pvp, preserve, keep_layout)
+                            emph.get("perk_focus", perk_focus), roles, pvp, preserve, keep_layout,
+                            content=content)
         if not alt:
             continue
         deltas = _headline_deltas(cur, alt)
@@ -4391,6 +4450,8 @@ def build_solve():
                                    engine.PIECE_GLOBALS, base, slot_cap=slot_cap, tier=tier,
                                    perk_focus=perk_focus, roles=roles, pvp=pvp,
                                    preserve=preserve, keep_layout=keep_layout, archetype=archetype,
+                                   ho_pieces=(_ho_solver_pieces()
+                                              if content in _HO_CONTENTS else None),
                                    **_at_solve_phys(archetype))
         except Exception:  # noqa: BLE001
             diag.swallowed("solver.solve_ilp")
@@ -4467,7 +4528,10 @@ def build_solve():
             full = solver.solve_ilp(copy.deepcopy(powers), targets, SETS_BY_CATEGORY,
                                     engine.PIECE_GLOBALS, base, slot_cap=slot_cap,
                                     tier=tier, roles=roles, pvp=pvp, preserve=False,
-                                    archetype=archetype, **_at_solve_phys(archetype))
+                                    archetype=archetype,
+                                    ho_pieces=(_ho_solver_pieces()
+                                               if content in _HO_CONTENTS else None),
+                                    **_at_solve_phys(archetype))
             ft = engine.calculate_build(
                 {"archetype": archetype, "powers": full["powers"], "pvp": pvp},
                 SET_BONUSES, res_cap=res_cap, ctx=ctx)

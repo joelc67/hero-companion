@@ -4168,6 +4168,7 @@ async function renderPowerInfo() {
         `<tr><td>${k}</td><td>${escHtml(String(v))}</td></tr>`).join("")}</table>` : "")
     + cardAttributionHtml(atk, LAST_TOTALS)
     + procTradeHtml(atk, pw)
+    + hoNoteHtml(pw)
     + (cats.length ? `<div class="muted small">Allowed enhancements</div>
        <div class="pi-tags">${cats.map(c => `<span class="pi-tag">${escHtml(c)}</span>`).join("")}</div>` : "")
     + setHtml
@@ -5441,6 +5442,21 @@ function procTradeHtml(atk, pw) {
     return "";
   }
   return `<div class="pi-trade" id="proc-trade-note">${body}</div>`;
+}
+
+// ── Piece 3 (R2, 2026-07-28): Hamidon Origins carry their attain note ───────
+// Wherever an HO sits (the optimizer's pick, a proc-pass core, or the user's
+// own hand), the ⓘ card states what it is and where it comes from — the same
+// advise-don't-assume pattern as accolades. Renders nothing without HOs.
+function hoNoteHtml(pw) {
+  const n = ((pw && pw.slots) || []).filter(s => s
+    && (s._ho || ((s.piece_uid || "").toLowerCase().startsWith("hamidon_")))).length;
+  if (!n) return "";
+  return `<div class="pi-trade" id="ho-attain-note">${escHtml(
+    `${n} Hamidon Origin piece${n > 1 ? "s" : ""} here: two or three enhancement aspects `
+    + `in one slot. Attainable from Hamidon raids or merit conversion — and the price is `
+    + `that these slots earn no set bonuses.`)}`
+    + ` <button class="tour-help" onclick="explainStep('ho-why', event)" aria-label="Explain Hamidon Origins" title="What is a Hamidon Origin? One click explains it">?</button></div>`;
 }
 
 function cardProvenanceFooterHtml() {

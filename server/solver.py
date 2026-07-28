@@ -385,9 +385,12 @@ def _global_piece_uid(srec, g):
 def _commit_set(p, srec, n, sigs, contrib, used_sig, totals):
     pieces = srec.get("pieces", [])[:n]
     for pc in pieces:
-        p["_slots"].append({"set_uid": srec["uid"], "set_name": srec["name"],
-                            "piece_name": pc["name"], "piece_uid": pc.get("uid"),
-                            "category_id": srec["category_id"]})
+        slot = {"set_uid": srec["uid"], "set_name": srec["name"],
+                "piece_name": pc["name"], "piece_uid": pc.get("uid"),
+                "category_id": srec["category_id"]}
+        if srec.get("_ho"):
+            slot["_ho"] = True        # Piece 3: ILP-chosen Hamidon Origin
+        p["_slots"].append(slot)
     for s in sigs:
         used_sig[s] += 1
     for k, v in contrib.items():
@@ -395,7 +398,7 @@ def _commit_set(p, srec, n, sigs, contrib, used_sig, totals):
 
 
 def _options_for_power(p, sets_by_category, targets, perks, piece_choices,
-                       allow_premium=False, pvp=False):
+                       allow_premium=False, pvp=False, ho_pieces=None):
     """Candidate (set, n-pieces) slotting options for a power. An option is
     functional by construction (a category-fitting set covers the power's
     aspects). Phase 1 solves CHEAP-only (allow_premium=False); the upgrade pass
@@ -466,6 +469,49 @@ def _options_for_power(p, sets_by_category, targets, perks, piece_choices,
         for srec in cand[:3]:
             contrib, sigs = _set_bonus_contrib(srec, 3, {}, pvp)
             opts.append({"set": srec, "n": 3, "contrib": contrib, "sigs": sigs})
+    # ── HAMIDON ORIGIN options (Piece 3, R2 ruling 2026-07-28) ──────────────
+    # The classic endgame move the option list never offered: 2-3 aspects in
+    # one slot, no set bonuses. Offered ONLY when the caller passes ho_pieces
+    # (endgame content presets — itrial/farm; the gate lives server-side), and
+    # only for ARMOR toggles — attacks/holds already earn their HOs through
+    # the proc-pass hybrid cores (v27), and a non-armor mule gains nothing a
+    # set doesn't give. Legality = the manual picker's own rule (accepts sets
+    # computed by the server from _special_accepts); enhancement values are
+    # engine-ED'd per count server-side (single ED authority). No sigs (no
+    # rule of five), not unique (identical copies stack), premium rank 0
+    # (R3 deferred: no tier gate). The ILP weighs the trade honestly: n slots
+    # of pure enhancement + end relief vs a set's enhancement + bonuses.
+    if ho_pieces and armor and base_rd:
+        ptypes = {t.lower() for t in (p.get("accepted_enhancement_types") or [])}
+        cid0 = min(p["_cats"]) if p.get("_cats") else 0
+        max_n = max(piece_choices) if piece_choices else 0
+        for ho in ho_pieces:
+            if not (set(ho.get("accepts") or []) & ptypes):
+                continue
+            ed_map = (ho.get("res_ed") if armor_kind == "Resistance"
+                      else ho.get("def_ed"))
+            if not ed_map:
+                continue              # no matching armor aspect → no option
+            for n in (1, 2, 3):
+                if n > max_n or n not in ed_map:
+                    continue
+                contrib = defaultdict(float)
+                f = ed_map[n]
+                for (kk, t), b in base_rd.items():
+                    if kk == armor_kind:
+                        contrib[(kk, t)] += b * f
+                # same END-COST relief the armor set options earn (v28 term)
+                drain = p.get("_end_drain") or 0.0
+                end_map = ho.get("end_ed")
+                if drain > 0 and end_map and n in end_map:
+                    relief = drain * (1.0 - 1.0 / (1.0 + end_map[n]))
+                    contrib[("Recovery", None)] += relief / 1.667
+                srec = {"uid": f"HO_{ho['uid']}", "name": "Hamidon Origin",
+                        "category": "Hamidon Origin", "category_id": cid0,
+                        "_ho": True, "bonuses": [],
+                        "pieces": [{"name": ho["name"], "uid": ho["uid"]}] * n}
+                opts.append({"set": srec, "n": n, "contrib": contrib,
+                             "sigs": []})
     return opts
 
 
@@ -754,7 +800,7 @@ def _post_target_decay(targets, targets_pct, at_res_cap, at_base_hp):
 def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
               slot_cap=67, tier="premium", perk_focus=None, roles=None, pvp=False,
               preserve=False, keep_layout=False, archetype=None,
-              at_res_cap=None, at_base_hp=None, warm_hint=None):
+              at_res_cap=None, at_base_hp=None, warm_hint=None, ho_pieces=None):
     """Optimal slot solve via integer linear programming.
 
     Phase 1 solves the targets with CHEAP sets only (the least-expensive build
@@ -1069,7 +1115,7 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
               piece_choices=(6, 5, 4, 3, 2), objective_targets=targets,
               allow_premium=allow_premium, cost_w=cost_w, pref_cats=pref_cats, pvp=pvp,
               priority=priority, piece_meta=piece_meta, decay=decay,
-              warm_hint=warm_hint)
+              warm_hint=warm_hint, ho_pieces=ho_pieces)
     focus_keys = set(PERK_FOCUS.get(perk_focus, []))
     perk_kind_mult = dict(kind_mult)
     if focus_keys:                  # the 🧮 perk dial gets an outsized weight
@@ -1093,7 +1139,7 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
               piece_choices=(6, 5, 4, 3, 2), objective_targets=perks, perk_pass=True,
               allow_premium=allow_premium, cost_w=cost_w, priority=_perk_priority,
               kind_mult=perk_kind_mult, pref_cats=pref_cats, pvp=pvp, piece_meta=piece_meta,
-              warm_hint=warm_hint)
+              warm_hint=warm_hint, ho_pieces=ho_pieces)
 
     # DEFAULT: never drop a cheap IO for an empty slot — restore any the solve
     # didn't replace with a set (keeps Hasten/Fulcrum/etc. functional). Runs in
@@ -1331,7 +1377,7 @@ def _enforce_added_cap(powers, budget):
 def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices,
               objective_targets, perk_pass=False, allow_premium=False, cost_w=0.0,
               kind_mult=None, pref_cats=None, pvp=False, priority=None, piece_meta=None,
-              decay=None, warm_hint=None):
+              decay=None, warm_hint=None, ho_pieces=None):
     """Run one ILP over powers that still have free slots / no set yet.
     `kind_mult` weights a stat KIND (e.g. {'Defense':2}) so the player's role
     leans coverage that way; `pref_cats` nudges set selection toward role-fitting
@@ -1424,7 +1470,8 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
             force_func = bool(is_pool_atk or is_long_util or has_role_alt)
         opt_src = dict(p, _is_attack=False) if force_func else p
         opts = _options_for_power(opt_src, sets_by_category, targets, objective_targets,
-                                  choices, allow_premium=allow_premium, pvp=pvp)
+                                  choices, allow_premium=allow_premium, pvp=pvp,
+                                  ho_pieces=ho_pieces)
         opts = [o for o in opts if o["n"] <= free and o["set"]["uid"] not in already
                 and not any((lambda uq, mk: uq and mk in placed_uniq)(*_uniq_key(pc))
                             for pc in o["set"].get("pieces", [])[:o["n"]])]

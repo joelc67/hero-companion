@@ -69,6 +69,14 @@ pets (the Mastermind's own Supremacy, Tactics) and accuracy slotted in the
 summon power itself. That is why those choices visibly raise pet damage here,
 just as they do in the game.
 
+**Hamidon Origins.** A Hamidon Origin enhancement carries two or three aspects
+in one slot — accuracy and damage together, or resistance and endurance — which
+is more raw enhancement per slot than any set piece. The price is that HOs earn
+no set bonuses, and they come from endgame play: Hamidon raids, or merit
+conversion. For endgame content (incarnate trials and farms) the optimizer may
+propose them where they genuinely beat a set piece, and every HO it places says
+where it comes from. You can slot them by hand anywhere, for any content.
+
 ## Content and Role
 
 These two dropdowns are the most important choice in the tool:
