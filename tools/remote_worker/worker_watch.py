@@ -116,8 +116,12 @@ def main():
     json.dump({"pid": os.getpid(), "order": oid}, open(LOCK, "w", encoding="utf-8"))
     try:
         # ── the commit pin, verified not assumed ────────────────────────
-        if _git("status", "--porcelain").stdout.strip():
-            raise RuntimeError("worker clone is dirty — refusing to checkout")
+        # untracked files are expected (the tick's own log, prior shards/logs)
+        # and harmless to a checkout — only MODIFIED tracked files refuse.
+        if _git("status", "--porcelain",
+                "--untracked-files=no").stdout.strip():
+            raise RuntimeError("worker clone has modified tracked files — "
+                               "refusing to checkout")
         _git("fetch", "origin")
         if _git("cat-file", "-e", order["commit"]).returncode != 0:
             raise RuntimeError(f"commit {order['commit']} not found after fetch "
