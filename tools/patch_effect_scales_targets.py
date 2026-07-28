@@ -37,13 +37,18 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PATH = os.path.join(ROOT, "data", "powers.json")
 EXPORTS = os.path.join(ROOT, "tools", "gamedata", "bin-crawler", "out_full")
 
-# our effect name -> the client attribs it may have been flattened from
+# our effect name -> the client attribs it may have been flattened from.
+# Vocabulary is CLIENT-CENSUSED (2026-07-28): the speed attribs are
+# RunningSpeed/FlyingSpeed/JumpingSpeed/JumpHeight — the first guess
+# (SpeedRunning-style) matched nothing and mislabeled 900+ effects as
+# "no attrib on power".
 ATTRIB_MAP = {
     "Recovery": {"Recovery"},
     "Regeneration": {"Regeneration"},
     "Endurance": {"Endurance"},
     "HitPoints": {"HitPoints"},
-    "Slow": {"SpeedRunning", "SpeedFlying", "SpeedJumping", "RechargeTime"},
+    "Slow": {"RunningSpeed", "FlyingSpeed", "JumpingSpeed", "JumpHeight",
+             "RechargeTime"},
 }
 REL_TOL = 1e-3
 
@@ -101,7 +106,7 @@ def main():
 
     expected = sum(1 for _ in candidates())
 
-    confirmed = normalized = drift = ambiguous = targeted = 0
+    confirmed = normalized = drift = ambiguous = targeted = synced = 0
     drift_samples = []
     rewrites = []          # (effect-dict, old_scale) for the safety revert
     added_targets = []     # effect-dicts that gained "target"
@@ -121,28 +126,49 @@ def main():
             confirmed += 1
             chosen = exact
         elif x100:
-            rewrites.append((e, e.get("scale")))
+            rewrites.append((e, e.get("scale"), None))
             e["scale"] = float(x100[0]["scale"])
             normalized += 1
             chosen = x100
         else:
-            drift += 1
-            if len(drift_samples) < 8:
-                drift_samples.append((q["full_name"].split(".")[-1],
-                                      e["effect"], table, ours,
-                                      [t["scale"] for t in matches]))
-            chosen = matches
+            # REPRESENTATION SYNC (sync_power_values precedent — the client
+            # is right): when the client carries this family on exactly ONE
+            # table with exactly ONE template, our (table, scale) pair is
+            # rewritten to the client's. Multi-template powers (drain pairs,
+            # chain decay, pseudo-pets) stay OURS and are reported — their
+            # flattening semantics need the reconciliation lane, not a guess.
+            fam_tpls = [t for t in tpls if t["attribs"] & want]
+            fam_tables = {t["table"] for t in fam_tpls}
+            ours_fam = sum(1 for kk in ("buff_effects", "debuff_effects")
+                           for ee in q.get(kk, []) if ee.get("effect") == e["effect"])
+            # ONE-to-ONE only: our multi-row flattenings (per-tick/per-jump)
+            # must NOT each inherit the client's single full-value template --
+            # that would multiply the magnitude by the row count.
+            if ours_fam == 1 and len(fam_tpls) == 1 and len(fam_tables) == 1:
+                t = fam_tpls[0]
+                rewrites.append((e, e.get("scale"), e.get("modifier_table")))
+                e["scale"] = float(t["scale"])
+                e["modifier_table"] = t["table"]
+                synced += 1
+                chosen = fam_tpls
+            else:
+                drift += 1
+                if len(drift_samples) < 8:
+                    drift_samples.append((q["full_name"].split(".")[-1],
+                                          e["effect"], table, ours,
+                                          [t["scale"] for t in matches]))
+                chosen = matches
         tgts = {t["target"] for t in chosen}
         if len(tgts) == 1 and "target" not in e:
             e["target"] = tgts.pop()
             added_targets.append(e)
             targeted += 1
 
-    handled = confirmed + normalized + drift + ambiguous
+    handled = confirmed + normalized + synced + drift + ambiguous
     print(f"{handled} of {expected} candidate effects examined "
           f"(confirmed {confirmed} · normalized ×100 {normalized} · "
-          f"drift-reported {drift} · no-table-match {ambiguous} · "
-          f"targets back-filled {targeted})")
+          f"representation-synced {synced} · drift-reported {drift} · "
+          f"no-attrib-on-power {ambiguous} · targets back-filled {targeted})")
     for s in drift_samples:
         print("  drift:", s)
     if handled != expected:
@@ -150,9 +176,12 @@ def main():
                          "mid-patch — nothing written ==")
 
     # Safety: revert rewrites + strip added keys must reproduce the input.
-    for e, old in rewrites:
+    for e, old_scale, old_table in rewrites:
         e["_undo"] = e["scale"]
-        e["scale"] = old
+        e["scale"] = old_scale
+        if old_table is not None:
+            e["_undo_t"] = e["modifier_table"]
+            e["modifier_table"] = old_table
     for e in added_targets:
         e["_t"] = e.pop("target")
     if json.dumps(data, sort_keys=True) != json.dumps(
@@ -166,13 +195,16 @@ def main():
                 for key in ("buff_effects", "debuff_effects"):
                     for e in q.get(key, []):
                         e.pop("_undo", None)
+                        e.pop("_undo_t", None)
                         e.pop("_t", None)
         if json.dumps(chk, sort_keys=True) != json.dumps(
                 json.loads(original), sort_keys=True):
             raise SystemExit("== SAFETY FAILURE: patch touched more than "
                              "scales/targets — nothing written ==")
-    for e, _old in rewrites:
+    for e, _old_scale, _old_table in rewrites:
         e["scale"] = e.pop("_undo")
+        if "_undo_t" in e:
+            e["modifier_table"] = e.pop("_undo_t")
     for e in added_targets:
         e["target"] = e.pop("_t")
 
