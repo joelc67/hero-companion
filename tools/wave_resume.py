@@ -75,23 +75,25 @@ def main():
         print("Nothing to resume — run the verdict gate:")
         print("  py tools\\recert_verdicts.py " + " ".join(sorted(
             os.path.basename(f)
-            for f in glob.glob(os.path.join(ROOT, "champions_shard_par*_p*.json")))))
+            for f in glob.glob(os.path.join(ROOT, _pfx + "*_p*.json")))))
         return
     # a resume run number that never collides with existing resume shards
+    # (v38ho fix: the resume prefix follows the CURRENT wave's prefix — the
+    # hardcoded par_resume names were the v35 spelling)
     n = 1
-    while glob.glob(os.path.join(ROOT, f"champions_shard_par_resume{n}_p*.json")):
+    while glob.glob(os.path.join(ROOT, f"{_pfx}_resume{n}_p*.json")):
         n += 1
     workers = min(4, len(remaining))
     cmd = [PY, os.path.join(ROOT, "tools", "converge_parallel.py"),
            "--recert", "--workers", str(workers),
-           "--shard-prefix", f"champions_shard_par_resume{n}",
+           "--shard-prefix", f"{_pfx}_resume{n}",
            "--keys", ",".join(remaining)]
     env = dict(os.environ, HC_SOLVER_NODE_CAP="50000")
     print("relaunch:", " ".join(cmd[:7]) + " --keys <" + str(len(remaining)) + " keys>")
     if DRY:
         print("(dry-run — nothing launched)")
         return
-    log = os.path.join(ROOT, f"champions_recert_v35_resume{n}_log.txt")
+    log = os.path.join(ROOT, f"{_pfx}_resume{n}_log.txt")
     with open(log, "w", encoding="utf-8") as lf:
         subprocess.Popen(cmd, env=env, stdout=lf, stderr=lf,
                          cwd=ROOT,
