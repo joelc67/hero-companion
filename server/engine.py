@@ -1262,7 +1262,7 @@ def _debuff_buff_summary(build, ctx):
     # Endurance effects are points of the 100-end bar.
     hp_keys = set()
     end_keys = set()
-    _POINT_HP = ("Heal", "Absorb")
+    _POINT_HP = ("Heal", "Absorb", "HitPoints")
     for power in build.get("powers", []):
         p = power_by_full.get(power.get("full_name"))
         if not p:
@@ -1270,6 +1270,8 @@ def _debuff_buff_summary(build, ctx):
         for d in p.get("debuff_effects", []):
             if not _pv_ok(d.get("pv_mode", 0), pvp):
                 continue
+            if d.get("target") == "Self":
+                continue   # caster-only (client-verified target back-fill)
             row = mod_tables.get(d["modifier_table"])
             if row and col < len(row):
                 key = (d["effect"], d["damage_type"])
@@ -1281,6 +1283,8 @@ def _debuff_buff_summary(build, ctx):
         for d in p.get("buff_effects", []):
             if not _pv_ok(d.get("pv_mode", 0), pvp):
                 continue
+            if d.get("target") == "Self":
+                continue   # caster-only (client-verified target back-fill)
             row = mod_tables.get(d["modifier_table"])
             if row and col < len(row):
                 key = (d["effect"], d["damage_type"])
