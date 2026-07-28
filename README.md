@@ -1,6 +1,8 @@
 # Hero Companion
 
-### [⬇ Download the latest version](https://github.com/joelc67/hero-companion/releases/latest) — run the installer or unzip the portable build. Free, no account.
+### [⬇ Download the latest version](https://github.com/joelc67/hero-companion/releases/latest) — run the installer or unzip the portable build. Free, no account, code-signed.
+
+**Home: [hero-companion.com](https://hero-companion.com)** — downloads, Companion Lite, and the live Pulse Boards.
 
 **Your City of Heroes sidekick** — a free, offline companion for
 [City of Heroes: Homecoming](https://homecomingservers.com) that designs, optimizes,
@@ -43,6 +45,18 @@ quietly drift six months behind a patch.
   authoritative cross-check.
 - **Champions** — the best certified build per context gives the optimizer its head
   start. Beat one, and the 🏆 button lets you submit yours.
+- **A guided tour** — a 🧭 compass in the header walks every part of the app on a
+  drawn example screen (a full Brute build), so the tour works at any time and never
+  touches your own work. Every power card has a ? that jumps straight to that card
+  explained.
+- **Companion Lite** — a small signed tray app whose only job is capturing your game
+  logs into local intel and (only if you opt in) feeding the boards — for players who
+  want the community layer without the planner. See
+  [docs/companion-lite.md](docs/companion-lite.md).
+- **CoH Pulse Boards (alpha)** — the community intel site is live at
+  [hero-companion.com/pulse](https://hero-companion.com/pulse): server pulse and
+  scorecards today, more to come. Every stat individually opt-in, anonymous by
+  default.
 
 ## Where it's heading
 
@@ -52,19 +66,16 @@ The near-term roadmap, roughly in order:
   Origin mixing, −resistance and Force Feedback proc valuation, and henchman damage
   modeled from the game's own critter tables so Mastermind builds are slotted for
   what the pets actually do.
-- **In-game integration** — a generated Hero Companion popmenu (one click in-game
-  to enable log capture; your respec shopping list as a right-click menu at the
-  market). Everything opt-in, everything within Homecoming's modding rules — file
-  overlays only, never memory reading or injection.
+- **Deeper in-game integration** — the one-click log-capture popmenu ships with
+  Companion Lite today; next: your respec shopping list as a right-click menu at
+  the market. Everything opt-in, everything within Homecoming's modding rules —
+  file overlays only, never memory reading or injection.
 - **"Alert me when…"** — tray alerts from the live log: an iTrial forming, a Task
   Force recruiting, an event starting that you still need the badge for.
-- **CoH Pulse Boards** — an opt-in community intel site: real market prices for a
-  blind-bid economy, PvE scorecards (badges, days played, playstyle), League and
-  Task Force run pages with leaders and participants, supergroup and coalition
-  standings. Think killboards, but for the game we actually play. Every stat is
-  individually opt-in and anonymous by default.
-- **Companion Lite** — a tiny client whose only job is connecting your characters
-  to the boards, for players who want the community layer without the planner.
+- **More Pulse Boards** — the boards are live in alpha; ahead: real market prices
+  for a blind-bid economy, PvE scorecards, League and Task Force run pages with
+  leaders and participants, supergroup and coalition standings. Think killboards,
+  but for the game we actually play.
 
 ## Quick start
 
@@ -94,8 +105,9 @@ remains the interchange format and the authoritative UI cross-check.
 
 ## Feedback and champions
 
-- **🐞 Report a bug** (in-app) — opens a pre-filled GitHub issue with your app,
-  model, and data versions. Nothing is ever sent without your click.
+- **🐞 Report a bug** (in-app) — a report form that goes straight to the developer,
+  no account needed, with your app, model, and data versions pre-filled and the
+  option to attach your build. Nothing is sent until you press Send.
 - **🏆 Submit champion** (in-app) — exports your build as a candidate file and opens
   the submission queue. Every candidate is re-scored deterministically before
   promotion; verified wins ship in the next update with credit to the builder.

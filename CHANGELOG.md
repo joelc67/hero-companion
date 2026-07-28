@@ -485,7 +485,7 @@ Earlier in this cycle:
   depending on your alignment and body type); the pop-up now states that,
   confirmed against the game's own text.
 
-## Companion Lite 0.1.18 — Unreleased (signing pending Joel's cert profile)
+## Companion Lite 0.1.18 — 2026-07-17 — The signed install
 
 - **A real Windows installer.** Companion Lite now ships as a proper per-user
   install (Start Menu entry, clean uninstall, no admin prompt) instead of a

@@ -6,7 +6,7 @@ The little brother of Hero Companion. One job, done quietly.
 |---|---|---|
 | What it is | The full build planner: optimizer, 1–50 walkthrough, respec worksheets, drop appraisal, Play Log insights | A tiny tray app that captures your game logs into local intel |
 | Feeds | Your builds, plans, and insights | **The Pulse Boards only** |
-| Size | ~55 MB, installer + tray server | One ~27 MB exe, no install |
+| Size | ~45 MB signed installer (or ~58 MB portable zip) | ~21 MB signed installer (per-user, Start Menu entry, clean uninstall) |
 | When you'd run it | When planning or reviewing | Whenever the game is on |
 
 ## What Lite does
@@ -22,13 +22,20 @@ The little brother of Hero Companion. One job, done quietly.
 - Installs an optional **in-game menu** (`/popmenu Companion`) so enabling logging is
   one click from inside the game. A consent dialog shows exactly what file goes where
   before anything is written; Remove reverses it completely.
+- Asks **once, on first run**, whether to start with Windows — never silently on, and
+  you can flip it any time from the tray. Uninstalling removes it cleanly.
+- Both the installer and the app are **code-signed** — Windows names the publisher
+  instead of showing an "unknown publisher" warning.
 
 ## What Lite shares
 
-**Nothing.** Everything lives in `%APPDATA%\HeroCompanion` on your machine. There is
-no upload, no telemetry, no account. When community boards open, sharing will be a
-**separate, per-stat opt-in** — Lite will ask you again then, item by item, and
-"no" will be remembered.
+**Nothing, until you say otherwise.** Everything lives in `%APPDATA%\HeroCompanion`
+on your machine; there is no telemetry and no account. Feeding the community Pulse
+Board is a **separate, explicit opt-in**: before you agree, Lite shows you exactly
+what sharing looks like (structured events only, accounts pseudonymized — never raw
+chat), and the public board preview shows precisely what would be visible. The feed
+can be turned off from either app and the off is honored by both; your "no" is
+remembered. When more board stats arrive, each will be its own opt-in.
 
 ## Running Lite and the full app together
 
@@ -47,4 +54,6 @@ Fully supported, in any order, by design:
 ## Updates
 
 Right-click the blue P → **Check for updates**. Never automatic — same policy as the
-full app. If a newer Lite exists, the download page opens.
+full app. If a newer Lite exists it asks first; say yes and it updates itself and
+relaunches (if it can't — for example, running from source — it opens the download
+page instead).

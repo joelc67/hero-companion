@@ -97,7 +97,7 @@ What is deliberately NOT in the repository:
 
 ## The feedback loop, end to end
 
-1. A player hits a bug → 🐞 opens a GitHub issue pre-filled with app/model/DB versions
+1. A player hits a bug → 🐞 opens an in-app report form that goes straight to the developer (no account needed), pre-filled with app/model/DB versions
    and their build context. They add words and post — nothing is sent silently.
 2. A player beats a champion → 🏆 saves a champion-candidate JSON and opens the
    Discussions queue to post it.
