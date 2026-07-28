@@ -1,0 +1,27 @@
+# Canary for the 2026-07-20 failure class: the repo keeps committing fresh
+# content while the DEPLOYED site silently serves a frozen build (that time:
+# Pages build_type flipped to "workflow", stopping branch builds for 8 days,
+# boards included). This checks the LIVE site, so it catches any future cause.
+# Red run = GitHub emails Joel. Fix ritual: gh api .../pages/builds/latest
+# first; if its date is old while workflows are green, restore
+# build_type=legacy and POST a build (seam in CLAUDE.md).
+name: Site freshness canary
+on:
+  schedule:
+    - cron: "17 12 * * *"   # daily, 12:17 UTC
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Live pulse board must carry today's or yesterday's date
+        run: |
+          page=$(curl -fsS https://hero-companion.com/pulse/)
+          today=$(date -u +%Y-%m-%d)
+          yesterday=$(date -u -d yesterday +%Y-%m-%d)
+          if echo "$page" | grep -q -e "$today" -e "$yesterday"; then
+            echo "FRESH: board carries $today or $yesterday"
+          else
+            echo "STALE: live board has neither $today nor $yesterday — the deployed site is frozen while the repo may still be updating. See the site-freshness seam in CLAUDE.md."
+            exit 1
+          fi
