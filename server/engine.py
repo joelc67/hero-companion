@@ -1038,7 +1038,11 @@ def _offense(build, totals, ctx):
 
 def _pet_damage_for_powerset(ps_full, ctx, pet_col, dmg_boost, pvp=False):
     """Best-attack-chain DPS for one pet powerset's attacks (pet's own AT
-    column, fixed recharge, + the summon power's slotted damage boost)."""
+    column, fixed recharge, + the summon power's slotted damage boost).
+    v38: also returns the damage-weighted mean of the attacks' INHERENT
+    accuracy (client field via patch_pet_accuracy; absent → 1.0) — the
+    scorer's pet hit chance multiplies it in. Damage-weighting is a stated
+    approximation of the chain's cast mix."""
     power_by_full = ctx["power_by_full"]
     mod_tables = ctx["modifier_tables"]
     powers = ctx.get("powers_by_set", {}).get(ps_full, [])
@@ -1060,11 +1064,14 @@ def _pet_damage_for_powerset(ps_full, ctx, pet_col, dmg_boost, pvp=False):
         dmg = base * (1.0 + dmg_boost)
         attacks.append({"name": p.get("display_name"), "damage": dmg,
                         "cast_time": cast, "recharge": rech,
+                        "acc": p.get("accuracy") or 1.0,
                         "dpa": (dmg / cast) if cast > 0 else 0})
     if not attacks:
-        return 0.0, 0
+        return 0.0, 0, 1.0
     pet_dps, _ = _chain_dps(attacks)
-    return pet_dps, len(attacks)
+    tot = sum(a["damage"] for a in attacks) or 1.0
+    acc_avg = sum(a["damage"] * a["acc"] for a in attacks) / tot
+    return pet_dps, len(attacks), acc_avg
 
 
 # Pet-directed damage buffs (#13, Joel's rulings 2026-07-19). A Mastermind's main
@@ -1085,66 +1092,98 @@ _PACK_MENTALITY_STACKS = 8
 _PACK_MENTALITY_PER_STACK = 0.02
 _PACK_MENTALITY_FN = "Mastermind_Summon.Beast_Mastery.Pack_Mentality"
 
+# v38: MM henchman tier LEVEL SHIFT by class — the count-gated combat-level
+# rule (wiki-sourced, docs/pet-tohit-sources.md: at full strength T1 = 3
+# henchmen at −2, T2 = 2 at −1, T3 = 1 at −0). The client summon templates
+# are structurally silent on this (all `Ranged_Ones` — swept 2026-07-28), so
+# the class IS the key; both class-name spellings ship in the data.
+_HENCH_TIER_SHIFT = {
+    "Class_Minion_Henchman": 2, "Class_Henchman_Minion": 2,
+    "Class_Minion_Henchman_Small": 2, "Class_Henchman_Minion_Small": 2,
+    "Class_Lt_Henchman": 1, "Class_Henchman_Lt": 1,
+    "Class_Boss_Henchman": 0, "Class_Henchman_Boss": 0,
+}
+
 
 def _pet_damage_buff(build, totals, ctx, global_rech):
-    """(all_pet_mult, top_pet_extra_mult, sources[]) — the MM's pet-directed
-    +damage as FRACTIONS, uptime-weighted, game-first per the routing lever above.
-    Returns (0, 0, []) for any build with no pet-directed +damage (negative
+    """(all_pet_mult, top_pet_extra_mult, tohit_all, tohit_top, sources[]) —
+    the MM's pet-directed +damage AND +ToHit as FRACTIONS, uptime-weighted,
+    game-first per the routing lever above. v38 adds the ToHit half the v34
+    always-hit simplification deferred: Supremacy's own template carries
+    ToHit 0.1 beside its DamageBuffs, Tactics-class auras project, and a
+    self_effects-only ToHit (Focused Accuracy) stays caster-only by the same
+    lever. Returns zeros for any build with no pet-directed buffs (negative
     control: a non-MM, or an MM with only caster-only buffs, reads exactly 0)."""
     power_by_full = ctx.get("power_by_full") or {}
     mod_tables = ctx.get("modifier_tables") or {}
     mult_ed = ctx.get("mult_ed")
     col = ctx.get("at_column")
     if col is None or col < 0:
-        return 0.0, 0.0, []
+        return 0.0, 0.0, 0.0, 0.0, []
     all_mult = top_mult = 0.0
+    tohit_all = tohit_top = 0.0
     sources = []
     for power in build.get("powers", []):
         rec = power_by_full.get(power.get("full_name"))
         if not rec:
             continue
         dbs = [d for d in (rec.get("buff_effects") or [])
-               if d.get("effect") == "DamageBuff" and d.get("pv_mode") != 2]
+               if d.get("effect") in ("DamageBuff", "ToHit")
+               and d.get("pv_mode") != 2]
         if not dbs:
-            continue
-        d = dbs[0]                          # typed spread -> one +dmg value
-        row = mod_tables.get(d.get("modifier_table"))
-        if not row or col >= len(row):
-            continue
-        prob = min(max(d.get("probability") or 1.0, 0.0), 1.0)
-        mag = abs((d.get("scale") or 0.0) * (d.get("nmag") or 1.0) * row[col] * prob)
-        # uptime: click buffs by duration / enhanced recharge; auras/toggles 1.0
-        base_rech = rec.get("base_recharge") or 0.0
-        dur = d.get("duration") or 0.0
-        is_click = ((rec.get("power_type") or 0) == 0
-                    and (rec.get("activate_period") or 0) == 0)
-        uptime = 1.0
-        if is_click and base_rech > 0 and dur > 0:
-            rech_enh = 0.0
-            for slot in power.get("slots", []) or []:
-                if slot and slot.get("piece_uid"):
-                    for asp, val in _scaled_boosts(slot, ctx):
-                        if asp == "Recharge":
-                            rech_enh += val
-            rech_boost = apply_ed_sched(ED_SCHEDULE.get("Recharge", 0), rech_enh, mult_ed)
-            enh_rech = base_rech / (1.0 + global_rech + rech_boost)
-            uptime = min(1.0, dur / enh_rech) if enh_rech > 0 else 1.0
-        val = mag * uptime
-        if val <= 0:
             continue
         # single-target ally buff (Temporal Selection: radius 0, not an aura) ->
         # the top-DPS pet only; PBAoE/aura buffs -> every pet.
         single = ((rec.get("radius") or 0) == 0
                   and (rec.get("activate_period") or 0) == 0)
         label = rec.get("display_name") or power.get("full_name")
-        if single:
-            top_mult += val
+        base_rech = rec.get("base_recharge") or 0.0
+        is_click = ((rec.get("power_type") or 0) == 0
+                    and (rec.get("activate_period") or 0) == 0)
+        rech_boost = None                   # computed once, only if needed
+        # one value per EFFECT (typed spread -> first row of each kind)
+        for eff_kind in ("DamageBuff", "ToHit"):
+            rows = [d for d in dbs if d.get("effect") == eff_kind]
+            if not rows:
+                continue
+            d = rows[0]
+            row = mod_tables.get(d.get("modifier_table"))
+            if not row or col >= len(row):
+                continue
+            prob = min(max(d.get("probability") or 1.0, 0.0), 1.0)
+            mag = abs((d.get("scale") or 0.0) * (d.get("nmag") or 1.0)
+                      * row[col] * prob)
+            # uptime: click buffs by duration / enhanced recharge; auras 1.0
+            dur = d.get("duration") or 0.0
+            uptime = 1.0
+            if is_click and base_rech > 0 and dur > 0:
+                if rech_boost is None:
+                    rech_enh = 0.0
+                    for slot in power.get("slots", []) or []:
+                        if slot and slot.get("piece_uid"):
+                            for asp, val in _scaled_boosts(slot, ctx):
+                                if asp == "Recharge":
+                                    rech_enh += val
+                    rech_boost = apply_ed_sched(ED_SCHEDULE.get("Recharge", 0),
+                                                rech_enh, mult_ed)
+                enh_rech = base_rech / (1.0 + global_rech + rech_boost)
+                uptime = min(1.0, dur / enh_rech) if enh_rech > 0 else 1.0
+            val = mag * uptime
+            if val <= 0:
+                continue
+            scope = "top pet" if single else "all pets"
             sources.append({"name": label, "pct": round(val * 100, 1),
-                            "scope": "top pet", "uptime": round(uptime, 2)})
-        else:
-            all_mult += val
-            sources.append({"name": label, "pct": round(val * 100, 1),
-                            "scope": "all pets", "uptime": round(uptime, 2)})
+                            "scope": scope, "uptime": round(uptime, 2),
+                            "effect": "tohit" if eff_kind == "ToHit" else "damage"})
+            if eff_kind == "ToHit":
+                if single:
+                    tohit_top += val
+                else:
+                    tohit_all += val
+            elif single:
+                top_mult += val
+            else:
+                all_mult += val
     # incarnate Assault HYBRID *Radial* (team/pet); Core / Musculature-Alpha excluded
     for s in (totals.get("damage_buff_sources") or []):
         if s.get("slot") == "Hybrid" and "Radial" in (s.get("name") or ""):
@@ -1152,17 +1191,18 @@ def _pet_damage_buff(build, totals, ctx, global_rech):
             if v > 0:
                 all_mult += v
                 sources.append({"name": s.get("name"), "pct": round(v * 100, 1),
-                                "scope": "all pets", "uptime": 1.0})
+                                "scope": "all pets", "uptime": 1.0,
+                                "effect": "damage"})
     # Pack Mentality (Beast Mastery charge mechanic; empty effects -> priced by rule)
     if any((p.get("full_name") or "") == _PACK_MENTALITY_FN
            for p in build.get("powers", [])):
         v = _PACK_MENTALITY_STACKS * _PACK_MENTALITY_PER_STACK
         all_mult += v
         sources.append({"name": "Pack Mentality", "pct": round(v * 100, 1),
-                        "scope": "Beast pets",
+                        "scope": "Beast pets", "effect": "damage",
                         "note": f"assumes {_PACK_MENTALITY_STACKS} of 10 stacks "
                                 f"with pets engaged"})
-    return all_mult, top_mult, sources
+    return all_mult, top_mult, tohit_all, tohit_top, sources
 
 
 def _pet_offense(build, totals, ctx):
@@ -1192,8 +1232,10 @@ def _pet_offense(build, totals, ctx):
         if not p or not (p.get("summons") or p.get("pet_powersets")):
             continue
         # summon power's slotted enhancement: Damage boosts the pets (when the game
-        # copies boosts), Recharge shortens the resummon cycle for timed pets
-        dmg_enh = rech_enh = 0.0
+        # copies boosts), Recharge shortens the resummon cycle for timed pets.
+        # v38: Accuracy rides the same copy_boosts path — the pet-set Acc pieces
+        # (Blood Mandate Acc/Dam...) enhance the pets' own attacks.
+        dmg_enh = rech_enh = acc_enh = 0.0
         for slot in power.get("slots", []) or []:
             if slot and slot.get("piece_uid"):
                 for asp, val in _scaled_boosts(slot, ctx):
@@ -1201,10 +1243,14 @@ def _pet_offense(build, totals, ctx):
                         dmg_enh += val
                     elif asp == "Recharge":
                         rech_enh += val
+                    elif asp == "Accuracy":
+                        acc_enh += val
         dmg_boost = apply_ed_sched(ED_SCHEDULE.get("Damage", 0), dmg_enh, mult_ed)
+        acc_boost = apply_ed_sched(ED_SCHEDULE.get("Accuracy", 0), acc_enh, mult_ed)
         spec = specs.get(p.get("full_name"))
         if spec is not None and not spec.get("copy_boosts", True):
             dmg_boost = 0.0                  # the game does not copy slotting to these
+            acc_boost = 0.0
         uptime = 1.0
         if spec is not None and not spec.get("permanent"):
             dur = float(spec.get("duration") or 0.0)
@@ -1227,21 +1273,35 @@ def _pet_offense(build, totals, ctx):
                 continue
             dps = 0.0
             natk = 0
+            acc_w = 0.0
             for ps_full in ent.get("powerset_full_names", []):
                 seen_ps.add(ps_full)
-                d, n = _pet_damage_for_powerset(ps_full, ctx, pet_col, dmg_boost, pvp)
+                d, n, a = _pet_damage_for_powerset(ps_full, ctx, pet_col,
+                                                   dmg_boost, pvp)
                 dps += d
                 natk += n
+                acc_w += d * a               # dps-weighted inherent accuracy
             if natk == 0 or dps <= 0:    # support/heal pets have no damage
                 continue
             count = max(1, int(se.get("count") or 1))
+            pcls = se.get("class") or ent.get("class_name")
             pets.append({"name": ent.get("display_name") or uid,
                          "from_power": p.get("display_name"),
                          # v29: the pet's game class + the summon's real cast time
                          # ride along so the scorer's henchman-inheritance term can
                          # key tier HP and the resummon downtime off them.
-                         "pet_class": se.get("class") or ent.get("class_name"),
+                         "pet_class": pcls,
                          "resummon_cast": round(p.get("cast_time") or 0.0, 2),
+                         # v38 pet hit-chance ledger (docs/pet-tohit-sources.md):
+                         # level_shift = henchman tier rule by CLASS (wiki-
+                         # sourced: T1 −2 / T2 −1 / T3 −0 at full count) else
+                         # the summon template's own client level shell
+                         # (patch_summon_level_shift). acc_mult = the attacks'
+                         # inherent accuracy × summon-slotted Accuracy (ED,
+                         # copy_boosts-gated).
+                         "level_shift": _HENCH_TIER_SHIFT.get(
+                             pcls, (spec or {}).get("level_shift") or 0),
+                         "acc_mult": round((acc_w / dps) * (1.0 + acc_boost), 3),
                          "dps_each": round(dps, 1), "attack_count": natk,
                          "count": count, "uptime": round(uptime, 2),
                          "dps_total": round(dps * count * uptime, 1)})
@@ -1253,10 +1313,13 @@ def _pet_offense(build, totals, ctx):
         for ps_full in (p.get("pet_powersets") or []):
             if ps_full in seen_ps or pet_min_col is None:
                 continue
-            d, n = _pet_damage_for_powerset(ps_full, ctx, pet_min_col, dmg_boost, pvp)
+            d, n, a = _pet_damage_for_powerset(ps_full, ctx, pet_min_col,
+                                               dmg_boost, pvp)
             if n and d > 0:
                 pets.append({"name": ps_full.split(".")[-1].replace("_", " "),
                              "from_power": p.get("display_name"),
+                             "level_shift": (spec or {}).get("level_shift") or 0,
+                             "acc_mult": round(a * (1.0 + acc_boost), 3),
                              "dps_each": round(d, 1), "attack_count": n,
                              "count": 1, "uptime": round(uptime, 2),
                              "dps_total": round(d * uptime, 1)})
@@ -1265,8 +1328,10 @@ def _pet_offense(build, totals, ctx):
     pets.sort(key=lambda x: x["dps_total"], reverse=True)
     # #13: apply the MM's pet-directed damage buffs. all_mult is uniform (does not
     # reorder), so the pre-buff top pet is still the top pet -> Temporal Selection's
-    # single-target bonus lands on pets[0].
-    all_mult, top_mult, buff_sources = _pet_damage_buff(build, totals, ctx, global_rech)
+    # single-target bonus lands on pets[0]. v38: the ToHit halves are CARRIED,
+    # not applied — hit chance is scenario physics, the scorer owns it.
+    all_mult, top_mult, tohit_all, tohit_top, buff_sources = _pet_damage_buff(
+        build, totals, ctx, global_rech)
     if all_mult or top_mult:
         for i, pt in enumerate(pets):
             m = 1.0 + all_mult + (top_mult if i == 0 else 0.0)
@@ -1280,6 +1345,9 @@ def _pet_offense(build, totals, ctx):
         out["damage_buff_sources"] = buff_sources
         out["damage_buff_all_pct"] = round(all_mult * 100, 1)
         out["damage_buff_top_pct"] = round(top_mult * 100, 1)
+    if tohit_all or tohit_top:
+        out["tohit_buff_all_pct"] = round(tohit_all * 100, 1)
+        out["tohit_buff_top_pct"] = round(tohit_top * 100, 1)
     return out
 
 
@@ -1566,6 +1634,11 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
                 offense["pet_damage_buff_sources"] = pets["damage_buff_sources"]
                 offense["pet_damage_buff_all_pct"] = pets.get("damage_buff_all_pct")
                 offense["pet_damage_buff_top_pct"] = pets.get("damage_buff_top_pct")
+            # v38: pet-directed ToHit (Supremacy/Tactics-class) — the scorer's
+            # pet hit chance consumes these; display names them with the rest.
+            if pets.get("tohit_buff_all_pct") or pets.get("tohit_buff_top_pct"):
+                offense["pet_tohit_all_pct"] = pets.get("tohit_buff_all_pct") or 0.0
+                offense["pet_tohit_top_pct"] = pets.get("tohit_buff_top_pct") or 0.0
         display["offense"] = offense
     display["endurance"] = _endurance_balance(build, display, offense, ctx)
     return display

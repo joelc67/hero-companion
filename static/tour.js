@@ -851,6 +851,11 @@ const TOUR_STEPS = [
         + "support set, a controller or a Mastermind and it grows: per-pet "
         + "damage, your enemy debuffs at their base value per application, and "
         + "what your buffs hand allies.\n\n"
+        + "Pet damage is honest about hit chance: pets are scored with their "
+        + "real chance to hit at their own level. Lower-tier henchmen fight "
+        + "higher-level enemies and miss more -- which is exactly why ToHit "
+        + "buffs like Tactics and accuracy slotted in the summon power "
+        + "visibly raise pet damage.\n\n"
         + "Those numbers are the invisible half of the game made visible -- and "
         + "for a support role they are exactly what the optimizer maximises: "
         + "size times how often they are up." },

@@ -59,6 +59,16 @@ and roughly how much each would add. If nothing on your character supplies that
 stat, it says so plainly, because a goal you cannot reach is worth knowing about
 rather than chasing.
 
+**How pet damage is counted.** Pets and henchmen are scored with their real
+chance to hit, at their own level — not yours. The game summons lower-tier
+henchmen below your level (at full strength, tier 1 fights two levels down,
+tier 2 one, tier 3 at your level), so against high-level enemies they miss
+more, and the tool counts that honestly instead of pretending every pet always
+hits. It also counts what buys the accuracy back: ToHit buffs that reach your
+pets (the Mastermind's own Supremacy, Tactics) and accuracy slotted in the
+summon power itself. That is why those choices visibly raise pet damage here,
+just as they do in the game.
+
 ## Content and Role
 
 These two dropdowns are the most important choice in the tool:

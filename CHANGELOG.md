@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+- **Pet damage stops pretending pets always hit (model v38).** Pets and
+  henchmen are now scored with their real chance to hit, at their own level:
+  the game summons tier-1 henchmen two levels below you (tier 2 one, tier 3
+  at level), so against +4 enemies they miss a lot — and now the numbers say
+  so. What buys it back is counted too: ToHit buffs that actually reach pets
+  (Supremacy itself carries one, Tactics projects; a self-only power like
+  Focused Accuracy does not) and accuracy slotted in the summon power. Every
+  fact behind this came from the game client or, where the client is
+  structurally silent, the wiki with a citation (docs/pet-tohit-sources.md).
+  Pet rows in the offense panel now show each pet's level and accuracy, the
+  ToHit buffs get their own named list, and the help guide gained a "How pet
+  damage is counted" section. Mastermind and pet-heavy champion scores will
+  re-certify in this batch's combined wave.
+
 - **Every proc choice now explains itself.** When the optimizer puts damage
   procs in a power instead of a full set — or seats a −resistance or Force
   Feedback proc — the power's ⓘ panel now says why, in one sentence with both

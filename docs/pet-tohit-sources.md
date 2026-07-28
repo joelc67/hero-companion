@@ -5,6 +5,7 @@ site added bot verification that now 403s every scripted fetch path):
 
 - https://homecoming.wiki/wiki/Attack_Mechanics
 - https://homecoming.wiki/wiki/Mastermind
+- https://homecoming.wiki/wiki/Purple_Patch
 
 These are the TWO facts the client bins are structurally silent on (the summon
 templates carry `Ranged_Ones` for every MM tier — swept 8 sets × 3 tiers on
@@ -57,4 +58,5 @@ where tier_shift = 2/1/0 for henchman Minion/Lt/Boss classes (wiki-sourced),
 1 for Levelminus-template pets (client-pinned), else 0; acc_inherent from the
 pet attack record (client); acc_enh from summon-power slotting via copy_boosts
 (client); tohit_buffs via the buff_effects routing lever (client: Supremacy
-+10% scale, Tactics, etc. — self_effects-only powers excluded).
+ToHit scale 0.1 × the MM's ToHit table 0.75 = +7.5% as priced, Tactics, etc. —
+self_effects-only powers excluded).

@@ -5777,22 +5777,41 @@ function renderOffense(off, t) {
     if (top) html += `<div class="o-atks">${top}</div>`;
   }
   if (off.pets && off.pets.length) {
+    // v38: each pet row states its own level (the game's tier rule — tier 1
+    // fights 2 levels below you) and its accuracy multiplier, straight from
+    // the engine's ledger (level_shift / acc_mult — never recomputed here).
+    const petTag = p => {
+      const bits = [];
+      if (p.level_shift) bits.push(`fights at −${p.level_shift}`);
+      if (p.acc_mult != null && p.acc_mult !== 1) bits.push(`acc ×${p.acc_mult}`);
+      return bits.length ? ` · ${bits.join(" · ")}` : "";
+    };
     html += `<div class="o-sub">Pet damage <span class="muted small">(per pet · squad size not multiplied)</span></div>`
       + off.pets.map(p => `<div class="o-atk"><span>${p.name}</span>`
-        + `<span class="muted small">~${p.dps_each} DPS each · ${p.attack_count} atk · via ${p.from_power}</span></div>`).join("");
+        + `<span class="muted small">~${p.dps_each} DPS each · ${p.attack_count} atk · via ${p.from_power}${petTag(p)}</span></div>`).join("");
     // v34 #13: the pet-directed damage-buff ledger — attribution is display of the
     // engine's ledger, never new math (the three laws). Each source names its scope
-    // and uptime; Pack Mentality carries its stated stack assumption. The
-    // pets-always-hit simplification is an honest known boundary (Joel option B).
-    const pbs = off.pet_damage_buff_sources;
-    if (pbs && pbs.length) {
+    // and uptime; Pack Mentality carries its stated stack assumption.
+    const pbs = (off.pet_damage_buff_sources || []);
+    const dmgSrc = pbs.filter(s => s.effect !== "tohit");
+    const thSrc = pbs.filter(s => s.effect === "tohit");
+    const srcRow = s => `<div class="o-row"><span>${s.name}`
+      + `<span class="muted small"> · ${s.scope}${s.uptime != null && s.uptime < 1 ? ` · ${Math.round(s.uptime * 100)}% uptime` : ""}</span></span>`
+      + `<span class="buf">+${s.pct}%</span></div>`
+      + (s.note ? `<div class="o-note muted small">↳ ${s.note}</div>` : "");
+    if (dmgSrc.length) {
       html += `<div class="o-sub">Pet damage buffs <span class="muted small">(applied to the pet DPS above)</span></div>`
-        + pbs.map(s => `<div class="o-row"><span>${s.name}`
-          + `<span class="muted small"> · ${s.scope}${s.uptime != null && s.uptime < 1 ? ` · ${Math.round(s.uptime * 100)}% uptime` : ""}</span></span>`
-          + `<span class="buf">+${s.pct}%</span></div>`
-          + (s.note ? `<div class="o-note muted small">↳ ${s.note}</div>` : "")).join("")
-        + `<div class="o-note muted small">Pets are modeled as always hitting — pet accuracy is not yet modeled (buff ToHit not credited).</div>`;
+        + dmgSrc.map(srcRow).join("");
     }
+    if (thSrc.length) {
+      html += `<div class="o-sub">Pet ToHit buffs <span class="muted small">(raise the pets' real chance to hit)</span></div>`
+        + thSrc.map(srcRow).join("");
+    }
+    // v38: the always-hit apology is retired — the model now scores each pet's
+    // REAL chance to hit at its own level (wiki-verified; docs/pet-tohit-sources.md).
+    html += `<div class="o-note muted small">Pet damage is scored with each pet's real chance to hit at its own level — `
+      + `lower-tier henchmen fight higher-level enemies and miss more, and your ToHit buffs `
+      + `(and accuracy slotted in the summon power) are credited back.</div>`;
   }
   // Point-valued rows arrive as {hp} or {end}, not {pct}: heals/absorbs are
   // HIT POINTS and endurance effects are POINTS of the 100-end bar (each
