@@ -1254,12 +1254,15 @@ def _debuff_buff_summary(build, ctx):
     pvp = bool(build.get("pvp"))
     deb = defaultdict(float)
     buf = defaultdict(float)
-    # Effects resolved through a *_Heal modifier table are HIT POINTS, not
-    # fractions — formatting them "×100 %" printed a ~798-HP heal total as
-    # "+79781.8%" (Joel's field find, 2026-07-28). The table name is the
-    # game's own unit declaration, so point-ness keys off it, never off
-    # effect names.
+    # POINT-VALUED effects must never be formatted "×100 %" (Joel's field
+    # find, 2026-07-28: a ~943-HP heal total printed as "+94303.2%"). The
+    # unit lives in the EFFECT, not the modifier table: Heal/Absorb are
+    # always hit points (counterexample that killed the table-suffix rule:
+    # Rejuvenating_Circuit stores 165.99 HP as scale on Ranged_Ones), and
+    # Endurance effects are points of the 100-end bar.
     hp_keys = set()
+    end_keys = set()
+    _POINT_HP = ("Heal", "Absorb")
     for power in build.get("powers", []):
         p = power_by_full.get(power.get("full_name"))
         if not p:
@@ -1270,8 +1273,10 @@ def _debuff_buff_summary(build, ctx):
             row = mod_tables.get(d["modifier_table"])
             if row and col < len(row):
                 key = (d["effect"], d["damage_type"])
-                if str(d.get("modifier_table", "")).endswith("_Heal"):
+                if d["effect"] in _POINT_HP:
                     hp_keys.add(key)
+                elif d["effect"] == "Endurance":
+                    end_keys.add(key)
                 deb[key] += _resolve_mag(d, row, col)
         for d in p.get("buff_effects", []):
             if not _pv_ok(d.get("pv_mode", 0), pvp):
@@ -1279,8 +1284,10 @@ def _debuff_buff_summary(build, ctx):
             row = mod_tables.get(d["modifier_table"])
             if row and col < len(row):
                 key = (d["effect"], d["damage_type"])
-                if str(d.get("modifier_table", "")).endswith("_Heal"):
+                if d["effect"] in _POINT_HP:
                     hp_keys.add(key)
+                elif d["effect"] == "Endurance":
+                    end_keys.add(key)
                 buf[key] += _resolve_mag(d, row, col)
 
     def fmt(agg):
@@ -1306,10 +1313,15 @@ def _debuff_buff_summary(build, ctx):
                     # hit points, one application of each contributing power
                     out.append({"effect": label, "type": dt if dt != "None" else None,
                                 "hp": round(v, 1)})
+                elif (et, dt) in end_keys:
+                    out.append({"effect": label, "type": dt if dt != "None" else None,
+                                "end": round(v, 1)})
                 else:
                     out.append({"effect": label, "type": dt if dt != "None" else None,
                                 "pct": round(v * 100, 1)})
-        out.sort(key=lambda r: abs(r.get("pct", r.get("hp", 0))), reverse=True)
+        out.sort(key=lambda r: abs(r.get("pct") if r.get("pct") is not None
+                                   else r.get("hp") if r.get("hp") is not None
+                                   else r.get("end", 0)), reverse=True)
         return out
     return fmt(deb), fmt(buf)
 
