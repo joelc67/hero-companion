@@ -10,7 +10,8 @@ set "WORKDIR=%USERPROFILE%\code\hero-companion-worker"
 rem Pin to Python 3.13 (the conductor laptop's version) so both machines run
 rem the identical runtime; falls back to PATH python only if 3.13 is absent.
 set "PYTHON=py -3.13"
-py -3.13 --version >nul 2>nul || set "PYTHON=python"
+py -3.13 --version >nul 2>nul || set "PYTHON=py -3.11"
+py -3.13 --version >nul 2>nul || py -3.11 --version >nul 2>nul || set "PYTHON=python"
 
 echo [1/5] Checking prerequisites...
 where git >nul 2>nul || (echo   git is missing - install Git for Windows first & exit /b 1)
