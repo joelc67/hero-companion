@@ -128,8 +128,14 @@ def main():
             raise RuntimeError(f"checkout landed on {head}, wanted {order['commit']}")
         _heartbeat(order, prefix, t0, "running", f"checked out {head[:12]}")
 
+        # workers omitted/0 in the order → auto-size to THIS box's cores
+        # (Joel's gaming box is many-core i9 — the conductor shouldn't have
+        # to know the worker's hardware; ~5 sweep threads per worker).
+        n_workers = (order.get("workers")
+                     or max(1, min(len(order["keys"]),
+                                   (os.cpu_count() or 8) // 5)))
         cmd = [PY, os.path.join(ROOT, "tools", "converge_parallel.py"),
-               "--workers", str(order.get("workers") or 4),
+               "--workers", str(n_workers),
                "--shard-prefix", prefix,
                "--keys", ",".join(order["keys"])]
         if order.get("recert", True):
