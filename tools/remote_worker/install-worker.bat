@@ -7,12 +7,15 @@ rem nothing listens, no ports open, no inbound access needed - ever.
 rem ============================================================================
 setlocal
 set "WORKDIR=%USERPROFILE%\code\hero-companion-worker"
-set "PYTHON=python"
-where python >nul 2>nul || set "PYTHON=py"
+rem Pin to Python 3.13 (the conductor laptop's version) so both machines run
+rem the identical runtime; falls back to PATH python only if 3.13 is absent.
+set "PYTHON=py -3.13"
+py -3.13 --version >nul 2>nul || set "PYTHON=python"
 
 echo [1/5] Checking prerequisites...
 where git >nul 2>nul || (echo   git is missing - install Git for Windows first & exit /b 1)
-"%PYTHON%" --version >nul 2>nul || (echo   Python is missing - install Python 3.11+ first & exit /b 1)
+%PYTHON% --version >nul 2>nul || (echo   Python is missing - install Python 3.13 first & exit /b 1)
+%PYTHON% --version 2>nul | findstr /c:" 3.13." >nul || echo   NOTE: not running 3.13 - install Python 3.13 for an identical runtime to the laptop
 if "%OneDrive%"=="" (echo   OneDrive env var missing - sign into OneDrive first & exit /b 1)
 
 echo [2/5] Cloning the repo to %WORKDIR% ...
@@ -23,7 +26,7 @@ if not exist "%WORKDIR%\.git" (
 )
 
 echo [3/5] Installing Python dependencies...
-"%PYTHON%" -m pip install -r "%WORKDIR%\requirements.txt" || exit /b 1
+%PYTHON% -m pip install -r "%WORKDIR%\requirements.txt" || exit /b 1
 
 echo [4/5] Creating the OneDrive mailbox folders...
 mkdir "%OneDrive%\HeroCompanionCompute\orders" 2>nul
