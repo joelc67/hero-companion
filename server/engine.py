@@ -931,9 +931,42 @@ def _offense(build, totals, ctx):
         # so dmg/cycle carries it exactly. Clicks keep the v24 formula.
         # Procs ignore the damage buff/cap by design.
         if p.get("power_type") == 2 and (p.get("activate_period") or 0) > 0:
-            dmg += aura_proc_dps_per_target(power, p) * cycle
+            proc_add = aura_proc_dps_per_target(power, p) * cycle
+            proc_per = "cycle"            # auras roll per pulse, per target
         else:
-            dmg += proc_damage_per_activation(power, p, rech_boost)
+            proc_add = proc_damage_per_activation(power, p, rech_boost)
+            proc_per = "use"
+        dmg += proc_add
+        # Piece 1 (2026-07-28): the proc-vs-set trade LEDGER — display-only
+        # fields the ⓘ card reads (law 1: READ, NEVER RE-ADD; `dmg` above is
+        # unchanged, totals stay byte-identical). proc_dmg = the expected proc
+        # damage already folded in; when the proc pass recorded what it
+        # displaced (_proc_trade), the displaced pieces are priced with the
+        # SAME enhancement math as everything else — the counterfactual side
+        # of the sentence, from data, never guessed.
+        proc_n = sum(1 for s in (power.get("slots") or [])
+                     if s and s.get("piece_uid") in _proc_table())
+        trade_fields = {}
+        tr = power.get("_proc_trade")
+        if tr and tr.get("displaced"):
+            alt = defaultdict(float)
+            for slot in tr["displaced"]:
+                if slot and slot.get("piece_uid"):
+                    for asp, val in _scaled_boosts(slot, ctx):
+                        alt[asp] += val
+            alt_boost = (apply_ed_sched(ED_SCHEDULE.get("Damage", 0),
+                                        alt.get("Damage", 0.0), mult_ed)
+                         + global_dmg)
+            if dmg_cap is not None:
+                alt_boost = min(alt_boost, dmg_cap)
+            tsets = []
+            for slot in tr["displaced"]:
+                sn = slot.get("set_name")
+                if sn and sn not in tsets:
+                    tsets.append(sn)
+            trade_fields = {"trade_kind": tr.get("kind"),
+                            "trade_sets": tsets,
+                            "trade_set_dmg": round(base * (alt_boost - dmg_boost), 1)}
         # AoE vs single-target by the set categories the power accepts — no radius
         # field in the data, but a hit-many attack always accepts an AoE damage set.
         is_aoe_hit = is_aoe(p)                  # real geometry: hits an area (radius/effect_area)
@@ -951,6 +984,11 @@ def _offense(build, totals, ctx):
             # global vs the effective value after this attack's damage cap.
             "global_dmg_raw": round(global_dmg, 4),
             "global_dmg_eff": round(global_dmg_eff, 4),
+            # Piece 1: proc-vs-set trade ledger (display-only, see above)
+            "proc_dmg": round(proc_add, 1),
+            "proc_n": proc_n,
+            "proc_per": proc_per,
+            **trade_fields,
         })
     # v31 PATCH SUMMONERS (Irradiated Ground, the poster case): the summoning
     # power carries NO damage_effects — its whole output lives on the pseudo-
@@ -975,6 +1013,11 @@ def _offense(build, totals, ctx):
             "end_cost": p.get("end_cost") or 0.0, "is_aoe": True,
             "dpa": None,                  # never part of the click chain
             "dps_spam": round(pdps, 1),   # per-target proc DPS, continuous
+            # Piece 1 ledger: this row IS proc damage (the patch pet's rolls)
+            "proc_dmg": round(pdps, 1),
+            "proc_n": sum(1 for s in (power.get("slots") or [])
+                          if s and s.get("piece_uid") in _proc_table()),
+            "proc_per": "cycle",
         })
     if not attacks:
         return {}

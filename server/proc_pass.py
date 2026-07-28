@@ -71,6 +71,15 @@ def _proc_slot(setname, uid, cat_id):
             "piece_uid": uid, "category_id": cat_id, "_proc": True}
 
 
+def _record_trade(p, kind, old_slots):
+    """Piece 1 (2026-07-28): remember WHAT this pass displaced, so the ⓘ card
+    can state the trade with real numbers instead of showing only the result.
+    Stores the displaced slots verbatim — the engine prices them at display
+    time (READ-the-ledger law); display-only, never read by scoring."""
+    p["_proc_trade"] = {"kind": kind,
+                        "displaced": [dict(s) for s in old_slots if s]}
+
+
 def _last_swap_safe(slots):
     """True when replacing slots[-1] does no collateral damage. The anchor/FF sweeps
     swap only the LAST piece of a host to keep its set bonuses — but that's only safe
@@ -196,6 +205,13 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general",
             return powers
         if guard:
             guard.snapshot(powers)    # A2 baseline: the ILP's delivered axes
+        # A fresh pass invalidates any earlier pass's trade notes (a re-solve
+        # re-slots; a stale note would describe slotting that no longer exists).
+        # Locked powers keep theirs — their slots are byte-identical, so the
+        # note is still true.
+        for p in powers:
+            if not p.get("locked"):
+                p.pop("_proc_trade", None)
         # globals already on the build are unique-once — never duplicate them
         used = set()
         for p in powers:
@@ -276,6 +292,8 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general",
                     p["slots"] = slots            # A2: the bomb stole a target
                     for _sn, _uid, _c in procs:
                         used.discard(_uid)        # freed procs may seat elsewhere
+                else:
+                    _record_trade(p, "bomb", slots)
         # ST proc HYBRIDS (offense + control roles): keep the set's acc/dam core — the first
         # 3 pieces of a premium home (its bonuses are build-defining), 2 of a filler set —
         # and fill the tail slots with damage procs. Only fires when the PPM math clears the
@@ -331,6 +349,8 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general",
                         p["slots"] = slots        # A2: the hybrid stole a target
                         for _sn, _uid, _c in procs:
                             used.discard(_uid)
+                    else:
+                        _record_trade(p, "hybrid", slots)
         # −RES ANCHOR (v27: ALL roles, not just control/debuff — Maelwys's point): a −res
         # proc multiplies the whole spawn's incoming damage, and a DAMAGE role owns the
         # biggest single share of that damage, so Achilles/Annihilation/Fury belong in
@@ -379,6 +399,7 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general",
                             slots[-1] = old_last
                             continue
                         used.add(proc["uid"])
+                        _record_trade(p, "anchor", [old_last])
                         break
         # FORCE FEEDBACK +RECHARGE (v27): for roles that ATTACK, a Force Feedback proc in
         # a frequently-cycled knockback attack sustains a real average global-recharge
@@ -416,6 +437,7 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general",
                             slots[-1] = old_last
                             continue
                         used.add(proc["uid"])
+                        _record_trade(p, "ff", [old_last])
                         break
         return powers
     except Exception:  # noqa: BLE001 — fail safe, never break a solve

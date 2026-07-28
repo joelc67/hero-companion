@@ -1448,6 +1448,10 @@ body { overflow: hidden; }
    attribution line under a card's own numbers, and the honest footer that
    points build-level globals at Build Vitals instead of faking a share here */
 .pi-attr { font-size: 10.5px; color: var(--accent); margin: 2px 0 6px; padding-left: 2px; }
+/* Piece 1: the per-attack proc-vs-set explanation on the ⓘ card */
+.pi-trade { font-size: 11px; line-height: 1.5; margin: 4px 0 8px; padding: 6px 8px;
+  border-left: 3px solid var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-radius: 0 6px 6px 0; }
 .pi-prov { margin-top: 8px; padding-top: 5px; border-top: 1px solid var(--border);
   font-size: 10px; line-height: 1.45; font-style: italic; }
 

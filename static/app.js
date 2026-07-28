@@ -4167,6 +4167,7 @@ async function renderPowerInfo() {
     + (rows.length ? `<table>${rows.map(([k, v]) =>
         `<tr><td>${k}</td><td>${escHtml(String(v))}</td></tr>`).join("")}</table>` : "")
     + cardAttributionHtml(atk, LAST_TOTALS)
+    + procTradeHtml(atk, pw)
     + (cats.length ? `<div class="muted small">Allowed enhancements</div>
        <div class="pi-tags">${cats.map(c => `<span class="pi-tag">${escHtml(c)}</span>`).join("")}</div>` : "")
     + setHtml
@@ -5395,6 +5396,51 @@ function cardAttributionHtml(atk, t) {
     ? `↳ ${escHtml(src)} +${rP}% damage — the game's damage cap holds it to +${eP}% on this power`
     : `↳ ${escHtml(src)} +${eP}% damage — included in these numbers`;
   return `<div class="pi-attr" title="Read from the engine's own per-attack ledger; the game's damage cap is applied where it bites. Untick the incarnate preview and this line (and the numbers) drop.">${body}</div>`;
+}
+
+// ── Piece 1 (2026-07-28): the proc-vs-set trade, said out loud ──────────────
+// The optimizer already made this trade when it slotted the power; this states
+// the WHY with the engine's own numbers (atk.proc_dmg / trade_set_dmg — law 1:
+// read the ledger, never recompute). Renders nothing on a plain set-slotted
+// power (the negative control).
+function procTradeHtml(atk, pw) {
+  const tr = (pw && pw._proc_trade) || null;
+  if (!atk && !tr) return "";
+  const procDmg = (atk && atk.proc_dmg) || 0;
+  const per = atk && atk.proc_per === "cycle" ? "cycle, per target" : "use";
+  const kind = (atk && atk.trade_kind) || (tr && tr.kind);
+  // a −res anchor can live in a non-damage toggle (no offense row): the
+  // displaced-set names then come from the power's own trade record
+  const sets = ((atk && atk.trade_sets)
+    || (tr ? [...new Set((tr.displaced || []).map(s => s.set_name).filter(Boolean))] : [])
+  ).join(" + ");
+  const setDmg = atk && atk.trade_set_dmg;
+  if ((kind === "bomb" || kind === "hybrid") && !atk) return "";
+  let body = "";
+  if (kind === "bomb" || kind === "hybrid") {
+    const core = kind === "hybrid"
+      ? "An accuracy/damage core keeps the attack reliable, and the procs do the rest: "
+      : "Why procs here: ";
+    body = `${core}${atk.proc_n} proc${atk.proc_n > 1 ? "s" : ""} add ≈${procDmg} damage every ${per}.`;
+    if (sets) {
+      body += (setDmg != null && setDmg > 0)
+        ? ` The ${sets} pieces they replaced would have added ≈${setDmg} damage from enhancement instead — this build wanted the procs, and collects set bonuses in other powers.`
+        : ` They replaced ${sets} pieces that added no more damage than this — the procs win outright; set bonuses are collected in other powers.`;
+    }
+    body = escHtml(body)
+      + ` <button class="tour-help" onclick="explainStep('proc-why', event)" aria-label="Explain this trade" title="Why procs over a set? One click explains it">?</button>`;
+  } else if (kind === "anchor") {
+    body = escHtml("The −resistance proc here makes the whole spawn take more damage from EVERYONE on your team — a team-wide multiplier, worth more than one more set piece."
+      + (sets ? ` It took the last ${sets} slot; the set's earlier bonuses are kept.` : " It filled a spare slot."));
+  } else if (kind === "ff") {
+    body = escHtml("The Force Feedback proc here grants a burst of extra recharge each time it fires — already priced into your recharge numbers."
+      + (sets ? ` It took the last ${sets} slot; the set's earlier bonuses are kept.` : " It filled a spare slot."));
+  } else if (procDmg > 0) {
+    body = escHtml(`Procs here add ≈${procDmg} damage every ${per} — already included in the numbers above.`);
+  } else {
+    return "";
+  }
+  return `<div class="pi-trade" id="proc-trade-note">${body}</div>`;
 }
 
 function cardProvenanceFooterHtml() {

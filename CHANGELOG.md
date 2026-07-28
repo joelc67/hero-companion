@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- **Every proc choice now explains itself.** When the optimizer puts damage
+  procs in a power instead of a full set — or seats a −resistance or Force
+  Feedback proc — the power's ⓘ panel now says why, in one sentence with both
+  numbers: what the procs add every use, and what the replaced pieces would
+  have added instead. The numbers come from the same engine that prices your
+  build; nothing is re-estimated. A ? on the note jumps to a new guided-tour
+  card ("Why these enhancements") that explains the trade and how to overrule
+  it: slot the set back and lock the power.
+
 ## 0.12.29 — 2026-07-27 — The guided tour
 
 Game data is unchanged from 0.12.26 (Homecoming 2026.1.1242) and the

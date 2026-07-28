@@ -398,6 +398,10 @@ const TOUR_MOCK_HTML = `
       </table>
       <p class="pi-note">Slotted: Superior Unrelenting Fury ×6 — the full set, with its
         +regeneration proc and the set's build-wide bonuses.</p>
+      <p class="pi-trade" data-tm="trade-note">From this build's Foot Stomp ⓘ: “Why procs here:
+        4 procs add ≈118 damage every use. The Obliteration pieces they replaced would have
+        added ≈36 damage from enhancement instead — this build wanted the procs, and collects
+        set bonuses in other powers.”</p>
     </aside>
   </div>
 
@@ -709,6 +713,18 @@ const TOUR_STEPS = [
         + "It is also where enhancement details live: click a slotted piece and "
         + "you get the piece, its set, and the set's bonuses -- the same numbers "
         + "the game uses." },
+  { chapter: "powers", target: "#power-info", scene: "info", side: "left", key: "proc-why",
+    anchor: "[data-tm=trade-note]", slim: true,
+    title: "Why these enhancements",
+    body: "When the optimizer chooses damage procs over a full set -- or seats a "
+        + "-resistance or Force Feedback proc -- this panel says why, in one "
+        + "sentence with both numbers: what the procs add every use, and what "
+        + "the replaced pieces would have added instead. The numbers come from "
+        + "the same engine that prices your build; nothing is re-estimated for "
+        + "the explanation.\n\n"
+        + "Prefer the set after reading the trade? Slot it back and lock the "
+        + "power -- a re-solve honors the lock exactly and rebalances the rest "
+        + "of the build around your choice." },
   { chapter: "powers", target: "#modal", scene: "picker", anchor: "[data-tm=modal-box]", side: "right", slim: true,
     title: "Filling a slot, and why the list is short",
     body: "Click a slot and this chooser opens, offering the sets that power can "
