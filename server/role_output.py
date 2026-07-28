@@ -320,6 +320,9 @@ def enhanced_debuff_totals(powers, ctx, global_recharge=0.0):
         for d in rec.get("debuff_effects") or []:
             if d.get("pv_mode") == 2:
                 continue
+            if d.get("target") == "Self":
+                continue   # v37: a caster-only penalty is not a foe debuff
+                           # (client-verified target back-fill, 2026-07-28)
             row = mod_tables.get(d.get("modifier_table"))
             if not row or col is None or col >= len(row):
                 continue
@@ -376,6 +379,9 @@ def enhanced_team_buffs(powers, ctx, global_recharge=0.0):
         for d in rec.get("buff_effects") or []:
             if d.get("pv_mode") == 2:
                 continue
+            if d.get("target") == "Self":
+                continue   # v37: abs() was crediting Absorb-Pain-class caster
+                           # PENALTIES as ally buffs; Self rows never score here
             row = mod_tables.get(d.get("modifier_table"))
             if not row or col is None or col >= len(row):
                 continue
