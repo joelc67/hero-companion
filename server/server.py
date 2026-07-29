@@ -2530,42 +2530,22 @@ def _epic_prereq_count(tier):
 
 
 def _epic_prereq_errors(powers):
-    """Pool AND Epic powers taken without their in-game prerequisites.
-    2026-07-29: the authority is the CLIENT'S per-power requires expression
-    (_requires_ok) — the count model (first two free, third needs ONE, top
-    tiers TWO) survives only for the few records without a client expression.
-    Pools joined the check the same day: the count model silently blessed
-    Tough/Weave without Boxing or Kick, which the game refuses."""
-    picked = {p.get("full_name") for p in (powers or [])}
+    """Epic/ancillary powers taken WITHOUT their tier prerequisites. Epic pools are a
+    tier ladder: the first two powers are free, the third needs ONE other power from
+    the pool, and the top tiers (the pets — Ice Elemental, Summon Spiderlings…) need
+    TWO. Counted per power, so 'pet + one attack' is correctly flagged as one short."""
     by_ps = defaultdict(list)
     for p in (powers or []):
         rec = POWER_BY_FULL.get(p.get("full_name"))
-        psn = (rec or {}).get("powerset_full_name") or ""
-        if rec and (psn.startswith("Epic.") or psn.startswith("Pool.")):
-            by_ps[psn].append(rec)
+        if rec and (rec.get("powerset_full_name") or "").startswith("Epic."):
+            by_ps[rec["powerset_full_name"]].append(rec)
     out = []
     for ps, recs in by_ps.items():
         tiers = _pool_tiers(ps)
         setname = _AT_SUFFIX_RE.sub("", ps.split(".")[-1]).replace("_", " ")
         n_others = len(recs) - 1
         for r in recs:
-            fn = r.get("full_name")
-            req = _requires_ok(fn, picked)
-            if req is False:
-                opts = sorted({(POWER_BY_FULL.get(t) or {}).get("display_name")
-                               or t.split(".")[-1].replace("_", " ")
-                               for t in (POWER_BY_FULL.get(fn) or {})
-                               .get("requires", "").split()
-                               if t.count(".") == 2 and t not in picked})
-                out.append(
-                    f"{r.get('display_name')} can't be taken yet — the game "
-                    f"won't allow it without its prerequisite picks first "
-                    f"(they involve: {', '.join(opts) or 'other ' + setname + ' powers'}).")
-                continue
-            if req is True or not ps.startswith("Epic."):
-                continue                    # client expression satisfied, or a
-            #                                 pool record on the count fallback
-            t = tiers.get(fn, 0)
+            t = tiers.get(r.get("full_name"), 0)
             need = _epic_prereq_count(t)
             if n_others < need:
                 short = need - n_others
@@ -3411,41 +3391,10 @@ def _veat_accessible_sets(primary, secondary):
     return out
 
 
-def _requires_ok(full_name, picked):
-    """The game's OWN pick-prereq rule (2026-07-29 stop-the-line fix): evaluate
-    the power's client REQUIRES expression (RPN, && / ||) against the picked
-    set. Power tokens (Cat.Set.Power) must be in `picked`; NON-power tokens
-    (patron-arc unlocks etc.) evaluate True — advise-don't-block on conditions
-    the planner cannot know. Returns None when the record carries no client
-    expression (caller falls back to the count model), True/False otherwise.
-    Source: patch_pool_requires.py, 453/472 Pool+Epic records client-verified
-    (the 19 residuals are named in the patcher and stay on the count model)."""
-    rec = POWER_BY_FULL.get(full_name) or {}
-    expr = rec.get("requires")
-    if expr is None:
-        return None
-    if not expr.strip():
-        return True
-    st = []
-    for tok in expr.split():
-        if tok == "&&":
-            b, a = st.pop(), st.pop()
-            st.append(a and b)
-        elif tok == "||":
-            b, a = st.pop(), st.pop()
-            st.append(a or b)
-        else:
-            st.append(tok in picked if tok.count(".") == 2 else True)
-    return all(st)
-
-
 def _picks_legal(fns, primary, secondary):
     """In-game legality of a pick-set: ≤4 pools; only ONE origin-themed pool
-    (Sorcery/Experimentation/Force of Will); pool/epic prereqs by the CLIENT'S
-    OWN per-power requires expressions where we hold them (_requires_ok — the
-    position-count model survives only as the fallback for the 19 residual
-    records; the count-only model certified game-illegal builds, 2026-07-29);
-    at least one level-1 pick from BOTH primary and secondary
+    (Sorcery/Experimentation/Force of Will); pool/epic tier prereqs (T1-2 free, T3 needs 1
+    other from its pool, T4-5 need 2); at least one level-1 pick from BOTH primary and secondary
     (the game grants one of each at L1)."""
     pools, tiered = {}, {}
     for fn in fns:
@@ -3468,13 +3417,9 @@ def _picks_legal(fns, primary, secondary):
     for ps, members in tiered.items():
         tiers = _pool_tiers(ps)
         for fn in members:
-            r = _requires_ok(fn, fns)
-            if r is False:
+            need = _epic_prereq_count(tiers.get(fn, 0))
+            if len(members) - 1 < need:
                 return False
-            if r is None:                 # no client expression → count model
-                need = _epic_prereq_count(tiers.get(fn, 0))
-                if len(members) - 1 < need:
-                    return False
     for want in (primary, secondary):
         # VEAT dual access: the base set satisfies the level-1 seat for its branch
         # (post-24 respec, the L1 picks may legitimately come from the base set).
@@ -3804,38 +3749,17 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
     def _seed_pick_priority(p):
         return _ps_priority(POWER_BY_FULL.get(p["full_name"]) or {}, role,
                             "flex", content)
-    def _l1_seat_sets():
-        """Sets whose sole level-1 seat must never be dropped (repair once
-        dropped a seat and made legality permanently unreachable)."""
-        out = set()
-        for want in (primary, secondary):
-            ok_sets = {want} | ({_VEAT_BASE_SET[want]} if want in _VEAT_BASE_SET else set())
-            seats = [p["full_name"] for p in powers_in
-                     if p["full_name"].rsplit(".", 1)[0] in ok_sets
-                     and ((POWER_BY_FULL.get(p["full_name"]) or {})
-                          .get("level_available") or 1) <= 1]
-            if len(seats) == 1:
-                out.add(seats[0])
-        return out
-
     _guard = 0
     while not _picks_legal({p["full_name"] for p in powers_in},
                            primary, secondary) and _guard < 40:
         _guard += 1
-        _protected = pin | _l1_seat_sets()
         _droppable = [p for p in powers_in
-                      if p["full_name"] not in _protected
+                      if p["full_name"] not in pin
                       and not _fn_ps(p["full_name"]).startswith("Inherent")]
         if not _droppable:
             return None, {"error": "seed cannot be made pick-legal — pins + "
                                    "required picks exceed the game's ladder"}
-        # Drop the actual OFFENDER first: a pick failing its own client
-        # requires expression (2026-07-29) is the illegality — blind priority
-        # drops thrashed 40 rounds without touching it.
-        _fns_now = {p["full_name"] for p in powers_in}
-        _offenders = [p for p in _droppable
-                      if _requires_ok(p["full_name"], _fns_now) is False]
-        _victim = min(_offenders or _droppable, key=_seed_pick_priority)
+        _victim = min(_droppable, key=_seed_pick_priority)
         powers_in.remove(_victim)
     if not _picks_legal({p["full_name"] for p in powers_in}, primary, secondary):
         return None, {"error": "seed legality repair failed (ladder-unseatable "
