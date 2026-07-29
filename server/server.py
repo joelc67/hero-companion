@@ -2525,8 +2525,32 @@ def _epic_prereq_count(tier):
     builds + Maelwys's field report (2026-07-06): the first two (level 35) are free, the
     next two (level 38/41 — Physical Perfection is level 41) need ONE, and only the top
     power (level 44) needs TWO. (The power data carries no per-power prereq, so tier is
-    our proxy; the corpus confirms this mapping across every ancillary pool.)"""
+    our proxy; the corpus confirms this mapping across every ancillary pool.)
+
+    2026-07-29: superseded per-power by `prereq_count` in the data wherever the
+    GAME states it (patch_prereq_counts.py) — see _prereq_need, which every
+    caller now goes through. This stays as the fallback proxy for the 68
+    records the game does not state (and the 9 held disagreements)."""
     return 0 if tier <= 1 else (1 if tier <= 3 else 2)
+
+
+def _prereq_need(full_name, powerset_full_name=None):
+    """How many OTHER powers of its own set this power requires — THE one
+    authority. Prefers `prereq_count`, which carries the GAME'S OWN stated
+    rule ("have one other Fighting Powers"), and falls back to the
+    corpus-validated tier proxy where the game states nothing.
+
+    Why this exists: the tier proxy over-required travel powers (the game
+    gates Fly/Teleport/Super Speed freely) and under-required the Weave class
+    (the game wants two others, the proxy wanted one). Found by
+    tools/reality_check_prereqs.py, which compares the two for every power and
+    is now a standing check."""
+    rec = POWER_BY_FULL.get(full_name) or {}
+    n = rec.get("prereq_count")
+    if n is not None:
+        return int(n)
+    ps = powerset_full_name or rec.get("powerset_full_name") or ""
+    return _epic_prereq_count(_pool_tiers(ps).get(full_name, 0)) if ps else 0
 
 
 def _epic_prereq_errors(powers):
@@ -2545,8 +2569,7 @@ def _epic_prereq_errors(powers):
         setname = _AT_SUFFIX_RE.sub("", ps.split(".")[-1]).replace("_", " ")
         n_others = len(recs) - 1
         for r in recs:
-            t = tiers.get(r.get("full_name"), 0)
-            need = _epic_prereq_count(t)
+            need = _prereq_need(r.get("full_name"), ps)
             if n_others < need:
                 short = need - n_others
                 out.append(
@@ -3072,7 +3095,7 @@ def _tier_need(full_name):
     ps = (full_name or "").rsplit(".", 1)[0]
     if not ps.startswith(("Pool.", "Epic.")):
         return 0
-    return _epic_prereq_count(_pool_tiers(ps).get(full_name, 0))
+    return _prereq_need(full_name, ps)
 
 
 def _pick_order_legal(seq):
@@ -3415,10 +3438,8 @@ def _picks_legal(fns, primary, secondary):
         if a in fns and b in fns:
             return False
     for ps, members in tiered.items():
-        tiers = _pool_tiers(ps)
         for fn in members:
-            need = _epic_prereq_count(tiers.get(fn, 0))
-            if len(members) - 1 < need:
+            if len(members) - 1 < _prereq_need(fn, ps):
                 return False
     for want in (primary, secondary):
         # VEAT dual access: the base set satisfies the level-1 seat for its branch
@@ -6233,7 +6254,7 @@ def _pick_epic(archetype, content, role="damage", exposure="flex"):
         tiers = _pool_tiers(ps)
 
         def _needs(fn):
-            return _epic_prereq_count(tiers.get(fn, 0))
+            return _prereq_need(fn, ps)
 
         for _ in range(4):                    # at most a few gateways ever needed
             max_need = max((_needs(q["full_name"]) for q in take), default=0)

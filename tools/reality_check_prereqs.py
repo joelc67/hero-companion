@@ -40,7 +40,11 @@ _WORDNUM = {"no": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
 # other Fighting Powers before selecting Tough" / "have two other Primal Forces
 # Mastery Powers". Deliberately tolerant of the game's own grammar slips.
 _RE_NEED = re.compile(
-    r"have\s+(\w+)\s+other\s+(.{0,60}?)\s*Powers?\b", re.I | re.S)
+    # the game says this several ways: "have one other Fighting Powers",
+    # "have trained any two other Concealment powers" — a narrow regex read
+    # the second form as "no prerequisite", which is how a parser lies.
+    r"have\s+(?:trained\s+)?(?:any\s+)?(\w+)\s+other\s+(.{0,60}?)\s*Powers?\b",
+    re.I | re.S)
 
 
 def _norm(ps):
@@ -87,7 +91,6 @@ def main():
     for ps, lst in sorted(data.items()):
         if not (ps.startswith("Pool.") or ps.startswith("Epic.")):
             continue
-        tiers = srv._pool_tiers(ps)
         for p in lst:
             fn = p.get("full_name")
             expected += 1
@@ -102,7 +105,7 @@ def main():
                     unmatched.append(fn)
                     continue
             checked += 1
-            ours = srv._epic_prereq_count(tiers.get(fn, 0))
+            ours = srv._prereq_need(fn, ps)   # what the APP enforces
             theirs = stated_need(help_)
             if theirs is None:
                 # game states no prerequisite sentence -> it needs none
