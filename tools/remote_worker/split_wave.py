@@ -66,11 +66,52 @@ def main():
         print("nothing to split")
         return
 
-    n_local = round(len(remaining) * args.local_share)
-    # never idle a machine that could hold at least one key
-    if len(remaining) >= 2:
-        n_local = max(1, min(len(remaining) - 1, n_local))
-    remote, local = remaining[n_local:], remaining[:n_local]
+    # LONGEST-PROCESSING-TIME-FIRST (2026-07-29, Joel's efficiency standing
+    # ask). Measured on the v38 wave: 2752 context-minutes over 6 workers took
+    # ~16h wall where perfect packing is 7.6h — the loss is scheduling, and the
+    # fix is free. One context (PB triform, 484 min) is 9x the median, so if it
+    # starts last the wave's tail IS that context. Start the monsters first;
+    # unknown contexts sort as median so a first-time context is not starved.
+    # Cost history: benchmarks/wave_cost_history.json (tools/wave_cost_report.py).
+    try:
+        hist = json.load(open(os.path.join(ROOT, "benchmarks",
+                                           "wave_cost_history.json"),
+                              encoding="utf-8"))
+    except Exception:  # noqa: BLE001 — no history yet = original order
+        hist = {}
+    if hist:
+        med = sorted(hist.values())[len(hist) // 2]
+        remaining.sort(key=lambda k: -hist.get(k, med))
+        top = remaining[0]
+        print(f"scheduled longest-first (history: {len(hist)} contexts); "
+              f"first out = {hist.get(top, med):.0f} min "
+              f"{top.split('|')[0].replace('Class_','')}"
+              f"{'/' + top.split('|')[4] if len(top.split('|')) > 4 else ''}")
+
+    if hist:
+        # LPT LIST-SCHEDULING: deal longest-first to whichever machine has the
+        # least predicted load RELATIVE to its capacity. Slicing the sorted
+        # list instead would hand every monster to one machine and idle the
+        # other early — last night's failure with extra steps.
+        med = sorted(hist.values())[len(hist) // 2]
+        local, remote = [], []
+        load_l = load_r = 0.0
+        cap_l, cap_r = args.local_share, max(1e-6, 1.0 - args.local_share)
+        for k in remaining:                       # already longest-first
+            cost = hist.get(k, med)
+            if load_l / cap_l <= load_r / cap_r:
+                local.append(k)
+                load_l += cost
+            else:
+                remote.append(k)
+                load_r += cost
+        print(f"predicted load: local {load_l:.0f} min / remote {load_r:.0f} min "
+              f"(makespan is set by the busier side)")
+    else:
+        n_local = round(len(remaining) * args.local_share)
+        if len(remaining) >= 2:
+            n_local = max(1, min(len(remaining) - 1, n_local))
+        remote, local = remaining[n_local:], remaining[:n_local]
     print(f"split: {len(local)} local / {len(remote)} remote (box)")
     for k in local:
         print(f"   L {k}")
