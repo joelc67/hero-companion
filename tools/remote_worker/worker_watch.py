@@ -151,6 +151,38 @@ def main():
             pass
         os.remove(LOCK)
 
+    # ORPHAN RESCUE (2026-07-29): champions banked by an order that was killed
+    # mid-run live in shards on THIS box and were only ever copied home at
+    # DONE — so a cancelled order stranded finished work. Sweep any remote
+    # shard whose order has no results folder into a rescue folder, every
+    # tick, before doing anything else. Cheap, idempotent, and it means
+    # "stop the box" can never lose a converged champion again.
+    for sf in glob.glob(os.path.join(ROOT, "champions_shard_remote_*_p*.json")):
+        base = os.path.basename(sf)
+        oid = base[len("champions_shard_remote_"):].rsplit("_p", 1)[0]
+        oid_dash = oid.replace("_", "-", 2)          # wave_YYYYMMDD_HHMMSS -> wave-...
+        if os.path.exists(os.path.join(RESULTS, oid_dash, "DONE.json")):
+            continue                                  # already delivered
+        dest = os.path.join(RESULTS, oid_dash + "-rescued")
+        os.makedirs(dest, exist_ok=True)
+        try:
+            if not os.path.exists(os.path.join(dest, base)) or \
+                    os.path.getmtime(sf) > os.path.getmtime(os.path.join(dest, base)):
+                shutil.copy2(sf, dest)
+                lg = sf[:-5] + ".log"
+                if os.path.exists(lg):
+                    shutil.copy2(lg, dest)
+                json.dump({"order": oid_dash, "rescued": True,
+                           "note": "order did not finish; these champions were "
+                                   "banked before it stopped",
+                           "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ",
+                                                time.gmtime())},
+                          open(os.path.join(dest, "RESCUED.json"), "w",
+                               encoding="utf-8"), indent=1)
+                print(f"rescued orphaned shard {base} -> {dest}")
+        except Exception:  # noqa: BLE001 — rescue must never block a claim
+            pass
+
     claimed = _claim_order()
     if not claimed:
         print("no orders")
