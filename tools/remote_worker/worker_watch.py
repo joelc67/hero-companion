@@ -26,6 +26,7 @@ Order file shape (written by send_work.py):
 import glob
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -67,6 +68,43 @@ def _claim_order():
     return None
 
 
+def _in_flight(prefix):
+    """What each worker is doing RIGHT NOW, from its own log tail.
+
+    Why (2026-07-29, Joel nearly cancelled a healthy order): a banked count
+    alone reads as "0 of 8" for the first 40 minutes while four contexts are
+    mid-convergence — motion invisible, and invisible motion looks like a
+    hang. The worker logs already carry it: "[  12.3m] <context key>" when a
+    context starts and "sweep N r0 best=X ... solves=A/B" as it progresses."""
+    out = []
+    for lp in sorted(glob.glob(os.path.join(ROOT, prefix + "_p*.log"))):
+        try:
+            with open(lp, encoding="utf-8", errors="replace") as f:
+                lines = f.readlines()[-400:]
+        except Exception:  # noqa: BLE001 — a log mid-write reads next tick
+            continue
+        cur, started, sweep = None, None, None
+        for ln in lines:
+            m = re.match(r"^\[\s*([0-9.]+)m\]\s+(\S+)", ln)
+            if m:
+                started, cur, sweep = float(m.group(1)), m.group(2), None
+            elif cur and "-> score" in ln:
+                cur = None                     # that context finished
+            elif cur:
+                s = re.search(r"sweep\s+(\d+)\s+r(\d+)\s+best=([0-9.]+)", ln)
+                if s:
+                    sweep = {"sweep": int(s.group(1)), "restart": int(s.group(2)),
+                             "best": float(s.group(3))}
+        if cur:
+            p = cur.split("|")
+            out.append({"worker": os.path.basename(lp).rsplit("_", 1)[-1][:-4],
+                        "context": (f"{p[0].replace('Class_', '')}/"
+                                    f"{p[1].split('.')[-1]}"
+                                    f"{'/' + p[4] if len(p) > 4 else ''}"),
+                        "started_at_min": started, "progress": sweep})
+    return out
+
+
 def _heartbeat(order, prefix, t0, status, note=""):
     os.makedirs(STATE, exist_ok=True)
     counts = {}
@@ -75,10 +113,20 @@ def _heartbeat(order, prefix, t0, status, note=""):
             counts[os.path.basename(sf)] = len(json.load(open(sf, encoding="utf-8")))
         except Exception:  # noqa: BLE001 — a mid-write shard reads next tick
             counts[os.path.basename(sf)] = "writing"
+    elapsed = round((time.time() - t0) / 60.0, 1)
+    flight = _in_flight(prefix)
     hb = {"order": order["id"], "status": status,
-          "elapsed_min": round((time.time() - t0) / 60.0, 1),
+          "elapsed_min": elapsed,
           "done": sum(v for v in counts.values() if isinstance(v, int)),
-          "of": len(order.get("keys") or []), "shards": counts, "note": note,
+          "of": len(order.get("keys") or []),
+          # the motion a banked count cannot show
+          "in_flight": flight,
+          "in_flight_summary": "; ".join(
+              f"{w['context']} (sweep {w['progress']['sweep']}, best "
+              f"{w['progress']['best']:.0f}, {elapsed - (w['started_at_min'] or 0):.0f}m in)"
+              if w.get("progress") else f"{w['context']} (starting)"
+              for w in flight) or "none",
+          "shards": counts, "note": note,
           "written_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
     tmp = os.path.join(STATE, f"heartbeat_{order['id']}.json.tmp")
     with open(tmp, "w", encoding="utf-8") as f:
