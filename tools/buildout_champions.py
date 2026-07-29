@@ -242,8 +242,15 @@ def main():
                                         restarts=args.restarts,
                                         ban=ban, pin=pin, form=form)
             cert = info.get("certificate")
-            results.append((key, f"score {info.get('score'):.1f}", cert))
-            print(f"   -> score {info.get('score'):.1f}  certificate: {cert}", flush=True)
+            sc = info.get("score")
+            # score None = EVERY evaluation failed (deep_optimize's best never
+            # scored) — say that plainly instead of crashing the formatter
+            # (2026-07-29: a 30-sweep-thread run died here as a TypeError).
+            sc_txt = f"score {sc:.1f}" if sc is not None else \
+                "score NONE — every evaluation failed (see solves count)"
+            results.append((key, sc_txt, cert))
+            print(f"   -> {sc_txt}  solves {info.get('solves')}  "
+                  f"certificate: {cert}", flush=True)
         except Exception as e:  # noqa: BLE001
             results.append((key, f"ERROR {type(e).__name__}: {e}", None))
             print(f"   -> ERROR {e}", flush=True)
