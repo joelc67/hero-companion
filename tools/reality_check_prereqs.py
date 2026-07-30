@@ -1,169 +1,126 @@
-"""PREREQ REALITY CHECK — the game's OWN words vs our prerequisite model.
+"""PREREQ REALITY CHECK — the game's OWN RULE vs what the app enforces.
 
-WHY THIS EXISTS (2026-07-29, and it cost a wave): I parsed a `requires`
-expression out of the client bins, decided our count model was wrong, called
-~20 shipping champions illegal, and burned 12 hours of certification. Then the
-game's own help text said plainly: "You must be at least level 14 and have ONE
-OTHER Fighting Powers" — any one. The count model was right all along.
+STANDARD RE-BASED 2026-07-30 (engine-accuracy work order §1.4). The original
+check compared our model to the help PROSE and treated "this power has no
+prerequisite sentence" as "it needs 0". That was an inference, not a game
+statement — 219 of 488 client pool/epic powers carry no sentence at all, and
+for every one of them the prose check was silently guessing (wrong for at
+least Jaunt, Translocation, and Blaster Black Hole).
 
-So: never infer a rule from an undocumented field again. The client STATES its
-prerequisites in English, per power, in display_help. This reads that
-statement for EVERY pool/epic power and compares it to what our model would
-enforce (server._epic_prereq_count over the set's tier order). Any
-disagreement is printed as a hard failure with both sides quoted, so the
-question is settled by the game's words rather than anyone's parse.
+The standard is now the client's `requires` EXPRESSION — the boolean rule the
+game actually executes — evaluated for its minimum satisfying count by
+tools/prereq_from_requires.py (validated against 7 controls whose player-facing
+text states the count). Prose is CORROBORATION only: conflicts are reported,
+never enforced. An empty expression IS the game's statement (no gate).
 
-Coverage denominator: every Pool./Epic. power in data/powers.json that the
-client export can be matched to (same resolvers as the shipped patchers).
-Powers whose help states no prerequisite are checked to need 0.
+FULL ACCOUNTING (Joel's ruling 2026-07-30: "knowing all, not just most"):
+the denominator is every Pool./Epic. power in data/powers.json. Each must be
+either (a) resolved to a client record — exact name, set bridge, or unique
+display-name identity (tools/patch_prereq_counts.resolve, namespace-honest) —
+and compared, or (b) named with a reason in
+tools/prereq_unmatched_dispositions.json. Anything else is a hard failure.
 
-Run:  py tools\\reality_check_prereqs.py [--verbose]
+GATE MODE: converge_parallel runs `--gate` before spawning a worker; it fails
+only on disagreements NEW since tools/prereq_disagreement_baseline.json.
+`--write-baseline` regenerates the baseline deliberately.
+
+Run:  py tools\\reality_check_prereqs.py [--verbose] [--gate [--write-baseline]]
 """
-import glob
 import json
 import os
-import re
 import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
-import server as srv  # noqa: E402
+sys.path.insert(0, os.path.join(ROOT, "tools"))
+import server as srv  # noqa: E402 — what the APP enforces
+import patch_prereq_counts as ppc  # noqa: E402 — the shared client resolver
+import prereq_from_requires as pfr  # noqa: E402 — the expression evaluator
 
-OUT_FULL = os.path.join(ROOT, "tools", "gamedata", "bin-crawler", "out_full")
 VERBOSE = "--verbose" in sys.argv
-# GATE MODE (2026-07-30, Joel's question: "why check AFTER the builds?").
-# converge_parallel runs `--gate` before it spawns a single worker, so a wave
-# can never start on a prerequisite model the game disputes. The known
-# disagreements (help text that names a DIFFERENT power — see docstring) are
-# text evidence, not rule evidence, and must not block waves forever: the gate
-# fails only on disagreements that are NEW since the baseline.
 GATE = "--gate" in sys.argv
 BASELINE = os.environ.get("HC_PREREQ_BASELINE") or os.path.join(
     ROOT, "tools", "prereq_disagreement_baseline.json")
-
-_WORDNUM = {"no": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
-            "1": 1, "2": 2, "3": 3, "4": 4, "5": 5}
-# The client's own sentence, e.g. "you must be at least level 14 and have one
-# other Fighting Powers before selecting Tough" / "have two other Primal Forces
-# Mastery Powers". Deliberately tolerant of the game's own grammar slips.
-_RE_NEED = re.compile(
-    # the game says this several ways: "have one other Fighting Powers",
-    # "have trained any two other Concealment powers" — a narrow regex read
-    # the second form as "no prerequisite", which is how a parser lies.
-    r"have\s+(?:trained\s+)?(?:any\s+)?(\w+)\s+other\s+(.{0,60}?)\s*Powers?\b",
-    re.I | re.S)
-
-
-def _norm(ps):
-    return frozenset(w for w in ps.lower().split("_"))
-
-
-def client_index():
-    """full_name -> display_help, plus a word-set index for the Mids-vs-client
-    set-name split (Epic.Dark_Mastery_Controller vs Epic.Controller_Dark_...)."""
-    idx, by_words = {}, {}
-    for f in glob.glob(os.path.join(OUT_FULL, "pool", "*", "*.json")) + \
-             glob.glob(os.path.join(OUT_FULL, "epic", "*", "*.json")):
-        if os.path.basename(f) == "index.json":
-            continue
-        try:
-            rec = json.load(open(f, encoding="utf-8"))
-        except Exception:  # noqa: BLE001
-            continue
-        fn, help_ = rec.get("full_name"), rec.get("display_help") or ""
-        if not fn:
-            continue
-        idx[fn] = help_
-        cat, ps, pw = fn.split(".", 2)
-        by_words.setdefault((cat.lower(), _norm(ps), pw.lower()), []).append(fn)
-    return idx, by_words
-
-
-def stated_need(help_text):
-    """What the GAME says this power needs: N other powers of its set, or None
-    when it states no prerequisite."""
-    m = _RE_NEED.search(help_text or "")
-    if not m:
-        return None
-    return _WORDNUM.get(m.group(1).lower())
+DISPOSITIONS = os.path.join(ROOT, "tools", "prereq_unmatched_dispositions.json")
 
 
 def main():
-    idx, by_words = client_index()
+    idx, by_set = ppc.client_index()
+    bridge = ppc.set_bridge()
+    disp = (json.load(open(DISPOSITIONS, encoding="utf-8"))
+            if os.path.exists(DISPOSITIONS) else {})
     data = json.load(open(os.path.join(ROOT, "data", "powers.json"),
                           encoding="utf-8"))
-    expected = checked = agree = 0
-    unmatched, mismatches, unparsed = [], [], []
 
+    expected = compared = agree = 0
+    mismatches, inexact, unaccounted, dispositioned = [], [], [], []
+    prose_conflicts = []
     for ps, lst in sorted(data.items()):
-        if not (ps.startswith("Pool.") or ps.startswith("Epic.")):
+        if not ps.startswith(("Pool.", "Epic.")):
             continue
         for p in lst:
-            fn = p.get("full_name")
+            fn = p["full_name"]
             expected += 1
-            help_ = idx.get(fn)
-            if help_ is None:
-                cat, psn, pw = fn.split(".", 2)
-                cands = by_words.get((cat.lower(), _norm(psn), pw.lower()), [])
-                helps = {idx[c] for c in cands}
-                if len(cands) >= 1 and len({stated_need(h) for h in helps}) == 1:
-                    help_ = next(iter(helps))
-                else:
-                    unmatched.append(fn)
+            rec = ppc.resolve(fn, p.get("display_name"), idx, by_set, bridge)
+            if rec is None:
+                (dispositioned if fn in disp else unaccounted).append(fn)
+                continue
+            cfn = rec["full_name"]
+            expr = (rec.get("requires") or "").strip()
+            siblings = [r["full_name"] for r in by_set[cfn.rsplit(".", 1)[0]]
+                        if r["full_name"] != cfn]
+            if expr:
+                game, status = pfr.min_others(expr, siblings)
+                if status != "exact":
+                    inexact.append((fn, status, expr))
                     continue
-            checked += 1
-            ours = srv._prereq_need(fn, ps)   # what the APP enforces
-            theirs = stated_need(help_)
-            if theirs is None:
-                # game states no prerequisite sentence -> it needs none
-                theirs = 0
-                if "before selecting" in (help_ or "").lower():
-                    unparsed.append((fn, help_[:120]))
-                    continue
-            if ours == theirs:
+            else:
+                game = 0                      # empty expression = the game gates nothing
+            compared += 1
+            ours = srv._prereq_need(fn, ps)
+            if ours == game:
                 agree += 1
                 if VERBOSE:
                     print(f"  ok   {fn}: both say {ours}")
             else:
-                # SELF-SKEPTICISM (the lesson of 2026-07-29): the client's help
-                # sentence sometimes names a DIFFERENT power than the record it
-                # sits on (Vengeance's says "before selecting Victory Rush").
-                # A mismatch whose sentence names someone else is EVIDENCE
-                # ABOUT THE TEXT, not about the rule — never act on it without
-                # a second source.
-                m = re.search(r"before selecting ([A-Za-z' \-]+)", help_ or "")
-                named = (m.group(1).strip() if m else "")
-                own = fn.rsplit(".", 1)[-1].replace("_", " ")
-                suspect = bool(named) and named.lower() != own.lower()
-                mismatches.append((fn, ours, theirs, help_, suspect, named))
+                mismatches.append((fn, ours, game, expr))
+            # prose corroboration only — both sides CLIENT namespace
+            hc = pfr.help_count(pfr.help_sentence(rec))
+            if hc is not None and hc != game:
+                prose_conflicts.append((fn, cfn, game, hc))
 
-    print(f"\nPREREQ REALITY CHECK — the game's words vs our model")
-    print(f"  {checked} of {expected} Pool/Epic powers checked "
-          f"({len(unmatched)} unmatched in the client export)")
-    solid = [m for m in mismatches if not m[4]]
-    suspect = [m for m in mismatches if m[4]]
-    print(f"  {agree} agree, {len(mismatches)} DISAGREE "
-          f"({len(solid)} on the power's OWN sentence, {len(suspect)} whose "
-          f"sentence names a DIFFERENT power — text evidence, not rule "
-          f"evidence), {len(unparsed)} unparsable prerequisite")
-    for fn, ours, theirs, help_, susp, named in solid + suspect:
-        sent = next((s.strip() for s in re.split(r"<br>|\. ", help_ or "")
-                     if "other" in s.lower() and "power" in s.lower()), "")
-        tag = f"  ⚠ SENTENCE NAMES '{named}' — needs a second source" if susp else ""
-        print(f"\n  MISMATCH {fn}{tag}\n    ours: needs {ours} other set powers"
-              f"\n    game: needs {theirs} — \"{sent[:140]}\"")
-    for fn, snippet in unparsed:
-        print(f"\n  UNPARSED PREREQ {fn}: \"{snippet}\"")
-    if unmatched and VERBOSE:
-        print("\n  unmatched (no client record):")
-        for fn in unmatched:
-            print(f"    {fn}")
+    print("\nPREREQ REALITY CHECK — the game's requires expression vs what "
+          "the app enforces")
+    print(f"  {expected} Pool/Epic powers in our data (the denominator)")
+    print(f"  {compared} compared against the game's own rule, {agree} agree")
+    print(f"  {len(inexact)} expression(s) not reducible to an exact count")
+    print(f"  {len(dispositioned)} unmatched WITH a named disposition")
+    print(f"  {len(unaccounted)} unmatched with NO disposition (hard failure)")
+    for fn, ours, game, expr in mismatches:
+        print(f"\n  MISMATCH {fn}\n    app enforces {ours}, the game's "
+              f"expression needs {game}: {expr[:140]}")
+    for fn, status, expr in inexact:
+        print(f"\n  {status.upper()} {fn}: {expr[:140]}")
+    for fn in unaccounted:
+        print(f"\n  UNACCOUNTED {fn}: no client record and no disposition — "
+              "add one to tools/prereq_unmatched_dispositions.json or fix the data")
+    if prose_conflicts:
+        print(f"\n  prose corroboration: {len(prose_conflicts)} sentence(s) "
+              "state a different count than the expression (client prose vs "
+              "client expression — the expression is what the game executes):")
+        for fn, cfn, game, hc in prose_conflicts:
+            print(f"    {fn} (client {cfn}): expression {game}, sentence {hc}")
 
+    if unaccounted:
+        print(f"\nHARD FAIL: {len(unaccounted)} power(s) neither verified nor "
+              "dispositioned — full accounting is the rule.")
+        sys.exit(1)
+
+    seen = sorted([f"{fn}|{ours}|{game}" for fn, ours, game, _ in mismatches]
+                  + [f"{fn}|{status}" for fn, status, _ in inexact])
     if GATE:
-        seen = sorted([f"{fn}|{ours}|{theirs}" for fn, ours, theirs, *_ in mismatches]
-                      + [f"{fn}|unparsed" for fn, _ in unparsed])
         base = (json.load(open(BASELINE, encoding="utf-8"))
                 if os.path.exists(BASELINE) else [])
         if "--write-baseline" in sys.argv:
@@ -179,17 +136,18 @@ def main():
             for s in new:
                 print(f"   {s}")
             print("harden-before-certify: settle these against the game's own "
-                  "words (or re-baseline deliberately) before any wave starts.")
+                  "rule (or re-baseline deliberately) before any wave starts.")
             sys.exit(1)
-        print(f"\nPREREQ GATE OK — {agree} powers agree; {len(seen)} known "
-              f"disagreement(s), none new. Safe to certify.")
+        print(f"\nPREREQ GATE OK — {agree} of {compared} agree; {len(seen)} "
+              f"known disagreement(s), none new; {len(dispositioned)} "
+              "dispositioned. Safe to certify.")
         sys.exit(0)
 
-    bad = bool(mismatches or unparsed)
+    bad = bool(mismatches or inexact)
     print("\n" + ("REALITY CHECK FAILED — the game disagrees with our model above"
                   if bad else
-                  "ALL CHECKED POWERS AGREE — our prerequisite model matches "
-                  "the game's own stated rules"))
+                  f"ALL {compared} COMPARED POWERS AGREE with the game's own "
+                  f"rule ({len(dispositioned)} dispositioned by name)"))
     sys.exit(1 if bad else 0)
 
 

@@ -4,8 +4,11 @@
  "Epic.Dark_Mastery_Mastermind": "Epic.Mastermind_Dark_Mastery",
  "Epic.Dark_Mastery_TankBrute": "Epic.Tank_Dark_Mastery",
  "Epic.Def_Flame_Mastery": "Epic.Defender_Fire_Mastery",
+ "Epic.Ice_Mastery_DefCorr": "Epic.Defender_Ice_Mastery",
  "Epic.Ice_Mastery_ScrapStalk": "Epic.Scrapper_Ice_Mastery",
  "Epic.Psionic_Mastery_ScrapStalk": "Epic.Melee_Psionic_Mastery",
  "Epic.Psionic_Mastery_TankBrute": "Epic.Tank_Psionic_Mastery",
+ "Epic.Sentinel_Elec_Mastery": "Epic.Sentinel_Electricity_Mastery",
+ "Epic.Sentinel_Lev_Mastery": "Epic.Sentinel_Leviathan_Mastery",
  "Epic.Sentinel_Psi_Mastery": "Epic.Sentinel_Psionic_Mastery"
 }

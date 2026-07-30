@@ -48,8 +48,18 @@ def _wordset(ps):
     return frozenset(ps.lower().split("_"))
 
 
+# Ours -> client set names, proven by TWO signals (identical power leaf rosters
+# AND an agreeing archetype token — content alone maps Corr_ and Def_ Flame
+# Mastery onto the same copy). See CLAUDE.md "Naming: three namespaces".
+def set_bridge():
+    p = os.path.join(ROOT, "tools", "epic_set_name_bridge.json")
+    return json.load(open(p, encoding="utf-8")) if os.path.exists(p) else {}
+
+
 def client_index():
-    idx, by_words = {}, {}
+    """(full_name -> record, set_full_name -> [records]) for every client
+    pool/epic power."""
+    idx, by_set = {}, {}
     for f in glob.glob(os.path.join(OUT_FULL, "pool", "*", "*.json")) + \
              glob.glob(os.path.join(OUT_FULL, "epic", "*", "*.json")):
         if os.path.basename(f) == "index.json":
@@ -62,9 +72,41 @@ def client_index():
         if not fn:
             continue
         idx[fn] = rec
-        cat, ps, pw = fn.split(".", 2)
-        by_words.setdefault((cat.lower(), _wordset(ps), pw.lower()), []).append(fn)
-    return idx, by_words
+        by_set.setdefault(fn.rsplit(".", 1)[0], []).append(rec)
+    return idx, by_set
+
+
+def resolve(fn, our_disp, idx, by_set, bridge):
+    """Our full_name -> the client record, namespace-honest (CLAUDE.md "three
+    namespaces"). Ladder: exact full_name; bridged/word-set-equal set + exact
+    leaf; then a UNIQUE display-name match inside those sets — our internal
+    names are Mids/display-derived, the client's are historical and reused, so
+    display identity is what actually links them (our Sentinel Chum_Spray
+    displays 'Arctic Breath' and IS the client's Arctic_Breath). Candidate sets
+    are constrained by the archetype token (word-set equality or the proven
+    bridge), which is what keeps byte-identical rosters like Corr_/Def_ Flame
+    Mastery from cross-mapping."""
+    rec = idx.get(fn)
+    if rec is not None:
+        return rec
+    cat, psn, leaf = fn.split(".", 2)
+    ps = f"{cat}.{psn}"
+    cands = [bridge[ps]] if ps in bridge else []
+    ws = _wordset(psn)
+    cands += [cs for cs in by_set
+              if cs not in cands and cs.split(".", 1)[0] == cat
+              and _wordset(cs.split(".", 1)[1]) == ws]
+    for cs in cands:
+        rec = idx.get(f"{cs}.{leaf}")
+        if rec is not None:
+            return rec
+    disp = (our_disp or leaf.replace("_", " ")).lower()
+    for cs in cands:
+        hits = [r for r in by_set.get(cs, [])
+                if (r.get("display_name") or "").lower() == disp]
+        if len(hits) == 1:
+            return hits[0]
+    return None
 
 
 def stated(rec, own_name):
@@ -104,7 +146,8 @@ def stated(rec, own_name):
 def main(write=False):
     raw = open(POWERS, "rb").read()
     data = json.loads(raw)
-    idx, by_words = client_index()
+    idx, by_set = client_index()
+    bridge = set_bridge()
 
     # PRIMARY SIGNAL (2026-07-30, Joel: "check the game, make no assumptions").
     # The client states each prerequisite as an executable boolean expression
@@ -134,16 +177,10 @@ def main(write=False):
         for p in lst:
             fn = p.get("full_name")
             expected += 1
-            rec = idx.get(fn)
+            rec = resolve(fn, p.get("display_name"), idx, by_set, bridge)
             if rec is None:
-                cat, psn, pw = fn.split(".", 2)
-                cands = by_words.get((cat.lower(), _wordset(psn), pw.lower()), [])
-                results = {stated(idx[c], pw)[0] for c in cands}
-                if len(cands) >= 1 and len(results) == 1:
-                    rec = idx[cands[0]]
-                else:
-                    unmatched.append(fn)
-                    continue
+                unmatched.append(fn)
+                continue
             ex = expr.get(rec.get("full_name") or fn)
             if ex is not None:
                 n = ex["needs"]
