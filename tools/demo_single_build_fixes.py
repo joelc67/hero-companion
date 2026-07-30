@@ -331,8 +331,17 @@ import json as _json  # noqa: E402
 _lock_target = next(p for p in powers
                     if sum(1 for s in (p.get("slots") or []) if s and s.get("set_uid")) >= 3)
 _lock_name = _lock_target["full_name"]
-_lock_slots_before = _json.dumps(_lock_target.get("slots"), sort_keys=True)
-_lock_powers_in = [{"full_name": p["full_name"], "slots": p.get("slots"),
+# 2026-07-30 (eps tie-break made re-solves REPRODUCIBLE): the old witness —
+# "the other powers came back different" — was quietly resting on CBC's
+# arbitrary tie choice; a deterministic full re-slot can legitimately
+# reproduce itself. Lock a MANGLED (suboptimal — last filled slot removed)
+# slotting instead: byte-identity of a slotting the optimizer would love to
+# fix is the strong proof that the lock overrides the solve.
+_lock_mangled = [s for s in (_lock_target.get("slots") or []) if s][:-1]
+_lock_slots_before = _json.dumps(_lock_mangled, sort_keys=True)
+_lock_powers_in = [{"full_name": p["full_name"],
+                    "slots": (_lock_mangled if p["full_name"] == _lock_name
+                              else p.get("slots")),
                     "earned_slot_count": p.get("earned_slot_count"),
                     "locked": p["full_name"] == _lock_name} for p in powers]
 _lock_sol = c.post("/build/solve", json={"archetype": AT, "goal": "", "tier": "premium",
@@ -342,17 +351,17 @@ _lock_sol = c.post("/build/solve", json={"archetype": AT, "goal": "", "tier": "p
 _lock_out = next((p for p in _lock_sol.get("powers", [])
                   if p["full_name"] == _lock_name), None)
 _lock_slots_after = _json.dumps((_lock_out or {}).get("slots"), sort_keys=True)
-_others_changed = any(
-    _json.dumps(next((q for q in _lock_sol.get("powers", [])
-                      if q["full_name"] == p["full_name"]), {}).get("slots"),
-                sort_keys=True) != _json.dumps(p.get("slots"), sort_keys=True)
-    for p in powers if p["full_name"] != _lock_name)
-check("LOCKED power byte-identical through a full re-slot; others re-solve",
-      _lock_slots_before == _lock_slots_after and _others_changed
+_lock_slots_after = _json.dumps(
+    [s for s in ((_lock_out or {}).get("slots") or []) if s], sort_keys=True)
+_others_solved = any(
+    sum(1 for s in (q.get("slots") or []) if s and s.get("set_uid")) >= 2
+    for q in _lock_sol.get("powers", []) if q["full_name"] != _lock_name)
+check("LOCKED mangled slotting byte-identical through a full re-slot; others solve",
+      _lock_slots_before == _lock_slots_after and _others_solved
       and bool((_lock_out or {}).get("locked")),
       f"locked {_lock_out and _lock_out.get('display_name')}: identical="
       f"{_lock_slots_before == _lock_slots_after}, echo locked flag="
-      f"{bool((_lock_out or {}).get('locked'))}, others changed={_others_changed}")
+      f"{bool((_lock_out or {}).get('locked'))}, others solved={_others_solved}")
 
 # ── #15 ACCEPTANCE PINS (Joel's custom-targets doctrine, the 7/20 forum user's
 # two cases): the pick layer SERVES a declared ask. Case 1 — Inv/SS Tanker with

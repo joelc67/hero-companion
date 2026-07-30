@@ -2897,7 +2897,8 @@ class _TargetGuard:
 
 
 def _assess_solve(archetype, powers_in, targets, tier, perk_focus, roles,
-                  pvp, preserve, keep_layout, with_powers=False, content=None):
+                  pvp, preserve, keep_layout, with_powers=False, content=None,
+                  two_stage=None):
     """Run ONE solve and return the engine totals (for comparing routes) — or
     (totals, solved_powers) when with_powers, for the joint think-ahead loop. Mirrors
     /build/solve's core; returns None on any failure."""
@@ -2943,6 +2944,7 @@ def _assess_solve(archetype, powers_in, targets, tier, perk_focus, roles,
                                preserve=preserve, keep_layout=keep_layout, archetype=archetype,
                                ho_pieces=(_ho_solver_pieces()
                                           if content in _HO_CONTENTS else None),
+                               two_stage=two_stage,
                                **_at_solve_phys(archetype))
     except Exception:  # noqa: BLE001
         return None
@@ -4006,10 +4008,14 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
     cert["node_cap"] = {"cap": int(os.environ.get("HC_DEEP_NODE_CAP", "50000")),
                         "capped_solves_floor":
                             len(solver.CAPPED_SOLVES) - _capped_before}
-    r = _assess_solve(archetype, _c.deepcopy(cur_b), _c.deepcopy(targets),
-                      "premium", perk, roles, False, False, False,
-                      with_powers=True, content=content)
-    if r:
+    def _finale_arm(style):
+        """Full re-solve + downstream chain + fresh fp score for one tie-break
+        style. Returns (score, solved, ev) or None."""
+        r = _assess_solve(archetype, _c.deepcopy(cur_b), _c.deepcopy(targets),
+                          "premium", perk, roles, False, False, False,
+                          with_powers=True, content=content, two_stage=style)
+        if not r:
+            return None
         _tot2, solved2 = r
         solved2 = proc_pass.apply_proc_pass(solved2, POWER_BY_FULL,
                                             role=role, content=content)
@@ -4022,8 +4028,28 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
                                  role_output_mod=role_output)
         _tm2 = (fp.SCENARIOS.get(content)
                 or fp.SCENARIOS["general"]).get("teammates", 0)
-        sc2 = fp.role_contribution(ev2, role_mix or role, teammates=_tm2)
+        return fp.role_contribution(ev2, role_mix or role, teammates=_tm2), \
+            solved2, ev2
+
+    # TIE ARBITRATION (item 5, Joel's "fix the honest negatives" 2026-07-30):
+    # no static tie-break weighting survives the physics model (measured: each
+    # weighting fixes one outlier and breaks another), so the FINALE solves
+    # the winner under each tie-break style and PHYSICS picks. The committed
+    # champion is never worse than any single style by construction. Sweeps
+    # stay on the free "eps" style; the extra arms cost two solves per
+    # CONTEXT, not per candidate.
+    arms = {}
+    for style in ("eps", "lex", False):
+        a = _finale_arm(style)
+        if a:
+            arms[style or "plain"] = a
+    if arms:
+        win = max(arms, key=lambda k: arms[k][0])
+        sc2, solved2, ev2 = arms[win]
         cert["node_cap"]["final_resolve_delta"] = round(sc2 - sc_b, 2)
+        cert["tie_arbitration"] = {
+            "winner": win,
+            "scores": {k: round(v[0], 2) for k, v in arms.items()}}
         sc_b, solved_b, ev_b = sc2, solved2, ev2
     # v31 AFK sustain label (Joel's ruling, 2026-07-16): any content that asks
     # the AFK regen floor certifies with the tier the build DOES sustain stated

@@ -800,7 +800,8 @@ def _post_target_decay(targets, targets_pct, at_res_cap, at_base_hp):
 def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
               slot_cap=67, tier="premium", perk_focus=None, roles=None, pvp=False,
               preserve=False, keep_layout=False, archetype=None,
-              at_res_cap=None, at_base_hp=None, warm_hint=None, ho_pieces=None):
+              at_res_cap=None, at_base_hp=None, warm_hint=None, ho_pieces=None,
+              two_stage=None):
     """Optimal slot solve via integer linear programming.
 
     Phase 1 solves the targets with CHEAP sets only (the least-expensive build
@@ -982,8 +983,21 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
     # for damage roles and the over-cap def/res cushion for survival roles.
     # Support/control/heal roles' signature is already the step-1 objective
     # (invisible-role doctrine), so recovery alone breaks their (rare) ties.
+    # `two_stage` threads per-CALL (env is process-global and deep_optimize's
+    # sweep pool is multi-threaded — a per-call flag cannot race). Styles:
+    #   "eps"  — tie-preference folded into step 1, ONE solve (measured 1.05x
+    #            single-stage wall: effectively free). The default.
+    #   "lex"  — the two-solve lexicographic step 2 (recovery-dominant).
+    #   False  — plain single-stage, no tie term.
+    # None = env default: HC_TWO_STAGE=0 -> off, else HC_TS_STYLE or "eps".
+    if two_stage is None:
+        two_stage = (False if os.environ.get("HC_TWO_STAGE") == "0"
+                     else os.environ.get("HC_TS_STYLE") or "eps")
+    elif two_stage is True:
+        two_stage = "lex"
     tiebreak = {"mode": ("damage" if "damage" in roles
-                         else "survival" if "survival" in roles else None)}
+                         else "survival" if "survival" in roles else None),
+                "style": two_stage}
     kind_mult = defaultdict(lambda: 1.0)
     pref_cats = set()
     for r in roles:
@@ -1679,8 +1693,44 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
     # exceeding the threshold — the free-power roster, targets, budget, and
     # wall time. Off by default; costs one perf_counter call.
     import time as _time
+    # ── EPS DEGENERACY-BREAKER (item-5 speed experiment, 2026-07-30): the
+    # plateau heavies are slow because MANY slottings tie at the same step-1
+    # optimum and CBC must prove optimality across the flat region. Folding a
+    # TINY tie-preference into step 1 collapses the degeneracy in ONE solve.
+    # HC_TS_EPS=<abs cap> scales the tie expression so its total influence is
+    # bounded by that cap (objective units, typical objective 1-40) — big
+    # enough to order ties, orders below any real primary difference. The
+    # committed-solve fp arbitration is the correctness guarantee; this term
+    # is a speed/bias hint, never an authority.
+    _eps_cap = float(os.environ.get("HC_TS_EPS") or 0.001)
+    _eps_used = False
+    if _eps_cap > 0 and tiebreak and tiebreak.get("style") == "eps":
+        _rec_w0 = float(os.environ.get("HC_TS_REC_W") or 1000.0)
+        _e_terms = []
+        _e_max = 0.0
+        for pi, opts in opts_by_power.items():
+            for oi, o in enumerate(opts):
+                w = _rec_w0 * (o["contrib"] or {}).get(("Recovery", None), 0.0)
+                if tiebreak.get("mode") == "survival":
+                    w += sum(v2 for k2, v2 in (o["contrib"] or {}).items()
+                             if k2[0] in ("Defense", "Resistance"))
+                if w > 0:
+                    _e_terms.append((w, x[(pi, oi)]))
+                    _e_max += w
+        if tiebreak.get("mode") == "damage":
+            for cft, v in dmg_terms:
+                _e_terms.append((cft, v))
+                _e_max += cft
+        if _e_terms and _e_max > 0:
+            _primary0 = prob.objective
+            _scale = _eps_cap / _e_max
+            prob.setObjective(_primary0 + _scale * pulp.lpSum(
+                w * v for w, v in _e_terms))
+            _eps_used = True
     _t_solve0 = _time.perf_counter()
     prob.solve(_mip_solver(warm=hinted))
+    if _eps_used:
+        prob.setObjective(_primary0)   # diagnostics log step-1 semantics
     # ── TWO-STEP SOLVE (plateau work order item 5; Joel's rulings 2026-07-30) ──
     # Past the caps many slottings tie at the same objective value; which one
     # CBC returns is arbitrary, and fresh physics scoring measured those ties
@@ -1692,7 +1742,7 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
     # non-optimal step 2 restores step 1's answer verbatim, and the objective
     # is restored either way so every diagnostic below keeps step-1 semantics.
     # HC_TWO_STAGE=0 disables for A/B measurement.
-    if (tiebreak and os.environ.get("HC_TWO_STAGE") != "0"
+    if (tiebreak and tiebreak.get("style") == "lex" and not _eps_used
             and pulp.LpStatus[prob.status] == "Optimal"):
         V = pulp.value(prob.objective)
         rec_terms, role_terms = [], []
