@@ -306,12 +306,28 @@ Read it before planning anything.
   −20.3, Battle_Axe/FA −9.5, Stalker Rad/Dark −7.2 — linear proxies can't see
   procs/chains that fp prices) and cost 3.15× ILP wall (up to 9× per solve).
   `HC_TS_REC_W` = measurement seam for the recovery dominance.
-  **▶ AWAITING JOEL'S CALL (session-report options): (1) ship as-is, (2)
-  best-of-both per evaluate (~4× cost, never worse by construction), (3)
-  two-stage for the app / single-stage for certification until a converged
-  A/B on the six biggest movers (~6-8 h fleet, nothing merges) decides.
-  Then item 6 re-cert per the justification evidence.** Cheap wins parked:
-  exploration-log parse, PuLP model reuse.
+  **✅ NEGATIVES CLOSED STRUCTURALLY (7820d06a, Joel's "fix the honest
+  negatives"):** no static tie-break weighting survives fp (measured 3-way:
+  each fixes one outlier, breaks another — no more weight tuning, ever). Fix =
+  (a) tie-break STYLES per-call on solve_ilp ("eps" = tie-preference folded
+  into step 1, HC_TS_EPS cap 0.001, measured 1.05× = FREE, outliers bounded
+  −4.6%, the DEFAULT everywhere incl. sweeps; "lex" = the two-solve step 2;
+  False = plain) — per-call param, never env (sweep pool is threaded);
+  (b) **deep_optimize FINALE solves the winner under every style and PHYSICS
+  picks** (cert["tie_arbitration"] records arms) — committed champions never
+  worse than any style by construction, cost 2 solves per CONTEXT.
+  **🐌 SLOW-BUILD DIAGNOSIS COMPLETE:** sweep counts uniform — per-solve cost
+  is the whole story; eps FALSIFIED the degeneracy-collapse hypothesis (1.05×,
+  not <1×) so plateau bound-proving is INTRINSIC; the remaining measured lever
+  = the 30-40% PuLP rebuild/MPS-I/O overhead → in-process CBC (python-mip),
+  ⚠ a NEW DEPENDENCY in the shipped client — Joel's call before any port.
+  ⚠ Battery lesson: eps makes re-solves REPRODUCIBLE — the v35 lock check's
+  "others changed" witness died of it; now locks a MANGLED slotting instead
+  (byte-identity proves the lock overrides the optimizer). All batteries
+  green. ⚠ Observed: CBC tie choice can vary under CPU load (same family as
+  the canonical-score drift). **▶ OPEN WITH JOEL: python-mip dependency; the
+  converged movers A/B before item-6 re-cert.** Cheap win parked:
+  exploration-log parse.
 - **🧾 v38+HO WAVE COMPLETE 24/24 — VERDICT TABLE WITH JOEL, NOTHING MERGED.** `recert_verdicts.json` (written 2026-07-30 00:10): **4 SUPERSEDE** (Crab_Spider_Soldier +181.3 — this also CLOSES the named autopick defect that failed every leg of the previous wave · Spines/Fiery_Aura +92.4 · Poison/Sonic_Attack +50.9 · Broad_Sword/Super_Reflexes +4.1) / **20 KEEP**, zero collapsed runs, zero eval failures. The gate re-scores BOTH sides fresh under v38 (canonical vs canonical, CBC pinned) so the deltas are real; a mostly-KEEP outcome is the NORMAL shape of a recert wave (the prior wave was 3/20), not a defect. Large negatives cluster on Kheldian per-form contexts, where the form context BANS powers the incumbent build holds — the recert searches a strictly smaller space and cannot win by construction. **Merge = by context, `--verdicts`, canonical winner kept, shards retired `.merged_2026-07-30` — awaits Joel's word.**
 - **Wave-run history worth keeping:** ran across the laptop + gaming box; the box was stopped mid-order and its 2 finished champions came home via the new orphan-rescue (2505c2a0) rather than being lost. Drop-dead pauses fired clean twice (4:10 PM, then armed 6 AM). ⚠ `bench_solver_e2e` running beside the wave killed 10 in-flight contexts — several hours of compute, nothing corrupted; see the speed-ledger guard warning.
 - **⚠ MY OWN ERRORS THIS WAVE, recorded so the pattern is visible:** quoted a per-solve solver ratio (2.65×) as if it were end-to-end (really 1.2-1.7×); quoted a pre-fix 484 min as current (really 261); inflated the banked count by 2 by incrementing from monitor events instead of counting the shards; read a docstring's history as current state and wrongly declared a healthy wave's premise broken. **Common thread: passing along a number without checking what it measured.** Count from the artifact, not from the narration.
