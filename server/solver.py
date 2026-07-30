@@ -976,6 +976,14 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
     # their sets — recharge still leads (perma-dom/perma-buffs) via the control/support recharge block.
     if archetype in _DAMAGE_HYBRID_ATS and "damage" not in roles:
         roles = roles + ["damage"]
+    # TWO-STEP tie-break spec (plateau item 5, Joel's rulings 2026-07-30): the
+    # declared objective decides the tie-break and ROLE is always the focus.
+    # Recovery leads for every role; the signature axis is the damage credit
+    # for damage roles and the over-cap def/res cushion for survival roles.
+    # Support/control/heal roles' signature is already the step-1 objective
+    # (invisible-role doctrine), so recovery alone breaks their (rare) ties.
+    tiebreak = {"mode": ("damage" if "damage" in roles
+                         else "survival" if "survival" in roles else None)}
     kind_mult = defaultdict(lambda: 1.0)
     pref_cats = set()
     for r in roles:
@@ -1115,7 +1123,7 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
               piece_choices=(6, 5, 4, 3, 2), objective_targets=targets,
               allow_premium=allow_premium, cost_w=cost_w, pref_cats=pref_cats, pvp=pvp,
               priority=priority, piece_meta=piece_meta, decay=decay,
-              warm_hint=warm_hint, ho_pieces=ho_pieces)
+              warm_hint=warm_hint, ho_pieces=ho_pieces, tiebreak=tiebreak)
     focus_keys = set(PERK_FOCUS.get(perk_focus, []))
     perk_kind_mult = dict(kind_mult)
     if focus_keys:                  # the 🧮 perk dial gets an outsized weight
@@ -1139,7 +1147,7 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
               piece_choices=(6, 5, 4, 3, 2), objective_targets=perks, perk_pass=True,
               allow_premium=allow_premium, cost_w=cost_w, priority=_perk_priority,
               kind_mult=perk_kind_mult, pref_cats=pref_cats, pvp=pvp, piece_meta=piece_meta,
-              warm_hint=warm_hint, ho_pieces=ho_pieces)
+              warm_hint=warm_hint, ho_pieces=ho_pieces, tiebreak=tiebreak)
 
     # DEFAULT: never drop a cheap IO for an empty slot — restore any the solve
     # didn't replace with a set (keeps Hasten/Fulcrum/etc. functional). Runs in
@@ -1377,7 +1385,7 @@ def _enforce_added_cap(powers, budget):
 def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices,
               objective_targets, perk_pass=False, allow_premium=False, cost_w=0.0,
               kind_mult=None, pref_cats=None, pvp=False, priority=None, piece_meta=None,
-              decay=None, warm_hint=None, ho_pieces=None):
+              decay=None, warm_hint=None, ho_pieces=None, tiebreak=None):
     """Run one ILP over powers that still have free slots / no set yet.
     `kind_mult` weights a stat KIND (e.g. {'Defense':2}) so the player's role
     leans coverage that way; `pref_cats` nudges set selection toward role-fitting
@@ -1673,6 +1681,49 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
     import time as _time
     _t_solve0 = _time.perf_counter()
     prob.solve(_mip_solver(warm=hinted))
+    # ── TWO-STEP SOLVE (plateau work order item 5; Joel's rulings 2026-07-30) ──
+    # Past the caps many slottings tie at the same objective value; which one
+    # CBC returns is arbitrary, and fresh physics scoring measured those ties
+    # ±19.4% apart. Step 2 re-solves among the tied optima for the declared
+    # objective's tie-break: endurance recovery FIRST ("second only to
+    # Endurance recovery"), then the role's signature axis — the damage-set
+    # credit for damage roles, raw def/res contribution (the over-cap cushion)
+    # for survival roles. Step 1's optimum is a hard floor (>= V - eps); a
+    # non-optimal step 2 restores step 1's answer verbatim, and the objective
+    # is restored either way so every diagnostic below keeps step-1 semantics.
+    # HC_TWO_STAGE=0 disables for A/B measurement.
+    if (tiebreak and os.environ.get("HC_TWO_STAGE") != "0"
+            and pulp.LpStatus[prob.status] == "Optimal"):
+        V = pulp.value(prob.objective)
+        rec_terms, role_terms = [], []
+        for pi, opts in opts_by_power.items():
+            for oi, o in enumerate(opts):
+                r = (o["contrib"] or {}).get(("Recovery", None), 0.0)
+                if r > 0:
+                    rec_terms.append(r * x[(pi, oi)])
+                if tiebreak.get("mode") == "survival":
+                    s = sum(v2 for k2, v2 in (o["contrib"] or {}).items()
+                            if k2[0] in ("Defense", "Resistance"))
+                    if s > 0:
+                        role_terms.append(s * x[(pi, oi)])
+        if tiebreak.get("mode") == "damage":
+            role_terms = [c * v for c, v in dmg_terms]
+        if V is not None and (rec_terms or role_terms):
+            saved_vals = {v: v.varValue for v in prob.variables()}
+            saved_status = prob.status
+            primary = prob.objective
+            prob += primary >= V - 1e-6 * max(1.0, abs(V)), "step1_floor"
+            # Recovery dominant by construction (both sums are bounded, and the
+            # 1000x spread exceeds their ratio): the role axis only breaks ties
+            # recovery itself leaves.
+            prob.setObjective(1000.0 * pulp.lpSum(rec_terms)
+                              + pulp.lpSum(role_terms))
+            prob.solve(_mip_solver(warm=False))
+            if pulp.LpStatus[prob.status] != "Optimal":
+                for v, val in saved_vals.items():
+                    v.varValue = val
+                prob.status = saved_status
+            prob.setObjective(primary)
     _slow_cfg = os.environ.get("HC_SOLVER_SLOW_LOG")
     if _slow_cfg:
         try:
