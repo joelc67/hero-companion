@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- **Exported .mbd files open in Mids Reborn again.** Mids reads the
+  alignment field as a case-sensitive value ("Hero"), and our exports wrote
+  the app's lowercase "hero" — so a build exported from Hero Companion
+  crashed Mids Reborn on open with "Requested value 'hero' was not found"
+  (thank you to the field reporter with the SS/Shield Brute). Exports now
+  write the exact casing Mids expects, for every alignment. If you have an
+  older exported file that won't open, changing "hero" to "Hero" inside it
+  fixes it — or just re-export after this update.
+
 - **The optimizer can now propose Hamidon Origins.** The classic endgame move
   — two or three enhancement aspects in one slot — was something you could
   always slot by hand, but the optimizer never offered. For endgame content

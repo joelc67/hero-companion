@@ -221,7 +221,12 @@ def build_mbd(payload, db_name, db_version, level_lookup, app_version="3.7.7.7")
         "Level": "49",
         "Class": payload.get("archetype") or "",
         "Origin": payload.get("origin") or "Magic",
-        "Alignment": payload.get("alignment") or "Hero",
+        # Mids parses Alignment as a .NET ENUM — case-sensitive. The app's
+        # toggle stores lowercase "hero"/"villain", and passing that through
+        # crashed Mids on OUR exports with "Requested value 'hero' was not
+        # found" (field report 2026-07-30). Capitalize to the enum's casing
+        # (Hero/Villain/Rogue/Vigilante/Loyalist/Resistance — all one word).
+        "Alignment": (payload.get("alignment") or "Hero").strip().capitalize(),
         "Name": payload.get("name") or "CoH Planner Build",
         "Comment": "Created with the local CoH Build Planner.",
         "PowerSets": power_sets,
