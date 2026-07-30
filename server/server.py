@@ -6440,8 +6440,25 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
 
     out, slots, placed = [], list(_PICK_LEVELS), set()
 
+    # VEAT base-vs-branch twins are ONE power to the game: Frag Grenade BECOMES
+    # CS Frag Grenade when a Soldier branches to Crab, so a build may hold only
+    # one of each pair — and _picks_legal correctly refuses both. Autopick never
+    # consulted the table it shares with that gate, so the Crab Spider seed
+    # carried BOTH grenades, twice over (Frag + CS_Frag, Venom + CS_Venom). That
+    # seed can never be made pick-legal, so every evaluation failed and the
+    # context reported "score NONE" on every leg of every wave — the named
+    # 24th-context defect, root-caused 2026-07-30. It was NOT a prereq bug.
+    # The guard lives in place() because that is the single funnel every pick
+    # routes through (L1 seats, early, rest, fill-to-cap), and priority order
+    # then decides which twin survives — the scorer chooses, not a hardcoded
+    # preference for base or branch.
+    _twin = {}
+    for _a, _b in _VEAT_DUPLICATE_PAIRS:
+        _twin[_a] = _b
+        _twin[_b] = _a
+
     def place(fn, lvl):
-        if fn in placed:
+        if fn in placed or _twin.get(fn) in placed:
             return
         for i, sl in enumerate(slots):
             if sl >= lvl:

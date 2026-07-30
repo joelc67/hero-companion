@@ -106,7 +106,27 @@ def main(write=False):
     data = json.loads(raw)
     idx, by_words = client_index()
 
+    # PRIMARY SIGNAL (2026-07-30, Joel: "check the game, make no assumptions").
+    # The client states each prerequisite as an executable boolean expression
+    # over named powers; tools/prereq_from_requires.py evaluates it for the
+    # minimum satisfying count. That is the rule the game runs, so it outranks
+    # the help PROSE (a player-facing summary, which disagrees with the
+    # expression for 4 of 488) and outranks our tier proxy entirely. Only
+    # "exact" counts are used -- ones that hold whether eligibility gates pass
+    # or fail. Prose+model stays the fallback where no expression exists.
+    expr = {}
+    p_expr = os.path.join(ROOT, "tools", "prereq_counts_from_requires.json")
+    if os.path.exists(p_expr):
+        expr = {k: v for k, v in json.load(open(p_expr, encoding="utf-8")).items()
+                if v.get("status") == "exact"}
+        print(f"expression counts loaded: {len(expr)} powers (the game's own rule)")
+    else:
+        print("⚠ no expression counts on disk — run "
+              "tools/prereq_from_requires.py --json first; falling back to prose")
+
     expected = patched = changed = 0
+    from_expr = 0
+    changes = []
     held, unmatched = [], []
     for ps, lst in sorted(data.items()):
         if not (ps.startswith("Pool.") or ps.startswith("Epic.")):
@@ -124,6 +144,17 @@ def main(write=False):
                 else:
                     unmatched.append(fn)
                     continue
+            ex = expr.get(rec.get("full_name") or fn)
+            if ex is not None:
+                n = ex["needs"]
+                patched += 1
+                from_expr += 1
+                if p.get("prereq_count") != n:
+                    changes.append((fn, p.get("prereq_count"), n,
+                                    ex.get("display_name")))
+                    p["prereq_count"] = n
+                    changed += 1
+                continue
             n, why = stated(rec, fn.rsplit(".", 1)[-1].replace("_", " "))
             if n is None:
                 held.append((fn, why))
@@ -143,7 +174,10 @@ def main(write=False):
                 changed += 1
 
     print(f"{patched} of {expected} Pool/Epic powers patched from the game's "
-          f"own words ({changed} changed this run)")
+          f"own words ({from_expr} from the requires EXPRESSION, "
+          f"{patched - from_expr} from prose+model; {changed} changed this run)")
+    for fn, was, now, disp in changes:
+        print(f"    CHANGE {fn} [{disp}]: {was} -> {now}")
     print(f"  HELD (signals disagree or text is about another power): {len(held)}")
     for fn, why in held:
         print(f"    {fn}: {why}")
