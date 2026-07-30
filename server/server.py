@@ -2554,14 +2554,15 @@ def _prereq_need(full_name, powerset_full_name=None):
 
 
 def _epic_prereq_errors(powers):
-    """Epic/ancillary powers taken WITHOUT their tier prerequisites. Epic pools are a
-    tier ladder: the first two powers are free, the third needs ONE other power from
-    the pool, and the top tiers (the pets — Ice Elemental, Summon Spiderlings…) need
-    TWO. Counted per power, so 'pet + one attack' is correctly flagged as one short."""
+    """Pool AND epic/ancillary powers taken WITHOUT their prerequisites (2026-07-30:
+    was Epic.-only — a user could take Vengeance with one Leadership power and see no
+    warning, while _picks_legal refused the same roster in search). _prereq_need is
+    the one authority for the count. Counted per power, so 'pet + one attack' is
+    correctly flagged as one short."""
     by_ps = defaultdict(list)
     for p in (powers or []):
         rec = POWER_BY_FULL.get(p.get("full_name"))
-        if rec and (rec.get("powerset_full_name") or "").startswith("Epic."):
+        if rec and (rec.get("powerset_full_name") or "").startswith(("Pool.", "Epic.")):
             by_ps[rec["powerset_full_name"]].append(rec)
     out = []
     for ps, recs in by_ps.items():
