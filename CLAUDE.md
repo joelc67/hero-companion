@@ -330,9 +330,21 @@ Read it before planning anything.
   probe warm-starts from HC_CHAMPIONS_PATH and appends to the REAL
   exploration log, so back-to-back probes on one context are NOT independent
   — isolate scratch paths PER ARM and run separate processes, or the ladder
-  measures learning, not the variable. **▶ OPEN WITH JOEL: the converged
-  movers A/B before item-6 re-cert.** Cheap win parked: exploration-log
-  parse.
+  measures learning, not the variable.
+- **✅ NO-SHORTCUTS AUDIT (8d676076, Joel: "make sure we did not take
+  shortcuts that will undermine the accuracy"):** three holes found+closed —
+  (1) the eps floor is now a STANDING battery check for BOTH styles
+  (discrete-gap fixture, exact); (2) the lock check regained the
+  "allocated empties stay empty" half (mangled slotting carries an explicit
+  None; empties = the None entries in the incoming list, NOT derived from
+  earned); (3) **serve-time /build/solve now physics-arbitrates too** —
+  generated/full-re-slot solves with a scorable objective run the plain arm
+  and fp picks (preserve/keep-layout/perk-chip skip; ~2× solve seconds).
+  Gate grew check 24: both arms RAN and the arbitration swallow did NOT fire
+  — silent death is the failure mode, and this check caught a real NameError
+  pre-ship. Gate 24/24 · plateau 6/6. **▶ OPEN WITH JOEL: the converged
+  movers A/B before item-6 re-cert; optional dominance-reduction attempt.**
+  Cheap win parked: exploration-log parse.
 - **🧾 v38+HO WAVE COMPLETE 24/24 — VERDICT TABLE WITH JOEL, NOTHING MERGED.** `recert_verdicts.json` (written 2026-07-30 00:10): **4 SUPERSEDE** (Crab_Spider_Soldier +181.3 — this also CLOSES the named autopick defect that failed every leg of the previous wave · Spines/Fiery_Aura +92.4 · Poison/Sonic_Attack +50.9 · Broad_Sword/Super_Reflexes +4.1) / **20 KEEP**, zero collapsed runs, zero eval failures. The gate re-scores BOTH sides fresh under v38 (canonical vs canonical, CBC pinned) so the deltas are real; a mostly-KEEP outcome is the NORMAL shape of a recert wave (the prior wave was 3/20), not a defect. Large negatives cluster on Kheldian per-form contexts, where the form context BANS powers the incumbent build holds — the recert searches a strictly smaller space and cannot win by construction. **Merge = by context, `--verdicts`, canonical winner kept, shards retired `.merged_2026-07-30` — awaits Joel's word.**
 - **Wave-run history worth keeping:** ran across the laptop + gaming box; the box was stopped mid-order and its 2 finished champions came home via the new orphan-rescue (2505c2a0) rather than being lost. Drop-dead pauses fired clean twice (4:10 PM, then armed 6 AM). ⚠ `bench_solver_e2e` running beside the wave killed 10 in-flight contexts — several hours of compute, nothing corrupted; see the speed-ledger guard warning.
 - **⚠ MY OWN ERRORS THIS WAVE, recorded so the pattern is visible:** quoted a per-solve solver ratio (2.65×) as if it were end-to-end (really 1.2-1.7×); quoted a pre-fix 484 min as current (really 261); inflated the banked count by 2 by incrementing from monitor events instead of counting the shards; read a docstring's history as current state and wrongly declared a healthy wave's premise broken. **Common thread: passing along a number without checking what it measured.** Count from the artifact, not from the narration.
