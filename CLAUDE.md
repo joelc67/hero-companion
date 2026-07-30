@@ -284,10 +284,24 @@ Read it before planning anything.
   Ribosome in an armor toggle had no `_slot_plan` note; HO branch added, 23/23.
   Verification stack: 467/467 · gate OK · 273/273 · 23/23 · epic-tiers clean ·
   autopick legality 2,691/2,691 (re-run because Scrapper eligibility changed).
-  **▶ NEXT = item 5, the one-objective plateau (±19.4%) — NEEDS JOEL'S SCOPE
-  RULING before any code. Then item 6, full re-cert (the 12 illegal champions
-  re-run there, not before).** Cheap wins parked: exploration-log parse, PuLP
-  model reuse.
+  **✅ ITEM 5 RULED AND IMPLEMENTED (aea7e1fd, same morning).** Joel's rulings:
+  tie-break = what the user chose the build for, ROLE always the focus; fix =
+  (b) the TWO-STAGE solve; "never assume we need a re-cert — always check
+  whether the change justifies it" (STANDING RULE); endurance recovery ranks
+  first among tie-breaks, then DPS (damage) / survivability (tanks). Design:
+  `C:\Users\joelc\code\plateau-fix-paper.md`. Implementation: `_ilp_pass`
+  step 2 re-solves among tied optima (step-1 optimum = hard floor constraint;
+  failed step 2 restores step 1 verbatim; HC_TWO_STAGE=0 = A/B seam). NOT a
+  model bump — canonical scores stay comparable (Piece 3 family). Battery
+  test_plateau_twostep.py 5/5 (tie pin, floor negative control, cushion,
+  recovery-never-worse, kill switch); gate 23/23, HO/proc/pet green. ⚠ Step 2
+  is an ADDED solve: spot A/B 0.5s→1.9s, identical step-1 outcome — the trade
+  is tie-correctness for wall time; the paper's original "speed win" hope was
+  WRONG and is corrected in the paper. **▶ NEXT: the item-5 measurement run
+  (fp tie-spread re-measurement + speed on the plateau heavies + per-context
+  re-cert justification table) — a detached multi-hour A/B, needs Joel's go
+  with stated cost. Then item 6 re-cert per the justification table.** Cheap
+  wins parked: exploration-log parse, PuLP model reuse.
 - **🧾 v38+HO WAVE COMPLETE 24/24 — VERDICT TABLE WITH JOEL, NOTHING MERGED.** `recert_verdicts.json` (written 2026-07-30 00:10): **4 SUPERSEDE** (Crab_Spider_Soldier +181.3 — this also CLOSES the named autopick defect that failed every leg of the previous wave · Spines/Fiery_Aura +92.4 · Poison/Sonic_Attack +50.9 · Broad_Sword/Super_Reflexes +4.1) / **20 KEEP**, zero collapsed runs, zero eval failures. The gate re-scores BOTH sides fresh under v38 (canonical vs canonical, CBC pinned) so the deltas are real; a mostly-KEEP outcome is the NORMAL shape of a recert wave (the prior wave was 3/20), not a defect. Large negatives cluster on Kheldian per-form contexts, where the form context BANS powers the incumbent build holds — the recert searches a strictly smaller space and cannot win by construction. **Merge = by context, `--verdicts`, canonical winner kept, shards retired `.merged_2026-07-30` — awaits Joel's word.**
 - **Wave-run history worth keeping:** ran across the laptop + gaming box; the box was stopped mid-order and its 2 finished champions came home via the new orphan-rescue (2505c2a0) rather than being lost. Drop-dead pauses fired clean twice (4:10 PM, then armed 6 AM). ⚠ `bench_solver_e2e` running beside the wave killed 10 in-flight contexts — several hours of compute, nothing corrupted; see the speed-ledger guard warning.
 - **⚠ MY OWN ERRORS THIS WAVE, recorded so the pattern is visible:** quoted a per-solve solver ratio (2.65×) as if it were end-to-end (really 1.2-1.7×); quoted a pre-fix 484 min as current (really 261); inflated the banked count by 2 by incrementing from monitor events instead of counting the shards; read a docstring's history as current state and wrongly declared a healthy wave's premise broken. **Common thread: passing along a number without checking what it measured.** Count from the artifact, not from the narration.
