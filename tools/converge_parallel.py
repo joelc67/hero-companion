@@ -124,10 +124,31 @@ def main():
                     help="E-holdout mode: arbitrary (non-roster) keys, workers "
                          "run --experiment; NEVER combine with --merge — "
                          "experiment shards are measurement artifacts")
+    ap.add_argument("--skip-reality-check", action="store_true",
+                    help="skip the prereq reality gate (say why out loud)")
     args = ap.parse_args()
     if args.experiment and args.merge:
         raise SystemExit("--experiment shards are never merged into the "
                          "roster; drop --merge")
+
+    # HARDEN-BEFORE-CERTIFY, MECHANISED (2026-07-30, Joel: "why are you checking
+    # reality of game AFTER the builds?"). The prereq reality check existed as a
+    # manual tool and a wave launched without it. It now runs BEFORE any worker
+    # spawns: the game's own words vs what we enforce, failing only on
+    # disagreements NEW since tools/prereq_disagreement_baseline.json.
+    if not args.skip_reality_check:
+        gate = subprocess.run(
+            [sys.executable, os.path.join(ROOT, "tools",
+                                          "reality_check_prereqs.py"), "--gate"],
+            capture_output=True, text=True)
+        print(gate.stdout.strip().splitlines()[-1] if gate.stdout.strip()
+              else "(prereq gate produced no output)")
+        if gate.returncode:
+            print(gate.stdout)
+            raise SystemExit(
+                "PREREQ GATE FAILED — no wave starts on a rule the game "
+                "disputes. Settle it game-first, or pass --skip-reality-check "
+                "and say why.")
 
     certified, srcs = certified_union()
     print("certified sources: " + ", ".join(f"{k} ({v})" for k, v in srcs.items()))

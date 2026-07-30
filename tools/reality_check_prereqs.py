@@ -33,6 +33,15 @@ import server as srv  # noqa: E402
 
 OUT_FULL = os.path.join(ROOT, "tools", "gamedata", "bin-crawler", "out_full")
 VERBOSE = "--verbose" in sys.argv
+# GATE MODE (2026-07-30, Joel's question: "why check AFTER the builds?").
+# converge_parallel runs `--gate` before it spawns a single worker, so a wave
+# can never start on a prerequisite model the game disputes. The known
+# disagreements (help text that names a DIFFERENT power — see docstring) are
+# text evidence, not rule evidence, and must not block waves forever: the gate
+# fails only on disagreements that are NEW since the baseline.
+GATE = "--gate" in sys.argv
+BASELINE = os.environ.get("HC_PREREQ_BASELINE") or os.path.join(
+    ROOT, "tools", "prereq_disagreement_baseline.json")
 
 _WORDNUM = {"no": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
             "1": 1, "2": 2, "3": 3, "4": 4, "5": 5}
@@ -151,6 +160,30 @@ def main():
         print("\n  unmatched (no client record):")
         for fn in unmatched:
             print(f"    {fn}")
+
+    if GATE:
+        seen = sorted([f"{fn}|{ours}|{theirs}" for fn, ours, theirs, *_ in mismatches]
+                      + [f"{fn}|unparsed" for fn, _ in unparsed])
+        base = (json.load(open(BASELINE, encoding="utf-8"))
+                if os.path.exists(BASELINE) else [])
+        if "--write-baseline" in sys.argv:
+            with open(BASELINE, "w", encoding="utf-8") as f:
+                json.dump(seen, f, indent=1)
+            print(f"\nbaseline written: {len(seen)} accepted disagreement(s)")
+            sys.exit(0)
+        for s in [s for s in base if s not in seen]:
+            print(f"  baseline entry now AGREES (stale, harmless): {s}")
+        new = [s for s in seen if s not in base]
+        if new:
+            print("\nPREREQ GATE FAILED — disagreement(s) NEW since the baseline:")
+            for s in new:
+                print(f"   {s}")
+            print("harden-before-certify: settle these against the game's own "
+                  "words (or re-baseline deliberately) before any wave starts.")
+            sys.exit(1)
+        print(f"\nPREREQ GATE OK — {agree} powers agree; {len(seen)} known "
+              f"disagreement(s), none new. Safe to certify.")
+        sys.exit(0)
 
     bad = bool(mismatches or unparsed)
     print("\n" + ("REALITY CHECK FAILED — the game disagrees with our model above"
