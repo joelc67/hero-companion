@@ -345,13 +345,14 @@
  },
  "Class_Blaster|Blaster_Ranged.Fire_Blast|Blaster_Support.Energy_Manipulation|itrial": {
   "picks": [
+   "Blaster_Ranged.Fire_Blast.Aim",
    "Blaster_Ranged.Fire_Blast.Fire_Ball",
    "Blaster_Ranged.Fire_Blast.Fire_Blast",
    "Blaster_Ranged.Fire_Blast.Fire_Breath",
    "Blaster_Ranged.Fire_Blast.Flares",
    "Blaster_Ranged.Fire_Blast.Inferno",
    "Blaster_Ranged.Fire_Blast.Rain_of_Fire",
-   "Blaster_Support.Energy_Manipulation.Conserve_Power",
+   "Blaster_Support.Energy_Manipulation.Build_Up",
    "Blaster_Support.Energy_Manipulation.Power_Thrust",
    "Epic.Electrical_Mastery.Charged_Armor",
    "Epic.Electrical_Mastery.EM_Pulse",
@@ -360,21 +361,20 @@
    "Inherent.Fitness.Stamina",
    "Pool.Fighting.Boxing",
    "Pool.Fighting.Cross_Punch",
-   "Pool.Fighting.Kick",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
-   "Pool.Invisibility.Grant_Invisibility",
    "Pool.Invisibility.Invisibility",
+   "Pool.Invisibility.Misdirection",
    "Pool.Invisibility.Stealth",
-   "Pool.Leadership.Assault",
    "Pool.Leadership.Defense",
    "Pool.Leadership.Vengeance",
+   "Pool.Leadership.Victory_Rush",
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed"
   ],
-  "score": 470.640625,
+  "score": 440.20559999999995,
   "certificate": {
-   "sweeps": 38,
+   "sweeps": 29,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
@@ -386,6 +386,14 @@
     "cap": 50000,
     "capped_solves_floor": 0,
     "final_resolve_delta": 0.0
+   },
+   "tie_arbitration": {
+    "winner": "eps",
+    "scores": {
+     "eps": 440.21,
+     "lex": 434.66,
+     "plain": 432.24
+    }
    }
   }
  },
@@ -1053,44 +1061,51 @@
    "Pool.Fighting.Cross_Punch",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
-   "Pool.Force_of_Will.Mighty_Leap",
    "Pool.Force_of_Will.Project_Will",
    "Pool.Force_of_Will.Wall_of_Force",
    "Pool.Force_of_Will.Weaken_Resolve",
-   "Pool.Leadership.Defense",
-   "Pool.Leadership.Vengeance",
+   "Pool.Invisibility.Stealth",
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed",
-   "Teamwork.Teamwork.Combat_Training:_Defensive",
    "Teamwork.Teamwork.Foresight",
+   "Teamwork.Teamwork.Tactical_Training:_Assault",
    "Teamwork.Teamwork.Tactical_Training:_Maneuvers",
    "Teamwork.Widow_Teamwork.Mental_Training",
    "Teamwork.Widow_Teamwork.NW_Mask_Presence",
    "Teamwork.Widow_Teamwork.NW_Mind_Link",
    "Teamwork.Widow_Teamwork.NW_Pain_Tolerance",
    "Teamwork.Widow_Teamwork.NW_Tactical_Training:_Vengeance",
+   "Widow_Training.Night_Widow_Training.Build_Up",
    "Widow_Training.Night_Widow_Training.NW_Eviscerate",
-   "Widow_Training.Night_Widow_Training.NW_Smoke_Grenade",
+   "Widow_Training.Night_Widow_Training.NW_Psychic_Scream",
+   "Widow_Training.Widow_Training.Lunge",
    "Widow_Training.Widow_Training.Spin",
    "Widow_Training.Widow_Training.Swipe"
   ],
-  "score": 1524.7071,
+  "score": 1766.7053250000001,
   "certificate": {
-   "sweeps": 29,
+   "sweeps": 33,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
-   "evaluated": {
-    "against": "model 35, 2026-07-21",
-    "verdict": "moved",
-    "canonical_score": 1762.38
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
-   "canonical_optimality_checked": false
-  },
-  "canonical_score": 1762.38
+   "tie_arbitration": {
+    "winner": "eps",
+    "scores": {
+     "eps": 1766.71,
+     "lex": 1766.48,
+     "plain": 1724.99
+    }
+   }
+  }
  },
  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|itrial": {
   "picks": [
