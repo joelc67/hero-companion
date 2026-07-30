@@ -189,21 +189,25 @@ across two namespaces, it must say which namespace each side is in.
   (ours `Corr`/`Elec`/`Lev`/`Psi`/`ScrapStalk`/`TankBrute` / client
   `Corruptor`/`Electricity`/`Leviathan`/`Psionic`/`Scrapper`/`Tank`), and a
   different theme word (ours `Flame_Mastery` / client `Fire_Mastery`).
-  **9 pairs PROVEN** and recorded in `tools/epic_set_name_bridge.json` — proven
+  **12 pairs PROVEN** and recorded in `tools/epic_set_name_bridge.json` — proven
   by TWO signals: identical power leaf rosters AND an agreeing archetype token.
   ⚠ Content alone is NOT sufficient: `Corr_Flame_Mastery` and
   `Def_Flame_Mastery` have byte-identical rosters, so content matching alone
   mapped both onto Corruptor's copy. The archetype token is what separates them.
-- **7 remaining differences are DATA, not naming** (each needs the game, not a
-  string rule): pure spelling — ours `Havoc_Punch` vs client **`Havok_Punch`**,
-  ours `Umbral_Torrent` vs client `Torrent`; already-known and already-banned —
-  ours `Build_Up` vs client `Ice_Slick` (the Rad/Rad champion was picking it);
-  real roster gaps — ours `Chum_Spray` vs client `Arctic_Breath`, client has
-  `Gather_Shadows`+`Torrent` in Controller Dark Mastery that we lack, and
-  **we are MISSING `Pool.Flight.Fly_Boost` ("Afterburner") entirely**; and
-  **we carry `Epic.Scrapper_Mace_Mastery`, which the client does NOT have** —
-  the game gives Mace Mastery to Stalkers, not Scrappers (same family as the
-  `_EPIC_NOT` pinned eligibility subtractions).
+- **✅ The "7 remaining differences" DISPOSED game-first (2026-07-30, work order
+  §1.6).** Five were NAMING, not data — settled mechanically by the resolver's
+  display-identity rung (`patch_prereq_counts.resolve`: exact name → set bridge
+  → UNIQUE display-name match inside archetype-constrained sets; our names are
+  Mids/display-derived, the client's are historical): our Sentinel `Chum_Spray`
+  displays "Arctic Breath" and IS client `Arctic_Breath`; `Havoc_Punch` = client
+  `Havok_Punch`; `Umbral_Torrent` = client `Torrent`; DefCorr `Build_Up` =
+  client `Ice_Slick` (displays "Build Up"); "missing" `Gather_Shadows`+`Torrent`
+  = our `Midnight_Grasp`+`Umbral_Torrent`. The two REAL data items:
+  **`Epic.Scrapper_Mace_Mastery` REMOVED** (e4d63760 — client doesn't have it;
+  game gives Mace to Stalkers); **`Pool.Flight.Fly_Boost` ("Afterburner") stays
+  absent ON PURPOSE** — client says `auto_issue=True`, never pickable
+  (`available_level` 0xFFFFFFFF), accepts zero enhancements; it is a free rider
+  on Fly, not a pick. Do not "add" it to pickable data.
 
 ## Game facts pinned from the client (game-first evidence — restored 2026-07-30)
 
@@ -260,6 +264,30 @@ Read it before planning anything.
 
 ## ⭐ CURRENT STATE & open queue (2026-07-30)
 
+- **🔧 ENGINE-ACCURACY WORK ORDER: ITEMS 1-4 DONE (2026-07-30 morning; commits
+  4c9243cc · 9de25d30 · 9025dee8 · e4d63760 — details in session-report).**
+  (1) The user-facing validator now checks POOL prerequisites, not just Epic
+  (`_epic_prereq_errors` widened; proof = `tools/audit_pool_prereq_validator.py`,
+  both arms through the real /build/validate route, negative-controlled; its
+  `--champions` re-derived the 12-of-24 illegal list independently — matches §1.1).
+  (2) `reality_check_prereqs.py` RE-BASED on the requires EXPRESSION the game
+  executes; prose = corroboration only; the "no sentence means needs 0" default
+  is DELETED. **Full accounting is enforced**: every one of our pool/epic powers
+  either game-verified or named in `tools/prereq_unmatched_dispositions.json`,
+  hard-fail otherwise (Joel: "knowing all, not just most"). Baseline regenerated
+  EMPTY (was 8 prose-era entries); gate interface unchanged for converge_parallel.
+  (3) Bridge 9→12 pairs + display-identity resolver rung → **prereq coverage
+  467 of 467, all from the expression, zero held** (was 413/472); all 54 new
+  counts equal the proxy's — ZERO enforcement movers. (4) §1.6 disposed (see the
+  Naming section — Scrapper Mace removed, Fly_Boost deliberately absent).
+  Also fixed: the standing gate was RED at HEAD (pre-existing) — lone-HO
+  Ribosome in an armor toggle had no `_slot_plan` note; HO branch added, 23/23.
+  Verification stack: 467/467 · gate OK · 273/273 · 23/23 · epic-tiers clean ·
+  autopick legality 2,691/2,691 (re-run because Scrapper eligibility changed).
+  **▶ NEXT = item 5, the one-objective plateau (±19.4%) — NEEDS JOEL'S SCOPE
+  RULING before any code. Then item 6, full re-cert (the 12 illegal champions
+  re-run there, not before).** Cheap wins parked: exploration-log parse, PuLP
+  model reuse.
 - **🧾 v38+HO WAVE COMPLETE 24/24 — VERDICT TABLE WITH JOEL, NOTHING MERGED.** `recert_verdicts.json` (written 2026-07-30 00:10): **4 SUPERSEDE** (Crab_Spider_Soldier +181.3 — this also CLOSES the named autopick defect that failed every leg of the previous wave · Spines/Fiery_Aura +92.4 · Poison/Sonic_Attack +50.9 · Broad_Sword/Super_Reflexes +4.1) / **20 KEEP**, zero collapsed runs, zero eval failures. The gate re-scores BOTH sides fresh under v38 (canonical vs canonical, CBC pinned) so the deltas are real; a mostly-KEEP outcome is the NORMAL shape of a recert wave (the prior wave was 3/20), not a defect. Large negatives cluster on Kheldian per-form contexts, where the form context BANS powers the incumbent build holds — the recert searches a strictly smaller space and cannot win by construction. **Merge = by context, `--verdicts`, canonical winner kept, shards retired `.merged_2026-07-30` — awaits Joel's word.**
 - **Wave-run history worth keeping:** ran across the laptop + gaming box; the box was stopped mid-order and its 2 finished champions came home via the new orphan-rescue (2505c2a0) rather than being lost. Drop-dead pauses fired clean twice (4:10 PM, then armed 6 AM). ⚠ `bench_solver_e2e` running beside the wave killed 10 in-flight contexts — several hours of compute, nothing corrupted; see the speed-ledger guard warning.
 - **⚠ MY OWN ERRORS THIS WAVE, recorded so the pattern is visible:** quoted a per-solve solver ratio (2.65×) as if it were end-to-end (really 1.2-1.7×); quoted a pre-fix 484 min as current (really 261); inflated the banked count by 2 by incrementing from monitor events instead of counting the shards; read a docstring's history as current state and wrongly declared a healthy wave's premise broken. **Common thread: passing along a number without checking what it measured.** Count from the artifact, not from the narration.
