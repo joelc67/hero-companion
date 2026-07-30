@@ -244,6 +244,20 @@ them from a parse without the same standard of proof.
 - ⚠ **Never mutate a resumed/saved build to test live-update behavior** — autoSaveTick persists (~2 min, sometimes immediately) to gitignored saves/. Test destructive edits on a scratch build.
 - ⚠ While a champion refresh runs, **benchmarks/champions.json belongs to the refresh process** — no `git add -A`, no checkout. Commit once, complete, after validate_champions.
 
+## 🛑 READ FIRST (2026-07-30): `C:\Users\joelc\code\engine-accuracy-work-order.md`
+
+**Joel's ruling, 2026-07-30 morning: "We need to fix the engine entirely. Your
+attempts to fix champions while it is still not accurate is dumb."**
+
+**NO champion work. NO certification waves. NO merges into champions.json — none,
+until the engine is proven accurate.** The engine-accuracy work order is the
+governing document for the current batch: it holds the confirmed defects (12 of 24
+shipping champions are game-illegal; the user-facing validator never checks POOL
+prerequisites; 59 of 472 powers unverified; the standing check measures against
+prose and treats silence as "needs 0"), the measured plateau finding that answers
+why armor contexts are slow, every unmerged result, and the ordered work list.
+Read it before planning anything.
+
 ## ⭐ CURRENT STATE & open queue (2026-07-30)
 
 - **🧾 v38+HO WAVE COMPLETE 24/24 — VERDICT TABLE WITH JOEL, NOTHING MERGED.** `recert_verdicts.json` (written 2026-07-30 00:10): **4 SUPERSEDE** (Crab_Spider_Soldier +181.3 — this also CLOSES the named autopick defect that failed every leg of the previous wave · Spines/Fiery_Aura +92.4 · Poison/Sonic_Attack +50.9 · Broad_Sword/Super_Reflexes +4.1) / **20 KEEP**, zero collapsed runs, zero eval failures. The gate re-scores BOTH sides fresh under v38 (canonical vs canonical, CBC pinned) so the deltas are real; a mostly-KEEP outcome is the NORMAL shape of a recert wave (the prior wave was 3/20), not a defect. Large negatives cluster on Kheldian per-form contexts, where the form context BANS powers the incumbent build holds — the recert searches a strictly smaller space and cannot win by construction. **Merge = by context, `--verdicts`, canonical winner kept, shards retired `.merged_2026-07-30` — awaits Joel's word.**
