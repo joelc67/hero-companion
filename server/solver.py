@@ -1715,8 +1715,10 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
             prob += primary >= V - 1e-6 * max(1.0, abs(V)), "step1_floor"
             # Recovery dominant by construction (both sums are bounded, and the
             # 1000x spread exceeds their ratio): the role axis only breaks ties
-            # recovery itself leaves.
-            prob.setObjective(1000.0 * pulp.lpSum(rec_terms)
+            # recovery itself leaves. HC_TS_REC_W overrides the dominance for
+            # the item-5 A/B measurement (e.g. 0.001 = role-signature first).
+            _rec_w = float(os.environ.get("HC_TS_REC_W") or 1000.0)
+            prob.setObjective(_rec_w * pulp.lpSum(rec_terms)
                               + pulp.lpSum(role_terms))
             prob.solve(_mip_solver(warm=False))
             if pulp.LpStatus[prob.status] != "Optimal":
