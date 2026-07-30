@@ -2364,6 +2364,14 @@ def _slot_plan(power, archetype=None, all_powers=None):
             return {"kind": "global-mules",
                     "text": f"Global mule: {s.get('set_name')} ({_GLOBAL_DESC[gk]}) — "
                             "a build-wide unique that works from this single slot."}
+        if str(s.get("piece_uid") or "").startswith(_SPECIAL_PIECE_PREFIXES):
+            # Piece 3 (2026-07-30): the ILP may leave a lone HO in an armor toggle —
+            # the card must defend that choice like any other 1-slot decision.
+            return {"kind": "ho-single",
+                    "text": f"{s.get('piece_name') or s.get('set_name')}: two or three "
+                            "enhancement aspects in one slot, so this single slot does "
+                            "the work of several. Attainable from Hamidon raids or "
+                            "merit conversion."}
         if not s.get("set_uid") and (power.get("accepted_set_category_ids")
                                      or power.get("accepted_set_categories")):
             return {"kind": "placeholder",
