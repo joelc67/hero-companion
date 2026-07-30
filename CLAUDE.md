@@ -155,6 +155,56 @@ Joel's session context is a limited resource. Do not spend it on prose.
 - **THE MACHINE CLOCK IS LOCAL EASTERN — `Get-Date` IS THE TIME AUTHORITY, NEVER A TZ CONVERSION (2026-07-16; re-bitten 07-27 with a same-evening "7/28" erratum).** For anything a deadline, ritual, or timestamp depends on, run `Get-Date` and use it verbatim. `date -u` only for UTC-labelled facts; never convert to derive local time.
 - **SCRIPTED-WRITE GUARD (2026-07-16) — the catch is mechanical, not vigilant.** (a) Every scripted edit of a repo file writes binary/newline-preserving (`open(p,'rb')`→transform→`'wb'`) and matches the file's existing serialisation (powers.json is COMPACT single-line — never `indent=`). (b) Before committing, compare `git diff --stat` to INTENDED size (cross-check `--ignore-all-space`); >2× intent or whitespace-blind much smaller → STOP and diagnose. (c) Prefer the dedicated edit tooling; **NEVER PowerShell string rewrites on source files** (PS5.1 reads BOM-less UTF-8 as ANSI and mangles unicode).
 
+## Naming: three namespaces, and the trap (settled game-first 2026-07-30)
+
+Joel's order: "understand how we name things and make a clear understanding
+between game historical naming conventions and what is displayed to players."
+There are THREE namespaces and they routinely disagree:
+
+1. **The game's INTERNAL name** (client bins) — historical, dev-era, and
+   **REUSED over time**. It is an identifier, never an identity.
+2. **The DISPLAY name** (client `display_name`) — what the player sees.
+3. **OUR internal name** (Mids-derived) — sometimes copies #1, sometimes #2.
+
+**The proof case, and why internal names can never be trusted as identity:**
+```
+client internal "Afterburner"  ->  player sees "Evasive Maneuvers"
+client internal "Fly_Boost"    ->  player sees "Afterburner"
+```
+The record still named `Afterburner` is now shown as Evasive Maneuvers, and a
+newer record took over the "Afterburner" label. Same family, all client-verified:
+`Pool.Leaping.Leap` = **"Acrobatics"** · `Pool.Leadership.Defense` =
+**"Maneuvers"** · `Pool.Teleportation.Long_Range_Teleport` = **"Fold Space"** ·
+`Epic.Fire_Mastery_Dominator.Consume` = **"Melt Armor"** (and see the
+internal-name-reuse pitfall: 15 such groups).
+
+⚠ **This caused six FALSE alarms** in `reality_check_prereqs.py`: its
+"the help sentence names a DIFFERENT power" warning was comparing prose display
+names against our internal names. Nothing was misattributed — "before selecting
+Acrobatics" IS the sentence for `Leaping.Leap`. When a check compares names
+across two namespaces, it must say which namespace each side is in.
+
+- **Set-name divergence is systematic, three ways at once:** word order
+  (ours `Dark_Mastery_Blaster` / client `Blaster_Dark_Mastery`), abbreviation
+  (ours `Corr`/`Elec`/`Lev`/`Psi`/`ScrapStalk`/`TankBrute` / client
+  `Corruptor`/`Electricity`/`Leviathan`/`Psionic`/`Scrapper`/`Tank`), and a
+  different theme word (ours `Flame_Mastery` / client `Fire_Mastery`).
+  **9 pairs PROVEN** and recorded in `tools/epic_set_name_bridge.json` — proven
+  by TWO signals: identical power leaf rosters AND an agreeing archetype token.
+  ⚠ Content alone is NOT sufficient: `Corr_Flame_Mastery` and
+  `Def_Flame_Mastery` have byte-identical rosters, so content matching alone
+  mapped both onto Corruptor's copy. The archetype token is what separates them.
+- **7 remaining differences are DATA, not naming** (each needs the game, not a
+  string rule): pure spelling — ours `Havoc_Punch` vs client **`Havok_Punch`**,
+  ours `Umbral_Torrent` vs client `Torrent`; already-known and already-banned —
+  ours `Build_Up` vs client `Ice_Slick` (the Rad/Rad champion was picking it);
+  real roster gaps — ours `Chum_Spray` vs client `Arctic_Breath`, client has
+  `Gather_Shadows`+`Torrent` in Controller Dark Mastery that we lack, and
+  **we are MISSING `Pool.Flight.Fly_Boost` ("Afterburner") entirely**; and
+  **we carry `Epic.Scrapper_Mace_Mastery`, which the client does NOT have** —
+  the game gives Mace Mastery to Stalkers, not Scrappers (same family as the
+  `_EPIC_NOT` pinned eligibility subtractions).
+
 ## Game facts pinned from the client (game-first evidence — restored 2026-07-30)
 
 These were proven against the client bins and then buried in dated state blocks.

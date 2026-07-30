@@ -1,0 +1,2930 @@
+{
+ "Epic.Arctic_Mastery.Block_of_Ice": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Block of Ice",
+  "requires": "$archetype @Class_Brute == $archetype @Class_Tanker == ||"
+ },
+ "Epic.Arctic_Mastery.Chilblain": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Chilblain",
+  "requires": "$archetype @Class_Brute == $archetype @Class_Tanker == ||"
+ },
+ "Epic.Arctic_Mastery.Ice_Blast": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Ice Blast",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Arctic_Mastery.Ice_Storm": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Ice Storm",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Arctic_Mastery.Shiver": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Shiver",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Blaster_Dark_Mastery.Black_Hole": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Black Hole",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Blaster_Dark_Mastery.Fearsome_Stare": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Fearsome Stare",
+  "requires": "$archetype @Class_Blaster =="
+ },
+ "Epic.Blaster_Dark_Mastery.Murky_Cloud": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Murky Cloud",
+  "requires": "$archetype @Class_Blaster =="
+ },
+ "Epic.Blaster_Dark_Mastery.Possess": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Possess",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Blaster_Dark_Mastery.Soul_Consumption": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Soul Consumption",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Blaster_Mace_Mastery.Mace_Beam_Volley": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Mace Beam Volley",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Blaster_Mace_Mastery.Power_Boost": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Summon Spiderlings",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Blaster_Mace_Mastery.Scorpion_Shield": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Scorpion Shield",
+  "requires": "$archetype @Class_Blaster == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Blaster_Mace_Mastery.Web_Cocoon": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Web Cocoon",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Blaster_Mace_Mastery.Web_Envelope": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Web Envelope",
+  "requires": "$archetype @Class_Blaster == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Blaster_Mu_Mastery.Charged_Armor": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Charged Armor",
+  "requires": "$archetype @Class_Blaster == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Blaster_Mu_Mastery.Electric_Shackles": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Electric Shackles",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Blaster_Mu_Mastery.Electrifying_Fences": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Electrifying Fences",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Blaster_Mu_Mastery.Static_Discharge": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Static Discharge",
+  "requires": "$archetype @Class_Blaster == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Blaster_Mu_Mastery.Thunder_Strike": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Summon Adept",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Blaze_Mastery.Char": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Char",
+  "requires": "$archetype @Class_Scrapper == $archetype @Class_Stalker == ||"
+ },
+ "Epic.Blaze_Mastery.Fire_Ball": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Fire Ball",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Blaze_Mastery.Fire_Blast": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Fire Blast",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Blaze_Mastery.Melt_Armor": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Melt Armor",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Blaze_Mastery.Ring_of_Fire": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Ring of Fire",
+  "requires": "$archetype @Class_Scrapper == $archetype @Class_Stalker == ||"
+ },
+ "Epic.Body_Mastery.Conserve_Power": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Conserve Power",
+  "requires": "$archetype @Class_Scrapper =="
+ },
+ "Epic.Body_Mastery.Energy_Torrent": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Energy Torrent",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Body_Mastery.Focused_Accuracy": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Focused Accuracy",
+  "requires": "$archetype @Class_Scrapper =="
+ },
+ "Epic.Body_Mastery.Laser_Beam_Eyes": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Laser Beam Eyes",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Body_Mastery.Physical_Perfection": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Physical Perfection",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Body_Mastery_Stalker.Conserve_Power": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Superior Conditioning",
+  "requires": "$archetype @Class_Stalker =="
+ },
+ "Epic.Body_Mastery_Stalker.Energy_Torrent": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Energy Torrent",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Body_Mastery_Stalker.Focused_Accuracy": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Focused Accuracy",
+  "requires": "$archetype @Class_Stalker =="
+ },
+ "Epic.Body_Mastery_Stalker.Laser_Beam_Eyes": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Laser Beam Eyes",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Body_Mastery_Stalker.Physical_Perfection": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Physical Perfection",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Brute_Leviathan_Mastery.Arctic_Breath": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Arctic Breath",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Brute_Leviathan_Mastery.Chum_Spray": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Bile Spray",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Brute_Leviathan_Mastery.School_of_Sharks": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "School of Sharks",
+  "requires": "$archetype @Class_Brute == $archetype @Class_Tanker == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Brute_Leviathan_Mastery.Spirit_Shark": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Spirit Shark",
+  "requires": "$archetype @Class_Brute == $archetype @Class_Tanker == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Brute_Leviathan_Mastery.Summon_Guardian": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Guardian",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Brute_Mace_Mastery.Disruptor_Blast": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Disruptor Blast",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Brute_Mace_Mastery.Focused_Accuracy": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Focused Accuracy",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Brute_Mace_Mastery.Mace_Blast": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Mace Blast",
+  "requires": "$archetype @Class_Brute == $archetype @Class_Tanker == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Brute_Mace_Mastery.Summon_Blaster": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Blaster",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Brute_Mace_Mastery.Web_Envelope": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Web Envelope",
+  "requires": "$archetype @Class_Brute == $archetype @Class_Tanker == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Brute_Mu_Mastery.Ball_Lightning": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Ball Lightning",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Brute_Mu_Mastery.Electrifying_Fences": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Electrifying Fences",
+  "requires": "$archetype @Class_Brute == $archetype @Class_Tanker == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Brute_Mu_Mastery.Mu_Lightning": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Mu Lightning",
+  "requires": "$archetype @Class_Brute == $archetype @Class_Tanker == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Brute_Mu_Mastery.Static_Discharge": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Static Discharge",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Brute_Mu_Mastery.Summon_Striker": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Striker",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Brute_Soul_Mastery.Dark_Obliteration": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Dark Obliteration",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Brute_Soul_Mastery.Darkest_Night": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Darkest Night",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Brute_Soul_Mastery.Gloom": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Gloom",
+  "requires": "$archetype @Class_Brute == $archetype @Class_Tanker == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Brute_Soul_Mastery.Soul_Tentacles": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Soul Tentacles",
+  "requires": "$archetype @Class_Brute == $archetype @Class_Tanker == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Brute_Soul_Mastery.Summon_Widow": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Widow",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Charge_Mastery.EM_Pulse": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "ESD",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Charge_Mastery.Electric_Shackles": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Electric Shackles",
+  "requires": "$archetype @Class_Mastermind =="
+ },
+ "Epic.Charge_Mastery.Static_Discharge": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Static Discharge",
+  "requires": "$archetype @Class_Mastermind =="
+ },
+ "Epic.Charge_Mastery.Surge_of_Power": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Surge of Power",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Charge_Mastery.Thunder_Strike": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Thunder Strike",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Chill_Mastery.Flash_Freeze": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Flash Freeze",
+  "requires": "$archetype @Class_Mastermind =="
+ },
+ "Epic.Chill_Mastery.Hibernate": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Hibernate",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Chill_Mastery.Hoarfrost": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Hoarfrost",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Chill_Mastery.Ice_Blast": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Ice Blast",
+  "requires": "$archetype @Class_Mastermind =="
+ },
+ "Epic.Chill_Mastery.Snow_Storm": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Frozen Armor",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Cold_Mastery.Flash_Freeze": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Flash Freeze",
+  "requires": "$archetype @Class_Blaster =="
+ },
+ "Epic.Cold_Mastery.Frozen_Armor": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Frozen Armor",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Cold_Mastery.Hibernate": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Hibernate",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Cold_Mastery.Hoarfrost": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Hoarfrost",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Cold_Mastery.Snow_Storm": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Snow Storm",
+  "requires": "$archetype @Class_Blaster =="
+ },
+ "Epic.Controller_Dark_Mastery.Dark_Blast": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Dark Blast",
+  "requires": "$archetype @Class_Controller =="
+ },
+ "Epic.Controller_Dark_Mastery.Gather_Shadows": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Midnight Grasp",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Controller_Dark_Mastery.Murky_Cloud": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Murky Cloud",
+  "requires": "$archetype @Class_Controller =="
+ },
+ "Epic.Controller_Dark_Mastery.Soul_Consumption": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Soul Consumption",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Controller_Dark_Mastery.Torrent": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Umbral Torrent",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Controller_Mace_Mastery.Disruptor_Blast": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Disruptor Blast",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Controller_Mace_Mastery.Personal_Force_Field": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Focused Accuracy",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Controller_Mace_Mastery.Poisonous_Ray": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Poisonous Ray",
+  "requires": "$archetype @Class_Controller == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Controller_Mace_Mastery.Scorpion_Shield": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Scorpion Shield",
+  "requires": "$archetype @Class_Controller == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Controller_Mace_Mastery.Summon_Tarantula": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Tarantula",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Corruptor_Fire_Mastery.Char": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Char",
+  "requires": "$archetype @Class_Corruptor =="
+ },
+ "Epic.Corruptor_Fire_Mastery.Consume": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Consume",
+  "requires": "$archetype @Class_Corruptor =="
+ },
+ "Epic.Corruptor_Fire_Mastery.Fire_Shield": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Fire Shield",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Corruptor_Fire_Mastery.Greater_Fire_Sword": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Greater Fire Sword",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Corruptor_Fire_Mastery.Rise_of_the_Phoenix": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Rise of the Phoenix",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Corruptor_Leviathan_Mastery.Hibernate": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Hibernate",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Corruptor_Leviathan_Mastery.School_of_Sharks": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "School of Sharks",
+  "requires": "$archetype @Class_Corruptor == $archetype @Class_Defender == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Corruptor_Leviathan_Mastery.Shark_Skin": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Shark Skin",
+  "requires": "$archetype @Class_Corruptor == $archetype @Class_Defender == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Corruptor_Leviathan_Mastery.Spirit_Shark_Jaws": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Spirit Shark Jaws",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Corruptor_Leviathan_Mastery.Summon_Coralax": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Coralax",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Corruptor_Mace_Mastery.Focused_Accuracy": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Focused Accuracy",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Corruptor_Mace_Mastery.Scorpion_Shield": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Scorpion Shield",
+  "requires": "$archetype @Class_Corruptor == $archetype @Class_Defender == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Corruptor_Mace_Mastery.Summon_Disruptor": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Disruptor",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Corruptor_Mace_Mastery.Web_Cocoon": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Web Cocoon",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Corruptor_Mace_Mastery.Web_Envelope": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Web Envelope",
+  "requires": "$archetype @Class_Corruptor == $archetype @Class_Defender == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Corruptor_Mu_Mastery.Charged_Armor": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Charged Armor",
+  "requires": "$archetype @Class_Corruptor == $archetype @Class_Defender == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Corruptor_Mu_Mastery.Conserve_Power": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Energize",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Corruptor_Mu_Mastery.Electric_Shackles": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Electric Shackles",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Corruptor_Mu_Mastery.Power_Sink": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Power Sink",
+  "requires": "$archetype @Class_Corruptor == $archetype @Class_Defender == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Corruptor_Mu_Mastery.Summon_Adept": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Adept",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Corruptor_Soul_Mastery.Dark_Embrace": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Dark Embrace",
+  "requires": "$archetype @Class_Corruptor == $archetype @Class_Defender == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Corruptor_Soul_Mastery.Power_Boost": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Power Boost",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Corruptor_Soul_Mastery.Soul_Drain": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Soul Drain",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Corruptor_Soul_Mastery.Soul_Storm": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Soul Storm",
+  "requires": "$archetype @Class_Corruptor == $archetype @Class_Defender == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Corruptor_Soul_Mastery.Summon_Mistress": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Mistress",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Dark_Mastery.Dark_Consumption": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Dark Consumption",
+  "requires": "$archetype @Class_Defender == $archetype @Class_Corruptor == ||"
+ },
+ "Epic.Dark_Mastery.Dark_Embrace": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Dark Embrace",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Dark_Mastery.Oppressive_Gloom": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Oppressive Gloom",
+  "requires": "$archetype @Class_Defender == $archetype @Class_Corruptor == ||"
+ },
+ "Epic.Dark_Mastery.Soul_Drain": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Spirit Drain",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Dark_Mastery.Soul_Transfer": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Soul Transfer",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Darkness_Mastery.Dark_Blast": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Dark Blast",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Darkness_Mastery.Night_Fall": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Night Fall",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Darkness_Mastery.Petrifying_Gaze": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Petrifying Gaze",
+  "requires": "$archetype @Class_Scrapper == $archetype @Class_Stalker == ||"
+ },
+ "Epic.Darkness_Mastery.Tenebrous_Tentacles": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Tenebrous Tentacles",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Darkness_Mastery.Torrent": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Umbral Torrent",
+  "requires": "$archetype @Class_Scrapper == $archetype @Class_Stalker == ||"
+ },
+ "Epic.Defender_Fire_Mastery.Char": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Char",
+  "requires": "$archetype @Class_Defender =="
+ },
+ "Epic.Defender_Fire_Mastery.Consume": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Consume",
+  "requires": "$archetype @Class_Defender =="
+ },
+ "Epic.Defender_Fire_Mastery.Fire_Shield": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Fire Shield",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Defender_Fire_Mastery.Greater_Fire_Sword": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Greater Fire Sword",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Defender_Fire_Mastery.Rise_of_the_Phoenix": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Rise of the Phoenix",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Defender_Ice_Mastery.Flash_Freeze": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Flash Freeze",
+  "requires": "$archetype @Class_Corruptor == $archetype @Class_Defender == ||"
+ },
+ "Epic.Defender_Ice_Mastery.Frozen_Armor": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Frozen Armor",
+  "requires": "$archetype @Class_Corruptor == $archetype @Class_Defender == ||"
+ },
+ "Epic.Defender_Ice_Mastery.Hoarfrost": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Hoarfrost",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Defender_Ice_Mastery.Ice_Elemental": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Ice Elemental",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Defender_Ice_Mastery.Ice_Slick": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Build Up",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Dominator_Dark_Mastery.Darkest_Night": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Darkest Night",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Dominator_Dark_Mastery.Murky_Cloud": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Murky Cloud",
+  "requires": "$archetype @Class_Dominator =="
+ },
+ "Epic.Dominator_Dark_Mastery.Soul_Consumption": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Soul Consumption",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Dominator_Dark_Mastery.Tar_Patch": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Tar Patch",
+  "requires": "$archetype @Class_Dominator =="
+ },
+ "Epic.Dominator_Dark_Mastery.Torrent": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Umbral Torrent",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Dominator_Leviathan_Mastery.Chum_Spray": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Bile Spray",
+  "requires": "$archetype @Class_Dominator == $archetype @Class_Controller == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Dominator_Leviathan_Mastery.Hibernate": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Hibernate",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Dominator_Leviathan_Mastery.Shark_Skin": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Shark Skin",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Dominator_Leviathan_Mastery.Summon_Coralax": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Coralax",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Dominator_Leviathan_Mastery.Water_Spout": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Water Spout",
+  "requires": "$archetype @Class_Dominator == $archetype @Class_Controller == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Dominator_Mace_Mastery.Disruptor_Blast": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Disruptor Blast",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Dominator_Mace_Mastery.Personal_Force_Field": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Personal Force Field",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Dominator_Mace_Mastery.Poisonous_Ray": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Poisonous Ray",
+  "requires": "$archetype @Class_Dominator == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Dominator_Mace_Mastery.Scorpion_Shield": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Scorpion Shield",
+  "requires": "$archetype @Class_Dominator == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Dominator_Mace_Mastery.Summon_Tarantula": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Tarantula",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Dominator_Mu_Mastery.Ball_Lightning": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Ball Lightning",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Dominator_Mu_Mastery.Charged_Armor": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Charged Armor",
+  "requires": "$archetype @Class_Dominator == $archetype @Class_Controller == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Dominator_Mu_Mastery.Power_Sink": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Power Sink",
+  "requires": "$archetype @Class_Dominator == $archetype @Class_Controller == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Dominator_Mu_Mastery.Summon_Guardian": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Guardian",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Dominator_Mu_Mastery.Surge_of_Power": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Surge of Power",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Dominator_Soul_Mastery.Dark_Consumption": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Dark Consumption",
+  "requires": "$archetype @Class_Dominator == $archetype @Class_Controller == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Dominator_Soul_Mastery.Dark_Embrace": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Dark Embrace",
+  "requires": "$archetype @Class_Dominator == $archetype @Class_Controller == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Dominator_Soul_Mastery.Dark_Obliteration": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Dark Obliteration",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Dominator_Soul_Mastery.Soul_Drain": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Soul Drain",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Dominator_Soul_Mastery.Summon_Seer": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Seer",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Earth_Mastery.Fossilize": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Fossilize",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Earth_Mastery.Quick_Sand": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Quicksand",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Earth_Mastery.Salt_Crystals": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Salt Crystals",
+  "requires": "$archetype @Class_Brute == $archetype @Class_Tanker == ||"
+ },
+ "Epic.Earth_Mastery.Stalagmites": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Stalagmites",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Earth_Mastery.Stone_Prison": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Stone Prison",
+  "requires": "$archetype @Class_Brute == $archetype @Class_Tanker == ||"
+ },
+ "Epic.Electrical_Mastery.Charged_Armor": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Charged Armor",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Electrical_Mastery.EM_Pulse": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "EM Pulse",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Electrical_Mastery.Shocking_Bolt": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Shocking Bolt",
+  "requires": "$archetype @Class_Blaster =="
+ },
+ "Epic.Electrical_Mastery.Static_Discharge": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Static Discharge",
+  "requires": "$archetype @Class_Blaster =="
+ },
+ "Epic.Electrical_Mastery.Surge_of_Power": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Surge of Power",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Electricity_Mastery.Charged_Armor": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Charged Armor",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Electricity_Mastery.Electric_Fence": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Electric Fence",
+  "requires": "$archetype @Class_Defender == $archetype @Class_Corruptor == ||"
+ },
+ "Epic.Electricity_Mastery.Power_Sink": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Power Sink",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Electricity_Mastery.Shocking_Bolt": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Shocking Bolt",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Electricity_Mastery.Thunder_Strike": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Thunder Strike",
+  "requires": "$archetype @Class_Defender == $archetype @Class_Corruptor == ||"
+ },
+ "Epic.Energy_Mastery.Conserve_Power": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Conserve Power",
+  "requires": "$archetype @Class_Tanker =="
+ },
+ "Epic.Energy_Mastery.Energy_Torrent": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Energy Torrent",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Energy_Mastery.Focused_Accuracy": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Focused Accuracy",
+  "requires": "$archetype @Class_Tanker =="
+ },
+ "Epic.Energy_Mastery.Laser_Beam_Eyes": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Laser Beam Eyes",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Energy_Mastery.Physical_Perfection": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Physical Perfection",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Energy_Mastery_Brute.Conserve_Power": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Superior Conditioning",
+  "requires": "$archetype @Class_Brute =="
+ },
+ "Epic.Energy_Mastery_Brute.Energy_Torrent": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Energy Torrent",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Energy_Mastery_Brute.Focused_Accuracy": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Focused Accuracy",
+  "requires": "$archetype @Class_Brute =="
+ },
+ "Epic.Energy_Mastery_Brute.Laser_Beam_Eyes": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Laser Beam Eyes",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Energy_Mastery_Brute.Physical_Perfection": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Physical Perfection",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Field_Mastery.Energy_Torrent": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Energy Torrent",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Field_Mastery.Foce_of_Nature": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Force of Nature",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Field_Mastery.Personal_Force_Field": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Temp Invulnerability",
+  "requires": "$archetype @Class_Mastermind =="
+ },
+ "Epic.Field_Mastery.Power_Blast": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Power Blast",
+  "requires": "$archetype @Class_Mastermind =="
+ },
+ "Epic.Field_Mastery.Repulsion_Bomb": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Explosive Blast",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Fire_Mastery.Consume": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Consume",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Fire_Mastery.Fire_Ball": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Fire Ball",
+  "requires": "$archetype @Class_Controller =="
+ },
+ "Epic.Fire_Mastery.Fire_Blast": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Fire Blast",
+  "requires": "$archetype @Class_Controller =="
+ },
+ "Epic.Fire_Mastery.Fire_Shield": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Fire Shield",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Fire_Mastery.Rise_of_the_Phoenix": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Rise of the Phoenix",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Fire_Mastery_Dominator.Consume": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Melt Armor",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Fire_Mastery_Dominator.Fire_Ball": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Fire Ball",
+  "requires": "$archetype @Class_Dominator =="
+ },
+ "Epic.Fire_Mastery_Dominator.Fire_Blast": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Rain of Fire",
+  "requires": "$archetype @Class_Dominator =="
+ },
+ "Epic.Fire_Mastery_Dominator.Fire_Shield": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Fire Shield",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Fire_Mastery_Dominator.Rise_of_the_Phoenix": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Rise of the Phoenix",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Flame_Mastery.Bonfire": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Bonfire",
+  "requires": "$archetype @Class_Blaster =="
+ },
+ "Epic.Flame_Mastery.Char": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Char",
+  "requires": "$archetype @Class_Blaster =="
+ },
+ "Epic.Flame_Mastery.Fire_Shield": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Fire Shield",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Flame_Mastery.Melt_Armor": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Melt Armor",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Flame_Mastery.Rise_of_the_Phoenix": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Rise of the Phoenix",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Force_Mastery.Foce_of_Nature": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Force of Nature",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Force_Mastery.Personal_Force_Field": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Personal Force Field",
+  "requires": "$archetype @Class_Blaster =="
+ },
+ "Epic.Force_Mastery.Repulsion_Bomb": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Force Bomb",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Force_Mastery.Repulsion_Field": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Repulsion Field",
+  "requires": "$archetype @Class_Blaster =="
+ },
+ "Epic.Force_Mastery.Temp_Invulnerability": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Temp Invulnerability",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Heat_Mastery_Stalker.Bonfire": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Bonfire",
+  "requires": "$archetype @Class_Mastermind =="
+ },
+ "Epic.Heat_Mastery_Stalker.Fire_Ball": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Fire Ball",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Heat_Mastery_Stalker.Fire_Blast": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Fire Blast",
+  "requires": "$archetype @Class_Mastermind =="
+ },
+ "Epic.Heat_Mastery_Stalker.Melt_Armor": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Char",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Heat_Mastery_Stalker.Rise_of_the_Phoenix": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Rise of the Phoenix",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Ice_Mastery.Frost_Breath": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Frost Breath",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Ice_Mastery.Frozen_Armor": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Frozen Armor",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Ice_Mastery.Hibernate": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Hibernate",
+  "requires": "$archetype @Class_Controller =="
+ },
+ "Epic.Ice_Mastery.Ice_Blast": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Ice Blast",
+  "requires": "$archetype @Class_Controller =="
+ },
+ "Epic.Ice_Mastery.Ice_Storm": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Ice Storm",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Ice_Mastery_Dominator.Frost_Breath": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Hoarfrost",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Ice_Mastery_Dominator.Frozen_Armor": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Frozen Armor",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Ice_Mastery_Dominator.Hibernate": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Hibernate",
+  "requires": "$archetype @Class_Dominator =="
+ },
+ "Epic.Ice_Mastery_Dominator.Ice_Blast": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Sleet",
+  "requires": "$archetype @Class_Dominator =="
+ },
+ "Epic.Ice_Mastery_Dominator.Ice_Storm": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Ice Storm",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Mastermind_Dark_Mastery.Dark_Pit": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Dark Pit",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Mastermind_Dark_Mastery.Murky_Cloud": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Murky Cloud",
+  "requires": "$archetype @Class_Mastermind =="
+ },
+ "Epic.Mastermind_Dark_Mastery.Possess": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Possess",
+  "requires": "Epic.Mastermind_Dark_Mastery.Murky_Cloud Epic.Mastermind_Dark_Mastery.Shadowy_Binds + 0 >"
+ },
+ "Epic.Mastermind_Dark_Mastery.Shadowy_Binds": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Shadowy Binds",
+  "requires": "$archetype @Class_Mastermind =="
+ },
+ "Epic.Mastermind_Dark_Mastery.Soul_Consumption": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Soul Consumption",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Mastermind_Leviathan_Mastery.Chum_Spray": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Bile Spray",
+  "requires": "$archetype @Class_Mastermind == $archetype @Class_Blaster == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Mastermind_Leviathan_Mastery.Knockout_Blow": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Knockout Blow",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Mastermind_Leviathan_Mastery.School_of_Sharks": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "School of Sharks",
+  "requires": "$archetype @Class_Mastermind == $archetype @Class_Blaster == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Mastermind_Leviathan_Mastery.Shark_Skin": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Shark Skin",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Mastermind_Leviathan_Mastery.Spirit_Shark_Jaws": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Spirit Shark Jaws",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Mastermind_Mace_Mastery.Mace_Beam_Volley": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Mace Beam Volley",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Mastermind_Mace_Mastery.Power_Boost": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Power Boost",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Mastermind_Mace_Mastery.Scorpion_Shield": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Scorpion Shield",
+  "requires": "$archetype @Class_Mastermind == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Mastermind_Mace_Mastery.Web_Cocoon": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Web Cocoon",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Mastermind_Mace_Mastery.Web_Envelope": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Web Envelope",
+  "requires": "$archetype @Class_Mastermind == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Mastermind_Mu_Mastery.Charged_Armor": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Charged Armor",
+  "requires": "$archetype @Class_Mastermind == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Mastermind_Mu_Mastery.Electric_Shackles": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Electric Shackles",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Mastermind_Mu_Mastery.Electrifying_Fences": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Electrifying Fences",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Mastermind_Mu_Mastery.Static_Discharge": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Static Discharge",
+  "requires": "$archetype @Class_Mastermind == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Mastermind_Mu_Mastery.Thunder_Strike": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Thunder Strike",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Mastermind_Soul_Mastery.Dark_Embrace": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Dark Embrace",
+  "requires": "$archetype @Class_Mastermind == $archetype @Class_Blaster == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Mastermind_Soul_Mastery.Night_Fall": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Night Fall",
+  "requires": "$archetype @Class_Mastermind == $archetype @Class_Blaster == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Mastermind_Soul_Mastery.Oppressive_Gloom": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Oppressive Gloom",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Mastermind_Soul_Mastery.Soul_Storm": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Soul Storm",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Mastermind_Soul_Mastery.Soul_Tentacles": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Soul Tentacles",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Melee_Psionic_Mastery.Harmonic_Mind": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Harmonic Mind",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Melee_Psionic_Mastery.Mental_Blast": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Mental Blast",
+  "requires": "$archetype @Class_Scrapper == $archetype @Class_Stalker == ||"
+ },
+ "Epic.Melee_Psionic_Mastery.Psionic_Lance": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Psionic Lance",
+  "requires": "$archetype @Class_Scrapper == $archetype @Class_Stalker == ||"
+ },
+ "Epic.Melee_Psionic_Mastery.Psionic_Nexus": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Psionic Nexus",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Melee_Psionic_Mastery.Psychic_Scream": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Psychic Scream",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Munitions_Mastery.Body_Armor": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Body Armor",
+  "requires": "$archetype @Class_Blaster =="
+ },
+ "Epic.Munitions_Mastery.Cryo_Freeze_Ray": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Cryo Freeze Ray",
+  "requires": "$archetype @Class_Blaster =="
+ },
+ "Epic.Munitions_Mastery.LRM_Rocket": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "LRM Rocket",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Munitions_Mastery.Sleep_Grenade": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Sleep Grenade",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Munitions_Mastery.Surveillance": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Surveillance",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Power_Mastery.Conserve_Power": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Conserve Power",
+  "requires": "$archetype @Class_Defender == $archetype @Class_Corruptor == ||"
+ },
+ "Epic.Power_Mastery.Force_of_Nature": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Force of Nature",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Power_Mastery.Power_Build_Up": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Power Build Up",
+  "requires": "$archetype @Class_Defender == $archetype @Class_Corruptor == ||"
+ },
+ "Epic.Power_Mastery.Temp_Invulnerability": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Temp Invulnerability",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Power_Mastery.Total_Focus": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Total Focus",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Primal_Forces_Mastery.Conserve_Power": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Conserve Power",
+  "requires": "$archetype @Class_Controller =="
+ },
+ "Epic.Primal_Forces_Mastery.Energy_Torrent": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Energy Torrent",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Primal_Forces_Mastery.Power_Blast": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Power Blast",
+  "requires": "$archetype @Class_Controller =="
+ },
+ "Epic.Primal_Forces_Mastery.Power_Boost": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Power Boost",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Primal_Forces_Mastery.Temp_Invulnerability": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Temp Invulnerability",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Primal_Forces_Mastery_Dominator.Conserve_Power": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Conserve Power",
+  "requires": "$archetype @Class_Dominator =="
+ },
+ "Epic.Primal_Forces_Mastery_Dominator.Energy_Torrent": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Energy Torrent",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Primal_Forces_Mastery_Dominator.Energy_Transfer": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Energy Transfer",
+  "requires": "$archetype @Class_Dominator =="
+ },
+ "Epic.Primal_Forces_Mastery_Dominator.Explosive_Blast": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Explosive Blast",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Primal_Forces_Mastery_Dominator.Temp_Invulnerability": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Temp Invulnerability",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Psionic_Mastery.Indomitable_Will": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Indomitable Will",
+  "requires": "$archetype @Class_Controller =="
+ },
+ "Epic.Psionic_Mastery.Mental_Blast": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Mental Blast",
+  "requires": "$archetype @Class_Controller =="
+ },
+ "Epic.Psionic_Mastery.Mind_Over_Body": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Mind Over Body",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Psionic_Mastery.Psionic_Tornado": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Psionic Tornado",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Psionic_Mastery.World_of_Confusion": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "World of Confusion",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Psionic_Mastery_Domingator.Indomitable_Will": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Indomitable Will",
+  "requires": "$archetype @Class_Dominator =="
+ },
+ "Epic.Psionic_Mastery_Domingator.Link_Minds": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Link Minds",
+  "requires": "$archetype @Class_Dominator =="
+ },
+ "Epic.Psionic_Mastery_Domingator.Mind_Over_Body": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Mind Over Body",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Psionic_Mastery_Domingator.Psionic_Tornado": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Psionic Tornado",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Psionic_Mastery_Domingator.World_of_Confusion": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "World of Confusion",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Psychic_Mastery.Dominate": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Dominate",
+  "requires": "$archetype @Class_Defender == $archetype @Class_Corruptor == ||"
+ },
+ "Epic.Psychic_Mastery.Mass_Hypnosis": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Mass Hypnosis",
+  "requires": "$archetype @Class_Defender == $archetype @Class_Corruptor == ||"
+ },
+ "Epic.Psychic_Mastery.Mind_Over_Body": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Mind Over Body",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Psychic_Mastery.Telekinesis": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Telekinesis",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Psychic_Mastery.World_of_Confusion": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "World of Confusion",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Pyre_Mastery.Char": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Char",
+  "requires": "$archetype @Class_Brute == $archetype @Class_Tanker == ||"
+ },
+ "Epic.Pyre_Mastery.Fire_Ball": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Fire Ball",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Pyre_Mastery.Fire_Blast": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Fire Blast",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Pyre_Mastery.Melt_Armor": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Melt Armor",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Pyre_Mastery.Ring_of_Fire": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Ring of Fire",
+  "requires": "$archetype @Class_Brute == $archetype @Class_Tanker == ||"
+ },
+ "Epic.Scrapper_Ice_Mastery.Frigid_Wind": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Frigid Wind",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Scrapper_Ice_Mastery.Frozen_Spear": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Frozen Spear",
+  "requires": "$archetype @Class_Scrapper == $archetype @Class_Stalker == ||"
+ },
+ "Epic.Scrapper_Ice_Mastery.Ice_Bolt": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Ice Bolt",
+  "requires": "$archetype @Class_Scrapper == $archetype @Class_Stalker == ||"
+ },
+ "Epic.Scrapper_Ice_Mastery.Ice_Elemental": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Ice Elemental",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Scrapper_Ice_Mastery.Shiver": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Shiver",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Dark_Mastery.Darkest_Night": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Darkest Night",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Sentinel_Dark_Mastery.Engulfing_Darkness": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Engulfing Darkness",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Dark_Mastery.Netherworld_Grasp": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Netherworld Grasp",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Dark_Mastery.Netherworld_Tentacles": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Netherworld Tentacles",
+  "requires": "$archetype @Class_Sentinel =="
+ },
+ "Epic.Sentinel_Dark_Mastery.Smite": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Smite",
+  "requires": "$archetype @Class_Sentinel =="
+ },
+ "Epic.Sentinel_Electricity_Mastery.Chain_Fences": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Chain Fences",
+  "requires": "$archetype @Class_Sentinel =="
+ },
+ "Epic.Sentinel_Electricity_Mastery.Havok_Punch": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Havoc Punch",
+  "requires": "$archetype @Class_Sentinel =="
+ },
+ "Epic.Sentinel_Electricity_Mastery.Lightning_Field": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Shocking Field",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Electricity_Mastery.Paralyzing_Jolt": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Paralyzing Jolt",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Electricity_Mastery.Rehabilitating_Circuit": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Rehabilitating Circuit",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Sentinel_Fire_Mastery.Char": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Char",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Fire_Mastery.Cremate": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Cremate",
+  "requires": "$archetype @Class_Sentinel =="
+ },
+ "Epic.Sentinel_Fire_Mastery.Fire_Cages": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Fire Cages",
+  "requires": "$archetype @Class_Sentinel =="
+ },
+ "Epic.Sentinel_Fire_Mastery.Fire_Sword_Circle": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Fire Sword Circle",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Fire_Mastery.Warmth": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Warmth",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Sentinel_Ice_Mastery.Block_of_Ice": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Block of Ice",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Ice_Mastery.Frostbite": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Frostbite",
+  "requires": "$archetype @Class_Sentinel =="
+ },
+ "Epic.Sentinel_Ice_Mastery.Frozen_Aura": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Frozen Aura",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Ice_Mastery.Ice_Sword": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Ice Sword",
+  "requires": "$archetype @Class_Sentinel =="
+ },
+ "Epic.Sentinel_Ice_Mastery.Snow_Storm": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Snow Storm",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Sentinel_Leviathan_Mastery.Arctic_Breath": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Arctic Breath",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Leviathan_Mastery.Knockout_Blow": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Knockout Blow",
+  "requires": "$archetype @Class_Sentinel == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Sentinel_Leviathan_Mastery.School_of_Sharks": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "School of Sharks",
+  "requires": "$archetype @Class_Sentinel == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Sentinel_Leviathan_Mastery.Spirit_Shark_Jaws": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Spirit Shark Jaws",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Leviathan_Mastery.Summon_Coralax": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Coralax",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Sentinel_Mace_Mastery.Focused_Accuracy": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Coordinated Targeting",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Mace_Mastery.Pulverize": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Pulverize",
+  "requires": "$archetype @Class_Sentinel == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Sentinel_Mace_Mastery.Summon_Tarantula": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Tarantula",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Sentinel_Mace_Mastery.Web_Cocoon": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Web Cocoon",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Mace_Mastery.Web_Envelope": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Web Envelope",
+  "requires": "$archetype @Class_Sentinel == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Sentinel_Mu_Mastery.Electric_Shackles": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Electric Shackles",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Mu_Mastery.Electrifying_Fences": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Electrifying Fences",
+  "requires": "$archetype @Class_Sentinel == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Sentinel_Mu_Mastery.Static_Discharge": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Static Discharge",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Mu_Mastery.Summon_Adept": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Adept",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Sentinel_Mu_Mastery.Thunder_Strike": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Thunder Strike",
+  "requires": "$archetype @Class_Sentinel == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Sentinel_Ninja_Mastery.Caltrops": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Tashibishi",
+  "requires": "$archetype @Class_Sentinel =="
+ },
+ "Epic.Sentinel_Ninja_Mastery.Kemuridama": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Kemuridama",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Sentinel_Ninja_Mastery.Paralizing_Dart": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Paralyzing Dart",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Ninja_Mastery.Sting_of_the_Wasp": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Sting of the Wasp",
+  "requires": "$archetype @Class_Sentinel =="
+ },
+ "Epic.Sentinel_Ninja_Mastery.The_Lotus_Drops": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "The Lotus Drops",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Psionic_Mastery.Dominate": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Dominate",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Psionic_Mastery.Link_Minds": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Link Minds",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Sentinel_Psionic_Mastery.Mass_Hypnosis": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Mass Hypnosis",
+  "requires": "$archetype @Class_Sentinel =="
+ },
+ "Epic.Sentinel_Psionic_Mastery.Mind_Probe": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Mind Probe",
+  "requires": "$archetype @Class_Sentinel =="
+ },
+ "Epic.Sentinel_Psionic_Mastery.Psychic_Shockwave": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Psychic Shockwave",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Soul_Mastery.Darkest_Night": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Darkest Night",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Soul_Mastery.Midnight_Grasp": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Midnight Grasp",
+  "requires": "$archetype @Class_Sentinel == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Sentinel_Soul_Mastery.Soul_Storm": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Soul Storm",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Sentinel_Soul_Mastery.Soul_Tentacles": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Soul Tentacles",
+  "requires": "$archetype @Class_Sentinel == SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Sentinel_Soul_Mastery.Summon_Mistress": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Mistress",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Stalker_Leviathan_Mastery.Hibernate": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Hibernate",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Stalker_Leviathan_Mastery.Spirit_Shark": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Spirit Shark",
+  "requires": "$archetype @Class_Stalker == $archetype @Class_Scrapper == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Stalker_Leviathan_Mastery.Spirit_Shark_Jaws": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Spirit Shark Jaws",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Stalker_Leviathan_Mastery.Summon_Guardian": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Guardian",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Stalker_Leviathan_Mastery.Water_Spout": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Water Spout",
+  "requires": "$archetype @Class_Stalker == $archetype @Class_Scrapper == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Stalker_Mace_Mastery.Disruptor_Blast": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Disruptor Blast",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Stalker_Mace_Mastery.Mace_Beam": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Mace Beam",
+  "requires": "$archetype @Class_Stalker == $archetype @Class_Scrapper == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Stalker_Mace_Mastery.Mace_Blast": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Mace Blast",
+  "requires": "$archetype @Class_Stalker == $archetype @Class_Scrapper == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Stalker_Mace_Mastery.Summon_Spiderlings": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Spiderlings",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Stalker_Mace_Mastery.Web_Cocoon": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Web Cocoon",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Stalker_Mu_Mastery.Ball_Lightning": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Ball Lightning",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Stalker_Mu_Mastery.Electric_Shackles": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Electric Shackles",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Stalker_Mu_Mastery.Mu_Bolts": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Mu Bolts",
+  "requires": "$archetype @Class_Stalker == $archetype @Class_Scrapper == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Stalker_Mu_Mastery.Summon_Adept": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Adept",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Stalker_Mu_Mastery.Zapp": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Zapp",
+  "requires": "$archetype @Class_Stalker == $archetype @Class_Scrapper == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Stalker_Soul_Mastery.Dark_Blast": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Dark Blast",
+  "requires": "$archetype @Class_Stalker == $archetype @Class_Scrapper == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Stalker_Soul_Mastery.Moonbeam": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Moonbeam",
+  "requires": "$archetype @Class_Stalker == $archetype @Class_Scrapper == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.Stalker_Soul_Mastery.Shadow_Meld": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Shadow Meld",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Stalker_Soul_Mastery.Soul_Storm": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Soul Storm",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Stalker_Soul_Mastery.Summon_Widow": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Widow",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Stone_Mastery.Earths_Embrace": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Embrace of the Earth",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Stone_Mastery.Fissure": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Fissure",
+  "requires": "$archetype @Class_Controller =="
+ },
+ "Epic.Stone_Mastery.Hurl_Boulder": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Hurl Boulder",
+  "requires": "$archetype @Class_Controller =="
+ },
+ "Epic.Stone_Mastery.Seismic_Smash": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Seismic Smash",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Stone_Mastery.Stone_Armor": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Rock Armor",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Tank_Dark_Mastery.Dark_Blast": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Dark Blast",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Tank_Dark_Mastery.Night_Fall": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Night Fall",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Tank_Dark_Mastery.Penumbral_Grasp": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Penumbral Grasp",
+  "requires": "$archetype @Class_Tanker == $archetype @Class_Brute == ||"
+ },
+ "Epic.Tank_Dark_Mastery.Petrifying_Gaze": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Petrifying Gaze",
+  "requires": "$archetype @Class_Tanker == $archetype @Class_Brute == ||"
+ },
+ "Epic.Tank_Dark_Mastery.Tar_Patch": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Tar Patch",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Tank_Psionic_Mastery.Dominate": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Dominate",
+  "requires": "$archetype @Class_Brute == $archetype @Class_Tanker == ||"
+ },
+ "Epic.Tank_Psionic_Mastery.Harmonic_Mind": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Harmonic Mind",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Tank_Psionic_Mastery.Mental_Blast": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Mental Blast",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Tank_Psionic_Mastery.Mesmerize": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Mesmerize",
+  "requires": "$archetype @Class_Brute == $archetype @Class_Tanker == ||"
+ },
+ "Epic.Tank_Psionic_Mastery.Psionic_Tornado": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Psionic Tornado",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.VEAT_Leviathan_Mastery.Arctic_Breath": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Arctic Breath",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.VEAT_Leviathan_Mastery.Chum_Spray": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Bile Spray",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.VEAT_Leviathan_Mastery.School_of_Sharks": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "School of Sharks",
+  "requires": "$archetype @Class_Arachnos_Soldier == $archetype @Class_Arachnos_Widow == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.VEAT_Leviathan_Mastery.Spirit_Shark": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Spirit Shark",
+  "requires": "$archetype @Class_Arachnos_Soldier == $archetype @Class_Arachnos_Widow == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.VEAT_Leviathan_Mastery.Summon_Guardian": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Guardian",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.VEAT_Mace_Mastery.Disruptor_Blast": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Disruptor Blast",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.VEAT_Mace_Mastery.Focused_Accuracy": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Shatter Armor",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.VEAT_Mace_Mastery.Mace_Blast": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Mace Blast",
+  "requires": "$archetype @Class_Arachnos_Soldier == $archetype @Class_Arachnos_Widow == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.VEAT_Mace_Mastery.Summon_Blaster": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Blaster",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.VEAT_Mace_Mastery.Web_Envelope": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Web Envelope",
+  "requires": "$archetype @Class_Arachnos_Soldier == $archetype @Class_Arachnos_Widow == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.VEAT_Mu_Mastery.Ball_Lightning": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Ball Lightning",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.VEAT_Mu_Mastery.Electrifying_Fences": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Electrifying Fences",
+  "requires": "$archetype @Class_Arachnos_Soldier == $archetype @Class_Arachnos_Widow == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.VEAT_Mu_Mastery.Mu_Lightning": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Mu Lightning",
+  "requires": "$archetype @Class_Arachnos_Soldier == $archetype @Class_Arachnos_Widow == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.VEAT_Mu_Mastery.Static_Discharge": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Static Discharge",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.VEAT_Mu_Mastery.Summon_Striker": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Striker",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.VEAT_Soul_Mastery.Dark_Obliteration": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Dark Obliteration",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.VEAT_Soul_Mastery.Darkest_Night": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Darkest Night",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.VEAT_Soul_Mastery.Gloom": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Gloom",
+  "requires": "$archetype @Class_Arachnos_Soldier == $archetype @Class_Arachnos_Widow == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.VEAT_Soul_Mastery.Soul_Tentacles": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Soul Tentacles",
+  "requires": "$archetype @Class_Arachnos_Soldier == $archetype @Class_Arachnos_Widow == || SpidersKissPatron Owned? TheStingerPatron Owned? || BloodInTheWaterPatron Owned? || MiragePatron Owned? || Beta_AutoLevel50 Owned? || &&"
+ },
+ "Epic.VEAT_Soul_Mastery.Summon_Widow": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Summon Widow",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Weapon_Mastery.Caltrops": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Caltrops",
+  "requires": "$archetype @Class_Scrapper =="
+ },
+ "Epic.Weapon_Mastery.Exploding_Shuriken": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Exploding Shuriken",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Weapon_Mastery.Shuriken": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Shuriken",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Weapon_Mastery.Targeting_Drone": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Targeting Drone",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Weapon_Mastery.Web_Grenade": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Web Grenade",
+  "requires": "$archetype @Class_Scrapper =="
+ },
+ "Epic.Weapon_Mastery_Stalker.Caltrops": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Physical Perfection",
+  "requires": "$archetype @Class_Stalker =="
+ },
+ "Epic.Weapon_Mastery_Stalker.Exploding_Shuriken": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Exploding Shuriken",
+  "requires": "Epic ownPowerNum? 1 >"
+ },
+ "Epic.Weapon_Mastery_Stalker.Shuriken": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Shuriken",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Weapon_Mastery_Stalker.Targeting_Drone": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Targeting Drone",
+  "requires": "Epic ownPowerNum? 0 >"
+ },
+ "Epic.Weapon_Mastery_Stalker.Web_Grenade": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Web Grenade",
+  "requires": "$archetype @Class_Stalker =="
+ },
+ "Pool.Experimentation.Adrenal_Booster": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Adrenal Booster",
+  "requires": "Pool.Experimentation.Experimental_Injection Pool.Experimentation.Toxic_Dart && Pool.Experimentation.Experimental_Injection Pool.Experimentation.Speed_of_Sound && || Pool.Experimentation.Toxic_Dart Pool.Experimentation.Speed_of_Sound && ||"
+ },
+ "Pool.Experimentation.Corrosive_Vial": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Corrosive Vial",
+  "requires": "Pool.Experimentation.Experimental_Injection Pool.Experimentation.Toxic_Dart && Pool.Experimentation.Experimental_Injection Pool.Experimentation.Speed_of_Sound && || Pool.Experimentation.Toxic_Dart Pool.Experimentation.Speed_of_Sound && ||"
+ },
+ "Pool.Experimentation.Experimental_Injection": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Experimental Injection",
+  "requires": ""
+ },
+ "Pool.Experimentation.Jaunt": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Jaunt",
+  "requires": "Pool.Experimentation.Speed_of_Sound"
+ },
+ "Pool.Experimentation.Speed_of_Sound": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Speed of Sound",
+  "requires": ""
+ },
+ "Pool.Experimentation.Toxic_Dart": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Toxic Dart",
+  "requires": ""
+ },
+ "Pool.Fighting.Boxing": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Boxing",
+  "requires": ""
+ },
+ "Pool.Fighting.Cross_Punch": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Cross Punch",
+  "requires": "Pool.Fighting.Boxing Pool.Fighting.Kick && Pool.Fighting.Boxing Pool.Fighting.Tough && || Pool.Fighting.Boxing Pool.Fighting.Weave && || Pool.Fighting.Kick Pool.Fighting.Tough && || Pool.Fighting.Kick Pool.Fighting.Weave && || Pool.Fighting.Tough Pool.Fighting.Weave && ||"
+ },
+ "Pool.Fighting.Kick": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Kick",
+  "requires": ""
+ },
+ "Pool.Fighting.Tough": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Tough",
+  "requires": "Pool.Fighting.Boxing Pool.Fighting.Kick ||"
+ },
+ "Pool.Fighting.Weave": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Weave",
+  "requires": "Pool.Fighting.Boxing Pool.Fighting.Kick && Pool.Fighting.Boxing Pool.Fighting.Tough && || Pool.Fighting.Kick Pool.Fighting.Tough && ||"
+ },
+ "Pool.Fitness.Health": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Health",
+  "requires": "Inherent.Fitness.Health ! Pool.Fitness.Quick Pool.Fitness.Hurdle || &&"
+ },
+ "Pool.Fitness.Hurdle": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Hurdle",
+  "requires": "Inherent.Fitness.Hurdle !"
+ },
+ "Pool.Fitness.Quick": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Swift",
+  "requires": "Inherent.Fitness.Swift !"
+ },
+ "Pool.Fitness.Stamina": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Stamina",
+  "requires": "Inherent.Fitness.Stamina ! Pool.Fitness.Quick Pool.Fitness.Hurdle && Pool.Fitness.Quick Pool.Fitness.Health && || Pool.Fitness.Hurdle Pool.Fitness.Health && || &&"
+ },
+ "Pool.Flight.Afterburner": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Evasive Maneuvers",
+  "requires": "Pool.Flight.Combat_Flight Pool.Flight.Air_Superiority && Pool.Flight.Combat_Flight Pool.Flight.Fly && || Pool.Flight.Air_Superiority Pool.Flight.Fly && ||"
+ },
+ "Pool.Flight.Air_Superiority": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Air Superiority",
+  "requires": ""
+ },
+ "Pool.Flight.Combat_Flight": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Hover",
+  "requires": ""
+ },
+ "Pool.Flight.Fly": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Fly",
+  "requires": ""
+ },
+ "Pool.Flight.Fly_Boost": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Afterburner",
+  "requires": "Pool.Flight.Fly"
+ },
+ "Pool.Flight.Group_Fly": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Group Fly",
+  "requires": "Pool.Flight.Combat_Flight Pool.Flight.Air_Superiority && Pool.Flight.Combat_Flight Pool.Flight.Fly && || Pool.Flight.Air_Superiority Pool.Flight.Fly && ||"
+ },
+ "Pool.Force_of_Will.Mighty_Leap": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Mighty Leap",
+  "requires": ""
+ },
+ "Pool.Force_of_Will.Project_Will": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Project Will",
+  "requires": ""
+ },
+ "Pool.Force_of_Will.Stomp": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Takeoff",
+  "requires": "Pool.Force_of_Will.Mighty_Leap"
+ },
+ "Pool.Force_of_Will.Unleash_Potential": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Unleash Potential",
+  "requires": "Pool.Force_of_Will.Weaken_Resolve Pool.Force_of_Will.Project_Will + Pool.Force_of_Will.Mighty_Leap + Pool.Force_of_Will.Wall_of_Force + Pool.Force_of_Will.Unleash_Potential + 1 >"
+ },
+ "Pool.Force_of_Will.Wall_of_Force": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Wall of Force",
+  "requires": "Pool.Force_of_Will.Weaken_Resolve Pool.Force_of_Will.Project_Will + Pool.Force_of_Will.Mighty_Leap + Pool.Force_of_Will.Wall_of_Force + Pool.Force_of_Will.Unleash_Potential + 1 >"
+ },
+ "Pool.Force_of_Will.Weaken_Resolve": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Weaken Resolve",
+  "requires": ""
+ },
+ "Pool.Gadgetry.Blaster_Barrage": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Drone Barrage",
+  "requires": "Pool.Gadgetry.Nano_Net Pool.Gadgetry.Wrist_Blaster && Pool.Gadgetry.Nano_Net Pool.Gadgetry.Jetpack && || Pool.Gadgetry.Wrist_Blaster Pool.Gadgetry.Jetpack && || accesslevel char> 0 >= &&"
+ },
+ "Pool.Gadgetry.Force_Barrier": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Force Barrier",
+  "requires": "Pool.Gadgetry.Nano_Net Pool.Gadgetry.Wrist_Blaster && Pool.Gadgetry.Nano_Net Pool.Gadgetry.Jetpack && || Pool.Gadgetry.Wrist_Blaster Pool.Gadgetry.Jetpack && || accesslevel char> 0 >= &&"
+ },
+ "Pool.Gadgetry.Jetpack": {
+  "needs": 0,
+  "status": "gate-dependent",
+  "display_name": "Jetpack",
+  "requires": "$archtype @Class_Peacebringer == ! $archtype @Class_Warshade == ! && accesslevel char> 0 >= &&"
+ },
+ "Pool.Gadgetry.Nano_Net": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Nano Net",
+  "requires": "accesslevel char> 0 >="
+ },
+ "Pool.Gadgetry.Turbo_Boost": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Turbo Boost",
+  "requires": "accesslevel char> 0 >= Pool.Gadgetry.Jetpack &&"
+ },
+ "Pool.Gadgetry.Wrist_Blaster": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Blaster Drone",
+  "requires": "accesslevel char> 0 >="
+ },
+ "Pool.Invisibility.Grant_Invisibility": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Grant Invisibility",
+  "requires": ""
+ },
+ "Pool.Invisibility.Invisibility": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Infiltration",
+  "requires": ""
+ },
+ "Pool.Invisibility.Misdirection": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Misdirection",
+  "requires": "Pool.Invisibility.Stealth Pool.Invisibility.Grant_Invisibility && Pool.Invisibility.Stealth Pool.Invisibility.Invisibility && || Pool.Invisibility.Stealth Pool.Invisibility.Phase_Shift && || Pool.Invisibility.Grant_Invisibility Pool.Invisibility.Invisibility && || Pool.Invisibility.Grant_Invisibility Pool.Invisibility.Phase_Shift && || Pool.Invisibility.Invisibility Pool.Invisibility.Phase_Shift && ||"
+ },
+ "Pool.Invisibility.Phase_Shift": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Phase Shift",
+  "requires": "Pool.Invisibility.Stealth Pool.Invisibility.Grant_Invisibility && Pool.Invisibility.Stealth Pool.Invisibility.Invisibility && || Pool.Invisibility.Grant_Invisibility Pool.Invisibility.Invisibility && ||"
+ },
+ "Pool.Invisibility.Stealth": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Stealth",
+  "requires": ""
+ },
+ "Pool.Leadership.Assault": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Assault",
+  "requires": ""
+ },
+ "Pool.Leadership.Defense": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Maneuvers",
+  "requires": ""
+ },
+ "Pool.Leadership.Tactics": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Tactics",
+  "requires": "Pool.Leadership.Defense Pool.Leadership.Assault ||"
+ },
+ "Pool.Leadership.Vengeance": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Vengeance",
+  "requires": "Pool.Leadership.Defense Pool.Leadership.Assault && Pool.Leadership.Defense Pool.Leadership.Tactics && || Pool.Leadership.Assault Pool.Leadership.Tactics && ||"
+ },
+ "Pool.Leadership.Victory_Rush": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Victory Rush",
+  "requires": "Pool.Leadership.Defense Pool.Leadership.Assault && Pool.Leadership.Defense Pool.Leadership.Tactics && || Pool.Leadership.Defense Pool.Leadership.Vengeance && || Pool.Leadership.Assault Pool.Leadership.Tactics && || Pool.Leadership.Assault Pool.Leadership.Vengeance && || Pool.Leadership.Tactics Pool.Leadership.Vengeance && ||"
+ },
+ "Pool.Leaping.Combat_Jumping": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Combat Jumping",
+  "requires": ""
+ },
+ "Pool.Leaping.Double_Jump": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Double Jump",
+  "requires": "Pool.Leaping.Long_Jump"
+ },
+ "Pool.Leaping.Jump_Kick": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Jump Kick",
+  "requires": ""
+ },
+ "Pool.Leaping.Leap": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Acrobatics",
+  "requires": "Pool.Leaping.Jump_Kick Pool.Leaping.Combat_Jumping && Pool.Leaping.Jump_Kick Pool.Leaping.Long_Jump && || Pool.Leaping.Combat_Jumping Pool.Leaping.Long_Jump && ||"
+ },
+ "Pool.Leaping.Long_Jump": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Super Jump",
+  "requires": ""
+ },
+ "Pool.Leaping.Spring_Attack": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Spring Attack",
+  "requires": "Pool.Leaping.Jump_Kick Pool.Leaping.Combat_Jumping && Pool.Leaping.Jump_Kick Pool.Leaping.Long_Jump && || Pool.Leaping.Combat_Jumping Pool.Leaping.Long_Jump && ||"
+ },
+ "Pool.Manipulation.Challenge": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Pacify",
+  "requires": ""
+ },
+ "Pool.Manipulation.Intimidate": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Intimidate",
+  "requires": "Pool.Manipulation.Challenge Pool.Manipulation.Provoke ||"
+ },
+ "Pool.Manipulation.Invoke_Panic": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Invoke Panic",
+  "requires": "Pool.Manipulation.Challenge Pool.Manipulation.Provoke && Pool.Manipulation.Challenge Pool.Manipulation.Intimidate && || Pool.Manipulation.Provoke Pool.Manipulation.Intimidate && ||"
+ },
+ "Pool.Manipulation.Provoke": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Provoke",
+  "requires": ""
+ },
+ "Pool.Manipulation.Unrelenting": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Unrelenting",
+  "requires": "Pool.Manipulation.Challenge Pool.Manipulation.Provoke && Pool.Manipulation.Challenge Pool.Manipulation.Intimidate && || Pool.Manipulation.Challenge Pool.Manipulation.Invoke_Panic && || Pool.Manipulation.Provoke Pool.Manipulation.Intimidate && || Pool.Manipulation.Provoke Pool.Manipulation.Invoke_Panic && || Pool.Manipulation.Intimidate Pool.Manipulation.Invoke_Panic && ||"
+ },
+ "Pool.Medicine.Aid_Other": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Aid Other",
+  "requires": ""
+ },
+ "Pool.Medicine.Aid_Self": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Aid Self",
+  "requires": "Pool.Medicine.Aid_Other Pool.Medicine.Stimulant ||"
+ },
+ "Pool.Medicine.Field_Medic": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Field Medic",
+  "requires": "Pool.Medicine.Aid_Other Pool.Medicine.Stimulant && Pool.Medicine.Aid_Other Pool.Medicine.Aid_Self && || Pool.Medicine.Aid_Other Pool.Medicine.Resuscitate && || Pool.Medicine.Stimulant Pool.Medicine.Aid_Self && || Pool.Medicine.Stimulant Pool.Medicine.Resuscitate && || Pool.Medicine.Aid_Self Pool.Medicine.Resuscitate && ||"
+ },
+ "Pool.Medicine.Resuscitate": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Resuscitate",
+  "requires": "Pool.Medicine.Aid_Other Pool.Medicine.Stimulant && Pool.Medicine.Aid_Other Pool.Medicine.Aid_Self && || Pool.Medicine.Stimulant Pool.Medicine.Aid_Self && ||"
+ },
+ "Pool.Medicine.Stimulant": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Injection",
+  "requires": ""
+ },
+ "Pool.Sorcery.Arcane_Bolt": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Arcane Bolt",
+  "requires": ""
+ },
+ "Pool.Sorcery.Arcane_Proc": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Arcane Power",
+  "requires": "Pool.Sorcery.Arcane_Bolt"
+ },
+ "Pool.Sorcery.Enflame": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Enflame",
+  "requires": "Pool.Sorcery.Spirit_Ward Pool.Sorcery.Arcane_Bolt + Pool.Sorcery.Mystic_Flight + 1 >"
+ },
+ "Pool.Sorcery.Mystic_Flight": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Mystic Flight",
+  "requires": ""
+ },
+ "Pool.Sorcery.Rune_of_Protection": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Rune of Protection",
+  "requires": "Pool.Sorcery.Spirit_Ward Pool.Sorcery.Arcane_Bolt + Pool.Sorcery.Mystic_Flight + 1 >"
+ },
+ "Pool.Sorcery.Spirit_Ward": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Spirit Ward",
+  "requires": ""
+ },
+ "Pool.Sorcery.Translocation": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Translocation",
+  "requires": "Pool.Sorcery.Mystic_Flight"
+ },
+ "Pool.Speed.Burnout": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Burnout",
+  "requires": "Pool.Speed.Flurry Pool.Speed.Hasten && Pool.Speed.Flurry Pool.Speed.Super_Speed && || Pool.Speed.Hasten Pool.Speed.Super_Speed && ||"
+ },
+ "Pool.Speed.Flurry": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Flurry",
+  "requires": ""
+ },
+ "Pool.Speed.Hasten": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Hasten",
+  "requires": ""
+ },
+ "Pool.Speed.SpeedPhase": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Speed Phase",
+  "requires": "Pool.Speed.Super_Speed"
+ },
+ "Pool.Speed.Super_Speed": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Super Speed",
+  "requires": ""
+ },
+ "Pool.Speed.Whirlwind": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Whirlwind",
+  "requires": "Pool.Speed.Flurry Pool.Speed.Hasten && Pool.Speed.Flurry Pool.Speed.Super_Speed && || Pool.Speed.Hasten Pool.Speed.Super_Speed && ||"
+ },
+ "Pool.Teleportation.Long_Range_Teleport": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Fold Space",
+  "requires": "Pool.Teleportation.Recall_Friend Pool.Teleportation.Teleport_Foe && Pool.Teleportation.Recall_Friend Pool.Teleportation.Teleport && || Pool.Teleportation.Teleport_Foe Pool.Teleportation.Teleport && ||"
+ },
+ "Pool.Teleportation.Recall_Friend": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Teleport Target",
+  "requires": ""
+ },
+ "Pool.Teleportation.Team_Teleport": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Team Teleport",
+  "requires": "Pool.Teleportation.Recall_Friend Pool.Teleportation.Teleport_Foe && Pool.Teleportation.Recall_Friend Pool.Teleportation.Teleport && || Pool.Teleportation.Teleport_Foe Pool.Teleportation.Teleport && ||"
+ },
+ "Pool.Teleportation.Teleport": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Teleport",
+  "requires": ""
+ },
+ "Pool.Teleportation.Teleport_Foe": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Combat Teleport",
+  "requires": ""
+ },
+ "Pool.Utility_Belt.Athletics": {
+  "needs": 1,
+  "status": "exact",
+  "display_name": "Athletics",
+  "requires": "accesslevel char> 0 >= Pool.Utility_Belt.Freerunning &&"
+ },
+ "Pool.Utility_Belt.Bolas": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Bolas",
+  "requires": "accesslevel char> 0 >="
+ },
+ "Pool.Utility_Belt.Flying_Kick": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Envenomed Barrage",
+  "requires": "Pool.Utility_Belt.Bolas Pool.Utility_Belt.Poisoned_Dagger && Pool.Utility_Belt.Bolas Pool.Utility_Belt.Freerunning && || Pool.Utility_Belt.Poisoned_Dagger Pool.Utility_Belt.Freerunning && || accesslevel char> 0 >= &&"
+ },
+ "Pool.Utility_Belt.Freerunning": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Freerunning",
+  "requires": "accesslevel char> 0 >="
+ },
+ "Pool.Utility_Belt.Life_Support_System": {
+  "needs": 2,
+  "status": "exact",
+  "display_name": "Life Support System",
+  "requires": "Pool.Utility_Belt.Bolas Pool.Utility_Belt.Poisoned_Dagger && Pool.Utility_Belt.Bolas Pool.Utility_Belt.Freerunning && || Pool.Utility_Belt.Poisoned_Dagger Pool.Utility_Belt.Freerunning && || accesslevel char> 0 >= &&"
+ },
+ "Pool.Utility_Belt.Poisoned_Dagger": {
+  "needs": 0,
+  "status": "exact",
+  "display_name": "Poisoned Dagger",
+  "requires": "accesslevel char> 0 >="
+ }
+}

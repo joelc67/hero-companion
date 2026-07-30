@@ -1,0 +1,11 @@
+{
+ "Epic.Corr_Flame_Mastery": "Epic.Corruptor_Fire_Mastery",
+ "Epic.Dark_Mastery_Blaster": "Epic.Blaster_Dark_Mastery",
+ "Epic.Dark_Mastery_Mastermind": "Epic.Mastermind_Dark_Mastery",
+ "Epic.Dark_Mastery_TankBrute": "Epic.Tank_Dark_Mastery",
+ "Epic.Def_Flame_Mastery": "Epic.Defender_Fire_Mastery",
+ "Epic.Ice_Mastery_ScrapStalk": "Epic.Scrapper_Ice_Mastery",
+ "Epic.Psionic_Mastery_ScrapStalk": "Epic.Melee_Psionic_Mastery",
+ "Epic.Psionic_Mastery_TankBrute": "Epic.Tank_Psionic_Mastery",
+ "Epic.Sentinel_Psi_Mastery": "Epic.Sentinel_Psionic_Mastery"
+}
