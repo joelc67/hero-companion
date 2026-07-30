@@ -276,6 +276,38 @@ check("custom targets survive the post-ILP passes (shipped >= promised, 45/90 ca
       f"shipped fire def {_fd} / fire res {_fr} vs the explicit 45/90 ask "
       f"(the unguarded proc pass used to ship 40.52)")
 
+# ── SERVE-TIME TIE ARBITRATION IS ALIVE (2026-07-30, Joel's no-shortcuts
+# order): a generated /build/solve must run BOTH tie-break arms and let the
+# physics model pick. Its one failure mode is SILENT death — the arbitration
+# sits in a fails-safe swallow, so a NameError there would no-op forever and
+# every check would stay green. This check counts solver passes (two arms =
+# strictly more ILP passes than one) and requires the swallow did NOT fire.
+_arb_solves = {"n": 0}
+_orig_ilp = srv.solver.solve_ilp
+def _counting_ilp(*a, **k):
+    _arb_solves["n"] += 1
+    return _orig_ilp(*a, **k)
+srv.solver.solve_ilp = _counting_ilp
+_arb_swallowed = []
+_orig_swallow = srv.diag.swallowed
+def _watch_swallow(tag, *a, **k):
+    if "arbitration" in tag:
+        _arb_swallowed.append(tag)
+    return _orig_swallow(tag, *a, **k)
+srv.diag.swallowed = _watch_swallow
+try:
+    _arb_sol = c.post("/build/solve", json={"archetype": "Class_Brute", "goal": "",
+        "tier": "premium", "content": "fire_farm", "preserve": False,
+        "keep_layout": False, "powers": pre3}).get_json()
+finally:
+    srv.solver.solve_ilp = _orig_ilp
+    srv.diag.swallowed = _orig_swallow
+check("serve-time tie arbitration runs both arms and never dies silently",
+      bool(_arb_sol.get("powers")) and _arb_solves["n"] >= 2
+      and not _arb_swallowed,
+      f"solve_ilp calls {_arb_solves['n']} (>=2 = both arms), "
+      f"swallowed={_arb_swallowed or 'none'}")
+
 # ── v35 ENDURANCE BATCH (2026-07-21, endurance-fix-paper.md §7): the mandatory
 # negative control + the paper's worked Nimbus table, pinned through the REAL
 # scorer path (encounter_value my_dps ratio isolates end_factor exactly — every
@@ -334,11 +366,13 @@ _lock_name = _lock_target["full_name"]
 # 2026-07-30 (eps tie-break made re-solves REPRODUCIBLE): the old witness —
 # "the other powers came back different" — was quietly resting on CBC's
 # arbitrary tie choice; a deterministic full re-slot can legitimately
-# reproduce itself. Lock a MANGLED (suboptimal — last filled slot removed)
-# slotting instead: byte-identity of a slotting the optimizer would love to
-# fix is the strong proof that the lock overrides the solve.
-_lock_mangled = [s for s in (_lock_target.get("slots") or []) if s][:-1]
-_lock_slots_before = _json.dumps(_lock_mangled, sort_keys=True)
+# reproduce itself. Lock a MANGLED slotting instead: the last filled slot is
+# replaced with an explicit EMPTY (None), so byte-identity proves BOTH halves
+# of the lock contract at once — a suboptimal slotting the optimizer would
+# love to fix comes back untouched, and the allocated empty is preserved,
+# never refilled or reclaimed.
+_lock_mangled = [s for s in (_lock_target.get("slots") or []) if s][:-1] + [None]
+_lock_slots_before = _json.dumps([s for s in _lock_mangled if s], sort_keys=True)
 _lock_powers_in = [{"full_name": p["full_name"],
                     "slots": (_lock_mangled if p["full_name"] == _lock_name
                               else p.get("slots")),
@@ -353,14 +387,22 @@ _lock_out = next((p for p in _lock_sol.get("powers", [])
 _lock_slots_after = _json.dumps((_lock_out or {}).get("slots"), sort_keys=True)
 _lock_slots_after = _json.dumps(
     [s for s in ((_lock_out or {}).get("slots") or []) if s], sort_keys=True)
+# BOTH halves of the original lock contract: the filled slots are byte-
+# identical to the MANGLED input (the lock overrides the optimizer), AND the
+# freed slot comes back as a padded EMPTY — the allocated count is preserved,
+# never silently reclaimed (the _locked_empties/finalize seam).
+_lock_total_after = len((_lock_out or {}).get("slots") or [])
+_lock_total_expected = len(_lock_mangled)
 _others_solved = any(
     sum(1 for s in (q.get("slots") or []) if s and s.get("set_uid")) >= 2
     for q in _lock_sol.get("powers", []) if q["full_name"] != _lock_name)
-check("LOCKED mangled slotting byte-identical through a full re-slot; others solve",
+check("LOCKED mangled slotting byte-identical through a full re-slot; empty kept; others solve",
       _lock_slots_before == _lock_slots_after and _others_solved
+      and _lock_total_after == _lock_total_expected
       and bool((_lock_out or {}).get("locked")),
       f"locked {_lock_out and _lock_out.get('display_name')}: identical="
-      f"{_lock_slots_before == _lock_slots_after}, echo locked flag="
+      f"{_lock_slots_before == _lock_slots_after}, slots {_lock_total_after}"
+      f"/{_lock_total_expected} (empty preserved), echo locked flag="
       f"{bool((_lock_out or {}).get('locked'))}, others solved={_others_solved}")
 
 # ── #15 ACCEPTANCE PINS (Joel's custom-targets doctrine, the 7/20 forum user's
@@ -462,7 +504,7 @@ check("REMEDY NEGATIVE CONTROL: proxy-only shortfalls generate no advice",
 # COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
 # check — a crash or skipped section that silently shrinks the list must fail, not
 # pass by absence. Bump EXPECTED_CHECKS when adding a check.
-EXPECTED_CHECKS = 23
+EXPECTED_CHECKS = 24
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
 if len(results) != EXPECTED_CHECKS:

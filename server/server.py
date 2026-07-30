@@ -4500,49 +4500,93 @@ def build_solve():
     # Up to one re-solve: if the slotting can't be seated on the real pick ladder
     # (a level-49 pick holds at most 4 slots; 47+49 share 6), cap the tail offenders
     # and let the solver move that weight to earlier powers.
-    for _sched_round in range(2):
-        try:
-            sol = solver.solve_ilp(powers, targets, SETS_BY_CATEGORY,
-                                   engine.PIECE_GLOBALS, base, slot_cap=slot_cap, tier=tier,
-                                   perk_focus=perk_focus, roles=roles, pvp=pvp,
-                                   preserve=preserve, keep_layout=keep_layout, archetype=archetype,
-                                   ho_pieces=(_ho_solver_pieces()
-                                              if content in _HO_CONTENTS else None),
-                                   **_at_solve_phys(archetype))
-        except Exception:  # noqa: BLE001
-            diag.swallowed("solver.solve_ilp")
-            return jsonify({"ok": False, "response": "The solver couldn't finish this "
-                            "build. Try again, or change a pick or target."})
+    def _serve_pipeline(pw, two_stage=None):
+        """The full serve solve chain on ONE powers copy (solve_ilp mutates
+        it): ILP + sched re-solve + proc pass + endurance relief. Returns the
+        sol dict or None on solver failure."""
+        for _sched_round in range(2):
+            try:
+                sol = solver.solve_ilp(pw, targets, SETS_BY_CATEGORY,
+                                       engine.PIECE_GLOBALS, base, slot_cap=slot_cap, tier=tier,
+                                       perk_focus=perk_focus, roles=roles, pvp=pvp,
+                                       preserve=preserve, keep_layout=keep_layout,
+                                       archetype=archetype,
+                                       ho_pieces=(_ho_solver_pieces()
+                                                  if content in _HO_CONTENTS else None),
+                                       two_stage=two_stage,
+                                       **_at_solve_phys(archetype))
+            except Exception:  # noqa: BLE001
+                diag.swallowed("solver.solve_ilp")
+                return None
 
-        # Proc-bombing pass (doctrine §3): for offense builds, convert damage auras + filler
-        # AoEs into proc bombs — the #1 master-build damage lever. Fails safe (no-op on error).
-        # Runs on a full re-slot, AND (v24) on GENERATED builds even in preserve mode — a
-        # fresh wizard/autopick build has no player IO choices to preserve, and skipping the
-        # pass there was why generated kits shipped proc-less in the proc meta.
-        if not preserve or _generated:
-            # A2 GUARD SCOPE (measured 2026-07-15, evaluate-first on all 19
-            # certified contexts): the guard runs ONLY for user-DECLARED
-            # targets (custom). Preset asks are harvest proxies — at
-            # certification the true scorer consistently ENDORSES the proc
-            # trade even where it dips a preset axis (guarding presets cost
-            # every armor context 70-300 true-score points), so protecting a
-            # proxy against the objective it proxies is backwards. A declared
-            # ask is a promise; a preset is a heuristic. Work order D's farm
-            # certifications declare their asks — they run this guard strict.
-            sol["powers"] = proc_pass.apply_proc_pass(
-                sol["powers"], POWER_BY_FULL, role=role, content=content,
-                guard=(_TargetGuard(archetype, targets, ctx, _rescap,
-                                    strict=True) if custom else None))
-            sol["powers"] = _endurance_relief_pass(sol["powers"], archetype, ctx, _rescap)
+            # Proc-bombing pass (doctrine §3): for offense builds, convert damage auras + filler
+            # AoEs into proc bombs — the #1 master-build damage lever. Fails safe (no-op on error).
+            # Runs on a full re-slot, AND (v24) on GENERATED builds even in preserve mode — a
+            # fresh wizard/autopick build has no player IO choices to preserve, and skipping the
+            # pass there was why generated kits shipped proc-less in the proc meta.
+            if not preserve or _generated:
+                # A2 GUARD SCOPE (measured 2026-07-15, evaluate-first on all 19
+                # certified contexts): the guard runs ONLY for user-DECLARED
+                # targets (custom). Preset asks are harvest proxies — at
+                # certification the true scorer consistently ENDORSES the proc
+                # trade even where it dips a preset axis (guarding presets cost
+                # every armor context 70-300 true-score points), so protecting a
+                # proxy against the objective it proxies is backwards. A declared
+                # ask is a promise; a preset is a heuristic. Work order D's farm
+                # certifications declare their asks — they run this guard strict.
+                sol["powers"] = proc_pass.apply_proc_pass(
+                    sol["powers"], POWER_BY_FULL, role=role, content=content,
+                    guard=(_TargetGuard(archetype, targets, ctx, _rescap,
+                                        strict=True) if custom else None))
+                sol["powers"] = _endurance_relief_pass(sol["powers"], archetype, ctx, _rescap)
 
-        if _assign_pick_levels(sol["powers"], archetype) or _sched_round == 1:
-            break
-        caps = _sched_budget_caps(sol["powers"])
-        if not caps:
-            break
-        for p in powers:
-            if p["full_name"] in caps:
-                p["_sched_budget"] = min(caps[p["full_name"]], p.get("_sched_budget") or 6)
+            if _assign_pick_levels(sol["powers"], archetype) or _sched_round == 1:
+                break
+            caps = _sched_budget_caps(sol["powers"])
+            if not caps:
+                break
+            for p in pw:
+                if p["full_name"] in caps:
+                    p["_sched_budget"] = min(caps[p["full_name"]], p.get("_sched_budget") or 6)
+        return sol
+
+    # SERVE-TIME TIE ARBITRATION (Joel 2026-07-30, "no shortcuts that
+    # undermine accuracy"): certification's finale physics-arbitrates its
+    # tie-break; a user's one-shot solve deserves the same honesty. On a
+    # scorable full re-slot / generated solve (content or role present, not a
+    # perk-chip re-solve), run the plain single-stage arm too and let the
+    # physics model pick — the shipped build is never worse than either
+    # style. Preserve/keep-layout solves skip it (incremental, tie space
+    # near-empty, latency matters).
+    _arb = ((not preserve or _generated) and (content or role)
+            and not perk_focus and at is not None)
+    _pristine = copy.deepcopy(powers) if _arb else None
+    sol = _serve_pipeline(powers)
+    if sol is None:
+        return jsonify({"ok": False, "response": "The solver couldn't finish this "
+                        "build. Try again, or change a pick or target."})
+    if _arb:
+        import first_principles as fp
+        ctx.setdefault("power_by_full", POWER_BY_FULL)
+        alt = _serve_pipeline(_pristine, two_stage=False)
+        if alt:
+            def _fp_of(s):
+                t = engine.calculate_build(
+                    {"archetype": archetype, "powers": s["powers"], "pvp": pvp},
+                    SET_BONUSES, res_cap=res_cap, ctx=ctx)
+                ev = fp.encounter_value(
+                    archetype, s["powers"], ctx, t, scenario=content,
+                    arch_row=at, role_output_mod=role_output)
+                tm = (fp.SCENARIOS.get(content)
+                      or fp.SCENARIOS["general"]).get("teammates", 0)
+                return fp.role_contribution(
+                    ev, role_mix or role
+                    or _AT_DEFAULT_ROLE.get(archetype, "damage"), teammates=tm)
+            try:
+                if _fp_of(alt) > _fp_of(sol):
+                    sol = alt
+            except Exception:  # noqa: BLE001 — arbitration is a bonus, never a blocker
+                diag.swallowed("build_solve: serve-time tie arbitration")
 
     resolved = {"powers": sol["powers"]}
     _fill_slot_images(resolved)

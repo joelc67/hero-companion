@@ -118,6 +118,22 @@ def main():
           "Cushion" in chosen[0] and "Flat" not in chosen[0],
           f"picked {sorted(chosen[0])}")
 
+    # ── 6: the floor holds under BOTH styles — check 2 already exercises the
+    # DEFAULT (eps: the perturbation is capped at 0.001 objective units, far
+    # below the fixture's ~0.33 discrete primary gap, so a floor leak would
+    # flip the chosen set — testable exactly, no tolerance); this arm pins the
+    # LEX step-2 constraint the same way, so a regression in either style's
+    # floor goes red. Roster-wide evidence behind both: 0 floor defects at
+    # 2e-6 rel across all 24 certified contexts (measure_plateau_ab).
+    os.environ["HC_TS_STYLE"] = "lex"
+    _, chosen = run([mk_set("Strong2", def_melee=0.03),
+                     mk_set("Tempter2", def_melee=0.02, recovery=0.50)],
+                    roles=["survival"], targets={"defense": {"Melee": 3}})
+    del os.environ["HC_TS_STYLE"]
+    check("6 lex style cannot trade primary value (discrete-gap floor, exact)",
+          "Strong2" in chosen[0] and "Tempter2" not in chosen[0],
+          f"picked {sorted(chosen[0])} under HC_TS_STYLE=lex")
+
     # ── 4: recovery never worse across a multi-power fixture ───────────────
     pool = [mk_set("P1", def_melee=0.02), mk_set("P2", def_melee=0.02, recovery=0.03),
             mk_set("P3", def_melee=0.015, recovery=0.06),
@@ -134,8 +150,8 @@ def main():
 
     n = len(CHECKS)
     fails = [c for c, ok in CHECKS if not ok]
-    print(f"\n{n} of 5 expected checks ran")
-    if n != 5:
+    print(f"\n{n} of 6 expected checks ran")
+    if n != 6:
         print("COVERAGE FAILURE")
         sys.exit(1)
     print("ALL CHECKS PASS" if not fails else f"FAILURES: {', '.join(fails)}")
