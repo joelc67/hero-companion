@@ -110,8 +110,12 @@ def main():
     ap.add_argument("--contexts", type=int, default=0,
                     help="limit to first N contexts (0 = all)")
     ap.add_argument("--repeat-highs", action="store_true",
-                    help="run HiGHS twice per context to prove determinism")
+                    help="run the B arm twice per context to prove determinism")
+    ap.add_argument("--backends", default="cbc,highs",
+                    help="A,B backend pair (2026-07-30: also 'mip' — the "
+                         "in-process CBC bridge)")
     args = ap.parse_args()
+    back_a, back_b = args.backends.split(",")
 
     champs = certified_contexts()
     keys = sorted(champs)
@@ -148,11 +152,11 @@ def main():
             continue
         powers = ap_res["powers"]
 
-        os.environ["HC_SOLVER_BACKEND"] = "cbc"
+        os.environ["HC_SOLVER_BACKEND"] = back_a
         sc_c, solved_c, s_c, obj_c = solve_once(at, content, role, powers,
                                                 targets, perk, roles, arch_row,
                                                 ctx, res_cap)
-        os.environ["HC_SOLVER_BACKEND"] = "highs"
+        os.environ["HC_SOLVER_BACKEND"] = back_b
         sc_h, solved_h, s_h, obj_h = solve_once(at, content, role, powers,
                                                 targets, perk, roles, arch_row,
                                                 ctx, res_cap)
@@ -166,7 +170,7 @@ def main():
         t_cbc += s_c
         t_highs += s_h
         if sc_c is None or sc_h is None:
-            print(f"  SOLVE FAILED          {key} (cbc={sc_c} highs={sc_h})")
+            print(f"  SOLVE FAILED          {key} (A={sc_c} B={sc_h})")
             failed += 1
             continue
         cc, ch = canon(solved_c), canon(solved_h)
@@ -196,21 +200,21 @@ def main():
         else:
             scorediff += 1
             v = "DEFECT    "
-            print(f"    pass-0 objective mismatch: cbc={div[1]!r} highs={div[2]!r}")
-        print(f"  {v} cbc={sc_c:9.2f} ({s_c:5.2f}s)  highs={sc_h:9.2f} "
+            print(f"    pass-0 objective mismatch: A={div[1]!r} B={div[2]!r}")
+        print(f"  {v} {back_a}={sc_c:9.2f} ({s_c:5.2f}s)  {back_b}={sc_h:9.2f} "
               f"({s_h:5.2f}s)  {name}")
 
     print(f"\n=== BACKEND VALIDATION: {identical} identical, {tiebreak} tie-break "
           f"(eyeball), {scorediff} BACKEND DEFECTS, {failed} failed, "
           f"of {len(keys)} contexts ===")
-    print(f"ILP wall time: CBC {t_cbc:.1f}s vs HiGHS {t_highs:.1f}s "
+    print(f"ILP wall time: {back_a} {t_cbc:.1f}s vs {back_b} {t_highs:.1f}s "
           f"({t_cbc / max(t_highs, 1e-9):.1f}x)")
     if eyeball:
         print("\nTIE-BREAK DETAILS (equal ILP optimum, different choice — eyeball):")
         for key, sc, sh, div, diffs in eyeball:
             dd = (f"objective sequences equal" if div is None else
-                  f"cascade from pass {div[0]}: cbc={div[1]} highs={div[2]}")
-            print(f"  {key}\n    fp score cbc={sc:.4f} highs={sh:.4f} "
+                  f"cascade from pass {div[0]}: A={div[1]} B={div[2]}")
+            print(f"  {key}\n    fp score A={sc:.4f} B={sh:.4f} "
                   f"(delta {100 * (sh - sc) / max(sc, 1e-9):+.4f}%)  [{dd}]")
             for p in sorted(diffs):
                 print(f"    {p}")

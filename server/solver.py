@@ -83,6 +83,77 @@ def _mip_solver(warm=False):
     return pulp.PULP_CBC_CMD(msg=0, warmStart=warm)
 
 
+def _solve_inprocess(prob):
+    """PuLP -> python-mip bridge: solve the SAME model with in-process CBC.
+
+    ⚠ MEASURED AND REJECTED AS THE DEFAULT (2026-07-30, same day it was
+    built): (a) 2x SLOWER single-threaded than PULP_CBC_CMD on all 24
+    certified contexts (83.6s vs 41.1s; equivalence clean, 0 defects —
+    python-mip's bundled CBC solves slower than cbc.exe, translation is only
+    ~12% of the cost); (b) SEGFAULTS under deep_optimize's threaded sweep
+    pool. Kept as a measurement seam (HC_SOLVER_BACKEND=mip), same precedent
+    as the warm-start seam — re-measure only if python-mip's CBC or thread
+    story changes. `mip` is a dev-only install; it is NOT in the client's
+    requirements and must not be.
+
+    Generic translation of the already-built PuLP problem, so every
+    constraint/objective stays in one place; varValues are written back so
+    all downstream extraction (x.value(), pulp.value(prob.objective)) works
+    unchanged.
+
+    Gap tolerances pinned to 0 (the backend-validation rule: at gap 0 both
+    backends prove the same optimum, so only tie-broken slottings may differ).
+    HC_SOLVER_NODE_CAP maps to max_nodes; a capped stop returns FEASIBLE and
+    is reported as non-Optimal — HONEST, unlike CBC_CMD whose node-limit stop
+    can parse as "Optimal" (measured 2026-07-16), so CAPPED_SOLVES stops
+    being only a floor under this backend."""
+    import mip
+    m = mip.Model(sense=(mip.MAXIMIZE if prob.sense == pulp.LpMaximize
+                         else mip.MINIMIZE), solver_name="CBC")
+    m.verbose = 0
+    m.threads = 1
+    m.max_mip_gap = 0.0
+    m.max_mip_gap_abs = 0.0
+    vmap = {}
+    for v in prob.variables():
+        vmap[v.name] = m.add_var(
+            name=v.name,
+            var_type=(mip.BINARY if v.cat == pulp.LpBinary else
+                      mip.INTEGER if v.cat == pulp.LpInteger else
+                      mip.CONTINUOUS),
+            lb=v.lowBound if v.lowBound is not None else -mip.INF,
+            ub=v.upBound if v.upBound is not None else mip.INF)
+    for name, c in prob.constraints.items():
+        expr = mip.xsum(coef * vmap[var.name] for var, coef in c.items())
+        rhs = -c.constant
+        if c.sense == pulp.LpConstraintLE:
+            m += expr <= rhs, name
+        elif c.sense == pulp.LpConstraintGE:
+            m += expr >= rhs, name
+        else:
+            m += expr == rhs, name
+    obj = prob.objective
+    m.objective = (mip.xsum(coef * vmap[var.name] for var, coef in obj.items())
+                   + (obj.constant or 0.0))
+    cap = os.environ.get("HC_SOLVER_NODE_CAP")
+    st = m.optimize(max_nodes=int(cap)) if cap else m.optimize()
+    for v in prob.variables():
+        v.varValue = vmap[v.name].x
+    prob.status = (pulp.LpStatusOptimal if st == mip.OptimizationStatus.OPTIMAL
+                   else pulp.LpStatusNotSolved
+                   if st == mip.OptimizationStatus.FEASIBLE
+                   else pulp.LpStatusInfeasible)
+    return prob.status
+
+
+def _solve(prob, warm=False):
+    """One solve dispatch for every ILP pass: HC_SOLVER_BACKEND=mip -> the
+    in-process bridge; cbc (default) / highs -> PuLP command solvers."""
+    if os.environ.get("HC_SOLVER_BACKEND", "cbc").lower() == "mip":
+        return _solve_inprocess(prob)
+    return prob.solve(_mip_solver(warm=warm))
+
+
 # Backend-validation instrumentation (tools/validate_solver_backend.py): with
 # HC_SOLVER_DEBUG_OBJ=1 every ILP solve appends its proven objective value here,
 # so an A/B run can tell "equal objective, different tie-broken solution" apart
@@ -1728,7 +1799,7 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
                 w * v for w, v in _e_terms))
             _eps_used = True
     _t_solve0 = _time.perf_counter()
-    prob.solve(_mip_solver(warm=hinted))
+    _solve(prob, warm=hinted)
     if _eps_used:
         prob.setObjective(_primary0)   # diagnostics log step-1 semantics
     # ── TWO-STEP SOLVE (plateau work order item 5; Joel's rulings 2026-07-30) ──
@@ -1770,7 +1841,7 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
             _rec_w = float(os.environ.get("HC_TS_REC_W") or 1000.0)
             prob.setObjective(_rec_w * pulp.lpSum(rec_terms)
                               + pulp.lpSum(role_terms))
-            prob.solve(_mip_solver(warm=False))
+            _solve(prob, warm=False)
             if pulp.LpStatus[prob.status] != "Optimal":
                 for v, val in saved_vals.items():
                     v.varValue = val
