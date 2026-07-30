@@ -348,17 +348,21 @@ Read it before planning anything.
   certification is a waste — the cheap instrument answers "did it move", the
   next spend goes to the REAL artifact):** 6 mover contexts, --recert, eps
   solver + arbitrated finales, launched detached 12:34 PM, paused clean 4:05
-  (armed pre-departure), 5 banked + Warshade cut mid-flight (resume on
-  Joel's word). **Verdicts (recert_verdicts.json 16:06): 2 SUPERSEDE
-  (Night_Widow +99.3 · Blaster Fire/EM +6.3) / 3 KEEP (Broad_Sword −180.8,
-  Battle_Axe −551.0, Stalker Rad/Dark −304.6 — gate held, normal recert
-  shape).** Notable: the Blaster was the solve-level −20.3% outlier yet its
-  CONVERGED run supersedes — the sweep+finale arbitration absorbs
-  single-solve tie noise, as designed. ⚠ abmov shards sit in the union glob
-  until Joel rules — merge the 2 supersedes by context with --verdicts then
-  retire .merged, or retire all. **▶ AWAITING JOEL: merge word · Warshade
-  resume · schedule for the remaining 18 item-6 contexts · optional
-  dominance-reduction attempt.** Cheap win parked: exploration-log parse.
+  (armed pre-departure), 5 banked; Warshade resumed on Joel's "continue"
+  (4:54 PM, distinct prefix abmov_ws per the collision rule) and converged
+  in 88.6 min. **WAVE COMPLETE 6/6 — verdicts (recert_verdicts.json 18:25,
+  regenerated with ALL six shards — ⚠ the tool OVERWRITES per invocation,
+  always regenerate complete before any merge): 2 SUPERSEDE (Night_Widow
+  +99.3 · Blaster Fire/EM +6.3) / 4 KEEP (Broad_Sword −180.8, Warshade
+  −352.0, Stalker Rad/Dark −304.6, Battle_Axe −551.0 — gate held).**
+  Notable, both directions: the Blaster (worst solve-level outlier, −20.3%)
+  SUPERSEDES converged; the Warshade (+61.9% solve-level) KEEPS —
+  single-solve tie deltas predict NOTHING about converged outcomes; the
+  sweep+arbitrated-finale decides and the verdict gate protects the roster.
+  ⚠ abmov + abmov_ws shards sit in the union glob until Joel rules — merge
+  the 2 supersedes by context with --verdicts then retire .merged, or
+  retire all. **▶ AWAITING JOEL: merge word · schedule for the remaining 18
+  item-6 contexts · optional dominance-reduction attempt.** Cheap win parked: exploration-log parse.
 - **🧾 v38+HO WAVE COMPLETE 24/24 — VERDICT TABLE WITH JOEL, NOTHING MERGED.** `recert_verdicts.json` (written 2026-07-30 00:10): **4 SUPERSEDE** (Crab_Spider_Soldier +181.3 — this also CLOSES the named autopick defect that failed every leg of the previous wave · Spines/Fiery_Aura +92.4 · Poison/Sonic_Attack +50.9 · Broad_Sword/Super_Reflexes +4.1) / **20 KEEP**, zero collapsed runs, zero eval failures. The gate re-scores BOTH sides fresh under v38 (canonical vs canonical, CBC pinned) so the deltas are real; a mostly-KEEP outcome is the NORMAL shape of a recert wave (the prior wave was 3/20), not a defect. Large negatives cluster on Kheldian per-form contexts, where the form context BANS powers the incumbent build holds — the recert searches a strictly smaller space and cannot win by construction. **Merge = by context, `--verdicts`, canonical winner kept, shards retired `.merged_2026-07-30` — awaits Joel's word.**
 - **Wave-run history worth keeping:** ran across the laptop + gaming box; the box was stopped mid-order and its 2 finished champions came home via the new orphan-rescue (2505c2a0) rather than being lost. Drop-dead pauses fired clean twice (4:10 PM, then armed 6 AM). ⚠ `bench_solver_e2e` running beside the wave killed 10 in-flight contexts — several hours of compute, nothing corrupted; see the speed-ledger guard warning.
 - **⚠ MY OWN ERRORS THIS WAVE, recorded so the pattern is visible:** quoted a per-solve solver ratio (2.65×) as if it were end-to-end (really 1.2-1.7×); quoted a pre-fix 484 min as current (really 261); inflated the banked count by 2 by incrementing from monitor events instead of counting the shards; read a docstring's history as current state and wrongly declared a healthy wave's premise broken. **Common thread: passing along a number without checking what it measured.** Count from the artifact, not from the narration.
