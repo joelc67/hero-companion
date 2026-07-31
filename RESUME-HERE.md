@@ -12,9 +12,11 @@ This file is the current state and the open queue.
 ## Joel's work order (given 2026-07-31 afternoon, in this order)
 
 1. ✅ **DONE — fold in the CLAUDE.md staleness.** `c2265c6b`, pushed.
-2. ▶ **IN PROGRESS — build the four-way alignment.** Design settled below, ZERO
-   code written yet. This is where the next session starts.
-3. ⏸ **Close the verdict gate's legality hole.** Not started.
+2. ✅ **BUILT — the four-way alignment.** `3d62f4fa`, pushed (master `ae90662e`).
+   Verified in the real app in Edge, not from source. **Joel has not walked it
+   yet — that is the next thing.**
+3. ▶ **NEXT — close the verdict gate's legality hole.** Not started; approach
+   below.
 
 Plus Joel's standing instruction for this batch, in his words:
 
@@ -47,7 +49,54 @@ CURRENT STATE re-dated 2026-07-31 and given the open queue in Joel's order.
 
 ---
 
-## Item 2 — the four-way alignment: everything found, nothing built
+## Item 2 — SHIPPED (`3d62f4fa`). What to look at, and what I still owe you
+
+**Walk it:** start the dev server, open http://localhost:5080, and the entry
+screen now offers all four. Then the header button (it names your CURRENT
+alignment) opens a picker with all four and their one-line tips.
+
+**Verified on screen, not from source:**
+- Four entry cards; Vigilante and Rogue outlined in gold.
+- Header wordmark, tag line, tab title and button all change per alignment.
+- **Build-neutrality proven end-to-end through the real recompute**, with a
+  working negative control: hero ≡ vigilante, villain ≡ rogue, and hero ≠ villain
+  (so the comparison can actually detect a difference). Payload check: four
+  alignments produce exactly two values server-side — hero and villain.
+- Contrast measured: menu names 14.24:1, tips 5.74:1, header button 10.32:1.
+- Zero console errors. Gate 24/24 · tour 8/8 · mbd alignment 4/4.
+
+**One real bug caught BY LOOKING** (the reason your Edge instruction matters):
+the middles' yellow wordmark rendered as a solid yellow BAR with the name
+invisible. `background:` shorthand resets `background-clip`, unclipping the
+text-clipped wordmark. Fixed with `background-image:` plus a restated clip.
+Same family as the button background/color trap. Source review would not have
+caught it — it looked correct.
+
+**Two things I decided and you should overrule if you disagree:**
+1. **The yellow is `#ffd166`** (token `--mid`). You said "the wizard section's
+   yellow" — I measured the wizard and **it has no yellow at all**: its headings
+   are `#e6edf3` and its buttons `#4da3ff`. `#ffd166` is the app's only yellow
+   token and it is what outlines the selected side card on the start screen, so
+   that is what I used. One-line change if you meant something else.
+2. **The header button now names your CURRENT alignment, not the destination.**
+   With four choices behind a picker there is no single "where this takes you".
+   This also fixed a pre-existing drift: the tour's mock header already said
+   "🦸 Hero" while the real app said "🦹 Villain" on the hero theme.
+
+**Also updated so nothing drifted:** the tour's alignment step (title, body,
+`absent:` text — `audit_tour` checks ids and anchors, NEVER copy, so this class
+of drift is caught only by reading it) and the `Your alignment` section of
+`docs/help.md`, which had TWO generations of staleness — it still claimed the
+other side's accolades are "dropped", which your 2026-07-31 design pass had
+already changed to remembered-and-greyed.
+
+**Known gap, your call:** the four-way mapping has no automated check — I proved
+it in the browser, but nothing in the battery suite would fail if a future edit
+made `charAlignment()` return a middle alignment. The batteries are Python and
+this logic is JS, so it would need a new harness. Cheap-ish, not free, and the
+guarantee is one heavily-commented line. Say the word if you want it pinned.
+
+## Item 2 — the original design notes (kept; all of this is now implemented)
 
 **The design (Joel's):** the app toggle becomes 🦸 Hero / 🛡️ Vigilante /
 😈 Rogue / 🦹 Villain. Both middles themed the **wizard section's yellow**. Each
