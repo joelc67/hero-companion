@@ -2228,26 +2228,57 @@ function refreshRoleUI() { updateOffRoleWarning(); renderRoleFocusSplit(); }
 
 
 // ── ALIGNMENT (Hero Companion reskin): the app has an alignment like any CoH character.
-// Hero = Paragon blue & gold, Villain = Rogue Isles crimson. Persisted per browser.
+// FOUR-WAY since 2026-07-31 (Joel, overturning the earlier "the toggle stays
+// Hero/Villain"): 🦸 Hero / 🛡️ Vigilante / 😈 Rogue / 🦹 Villain, so a player can
+// see BOTH sides' information from the middle alignments the way the game lets
+// them. Praetorian is deliberately NOT here — it is a Journey-only 🌀 Flashback
+// view because Praetoria is not startable on Homecoming.
+//
+// ⚠ BUILD-NEUTRALITY LIVES IN ONE PLACE: charAlignment() (below) returns
+// _contentSide(rawAlignment()), i.e. hero or villain and NEVER a middle. That is
+// what the server-bound `alignment:` field and all three accolade consumers read,
+// so adding the middles cannot move a single number. Verified game-first: every
+// side-tagged accolade gates on `activate_requires type char> hero|villain eq`,
+// and a Vigilante IS hero-type / a Rogue IS villain-type for that gate.
+const _APP_ALIGNMENTS = ["hero", "vigilante", "rogue", "villain"];
+// Per-alignment header identity. The middles keep the companion framing while
+// naming what they actually are — plain English, no jargon (Joel's copy rule).
+const _ALIGN_APP = {
+  hero:      { glyph: "🦸", short: "Hero",      name: "Hero Companion",      tag: "your City of Heroes sidekick" },
+  vigilante: { glyph: "🛡️", short: "Vigilante", name: "Vigilante Companion", tag: "a hero who bends the rules" },
+  rogue:     { glyph: "😈", short: "Rogue",     name: "Rogue Companion",     tag: "a villain with a code" },
+  villain:   { glyph: "🦹", short: "Villain",   name: "Villain Companion",   tag: "your Rogue Isles accomplice" },
+};
+// The stored alignment, unmapped — for THEME and DISPLAY only. Anything that
+// reaches a build must go through charAlignment() instead.
+function rawAlignment() {
+  try {
+    const v = localStorage.getItem("cohAlignment") || "hero";
+    return _APP_ALIGNMENTS.includes(v) ? v : "hero";
+  } catch (e) { return "hero"; }
+}
 function applyAlignment(al) {
+  if (!_APP_ALIGNMENTS.includes(al)) al = "hero";
+  const side = _contentSide(al);      // hero|villain — the content road AND the build side
+  const mid = al !== side;            // the two middle alignments wear the yellow
   document.body.classList.remove("theme-hero", "theme-villain");
-  document.body.classList.add(al === "villain" ? "theme-villain" : "theme-hero");
-  const name = al === "villain" ? "Villain Companion" : "Hero Companion";
-  const glyph = al === "villain" ? "🦹" : "🦸";
-  const tag = al === "villain" ? "your Rogue Isles accomplice" : "your City of Heroes sidekick";
-  if ($("app-name")) $("app-name").textContent = name;
-  if ($("app-glyph")) $("app-glyph").textContent = glyph;
-  const tagEl = document.querySelector(".app-tag"); if (tagEl) tagEl.textContent = tag;
+  document.body.classList.add(side === "villain" ? "theme-villain" : "theme-hero");
+  document.body.classList.toggle("align-mid", mid);
+  const d = _ALIGN_APP[al];
+  if ($("app-name")) $("app-name").textContent = d.name;
+  if ($("app-glyph")) $("app-glyph").textContent = d.glyph;
+  const tagEl = document.querySelector(".app-tag"); if (tagEl) tagEl.textContent = d.tag;
   const btn = $("alignment-btn");
   if (btn) {
     // Keep the NAME beside the glyph (Joel, 2026-07-31) — this used to set
     // textContent, which silently ate the label span every time the side
-    // switched, leaving the one unlabeled control in the header. The label
-    // names where the click TAKES you, matching the title.
-    btn.innerHTML = al === "villain" ? "🦸 <span>Hero</span>" : "🦹 <span>Villain</span>";
-    btn.title = al === "villain" ? "Go Hero — reskin the whole app" : "Go Villain — reskin the whole app";
+    // switched, leaving the one unlabeled control in the header.
+    // ⚠ The label now names the CURRENT alignment, not the destination: with
+    // four choices behind a menu there is no single "where this takes you".
+    btn.innerHTML = `${d.glyph} <span>${d.short}</span>`;
+    btn.title = "Change alignment — Hero, Vigilante, Rogue or Villain";
   }
-  document.title = name + " — City of Heroes";
+  document.title = d.name + " — City of Heroes";
   document.querySelectorAll(".align-card").forEach(c =>
     c.classList.toggle("on", c.dataset.align === al));
   try { localStorage.setItem("cohAlignment", al); } catch (e) {}
@@ -2269,15 +2300,54 @@ function applyAlignment(al) {
   // that adds information, it never destroys a choice the user made.
   if (typeof build !== "undefined" && build.powers && build.powers.length
       && ACCOLADES_ROWS) {
+    // ⚠ SIDE, not the raw alignment: accolades are tagged hero/villain and a
+    // Vigilante's standard set is the HERO set. Matching on `al` would tick
+    // nothing at all on either middle alignment.
     for (const a of ACCOLADES_ROWS) {
-      if (a.standard_assumed && a.alignment === al) ACCOLADES_CHECKED.add(a.key);
+      if (a.standard_assumed && a.alignment === side) ACCOLADES_CHECKED.add(a.key);
     }
     try { recompute(); } catch (e) {}
   }
 }
+// The header control opens a PICKER rather than cycling: four states behind a
+// cycle button means three clicks to get back and no way to see what the other
+// choices are without clicking through them. Legibility beats cleverness.
 window.toggleAlignment = function () {
-  const cur = localStorage.getItem("cohAlignment") || "hero";
-  applyAlignment(cur === "hero" ? "villain" : "hero");
+  const open = $("align-menu");
+  if (open) { open.remove(); return; }        // click the button again = close
+  const btn = $("alignment-btn"); if (!btn) return;
+  const cur = rawAlignment();
+  const menu = document.createElement("div");
+  menu.id = "align-menu";
+  menu.className = "align-menu";
+  menu.setAttribute("role", "menu");
+  menu.innerHTML = _APP_ALIGNMENTS.map(k => {
+    const a = _ALIGNMENTS.find(x => x.key === k);
+    return `<button class="align-menu-item ${a.css}${k === cur ? " on" : ""}" role="menuitem"
+        data-al="${k}"><b>${a.label}</b><span>${escHtml(a.tip)}</span></button>`;
+  }).join("");
+  document.body.appendChild(menu);
+  const r = btn.getBoundingClientRect();
+  menu.style.top = (r.bottom + 6) + "px";
+  menu.style.right = Math.max(8, window.innerWidth - r.right) + "px";
+  menu.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    applyAlignment(b.dataset.al);
+    menu.remove();
+  }));
+  // Dismiss on outside click or Esc. Deferred a tick so the click that OPENED
+  // the menu doesn't immediately close it.
+  setTimeout(() => {
+    const off = (e) => {
+      if (menu.contains(e.target) || btn.contains(e.target)) return;
+      menu.remove(); document.removeEventListener("mousedown", off);
+    };
+    const esc = (e) => {
+      if (e.key !== "Escape") return;
+      menu.remove(); document.removeEventListener("keydown", esc);
+    };
+    document.addEventListener("mousedown", off);
+    document.addEventListener("keydown", esc);
+  }, 0);
 };
 
 
@@ -5320,11 +5390,17 @@ window.closeAccHowTo = function () {
   const ov = $("acc-howto"); if (ov) ov.remove();
 };
 
-// The character's alignment (hero/villain) — the same reskin the Hero/Villain
-// side card set at entry. Accolades gate on it (game rule).
+// ⚠⚠ THE BUILD-NEUTRALITY GUARANTEE OF THE FOUR-WAY ALIGNMENT LIVES HERE.
+// The character's BUILD side — always "hero" or "villain", never a middle
+// alignment. This is what buildPayload sends to the server and what all three
+// accolade consumers read, so routing the four-way through _contentSide() here
+// means adding Vigilante and Rogue cannot move a single number: the game itself
+// treats a Vigilante as hero-type and a Rogue as villain-type for the accolade
+// `activate_requires` gate, which is the only place alignment reaches a build.
+// Use rawAlignment() instead if you want what the user actually picked (theme,
+// labels, the Journey's content view) — never for anything that scores.
 function charAlignment() {
-  try { return localStorage.getItem("cohAlignment") || "hero"; }
-  catch (e) { return "hero"; }
+  return _contentSide(rawAlignment());
 }
 
 // v34 item 5: the standard accolades a generated level-50 build assumes — now

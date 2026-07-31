@@ -16,9 +16,15 @@
     <div class="entry-box">
       <h2>How do you want to start?</h2>
       <p class="muted">Pick a starting point — you can switch any time from the header.</p>
+      <!-- All four alignments (Joel, 2026-07-31). The middles are not a third
+           side: a Vigilante levels in Paragon City like a hero and a Rogue in
+           the Rogue Isles like a villain — what changes is the other side's
+           content they can also reach. Your build scores identically either way. -->
       <div class="align-cards" id="align-cards">
-        <button class="align-card hero" data-align="hero"><b>🦸 Hero side</b><span>Paragon City — blue &amp; gold</span></button>
-        <button class="align-card villain" data-align="villain"><b>🦹 Villain side</b><span>Rogue Isles — crimson &amp; black</span></button>
+        <button class="align-card hero" data-align="hero"><b>🦸 Hero</b><span>Paragon City — blue &amp; gold</span></button>
+        <button class="align-card vigilante" data-align="vigilante"><b>🛡️ Vigilante</b><span>Hero side, can also visit villain content</span></button>
+        <button class="align-card rogue" data-align="rogue"><b>😈 Rogue</b><span>Villain side, can also visit hero content</span></button>
+        <button class="align-card villain" data-align="villain"><b>🦹 Villain</b><span>Rogue Isles — crimson &amp; black</span></button>
       </div>
       <div class="entry-cards" id="entry-cards">
         <button class="entry-card" id="entry-continue" style="display:none">
@@ -233,7 +239,7 @@
         <span class="legend-div" aria-hidden="true"></span>
         <button id="champ-btn" class="iconbtn iconbtn-labeled" title="Submit your build as a champion candidate — the hub re-verifies every claim">🏆 <span>Champion</span></button>
         <button id="update-btn" class="iconbtn iconbtn-labeled" title="Check for updates">⟳ <span>Updates</span></button>
-        <button id="alignment-btn" class="iconbtn iconbtn-labeled" title="Switch alignment — reskins the whole app">🦹 <span>Villain</span></button>
+        <button id="alignment-btn" class="iconbtn iconbtn-labeled" title="Change alignment — Hero, Vigilante, Rogue or Villain">🦸 <span>Hero</span></button>
         <button id="start-over-btn" class="iconbtn iconbtn-labeled" title="Load another character, or make a new one">↺ <span>Switch</span></button>
       </div>
     </div>

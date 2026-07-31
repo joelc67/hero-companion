@@ -1143,9 +1143,10 @@ body.theme-villain button.primary, body.theme-villain .entry-go { color: var(--a
 main, header, footer { position: relative; z-index: 1; }
 
 /* ── Alignment CARDS on the entry banner — pick your side up front ── */
-.align-cards { display: flex; gap: 10px; margin: 10px 0 16px; }
+/* Four cards since 2026-07-31, so they wrap to 2×2 rather than squeezing. */
+.align-cards { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 16px; }
 .align-card {
-  flex: 1; padding: 10px 12px; border-radius: 10px; cursor: pointer;
+  flex: 1 1 190px; padding: 10px 12px; border-radius: 10px; cursor: pointer;
   border: 2px solid var(--border); background: var(--panel2);
   color: var(--ink); font: inherit; text-align: left;
 }
@@ -1153,6 +1154,48 @@ main, header, footer { position: relative; z-index: 1; }
 .align-card span { font-size: 11.5px; color: var(--muted); }
 .align-card.hero.on { border-color: #ffd166; box-shadow: 0 0 12px #4da3ff44; }
 .align-card.villain.on { border-color: #ff5252; box-shadow: 0 0 12px #ff525244; }
+/* THE MIDDLE ALIGNMENTS WEAR THE YELLOW (Joel's ruling). One shared token so
+   Vigilante and Rogue read as a matched pair rather than two near-misses. */
+:root { --mid: #ffd166; }
+.align-card.vigilante.on, .align-card.rogue.on {
+  border-color: var(--mid); box-shadow: 0 0 12px #ffd16644;
+}
+/* Header identity for the middles: the underline and the wordmark go yellow,
+   so the whole app says which alignment you are looking through. */
+body.align-mid header { border-bottom: 2px solid var(--mid); }
+/* ⚠ background-IMAGE, not the `background` shorthand: the shorthand resets
+   background-clip to border-box, which unclips the text-clipped wordmark and
+   paints a solid yellow BAR over an invisible name. Seen on screen, not in the
+   source — the same class as the button background/color trap below. */
+body.align-mid #app-name {
+  background-image: linear-gradient(90deg, #ffe6a8, #ffb703);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+/* The header control names the CURRENT alignment now (it opens a picker), so it
+   is coloured for where you ARE — these two used to be swapped, back when the
+   label named the destination. */
+body.theme-hero #alignment-btn { border-color: #27395c; color: #7ec8ff; }
+body.theme-villain #alignment-btn { border-color: #4a2430; color: #ff8a8a; }
+body.align-mid #alignment-btn { border-color: #6b5320; color: var(--mid); }
+
+/* ── The alignment picker (header) ── */
+.align-menu {
+  position: fixed; z-index: 60; min-width: 250px; padding: 6px;
+  background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+  box-shadow: 0 10px 28px #0009; display: flex; flex-direction: column; gap: 2px;
+}
+.align-menu-item {
+  width: 100%; text-align: left; padding: 8px 10px; border-radius: 7px; cursor: pointer;
+  /* ⚠ background AND color together — the base button rule pairs near-black text
+     with the light accent background, so overriding one alone gives 1.27:1. */
+  background: transparent; color: var(--ink); border: 1px solid transparent;
+  font: inherit;
+}
+.align-menu-item b { display: block; font-size: 13.5px; font-weight: 600; }
+.align-menu-item span { font-size: 11.5px; color: var(--muted); }
+.align-menu-item:hover { background: var(--panel2); color: var(--ink); border-color: var(--border); }
+.align-menu-item.on { border-color: var(--accent); }
+.align-menu-item.al-vig.on, .align-menu-item.al-rogue.on { border-color: var(--mid); }
 
 /* Full-bleed scroll container (the frame matte went with the corner graphics). */
 html, body { height: 100%; }

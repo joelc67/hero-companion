@@ -1055,16 +1055,23 @@ const TOUR_STEPS = [
         + "saved in the background as you worked.",
     absent: "The ↺ button at the right end of the header." },
   { chapter: "header", target: "#alignment-btn",
-    title: "Hero or Villain",
-    body: "Switches the whole app between blue and red. It is not only a colour "
-        + "scheme: accolades are side-specific in game, so switching also swaps "
-        + "which accolades your character is assumed to have and recalculates your "
-        + "totals. If your numbers move slightly when you flip it, that is "
-        + "correct; flip it back and they return.\n\n"
+    title: "Your alignment",
+    body: "Opens a short list of the four alignments: Hero, Vigilante, Rogue and "
+        + "Villain. It reskins the whole app, and it decides which side's "
+        + "information you see -- a Vigilante levels in Paragon City like a hero "
+        + "and can also visit villain content; a Rogue is the mirror of that.\n\n"
+        + "It will not change how your build scores. The game treats a Vigilante "
+        + "as hero-side and a Rogue as villain-side, so Hero and Vigilante give "
+        + "identical numbers, as do Villain and Rogue. Moving between the hero "
+        + "pair and the villain pair can shift your totals slightly, because "
+        + "accolades are side-specific in game and the app assumes the standard "
+        + "set for your side. Nothing you ticked is ever thrown away: an accolade "
+        + "for the other side stays remembered, greys out, and counts as zero "
+        + "until you switch back.\n\n"
         + "Do not confuse it with the Leveling Journey's own alignment switch -- "
         + "that one is a preview of somebody else's route through the game and "
         + "changes nothing at all.",
-    absent: "The 🦸 / 🦹 button in the header." },
+    absent: "The alignment button in the header -- it shows your current one." },
   { chapter: "header", target: "#help-btn",
     title: "The user guide",
     body: "The full guide as a PDF: everything this tour covers and more, plus "

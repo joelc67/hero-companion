@@ -183,25 +183,36 @@ The Converter panel answers two questions:
 - **Import/Export** is Mids Reborn compatible — bring builds in, take builds out. Your
   builds are yours; nothing leaves your machine.
 
-## Hero or Villain
+## Your alignment
 
-The alignment button in the banner (🦸 / 🦹) switches the whole app between Hero
-Companion in blue and Villain Companion in red. Your choice is remembered.
+The alignment button in the banner shows your current alignment. Click it and you
+get all four: **🦸 Hero**, **🛡️ Vigilante**, **😈 Rogue**, **🦹 Villain**. It
+reskins the whole app, and your choice is remembered.
 
-**It is not only a colour scheme.** Accolades are alignment-specific in game, so
-switching sides also switches which accolades your character is assumed to have:
-the ones the other side cannot earn are dropped, that side's standard set is
-assumed instead, and your totals are recalculated. Accolades carry real stats, so
-you may see your numbers move slightly when you flip the button. That is correct
-behaviour, not a glitch — a villain build should not be counting Freedom Phalanx
-Reserve.
+The two middle alignments are not a third side. A Vigilante levels in Paragon City
+like a hero and can also visit villain content; a Rogue levels in the Rogue Isles
+like a villain and can also visit hero content. That is how the game works, and it
+is why they are shown in gold rather than blue or red.
 
-If you only wanted the different look, flip it back and your accolades return with
-it. Nothing else about your build is touched: powers, slotting and targets stay
-exactly as they were.
+**Your build scores the same either way.** The game counts a Vigilante as
+hero-side and a Rogue as villain-side, so Hero and Vigilante give identical
+numbers, and so do Villain and Rogue. Changing alignment changes what you *see*,
+never what your build is worth.
+
+**Moving between the hero pair and the villain pair can shift your totals
+slightly.** Accolades are alignment-specific in game, and the app assumes the
+standard set for your side, so a villain build should not be counting Freedom
+Phalanx Reserve. Accolades carry real stats, so the numbers move a little. That is
+correct behaviour, not a glitch.
+
+**Nothing you ticked is ever thrown away.** An accolade for the other side stays
+remembered, greys out, and counts as zero while you are on this side — the game
+gates it the same way, so a held off-side accolade does nothing until you switch
+back. Switch back and it counts again. Powers, slotting and targets are never
+touched by any of this.
 
 **A separate control, easy to confuse with this one:** the Leveling Journey has its
-own Hero / Vigilante / Rogue / Villain / 🌀 Flashback switch. That one is a
+own alignment switch, which additionally offers 🌀 Flashback. That one is a
 **preview** of somebody else's route through the game, so you can see where a
 villain would level. It changes nothing about your character and resets when you
 close the Journey.
