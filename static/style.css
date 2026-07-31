@@ -60,6 +60,20 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
   cursor: pointer; color: var(--ink); text-decoration: none;
 }
 .iconbtn:hover { border-color: var(--accent); }
+/* A LABELED header control (design review 2026-07-31). Mirrors .journey-pill,
+   which is the proof case: it is the one control in that row a user can find
+   without hovering every icon. Used for the bug reporter, whose whole value
+   depends on being findable at the moment something goes wrong. */
+.iconbtn-labeled { width: auto; padding: 0 9px; gap: 4px; }
+.iconbtn-labeled span { font-size: 13px; font-weight: 600; }
+/* Hairline between header groups: this-character actions | help + feedback |
+   app/meta. Eight identical targets in one undivided run meant finding any one
+   of them required reading all of them. */
+.legend-div { width: 1px; align-self: stretch; margin: 2px 2px;
+  background: var(--border); }
+/* "Report this", offered ON a failure. Deliberately quiet: it must be findable
+   the moment something breaks without competing with the error text itself. */
+.report-this { display: inline-block; margin-top: 6px; font-size: 12px; }
 .cap-chips { display: flex; gap: 6px; margin: 4px 0 6px; }
 
 /* Overview CARD — the build's vitals as a gap-filling brick inside the powers grid
@@ -2006,6 +2020,9 @@ body { overflow: hidden; }
 .tour-svg .d-ico  { fill: var(--accent); opacity: .55; }
 .tour-svg .d-slot { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: .8; }
 .tour-svg .d-ctl  { fill: var(--panel); stroke: var(--border); stroke-width: 1; }
+/* the header-group hairline, drawn in the tour's header diagram so the drawing
+   matches the real header (design review 2026-07-31) */
+.tour-svg .d-div  { stroke: var(--border); stroke-width: 1; }
 .tour-svg .d-chip { fill: var(--panel); stroke: var(--border); stroke-width: 1; }
 /* Sizes bumped 2026-07-27 (Joel: the icon/IO/−+ drawings were too small to
    read). The SVGs scale with the card, so these are viewBox units. */

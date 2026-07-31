@@ -2470,7 +2470,12 @@ function _bugContext() {
       + ` · role ${build.role || "?"} · ${(build.powers || []).length} powers`
     : "(none loaded)";
 }
-function reportBug() {
+// `prefill` (design review 2026-07-31): the header button is a fallback that a
+// motivated user can hunt down. The report that actually arrives is the one
+// offered AT the failure — so the error surfaces call this with what just went
+// wrong already typed in. The user still edits and still presses Send; nothing
+// is captured or transmitted without them.
+function reportBug(prefill) {
   if (!META) return;
   if (!META.bug_report_key) return _reportBugViaGitHub();   // graceful fallback
   let m = $("bug-modal");
@@ -2480,7 +2485,7 @@ function reportBug() {
        <div class="modal-head"><b>🐞 Report a bug</b><button title="Close" onclick="closeBugModal()">✕</button></div>
        <p class="muted small">Goes straight to the developer — no account needed. Nothing is sent until you press Send.</p>
        <label class="bug-field"><b>What happened?</b>
-         <textarea id="bug-what" rows="5" placeholder="What you did, what you expected, and what actually happened."></textarea></label>
+         <textarea id="bug-what" rows="5" placeholder="What you did, what you expected, and what actually happened.">${escHtml(typeof prefill === "string" ? prefill : "")}</textarea></label>
        <label class="bug-field">Your email <span class="muted small">— optional, only if you'd like a reply</span>
          <input id="bug-email" type="email" placeholder="you@example.com"></label>
        <label class="bug-inc"><input type="checkbox" id="bug-attach"${build.archetype ? " checked" : " disabled"}>
@@ -2492,9 +2497,25 @@ function reportBug() {
          <button id="bug-send" onclick="submitBugReport()">Send</button></div>
      </div>`;
   m.classList.remove("hidden");
-  const ta = $("bug-what"); if (ta) ta.focus();
+  const ta = $("bug-what");
+  if (ta) {
+    ta.focus();
+    // Land the caret at the END of a prefill so the user types their own words
+    // after the machine's, rather than in front of them.
+    if (ta.value) ta.setSelectionRange(ta.value.length, ta.value.length);
+  }
 }
+window.reportBug = reportBug;
 window.closeBugModal = function () { const m = $("bug-modal"); if (m) m.classList.add("hidden"); };
+
+// "Report this" — the contextual entry point. Any surface that shows the user a
+// failure appends this, so reporting costs one click at the moment they are
+// already looking at the problem. `what` becomes the prefilled first line.
+function reportThisBtn(what) {
+  return `<button class="linkbtn report-this" title="Report this to the developer — opens a pre-filled report, nothing is sent until you press Send"
+    onclick="reportBug(${JSON.stringify(String(what || "")).replace(/"/g, "&quot;")})">🐞 Report this</button>`;
+}
+window.reportThisBtn = reportThisBtn;
 
 async function submitBugReport() {
   const key = (META || {}).bug_report_key;
@@ -5987,7 +6008,11 @@ async function importMids(e) {
   report.classList.remove("hidden");
   report.innerHTML = `<p class="muted small">Reading <strong>${escHtml(file.name)}</strong>…</p>`;
   let text;
-  try { text = await file.text(); } catch (err) { report.innerHTML = `<p class="v-err">Couldn't read the file: ${err}</p>`; return; }
+  try { text = await file.text(); } catch (err) {
+    report.innerHTML = `<p class="v-err">Couldn't read the file: ${escHtml(String(err))}</p>`
+      + reportThisBtn(`Import failed while reading the file "${file.name}": ${err}`);
+    return;
+  }
   importBuildText(text);
 }
 
@@ -5999,8 +6024,16 @@ async function importBuildText(text) {
   let res;
   try {
     res = await api("/build/import", postJson({ mbd: text, pvp: build.pvp }));
-  } catch (err) { report.innerHTML = `<p class="v-err">Import failed: ${err}</p>`; return; }
-  if (!res.ok) { report.innerHTML = `<p class="v-err">${res.response || "Import failed."}</p>`; return; }
+  } catch (err) {
+    report.innerHTML = `<p class="v-err">Import failed: ${escHtml(String(err))}</p>`
+      + reportThisBtn(`Import failed: ${err}`);
+    return;
+  }
+  if (!res.ok) {
+    report.innerHTML = `<p class="v-err">${escHtml(res.response || "Import failed.")}</p>`
+      + reportThisBtn(`Import was refused: ${res.response || "Import failed."}`);
+    return;
+  }
 
   await applyImportedBuild(res.build);
   build._mode = "import";        // a real, created character → lock its archetype/powersets
@@ -6252,7 +6285,12 @@ async function previewRespec() {
     renderRespecPreview();
   } catch (e) {
     const host = $("respec-preview");
-    if (host) { host.classList.remove("hidden"); host.innerHTML = `<p class="v-err">Couldn't build a respec: ${(e && e.message) || e}</p>`; }
+    if (host) {
+      host.classList.remove("hidden");
+      const _msg = (e && e.message) || e;
+      host.innerHTML = `<p class="v-err">Couldn't build a respec: ${escHtml(String(_msg))}</p>`
+        + reportThisBtn(`"Preview a full respec" failed: ${_msg}`);
+    }
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = "🔧 Preview a full respec"; }
   }

@@ -88,16 +88,18 @@ const TOUR_DIAGRAMS = {
   <rect x="170" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="181" y="102" class="d-glyph">🗺️</text>
   <rect x="196" y="87" width="22" height="22" rx="4" class="d-ctl d-hot"/><text x="207" y="102" class="d-glyph">🧭</text>
   <rect x="222" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="233" y="102" class="d-glyph">💾</text>
-  <rect x="248" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="259" y="102" class="d-glyph">❓</text>
-  <rect x="274" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="285" y="102" class="d-glyph">🐞</text>
-  <rect x="300" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="311" y="102" class="d-glyph">🏆</text>
-  <rect x="326" y="87" width="22" height="22" rx="4" class="d-ctl d-hot"/><text x="337" y="102" class="d-glyph">⟳</text>
-  <rect x="352" y="87" width="22" height="22" rx="4" class="d-ctl d-hot"/><text x="363" y="102" class="d-glyph">🦸</text>
-  <rect x="378" y="87" width="22" height="22" rx="4" class="d-ctl d-hot"/><text x="389" y="102" class="d-glyph">↺</text>
+  <path d="M249 88 L249 108" class="d-div"/>
+  <rect x="256" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="267" y="102" class="d-glyph">❓</text>
+  <rect x="282" y="87" width="56" height="22" rx="4" class="d-ctl d-hot"/>
+  <text x="291" y="102" class="d-glyph">🐞</text><text x="303" y="102" class="d-name" style="font-size:10px">Report</text>
+  <path d="M343 88 L343 108" class="d-div"/>
+  <rect x="350" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="361" y="102" class="d-glyph">🏆</text>
+  <rect x="376" y="87" width="22" height="22" rx="4" class="d-ctl d-hot"/><text x="387" y="102" class="d-glyph">⟳</text>
+  <rect x="402" y="87" width="22" height="22" rx="4" class="d-ctl d-hot"/><text x="413" y="102" class="d-glyph">🦸</text>
   <path d="M207 50 L207 83" class="d-arrow"/><text x="207" y="42" class="d-lbl d-mid">this tour</text>
-  <path d="M363 50 L363 83" class="d-arrow"/><text x="363" y="42" class="d-lbl d-mid">hero / villain</text>
-  <path d="M337 146 L337 113" class="d-arrow"/><text x="337" y="160" class="d-lbl d-mid">check for updates</text>
-  <path d="M389 174 L389 113" class="d-arrow"/><text x="389" y="188" class="d-lbl d-mid">start over</text>
+  <path d="M310 50 L310 83" class="d-arrow"/><text x="310" y="42" class="d-lbl d-mid">tell me something is wrong</text>
+  <path d="M387 146 L387 113" class="d-arrow"/><text x="387" y="160" class="d-lbl d-mid">check for updates</text>
+  <path d="M413 174 L413 113" class="d-arrow"/><text x="413" y="188" class="d-lbl d-mid">hero / villain</text>
 </svg>`,
 };
 

@@ -214,9 +214,18 @@
              live together. Opens the section chooser, never a tour directly. -->
         <button id="tour-btn" class="iconbtn" title="Guided tour — pick a section and I'll explain it">🧭</button>
         <button id="save-btn" class="iconbtn" title="Save this character's plan + progress so you can resume later">💾</button>
+        <!-- HEADER GROUPING (design review 2026-07-31, Joel's field note "the bug
+             report is not easy to find"): eight same-shaped emoji in one run meant
+             finding any of them required decoding all of them. Three groups now,
+             separated by a hairline: this-character actions, help + feedback, then
+             app/meta. The Journey button already proved a LABEL is what makes a
+             header control findable, so the feedback button carries one too. -->
+        <span class="legend-div" aria-hidden="true"></span>
         <a id="help-btn" class="iconbtn" href="/static/help/HeroCompanion-Help.pdf" target="_blank"
            rel="noopener" title="User guide + release notes (PDF)">❓</a>
-        <button id="bug-btn" class="iconbtn" title="Report a bug — opens a pre-filled report; nothing is sent until you post it">🐞</button>
+        <button id="bug-btn" class="iconbtn iconbtn-labeled"
+          title="Report a bug — opens a pre-filled report; nothing is sent until you press Send">🐞 <span>Report</span></button>
+        <span class="legend-div" aria-hidden="true"></span>
         <button id="champ-btn" class="iconbtn" title="Submit your build as a champion candidate — the hub re-verifies every claim">🏆</button>
         <button id="update-btn" class="iconbtn" title="Check for updates">⟳</button>
         <button id="alignment-btn" class="iconbtn" title="Switch alignment — reskins the whole app">🦹</button>
