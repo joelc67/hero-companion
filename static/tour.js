@@ -81,25 +81,24 @@ const TOUR_DIAGRAMS = {
   <path d="M392 138 L392 94" class="d-arrow"/><text x="392" y="152" class="d-lbl d-mid">in combat</text>
 </svg>`,
   headerRow: `
-<svg viewBox="0 0 440 200" class="tour-svg" role="img"
-     aria-label="The header's row of small buttons: Journey, tour, save, help, bug report, champion, update check, alignment, and start over"><defs><marker id="tourArrowHead" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" class="d-head"/></marker></defs>
-  <rect x="20" y="78" width="400" height="40" rx="8" class="d-card"/>
-  <text x="34" y="102" class="d-name">Hero Companion</text>
-  <rect x="170" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="181" y="102" class="d-glyph">🗺️</text>
-  <rect x="196" y="87" width="22" height="22" rx="4" class="d-ctl d-hot"/><text x="207" y="102" class="d-glyph">🧭</text>
-  <rect x="222" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="233" y="102" class="d-glyph">💾</text>
-  <path d="M249 88 L249 108" class="d-div"/>
-  <rect x="256" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="267" y="102" class="d-glyph">❓</text>
-  <rect x="282" y="87" width="56" height="22" rx="4" class="d-ctl d-hot"/>
-  <text x="291" y="102" class="d-glyph">🐞</text><text x="303" y="102" class="d-name" style="font-size:10px">Report</text>
-  <path d="M343 88 L343 108" class="d-div"/>
-  <rect x="350" y="87" width="22" height="22" rx="4" class="d-ctl"/><text x="361" y="102" class="d-glyph">🏆</text>
-  <rect x="376" y="87" width="22" height="22" rx="4" class="d-ctl d-hot"/><text x="387" y="102" class="d-glyph">⟳</text>
-  <rect x="402" y="87" width="22" height="22" rx="4" class="d-ctl d-hot"/><text x="413" y="102" class="d-glyph">🦸</text>
-  <path d="M207 50 L207 83" class="d-arrow"/><text x="207" y="42" class="d-lbl d-mid">this tour</text>
-  <path d="M310 50 L310 83" class="d-arrow"/><text x="310" y="42" class="d-lbl d-mid">tell me something is wrong</text>
-  <path d="M387 146 L387 113" class="d-arrow"/><text x="387" y="160" class="d-lbl d-mid">check for updates</text>
-  <path d="M413 174 L413 113" class="d-arrow"/><text x="413" y="188" class="d-lbl d-mid">hero / villain</text>
+<svg viewBox="0 0 580 170" class="tour-svg" role="img"
+     aria-label="The header toolbar: every button carries its name — Journey, Tour, Save, Guide, Report, Champion, Updates, Villain and Switch"><defs><marker id="tourArrowHead" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" class="d-head"/></marker></defs>
+  <rect x="10" y="62" width="560" height="38" rx="8" class="d-card"/>
+  <rect x="18" y="71" width="58" height="20" rx="5" class="d-ctl"/><text x="24" y="85" class="d-glyph" style="font-size:9px">🗺️ Journey</text>
+  <rect x="80" y="71" width="44" height="20" rx="5" class="d-ctl d-hot"/><text x="86" y="85" class="d-glyph" style="font-size:9px">🧭 Tour</text>
+  <rect x="128" y="71" width="44" height="20" rx="5" class="d-ctl"/><text x="134" y="85" class="d-glyph" style="font-size:9px">💾 Save</text>
+  <path d="M178 72 L178 90" class="d-div"/>
+  <rect x="184" y="71" width="48" height="20" rx="5" class="d-ctl"/><text x="190" y="85" class="d-glyph" style="font-size:9px">❓ Guide</text>
+  <rect x="236" y="71" width="54" height="20" rx="5" class="d-ctl d-hot"/><text x="242" y="85" class="d-glyph" style="font-size:9px">🐞 Report</text>
+  <path d="M296 72 L296 90" class="d-div"/>
+  <rect x="302" y="71" width="66" height="20" rx="5" class="d-ctl"/><text x="308" y="85" class="d-glyph" style="font-size:9px">🏆 Champion</text>
+  <rect x="372" y="71" width="60" height="20" rx="5" class="d-ctl d-hot"/><text x="378" y="85" class="d-glyph" style="font-size:9px">⟳ Updates</text>
+  <rect x="436" y="71" width="54" height="20" rx="5" class="d-ctl"/><text x="442" y="85" class="d-glyph" style="font-size:9px">🦹 Villain</text>
+  <rect x="494" y="71" width="56" height="20" rx="5" class="d-ctl d-hot"/><text x="500" y="85" class="d-glyph" style="font-size:9px">↺ Switch</text>
+  <path d="M108 40 L108 67" class="d-arrow"/><text x="108" y="32" class="d-lbl d-mid">this tour</text>
+  <path d="M263 40 L263 67" class="d-arrow"/><text x="263" y="32" class="d-lbl d-mid">tell me something is wrong</text>
+  <path d="M402 126 L402 95" class="d-arrow"/><text x="402" y="140" class="d-lbl d-mid">check for a newer version</text>
+  <path d="M522 156 L522 95" class="d-arrow"/><text x="522" y="168" class="d-lbl d-mid">leave this character</text>
 </svg>`,
 };
 
@@ -161,14 +160,16 @@ const TOUR_MOCK_HTML = `
     <h1>🦸 Hero Companion <span class="muted small">— Bruiser Brawlwell · Brute · level 50</span></h1>
     <div class="legend">
       <button class="iconbtn journey-pill" data-for="journey-btn" type="button">🗺️ <span class="journey-pill-label">Journey</span></button>
-      <button class="iconbtn" data-tm="compass" type="button">🧭</button>
-      <button class="iconbtn" data-for="save-btn" type="button">💾</button>
-      <button class="iconbtn" data-for="help-btn" type="button">❓</button>
-      <button class="iconbtn" data-for="bug-btn" type="button">🐞</button>
-      <button class="iconbtn" data-for="champ-btn" type="button">🏆</button>
-      <button class="iconbtn" data-for="update-btn" type="button">⟳</button>
-      <button class="iconbtn" data-for="alignment-btn" type="button">🦸</button>
-      <button class="iconbtn" data-for="start-over-btn" type="button">↺</button>
+      <button class="iconbtn iconbtn-labeled" data-tm="compass" type="button">🧭 <span>Tour</span></button>
+      <button class="iconbtn iconbtn-labeled" data-for="save-btn" type="button">💾 <span>Save</span></button>
+      <span class="legend-div" aria-hidden="true"></span>
+      <button class="iconbtn iconbtn-labeled" data-for="help-btn" type="button">❓ <span>Guide</span></button>
+      <button class="iconbtn iconbtn-labeled" data-for="bug-btn" type="button">🐞 <span>Report</span></button>
+      <span class="legend-div" aria-hidden="true"></span>
+      <button class="iconbtn iconbtn-labeled" data-for="champ-btn" type="button">🏆 <span>Champion</span></button>
+      <button class="iconbtn iconbtn-labeled" data-for="update-btn" type="button">⟳ <span>Updates</span></button>
+      <button class="iconbtn iconbtn-labeled" data-for="alignment-btn" type="button">🦸 <span>Hero</span></button>
+      <button class="iconbtn iconbtn-labeled" data-for="start-over-btn" type="button">↺ <span>Switch</span></button>
     </div>
   </header>
 
@@ -1026,14 +1027,15 @@ const TOUR_STEPS = [
 
   // ── Saving, updates and help ───────────────────────────────────────────────
   { chapter: "header", target: "#masthead", diagram: "headerRow", anchor: "[data-tm=compass]", side: "bottom",
-    title: "The header's small buttons",
-    body: "Nine small buttons share the header, and the drawing above names the "
-        + "pair people mix up: the two circular arrows. ⟳ checks for updates; ↺ "
-        + "leaves this character and returns to the opening screen.\n\n"
-        + "Left to right: the 🗺️ Journey, this tour's 🧭 compass, 💾 save, the ❓ "
-        + "user guide, 🐞 report a bug, 🏆 submit a champion, ⟳ updates, 🦸/🦹 "
-        + "alignment, and ↺ to load another character. The rest of this section "
-        + "takes the important ones in turn.",
+    title: "The header toolbar",
+    body: "Nine buttons run across the top, and each one says its own name, so "
+        + "you should not have to memorise any of them.\n\n"
+        + "The one pair still worth calling out is the two circular arrows, "
+        + "because the words are close: ⟳ Updates checks whether a newer "
+        + "version of the app exists, while ↺ Switch leaves this character and "
+        + "returns to the opening screen. Nothing is lost either way -- your "
+        + "plan is already saved.\n\n"
+        + "The rest of this section takes the important ones in turn.",
     absent: "The bar across the top of the app." },
 
   { chapter: "header", target: "#save-btn", spine: true,

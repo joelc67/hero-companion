@@ -212,8 +212,13 @@
         <button id="journey-btn" class="iconbtn journey-pill" title="The Leveling Journey — your 1-50 as a road. Click to open, click again to close." style="display:none">🗺️ <span class="journey-pill-label">Journey</span></button>
         <!-- Sits next to the Journey button so the two "show me around" controls
              live together. Opens the section chooser, never a tour directly. -->
-        <button id="tour-btn" class="iconbtn" title="Guided tour — pick a section and I'll explain it">🧭</button>
-        <button id="save-btn" class="iconbtn" title="Save this character's plan + progress so you can resume later">💾</button>
+        <!-- EVERY header control carries its name (Joel, 2026-07-31: "all the
+             entries at the top probably deserve a name next to icons"). A bare
+             emoji is only legible to someone who already knows what it does, and
+             the tour needed a whole step to decode this row. .legend wraps, so a
+             narrow window stacks rather than clipping. -->
+        <button id="tour-btn" class="iconbtn iconbtn-labeled" title="Guided tour — pick a section and I'll explain it">🧭 <span>Tour</span></button>
+        <button id="save-btn" class="iconbtn iconbtn-labeled" title="Save this character's plan + progress so you can resume later">💾 <span>Save</span></button>
         <!-- HEADER GROUPING (design review 2026-07-31, Joel's field note "the bug
              report is not easy to find"): eight same-shaped emoji in one run meant
              finding any of them required decoding all of them. Three groups now,
@@ -221,15 +226,15 @@
              app/meta. The Journey button already proved a LABEL is what makes a
              header control findable, so the feedback button carries one too. -->
         <span class="legend-div" aria-hidden="true"></span>
-        <a id="help-btn" class="iconbtn" href="/static/help/HeroCompanion-Help.pdf" target="_blank"
-           rel="noopener" title="User guide + release notes (PDF)">❓</a>
+        <a id="help-btn" class="iconbtn iconbtn-labeled" href="/static/help/HeroCompanion-Help.pdf" target="_blank"
+           rel="noopener" title="User guide + release notes (PDF)">❓ <span>Guide</span></a>
         <button id="bug-btn" class="iconbtn iconbtn-labeled"
           title="Report a bug — opens a pre-filled report; nothing is sent until you press Send">🐞 <span>Report</span></button>
         <span class="legend-div" aria-hidden="true"></span>
-        <button id="champ-btn" class="iconbtn" title="Submit your build as a champion candidate — the hub re-verifies every claim">🏆</button>
-        <button id="update-btn" class="iconbtn" title="Check for updates">⟳</button>
-        <button id="alignment-btn" class="iconbtn" title="Switch alignment — reskins the whole app">🦹</button>
-        <button id="start-over-btn" class="iconbtn" title="Load another character, or make a new one">↺</button>
+        <button id="champ-btn" class="iconbtn iconbtn-labeled" title="Submit your build as a champion candidate — the hub re-verifies every claim">🏆 <span>Champion</span></button>
+        <button id="update-btn" class="iconbtn iconbtn-labeled" title="Check for updates">⟳ <span>Updates</span></button>
+        <button id="alignment-btn" class="iconbtn iconbtn-labeled" title="Switch alignment — reskins the whole app">🦹 <span>Villain</span></button>
+        <button id="start-over-btn" class="iconbtn iconbtn-labeled" title="Load another character, or make a new one">↺ <span>Switch</span></button>
       </div>
     </div>
   </header>

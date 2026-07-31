@@ -795,6 +795,15 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .slot-plan .sp-why { opacity: .55; font-weight: 400; }
 .slot-plan-proc-bomb   { background: rgba(230, 120, 40, .14);  border-color: rgba(230,120,40,.5);  color: #c8631a; }
 .slot-plan-committed   { background: rgba(60, 160, 90, .13);   border-color: rgba(60,160,90,.45);  color: #2f8a53; }
+/* PARTIAL SET (design review 2026-07-31). It had no rule at all, so it fell
+   through to the neutral fallback — the same treatment as "nothing worth
+   explaining" — while a full set got the green. But a partial set is a
+   DELIBERATE commitment for a set's cheap early bonuses (see the frankenslot
+   note: the 5th and 6th bonuses are usually the marginal ones). Same colour
+   family as the full set, dialled down: "this kind of thing, fewer pieces",
+   not "unremarkable". The icon differs too, so the two never rely on colour
+   alone to be told apart. */
+.slot-plan-partial-set { background: rgba(60, 160, 90, .07);   border-color: rgba(60,160,90,.28); color: #4f9e72; }
 .slot-plan-frankenslot { background: rgba(150, 110, 200, .14); border-color: rgba(150,110,200,.5); color: #7a54b0; }
 .slot-plan-global-mules,
 .slot-plan-global-host,

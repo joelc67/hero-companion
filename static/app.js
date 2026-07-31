@@ -2240,7 +2240,11 @@ function applyAlignment(al) {
   const tagEl = document.querySelector(".app-tag"); if (tagEl) tagEl.textContent = tag;
   const btn = $("alignment-btn");
   if (btn) {
-    btn.textContent = al === "villain" ? "🦸" : "🦹";
+    // Keep the NAME beside the glyph (Joel, 2026-07-31) — this used to set
+    // textContent, which silently ate the label span every time the side
+    // switched, leaving the one unlabeled control in the header. The label
+    // names where the click TAKES you, matching the title.
+    btn.innerHTML = al === "villain" ? "🦸 <span>Hero</span>" : "🦹 <span>Villain</span>";
     btn.title = al === "villain" ? "Go Hero — reskin the whole app" : "Go Villain — reskin the whole app";
   }
   document.title = name + " — City of Heroes";
@@ -4283,7 +4287,9 @@ const _PLAN_META = {
   "committed":    ["🎯", "Full set", "committed"],
   // A partial single set (e.g. 4 of 6) — a real, deliberate commitment for the
   // early bonuses, but NOT a full set (Joel, 2026-07-20: don't call 3-of-6 "Full").
-  "partial-set":  ["🎯", "Partial set", "committed"],
+  // ◎ rather than 🎯 (design review 2026-07-31): the two shared one icon, so the
+  // only thing telling them apart was colour. Now the glyph says it too.
+  "partial-set":  ["◎", "Partial set", "committed"],
   "frankenslot":  ["🧩", "Frankenslot", "frankenslot"],
   "global-mules": ["🌐", "Global mules", "global-mules"],
   // Running auto/toggle hosting globals — reads as a working power, not dead
