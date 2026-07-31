@@ -3890,8 +3890,10 @@ function powerCardHtml(pw, idx, icon, lv) {
         <span class="pc-tools">
           ${totalsChipHtml(pw, idx)}
           ${lockBtn}
-          <button class="mini" onclick="changeSlots(${idx}, -1)" title="return this power's last slot to the shared pool (67 added slots for the whole build)">−</button>
-          <button class="mini" onclick="changeSlots(${idx}, 1)" title="spend a free slot from the shared pool here (67 added slots for the whole build)">+</button>
+          <span class="slot-step">
+            <button class="mini" onclick="changeSlots(${idx}, -1)" title="return this power's last slot to the shared pool (67 added slots for the whole build)">−</button>
+            <button class="mini" onclick="changeSlots(${idx}, 1)" title="spend a free slot from the shared pool here (67 added slots for the whole build)">+</button>
+          </span>
           <button class="tour-help" onclick="explainStep('power-card', event)" aria-label="Explain this card" title="What is this card? One click explains it">?</button>
         </span>
       </div>
@@ -3908,9 +3910,11 @@ function powerCardHtml(pw, idx, icon, lv) {
       <span class="pc-tools">
         ${totalsChipHtml(pw, idx)}
         ${lockBtn}
-        <button class="mini" onclick="changeSlots(${idx}, -1)" title="return this power's last slot to the shared pool (67 added slots for the whole build)">−</button>
-        <button class="mini" onclick="changeSlots(${idx}, 1)" title="spend a free slot from the shared pool here (67 added slots for the whole build)">+</button>
-        <button class="remove-power" onclick="removePower(${idx})" title="remove this power">✕</button>
+        <span class="slot-step">
+          <button class="mini" onclick="changeSlots(${idx}, -1)" title="return this power's last slot to the shared pool (67 added slots for the whole build)">−</button>
+          <button class="mini" onclick="changeSlots(${idx}, 1)" title="spend a free slot from the shared pool here (67 added slots for the whole build)">+</button>
+        </span>
+        <button class="remove-power" onclick="removePower(${idx})" title="Remove this power from the build (Ctrl+Z undoes it)">✕</button>
         <button class="tour-help" onclick="explainStep('power-card', event)" aria-label="Explain this card" title="What is this card? One click explains it">?</button>
       </span>
     </div>

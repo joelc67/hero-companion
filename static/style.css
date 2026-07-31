@@ -247,7 +247,7 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
   border: 1px solid var(--accent); border-radius: 8px;
   padding: 0 4px; white-space: nowrap; flex: none;
 }
-.pc-tools { display: flex; align-items: center; gap: 2px; margin-left: auto; flex: none; }
+.pc-tools { display: flex; align-items: center; gap: 4px; margin-left: auto; flex: none; }
 .pc-tools .include-toggle { margin: 0 3px 0 0; font-size: 11px; gap: 2px; }
 .power-card .cats { font-size: 10.5px; color: var(--muted); margin-top: 2px; }
 .slot-row { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
@@ -296,8 +296,31 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
   border-radius: 5px; color: var(--warn, #b26a00);
   background: color-mix(in srgb, var(--warn, #b26a00) 12%, transparent);
   border: 1px solid color-mix(in srgb, var(--warn, #b26a00) 35%, transparent); }
-.mini { font-size: 11px; padding: 2px 6px; width: auto; }
-.remove-power { background: transparent; color: var(--bad); width: auto; padding: 2px 6px; font-size: 12px; }
+.mini { font-size: 11px; padding: 3px 7px; width: auto; }
+/* Press feedback: these are the most-clicked controls in the app, and a control
+   that does not acknowledge the press reads as a control that did not hear it. */
+.mini:active, .remove-power:active, .lock-btn:active { transform: scale(0.94); }
+.mini, .remove-power, .lock-btn { transition: transform 120ms ease-out,
+  color 120ms ease, border-color 120ms ease, background 120ms ease; }
+
+/* POWER-CARD CONTROL CLUSTER (design review 2026-07-31). Six controls at a 2px
+   gap, all the same size and weight, repeated down every card — the densest
+   texture in the app. Two changes, no controls removed:
+   1. − and + are ONE idea (this power's slot count), so they read as one
+      segmented control instead of two more items in the row.
+   2. ✕ REMOVES THE POWER with no confirm. It sat 2px from + at matching
+      weight, so a mis-aim dropped a pick. It now stands apart, and it is
+      quiet until you reach for it — a wall of 24 permanently-red ✕ marks
+      made the colour meaningless exactly where it needed to mean something. */
+.slot-step { display: inline-flex; align-items: center;
+  border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.slot-step .mini { border: none; border-radius: 0; background: var(--panel2); }
+.slot-step .mini + .mini { border-left: 1px solid var(--border); }
+.slot-step .mini:hover { background: color-mix(in srgb, var(--accent) 18%, var(--panel2)); }
+.remove-power { background: transparent; color: var(--muted); width: auto;
+  padding: 3px 7px; font-size: 12px; margin-left: 6px; opacity: .55; }
+.remove-power:hover, .remove-power:focus-visible {
+  color: var(--bad); opacity: 1; background: color-mix(in srgb, var(--bad) 12%, transparent); }
 .add-power select { margin-top: 6px; }
 .export-btn { margin-top: 14px; background: var(--res); color: #1a1207; }
 
