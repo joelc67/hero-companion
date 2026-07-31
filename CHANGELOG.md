@@ -2,6 +2,43 @@
 
 ## Unreleased
 
+- **Power prerequisites now come from the game's own rule, not our guess.**
+  The tool used to work out how many other powers a pool or epic power needs
+  from where it sat in the list. The game states it per power, and the two
+  disagreed in both directions: travel powers like Fly, Teleport, Super Speed
+  and Mystic Flight were being held back when the game lets you take them
+  freely, while Weave, Group Fly, Wall of Force, Misdirection and a few others
+  were allowed with one prerequisite when the game wants two. Every pool and
+  epic power in the app now carries the game's own count — all 467 of them,
+  checked against the rule the game actually runs, with a standing check that
+  refuses to let a build run if any of them ever drifts.
+
+- **The build checker now catches missing POOL prerequisites too.** It checked
+  epic and ancillary pools but silently skipped the regular power pools, so
+  taking Vengeance with only one other Leadership power drew no warning even
+  though the game will not allow it. Now every pool is checked, with the same
+  plain-English message telling you how many more powers you need and from
+  where.
+
+- **Mace Mastery no longer appears for Scrappers.** The game gives it to
+  Stalkers; we were offering a set that does not exist for that archetype.
+
+- **Better slotting when several layouts tie.** Once a build reaches the
+  defense and resistance caps, many different slot arrangements score exactly
+  the same, and the optimizer used to return whichever it happened to reach
+  first — builds that looked equal on paper could differ by a fifth in real
+  performance. It now breaks those ties by what you told it the build is for:
+  endurance sustain first, then damage for damage roles or protection above
+  the cap for tanks. When it is not certain, it solves the build both ways and
+  keeps whichever the full physics model rates higher, so the build you get is
+  never the worse of the two.
+
+- **Every bundled champion build re-certified.** All 24 came through the
+  scoring gate again on the corrected engine; 8 came back genuinely better and
+  were replaced, the other 16 kept their existing builds because the originals
+  still scored higher. The biggest gains were on the form-based Kheldians and
+  the Arachnos soldiers.
+
 - **Exported .mbd files open in Mids Reborn again.** Mids reads the
   alignment field as a case-sensitive value ("Hero"), and our exports wrote
   the app's lowercase "hero" — so a build exported from Hero Companion
