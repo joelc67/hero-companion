@@ -314,9 +314,16 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
       made the colour meaningless exactly where it needed to mean something. */
 .slot-step { display: inline-flex; align-items: center;
   border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
-.slot-step .mini { border: none; border-radius: 0; background: var(--panel2); }
+/* ⚠ COLOR IS NOT OPTIONAL HERE. The base `button` rule pairs color:#06121f
+   (near-black, for the LIGHT accent background) with background:var(--accent).
+   Overriding only the background leaves near-black text on a dark panel:
+   measured 1.27:1, invisible (caught by Joel, 2026-07-31). Any rule that
+   restyles a button's background must restate its color. */
+.slot-step .mini { border: none; border-radius: 0;
+  background: var(--panel2); color: var(--ink); font-weight: 700; }
 .slot-step .mini + .mini { border-left: 1px solid var(--border); }
-.slot-step .mini:hover { background: color-mix(in srgb, var(--accent) 18%, var(--panel2)); }
+.slot-step .mini:hover { background: color-mix(in srgb, var(--accent) 22%, var(--panel2));
+  color: #fff; }
 .remove-power { background: transparent; color: var(--muted); width: auto;
   padding: 3px 7px; font-size: 12px; margin-left: 6px; opacity: .55; }
 .remove-power:hover, .remove-power:focus-visible {
