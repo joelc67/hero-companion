@@ -217,6 +217,40 @@ them from a parse without the same standard of proof.
 
 - **Henchmen inherit 50% of ALL true set bonuses (verified in bins, 2026-07-08).** `SetBonusPetShareHP[50]` = 40.159 (= MM 803.17 × 10% × 0.5, caster-table, flat to every tier — henchman classes lack the table) plus a generic `SetBonusPetShare` = 0.5 for def/res/dmg/regen/rec/heal-strength/mez-duration. **Henchmen-tagged effect groups live ONLY on `Set_Bonus.Set_Bonus.*`** — Global_Bonus uniques (e.g. Unbreakable Guard) and accolades share NOTHING. Tier HP from `villain_classes.bin`: 578.3 / 771.0 / 963.8.
 - **Content-layer bins are EXHAUSTED and these hypotheses are DISPROVEN by name** (do not re-search): `pc_def_contacts.bin` = faction contact-name lists only, no TF gates · `mapstats`/`mapspecs` = mission spawn/layout catalogs · `map.bin` = minimap image bounds (its zone names are the dev-era Rosetta Stone — Baumton=Boomtown, Overbrook=Faultline — used only to FIND art, never to name a zone) · `minimap.bin` = geometry, string table has ZERO badge markers · `clientmessages` gate strings = `{level}` templates, values server-supplied · `villaingroups.bin` = 225 mob-group names, no zone link. **Zone level ranges, TF/SF rosters and gates, per-zone spawns, and exploration coordinates are ALL server-side in Homecoming.** Only unopened door: `geobin_cz*.pigg` zone scene graphs (different format, days not hours).
+- **ALIGNMENT & ACCOLADES — verified game-first 2026-07-31 (badges.bin export +
+  accolade power records).** (a) **Each accolade badge is ONE badge whose NAME
+  changes by side**, not two badges: id 160 `AtlasSet` = 'Received the Atlas
+  Medallion' (hero) / 'Atlas Shrugged' (villain); 532 `Marshal` = 'Ex-Marshal' /
+  'Marshal'; 161 `FreedomPhalanxSet` = 'Freedom Phalanx Reserve Member' /
+  'Freedom Phalanx Fallen'; 535 = 'Gotten Soft' / 'High Pain Threshold'; 551 =
+  'Return Visitor' / 'Invader'; 608 = 'Task Force Commander' / 'Task Force
+  Abandoner'. The game ships a villain-facing name for every hero badge, so
+  cross-faction earning is anticipated BY DESIGN. (b) **The hero-chain and
+  villain-chain accolades are DIFFERENT badge ids and STACK** — each power is a
+  separate `Temporary_Powers.Accolades.*` record, `num_allowed: 1` PER POWER,
+  no `requires` gate, no mutex linking a pair. A Rogue/Vigilante holding both
+  chains gets both powers. Pool roughly doubles: hero five = 2.0 HP scale/15
+  end, villain five = 3.0/20. ⚠ BUILD-AFFECTING — any app-level 4-way alignment
+  needs the re-cert justification check on accolade-assuming (farm) champions.
+  (c) **IOs are alignment-NEUTRAL** — zero alignment/side field in any
+  enhancement dataset (sets, common IOs, bonuses, categories, details).
+  (d) ⚠⚠ **SEARCH BADGES BY THEIR HERO-SIDE NAME AND BY TEMPLATE** — badge
+  displays carry gender templates: Iron Man is stored as id 10 `Adamant` with
+  villain display `Iron{Hero.gender=male man|woman}`. A substring search for
+  'iron man' returns ZERO and I wrongly reported 'no such badge exists in
+  2,396 records' on the strength of it.
+- **❓ OPEN (since 2026-07-16, re-confirmed 07-31): does the Adamant / Iron Man
+  badge actually GRANT its accolade power (+10% Max HP, +10 Max End) on
+  Homecoming?** The BADGE is real and game-corroborated (clientmessages-en.bin;
+  Born in Battle's requirement string lists it). What is unverified is the
+  POWER GRANT — +10/+10 would outsize every documented accolade, and the wiki's
+  badge page documents no grant. **Joel's in-game check settles it: a character
+  holding the badge either shows the HP/End bump or does not.** Until then the
+  record STAYS (dropping it would lose a real badge); `unobtainable: false`.
+  ⚠ Super_Patriot is the opposite case and is ALREADY handled: wiki says the
+  badge 'is not defined at this time', the game badge table has no record, and
+  our data carries `unobtainable: true` which the UI renders honestly. Do not
+  'clean up' either record without reading data/accolade_attainment.json first.
 - **Duplicate-piece legality / rule-of-five:** the picker blocks duplicates, validation ERRORS on them, tiers count DISTINCT pieces, and `_piece_globals` caps at five — **6×LotG = 37.5%, not 45%**.
 - **Mids `IoLevel` is 0-BASED** → +1 on import; `RelativeLevel` → `slot.boost`; engine applies ×(1+0.05·boost); the 53 Hamidon Origins = ×1.15. Old imported saves carry the 0-based value (re-import heals them).
 - **Power Boost amplifiers are their own exclusivity group** — one amplifier plus one burst together is BLESSED, not a conflict. (Separate from the still-queued gap that Power Boost's +66% amplifier effects are invisible to the parser allowlist.)
