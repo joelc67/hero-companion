@@ -1,6 +1,10 @@
 # Hero Companion — What's New
 
-## Unreleased
+## 0.12.30 — 2026-07-31 — Accuracy pass
+
+Game data is unchanged from 0.12.26 (Homecoming 2026.1.1242). The optimizer's
+model moves to v38 (pet hit chance), and every bundled champion build was
+re-certified against the corrected engine before this release.
 
 - **Power prerequisites now come from the game's own rule, not our guess.**
   The tool used to work out how many other powers a pool or epic power needs
