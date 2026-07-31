@@ -1154,21 +1154,54 @@ main, header, footer { position: relative; z-index: 1; }
 .align-card span { font-size: 11.5px; color: var(--muted); }
 .align-card.hero.on { border-color: #ffd166; box-shadow: 0 0 12px #4da3ff44; }
 .align-card.villain.on { border-color: #ff5252; box-shadow: 0 0 12px #ff525244; }
-/* THE MIDDLE ALIGNMENTS WEAR THE YELLOW (Joel's ruling). One shared token so
-   Vigilante and Rogue read as a matched pair rather than two near-misses. */
-:root { --mid: #ffd166; }
+/* ── THE MIDDLE ALIGNMENTS ARE A THIRD THEME, not an accent on a side theme.
+   Joel, 2026-07-31: "Vigilante looks like hero." It did, and that was a design
+   failure rather than a colour choice: the first pass only restyled the header,
+   so theme-hero still supplied the background, panels, borders and accent and
+   95% of the screen still said HERO. A Vigilante is not a hero with a stripe.
+   These rules are a PEER of theme-hero / theme-villain — same variables, same
+   header treatment — and they deliberately come AFTER both blocks, because
+   `body.align-mid` and `body.theme-hero` have equal specificity and source
+   order is what decides the winner.
+
+   Vigilante and Rogue share ONE amber (Joel's ask: "the same yellow"). It is
+   the amber the Leveling Journey already gives Rogue — the yellow he already
+   associates with the middle alignments — so the app and the 1-50 road now
+   agree. Which side you are on is carried by the glyph, the name and the tag
+   line, not by the palette; the palette says "in-between", which is the thing
+   the two share. */
+:root { --mid: #e0a63c; --mid-lit: #ffd166; }
 .align-card.vigilante.on, .align-card.rogue.on {
-  border-color: var(--mid); box-shadow: 0 0 12px #ffd16644;
+  border-color: var(--mid); box-shadow: 0 0 12px #e0a63c44;
 }
-/* Header identity for the middles: the underline and the wordmark go yellow,
-   so the whole app says which alignment you are looking through. */
-body.align-mid header { border-bottom: 2px solid var(--mid); }
+body.align-mid {
+  --bg: #16130a;
+  --panel: #221c0e;
+  --panel2: #2d2413;
+  --accent: #e0a63c;
+  --gold: #ffd166;
+  --border: #4a3a18;
+}
+/* ⚠ #masthead, NOT `header`. The masthead carries an ID, and `#masthead`
+   (line 46) sets both `background` and `border-bottom` — an id selector beats
+   `body.theme-x header`, so the themed header gradients and the 2px accent
+   underline have NEVER rendered, on any theme. Found by measuring the computed
+   style, 2026-07-31; the header still looked themed only because #masthead
+   derives its colour from var(--panel).
+   ⚠ The equivalent `body.theme-hero header` / `body.theme-villain header`
+   rules above are STILL DEAD. Reviving them would change the look of both
+   shipped themes, which is Joel's call, not a side effect of this change. */
+body.align-mid #masthead {
+  background: linear-gradient(90deg, #2a2210 0%, #3a2f14 55%, #4a3c18 100%);
+  border-bottom: 2px solid var(--mid);
+}
+body.align-mid #app-title { color: #fff6e0; }
 /* ⚠ background-IMAGE, not the `background` shorthand: the shorthand resets
    background-clip to border-box, which unclips the text-clipped wordmark and
    paints a solid yellow BAR over an invisible name. Seen on screen, not in the
    source — the same class as the button background/color trap below. */
 body.align-mid #app-name {
-  background-image: linear-gradient(90deg, #ffe6a8, #ffb703);
+  background-image: linear-gradient(90deg, #ffe6a8, #e0a63c);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 /* The header control names the CURRENT alignment now (it opens a picker), so it
@@ -1176,7 +1209,7 @@ body.align-mid #app-name {
    label named the destination. */
 body.theme-hero #alignment-btn { border-color: #27395c; color: #7ec8ff; }
 body.theme-villain #alignment-btn { border-color: #4a2430; color: #ff8a8a; }
-body.align-mid #alignment-btn { border-color: #6b5320; color: var(--mid); }
+body.align-mid #alignment-btn { border-color: #6b5320; color: var(--mid-lit); }
 
 /* ── The alignment picker (header) ── */
 .align-menu {
@@ -1875,7 +1908,12 @@ body { overflow: hidden; }
 /* The four true alignments + Praetoria, each in its in-game colour when active
    (Joel: Rogue should have "that amber look"). Inactive = neutral outline. */
 .jny-align button.al-hero.on    { border-color: #4da3ff; color: #4da3ff; }
-.jny-align button.al-vig.on     { border-color: #7fc7e0; color: #7fc7e0; }
+/* Vigilante and Rogue are ONE pair and share ONE amber (Joel, 2026-07-31).
+   Vigilante used to be #7fc7e0, a hero-blue cyan — so the switcher said
+   "Vigilante is basically a hero", which is the opposite of what the middle
+   alignments mean. Same amber as the app-wide middle theme, so the road and
+   the app agree. Which side each one walks is carried by the label. */
+.jny-align button.al-vig.on     { border-color: #e0a63c; color: #e0a63c; }   /* amber */
 .jny-align button.al-rogue.on   { border-color: #e0a63c; color: #e0a63c; }   /* amber */
 .jny-align button.al-villain.on { border-color: #e05c5c; color: #e05c5c; }
 .jny-align button.al-prae.on    { border-color: #d9b34a; color: #d9b34a; }   /* imperial gold */
