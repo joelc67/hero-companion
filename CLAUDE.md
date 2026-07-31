@@ -225,13 +225,21 @@ them from a parse without the same standard of proof.
   'Freedom Phalanx Fallen'; 535 = 'Gotten Soft' / 'High Pain Threshold'; 551 =
   'Return Visitor' / 'Invader'; 608 = 'Task Force Commander' / 'Task Force
   Abandoner'. The game ships a villain-facing name for every hero badge, so
-  cross-faction earning is anticipated BY DESIGN. (b) **The hero-chain and
-  villain-chain accolades are DIFFERENT badge ids and STACK** — each power is a
-  separate `Temporary_Powers.Accolades.*` record, `num_allowed: 1` PER POWER,
-  no `requires` gate, no mutex linking a pair. A Rogue/Vigilante holding both
-  chains gets both powers. Pool roughly doubles: hero five = 2.0 HP scale/15
-  end, villain five = 3.0/20. ⚠ BUILD-AFFECTING — any app-level 4-way alignment
-  needs the re-cert justification check on accolade-assuming (farm) champions.
+  cross-faction earning is anticipated BY DESIGN. (b) **You can EARN and HOLD
+  both sides' accolades, but only your CURRENT side's APPLY — the game gates
+  them at runtime.** Every side-tagged accolade power carries
+  `activate_requires` = `type char> hero eq` or `type char> villain eq`, so an
+  off-alignment accolade is DORMANT, not additive. The pool does NOT double.
+  Same-side accolades DO stack with each other (they are distinct powers, no
+  dedup). engine.py:602-620 already implements exactly this and records a
+  ledger entry (`inactive_alignment`) so the panel can say why a held accolade
+  contributes nothing. ⚠ I first reported 'both stack, pool roughly doubles'
+  from `requires`/`num_allowed`/no-mutex alone — WRONG, because the gate lives
+  in `activate_requires`, a DIFFERENT field. Check activate_requires for any
+  'does this actually apply' question. Consequence for a 4-way alignment:
+  Vigilante is hero-type and Rogue is villain-type for this gate, so adding
+  them is BUILD-NEUTRAL as long as they map to hero/villain the way
+  `_contentSide()` already does.
   (c) **IOs are alignment-NEUTRAL** — zero alignment/side field in any
   enhancement dataset (sets, common IOs, bonuses, categories, details).
   (d) ⚠⚠ **SEARCH BADGES BY THEIR HERO-SIDE NAME AND BY TEMPLATE** — badge
