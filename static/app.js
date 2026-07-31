@@ -2251,15 +2251,26 @@ function applyAlignment(al) {
   document.querySelectorAll(".align-card").forEach(c =>
     c.classList.toggle("on", c.dataset.align === al));
   try { localStorage.setItem("cohAlignment", al); } catch (e) {}
-  // Accolades gate on the character's alignment. Switching sides means this is
-  // now a different-alignment character, so drop the accolades it can no longer
-  // hold and assume the new side's standard set (auto-pick, Joel's intent), then
-  // recompute (re-gates totals + re-renders the panel greying).
+  // ALIGNMENT IS A PERSPECTIVE, NOT AN EDIT (Joel, 2026-07-31: "ideally I just
+  // want them to have access to information related to their changed
+  // perspective"). This used to DELETE the other side's ticked accolades and
+  // auto-tick the new side's, so a user looking at the villain theme silently
+  // lost selections and watched their HP/End move — while the button's own
+  // tooltip promised a reskin. Nothing is dropped now.
+  //
+  // Safe because the GAME does the gating and so does the engine: every
+  // side-tagged accolade carries `activate_requires type char> hero|villain eq`,
+  // and engine.py's accolade pass skips any whose alignment != the build's,
+  // recording an `inactive_alignment` ledger entry instead. So a ticked
+  // off-side accolade contributes exactly zero and the panel says why —
+  // no deletion required to keep the totals honest.
+  //
+  // Still auto-tick the NEW side's standard set (the original intent, kept):
+  // that adds information, it never destroys a choice the user made.
   if (typeof build !== "undefined" && build.powers && build.powers.length
       && ACCOLADES_ROWS) {
     for (const a of ACCOLADES_ROWS) {
-      if (a.alignment && a.alignment !== al) ACCOLADES_CHECKED.delete(a.key);
-      else if (a.standard_assumed && a.alignment === al) ACCOLADES_CHECKED.add(a.key);
+      if (a.standard_assumed && a.alignment === al) ACCOLADES_CHECKED.add(a.key);
     }
     try { recompute(); } catch (e) {}
   }
