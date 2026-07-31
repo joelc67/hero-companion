@@ -362,8 +362,18 @@ Read it before planning anything.
   ✅ MERGED on Joel's word (73aaab77, evening): Night_Widow + Blaster by
   context via --verdicts; all abmov shards retired (.merged /
   .kept_incumbent); validate_champions exit 0, both new champions SERVED.
-  **▶ AWAITING JOEL: schedule for the remaining 18 item-6 contexts ·
-  optional dominance-reduction attempt.** Cheap win parked: exploration-log parse.
+  **✅ ITEM-6 REMAINDER WAVE RUN (2026-07-30 19:25 → 5:30 AM pause): 17 of
+  18 converged, **6 SUPERSEDE / 11 KEEP** (Crab +248.9, PB nova +391.2,
+  Poison/Sonic +131.6, WS dwarf +85.6, Sentinel Fire/WP +77.7, Rad/Sonic
+  +55.9). Across all of item 6 (23 of 24 contexts): **8 supersede / 15
+  keep**, supersedes CONCENTRATED in form-locked Kheldian + VEAT contexts
+  — the tie-break work is doing real work, not shuffling ties. Shards:
+  champions_shard_i6r_split1_p0-3 + champions_shard_i6rbox_p0-2.
+  ⚠ The gaming box NEVER WOKE (order unclaimed 4h15m, heartbeat last
+  seen 7/29) — order withdrawn, its 6 contexts run on the laptop's idle
+  workers instead; check the box before relying on it next wave.
+  **▶ AWAITING JOEL: merge the 6 supersedes · finish Peacebringer dwarf
+  (only context not converged) · optional dominance-reduction attempt.** Cheap win parked: exploration-log parse.
 - **🧾 v38+HO WAVE COMPLETE 24/24 — VERDICT TABLE WITH JOEL, NOTHING MERGED.** `recert_verdicts.json` (written 2026-07-30 00:10): **4 SUPERSEDE** (Crab_Spider_Soldier +181.3 — this also CLOSES the named autopick defect that failed every leg of the previous wave · Spines/Fiery_Aura +92.4 · Poison/Sonic_Attack +50.9 · Broad_Sword/Super_Reflexes +4.1) / **20 KEEP**, zero collapsed runs, zero eval failures. The gate re-scores BOTH sides fresh under v38 (canonical vs canonical, CBC pinned) so the deltas are real; a mostly-KEEP outcome is the NORMAL shape of a recert wave (the prior wave was 3/20), not a defect. Large negatives cluster on Kheldian per-form contexts, where the form context BANS powers the incumbent build holds — the recert searches a strictly smaller space and cannot win by construction. **Merge = by context, `--verdicts`, canonical winner kept, shards retired `.merged_2026-07-30` — awaits Joel's word.**
 - **Wave-run history worth keeping:** ran across the laptop + gaming box; the box was stopped mid-order and its 2 finished champions came home via the new orphan-rescue (2505c2a0) rather than being lost. Drop-dead pauses fired clean twice (4:10 PM, then armed 6 AM). ⚠ `bench_solver_e2e` running beside the wave killed 10 in-flight contexts — several hours of compute, nothing corrupted; see the speed-ledger guard warning.
 - **⚠ MY OWN ERRORS THIS WAVE, recorded so the pattern is visible:** quoted a per-solve solver ratio (2.65×) as if it were end-to-end (really 1.2-1.7×); quoted a pre-fix 484 min as current (really 261); inflated the banked count by 2 by incrementing from monitor events instead of counting the shards; read a docstring's history as current state and wrongly declared a healthy wave's premise broken. **Common thread: passing along a number without checking what it measured.** Count from the artifact, not from the narration.
