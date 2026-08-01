@@ -59,6 +59,48 @@ FLOOR_TOTAL_SOLVES = 50
 FLOOR_AVG_PER_SWEEP = 5.0
 
 
+# ── LEGALITY (Joel's ruling, 2026-07-31: "legality outranks score") ──────────
+# 0.12.30 shipped 8 of 24 champions that could NOT be built in game - Wall of
+# Force / Misdirection / Weave held with one pool power where the game wants
+# two. This gate had "kept" every one of them, because it compared SCORE ONLY
+# and the illegal incumbents outscored their legal replacements. A gate that
+# cannot see legality will make that same trade again on the next wave.
+#
+# Same callable the user-facing validator uses, so the gate and the app can
+# never disagree about what the game allows.
+def _illegality(picks):
+    """[] when the build is buildable in game; a list of reasons when it is not.
+
+    None means the check itself could not run - deliberately distinct from [],
+    because "no violations" and "could not tell" must not collapse together.
+    """
+    try:
+        return srv._epic_prereq_errors(
+            [{"full_name": fn} for fn in (picks or [])]) or []
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _legality_verdict(inc_bad, cand_bad):
+    """The four branches, in Joel's order. Returns (verdict|None, note).
+
+    None = legality has nothing to say, fall through to the score comparison.
+    ⚠ The second branch is the whole point: a LEGAL challenger supersedes an
+    ILLEGAL incumbent even when it scores LOWER. That is exactly the 0.12.30
+    case, and a score-only gate gets it backwards every time.
+    """
+    if inc_bad is None or cand_bad is None:
+        return "keep", "legality UNMEASURABLE — keeping incumbent (fail safe)"
+    if cand_bad and not inc_bad:
+        return "keep", "challenger is NOT BUILDABLE in game — refused regardless of score"
+    if inc_bad and not cand_bad:
+        return "supersede", "incumbent is NOT BUILDABLE — legality outranks score"
+    if inc_bad and cand_bad:
+        return "keep", ("⚠ BOTH are NOT BUILDABLE — incumbent kept, but this "
+                        "context ships an unbuildable champion and needs a fix")
+    return None, ""
+
+
 def _run_health(shard_path, key, cert):
     """Health summary for one recert run: certificate facts + solve counts
     mined from the worker log that sits beside the shard (same basename).
@@ -117,6 +159,7 @@ def main():
     print(f"verdict gate under model {fp.MODEL_VERSION} "
           f"(fresh-process canonical vs canonical, EPS {EPS})\n")
     n_collapsed = 0
+    n_illegal_inc = 0
     for sp in shards:
         sd = json.load(open(sp, encoding="utf-8"))
         for key, cand in sorted(sd.items()):
@@ -138,6 +181,24 @@ def main():
                 print(f"  {'BLOCKED (collapsed NEW run)' if collapsed else 'NEW (no incumbent)':38s}{name}")
                 print(f"      run: {health}")
                 continue
+            # LEGALITY FIRST — before score, because it can decide on its own
+            # and because it stays reportable even when evaluation fails.
+            inc_bad, cand_bad = _illegality(inc["picks"]), _illegality(cand["picks"])
+            if inc_bad:
+                n_illegal_inc += 1
+            leg_verdict, leg_note = _legality_verdict(inc_bad, cand_bad)
+            if leg_verdict:
+                verdicts[key] = leg_verdict
+                rows.append((name, None, None, leg_verdict.upper() + " (legality)", health))
+                print(f"  {leg_verdict.upper():9s}  {name}")
+                print(f"      LEGALITY: {leg_note}")
+                for e in (cand_bad or [])[:2]:
+                    print(f"        challenger: {e}")
+                for e in (inc_bad or [])[:2]:
+                    print(f"        incumbent:  {e}")
+                print(f"      run: {health}")
+                continue
+
             inc_c, _ = evaluate_picks(at, prim, sec, content, inc["picks"],
                                       role, form=form)
             cand_c, _ = evaluate_picks(at, prim, sec, content, cand["picks"],
@@ -162,6 +223,8 @@ def main():
           f"{len(verdicts) - n_sup} keep, of {len(verdicts)}"
           + (f" — ⚠ {n_collapsed} COLLAPSED RUN(S): those contexts need a "
              f"RE-RUN, their verdicts prove nothing" if n_collapsed else "")
+          + (f" — ⚠ {n_illegal_inc} INCUMBENT(S) NOT BUILDABLE in game"
+             if n_illegal_inc else "")
           + " ===")
     print(f"written: {OUT}  ({time.strftime('%Y-%m-%d %H:%M')})")
     print("TABLE GOES TO JOEL BEFORE champions.json COMMITS (standing order).")
