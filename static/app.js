@@ -2288,6 +2288,24 @@ const _ALIGN_APP = {
   rogue:     { glyph: "😈", short: "Rogue",     name: "Rogue Companion",     tag: "a villain with a code",         backdrop: "sirens-call" },
   villain:   { glyph: "🦹", short: "Villain",   name: "Villain Companion",   tag: "your Rogue Isles accomplice",   backdrop: "grandville" },
 };
+// ── BACKDROP CHOICE ────────────────────────────────────────────────────────
+// "People should always have a choice" — and per the closing-is-not-a-decision
+// rule an opt-out has to be a VISIBLE toggle, never a hidden flag. It lives in
+// the alignment picker, because the backdrop IS the alignment's artwork; that is
+// where someone already goes to change how the app looks. Default ON, remembered,
+// and reversible from the same place it was turned off.
+function backdropEnabled() {
+  try { return localStorage.getItem("cohBackdrop") !== "0"; }
+  catch (e) { return true; }
+}
+function applyBackdrop() {
+  document.body.classList.toggle("no-backdrop", !backdropEnabled());
+}
+window.setBackdrop = function (on) {
+  try { localStorage.setItem("cohBackdrop", on ? "1" : "0"); } catch (e) {}
+  applyBackdrop();
+};
+
 // The stored alignment, unmapped — for THEME and DISPLAY only. Anything that
 // reaches a build must go through charAlignment() instead.
 function rawAlignment() {
@@ -2371,7 +2389,13 @@ window.toggleAlignment = function () {
     const a = _ALIGNMENTS.find(x => x.key === k);
     return `<button class="align-menu-item ${a.css}${k === cur ? " on" : ""}" role="menuitem"
         data-al="${k}"><b>${a.label}</b><span>${escHtml(a.tip)}</span></button>`;
-  }).join("");
+  }).join("")
+    // The backdrop opt-out, in the open, next to the artwork it governs. Rebuilt
+    // with the menu each time, so it always shows the real current state.
+    + `<label class="align-menu-opt" title="Turn the zone artwork behind the app on or off">`
+    + `<input type="checkbox" ${backdropEnabled() ? "checked" : ""}`
+    + ` onchange="setBackdrop(this.checked)">`
+    + `<span>Show zone artwork behind the app</span></label>`;
   document.body.appendChild(menu);
   const r = btn.getBoundingClientRect();
   menu.style.top = (r.bottom + 6) + "px";
@@ -2777,6 +2801,7 @@ async function init() {
   document.querySelectorAll(".align-card").forEach(c =>
     c.addEventListener("click", () => applyAlignment(c.dataset.align)));
   applyAlignment(localStorage.getItem("cohAlignment") || "hero");
+  applyBackdrop();   // honour a remembered "no" before the first paint settles
   if ($("alignment-btn")) $("alignment-btn").addEventListener("click", toggleAlignment);
 
   // pool selectors (4)

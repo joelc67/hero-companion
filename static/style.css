@@ -1235,6 +1235,19 @@ body.align-mid #alignment-btn { border-color: #6b5320; color: var(--mid-lit); }
 .align-menu-item:hover { background: var(--panel2); color: var(--ink); border-color: var(--border); }
 .align-menu-item.on { border-color: var(--accent); }
 .align-menu-item.al-vig.on, .align-menu-item.al-rogue.on { border-color: var(--mid); }
+/* The backdrop opt-out. ⚠ The shared control rule sets `input { width: 100% }`,
+   so an un-overridden checkbox here stretches the full menu width — width:auto
+   is load-bearing, not tidying. */
+.align-menu-opt {
+  display: flex; align-items: center; gap: 8px; margin: 4px 2px 2px;
+  padding: 8px 8px 2px; border-top: 1px solid var(--border);
+  font-size: 12px; color: var(--muted); cursor: pointer;
+}
+.align-menu-opt input { width: auto; margin: 0; flex-shrink: 0; }
+.align-menu-opt:hover { color: var(--ink); }
+/* The remembered "no". The layer stops rendering entirely rather than fading —
+   off means off. */
+body.no-backdrop #app-backdrop { display: none; }
 
 /* ── ALIGNMENT BACKDROP ─────────────────────────────────────────────────────
    Joel, 2026-07-31: a layer of the game's own art below the entire tool, themed
