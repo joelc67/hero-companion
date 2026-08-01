@@ -1093,14 +1093,15 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
    The app has an ALIGNMENT, like every CoH character. Hero = Paragon City blue & gold;
    Villain = Rogue Isles crimson & Arachnos black. Toggle in the header; persisted. */
 body.theme-hero {
-  --bg: #0c1220;
-  --panel: #141d30;
-  --panel2: #1b2740;
-  --accent: #4da3ff;
+  --bg: #090d18;
+  --panel: #141a2b;
+  --panel2: #1c2338;
+  --accent: #ffb638;
   --gold: #ffd166;
-  --border: #27395c;
+  --border: #38415e;
+  --accent2: #7ec8ff;
 }
-body.theme-hero header {
+body.theme-hero #masthead {
   background: linear-gradient(90deg, #10203c 0%, #14264a 55%, #1b3055 100%);
   border-bottom: 2px solid var(--gold);
 }
@@ -1120,7 +1121,7 @@ body.theme-villain {
   --def: #58b87e;
   --res: #ff9b45;
 }
-body.theme-villain header {
+body.theme-villain #masthead {
   background: linear-gradient(90deg, #2a0d12 0%, #3a1016 55%, #4a1218 100%);
   border-bottom: 2px solid #ff5252;
 }
@@ -2161,3 +2162,35 @@ body { overflow: hidden; }
 .tour-svg .d-arrow{ stroke: var(--muted); stroke-width: 1.6; fill: none;
                     marker-end: url(#tourArrowHead); }
 .tour-svg .d-head { fill: var(--muted); }
+
+
+/* ── DEPTH PASS (2026-08-01, Joel: "the entire tool default color is just
+   blahhhh"). The palette was only half of it: every surface sat at the same
+   weight - flat fills, uniform borders, no lift anywhere - so the eye had
+   nothing to climb. Colour alone would not have fixed that. */
+.panel {
+  background-image: linear-gradient(180deg,
+    rgba(255,255,255,.045) 0%, rgba(255,255,255,0) 120px);
+  box-shadow: 0 2px 14px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05);
+}
+/* ⚠ A gold hairline on every panel was my first instinct and it was WRONG -
+   rendered, it stacked a third gold rule directly under the masthead's, and the
+   page read stripey. Gold earns more by being scarce: it lives on the masthead
+   rule, the primary action, the slot rings and a completed set. The panels get
+   LIFT instead (sheen + shadow above), which is what actually separates them. */
+/* Power cards read as RAISED rather than as holes cut in the panel. */
+.power-card {
+  background-image: linear-gradient(180deg,
+    rgba(255,255,255,.05) 0%, rgba(0,0,0,.10) 100%);
+  box-shadow: 0 1px 6px rgba(0,0,0,.38);
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+.power-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0,0,0,.5);
+  border-color: var(--gold);
+}
+/* A completed set should feel like an achievement, not a status line. */
+.set-summary.full, .slot-plan-full-set {
+  box-shadow: 0 0 0 1px rgba(255,209,102,.35), 0 0 12px rgba(255,209,102,.13);
+}
