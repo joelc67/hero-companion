@@ -2276,36 +2276,12 @@ function refreshRoleUI() { updateOffRoleWarning(); renderRoleFocusSplit(); }
 const _APP_ALIGNMENTS = ["hero", "vigilante", "rogue", "villain"];
 // Per-alignment header identity. The middles keep the companion framing while
 // naming what they actually are — plain English, no jargon (Joel's copy rule).
-// `backdrop` = the zone splash plate that sits one layer below the whole tool.
-// Paragon City for a hero, the Rogue Isles for a villain, and for BOTH middles
-// the contested zone — Siren's Call is where heroes and villains actually meet,
-// which is the in-between said in the game's own art. (Silhouettes of the
-// signature cast were the original ask; the client holds them only as costume UV
-// textures and 3D geometry, never as flat figure art — see the CSS note.)
 const _ALIGN_APP = {
-  hero:      { glyph: "🦸", short: "Hero",      name: "Hero Companion",      tag: "your City of Heroes sidekick",  backdrop: "atlas-park" },
-  vigilante: { glyph: "🛡️", short: "Vigilante", name: "Vigilante Companion", tag: "a hero who bends the rules",    backdrop: "sirens-call" },
-  rogue:     { glyph: "😈", short: "Rogue",     name: "Rogue Companion",     tag: "a villain with a code",         backdrop: "sirens-call" },
-  villain:   { glyph: "🦹", short: "Villain",   name: "Villain Companion",   tag: "your Rogue Isles accomplice",   backdrop: "grandville" },
+  hero:      { glyph: "🦸", short: "Hero",      name: "Hero Companion",      tag: "your City of Heroes sidekick" },
+  vigilante: { glyph: "🛡️", short: "Vigilante", name: "Vigilante Companion", tag: "a hero who bends the rules" },
+  rogue:     { glyph: "😈", short: "Rogue",     name: "Rogue Companion",     tag: "a villain with a code" },
+  villain:   { glyph: "🦹", short: "Villain",   name: "Villain Companion",   tag: "your Rogue Isles accomplice" },
 };
-// ── BACKDROP CHOICE ────────────────────────────────────────────────────────
-// "People should always have a choice" — and per the closing-is-not-a-decision
-// rule an opt-out has to be a VISIBLE toggle, never a hidden flag. It lives in
-// the alignment picker, because the backdrop IS the alignment's artwork; that is
-// where someone already goes to change how the app looks. Default ON, remembered,
-// and reversible from the same place it was turned off.
-function backdropEnabled() {
-  try { return localStorage.getItem("cohBackdrop") !== "0"; }
-  catch (e) { return true; }
-}
-function applyBackdrop() {
-  document.body.classList.toggle("no-backdrop", !backdropEnabled());
-}
-window.setBackdrop = function (on) {
-  try { localStorage.setItem("cohBackdrop", on ? "1" : "0"); } catch (e) {}
-  applyBackdrop();
-};
-
 // The stored alignment, unmapped — for THEME and DISPLAY only. Anything that
 // reaches a build must go through charAlignment() instead.
 function rawAlignment() {
@@ -2336,13 +2312,6 @@ function applyAlignment(al) {
     btn.title = "Change alignment — Hero, Vigilante, Rogue or Villain";
   }
   document.title = d.name + " — City of Heroes";
-  // The backdrop plate. Set as a custom property so the stylesheet owns the veil
-  // and the compositing; JS only says WHICH zone. If the file is ever missing the
-  // layer simply renders the veil over nothing, which is the current background.
-  if (d.backdrop) {
-    document.body.style.setProperty(
-      "--backdrop-img", `url("/static/zone_art/${encodeURIComponent(d.backdrop)}.jpg")`);
-  }
   document.querySelectorAll(".align-card").forEach(c =>
     c.classList.toggle("on", c.dataset.align === al));
   try { localStorage.setItem("cohAlignment", al); } catch (e) {}
@@ -2389,13 +2358,7 @@ window.toggleAlignment = function () {
     const a = _ALIGNMENTS.find(x => x.key === k);
     return `<button class="align-menu-item ${a.css}${k === cur ? " on" : ""}" role="menuitem"
         data-al="${k}"><b>${a.label}</b><span>${escHtml(a.tip)}</span></button>`;
-  }).join("")
-    // The backdrop opt-out, in the open, next to the artwork it governs. Rebuilt
-    // with the menu each time, so it always shows the real current state.
-    + `<label class="align-menu-opt" title="Turn the zone artwork behind the app on or off">`
-    + `<input type="checkbox" ${backdropEnabled() ? "checked" : ""}`
-    + ` onchange="setBackdrop(this.checked)">`
-    + `<span>Show zone artwork behind the app</span></label>`;
+  }).join("");
   document.body.appendChild(menu);
   const r = btn.getBoundingClientRect();
   menu.style.top = (r.bottom + 6) + "px";
@@ -2801,7 +2764,6 @@ async function init() {
   document.querySelectorAll(".align-card").forEach(c =>
     c.addEventListener("click", () => applyAlignment(c.dataset.align)));
   applyAlignment(localStorage.getItem("cohAlignment") || "hero");
-  applyBackdrop();   // honour a remembered "no" before the first paint settles
   if ($("alignment-btn")) $("alignment-btn").addEventListener("click", toggleAlignment);
 
   // pool selectors (4)

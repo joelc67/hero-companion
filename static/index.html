@@ -11,13 +11,6 @@
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <!-- ALIGNMENT BACKDROP: the game's own zone art, one layer below the whole
-       tool. Sits at z-index 0 — above the body background, below #page-scroll
-       (z-index 1) — so it shows in the gutters and can never come between you
-       and a panel, because .panel backgrounds are opaque. aria-hidden and
-       pointer-events:none: it is decoration, not content. -->
-  <div id="app-backdrop" aria-hidden="true"></div>
-
   <!-- ENTRY ROUTER: the first thing a user sees — how do you want to start? -->
   <div id="entry-overlay" class="modal">
     <div class="entry-box">
