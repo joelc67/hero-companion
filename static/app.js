@@ -160,6 +160,39 @@ async function saveProgress() {
   }
 }
 
+// ── ARCHETYPE EMBLEMS: the game's own art, extracted by tools/extract_gui_emblems.py.
+// The app's 15 archetypes map onto the emblem files MECHANICALLY — strip the
+// `Class_` prefix, lowercase — with no special cases; verified against
+// /archetypes, all 15 resolve. (The game's villain-side `v_` prefix is
+// normalised away at extraction, not here.)
+function atEmblemSrc(archetype) {
+  const k = String(archetype || "").replace(/^Class_/, "").trim().toLowerCase();
+  return k ? `/static/icons/at/${encodeURIComponent(k)}.png` : null;
+}
+// An emblem is decoration: if the art is ever missing (a new archetype the
+// client's textures predate), the image hides itself rather than showing a
+// broken-image glyph next to the user's character.
+function _emblemImg(archetype, cls) {
+  const src = atEmblemSrc(archetype);
+  if (!src) return "";
+  return `<img class="${cls}" src="${src}" alt="" onerror="this.hidden=true">`;
+}
+// Keep the Build panel's emblem in step with the selected archetype. Called from
+// the select's change handler AND from the build-load path, because setting
+// .value programmatically does not fire `change`.
+function updateAtEmblem() {
+  const img = $("at-emblem"), sel = $("sel-archetype");
+  if (!img || !sel) return;
+  const src = atEmblemSrc(sel.value);
+  if (!src) { img.hidden = true; img.removeAttribute("src"); return; }
+  img.onerror = () => { img.hidden = true; };
+  img.src = src;
+  img.hidden = false;
+  const label = (sel.selectedOptions[0] || {}).textContent || "";
+  img.alt = label ? `${label} emblem` : "";
+  img.title = label;
+}
+
 async function openSavesList() {
   const res = await api("/saves");
   const saves = (res && res.saves) || [];
@@ -176,7 +209,7 @@ async function openSavesList() {
         const pill = leveling
           ? `<span class="save-pill leveling">⏳ Leveling · L${lv || 1}/50</span>`
           : `<span class="save-pill done">✓ Level-50 build</span>`;
-        return `<div class="save-row"><div class="save-main">`
+        return `<div class="save-row">${_emblemImg(s.archetype, "save-emblem")}<div class="save-main">`
           + `<div class="save-name">${escHtml(s.name)} ${pill}</div>`
           + `<div class="save-sub">${escHtml(at)}${sub ? " · " + escHtml(sub) : ""}</div></div>`
           + `<button onclick="loadSave('${escHtml(s.id)}')">Resume</button>`
@@ -2725,7 +2758,7 @@ async function init() {
   const sel = $("sel-archetype");
   sel.innerHTML = `<option value="">— choose archetype —</option>` +
     data.archetypes.map(a => `<option value="${a.name}">${a.display_name}</option>`).join("");
-  sel.addEventListener("change", (e) => { onArchetypeChange(e); refreshRoleUI(); });
+  sel.addEventListener("change", (e) => { onArchetypeChange(e); refreshRoleUI(); updateAtEmblem(); });
   const _pr = $("preset-role");
   if (_pr) _pr.addEventListener("change", refreshRoleUI);
   document.querySelectorAll(".align-card").forEach(c =>
@@ -6293,6 +6326,7 @@ async function applyImportedBuild(b) {
   //                             lifecycle rule; callers that carry answers re-set them after)
   // archetype cascade (loads powerset options)
   $("sel-archetype").value = b.archetype || "";
+  updateAtEmblem();   // setting .value programmatically does not fire `change`
   await onArchetypeChange({ target: { value: b.archetype || "" } });
   // primary / secondary / epic
   if (b.primary) { $("sel-primary").value = b.primary; build.primary = b.primary;

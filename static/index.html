@@ -250,7 +250,11 @@
     <section id="setup" class="panel">
       <h2>Build<button class="tour-help" onclick="startTour('build')" aria-label="Explain this section" title="Explain this section">?</button></h2>
 
+      <!-- The game's own archetype emblem, beside the label rather than inside
+           the select (a native <select> cannot render an image). Hidden until an
+           archetype is chosen, and hidden again if the art is ever missing. -->
       <label>Archetype
+        <img id="at-emblem" class="at-emblem" alt="" hidden>
         <select id="sel-archetype"></select>
       </label>
       <label>Primary
