@@ -2276,11 +2276,17 @@ function refreshRoleUI() { updateOffRoleWarning(); renderRoleFocusSplit(); }
 const _APP_ALIGNMENTS = ["hero", "vigilante", "rogue", "villain"];
 // Per-alignment header identity. The middles keep the companion framing while
 // naming what they actually are — plain English, no jargon (Joel's copy rule).
+// `backdrop` = the zone splash plate that sits one layer below the whole tool.
+// Paragon City for a hero, the Rogue Isles for a villain, and for BOTH middles
+// the contested zone — Siren's Call is where heroes and villains actually meet,
+// which is the in-between said in the game's own art. (Silhouettes of the
+// signature cast were the original ask; the client holds them only as costume UV
+// textures and 3D geometry, never as flat figure art — see the CSS note.)
 const _ALIGN_APP = {
-  hero:      { glyph: "🦸", short: "Hero",      name: "Hero Companion",      tag: "your City of Heroes sidekick" },
-  vigilante: { glyph: "🛡️", short: "Vigilante", name: "Vigilante Companion", tag: "a hero who bends the rules" },
-  rogue:     { glyph: "😈", short: "Rogue",     name: "Rogue Companion",     tag: "a villain with a code" },
-  villain:   { glyph: "🦹", short: "Villain",   name: "Villain Companion",   tag: "your Rogue Isles accomplice" },
+  hero:      { glyph: "🦸", short: "Hero",      name: "Hero Companion",      tag: "your City of Heroes sidekick",  backdrop: "atlas-park" },
+  vigilante: { glyph: "🛡️", short: "Vigilante", name: "Vigilante Companion", tag: "a hero who bends the rules",    backdrop: "sirens-call" },
+  rogue:     { glyph: "😈", short: "Rogue",     name: "Rogue Companion",     tag: "a villain with a code",         backdrop: "sirens-call" },
+  villain:   { glyph: "🦹", short: "Villain",   name: "Villain Companion",   tag: "your Rogue Isles accomplice",   backdrop: "grandville" },
 };
 // The stored alignment, unmapped — for THEME and DISPLAY only. Anything that
 // reaches a build must go through charAlignment() instead.
@@ -2312,6 +2318,13 @@ function applyAlignment(al) {
     btn.title = "Change alignment — Hero, Vigilante, Rogue or Villain";
   }
   document.title = d.name + " — City of Heroes";
+  // The backdrop plate. Set as a custom property so the stylesheet owns the veil
+  // and the compositing; JS only says WHICH zone. If the file is ever missing the
+  // layer simply renders the veil over nothing, which is the current background.
+  if (d.backdrop) {
+    document.body.style.setProperty(
+      "--backdrop-img", `url("/static/zone_art/${encodeURIComponent(d.backdrop)}.jpg")`);
+  }
   document.querySelectorAll(".align-card").forEach(c =>
     c.classList.toggle("on", c.dataset.align === al));
   try { localStorage.setItem("cohAlignment", al); } catch (e) {}

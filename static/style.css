@@ -1236,6 +1236,42 @@ body.align-mid #alignment-btn { border-color: #6b5320; color: var(--mid-lit); }
 .align-menu-item.on { border-color: var(--accent); }
 .align-menu-item.al-vig.on, .align-menu-item.al-rogue.on { border-color: var(--mid); }
 
+/* ── ALIGNMENT BACKDROP ─────────────────────────────────────────────────────
+   Joel, 2026-07-31: a layer of the game's own art below the entire tool, themed
+   to the alignment. He first asked for silhouettes of the signature characters;
+   the client does not hold them as flat art (they exist only as costume UV
+   textures and 3D geometry, and the character-creation renders are 512x512 at
+   98% opacity - square images WITH backgrounds, so there is no alpha to cut a
+   silhouette from). Rendering the 3D models is the costume side-quest that was
+   killed in June for looking crude, and hand-tracing them would be invented art.
+   So this uses the zone splash plates already shipping: Paragon City for Hero,
+   the Rogue Isles for Villain, and for the two middles the CONTESTED zones -
+   Siren's Call - where heroes and villains actually meet.
+
+   LEGIBILITY BEATS CLEVERNESS, structurally, not by taste: the art sits at
+   z-index 0, under #page-scroll (z-index 1), and every .panel background is
+   OPAQUE - so the backdrop is visible only in the gutters and cannot reduce the
+   contrast of any text inside a panel. The veil below is the theme's own
+   background colour at high alpha, so what little shows through is a hint of
+   skyline, never a picture competing with the UI.
+
+   The image is set by applyAlignment() into --backdrop-img; the veil is themed
+   here. Swap either without touching the other. */
+#app-backdrop {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(var(--backdrop-veil), var(--backdrop-veil)),
+    var(--backdrop-img, none);
+  background-size: cover, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+}
+/* Veil per theme = that theme's --bg at .93. Anything lighter and the art starts
+   arguing with the panels; anything heavier and there is no point drawing it. */
+body.theme-hero    { --backdrop-veil: rgba(12, 18, 32, .93); }
+body.theme-villain { --backdrop-veil: rgba(21, 13, 16, .93); }
+body.align-mid     { --backdrop-veil: rgba(22, 19, 10, .93); }
+
 /* Full-bleed scroll container (the frame matte went with the corner graphics). */
 html, body { height: 100%; }
 body { overflow: hidden; }
