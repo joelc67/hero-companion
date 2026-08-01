@@ -1279,11 +1279,37 @@ body.no-backdrop #app-backdrop { display: none; }
   background-position: center, center;
   background-repeat: no-repeat, no-repeat;
 }
-/* Veil per theme = that theme's --bg at .93. Anything lighter and the art starts
-   arguing with the panels; anything heavier and there is no point drawing it. */
-body.theme-hero    { --backdrop-veil: rgba(12, 18, 32, .93); }
-body.theme-villain { --backdrop-veil: rgba(21, 13, 16, .93); }
-body.align-mid     { --backdrop-veil: rgba(22, 19, 10, .93); }
+/* Veil per theme = that theme's --bg. ⚠ THIS WAS .93 AND THAT WAS A MISTAKE:
+   it left 6% of the image - a 3-6 RGB-level shift, at the perceptual floor on a
+   dark UI. I had tuned it so the CONTRAST measurement was safe and never asked
+   whether anyone would SEE it. Verifying a thing cannot hurt is not the same as
+   verifying it does anything.
+
+   ⚠ AND THE ALPHA IS PER THEME ON PURPOSE, not a constant worth unifying: the
+   plates differ in brightness, so one value cannot serve them. Grandville is a
+   dark plate and Atlas Park a bright one - measured mean shift at a shared .91
+   is 7.4 RGB levels for hero but only 4.1 for villain. Each alpha is picked to
+   land worst-case muted-text contrast at ~5.0 (floor is 4.5) while keeping the
+   art visible. Re-measure with the sweep if a plate is ever swapped; do not
+   assume a number that suited one photograph suits another. */
+body.theme-hero    { --backdrop-veil: rgba(12, 18, 32, .91); }   /* atlas-park:  bright plate */
+body.theme-villain { --backdrop-veil: rgba(21, 13, 16, .87); }   /* grandville:  dark plate   */
+body.align-mid     { --backdrop-veil: rgba(22, 19, 10, .91); }   /* sirens-call: mid          */
+
+/* ⚠ THE ENTRY SCREEN WAS HIDING IT COMPLETELY. `.modal` paints #000a - a 67%
+   black sheet over the whole viewport at z-index 50 - so on the first screen,
+   the one screen where a full-bleed plate belongs most, the backdrop was
+   invisible. The entry overlay gets a lighter, theme-tinted scrim instead (an ID
+   beats .modal), and the backdrop drops its own veil while that screen is up, so
+   the plate reads as the splash it is. Safe by the same structural argument as
+   everywhere else: .entry-box and .entry-card are both opaque, so no text on
+   that screen sits on the artwork. Other dialogs keep the dark .modal scrim,
+   where dimming the page is the point. */
+#entry-overlay { background: var(--entry-scrim); }
+body.theme-hero    { --entry-scrim: rgba(12, 18, 32, .40); --backdrop-veil-open: rgba(12, 18, 32, .55); }
+body.theme-villain { --entry-scrim: rgba(21, 13, 16, .40); --backdrop-veil-open: rgba(21, 13, 16, .55); }
+body.align-mid     { --entry-scrim: rgba(22, 19, 10, .40); --backdrop-veil-open: rgba(22, 19, 10, .55); }
+body:has(#entry-overlay:not(.hidden)) #app-backdrop { --backdrop-veil: var(--backdrop-veil-open); }
 
 /* Full-bleed scroll container (the frame matte went with the corner graphics). */
 html, body { height: 100%; }
