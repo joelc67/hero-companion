@@ -163,5 +163,57 @@ else:
           ("UNDEFINED, will fall back silently and may render invisible: "
            + ", ".join(undefined)) if undefined else "")
 
+
+# -- 9. DIAGRAM GEOMETRY: a label must not be drawn underneath a control.
+# WHY: the powerCard diagram drew the power name from x=134 while the info button
+# sat at cx=196 r=7 (left edge 189), so 'Fire Blast' - 58.5px wide at 14px - was
+# rendered UNDER the i button. Joel saw it on screen (2026-08-02). Every other
+# check in this file passed throughout, because none of them look at POSITION.
+#
+# Width is estimated at 0.42 x font-size per char, calibrated against the real
+# browser measurement (measured 58.5px, predicted 58.8).
+#
+# !! THIS CHECK CARRIES ITS OWN NEGATIVE CONTROL. A first version of it silently
+# failed to fire on the very bug it was written for, and reported PASS - which is
+# worse than no check at all. It now runs against a known-bad fixture first and
+# hard-fails if it cannot see that, so it can never again pass by being blind.
+_TXT_RE = re.compile('<text[^>]*x="([0-9.]+)"[^>]*class="([^"]*)"[^>]*>([^<]*)</text>')
+_CTL_RE = re.compile('<circle[^>]*cx="([0-9.]+)"[^>]*r="([0-9.]+)"[^>]*class="([^"]*)"')
+
+
+def _label_overlaps(body):
+    """[(label, right_edge, control_left)] for every start-anchored d-name that
+    runs into a control circle."""
+    ctls = [(float(cx), float(r)) for cx, r, cls in _CTL_RE.findall(body)
+            if 'd-ctl' in cls]
+    hits = []
+    for x, cls, txt in _TXT_RE.findall(body):
+        if 'd-name' not in cls or 'd-end' in cls or 'd-mid' in cls:
+            continue
+        x = float(x)
+        right = x + len(txt.strip()) * 14 * 0.42
+        for cx, r in ctls:
+            if x < cx - r < right:
+                hits.append((txt.strip(), round(right), round(cx - r)))
+    return hits
+
+
+_BAD_FIXTURE = ('<text x="134" y="77" class="d-name">Fire Blast</text>'
+                '<circle cx="196" cy="72" r="7" class="d-ctl d-hot"/>')
+if not _label_overlaps(_BAD_FIXTURE):
+    check('geometry check can detect a known overlap (negative control)', False,
+          'THE CHECK IS BLIND - it would report PASS on the exact defect it exists for')
+else:
+    check('geometry check can detect a known overlap (negative control)', True,
+          'fixture flagged as expected')
+    geom_fails = []
+    _diagrams = re.findall(r'^  (\w+): `([\s\S]*?)`,', tour, re.M)
+    for _dname, _body in _diagrams:
+        for _txt, _right, _left in _label_overlaps(_body):
+            geom_fails.append(_dname + ": '" + _txt + "' reaches x=" + str(_right)
+                              + ' but a control starts at x=' + str(_left))
+    check('no diagram label is drawn under a control (' + str(len(_diagrams)) + ' diagrams)',
+          not geom_fails, '; '.join(geom_fails) if geom_fails else '')
+
 print(f"\n{'ALL TOUR CHECKS PASS' if not fails else 'TOUR AUDIT FAILURES: ' + ', '.join(fails)}\n")
 sys.exit(1 if fails else 0)

@@ -51,7 +51,13 @@ const TOUR_DIAGRAMS = {
   <rect x="96" y="52" width="248" height="86" rx="8" class="d-card"/>
   <circle cx="118" cy="72" r="9" class="d-ico"/>
   <text x="134" y="77" class="d-name">Fire Blast</text>
-  <circle cx="196" cy="72" r="7" class="d-ctl d-hot"/><text x="196" y="76" class="d-glyph">i</text>
+  <!-- ⚠ The info button sits at 214, not 196. MEASURED: the name runs to
+       x=192.5 and a circle at cx=196 (r=7) starts at x=189, so the power name
+       was drawn UNDERNEATH it (Joel, 2026-08-02: "the power name buried under
+       some characters"). 214 leaves a clear 14px gap and room for a longer
+       name. Its arrow and label move with it - an annotation pointing at where
+       the control USED to be is worse than the overlap. -->
+  <circle cx="214" cy="72" r="7" class="d-ctl d-hot"/><text x="214" y="76" class="d-glyph">i</text>
   <rect x="106" y="88" width="26" height="14" rx="7" class="d-chip d-hot"/><text x="119" y="99" class="d-lvl">L6</text>
   <rect x="246" y="86" width="18" height="18" rx="4" class="d-ctl d-hot"/><text x="255" y="99" class="d-glyph">•</text>
   <rect x="268" y="86" width="18" height="18" rx="4" class="d-ctl d-hot"/><text x="277" y="100" class="d-glyph">–</text>
@@ -59,7 +65,7 @@ const TOUR_DIAGRAMS = {
   <rect x="312" y="86" width="18" height="18" rx="4" class="d-ctl d-hot"/><text x="321" y="100" class="d-glyph">x</text>
   <circle cx="118" cy="122" r="8" class="d-slot d-hot"/><circle cx="140" cy="122" r="8" class="d-slot d-hot"/>
   <circle cx="162" cy="122" r="8" class="d-slot d-hot"/><circle cx="184" cy="122" r="8" class="d-slot d-hot"/>
-  <path d="M196 40 L196 62" class="d-arrow"/><text x="196" y="32" class="d-lbl d-mid">its full details</text>
+  <path d="M214 40 L214 62" class="d-arrow"/><text x="214" y="32" class="d-lbl d-mid">its full details</text>
   <path d="M60 96 L102 96" class="d-arrow"/><text x="56" y="99" class="d-lbl d-end">level</text>
   <path d="M255 168 L255 108" class="d-arrow"/><text x="255" y="182" class="d-lbl d-mid">lock</text>
   <path d="M300 168 L288 108" class="d-arrow"/><text x="312" y="182" class="d-lbl d-mid">slots -/+</text>
