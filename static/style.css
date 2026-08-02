@@ -1130,10 +1130,15 @@ body.theme-hero header {
   border-bottom: 2px solid var(--gold);
 }
 body.theme-hero #app-title { color: #eaf3ff; }
+/* ⚠ THE WORDMARK IS SOLID, NOT A GRADIENT (Joel, 2026-08-02: it "looks like it
+   came out of a children's coloring book"). It was blue-to-gold clipped through
+   the letters at weight 800 with positive tracking - a rainbow-text effect that
+   reads as trying hard rather than as an identity. A wordmark looks confident
+   when it is ONE colour, set slightly tighter than body text. Gold because that
+   is already the app's identity: the masthead rule and the slot rings use it. */
 body.theme-hero #app-name {
-  background: linear-gradient(90deg, #7ec8ff, #ffd166);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  font-weight: 800; letter-spacing: 0.02em;
+  color: #ffd166;
+  font-weight: 700; letter-spacing: -0.01em;
 }
 body.theme-villain {
   --bg: #150d10;
@@ -1151,9 +1156,8 @@ body.theme-villain header {
 }
 body.theme-villain #app-title { color: #ffe9ea; }
 body.theme-villain #app-name {
-  background: linear-gradient(90deg, #ff8a8a, #c9973a);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  font-weight: 800; letter-spacing: 0.02em;
+  color: #ff8f8f;
+  font-weight: 700; letter-spacing: -0.01em;
 }
 .app-tag { font-size: 11px; font-weight: 400; margin-left: 6px; font-style: italic; }
 /* Source-run copies wear a DEV badge so they can't be confused with the installed app */
@@ -1232,8 +1236,8 @@ body.align-mid #app-title { color: #fff6e0; }
    paints a solid yellow BAR over an invisible name. Seen on screen, not in the
    source — the same class as the button background/color trap below. */
 body.align-mid #app-name {
-  background-image: linear-gradient(90deg, #ffe6a8, #e0a63c);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
+  color: #e8b354;
+  font-weight: 700; letter-spacing: -0.01em;
 }
 /* The header control names the CURRENT alignment now (it opens a picker), so it
    is coloured for where you ARE — these two used to be swapped, back when the
