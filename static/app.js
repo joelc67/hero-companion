@@ -606,6 +606,12 @@ window.setExemplarLevel = function (v) {
   refreshBuildViews();
 };
 
+// Enhancement behaviour quoted below is PINNED FROM THE CLIENT, not memory:
+// bin/boost_effect_above.bin = [1.0, 1.05, 1.1, 1.15] and
+// bin/boost_effect_below.bin = [1.0, 0.9, 0.8, 0.7]. Four entries each, so the
+// game defines scaling only for a difference of 0..3 levels - which is exactly
+// why a level-50 enhancement is dead weight when you exemplar to 25.
+// Re-pin with tools/extract_boost_level_tables.py; it fails if a patch moves them.
 function exemplarFacts(L) {
   // ⚠ FROM THE SERVER'S LADDER, never a second copy and never counted off the
   // build's own rows. Counting rows happens to agree only while a build holds
@@ -662,8 +668,11 @@ function exemplarReportHtml(ps) {
           + `by ${L} — if one matters more than something you keep, take it earlier in game and `
           + `the plan follows.`
         : "")
-    + ` Attuned and Superior enhancements scale down with you; ordinary ones above your `
-    + `exemplar level stop helping.</span></div>`;
+    + ` <b>Your enhancements matter even more than the powers here:</b> the game only `
+    + `scales an enhancement within 3 levels of your combat level (+5% per level above, `
+    + `-10% per level below), so an ordinary level-50 piece is far outside that range at `
+    + `${L} and does nothing for you. Attuned and Superior pieces carry no fixed level, `
+    + `follow your combat level, and keep working the whole way down.</span></div>`;
 }
 
 function levelingPlanHtml() {
