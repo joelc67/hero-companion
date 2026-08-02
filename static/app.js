@@ -699,11 +699,47 @@ async function renderTrayLayout(out) {
 
 // Keep the respec-order + tray-layout sections in plain view and in sync with the current
 // build — called at the end of every recompute(). Hidden only when there are no powers yet.
+// ⚠ THESE TWO NOW START FOLDED. The old comment below said "keep them in plain
+// view", and that was a deliberate choice - but measured, they were the 3rd and
+// 4th largest things on the page (756k and 679k square pixels) for content you
+// consult once and then act on. BasiliskXVIII, 2026-08-01: "I haven't got a clue
+// what the benefit of the in-game power trays window is supposed to be, but it's
+// taking up a colossal amount of screen real-estate."
+//
+// Nothing is removed and the choice is REMEMBERED: open one and it stays open.
+// This is a default, not a decision made for the user.
+function _foldKey(id) { return "cohFold_" + id; }
+function _foldOpen(id) {
+  try { return localStorage.getItem(_foldKey(id)) === "1"; } catch (e) { return false; }
+}
+function _fold(id, title, sub, innerHtml) {
+  return `<details class="subpanel-fold" data-fold="${escHtml(id)}"${_foldOpen(id) ? " open" : ""}>`
+       + `<summary><b>${escHtml(title)}</b> <span class="muted small">${escHtml(sub)}</span></summary>`
+       + `<div class="fold-body">${innerHtml}</div></details>`;
+}
+document.addEventListener("toggle", (e) => {
+  const d = e.target;
+  if (!d || !d.classList || !d.classList.contains("subpanel-fold")) return;
+  try { localStorage.setItem(_foldKey(d.dataset.fold), d.open ? "1" : "0"); } catch (err) {}
+}, true);
+
 async function refreshBuildViews() {
   const o = $("order-out"), t = $("tray-out");
   const has = !!(build.powers && build.powers.length);
-  if (o) { o.classList.toggle("hidden", !has); if (has) o.innerHTML = levelingPlanHtml(); }
-  if (t) { t.classList.toggle("hidden", !has); if (has) await renderTrayLayout(t); }
+  if (o) {
+    o.classList.toggle("hidden", !has);
+    if (has) o.innerHTML = _fold("order-out", "Level-by-level plan",
+      "the exact in-game order to take your powers", levelingPlanHtml());
+  }
+  if (t) {
+    t.classList.toggle("hidden", !has);
+    if (has) {
+      const tmp = document.createElement("div");
+      await renderTrayLayout(tmp);
+      t.innerHTML = _fold("tray-out", "In-game power trays",
+        "a suggested tray layout and attack order", tmp.innerHTML);
+    }
+  }
 }
 
 // Interactive leveling STEPPER: walk each pick, see the stat it contributes (delta) +
@@ -5235,6 +5271,54 @@ function closeModal() { $("modal").classList.add("hidden"); activeSlot = null; }
 // ---------------------------------------------------------------------------
 // Stats + validation
 // ---------------------------------------------------------------------------
+// ── PROGRESSIVE DISCLOSURE FOR LONG EXPLANATIONS ───────────────────────────
+// Field report, BasiliskXVIII 2026-08-01: "a lot of real estate is given to
+// overly-verbose explanations which benefit the user very little because there's
+// text everywhere and it's hard to know what you're actually looking for at
+// first glance. Short descriptive reminder text with more information available
+// in a popout or flyover hint box can clean up the layout."
+//
+// MEASURED before touching anything: 5,137 words on one page, 6.5 screens of
+// scrolling, and 21 always-visible prose blocks carrying 726 words of pure
+// explanation - with only 2 collapsed <details> on the entire page. He is right.
+//
+// This keeps every word (nothing is deleted - the explanations are good, they
+// are just always-on) and turns each long one into its own lead sentence plus a
+// disclosure. Done generically rather than by editing ten template strings,
+// because new prose gets written all the time and this catches that too.
+const EXPLAIN_MIN_WORDS = 26;
+
+function collapseLongExplanations(root) {
+  const scope = root || document;
+  scope.querySelectorAll("p.muted.small, .o-note, .muted.small").forEach(el => {
+    if (el.closest("details") || el.closest("#tour-mock")) return;
+    if (el.querySelector(":scope > details.explain")) return;   // already folded
+    // Leave anything the user can operate alone - collapsing a control is a bug.
+    if (el.querySelector("button, select, input, textarea, a")) return;
+    const text = (el.textContent || "").trim();
+    const wordCount = text.split(/\s+/).filter(Boolean).length;
+    if (wordCount < EXPLAIN_MIN_WORDS) return;
+    // The lead sentence stays as the summary, so the gist is never hidden.
+    const lead = (text.match(/^[^.!?]+[.!?]/) || [text])[0].trim();
+    const d = document.createElement("details");
+    d.className = "explain";
+    const s = document.createElement("summary");
+    s.textContent = lead.length > 96 ? lead.slice(0, 93) + "…" : lead;
+    const body = document.createElement("div");
+    body.className = "explain-body";
+    body.innerHTML = el.innerHTML;      // full original, formatting intact
+    d.appendChild(s); d.appendChild(body);
+    // ⚠ WRAP, NEVER REPLACE. The first version called el.replaceWith(d), which
+    // destroyed any element carrying an id - and #stats-note is one of the
+    // biggest explanations on the page. renderStats() then threw on a null, so
+    // recompute() died BEFORE refreshBuildViews() and the tray/level panels
+    // silently vanished. The node stays put and keeps its id; only its contents
+    // fold. Caught by driving the app, not by reading the diff.
+    el.innerHTML = "";
+    el.appendChild(d);
+  });
+}
+
 async function recompute() {
   renderEndgameWarnings();   // warn if a leveling character previews epic/incarnate content
   const hasPowers = build.powers.length > 0;
@@ -5254,6 +5338,7 @@ async function recompute() {
   const klLbl = $("keeplayout-label");
   if (klLbl) klLbl.style.display = showPres ? "flex" : "none";
   updateAssistantMode();   // header/intro/labels track the CREATE-vs-RETOOL mode
+  collapseLongExplanations();   // re-rendered prose gets folded too (idempotent)
   const rb = $("reset-btn");
   if (rb) rb.style.display = (hasPowers && IMPORTED_POWERS) ? "block" : "none";
   const cb = $("changes-btn");
@@ -7811,3 +7896,4 @@ function renderMarkdown(md) {
 }
 
 init();
+setTimeout(() => collapseLongExplanations(), 800);   // static prose present at load

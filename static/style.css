@@ -2186,3 +2186,30 @@ body { overflow: hidden; }
 .tour-svg .d-arrow{ stroke: var(--muted); stroke-width: 1.6; fill: none;
                     marker-end: url(#tourArrowHead); }
 .tour-svg .d-head { fill: var(--muted); }
+
+/* ── PROGRESSIVE DISCLOSURE (field report: "overly-verbose explanations"). The
+   lead sentence stays visible so the gist is never hidden; the rest is one
+   click away. Quiet by design - a page of disclosure triangles is its own
+   kind of noise. */
+.explain { margin: 4px 0; }
+.explain > summary {
+  cursor: pointer; color: var(--muted); font-size: 11px;
+  list-style: none; line-height: 1.45;
+}
+.explain > summary::-webkit-details-marker { display: none; }
+.explain > summary::after { content: " more"; opacity: .65; font-size: 10px; }
+.explain[open] > summary::after { content: " less"; }
+.explain > summary:hover, .explain[open] > summary { color: var(--ink); }
+.explain-body { font-size: 11px; color: var(--muted); line-height: 1.5; margin-top: 4px; }
+
+/* Folded reference panels (level plan, power trays). Reads as a section header,
+   not a hidden feature - the point is that you can SEE what is in there. */
+.subpanel-fold > summary {
+  cursor: pointer; padding: 8px 2px; list-style: none;
+  border-bottom: 1px solid var(--border);
+}
+.subpanel-fold > summary::-webkit-details-marker { display: none; }
+.subpanel-fold > summary::before { content: "B8 "; color: var(--accent); }
+.subpanel-fold[open] > summary::before { content: "BE "; }
+.subpanel-fold > summary:hover { color: var(--ink); }
+.fold-body { padding-top: 10px; }
