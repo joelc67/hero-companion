@@ -2148,6 +2148,11 @@ async function buildRespec() {
 // Natural roles per archetype (from /archetypes): picking outside them is a DELIBERATE
 // off-role build (Offender, tankermind…) — warn loudly so the user owns the choice.
 let NATURAL_ROLES = {};
+// Archetype display names, keyed the same way as NATURAL_ROLES. ⚠ Read the NAME
+// from data, never from the archetype <select>'s selected text: a build loaded
+// from a save sets build.archetype before the select catches up, and the group
+// label then reads "Natural for a - choose archetype -".
+let AT_DISPLAY = {};
 const ROLE_LABELS = { controller: "Controller / Lockdown", debuffer: "Debuffer",
                      buffer: "Buffer / Support", healer: "Healer",
                      damage: "Damage dealer", tank: "Tank / Survivor",
@@ -2295,7 +2300,53 @@ function updateOffRoleWarning() {
   }
 }
 
-function refreshRoleUI() { renderRoleHelp(); updateOffRoleWarning(); renderRoleFocusSplit(); }
+// ── GROUPED ROLE PICKER (Joel, 2026-08-02, answering BasiliskXVIII's "roles are
+// not especially well defined" and his Mixed Role nag).
+//
+// ⚠ NOTHING IS REMOVED, and that is deliberate. The role doctrine is "off-role is
+// only ever an explicit user choice - warn, don't block", and the optimization
+// doctrine is "NO ban lists - this picker is not a child". Deleting Healer from a
+// Scrapper would also delete the builds this community actually loves: an
+// Offender is a Defender built for damage, a tankermind is a Mastermind played as
+// a tank, and this file already names both. Set extensions matter too - a
+// Controller with Poison legitimately plays Debuffer.
+//
+// What was actually wrong is ORDER OF INFORMATION: seven flat options with no
+// hint which suit your archetype, and the warning arriving only AFTER you commit.
+// Grouping puts the answer before the choice and turns the warning into a
+// confirmation. Every option stays one click away.
+const _ROLE_ORDER = ["tank", "damage", "controller", "debuffer", "buffer", "healer"];
+
+function renderRoleOptions(sel, at) {
+  if (!sel) return;
+  const keep = sel.value;
+  const nat = (NATURAL_ROLES[at] || []);
+  const ext = rolesFromSets().filter(r => !nat.includes(r));
+  const off = _ROLE_ORDER.filter(r => !nat.includes(r) && !ext.includes(r));
+  const opt = r => `<option value="${escHtml(r)}">${escHtml(ROLE_LABELS[r] || r)}</option>`;
+  const group = (label, rs) => rs.length
+    ? `<optgroup label="${escHtml(label)}">${_ROLE_ORDER.filter(r => rs.includes(r)).map(opt).join("")}</optgroup>`
+    : "";
+  let html = `<option value="">— choose —</option>`;
+  if (!at || !nat.length) {
+    // No archetype yet: nothing to group BY, so stay flat rather than invent one.
+    html += _ROLE_ORDER.map(opt).join("") + opt("mixed");
+  } else {
+    const atName = AT_DISPLAY[at] || "this archetype";
+    html += group(`Natural for a ${atName}`, nat)
+          + group("Your powersets also support", ext)
+          + group("Off-role — allowed, but it will fight you", off)
+          + `<optgroup label="No single focus">${opt("mixed")}</optgroup>`;
+  }
+  sel.innerHTML = html;
+  sel.value = keep;                      // a rebuild must never silently re-answer
+  if (sel.value !== keep) sel.value = "";
+}
+
+function refreshRoleUI() {
+  renderRoleOptions($("preset-role"), build.archetype);
+  renderRoleHelp(); updateOffRoleWarning(); renderRoleFocusSplit();
+}
 
 
 // ── ALIGNMENT (Hero Companion reskin): the app has an alignment like any CoH character.
@@ -2792,6 +2843,8 @@ async function init() {
   loadMeta();   // versions + project-home links (bug reports, champions, updates)
   NATURAL_ROLES = Object.fromEntries(
     data.archetypes.map(a => [a.name, a.natural_roles || []]));
+  AT_DISPLAY = Object.fromEntries(
+    data.archetypes.map(a => [a.name, a.display_name || a.name]));
   SET_ROLE_EXTENSIONS = data.set_role_extensions || {};
   const sel = $("sel-archetype");
   sel.innerHTML = `<option value="">— choose archetype —</option>` +
@@ -2899,7 +2952,10 @@ async function init() {
   if ($("update-check")) $("update-check").addEventListener("click", checkUpdates);
   if ($("update-btn")) $("update-btn").addEventListener("click", manualUpdateCheck);
   $("wiz-close").addEventListener("click", closeRespecWizard);
-  $("wiz-at").addEventListener("change", () => { wizLoadPowersets(); wizFormRow(); wizExplain(null); });
+  $("wiz-at").addEventListener("change", () => {
+    wizLoadPowersets(); wizFormRow(); wizExplain(null);
+    renderRoleOptions($("wiz-role"), $("wiz-at").value);   // group by the WIZARD's archetype
+  });
   if ($("wiz-form")) $("wiz-form").addEventListener("change", () => {
     wizSetSrc("form", $("wiz-form").value ? "you" : "");
     wizGateBuild();
