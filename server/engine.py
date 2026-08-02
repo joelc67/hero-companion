@@ -104,10 +104,13 @@ PIECE_GLOBALS = [
     # Regeneration credit; PANACEA is the real end-returning sibling. Performance Shifter's
     # unique flag corrected to the game data's False (it stacks; rule of five applies).
     {"set": "performance shifter", "piece": "+end", "unique": False,
+     "needs_running_host": True,
      "effects": [{"effect": "Recovery", "value": 0.317}]},         # MEASURED 0.529 end/s
     {"set": "power transfer", "piece": "heal self", "unique": True,
+     "needs_running_host": True,
      "effects": [{"effect": "Regeneration", "value": 0.125}]},     # heal proc (NOT +end)
     {"set": "panacea", "piece": "hit points", "unique": True,
+     "needs_running_host": True,
      "effects": [{"effect": "Recovery", "value": 0.239},           # MEASURED 0.398 end/s
                  {"effect": "Regeneration", "value": 0.05}]},
     # Theft of Essence: Chance for +Endurance — heal-set proc (click hosts, Dark
@@ -637,7 +640,31 @@ def _external_buffs(build, totals, ctx=None):
         _accolade_buffs(build, totals, ctx)
 
 
-def _piece_globals(build, totals):
+# ⚠ ACTIVATION-GATED PROCS ARE NOT ALWAYS-ON GLOBALS (field report,
+# BasiliskXVIII 2026-08-01, CONFIRMED). Panacea / Performance Shifter / Power
+# Transfer are chance-on-activation procs: they fire when the power hosting them
+# fires. Their credited values were MEASURED (tools/measure_end_procs.py) with
+# the pieces in their normal homes - Health and Stamina, Auto powers that tick
+# forever - so the measurement has the host baked into it. Credited in a click
+# you rarely cast, that number is fiction, and the solver was free to move them
+# into any "global mule" because nothing in the data said otherwise.
+#
+# Auto (power_type 1) and Toggle (2) run continuously, so the measured rate
+# holds. Click (0) does not. Theft of Essence is deliberately NOT flagged: it is
+# a healing-set proc already priced for click hosts at a stated half-usage
+# assumption.
+_ALWAYS_RUNNING_TYPES = {1, 2}      # 1 = Auto, 2 = Toggle (client enum)
+
+
+def _host_runs_continuously(power, ctx=None):
+    pt = power.get("power_type")
+    if pt is None and ctx:
+        rec = (ctx.get("power_by_full") or {}).get(power.get("full_name")) or {}
+        pt = rec.get("power_type")
+    return pt in _ALWAYS_RUNNING_TYPES
+
+
+def _piece_globals(build, totals, ctx=None):
     """Add always-on special-IO piece globals (Steadfast +3% Def, LotG +7.5%
     Recharge, Shield Wall +5% Res, Kismet +6% ToHit, etc.). These work whether
     or not the host power is active, so every slotted piece counts; unique
@@ -654,6 +681,16 @@ def _piece_globals(build, totals):
             pn = (slot.get("piece_name") or "").lower()
             for g in PIECE_GLOBALS:
                 if g["set"] in sn and g["piece"] in pn:
+                    if g.get("needs_running_host") and not _host_runs_continuously(power, ctx):
+                        # The credit is simply withheld. ! NOT recorded into
+                        # `totals` - that holds floats and dicts only, and a
+                        # list here broke Force Feedback seating downstream
+                        # (the standing gate caught it). diag only exposes
+                        # swallowed(), which means something failed; this did
+                        # not fail. Surfacing "why is this proc worth 0 here"
+                        # on the info card is a UI job, tracked separately -
+                        # an honest silence beats a fake log line.
+                        break
                     if g["unique"]:
                         if g["set"] in seen_unique:
                             break
@@ -1486,7 +1523,7 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
         ctx["char_level"] = build.get("char_level") or 50
     amp_preview = _power_totals(build, totals, ctx)
     _incarnate_totals(build, totals, ctx)
-    _piece_globals(build, totals)
+    _piece_globals(build, totals, ctx)
     _amplifier_buffs(build, totals)
     _accolade_buffs(build, totals, ctx)
     bonus_signature_count = defaultdict(int)

@@ -124,9 +124,44 @@ for p in powers:
         ff_host = p.get("display_name")
     if n_proc >= 4:
         bombs[p.get("display_name")] = n_proc
-check("Force Feedback seats WITHOUT cannibalizing a proc bomb",
-      ff_host is not None and (ff_host not in bombs or bombs[ff_host] >= 5),
-      f"FF host: {ff_host} — full proc bombs intact: {dict(bombs)}")
+# ⚠ THE INVARIANT IS THE COMMENT ABOVE: FF must not EAT a proc bomb. The old
+# assertion also demanded `ff_host is not None`, i.e. that FF always finds a
+# seat - which is a different claim, and a false one. FF seats by swapping an
+# attack's LAST piece, so when every attack is running a completed set or a
+# proc bomb there is no legal host and refusing to seat is CORRECT behaviour,
+# not a defect. (Surfaced 2026-08-02 by the activation-gated-proc fix: with
+# Panacea correctly in Health, Energy Torrent takes a full Superior Frozen
+# Blast 6-set and _last_swap_safe rightly refuses to break it.)
+#
+# The check keeps its teeth: FF may only be ABSENT if no swap-safe host
+# existed. If one did exist and FF still did not seat, that is the real
+# defect and this still fails.
+import proc_pass as _pp
+_safe_hosts = []
+# ⚠ Mirror proc_pass's REAL eligibility, not a proxy. A first version of this
+# checked only _last_swap_safe and wrongly reported Energy Torrent as an
+# available host: proc_pass ALSO refuses _is_premium powers, and with the
+# activation-gated-proc fix Energy Torrent now carries a Superior ATO 6-set,
+# which premium-protection exists to keep intact. A half-copied predicate
+# turns a correct refusal into a phantom defect.
+for p in powers:
+    _rec = srv.POWER_BY_FULL.get(p.get("full_name")) or {}
+    _sl = [s for s in (p.get("slots") or []) if s]
+    if (_rec.get("is_attack") and len(_sl) >= 2 and _pp._last_swap_safe(_sl)
+            and not any(h in " ".join(s.get("set_name", "") for s in _sl)
+                        for h in _pp._PREMIUM_HINTS)):
+        _safe_hosts.append(p.get("display_name"))
+if ff_host is not None:
+    _ff_ok = ff_host not in bombs or bombs[ff_host] >= 5
+    _ff_why = f"FF host: {ff_host} — full proc bombs intact: {dict(bombs)}"
+else:
+    _ff_ok = not _safe_hosts
+    _ff_why = ("FF did not seat, and NO swap-safe host existed "
+               f"(every attack runs a complete set or a proc bomb) — bombs: {dict(bombs)}"
+               if _ff_ok else
+               f"FF did not seat although these hosts were swap-safe: {_safe_hosts}")
+check("Force Feedback never cannibalizes a proc bomb (and only skips when no safe host exists)",
+      _ff_ok, _ff_why)
 
 # 7 — Maelwys's "biggest glitch": attacks must not STALL at 5 (the beheading
 # bug: budget overspend + order-blind trim cut allocated 6th slots). PIN

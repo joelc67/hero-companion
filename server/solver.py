@@ -26,6 +26,11 @@ from collections import defaultdict, Counter
 
 import diag
 
+# A/B seam for the activation-gated-proc host rule. Default ON: this is a
+# correctness fix, not a preference. HC_PROC_HOST_GATE=0 exists so the trade
+# it makes can be MEASURED against the old behaviour, nothing else.
+_PROC_HOST_GATE = os.environ.get("HC_PROC_HOST_GATE", "1") != "0"
+
 try:
     import pulp
 except ImportError:  # ILP unavailable -> solve_ilp raises; install pulp
@@ -2104,6 +2109,15 @@ def _place_globals(powers, piece_globals, sets_by_category, totals, seed_unique=
         for p in hosts:
             if p.get("_is_pet_summon"):
                 continue     # reserved for its pet set — never a self-heal-global mule
+            # An activation-gated proc only fires when its host fires, so it
+            # cannot be muled into an arbitrary cheap power. Auto (1) and
+            # Toggle (2) run continuously; a click does not.
+            # HC_PROC_HOST_GATE=0 is the A/B seam used to MEASURE the trade
+            # this makes (see tools/measure_proc_host_gate.py), not a way to
+            # turn the correctness fix off in normal use.
+            if (_PROC_HOST_GATE and g.get("needs_running_host")
+                    and p.get("power_type") not in (1, 2)):
+                continue
             if len(p["_slots"]) >= p.get("_slot_budget", 6):
                 continue
             if not _find_set(sets_by_category, p["_cats"], g["set"]):
