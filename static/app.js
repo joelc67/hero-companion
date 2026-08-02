@@ -606,36 +606,64 @@ window.setExemplarLevel = function (v) {
   refreshBuildViews();
 };
 
+function exemplarFacts(L) {
+  // ⚠ FROM THE SERVER'S LADDER, never a second copy and never counted off the
+  // build's own rows. Counting rows happens to agree only while a build holds
+  // all 24 picks; the GAME's answer is the ladder. Verified against
+  // server/leveling_schedule.py: by 15 -> 9 picks / 14 added slots, by 25 ->
+  // 14 / 24, by 35 -> 19 / 37, by 45 -> 22 / 58, by 50 -> 24 / 67.
+  const lv = (META && META.leveling) || null;
+  if (!lv) return null;
+  const picks = (lv.pick_levels || []).filter(x => x <= L).length;
+  let added = 0;
+  for (const [g, v] of Object.entries(lv.slot_grants || {})) {
+    if (+g <= L) added += v;
+  }
+  return { picks, added, total_added: lv.total_added_slots };
+}
+
 function exemplarReportHtml(ps) {
   const L = exemplarLevel();
   const opts = [0, 15, 20, 25, 30, 35, 40, 45].map(v =>
     `<option value="${v}"${v === L ? " selected" : ""}>`
     + (v ? `level ${v}` : "I don't usually") + `</option>`).join("");
-  const picker = `<div class="lvl-ex"><label>When you exemplar down, how low do you go? `
+  const picker = `<div class="lvl-ex"><label>Show this build as it plays when exemplared to `
     + `<select onchange="setExemplarLevel(this.value)">${opts}</select></label></div>`;
   if (!L) return picker;
 
+  const f = exemplarFacts(L);
   const kept = ps.filter(p => (p.pick_level || 99) <= L);
   const lost = ps.filter(p => (p.pick_level || 99) > L);
+  const nm = p => escHtml(p.display_name || (p.full_name || "").split(".").pop().replace(/_/g, " "));
+  const usedAdded = ps.reduce((s, p) => s + Math.max(0, ((p.slots || []).length - 1)), 0);
+
+  // SLOTS ARE THE HALF EVERYONE FORGETS. Losing 10 of 24 powers is visible;
+  // dropping from 67 earned slots to 24 is what actually guts the character,
+  // because the powers you DO keep are barely enhanced down there.
+  const slotLine = f
+    ? `<br>At ${L} you have <b>${f.added} of the ${f.total_added} extra slots</b> the game `
+      + `eventually grants${usedAdded ? ` (this build spends ${usedAdded})` : ""} — so the powers `
+      + `you keep are enhanced far less than they are at 50.`
+    : "";
+
   if (!lost.length) {
     return picker + `<div class="lvl-ex-note good">Exemplared to ${L} you keep every power `
-      + `in this build.</div>`;
+      + `in this build.${slotLine}</div>`;
   }
-  const nm = p => escHtml(p.display_name || (p.full_name || "").split(".").pop().replace(/_/g, " "));
-  // Powers the game WOULD have granted by L but this plan seats later. Named
-  // separately because they are the ones that feel wrong to lose.
   const early = lost.filter(p => (p.level_available || 1) <= L);
   return picker
-    + `<div class="lvl-ex-note"><b>Exemplared to ${L} you keep ${kept.length} of `
-    + `${ps.length} powers.</b> You lose: ${lost.map(nm).join(", ")}.`
-    + `<br><span class="muted small">The game only grants ${kept.length} picks by level `
-    + `${L}, so the rest cannot come with you whatever order you take them in.`
+    + `<div class="lvl-ex-note"><b>Exemplared to ${L}: ${kept.length} of ${ps.length} powers.</b>`
+    + ` Not with you: ${lost.map(nm).join(", ")}.`
+    + slotLine
+    + `<br><span class="muted small">The game grants ${f ? f.picks : kept.length} power picks by `
+    + `level ${L}, so the rest cannot come whatever order you take them in.`
     + (early.length
-        ? ` ${early.length} of them (${early.map(nm).join(", ")}) `
-          + `are powers you could have had by ${L} — if one of those matters more than `
-          + `something you keep, take it earlier in game and the plan will follow.`
+        ? ` ${early.length} of them (${early.map(nm).join(", ")}) are powers you could have had `
+          + `by ${L} — if one matters more than something you keep, take it earlier in game and `
+          + `the plan follows.`
         : "")
-    + `</span></div>`;
+    + ` Attuned and Superior enhancements scale down with you; ordinary ones above your `
+    + `exemplar level stop helping.</span></div>`;
 }
 
 function levelingPlanHtml() {

@@ -876,8 +876,17 @@ def meta():
             autostart = {"supported": True, "enabled": None}
     else:
         autostart = {"supported": False}
+    # ⚠ THE LEVELING LADDER IS SERVED, NEVER COPIED. The exemplar view needs to
+    # say how many picks and slots the GAME grants by a level, and a second copy
+    # of those tables in JavaScript would drift the first time either changed.
+    # One source of truth: server/leveling_schedule.py.
     return jsonify({"ok": True, "app_version": APP_VERSION, "build_commit": BUILD_COMMIT,
                     "model_version": fp.MODEL_VERSION,
+                    "leveling": {
+                        "pick_levels": list(leveling_schedule.POWER_PICK_LEVELS),
+                        "slot_grants": {str(k): v for k, v in
+                                        sorted(leveling_schedule.SLOT_GRANTS.items())},
+                        "total_added_slots": leveling_schedule.TOTAL_ADDED_SLOTS},
                     "db_name": DB_NAME, "db_version": DB_VERSION,
                     "packaged": bool(getattr(sys, "frozen", False)),
                     "form_champions": has_forms,
