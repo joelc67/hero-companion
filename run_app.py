@@ -6,7 +6,8 @@ right-click it for Open / Quit. No console window, nothing to remember to close.
 Console output goes to %APPDATA%\\HeroCompanion\\app.log in windowed mode.
 
 Also runs from source:  python run_app.py   (console mode, Ctrl+C to stop)
-Env knobs: PORT (default 5000), HC_NO_BROWSER=1 (don't auto-open a browser tab).
+Env knobs: PORT (default 5000), HC_NO_BROWSER=1 (don't auto-open a browser tab),
+HC_WINDOW=1 (open in a native window instead of the browser — see _run_window).
 """
 import atexit
 import json
@@ -212,6 +213,50 @@ def _pick_port(start):
     return start
 
 
+# ── NATIVE WINDOW (HC_WINDOW=1) — the replacement for the browser tab + tray ──
+# pywebview drives the WebView2 runtime that already ships with Windows 10/11, so
+# end users install nothing extra. Flask still serves on localhost; the window is
+# just a chrome-less browser pointed at it.
+#
+# ⚠ PROTOTYPE FLAG (Joel, 2026-08-02: "prototype behind a flag first so I can see
+# it before it's the default"). HC_WINDOW=1 selects it in BOTH source and frozen
+# runs. When it becomes the default, _run_tray and its battery
+# (tools/test_tray_first_run_notice.py) are DELETED — window close = quit means
+# there is no second handle on the app to keep.
+_WINDOW = os.environ.get("HC_WINDOW") == "1"
+
+
+def _run_window(port):
+    """Hero Companion in its own window. Blocks until the window closes, which
+    quits the app — no tray, no background copy left running. False if pywebview
+    or the WebView2 runtime is unavailable (caller falls back)."""
+    try:
+        import webview
+    except Exception as e:  # noqa: BLE001 — missing dependency is a fallback, not a crash
+        print(f"native window unavailable ({e}); falling back to browser + tray")
+        return False
+
+    def _quit():
+        _clear_lock()          # os._exit skips atexit — release the instance lock here
+        os._exit(0)
+
+    # The self-update path (POST /app/shutdown, server._graceful_self_exit_for_update)
+    # retires this copy through the same hook the tray used. There is no icon to
+    # remove, so the exit is immediate — the tray's "let the message loop delete the
+    # icon first" delay was solving a problem that no longer exists.
+    server.SHUTDOWN_HOOK = _quit
+    try:
+        webview.create_window("Hero Companion", f"http://127.0.0.1:{port}",
+                              width=1440, height=920, min_size=(900, 600))
+        webview.start()        # blocks on the GUI loop until the window closes
+    except Exception as e:  # noqa: BLE001
+        print(f"native window failed to start ({e}); falling back to browser + tray")
+        server.SHUTDOWN_HOOK = None
+        return False
+    _quit()
+    return True
+
+
 def _run_tray(port):
     """Tray icon with Open / Check for updates / Quit. Returns False if the tray can't
     start (then the caller just blocks so the server stays up).
@@ -331,6 +376,9 @@ def main():
         # /meta answers autostart state through the live registry read — the
         # setting shown anywhere can never disagree with registry reality.
         server.AUTOSTART_STATE_FN = _autostart_enabled
+        # …and the setter, so the toggle can live in the app UI. With no tray menu
+        # the UI is the ONLY place this choice exists (Joel, 2026-08-02).
+        server.AUTOSTART_SET_FN = _set_autostart
     want = int(os.environ.get("PORT", "5000"))
     port = _pick_port(want)
     print(f"Hero Companion v{server.APP_VERSION} — model v{__import__('first_principles').MODEL_VERSION}"
@@ -344,6 +392,11 @@ def main():
     threading.Thread(
         target=lambda: server.app.run(host="127.0.0.1", port=port, debug=False),
         daemon=True).start()
+    # Window mode owns the whole lifecycle: no browser tab, no tray, no autostart
+    # MessageBox (that choice now lives in the app's own Settings). Falls through
+    # to the browser + tray path if pywebview/WebView2 aren't there.
+    if _WINDOW and _run_window(port):
+        return
     if os.environ.get("HC_NO_BROWSER") != "1" and not from_autostart:
         if after_update:
             # Relaunched by the installer after a self-update. The tab the user

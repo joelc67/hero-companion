@@ -937,6 +937,32 @@ SHUTDOWN_HOOK = None
 # None in dev/source mode (dev runs never touch autostart).
 AUTOSTART_STATE_FN = None
 
+# Set by run_app.py in packaged builds: a one-arg callable that turns "start with
+# Windows" on or off. With the tray menu gone, the app's own Settings is the only
+# place this choice lives, so the UI needs a way to WRITE it, not just read it.
+AUTOSTART_SET_FN = None
+
+
+@app.route("/app/autostart", methods=["POST"])
+def app_autostart():
+    """Turn 'start Hero Companion when I sign in' on or off (packaged builds only).
+    Answers with the state read back from the live registry, never from what we
+    just asked for — the setting shown can never disagree with reality."""
+    if not AUTOSTART_SET_FN:
+        return jsonify({"ok": False, "reason": "not_packaged"})
+    try:
+        AUTOSTART_SET_FN(bool((request.get_json(silent=True) or {}).get("enabled")))
+    except Exception:  # noqa: BLE001 — registry write refused; say so, don't pretend
+        diag.swallowed("autostart set")
+        return jsonify({"ok": False, "reason": "failed"})
+    enabled = None
+    if AUTOSTART_STATE_FN:
+        try:
+            enabled = bool(AUTOSTART_STATE_FN())
+        except Exception:  # noqa: BLE001
+            diag.swallowed("autostart read-back")
+    return jsonify({"ok": True, "enabled": enabled})
+
 
 @app.route("/app/shutdown", methods=["POST"])
 def app_shutdown():

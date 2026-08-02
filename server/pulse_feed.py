@@ -252,6 +252,11 @@ def feed_status():
             # 6a consent shape: the full app uploads only when ITS toggle was
             # explicitly answered yes — absent means "never asked here"
             "opted_in_here": st.get("feed_disabled") is False,
+            # …and absent vs. an explicit NO are different states. Both leave
+            # opted_in_here False, but only the first should ever be asked again:
+            # the launch prompt fires on `not asked_here`, so a remembered "no
+            # thanks" stays answered (choice doctrine — a "no" is remembered).
+            "asked_here": "feed_disabled" in st,
             "upload_owner": (gamelog.upload_owner() or {}).get("tag"),
             "feed_fails": _stats.get("feed_fails", 0),
             "upload_offset": int(st.get("upload_offset", 0)),

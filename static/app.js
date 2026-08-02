@@ -134,7 +134,13 @@ function showEntry() {
   // link still starts it, so saying no is never a door closing.
   if (typeof maybeOfferTour === "function") maybeOfferTour();
 }
-function hideEntry() { $("entry-overlay").classList.add("hidden"); }
+function hideEntry() {
+  $("entry-overlay").classList.add("hidden");
+  // The share prompt waits for the entry screen to clear so two overlays never
+  // stack. It answers itself out (asked_here) after the first time, so this is a
+  // no-op on every launch after the one that asks.
+  if (typeof maybeAskShare === "function") maybeAskShare();
+}
 
 // ---- Save / resume: a from-scratch character is weeks of real play ----
 let CURRENT_SAVE = null;   // {id, name} once saved/loaded, so re-saves update in place
@@ -2681,6 +2687,22 @@ function showAbout() {
     link(urls.project_home, "GitHub"),
     `<a href="/docs/credits" target="_blank">Credits</a>`,
   ].filter(Boolean).join(" · ");
+  // ── Settings (2026-08-02) — the tray menu is gone, so its one setting lives
+  // here, beside the other app-level choice. Autostart shows only where it can
+  // actually be honoured (packaged builds; /meta says so through a LIVE registry
+  // read, so the checkbox can never disagree with reality).
+  const auto = META.autostart || {};
+  const settings = `
+    <div class="about-row"><b>Settings</b><span>
+      ${auto.supported ? `<label class="incarnate-toggle"
+        title="Adds a per-user Windows startup entry. No admin rights, and uninstalling removes it."
+        ><input type="checkbox" ${auto.enabled ? "checked" : ""}
+        onchange="setAutostart(this.checked)"> Start Hero Companion when I sign in to Windows</label><br>` : ""}
+      <label class="incarnate-toggle"
+        title="Compares version numbers against the project's releases page. Nothing about you or your builds is sent."
+        ><input type="checkbox" ${localStorage.getItem("hc_update_check") === "off" ? "" : "checked"}
+        onchange="setUpdatePref(this.checked ? 'on' : 'off')"> Check for a new version when the app starts</label>
+    </span></div>`;
   const roster = META.champion_count
     ? `<div class="about-row"><b>Champions</b><span>${META.champion_count} certified
        reference builds, each converged and re-verified whenever the model changes.</span></div>` : "";
@@ -2700,29 +2722,32 @@ function showAbout() {
       ${escHtml(META.build_commit || "(packaged — no source commit)")}, browser loaded
       ${escHtml(jsAssetToken())}. If those two ever look out of step with a change you
       were expecting, the page is running older code than the server.</span></div>
+    ${settings}
     <p class="about-links">${links}</p>`;
   $("about-modal").classList.remove("hidden");
 }
+// Writes through to the registry and re-renders from the ANSWER, not the click —
+// a refused write leaves the checkbox showing the truth instead of the wish.
+window.setAutostart = async function (on) {
+  const r = await api("/app/autostart", postJson({ enabled: on })).catch(() => null);
+  if (r && r.ok) META.autostart = { supported: true, enabled: r.enabled };
+  showAbout();
+};
 
-// ── Startup update flow (Mids-style, but opt-in) ────────────────────────────
-// First run asks ONCE whether to auto-check at startup — plainly worded, because
-// the tool promises to never contact anything without the user's say-so. The
-// answer persists; "on" checks GitHub Releases each launch and prompts with
-// Update now / Remind me later. The manual footer button always works regardless.
+// ── Startup update flow ─────────────────────────────────────────────────────
+// AUTOMATIC ON LAUNCH (Joel, 2026-08-02). It used to ask once, on first run,
+// whether to check at startup; that question is gone and the check simply runs —
+// it compares version numbers against GitHub Releases and sends nothing about the
+// user or their builds. Still reversible, but as a visible toggle in Settings
+// (About dialog) rather than a one-shot banner nobody could find again.
+// ⚠ The forum reply's "the update check only runs when you click it" is false
+// from this build on — correct the post when the desktop build ships.
 function _ubShow(html) { const b = $("update-banner"); if (b) { b.innerHTML = html; b.classList.remove("hidden"); } }
 function _ubHide() { const b = $("update-banner"); if (b) b.classList.add("hidden"); }
 
 function initUpdateFlow() {
   if (!META || !_urlReady((META.urls || {}).releases_api)) return;   // no online home configured
-  const pref = localStorage.getItem("hc_update_check");
-  if (pref === "off") return;
-  if (pref === null) {
-    _ubShow(`🔔 <b>Check for updates automatically when the app starts?</b> `
-      + `It contacts github.com to compare version numbers — nothing else is ever sent.`
-      + `<button class="linkbtn" onclick="setUpdatePref('on')">Yes, check at startup</button>`
-      + `<button class="linkbtn quiet" onclick="setUpdatePref('off')">No thanks</button>`);
-    return;
-  }
+  if (localStorage.getItem("hc_update_check") === "off") return;   // Settings toggle
   runStartupUpdateCheck();
 }
 window.setUpdatePref = function (v) {
@@ -3002,6 +3027,9 @@ async function init() {
   $("modal-close").addEventListener("click", closeModal);
   $("tier-close").addEventListener("click", () => $("tier-modal").classList.add("hidden"));
   $("about-close").addEventListener("click", () => $("about-modal").classList.add("hidden"));
+  // ✕ on the share prompt stores nothing — it asks again next launch rather than
+  // converting a dismissal into a remembered answer (closing is not a decision).
+  $("share-close").addEventListener("click", () => $("share-modal").classList.add("hidden"));
   $("about-modal").addEventListener("click", (e) => {
     if (e.target === $("about-modal")) $("about-modal").classList.add("hidden"); });
   $("modal-search").addEventListener("input", renderModalSets);
@@ -3489,6 +3517,54 @@ window.feedConsent = async function () {
 };
 window.feedToggle = async function (on) {
   await api("/gamelog/feed", postJson({ enabled: on }));
+  renderFeedBlock();
+};
+
+// ── The launch share prompt (Joel, 2026-08-02) ──────────────────────────────
+// Asked ONCE per install, and only where it could actually do anything: a build
+// with an upload key, on a machine that has never answered here (asked_here).
+// The summary below is the terms in plain English — the full terms text ships
+// underneath it, straight from the server, so the two can never drift apart.
+// Fires from hideEntry() rather than at page load, so it never lands on top of
+// the entry screen; the very first thing it can interrupt is an empty app.
+async function maybeAskShare() {
+  if (!$("share-modal") || !$("share-modal").classList.contains("hidden")) return;
+  const st = await api("/gamelog/feed").catch(() => null);
+  if (!st || !st.ok || !st.key_present || st.asked_here) return;
+  const url = ((META && META.urls) || {}).pulse_boards || "";
+  const boards = url
+    ? `<a href="${escHtml(url)}" target="_blank" rel="noopener">Pulse Boards</a>` : "Pulse Boards";
+  $("share-body").innerHTML = `
+    <p>Hero Companion can feed the live ${boards} from what your game log already
+    records. It is off until you say yes, and nothing has been sent so far.</p>
+    <div class="about-row"><b>What is captured</b><span>Only while game logging is on
+      (<code>/logchat</code>): your own rewards (XP, influence, drops, merits, badges,
+      defeats); recruitment facts from PUBLIC channels (what is forming, and the
+      recruiting CHARACTER's name); auction-house sale prices.
+      <b>Never raw chat. Never tells.</b></span></div>
+    <div class="about-row"><b>What leaves this machine</b><span>Before upload, your account
+      login name is replaced by a code derived from it, so the real name never leaves.
+      Uploads carry an anonymous install id. <b>Your character names ARE included</b> so
+      your data can be attributed to your characters; they are not shown publicly today.
+      That is the one thing worth deciding on consciously.</span></div>
+    <div class="about-row"><b>Never read at all</b><span>Machine names, file paths, and
+      anything outside the game log.</span></div>
+    <div class="about-row"><b>What the public board shows</b><span>What is forming and when,
+      the character names of public-channel recruiters, and per-item sale prices. Never
+      account names, money totals, who sold what, or machine details.</span></div>
+    <details><summary class="muted small">Read the full terms</summary>
+      <pre class="gl-pre">${escHtml(st.terms)}</pre></details>
+    <p class="about-links">
+      <button class="linkbtn" onclick="shareAnswer(true)">Yes, share my play data</button>
+      <button class="linkbtn quiet" onclick="shareAnswer(false)">No thanks</button>
+      <span class="muted small">Either answer is remembered, and either one can be
+      changed later in the Play Log tab.</span></p>`;
+  $("share-modal").classList.remove("hidden");
+}
+window.shareAnswer = async function (yes) {
+  await api("/gamelog/feed",
+            postJson(yes ? { accept_terms: true, enabled: true } : { enabled: false }));
+  $("share-modal").classList.add("hidden");
   renderFeedBlock();
 };
 

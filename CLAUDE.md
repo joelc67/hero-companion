@@ -300,6 +300,42 @@ is **LIFTED — items 1-6 all complete, 24/24 recertified and merged 2026-07-31,
 shipped as v0.12.30.** The work order stays on disk as the record of what was
 fixed; it is no longer a gate. Champion work and waves are open again.
 
+## 🖥 DESKTOP APP (Joel's ruling 2026-08-02, built same day)
+
+Hero Companion stops being a browser app: **pywebview → WebView2** (the runtime
+already ships with Win10/11, so users install nothing), **no tray at all —
+window close = quit**, update check **automatic on launch**, the autostart
+toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
+**Companion Lite is UNCHANGED and keeps its tray** — do not touch `run_lite.py`.
+
+- **The window is behind `HC_WINDOW=1` until Joel has looked at it.** Flipping
+  the default is one line (`_WINDOW`); the tray (`_run_tray`, the pystray spec
+  entries, `tools/test_tray_first_run_notice.py`) is DELETED at that flip and
+  not before — with the flag off and the tray gone, a frozen build would have
+  no UI at all.
+- **⚠ The self-update path outlives the tray.** `_run_window` sets
+  `server.SHUTDOWN_HOOK` exactly as the tray did, so `POST /app/shutdown` and
+  `_graceful_self_exit_for_update` still retire the copy. Window mode exits
+  immediately — the tray's "let the message loop delete the icon" delay existed
+  only to prevent a ghost icon, and there is no icon now.
+- **⚠ ABSENT ≠ NO in the feed consent.** `feed_disabled` absent (never asked)
+  and `feed_disabled=True` (explicit no) both read `opted_in_here: False`, so
+  the old status could not tell them apart and would have re-asked forever.
+  `pulse_feed.feed_status()` now also returns **`asked_here`** (`"feed_disabled"
+  in st`) and the prompt fires on `not asked_here`. ✕ stores nothing.
+- **⚠ The launch prompt fires from `hideEntry()`, never at page load** — the
+  entry overlay is up at load on every launch, and two stacked overlays is the
+  bug that shape invites.
+- **⚠ The dev copy and the installed app SHARE the gamelog state** in
+  `%APPDATA%\HeroCompanion\gamelog`, and this source checkout HAS an inbox key
+  (`key_present: true`). Answering the share prompt in a dev copy writes Joel's
+  REAL feed preference — render it and close it when testing, never click an
+  answer.
+- **⚠ The forum reply's "the update check only runs when you click it" is now
+  FALSE in the code** and the post is uncorrected. See RESUME-HERE for the
+  accurate replacement sentence.
+- Battery: `tools/test_desktop_app.py` (28, negative-controlled both ways).
+
 ## ⭐ CURRENT STATE & open queue (2026-07-31)
 
 **Nothing is running; no scheduled tasks armed.** Shipped v0.12.30 "Accuracy pass".

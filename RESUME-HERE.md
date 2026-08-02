@@ -14,12 +14,53 @@ This file is current state, the open queue, and the traps earned today.
 
 > "The planner is fully offline, and the update check only runs when you click it."
 
-He has since ruled that the **update check becomes automatic on launch**. When
-that ships, that sentence is false, and BasiliskXVIII is exactly the reader who
-will check. Either correct the post when the desktop build ships, or the claim
-has to change. Do not let this slip.
+**As of 2026-08-02 that is FALSE in the code** — the launch check shipped
+(`initUpdateFlow` runs it unconditionally). The post has NOT been corrected;
+BasiliskXVIII is exactly the reader who will check. **Correct it when the
+desktop build publishes.** Accurate replacement: the planner still contacts
+nothing but GitHub's releases API, it compares version numbers only, it sends
+nothing about the user or their builds, and it can be turned off in
+About & Settings.
 
 ---
+
+## ✅ THE DESKTOP BATCH — BUILT 2026-08-02, ONE STEP LEFT
+
+All five pieces are in. `pywebview 6.2.1` + `pythonnet 3.1.0` installed; the
+window was launched for real on port 5083 and served the app through WebView2
+with no fallback message, and `/meta/update-check` fired on its own in that
+same launch (both proofs in the server log). Battery:
+`tools/test_desktop_app.py` **28/28**, standing gate 24/24, tour 10/10, tray
+battery still 9/9.
+
+- **1. Window** — `run_app._run_window(port)`, selected by `HC_WINDOW=1` in
+  BOTH source and frozen runs. `main()` tries it before any browser open and
+  falls through to browser+tray if pywebview or WebView2 is missing.
+  Spec updated (`webview`, `webview.platforms.edgechromium`, `clr_loader`,
+  `pythonnet`).
+- **2. Tray** — window mode is already tray-free: no icon, no autostart
+  MessageBox, and `server.SHUTDOWN_HOOK = _quit` keeps the self-update path
+  (`POST /app/shutdown`, `_graceful_self_exit_for_update`) working. The exit is
+  immediate because there is no icon to un-ghost.
+- **3. Update check** — automatic; the first-run "check at startup?" banner is
+  deleted. Off switch moved to About & Settings.
+- **4. Autostart** — `POST /app/autostart` + `server.AUTOSTART_SET_FN`
+  (`run_app` supplies `_set_autostart`); the checkbox renders from a live
+  registry read-back, so a refused write shows the truth.
+- **5. Share prompt** — `#share-modal`, fired from `hideEntry()` so it never
+  stacks on the entry screen. Asks only when a key is present and
+  `asked_here` is false (new `pulse_feed.feed_status` field: absent vs.
+  explicit-no were indistinguishable before). ✕ stores nothing.
+  `client_config.json` boards URL → `https://hero-companion.com/pulse/`.
+
+**▶ THE ONE STEP LEFT, and it is Joel's look:** run
+`set HC_WINDOW=1` then `python run_app.py` (or the desktop shortcut with that
+env set). When he approves, flipping the default is one line — make `_WINDOW`
+default true — and then **DELETE** `_run_tray`, the pystray spec entries, and
+`tools/test_tray_first_run_notice.py`. They are deliberately still alive until
+he has seen the window, so the flag-off path is never a no-UI app.
+
+### The original brief (kept for the detail)
 
 ## ▶ THE ACTIVE BATCH: DESKTOP APP (approved, NOT started)
 

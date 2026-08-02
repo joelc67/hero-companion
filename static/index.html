@@ -211,7 +211,7 @@
       <h1 id="app-title"><span id="app-glyph">🦸</span> <span id="app-name">Hero Companion</span>
         <span class="app-tag muted">your City of Heroes sidekick</span>
         <button id="app-ver" class="muted" type="button" hidden
-          title="About Hero Companion: what the version numbers mean"></button>
+          title="About &amp; Settings: what the version numbers mean, startup and update options"></button>
         <span id="db-version" class="muted"></span></h1>
       <div class="legend">
         <span id="autosave-ind" class="muted small" title="Auto-saves in the background when something changes"></span>
@@ -558,10 +558,26 @@
   <div id="about-modal" class="modal hidden">
     <div class="modal-box">
       <div class="modal-head">
-        <strong>About Hero Companion</strong>
+        <strong>About &amp; Settings</strong>
         <button id="about-close">✕</button>
       </div>
       <div id="about-body" class="about-body"></div>
+    </div>
+  </div>
+
+  <!-- Pulse Boards share prompt: asked ONCE per install, at launch, and only in
+       builds that actually carry an upload key. The specifics are spelled out
+       (being vague about this is what started the whole forum thread) with the
+       server's own terms text underneath, so the summary can never drift from
+       the agreement. Closing stores NOTHING — closing is not a decision; only
+       the two buttons are answers, and both are reversible in the Play Log tab. -->
+  <div id="share-modal" class="modal hidden">
+    <div class="modal-box">
+      <div class="modal-head">
+        <strong>📡 Share your play data with the Pulse Boards?</strong>
+        <button id="share-close">✕</button>
+      </div>
+      <div id="share-body" class="about-body"></div>
     </div>
   </div>
 

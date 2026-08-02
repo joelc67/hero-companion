@@ -34,7 +34,11 @@ hiddenimports = [
     "leveling_schedule", "learn", "proc_pass", "mids_export", "mids_import",
     "mids_powercust", "ingame_import", "ai_build", "claude_bridge", "pulse_feed",
     "requests",
-    "pystray", "pystray._win32",           # tray icon backend
+    "pystray", "pystray._win32",           # tray icon backend (goes with the tray)
+    # Native window (HC_WINDOW=1): pywebview drives the WebView2 runtime that
+    # already ships with Windows 10/11, so nothing extra installs on the user's
+    # machine. clr_loader/pythonnet are how the Windows backend is reached.
+    "webview", "webview.platforms.edgechromium", "clr_loader", "pythonnet",
 ]
 
 a = Analysis(

@@ -1,5 +1,31 @@
 # Hero Companion — What's New
 
+## Unreleased
+
+- **Hero Companion is becoming a real desktop window.** Instead of opening a
+  browser tab and leaving an icon down by your clock, it opens in its own
+  window, and closing that window closes the app. Nothing extra installs: it
+  uses the web view that already ships with Windows 10 and 11. This build has
+  it behind a switch (`HC_WINDOW=1`) so it can be looked at before it becomes
+  the normal way the app starts.
+
+- **The update check now runs when the app starts.** It compares version
+  numbers against the releases page and tells you only when there is something
+  newer. Nothing about you or your builds is sent, and you can turn it off
+  under About & Settings.
+
+- **Startup and update settings live in the app.** "Start Hero Companion when
+  I sign in to Windows" used to be reachable only from the tray icon's menu.
+  It is now in About & Settings, next to the update-check switch, where it can
+  still be found once the tray icon is gone.
+
+- **You are asked, once, whether to share your play data with the Pulse
+  Boards.** The prompt spells out exactly what is captured, what leaves your
+  machine, what is never read, and what the public board shows, with a link to
+  the boards themselves. Sharing stays off unless you say yes, either answer is
+  remembered, and both are reversible from the Play Log tab. Closing the prompt
+  answers nothing.
+
 ## 0.12.30 — 2026-07-31 — Accuracy pass
 
 Game data is unchanged from 0.12.26 (Homecoming 2026.1.1242). The optimizer's
