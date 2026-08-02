@@ -134,13 +134,7 @@ function showEntry() {
   // link still starts it, so saying no is never a door closing.
   if (typeof maybeOfferTour === "function") maybeOfferTour();
 }
-function hideEntry() {
-  $("entry-overlay").classList.add("hidden");
-  // The share prompt waits for the entry screen to clear so two overlays never
-  // stack. It answers itself out (asked_here) after the first time, so this is a
-  // no-op on every launch after the one that asks.
-  if (typeof maybeAskShare === "function") maybeAskShare();
-}
+function hideEntry() { $("entry-overlay").classList.add("hidden"); }
 
 // ---- Save / resume: a from-scratch character is weeks of real play ----
 let CURRENT_SAVE = null;   // {id, name} once saved/loaded, so re-saves update in place
@@ -2669,6 +2663,8 @@ async function loadMeta() {
       ` <span id="dev-badge" title="Development copy running from source (port ${location.port || 80}) — the installed app is separate">DEV</span>`);
   }
   initUpdateFlow();
+  // At launch, over the opening menu, before the user has started anything.
+  maybeAskShare();
 }
 
 // ── About dialog (header version click, UX item 2026-07-16) ─────────────────
@@ -3521,19 +3517,29 @@ window.feedToggle = async function (on) {
 };
 
 // ── The launch share prompt (Joel, 2026-08-02) ──────────────────────────────
-// Asked ONCE per install, and only where it could actually do anything: a build
-// with an upload key, on a machine that has never answered here (asked_here).
-// The summary below is the terms in plain English — the full terms text ships
-// underneath it, straight from the server, so the two can never drift apart.
-// Fires from hideEntry() rather than at page load, so it never lands on top of
-// the entry screen; the very first thing it can interrupt is an empty app.
+// Asked at LAUNCH, over the opening menu, and only where it could do anything:
+// a build with an upload key, on a machine that has never answered (asked_here).
+// The summary is the terms in plain English; the full terms ship underneath it
+// straight from the server, so the two can never drift apart.
+//
+// ⚠⚠ IT FIRES ONCE PER RUN, FROM loadMeta — NEVER FROM hideEntry (Joel,
+// 2026-08-02: "when I load it a new pop-up appears… a similar partial
+// navigation occurs picking other menu options"). hideEntry runs on EVERY entry
+// path — load a character, start from scratch, new 50, import — so hooking it
+// meant the consent question ambushed the first meaningful action every single
+// time, and ✕ deliberately stores nothing, so it came straight back on the next
+// one. A launch prompt belongs at launch, before anything is in progress; the
+// per-run guard is what keeps "at launch" from meaning "at every transition".
+let _SHARE_ASKED_THIS_RUN = false;
 async function maybeAskShare() {
+  if (_SHARE_ASKED_THIS_RUN) return;
   if (!$("share-modal") || !$("share-modal").classList.contains("hidden")) return;
   const st = await api("/gamelog/feed").catch(() => null);
   if (!st || !st.ok || !st.key_present || st.asked_here) return;
   const url = ((META && META.urls) || {}).pulse_boards || "";
   const boards = url
     ? `<a href="${escHtml(url)}" target="_blank" rel="noopener">Pulse Boards</a>` : "Pulse Boards";
+  _SHARE_ASKED_THIS_RUN = true;
   $("share-body").innerHTML = `
     <p>Hero Companion can feed the live ${boards} from what your game log already
     records. It is off until you say yes, and nothing has been sent so far.</p>

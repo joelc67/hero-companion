@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 36          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 38          # coverage denominator — hard-fail if a check silently skips
 
 
 def check(name, ok, detail=""):
@@ -158,9 +158,22 @@ def main():
 
     # ── 5. THE SHARE PROMPT ─────────────────────────────────────────────────
     check("the prompt exists in the page", 'id="share-modal"' in index and 'id="share-body"' in index)
-    check("it waits for the entry screen to clear (no stacked overlays)",
-          "maybeAskShare()" in app_js[app_js.find("function hideEntry"):
-                                      app_js.find("function hideEntry") + 400])
+    # ⚠ It fired from hideEntry() at first, which runs on EVERY entry path — so the
+    # consent question ambushed the first meaningful action every time, and ✕ stores
+    # nothing by design, so it came right back on the next one. Joel: "when I load it
+    # a new pop-up appears… a similar partial navigation occurs picking other menu
+    # options." All three checks below are that bug, pinned.
+    check("it fires at LAUNCH, from loadMeta", "maybeAskShare();" in
+          app_js[app_js.find("  initUpdateFlow();"):app_js.find("  initUpdateFlow();") + 200])
+    check("NEGATIVE CONTROL: hideEntry does NOT trigger it",
+          "maybeAskShare" not in app_js[app_js.find("function hideEntry"):
+                                        app_js.find("function hideEntry") + 300],
+          "hideEntry runs on load / scratch / new-50 / import — every one would ambush")
+    _ask = app_js[app_js.find("async function maybeAskShare"):app_js.find("window.shareAnswer")]
+    check("...and it can only ask ONCE per run",
+          "if (_SHARE_ASKED_THIS_RUN) return;" in _ask
+          and "_SHARE_ASKED_THIS_RUN = true;" in _ask,
+          "the guard is what keeps 'at launch' from meaning 'at every transition'")
     check("NEGATIVE CONTROL: ✕ stores nothing — only the buttons answer",
           "shareAnswer" not in app_js[app_js.find('$("share-close")'):
                                       app_js.find('$("share-close")') + 200],
