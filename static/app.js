@@ -2220,6 +2220,39 @@ function rolesFromSets() {
   return out;
 }
 
+// ── WHAT EACH ROLE ACTUALLY CHASES (field report, BasiliskXVIII 2026-08-01:
+// "Roles in the build assistant are not especially well defined"). Every line
+// below is DERIVED from ai_build.ROLE_PRESETS - the floors and focus quoted are
+// the numbers the solver really uses, not marketing. If a preset changes, change
+// the sentence with it.
+const ROLE_HELP = {
+  controller: "Lock enemies down first, then weaken what you locked. Chases high recharge (floor 100%) so controls come back fast, plus enough recovery to keep casting.",
+  debuffer:   "Weakening the enemy is the job: resistance, defence, damage, speed. Chases recharge (floor 90%) so debuffs stay up, with control as its second job.",
+  buffer:     "Make the team stronger, and weaken the enemy where your sets allow. Chases recharge (floor 90%) and steady endurance (recovery 50%).",
+  healer:     "Keep people standing. Chases regeneration (floor 150%) and recovery first, recharge second.",
+  damage:     "Kill things. Chases recharge (floor 100%) so the attack chain has no gaps, with enough survival to stay upright.",
+  tank:       "Stay alive and hold aggro. Pushes resistance toward your archetype's cap and adds max HP; nothing else competes.",
+  mixed:      "No specialisation on purpose. Just a safety floor (recharge 70%, recovery 40%) and survival, leaving the solver free to balance instead of chasing one number. Never treated as off-role on any archetype.",
+};
+// A set that does two jobs (Sonic Resonance buffs AND debuffs) is not a problem:
+// pick the job you want to lead with, and the focus split below lets you say how
+// much of each. Buffer already chases debuffing as its second role, and Debuffer
+// already chases control as its second.
+function renderRoleHelp() {
+  const sel = $("preset-role");
+  if (!sel) return;
+  let box = $("role-help");
+  if (!box) {
+    box = document.createElement("div");
+    box.id = "role-help";
+    box.className = "muted small";
+    box.style.cssText = "margin:4px 0 2px;";
+    (sel.closest("label") || sel).insertAdjacentElement("afterend", box);
+  }
+  const r = ({ control: "controller", support: "buffer" })[sel.value] || sel.value;
+  box.textContent = ROLE_HELP[r] || "";
+}
+
 function updateOffRoleWarning() {
   const roleSel = $("preset-role");
   if (!roleSel) return;
@@ -2235,6 +2268,11 @@ function updateOffRoleWarning() {
   const role = ({ control: "controller", support: "buffer" })[roleSel.value] || roleSel.value;
   const nat = NATURAL_ROLES[at] || [];
   warn.textContent = ""; warn.style.color = "";
+  // ⚠ "mixed" is the ABSENCE of specialisation, not a job an archetype can be
+  // unsuited for, so it is never off-role. The server has said exactly this
+  // since _off_role_notice was written; the client just never asked, so every
+  // Generalist pick earned a warning it could never clear (field report).
+  if (role === "mixed") return;
   if (!(at && role && nat.length) || nat.includes(role)) return;
   const atName = (($("sel-archetype") || {}).selectedOptions || [{}])[0].textContent
     || "this archetype";
@@ -2257,7 +2295,7 @@ function updateOffRoleWarning() {
   }
 }
 
-function refreshRoleUI() { updateOffRoleWarning(); renderRoleFocusSplit(); }
+function refreshRoleUI() { renderRoleHelp(); updateOffRoleWarning(); renderRoleFocusSplit(); }
 
 
 // ── ALIGNMENT (Hero Companion reskin): the app has an alignment like any CoH character.
