@@ -851,11 +851,11 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .slot-plan { display: inline-flex; align-items: center; gap: 4px; margin: 3px 0 0;
   padding: 1px 7px 1px 5px; border-radius: 10px; font-size: 11px; font-weight: 600;
   cursor: help; max-width: 100%; background: rgba(127,127,127,.12);
-  border: 1px solid var(--border); color: var(--muted); }
+  border: 1px solid var(--border); color: #8d9aab; }
 .slot-plan .sp-ico { font-size: 11px; line-height: 1; }
 .slot-plan .sp-why { opacity: .55; font-weight: 400; }
-.slot-plan-proc-bomb   { background: rgba(230, 120, 40, .14);  border-color: rgba(230,120,40,.5);  color: #c8631a; }
-.slot-plan-committed   { background: rgba(60, 160, 90, .13);   border-color: rgba(60,160,90,.45);  color: #2f8a53; }
+.slot-plan-proc-bomb   { background: rgba(230, 120, 40, .14);  border-color: rgba(230,120,40,.5);  color: #d68c56; }
+.slot-plan-committed   { background: rgba(60, 160, 90, .13);   border-color: rgba(60,160,90,.45);  color: #67aa81; }
 /* PARTIAL SET (design review 2026-07-31). It had no rule at all, so it fell
    through to the neutral fallback — the same treatment as "nothing worth
    explaining" — while a full set got the green. But a partial set is a
@@ -864,11 +864,11 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
    family as the full set, dialled down: "this kind of thing, fewer pieces",
    not "unremarkable". The icon differs too, so the two never rely on colour
    alone to be told apart. */
-.slot-plan-partial-set { background: rgba(60, 160, 90, .07);   border-color: rgba(60,160,90,.28); color: #4f9e72; }
-.slot-plan-frankenslot { background: rgba(150, 110, 200, .14); border-color: rgba(150,110,200,.5); color: #7a54b0; }
+.slot-plan-partial-set { background: rgba(60, 160, 90, .07);   border-color: rgba(60,160,90,.28); color: #5aa47a; }
+.slot-plan-frankenslot { background: rgba(150, 110, 200, .14); border-color: rgba(150,110,200,.5); color: #a990cc; }
 .slot-plan-global-mules,
 .slot-plan-global-host,
-.slot-plan-mixed       { background: rgba(70, 140, 200, .13);  border-color: rgba(70,140,200,.45); color: #2f76ad; }
+.slot-plan-mixed       { background: rgba(70, 140, 200, .13);  border-color: rgba(70,140,200,.45); color: #7fabd0; }
 .powers-wall .slot-plan { margin-top: auto; }   /* sit at the brick's bottom edge */
 /* The whole chip is the click target (not just the "?") — real affordance. */
 .slot-plan-click { cursor: pointer; }
@@ -2213,3 +2213,20 @@ body { overflow: hidden; }
 .subpanel-fold[open] > summary::before { content: "BE "; }
 .subpanel-fold > summary:hover { color: var(--ink); }
 .fold-body { padding-top: 10px; }
+
+/* ⚠ SLOT-PLAN LABEL CONTRAST (field report: "low-contrast greys on light blues,
+   especially where the text gets quite small"). These are 11px, so the floor is
+   4.5:1. MEASURED against the real COMPOSITED backdrop - the chips sit on
+   translucent tinted backgrounds, and comparing text to the overlay instead of
+   the composite reported nonsense (ratios near 1.0, i.e. invisible text, which
+   these plainly are not). Each colour is lifted toward white by the SMALLEST
+   amount that clears 4.5, so the hue that carries the meaning survives:
+     Frankenslot  #7a54b0 -> #a990cc   2.23 -> 4.50
+     Global host  #2f76ad -> #7fabd0   2.57 -> 4.80  (minimum lift read
+                  4.48 on a differently-nested card - margin added, because a
+                  value sitting exactly on 4.5 fails as soon as context shifts)
+     Full set     #2f8a53 -> #67aa81   2.90 -> 4.53
+     Proc bomb    #c8631a -> #d68c56   3.10 -> 4.56
+     Partial set  #4f9e72 -> #5aa47a   4.18 -> 4.54
+     Base slot    --muted -> #8d9aab   4.40 -> 4.52  (scoped to .slot-plan, so
+                  global --muted is untouched)                              */

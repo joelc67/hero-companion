@@ -356,53 +356,13 @@
 
     <!-- RIGHT RAIL: live stats + AI controls in ONE sticky column; the page scrolls under it -->
     <aside class="rail">
-    <section id="stats" class="panel">
-      <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span><button class="tour-help" onclick="startTour('stats')" aria-label="Explain this section" title="Explain this section">?</button></h2>
-      <div class="cap-chips">
-        <span class="chip cap-def">Defense soft cap 45%</span>
-        <span class="chip cap-res" id="res-cap-chip">Resistance hard cap 75%</span>
-      </div>
-
-      <label class="incarnate-toggle" title="Fold incarnate buffs (Destiny/Hybrid, e.g. Barrier) into the totals to match Mids' fully-buffed display.">
-        <input type="checkbox" id="incarnate-peak-toggle">
-        Include incarnates (peak)
-      </label>
-      <label class="incarnate-toggle" title="Add the 3 inspiration Amplifiers (Defense +5% Def/+7.5% Res, Offense +ToHit/+Rech, Survival +Regen/+Recovery) and permanent accolades (+Max HP/End). Amplifiers are temporary buyable buffs.">
-        <input type="checkbox" id="external-toggle">
-        Include accolades + amplifiers
-      </label>
-      <label class="incarnate-toggle" title="PvP arena rules: activates PvP-only set bonuses and PvP effect variants, and disables PvE-only ones — same as Mids' PvP mode. The Solve/Generate buttons will also build with PvP set bonuses. (Live-combat diminishing returns are a gameplay mechanic, not a static build stat, so they're not modeled — Mids doesn't either.)">
-        <input type="checkbox" id="pvp-toggle">
-        PvP build mode
-      </label>
-      <label class="incarnate-toggle" title="Combat suppression: powers like Stealth lose part of their defense the moment you attack, get hit, or take damage. This shows your totals as they are mid-fight — same as Mids' Options > Effects and Maths > Suppression (attacked / hit / attacking / damaged). Display only: Solve optimizes the same numbers either way.">
-        <input type="checkbox" id="suppression-toggle">
-        In-combat view (suppression)
-      </label>
-
-      <!-- warn-but-allow banner: a leveling character previewing endgame content
-           it hasn't unlocked yet (epics <35, incarnates <50). Populated by
-           renderEndgameWarnings(); hidden otherwise. -->
-      <div id="endgame-warn" class="endgame-warn hidden"></div>
-
-      <h3>Defense <span class="muted small">soft cap 45%</span></h3>
-      <div id="defense-bars" class="bars"></div>
-
-      <h3>Resistance <span class="muted small" id="res-cap-label">hard cap 75%</span></h3>
-      <div id="resistance-bars" class="bars"></div>
-
-      <h3>Other</h3>
-      <div id="other-stats" class="other"></div>
-
-      <div id="offense-section" class="hidden">
-        <h3>Offense <span class="muted small">damage / debuffs / buffs</span></h3>
-        <div id="offense-stats" class="offense"></div>
-      </div>
-
-      <div id="validation" class="validation"></div>
-      <p id="stats-note" class="muted small"></p>
-    </section>
-
+    <!-- ⚠ THE ASSISTANT SITS ABOVE THE STATS PANEL ON PURPOSE (field report,
+         BasiliskXVIII 2026-08-01: "having to scrounge around in a bottom corner
+         to find it when loading an existing build seems counterproductive").
+         MEASURED: it used to start 3,206px down a 4,124px page - 78% of the way
+         to the bottom - because the stats panel above it is 2,153px tall. The
+         assistant is the thing that DOES something; stats are what you read
+         after. Order follows that. -->
     <!-- RIGHT: AI Assistant -->
     <section id="assistant" class="panel">
       <!-- The Need help? button sits OUTSIDE this h2 on purpose: app.js rewrites
@@ -528,6 +488,54 @@
            visibility must never depend on the AI seam. -->
       <div id="ai-response" class="ai-response muted"></div>
     </section>
+
+    <section id="stats" class="panel">
+      <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span><button class="tour-help" onclick="startTour('stats')" aria-label="Explain this section" title="Explain this section">?</button></h2>
+      <div class="cap-chips">
+        <span class="chip cap-def">Defense soft cap 45%</span>
+        <span class="chip cap-res" id="res-cap-chip">Resistance hard cap 75%</span>
+      </div>
+
+      <label class="incarnate-toggle" title="Fold incarnate buffs (Destiny/Hybrid, e.g. Barrier) into the totals to match Mids' fully-buffed display.">
+        <input type="checkbox" id="incarnate-peak-toggle">
+        Include incarnates (peak)
+      </label>
+      <label class="incarnate-toggle" title="Add the 3 inspiration Amplifiers (Defense +5% Def/+7.5% Res, Offense +ToHit/+Rech, Survival +Regen/+Recovery) and permanent accolades (+Max HP/End). Amplifiers are temporary buyable buffs.">
+        <input type="checkbox" id="external-toggle">
+        Include accolades + amplifiers
+      </label>
+      <label class="incarnate-toggle" title="PvP arena rules: activates PvP-only set bonuses and PvP effect variants, and disables PvE-only ones — same as Mids' PvP mode. The Solve/Generate buttons will also build with PvP set bonuses. (Live-combat diminishing returns are a gameplay mechanic, not a static build stat, so they're not modeled — Mids doesn't either.)">
+        <input type="checkbox" id="pvp-toggle">
+        PvP build mode
+      </label>
+      <label class="incarnate-toggle" title="Combat suppression: powers like Stealth lose part of their defense the moment you attack, get hit, or take damage. This shows your totals as they are mid-fight — same as Mids' Options > Effects and Maths > Suppression (attacked / hit / attacking / damaged). Display only: Solve optimizes the same numbers either way.">
+        <input type="checkbox" id="suppression-toggle">
+        In-combat view (suppression)
+      </label>
+
+      <!-- warn-but-allow banner: a leveling character previewing endgame content
+           it hasn't unlocked yet (epics <35, incarnates <50). Populated by
+           renderEndgameWarnings(); hidden otherwise. -->
+      <div id="endgame-warn" class="endgame-warn hidden"></div>
+
+      <h3>Defense <span class="muted small">soft cap 45%</span></h3>
+      <div id="defense-bars" class="bars"></div>
+
+      <h3>Resistance <span class="muted small" id="res-cap-label">hard cap 75%</span></h3>
+      <div id="resistance-bars" class="bars"></div>
+
+      <h3>Other</h3>
+      <div id="other-stats" class="other"></div>
+
+      <div id="offense-section" class="hidden">
+        <h3>Offense <span class="muted small">damage / debuffs / buffs</span></h3>
+        <div id="offense-stats" class="offense"></div>
+      </div>
+
+      <div id="validation" class="validation"></div>
+      <p id="stats-note" class="muted small"></p>
+    </section>
+
     </aside>
   </main>
 
