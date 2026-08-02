@@ -1,3 +1,12 @@
+/* ⚠ TYPE LADDER (field report, BasiliskXVIII 2026-08-01: "Text size is kind of
+   all over the place"). Measured: the stylesheet carried EIGHTEEN distinct font
+   sizes, including 12.5 / 11.5 / 13.5 / 10.5 / 9.5 px half-steps and text as
+   small as 8px. The half-steps were drift, not design, and nothing under 10px
+   is comfortably readable. Snapped to this ladder - use it for new rules:
+     10  micro labels (slot levels, badges)   14  section text
+     11  secondary / muted detail             15  panel headings
+     12  body text (the default)              16+ page headings
+     13  emphasised body                                          */
 :root {
   --bg: #11151c;
   --panel: #1a212c;
@@ -86,16 +95,16 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
 .ovc-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin: 3px 0; }
 .ovc-row .ov-group { min-width: 34px; margin: 0; }
 .ovc-head { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--muted); margin-bottom: 4px; }
-.ovc-line { font-size: 11.5px; line-height: 1.5; }
+.ovc-line { font-size: 11px; line-height: 1.5; }
 .ovc-clip { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ovc-line b { color: var(--accent); }
 .ovc-dim { color: var(--muted); }
-.ov-group { color: var(--muted); font-weight: 700; font-size: 9.5px; letter-spacing: .06em; margin: 0 3px 0 8px; }
+.ov-group { color: var(--muted); font-weight: 700; font-size: 10px; letter-spacing: .06em; margin: 0 3px 0 8px; }
 .ov-group:first-child { margin-left: 0; }
 .ov-cell { display: inline-flex; flex-direction: column; align-items: center; min-width: 34px;
   padding: 1px 5px; border-radius: 5px; background: var(--panel2); line-height: 1.15; }
 .ov-num { font-weight: 700; font-size: 12px; }
-.ov-lab { font-size: 8.5px; color: var(--muted); letter-spacing: .04em; }
+.ov-lab { font-size: 10px; color: var(--muted); letter-spacing: .04em; }
 .ov-good .ov-num { color: var(--def); }
 .ov-mid .ov-num { color: var(--warn); }
 .ov-dim .ov-num { color: var(--muted); }
@@ -213,15 +222,15 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 @media (max-width: 1100px) { .info-course { grid-template-columns: 1fr; } }
 .info-course .overview-card { margin: 0; }
 .ov-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-.ov-table th { font-size: 9.5px; color: var(--muted); font-weight: 700; letter-spacing: .05em;
+.ov-table th { font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: .05em;
   text-align: center; padding: 1px 2px; }
 .ov-table th:first-child { text-align: left; }
-.ov-table td { text-align: center; font-weight: 700; font-size: 12.5px; padding: 1px 2px; }
+.ov-table td { text-align: center; font-weight: 700; font-size: 12px; padding: 1px 2px; }
 .ov-table td.ov-good, .ov-buildline b.ov-good { color: var(--def); }
 .ov-table td.ov-mid, .ov-buildline b.ov-mid { color: var(--warn); }
 .ov-table td.ov-dim, .ov-buildline b.ov-dim { color: var(--muted); font-weight: 400; }
 .ov-buildline { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 6px;
-  font-size: 11.5px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 5px; }
+  font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 5px; }
 .ov-buildline b { color: var(--ink); }
 .add-powers-row { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px;
   padding-top: 8px; border-top: 1px solid var(--border); }
@@ -243,28 +252,28 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .power-card .pname { font-weight: 600; font-size: 12px; white-space: normal;
   overflow: visible; overflow-wrap: anywhere; min-width: 0; line-height: 1.25; }
 .power-card .pick-lvl {
-  font-weight: 600; font-size: 9.5px; color: var(--accent);
+  font-weight: 600; font-size: 10px; color: var(--accent);
   border: 1px solid var(--accent); border-radius: 8px;
   padding: 0 4px; white-space: nowrap; flex: none;
 }
 .pc-tools { display: flex; align-items: center; gap: 4px; margin-left: auto; flex: none; }
 .pc-tools .include-toggle { margin: 0 3px 0 0; font-size: 11px; gap: 2px; }
-.power-card .cats { font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+.power-card .cats { font-size: 10px; color: var(--muted); margin-top: 2px; }
 .slot-row { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
 .slot {
   width: 27px; height: 27px; border-radius: 50%;
   background: #141b25; border: 2px solid var(--border);
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: 9px; color: var(--muted); position: relative;
+  cursor: pointer; font-size: 10px; color: var(--muted); position: relative;
   margin-bottom: 8px;                  /* room for the level tag below */
 }
 .slot:hover { border-color: var(--accent); }
 .slot.filled { border-color: var(--def); color: var(--ink); background: #1d2a22; }
 .slot.filled.unique { border-color: var(--warn); }
 .slot img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
-.slot .slot-abbr { font-size: 9px; }
+.slot .slot-abbr { font-size: 10px; }
 .slot .slot-lvl { position: absolute; bottom: -9px; left: 50%; transform: translateX(-50%);
-  font-size: 8px; color: var(--muted); line-height: 1; pointer-events: none; }
+  font-size: 10px; color: var(--muted); line-height: 1; pointer-events: none; }
 .slot-count { display:flex; align-items:center; gap:4px; }
 .slot-count button { width: 24px; height: 24px; padding: 0; border-radius: 4px; }
 .include-toggle { display: flex; align-items: center; gap: 5px; margin-top: 7px; font-size: 11px; color: var(--muted); cursor: pointer; }
@@ -329,7 +338,23 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .remove-power:hover, .remove-power:focus-visible {
   color: var(--bad); opacity: 1; background: color-mix(in srgb, var(--bad) 12%, transparent); }
 .add-power select { margin-top: 6px; }
-.export-btn { margin-top: 14px; background: var(--res); color: #1a1207; }
+/* ⚠ WAS a filled-orange button at full panel width, which made "export to
+   Mids" read as the most important thing you could do with a build (field
+   report, BasiliskXVIII 2026-08-01: "suggests it's the most important thing to
+   do with a build, over something like the build assistant"). Fair hit. It is a
+   handoff to another tool, not the goal of this one. Now a normal-width
+   outlined control: still easy to find, no longer shouting over the build.
+   background AND color restated together - the shared button rule pairs
+   near-black text with a light fill, so overriding one alone wrecks contrast. */
+.export-btn {
+  margin-top: 14px; width: auto;
+  background: transparent; color: var(--ink);
+  border: 1px solid var(--res);
+}
+.export-btn:hover {
+  background: color-mix(in srgb, var(--res) 18%, transparent);
+  color: var(--ink); border-color: var(--res);
+}
 
 /* Stats bars — the dashboard payoff. Taller pill tracks, gradient fills, and a
    green glow when a stat reaches its cap so hitting the softcap FEELS like a win. */
@@ -396,7 +421,7 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 
 /* Leveling stepper — respec-reassurance banner + "your call" alternative picker */
 .lvl-reassure {
-  font-size: 11.5px; line-height: 1.4; color: var(--muted);
+  font-size: 11px; line-height: 1.4; color: var(--muted);
   background: rgba(90, 169, 230, .07); border: 1px solid var(--border);
   border-radius: 6px; padding: 6px 9px; margin-bottom: 8px;
 }
@@ -425,7 +450,7 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 /* Level-by-level walk — power picks vs slot grants vs milestones */
 .lvl-num-big { font-size: 15px; font-weight: 700; color: var(--accent); }
 .lvl-pick { margin: 8px 0; padding: 8px 11px; background: var(--panel2); border-radius: 7px; border-left: 3px solid var(--accent); }
-.lvl-pick-lead { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.lvl-pick-lead { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 .lvl-slots { margin: 8px 0; padding: 8px 11px; background: var(--panel2); border-radius: 7px; border-left: 3px solid var(--def); }
 .lvl-enh { margin-top: 4px; }
 .lvl-milestone { margin: 8px 0; padding: 7px 10px; font-size: 12px; line-height: 1.4; background: rgba(217, 164, 65, .10); border: 1px solid var(--warn); border-radius: 6px; }
@@ -442,11 +467,11 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .lvl-sync-row { margin-top: 6px; }
 .lvl-sync-set { display: inline-flex; align-items: center; gap: 6px; }
 .lvl-sync-input { width: 56px; padding: 3px 6px; text-align: center; }
-.lvl-sync-warn { margin-top: 7px; padding-top: 7px; border-top: 1px dashed var(--warn); color: var(--warn); font-size: 11.5px; line-height: 1.5; }
+.lvl-sync-warn { margin-top: 7px; padding-top: 7px; border-top: 1px dashed var(--warn); color: var(--warn); font-size: 11px; line-height: 1.5; }
 .lvl-sync-exemplar { margin-top: 6px; color: var(--muted); font-size: 11px; line-height: 1.5; }
 
 /* Continue-screen status pill — leveling-in-progress vs finished level-50 kit */
-.save-pill { font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 999px; vertical-align: middle; white-space: nowrap; }
+.save-pill { font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: 999px; vertical-align: middle; white-space: nowrap; }
 .save-pill.leveling { color: var(--warn); background: rgba(217, 164, 65, .12); border: 1px solid var(--warn); }
 .save-pill.done { color: var(--def); background: rgba(90, 169, 230, .10); border: 1px solid var(--border); }
 
@@ -468,7 +493,7 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .conv-tag.standard { background: rgba(140, 150, 165, .15); color: var(--muted); }
 .conv-head { margin-bottom: 2px; }
 .conv-headline { font-size: 12px; color: var(--ink); margin: 2px 0 4px; }
-.conv-steps { margin: 0; padding-left: 18px; font-size: 11.5px; color: var(--muted); line-height: 1.5; }
+.conv-steps { margin: 0; padding-left: 18px; font-size: 11px; color: var(--muted); line-height: 1.5; }
 .conv-steps li { margin: 2px 0; }
 /* Interactive converter tool (want / have) */
 .conv-tool { margin: 4px 0 12px; padding: 10px; background: var(--panel2); border: 1px solid var(--border); border-radius: 8px; }
@@ -494,13 +519,13 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .offense .o-head .dps { color: var(--accent); font-weight: 700; font-size: 14px; }
 .offense .o-sub { margin-top: 7px; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; opacity: .8; }
 .offense .o-atks { display: flex; flex-direction: column; gap: 2px; margin: 3px 0 2px; padding-left: 6px; border-left: 2px solid var(--border); }
-.offense .o-atk { display: flex; justify-content: space-between; gap: 8px; font-size: 11.5px; }
+.offense .o-atk { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; }
 .offense .o-atk > span:first-child { white-space: nowrap; }
 .offense .deb { color: var(--bad); }
 .offense .buf { color: var(--good, #5fbf6f); }
 .io-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .import-btn { background: var(--panel); border: 1px solid var(--accent); color: var(--text); }
-.import-report { margin-top: 10px; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); font-size: 12.5px; }
+.import-report { margin-top: 10px; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); font-size: 12px; }
 .import-report.hidden { display: none; }
 .import-head { display: flex; flex-direction: column; gap: 2px; margin-bottom: 7px; }
 .crit-list { list-style: none; padding: 0; margin: 0 0 7px; display: flex; flex-direction: column; gap: 3px; }
@@ -519,7 +544,7 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .cos-slots { display: flex; flex-direction: column; gap: 4px; max-height: 320px; overflow-y: auto; }
 .cos-slot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12px; padding: 3px 0; border-bottom: 1px solid var(--border); }
 .cos-rn { min-width: 140px; font-weight: 500; }
-.cos-slot select { flex: 1; min-width: 160px; font-size: 11.5px; }
+.cos-slot select { flex: 1; min-width: 160px; font-size: 11px; }
 .cos-slot input[type=color] { width: 26px; height: 20px; padding: 0; border: 1px solid var(--border); }
 .cos-choice { display: flex; flex-direction: column; gap: 6px; margin: 4px 0 10px; }
 .cos-choice textarea { width: 100%; font-size: 12px; resize: vertical; }
@@ -539,7 +564,7 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .cos-3d.hidden { display: none; }
 .cos-3d canvas { border: 1px solid var(--border); border-radius: 8px; background: #0d1420; cursor: grab; touch-action: none; }
 .cos-3d canvas:active { cursor: grabbing; }
-.cos-offer { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; padding: 8px; border: 1px solid var(--accent); border-radius: 6px; background: var(--panel); font-size: 12.5px; }
+.cos-offer { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; padding: 8px; border: 1px solid var(--accent); border-radius: 6px; background: var(--panel); font-size: 12px; }
 .cos-offer span { flex: 1; }
 
 .validation { margin-top: 12px; }
@@ -576,7 +601,7 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .preserve-toggle { display: flex; align-items: flex-start; gap: 6px; font-size: 12px;
   color: var(--ink); cursor: pointer; margin: 4px 0 6px; user-select: none; }
 .preserve-toggle input { width: auto; margin: 1px 0 0; }
-.preserve-toggle.keeplayout { margin-left: 16px; font-size: 11.5px; color: var(--muted); }
+.preserve-toggle.keeplayout { margin-left: 16px; font-size: 11px; color: var(--muted); }
 /* Clear in-progress state on a button itself (so a slow action never looks dead). */
 .btn-working { animation: tcpulse 1.05s ease-in-out infinite; cursor: progress; }
 .perk-pick { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 8px; }
@@ -615,7 +640,7 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .rt-delta.down { color: #e8896b; }
 .rt-maxed { color: var(--muted); font-style: italic; }
 
-.aoe-tag { font-size: 9px; font-weight: 700; letter-spacing: .04em; padding: 0 4px;
+.aoe-tag { font-size: 10px; font-weight: 700; letter-spacing: .04em; padding: 0 4px;
   margin-left: 4px; border-radius: 3px; vertical-align: middle;
   background: color-mix(in srgb, var(--accent) 30%, transparent); color: var(--accent); }
 
@@ -634,7 +659,7 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .tier-pick input { width: auto; margin: 0; }
 .gen-confirm { margin-top: 8px; padding: 9px; border: 1px solid var(--accent); border-radius: 6px; background: var(--panel); }
 .gen-confirm.hidden { display: none; }
-.gen-confirm p { margin: 0 0 7px; font-size: 12.5px; }
+.gen-confirm p { margin: 0 0 7px; font-size: 12px; }
 .confirm-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 9px; }
 .confirm-chips .chip { color: var(--def); border-color: var(--def); }
 .chip.removable { display: inline-flex; align-items: center; gap: 4px; }
@@ -698,7 +723,7 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
 .entry-go-quiet { color: var(--muted); font-weight: 400; font-size: 12px; }
 .ingame-found { margin: 8px 0; display: flex; flex-direction: column; gap: 4px; max-height: 180px; overflow-y: auto; }
 .ingame-found.hidden { display: none; }
-.ingame-file { text-align: left; background: var(--panel2); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 12.5px; color: var(--ink); }
+.ingame-file { text-align: left; background: var(--panel2); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; cursor: pointer; font-size: 12px; color: var(--ink); }
 .ingame-file:hover { border-color: var(--accent); }
 .ingame-root-row { display: flex; gap: 6px; margin: 6px 0; }
 .ingame-root-row input { flex: 1; font-size: 12px; }
@@ -710,7 +735,7 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 /* Startup update banner — sits above everything, including the entry overlay */
 .update-banner { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 100;
   background: var(--panel); border: 1px solid var(--accent); border-radius: 8px;
-  padding: 9px 14px; font-size: 12.5px; line-height: 1.5; box-shadow: 0 4px 18px #000a;
+  padding: 9px 14px; font-size: 12px; line-height: 1.5; box-shadow: 0 4px 18px #000a;
   max-width: min(92vw, 660px); }
 .update-banner.hidden { display: none; }
 .update-banner .linkbtn { margin-left: 10px; }
@@ -783,16 +808,16 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
   animation: wizpop .18s ease-out; }
 @keyframes wizpop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 .wiz-pop-title { font-weight: 600; font-size: 13px; margin-bottom: 4px; color: var(--accent); }
-.wiz-pop-text { font-size: 12.5px; line-height: 1.55; color: var(--ink); }
+.wiz-pop-text { font-size: 12px; line-height: 1.55; color: var(--ink); }
 .wiz-pop-x { position: absolute; top: 6px; right: 6px; background: none; border: none;
   color: var(--muted, #888); cursor: pointer; font-size: 13px; padding: 2px 6px; }
 .wiz-pop-x:hover { color: var(--ink); }
 .wiz-summary { margin-top: 10px; padding: 10px 12px; background: var(--bg);
   border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; }
 .wiz-sum-title { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
-.wiz-sum-text { font-size: 12.5px; line-height: 1.5; color: var(--ink); margin-bottom: 8px; }
+.wiz-sum-text { font-size: 12px; line-height: 1.5; color: var(--ink); margin-bottom: 8px; }
 .wiz-sum-tgts { display: flex; flex-wrap: wrap; gap: 6px; }
-.wiz-tgt { font-size: 11.5px; padding: 2px 9px; border: 1px solid var(--border);
+.wiz-tgt { font-size: 11px; padding: 2px 9px; border: 1px solid var(--border);
   border-radius: 10px; background: var(--panel2); color: var(--ink); white-space: nowrap; }
 /* Generic hide utility — was MISSING, so plain class="hidden" elements (wiz-discover,
    saves-panel, offense-section, import-file, order-out) never actually hid. !important so
@@ -884,7 +909,7 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
   background: rgba(90, 150, 220, .10); }
 .respec-trigger.rt-has-plan { border-color: rgba(230, 168, 23, .55); background: rgba(230, 168, 23, .10); }
 .respec-trigger .rt-open { flex: 1 1 auto; width: auto; display: flex; align-items: center; gap: 8px;
-  background: none; border: none; color: var(--ink); cursor: pointer; font-size: 12.5px;
+  background: none; border: none; color: var(--ink); cursor: pointer; font-size: 12px;
   font-weight: 600; padding: 8px 12px; text-align: left; }
 .respec-trigger .rt-open:hover { background: rgba(127,127,127,.08); }
 .respec-trigger .rt-ico { flex: none; }
@@ -899,7 +924,7 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .respec-modal-card { position: relative; max-width: 620px; width: 100%; max-height: 84vh; overflow-y: auto;
   background: var(--panel, #1b2333); border: 1px solid var(--border); border-radius: 10px;
   padding: 16px 18px; color: var(--ink); box-shadow: 0 12px 40px rgba(0,0,0,.5); line-height: 1.45;
-  font-size: 12.5px; }
+  font-size: 12px; }
 .respec-card, .respec-modal-card { }
 .respec-card .rc-head { display: flex; align-items: center; gap: 7px; }
 .respec-card .rc-ico { flex: none; }
@@ -955,7 +980,7 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .tray-row { margin-bottom: 12px; }
 .tray-label { font-size: 12px; color: var(--muted); margin-bottom: 5px; }
 .tray-slots { display: flex; flex-wrap: wrap; gap: 6px; }
-.tray-note { font-size: 11.5px; color: var(--muted); margin-top: 6px; line-height: 1.45;
+.tray-note { font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.45;
   border-left: 2px solid var(--border); padding-left: 8px; }
 .tray-row.tray-rot .tray-note { border-left-color: var(--accent); color: var(--ink); }
 .tray-slot { width: 74px; min-height: 56px; box-sizing: border-box; display: flex; flex-direction: column;
@@ -1050,7 +1075,7 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .tc-spin { animation: tcpulse 1.3s ease-in-out infinite; }
 @keyframes tcpulse { 0%,100% { opacity: 0.45; } 50% { opacity: 1; } }
 @media (max-width: 760px) { .tier-cards { grid-template-columns: 1fr; } }
-.piece.unique::after { content: "unique"; font-size: 9px; color: var(--warn); }
+.piece.unique::after { content: "unique"; font-size: 10px; color: var(--warn); }
 
 /* ---- Full-respec preview (import -> show what a respec does -> commit) ---- */
 .respec-preview-btn { margin-top: 6px; padding: 7px 12px; border: 1px solid var(--accent);
@@ -1157,7 +1182,7 @@ main, header, footer { position: relative; z-index: 1; }
   color: var(--ink); font: inherit; text-align: left;
 }
 .align-card b { display: block; font-size: 14px; }
-.align-card span { font-size: 11.5px; color: var(--muted); }
+.align-card span { font-size: 11px; color: var(--muted); }
 .align-card.hero.on { border-color: #ffd166; box-shadow: 0 0 12px #4da3ff44; }
 .align-card.villain.on { border-color: #ff5252; box-shadow: 0 0 12px #ff525244; }
 /* ── THE MIDDLE ALIGNMENTS ARE A THIRD THEME, not an accent on a side theme.
@@ -1230,8 +1255,8 @@ body.align-mid #alignment-btn { border-color: #6b5320; color: var(--mid-lit); }
   background: transparent; color: var(--ink); border: 1px solid transparent;
   font: inherit;
 }
-.align-menu-item b { display: block; font-size: 13.5px; font-weight: 600; }
-.align-menu-item span { font-size: 11.5px; color: var(--muted); }
+.align-menu-item b { display: block; font-size: 13px; font-weight: 600; }
+.align-menu-item span { font-size: 11px; color: var(--muted); }
 .align-menu-item:hover { background: var(--panel2); color: var(--ink); border-color: var(--border); }
 .align-menu-item.on { border-color: var(--accent); }
 .align-menu-item.al-vig.on, .align-menu-item.al-rogue.on { border-color: var(--mid); }
@@ -1300,7 +1325,7 @@ body { overflow: hidden; }
   display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap;
   border-bottom: 1px solid var(--border); padding-bottom: 5px; }
 .glc-fit { font-size: 11px; font-weight: 400; }
-.glc-line { font-size: 12.5px; line-height: 1.7; }
+.glc-line { font-size: 12px; line-height: 1.7; }
 .glc-line .up { color: var(--def); }
 .glc-line .dn { color: var(--bad); }
 .gl-table { width: 100%; font-size: 12px; border-collapse: collapse; }
@@ -1311,17 +1336,17 @@ body { overflow: hidden; }
 .gl-fit-row { background: rgba(240, 190, 40, .10); }
 .gl-fit-row td { border-bottom-color: rgba(240, 190, 40, .35); }
 .gl-star { color: #e6a817; font-weight: 700; }
-.gl-fit-count { color: #e6a817; font-weight: 600; font-size: 11.5px; margin-left: 6px; }
+.gl-fit-count { color: #e6a817; font-weight: 600; font-size: 11px; margin-left: 6px; }
 .gl-pre { font-size: 11px; white-space: pre-wrap; word-break: break-all;
   background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 8px; }
 #gl-coverage { margin-top: 8px; }
 .gl-acct-btn { display: inline-block; width: auto; margin: 4px 6px 4px 0; padding: 5px 12px;
   background: var(--panel2); border: 1px solid var(--accent); border-radius: 6px;
-  color: var(--ink); cursor: pointer; font-size: 12.5px; }
+  color: var(--ink); cursor: pointer; font-size: 12px; }
 .gl-acct-btn:hover { filter: brightness(1.15); }
 .gl-chip { display: inline-block; width: auto; margin: 2px 4px 2px 0; padding: 4px 12px;
   background: var(--panel2); border: 1px solid var(--border); border-radius: 14px;
-  color: var(--ink); cursor: pointer; font-size: 12.5px; }
+  color: var(--ink); cursor: pointer; font-size: 12px; }
 .gl-chip:hover:not(.active) { border-color: var(--accent); filter: brightness(1.1); }
 .gl-chip.active { background: var(--accent); color: #101820; border-color: var(--accent);
   font-weight: 600; cursor: default; }
@@ -1329,14 +1354,14 @@ body { overflow: hidden; }
   animation: gl-pulse 2s ease-in-out infinite; }
 @keyframes gl-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 .gl-hint { background: rgba(217, 182, 74, 0.12); border: 1px solid #b9932e; border-radius: 6px;
-  padding: 7px 10px; margin: 8px 0; font-size: 12.5px; }
-.gl-help { margin-top: 10px; font-size: 12.5px; }
+  padding: 7px 10px; margin: 8px 0; font-size: 12px; }
+.gl-help { margin-top: 10px; font-size: 12px; }
 .gl-help summary { cursor: pointer; color: var(--accent); }
 .gl-help ol { margin: 8px 0 4px 18px; line-height: 1.7; }
 .gl-help ul { margin: 4px 0 4px 4px; line-height: 1.6; }
 .gl-help code { background: var(--bg); padding: 1px 5px; border-radius: 4px; }
 .gl-privacy { background: rgba(90, 160, 120, 0.10); border: 1px solid #3f9e6f; border-radius: 6px;
-  padding: 8px 11px; margin: 8px 0; font-size: 12.5px; line-height: 1.6; }
+  padding: 8px 11px; margin: 8px 0; font-size: 12px; line-height: 1.6; }
 
 /* ── IO full-detail card + slotted-set progress (feature pair) ─────────── */
 /* 2d: the ⓘ is ALWAYS visible — dim at rest, LIT on hover (an invisible
@@ -1349,7 +1374,7 @@ body { overflow: hidden; }
   text-shadow: 0 0 6px var(--accent), 0 0 2px var(--accent); }
 .modal-current { display: flex; align-items: center; gap: 8px; margin: 4px 0 8px;
   padding: 6px 10px; background: var(--bg); border: 1px solid var(--border);
-  border-radius: 6px; font-size: 12.5px; }
+  border-radius: 6px; font-size: 12px; }
 .mc-detail { margin-left: auto; border: 1px solid var(--accent); background: none;
   color: var(--accent); border-radius: 6px; padding: 2px 10px; cursor: pointer;
   font-size: 12px; }
@@ -1358,27 +1383,27 @@ body { overflow: hidden; }
 .eh-note { font-size: 12px; line-height: 1.5; margin: 6px 0; padding: 5px 9px;
   background: rgba(140, 140, 200, 0.10); border-left: 3px solid var(--accent);
   border-radius: 0 5px 5px 0; }
-.eh-set-h { margin: 10px 0 6px; font-size: 13.5px; }
+.eh-set-h { margin: 10px 0 6px; font-size: 13px; }
 .eh-set-h .muted { font-weight: 400; }
 .eh-roster { display: flex; flex-direction: column; gap: 2px; margin: 4px 0 8px; }
 .eh-piece { display: flex; align-items: center; gap: 8px; font-size: 12px;
   padding: 3px 8px; border-radius: 5px; border: 1px solid var(--border); }
 .eh-piece-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.eh-status { margin-left: auto; font-size: 10.5px; white-space: nowrap; }
+.eh-status { margin-left: auto; font-size: 10px; white-space: nowrap; }
 .eh-here { border-color: #3f9e6f; background: rgba(90, 160, 120, 0.12); }
 .eh-here .eh-status { color: #3f9e6f; font-weight: 600; }
 .eh-else { border-color: #b8a04a; background: rgba(190, 170, 80, 0.10); }
 .eh-else .eh-status { color: #b8a04a; }
 .eh-miss { opacity: 0.6; }
 .eh-tiers { display: flex; flex-direction: column; gap: 2px; }
-.eh-tier { display: flex; gap: 7px; align-items: baseline; font-size: 11.5px;
+.eh-tier { display: flex; gap: 7px; align-items: baseline; font-size: 11px;
   padding: 3px 8px; border-radius: 5px; opacity: 0.55; line-height: 1.45; }
 .eh-tier.eh-lit { opacity: 1; background: rgba(90, 160, 120, 0.12);
   border-left: 3px solid #3f9e6f; }
 .eh-tier.eh-next { opacity: 0.9; border-left: 3px dashed var(--accent);
   background: rgba(140, 140, 200, 0.08); }
 .eh-tier-n { font-weight: 700; flex: none; }
-.eh-tier-hint { margin-left: auto; color: var(--accent); font-size: 10.5px;
+.eh-tier-hint { margin-left: auto; color: var(--accent); font-size: 10px;
   white-space: nowrap; }
 
 /* ⓘ on the slotted chit — the direct path to the detail card (discoverability
@@ -1399,7 +1424,7 @@ body { overflow: hidden; }
   border-radius: 10px; padding: 14px 16px; max-width: 720px; width: 94vw;
   max-height: 88vh; overflow-y: auto; }
 .ct-card h3 { display: flex; align-items: center; justify-content: space-between; margin: 0 0 6px; }
-.ct-card h4 { margin: 8px 0 4px; font-size: 12.5px; }
+.ct-card h4 { margin: 8px 0 4px; font-size: 12px; }
 .ct-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .ct-field { display: flex; align-items: center; justify-content: space-between;
   gap: 8px; font-size: 12px; margin: 2px 0; }
@@ -1407,7 +1432,7 @@ body { overflow: hidden; }
 .ct-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;
   align-items: center; }
 .custom-targets-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
-.ct-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px;
+.ct-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11px;
   border: 1px solid #b48ee0; color: #b48ee0; border-radius: 9px; padding: 1px 8px; }
 .ct-chip.hidden { display: none; }
 .ct-chip .ct-clear { background: transparent; color: inherit; width: auto;
@@ -1453,7 +1478,7 @@ body { overflow: hidden; }
 .slot-lvl.lvl-preview { color: #b48ee0; font-weight: 700; }
 .eh-boost { margin: 8px 0; padding: 6px 8px; border: 1px solid var(--border);
   border-radius: 6px; }
-.eh-boost-head { font-size: 12.5px; font-weight: 600; margin-bottom: 4px; }
+.eh-boost-head { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
 .eh-boost-row { display: flex; align-items: center; gap: 6px; }
 .eh-boost-val { font-weight: 700; min-width: 26px; text-align: center; }
 .eh-boost-val.previewing { color: #b48ee0; }
@@ -1463,7 +1488,7 @@ body { overflow: hidden; }
 /* Frankenslot rows on the power-info panel: one collapsed row per parent set,
    the summary line carrying the count + next-piece hint. */
 .pi-set-row { margin: 4px 0; border: 1px solid var(--border); border-radius: 6px;
-  padding: 3px 8px; font-size: 12.5px; }
+  padding: 3px 8px; font-size: 12px; }
 .pi-set-row summary { cursor: pointer; }
 .pi-set-row[open] { padding-bottom: 7px; }
 
@@ -1496,7 +1521,7 @@ body { overflow: hidden; }
   font-size: 11px; border-radius: 4px; border: 1px solid var(--border);
   background: var(--panel); color: inherit;
 }
-.acc-hint { color: var(--muted); font-size: 9px; font-style: italic; white-space: nowrap; }
+.acc-hint { color: var(--muted); font-size: 10px; font-style: italic; white-space: nowrap; }
 /* the list itself: columns across the available width, vertical scroll.
    CSS multicol would overflow HORIZONTALLY under a fixed height, so this is a
    grid — rows flow left-to-right and the container scrolls down. */
@@ -1532,7 +1557,7 @@ body { overflow: hidden; }
 .acc-name { font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; }
 .acc-eff { color: var(--accent); font-size: 10px; line-height: 1.35;
   margin-left: 5px; overflow-wrap: anywhere; }
-.acc-note { color: var(--muted); font-size: 9.5px; font-style: italic;
+.acc-note { color: var(--muted); font-size: 10px; font-style: italic;
   margin-left: 5px; overflow-wrap: anywhere; }
 .acc-row.badge_only .acc-name { font-weight: 500; color: var(--muted); }
 /* Joel's grey-out: a same-effect twin of an already-checked accolade — a
@@ -1561,18 +1586,18 @@ body { overflow: hidden; }
 .acc-row { grid-template-columns: auto minmax(0, 1fr) auto; }
 .acc-undoc { color: var(--muted); font-style: italic; }
 .acc-assumed-note { color: var(--muted); font-size: 10px; margin-top: 4px; }
-.inc-unmodeled { color: var(--muted); font-style: italic; font-size: 9.5px; cursor: help; }
+.inc-unmodeled { color: var(--muted); font-style: italic; font-size: 10px; cursor: help; }
 .acc-howto-lead { font-weight: 600; margin: 8px 0 4px; }
 .acc-chain { margin: 0 0 6px; padding-left: 16px; }
 .acc-chain li { margin: 3px 0; line-height: 1.4; }
 .acc-chain li strong { color: var(--accent); }
-.acc-chain li span { display: block; color: var(--muted); font-size: 10.5px; }
+.acc-chain li span { display: block; color: var(--muted); font-size: 10px; }
 .acc-grants { margin: 0 0 6px; }
 .acc-src { margin-top: 8px; font-style: italic; }
 /* v34 deliverable 1: "what's in these numbers" — live provenance, never a
    hardcoded sentence. Answers Joel's standing question (did the epic/incarnate
    recommendations actually reach the totals?) at the point the numbers are read. */
-.prov-line { font-size: 9.5px; line-height: 1.5; margin: 0 0 5px; padding-bottom: 4px;
+.prov-line { font-size: 10px; line-height: 1.5; margin: 0 0 5px; padding-bottom: 4px;
   border-bottom: 1px solid var(--border); color: var(--muted); }
 .prov-in { color: var(--def); }
 .prov-off { color: var(--muted); font-style: italic; }
@@ -1582,7 +1607,7 @@ body { overflow: hidden; }
 /* v34 item 5 (Joel's 7/17 ruling): per-power-card provenance — the card-scope
    attribution line under a card's own numbers, and the honest footer that
    points build-level globals at Build Vitals instead of faking a share here */
-.pi-attr { font-size: 10.5px; color: var(--accent); margin: 2px 0 6px; padding-left: 2px; }
+.pi-attr { font-size: 10px; color: var(--accent); margin: 2px 0 6px; padding-left: 2px; }
 /* Piece 1: the per-attack proc-vs-set explanation on the ⓘ card */
 .pi-trade { font-size: 11px; line-height: 1.5; margin: 4px 0 8px; padding: 6px 8px;
   border-left: 3px solid var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent);
@@ -1596,13 +1621,13 @@ body { overflow: hidden; }
 .global-error-banner {
   position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
   display: none; align-items: center; gap: 12px;
-  padding: 10px 16px; font-size: 13.5px; line-height: 1.4;
+  padding: 10px 16px; font-size: 13px; line-height: 1.4;
   background: var(--bad, #e5534b); color: #fff;
   box-shadow: 0 2px 8px rgba(0,0,0,.35);
 }
 .global-error-banner .ge-msg { flex: 1; }
 .global-error-banner .ge-reload {
-  width: auto; flex: 0 0 auto; padding: 5px 14px; font-size: 12.5px;
+  width: auto; flex: 0 0 auto; padding: 5px 14px; font-size: 12px;
   background: #fff; color: var(--bad, #b3352d); border: none; border-radius: 5px;
   cursor: pointer; font-weight: 600;
 }
@@ -1614,7 +1639,7 @@ body { overflow: hidden; }
 /* Retired-Fire-Farm content nudge (2026-07-20): shown when a saved build uses the
    retired generic "Fire Farm" key — an honest prompt to pick AFK or Active. */
 .retired-note {
-  margin: 8px 0; padding: 9px 12px; font-size: 12.5px; line-height: 1.5;
+  margin: 8px 0; padding: 9px 12px; font-size: 12px; line-height: 1.5;
   background: rgba(217, 164, 65, .10); border: 1px solid var(--warn);
   border-radius: 6px; color: var(--ink);
 }
@@ -1721,7 +1746,7 @@ body { overflow: hidden; }
   background: var(--border); transform: translateX(-50%); top: calc(50% + 12px); }
 .jny-stop.here .jny-card { border-color: var(--warn); }
 .jny-youare { position: absolute; left: 50%; bottom: calc(50% + 24px); transform: translateX(-50%);
-  color: var(--warn); font-size: 12.5px; white-space: nowrap; letter-spacing: .04em; z-index: 2; }
+  color: var(--warn); font-size: 12px; white-space: nowrap; letter-spacing: .04em; z-index: 2; }
 .jny-lv { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
 .jny-pick { margin: 5px 0 2px; font-size: 15px; }
 .jny-slots { display: flex; align-items: center; gap: 4px; margin: 5px 0 2px; }
@@ -1736,9 +1761,9 @@ body { overflow: hidden; }
    own picks/slots because it is a different KIND of claim: the picks come from
    the optimizer, this comes from a person's recommendation. */
 .jny-route { margin-top: 6px; padding-top: 5px; border-top: 1px dashed var(--border); }
-.jny-route-places { font-size: 13.5px; line-height: 1.45; margin-top: 2px; }
-.jny-tf { font-size: 13.5px; margin-top: 3px; color: var(--accent); }
-.jny-route-src { font-size: 12.5px; color: var(--muted); font-style: italic; margin-top: 4px; }
+.jny-route-places { font-size: 13px; line-height: 1.45; margin-top: 2px; }
+.jny-tf { font-size: 13px; margin-top: 3px; color: var(--accent); }
+.jny-route-src { font-size: 12px; color: var(--muted); font-style: italic; margin-top: 4px; }
 /* THE LEVEL PANEL — art left, everything else right, and the RIGHT side scrolls
    in its own window. A fixed-height panel is what stops the road growing every
    time a level has a lot going on (the level-40 stop carries ten Task Forces). */
@@ -1767,14 +1792,14 @@ body { overflow: hidden; }
 .jny-card .jny-ms { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   overflow: hidden; }
 .jny-storychip { font-size: 13px; margin-top: 4px; color: var(--gold, var(--warn)); }
-.jny-story { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 13.5px; }
+.jny-story { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 13px; }
 .jny-story-chain { margin: 3px 0; line-height: 1.5; }
 .jny-warn { color: var(--warn); font-size: 13px; margin-top: 3px; }
-.jny-rewards { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 13.5px; }
+.jny-rewards { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 13px; }
 .jny-acc { margin-top: 3px; color: var(--gold, var(--warn)); }
 .jny-detail { display: none; margin-top: 6px; border-top: 1px solid var(--border); padding-top: 6px; }
 .jny-card.open .jny-detail { display: block; }
-.jny-tip { color: var(--muted); font-size: 13.5px; margin-top: 3px; }
+.jny-tip { color: var(--muted); font-size: 13px; margin-top: 3px; }
 .jny-zones { margin-top: 10px; border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; }
 .jny-zones > summary { cursor: pointer; }
 .jny-zonegrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
@@ -1782,10 +1807,10 @@ body { overflow: hidden; }
 .jny-zone { border-left: 2px solid var(--border); padding-left: 8px; }
 .jny-zone > summary { cursor: pointer; font-size: 14px; }
 .jny-zbadge { margin: 5px 0 5px 4px; }
-.jny-prov { font-size: 12.5px; color: var(--muted); opacity: .85; margin-top: 8px; font-style: italic; }
+.jny-prov { font-size: 12px; color: var(--muted); opacity: .85; margin-top: 8px; font-style: italic; }
 /* Content newer than the 2020 guides — visually distinct because its source is
    different (the wiki, supplied by hand) from every game-first layer above it. */
-.jny-modern { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--accent); font-size: 13.5px; }
+.jny-modern { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--accent); font-size: 13px; }
 /* The wiki's own neighbourhood difficulty marking. Colour-coded AND labelled in
    words — colour alone is not information for everyone reading this. */
 .jny-risk { font-size: 12px; border: 1px solid; border-radius: 8px; padding: 0 5px;
@@ -1800,16 +1825,16 @@ body { overflow: hidden; }
 /* Green = the safest band the wiki marks; and a separate starting path, which
    is a different road rather than a detour off this one. */
 .risk-green { color: #6fbf73; border-color: #6fbf73; }
-.jny-altstart { margin-top: 4px; color: var(--accent); font-size: 13.5px; }
+.jny-altstart { margin-top: 4px; color: var(--accent); font-size: 13px; }
 /* Badge directions from the community location DB — the actually-useful bit,
    given the game has no paste-to-navigate. Set off from the flavour text. */
-.jny-where { font-size: 13.5px; margin: 2px 0; color: var(--accent); }
+.jny-where { font-size: 13px; margin: 2px 0; color: var(--accent); }
 /* Master-of / iTrial challenge badge attached to a task force or trial. */
 .jny-master { font-size: 13px; margin: 2px 0 4px 14px; color: var(--gold, var(--warn)); }
 /* Neighbourhood con-read (CoH's own difficulty colours vs YOUR level). */
 .jny-hoods { margin: 4px 0; }
-.jny-hood { font-size: 13.5px; margin: 1px 0; }
-.jny-con { font-size: 12.5px; border: 1px solid; border-radius: 8px; padding: 0 5px; margin-left: 3px; }
+.jny-hood { font-size: 13px; margin: 1px 0; }
+.jny-con { font-size: 12px; border: 1px solid; border-radius: 8px; padding: 0 5px; margin-left: 3px; }
 .con-grey   { color: #9aa0a6; border-color: #9aa0a6; }
 .con-green  { color: #6fbf73; border-color: #6fbf73; }
 .con-white  { color: #d5d9de; border-color: #d5d9de; }
@@ -1818,7 +1843,7 @@ body { overflow: hidden; }
 .con-red    { color: #e05c5c; border-color: #e05c5c; }
 .con-purple { color: #b98ee0; border-color: #b98ee0; }
 /* Zones-open-to-you at this level (auto-placed from the full level table). */
-.jny-fit { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 13.5px; }
+.jny-fit { margin-top: 7px; padding-top: 5px; border-top: 1px dashed var(--border); font-size: 13px; }
 .jny-fit > summary { cursor: pointer; }
 .jny-fitzone { margin: 4px 0 4px 6px; }
 
@@ -1902,11 +1927,11 @@ body { overflow: hidden; }
    Journey — body and cards. */
 .jny-panel-info, .jny-zones, .jny-fit, .jny-zonegrid { font-size: 16px; line-height: 1.55; }
 .jny-panel-info .small, .jny-zones .small, .jny-fit .small,
-.jny-panel-info .muted.small, .jny-zones .muted.small, .jny-fit .muted.small { font-size: 14.5px; }
+.jny-panel-info .muted.small, .jny-zones .muted.small, .jny-fit .muted.small { font-size: 14px; }
 .jny-panel-h { font-size: 20px !important; }
 .jny-hood, .jny-fitzone, .jny-where, .jny-master, .jny-tf, .jny-story, .jny-route-places,
-.jny-note, .jny-tip, .jny-modern, .jny-rewards { font-size: 15.5px; }
-.jny-lv { font-size: 12.5px !important; }
+.jny-note, .jny-tip, .jny-modern, .jny-rewards { font-size: 15px; }
+.jny-lv { font-size: 12px !important; }
 .jny-pick, .jny-pick b { font-size: 15px; }
 /* TF/SF availability level — the "available at N" tag on a run. */
 .jny-avail { font-size: 13px; color: var(--accent); font-weight: 600; }
@@ -2081,7 +2106,7 @@ body { overflow: hidden; }
 #tour-mock button { cursor: default; }
 #tour-mock .tm-response {
   margin-top: 10px; padding: 10px; border: 1px solid var(--border);
-  border-radius: 6px; background: var(--panel2); font-size: 12.5px;
+  border-radius: 6px; background: var(--panel2); font-size: 12px;
 }
 #tour-mock .power-card { margin-top: 8px; }
 #tour-mock .solve-btn, #tour-mock .changes-btn, #tour-mock .reset-btn,
