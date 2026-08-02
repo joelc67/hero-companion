@@ -2230,3 +2230,59 @@ body { overflow: hidden; }
      Partial set  #4f9e72 -> #5aa47a   4.18 -> 4.54
      Base slot    --muted -> #8d9aab   4.40 -> 4.52  (scoped to .slot-plan, so
                   global --muted is untouched)                              */
+
+/* ══ MOTION & FEEDBACK PASS ══ Applying the installed design-engineering
+   doctrine (emil-design-eng) as an AUDIT rather than taste. The stylesheet was
+   already clean on four of its checks - no `transition: all`, no `ease-in` on UI,
+   no scale(0) entries, nothing over 300ms. Three real failures, all measured: */
+
+/* 1. CUSTOM EASING. The stylesheet had exactly ONE cubic-bezier in it, so almost
+      everything used the browser defaults, which the doctrine calls too weak to
+      feel intentional. Curves per the reference, not invented. */
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* 2. PRESS FEEDBACK. "Buttons must feel responsive to press" - the app had TWO
+      :active rules for dozens of buttons, so most of the interface gave no sign
+      it had heard the click. 160ms sits in the doctrine's 100-160ms band for
+      press feedback. Disabled buttons stay still: pressing them means nothing. */
+button { transition: transform 160ms var(--ease-out), background-color 160ms ease, border-color 160ms ease; }
+button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97); }
+
+/* 3. TOUCH HOVER. Touch devices fire :hover on tap, so a lift-on-hover sticks
+      after the finger leaves. Only ONE rule actually moves anything, so this is
+      a single neutralisation rather than a restructure. */
+@media (hover: none), (pointer: coarse) {
+  .entry-card:hover { transform: none; }
+}
+
+/* 4. THE DISCLOSURES ANIMATE. The folds added today appeared instantly, and
+      "elements appearing or disappearing without transition feel broken". These
+      are occasional interactions, so they earn a standard animation: ease-out,
+      inside the 150-250ms band, opacity + transform only (both GPU properties). */
+.explain[open] > .explain-body,
+.subpanel-fold[open] > .fold-body {
+  animation: foldIn 180ms var(--ease-out);
+}
+@keyframes foldIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 5. REDUCED MOTION. There was NO prefers-reduced-motion rule anywhere, against
+      FIVE infinite pulse animations. Per the doctrine this is 'fewer and gentler,
+      not zero': colour and opacity survive because they carry meaning, movement
+      and endless pulsing do not. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .wiz-reveal-cta, .tc-pulse, .gl-pulse, .jny-pulse { animation: none !important; }
+  button:active:not(:disabled) { transform: none; }
+  .entry-card:hover { transform: none; }
+}
