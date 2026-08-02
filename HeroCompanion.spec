@@ -7,6 +7,7 @@ datas = [
     ("data", "data"),                      # parsed game database snapshot
     ("static", "static"),                  # UI + help PDF
     ("assets/HeroCompanion-icon-512.png", "assets"),   # tray icon image
+    ("assets/HeroCompanion.ico", "assets"),            # window icon (pywebview needs .ico)
     ("VERSION", "."),
     ("client_config.json", "."),           # GitHub-home pointers (REPLACE-ME until repo exists)
     ("CHANGELOG.md", "."),
@@ -34,10 +35,10 @@ hiddenimports = [
     "leveling_schedule", "learn", "proc_pass", "mids_export", "mids_import",
     "mids_powercust", "ingame_import", "ai_build", "claude_bridge", "pulse_feed",
     "requests",
-    "pystray", "pystray._win32",           # tray icon backend (goes with the tray)
-    # Native window (HC_WINDOW=1): pywebview drives the WebView2 runtime that
-    # already ships with Windows 10/11, so nothing extra installs on the user's
-    # machine. clr_loader/pythonnet are how the Windows backend is reached.
+    # The app's own window: pywebview drives the WebView2 runtime that already
+    # ships with Windows 10/11, so nothing extra installs on the user's machine.
+    # clr_loader/pythonnet are how the Windows backend is reached.
+    # (pystray is GONE with the tray — 2026-08-02.)
     "webview", "webview.platforms.edgechromium", "clr_loader", "pythonnet",
 ]
 
@@ -62,8 +63,9 @@ exe = EXE(
     debug=False,
     strip=False,
     upx=False,                 # UPX-packed exes trip antivirus heuristics — never pack
-    console=False,             # windowed: the TRAY ICON is the app's handle (Open/Quit);
-                               # output goes to %APPDATA%\HeroCompanion\app.log
+    console=False,             # windowed: no console, ever — THE WINDOW is the app,
+                               # and closing it quits. Output goes to
+                               # %APPDATA%\HeroCompanion\app.log.
     icon="assets/HeroCompanion.ico",
 )
 coll = COLLECT(

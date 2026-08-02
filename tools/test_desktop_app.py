@@ -1,7 +1,7 @@
 """BATTERY: the desktop-app batch (Joel's five pieces, 2026-08-02).
 
-  1. native window instead of a browser (HC_WINDOW=1, pywebview -> WebView2)
-  2. no tray -> window close = quit, and the SELF-UPDATE path still has a hook
+  1. its own window instead of a browser (pywebview -> WebView2), by default
+  2. the tray is DELETED -> window close = quit, self-update hook survived
   3. the update check runs on launch, not only on a click
   4. the autostart toggle lives in the app UI, not a tray menu
   5. the share prompt is asked once, with the specifics, and remembers the answer
@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 28          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 36          # coverage denominator — hard-fail if a check silently skips
 
 
 def check(name, ok, detail=""):
@@ -56,12 +56,36 @@ def main():
     # ── 1. NATIVE WINDOW ────────────────────────────────────────────────────
     check("pywebview is installed", importlib.util.find_spec("webview") is not None,
           "pip install pywebview")
-    check("HC_WINDOW selects the window (prototype flag, Joel's ask)",
-          bool(re.search(r'_WINDOW\s*=\s*os\.environ\.get\("HC_WINDOW"\)\s*==\s*"1"', run_app)))
+    check("the window is the DEFAULT (HC_WINDOW=0 is the opt-OUT)",
+          bool(re.search(r'_WINDOW\s*=\s*os\.environ\.get\("HC_WINDOW"\)\s*!=\s*"0"', run_app)))
     check("main() tries the window BEFORE opening any browser",
           run_app.find("if _WINDOW and _run_window(port)") < run_app.find("webbrowser.open(f\"http://localhost:{port}\")",
                                                                           run_app.find("def main(")),
-          "otherwise window mode also spawns a browser tab")
+          "otherwise the app also spawns a browser tab")
+
+    # ── THE "STILL A BROWSER" TELLS (Joel's verdict, 2026-08-02) ────────────
+    win_cfg = run_app[run_app.find("def _run_window"):run_app.find("def main(")]
+    check("WebView2's right-click browser menu is OFF",
+          'webview.settings["SHOW_DEFAULT_MENUS"] = False' in win_cfg,
+          "Back/Reload/Save as/View source is the loudest browser tell")
+    check("text selection and zoom are pinned to app behaviour",
+          "text_select=False" in win_cfg and "zoomable=False" in win_cfg)
+    check("no white browser flash on open (background matches --bg)",
+          'background_color="#11151c"' in win_cfg
+          and "--bg: #11151c" in read("static", "style.css"),
+          "and the check reads the REAL stylesheet value, so a theme change fails it")
+    # ⚠⚠ pywebview defaults private_mode=True, which throws localStorage away every
+    # launch: the alignment theme, the update switch, the tour's saved spot.
+    check("localStorage SURVIVES a restart (private_mode off + a storage path)",
+          "private_mode=False" in win_cfg and "storage_path=" in win_cfg,
+          "an app remembers; a private browsing window is what forgets")
+    # ⚠ A .png here throws inside System.Drawing.Icon on a .NET thread, OUTSIDE
+    # the try/except — the app dies with no window and no fallback message.
+    check("the window icon is a .ico, not a .png",
+          'assets", "HeroCompanion.ico"' in win_cfg and ".png" not in win_cfg,
+          "a PNG kills the app on a .NET thread that this code cannot catch")
+    check("...and that .ico actually ships in the frozen build",
+          '("assets/HeroCompanion.ico", "assets")' in read("HeroCompanion.spec"))
 
     # The fallback is the whole reason the flag is safe: no pywebview / no
     # WebView2 must return False, not take the app down.
@@ -80,15 +104,21 @@ def main():
             sys.modules.pop("webview", None)
         ra.server.SHUTDOWN_HOOK = saved
 
-    # ── 2. NO TRAY -> the self-update path must still be able to retire us ──
-    win_src = run_app[run_app.find("def _run_window"):run_app.find("def _run_tray")]
-    check("window mode sets server.SHUTDOWN_HOOK (self-update / POST /app/shutdown)",
-          "server.SHUTDOWN_HOOK = _quit" in win_src)
+    # ── 2. THE TRAY IS GONE, and the self-update path survived it ───────────
+    check("no tray left anywhere in run_app.py",
+          not any(s in run_app for s in ("pystray", "_run_tray", "icon.notify",
+                                         "tray_notice_seen", "_maybe_ask_autostart")))
+    check("pystray is out of the frozen build too",
+          '"pystray' not in read("HeroCompanion.spec"),
+          "matches a quoted hiddenimports ENTRY, not the comment saying it is gone")
+    check("its battery went with it (a test for deleted code is noise)",
+          not os.path.exists(os.path.join(ROOT, "tools", "test_tray_first_run_notice.py")))
+    check("the window sets server.SHUTDOWN_HOOK (self-update / POST /app/shutdown)",
+          "server.SHUTDOWN_HOOK = _quit" in win_cfg,
+          "without this, in-place updates cannot retire the running copy")
     check("...and the hook releases the instance lock before exiting",
-          "_clear_lock()" in win_src and "os._exit(0)" in win_src,
+          "_clear_lock()" in win_cfg and "os._exit(0)" in win_cfg,
           "a stale lock makes the next launch defer to a dead copy")
-    check("window mode skips the tray's autostart MessageBox (UI owns that now)",
-          "_maybe_ask_autostart" not in win_src)
 
     # ── 3. UPDATE CHECK: AUTOMATIC ON LAUNCH ────────────────────────────────
     flow = app_js[app_js.find("function initUpdateFlow"):]

@@ -308,11 +308,26 @@ window close = quit**, update check **automatic on launch**, the autostart
 toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
 **Companion Lite is UNCHANGED and keeps its tray** — do not touch `run_lite.py`.
 
-- **The window is behind `HC_WINDOW=1` until Joel has looked at it.** Flipping
-  the default is one line (`_WINDOW`); the tray (`_run_tray`, the pystray spec
-  entries, `tools/test_tray_first_run_notice.py`) is DELETED at that flip and
-  not before — with the flag off and the tray gone, a frozen build would have
-  no UI at all.
+- **The window is the DEFAULT and the tray is DELETED** (`_run_tray`, the
+  first-run notice, the autostart MessageBox, `app_state.json`, pystray in the
+  spec, `tools/test_tray_first_run_notice.py`). `HC_WINDOW=0` falls back to a
+  browser tab and is the only escape hatch.
+- **⚠ JUDGE THE APP FROM THE FROZEN EXE, NEVER FROM A SOURCE RUN.** Joel's
+  verdict on the first prototype — *"obviously a python executable, its not a
+  self contained application like Mids Reborn"* — was aimed at scaffolding I
+  handed him (a .bat, a console, python.exe). Handing a source run as the
+  artifact is the mistake; `dist\HeroCompanion\HeroCompanion.exe` is the app.
+- **⚠ pywebview's defaults are a BROWSER's defaults, and three of them are
+  wrong for an app.** `SHOW_DEFAULT_MENUS` = WebView2's right-click
+  Back/Reload/Save-as/View-source menu (the loudest "this is a browser" tell);
+  `background_color` = white, which flashes on a dark app; and worst,
+  **`private_mode` defaults to TRUE, which throws localStorage away every
+  launch** — alignment theme, update switch, tour spot and finished flag, all
+  silently forgotten. All three fixed in `_run_window`; keep them named there
+  so a pywebview upgrade flipping one is a visible diff.
+- **⚠ The window icon MUST be a `.ico`.** A `.png` throws inside
+  `System.Drawing.Icon` on a .NET thread, OUTSIDE the try/except, and the app
+  dies with no window and no fallback message.
 - **⚠ The self-update path outlives the tray.** `_run_window` sets
   `server.SHUTDOWN_HOOK` exactly as the tray did, so `POST /app/shutdown` and
   `_graceful_self_exit_for_update` still retire the copy. Window mode exits

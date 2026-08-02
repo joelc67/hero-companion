@@ -1,13 +1,15 @@
 """Hero Companion — the packaged (PyInstaller) entry point.
 
-Packaged builds run WINDOWLESS: the server starts in the background, the browser
-opens, and a tray icon (the lime pulse, next to the clock) is the app's handle —
-right-click it for Open / Quit. No console window, nothing to remember to close.
-Console output goes to %APPDATA%\\HeroCompanion\\app.log in windowed mode.
+Hero Companion opens in its OWN WINDOW and closing that window quits it. The
+Flask server runs in the background on localhost and the window (pywebview ->
+the WebView2 runtime that already ships with Windows 10/11) is the view onto it.
+There is no tray icon: nothing keeps running once the window is shut.
+Console output goes to %APPDATA%\\HeroCompanion\\app.log in windowed builds.
 
-Also runs from source:  python run_app.py   (console mode, Ctrl+C to stop)
-Env knobs: PORT (default 5000), HC_NO_BROWSER=1 (don't auto-open a browser tab),
-HC_WINDOW=1 (open in a native window instead of the browser — see _run_window).
+Also runs from source:  python run_app.py
+Env knobs: PORT (default 5000), HC_WINDOW=0 (fall back to a browser tab — the
+escape hatch if WebView2 is genuinely absent), HC_NO_BROWSER=1 (with HC_WINDOW=0,
+don't open a tab either — headless smokes).
 """
 import atexit
 import json
@@ -41,18 +43,11 @@ import server  # noqa: E402  — the Flask app module; loads the game data on im
 # The packaged app now defers to a live copy instead of starting a second one.
 _APPDIR = os.path.join(os.environ.get("APPDATA") or os.path.expanduser("~"), "HeroCompanion")
 _LOCK = os.path.join(_APPDIR, "instance.lock")
-# ⚠ FIRST-RUN NOTICE (field report, BasiliskXVIII 2026-08-01). His complaint was
-# that the app "doesn't tell you that oh, actually something else is running on
-# your machine, which you then have to know is there and manually quit from".
-# The download page DOES say so, in the same sentence that tells you to run the
-# portable build - but documentation answers a factual question, not the feeling
-# of finding an unexplained tray icon. A user who never reads the page is still a
-# real user, and a background process that never introduces itself looks like
-# something to be suspicious of.
-#
-# Shown ONCE, ever. A notice that repeats is nagging, and the second time it
-# appears the user already knows.
-_SEEN_NOTICE = os.path.join(_APPDIR, "tray_notice_seen")
+# ⚠ The first-run TRAY NOTICE that shipped 2026-08-01 (270f03bb) is gone with the
+# tray. It existed because BasiliskXVIII found a background process that never
+# introduced itself — "something else is running on your machine, which you then
+# have to know is there and manually quit from". A window that closes when you
+# close it answers that complaint at the root instead of apologising for it.
 _SINGLE = getattr(sys, "frozen", False) or os.environ.get("HC_SINGLE_INSTANCE") == "1"
 
 
@@ -128,25 +123,9 @@ def _kill_other_copies():
 _RUN_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
 _RUN_VALUE = "HeroCompanion"
 _FROZEN = getattr(sys, "frozen", False)
-_STATE_FILE = os.path.join(_APPDIR, "app_state.json")
-
-
-def _load_app_state():
-    try:
-        with open(_STATE_FILE, encoding="utf-8") as f:
-            st = json.load(f)
-        return st if isinstance(st, dict) else {}
-    except Exception:  # noqa: BLE001
-        return {}
-
-
-def _save_app_state(st):
-    try:
-        os.makedirs(_APPDIR, exist_ok=True)
-        with open(_STATE_FILE, "w", encoding="utf-8") as f:
-            json.dump(st, f)
-    except Exception:  # noqa: BLE001
-        pass
+# app_state.json existed only to remember that the autostart MessageBox had been
+# asked. The box is gone, so the file is too — the registry IS the state now, and
+# /meta reads it live.
 
 
 def _autostart_enabled():
@@ -175,28 +154,10 @@ def _set_autostart(on):
             pass
 
 
-def _maybe_ask_autostart():
-    """First run of the installed app: ask once, remember, act on the answer."""
-    if not _FROZEN:
-        return
-    st = _load_app_state()
-    if st.get("autostart_asked"):
-        return
-    st["autostart_asked"] = True
-    _save_app_state(st)
-    try:
-        import ctypes
-        # MB_YESNO(0x4) | MB_ICONQUESTION(0x20) | MB_SETFOREGROUND(0x10000)
-        r = ctypes.windll.user32.MessageBoxW(
-            0,
-            "Start Hero Companion automatically when you sign in to Windows?\n\n"
-            "It runs quietly in the tray (no window opens) so your builds are a "
-            "click away. You can change this any time from the tray menu.",
-            "Hero Companion", 0x4 | 0x20 | 0x10000)
-        if r == 6:      # IDYES
-            _set_autostart(True)
-    except Exception:  # noqa: BLE001
-        pass
+# ⚠ The first-run autostart MessageBox is gone too. It asked the question before
+# the user had seen the app, and its answer ("change this any time from the tray
+# menu") pointed at a menu that no longer exists. The toggle lives in the app's
+# own About & Settings now, where it is visible whenever they think to look.
 
 
 def _pick_port(start):
@@ -213,27 +174,24 @@ def _pick_port(start):
     return start
 
 
-# ── NATIVE WINDOW (HC_WINDOW=1) — the replacement for the browser tab + tray ──
+# ── THE WINDOW — how Hero Companion runs (Joel, 2026-08-02) ──────────────────
 # pywebview drives the WebView2 runtime that already ships with Windows 10/11, so
 # end users install nothing extra. Flask still serves on localhost; the window is
-# just a chrome-less browser pointed at it.
+# a chrome-less view onto it. THE TRAY IS GONE: closing the window quits the app.
 #
-# ⚠ PROTOTYPE FLAG (Joel, 2026-08-02: "prototype behind a flag first so I can see
-# it before it's the default"). HC_WINDOW=1 selects it in BOTH source and frozen
-# runs. When it becomes the default, _run_tray and its battery
-# (tools/test_tray_first_run_notice.py) are DELETED — window close = quit means
-# there is no second handle on the app to keep.
-_WINDOW = os.environ.get("HC_WINDOW") == "1"
+# HC_WINDOW=0 is the escape hatch back to a browser tab, kept for the case where
+# WebView2 is genuinely absent and for headless smokes. It is an opt-OUT now.
+_WINDOW = os.environ.get("HC_WINDOW") != "0"
 
 
 def _run_window(port):
     """Hero Companion in its own window. Blocks until the window closes, which
     quits the app — no tray, no background copy left running. False if pywebview
-    or the WebView2 runtime is unavailable (caller falls back)."""
+    or the WebView2 runtime is unavailable (caller falls back to the browser)."""
     try:
         import webview
     except Exception as e:  # noqa: BLE001 — missing dependency is a fallback, not a crash
-        print(f"native window unavailable ({e}); falling back to browser + tray")
+        print(f"native window unavailable ({e}); falling back to a browser tab")
         return False
 
     def _quit():
@@ -246,112 +204,43 @@ def _run_window(port):
     # icon first" delay was solving a problem that no longer exists.
     server.SHUTDOWN_HOOK = _quit
     try:
-        webview.create_window("Hero Companion", f"http://127.0.0.1:{port}",
-                              width=1440, height=920, min_size=(900, 600))
-        webview.start()        # blocks on the GUI loop until the window closes
+        # ⚠ EVERY LINE BELOW IS A "THIS IS STILL A BROWSER" TELL, TURNED OFF
+        # (Joel, 2026-08-02: "it appears to be a browser still… not a self
+        # contained application like Mids Reborn"). pywebview's defaults are a
+        # browser's defaults; an application's are different.
+        #
+        # The right-click menu is the loudest one — WebView2's default offers
+        # Back / Reload / Save as / View source, none of which mean anything in
+        # an app. text_select/zoomable are already app-like defaults; they are
+        # named here so a future pywebview flipping them is a visible change.
+        webview.settings["SHOW_DEFAULT_MENUS"] = False
+        webview.settings["ALLOW_DOWNLOADS"] = False
+        # …and OPEN_EXTERNAL_LINKS_IN_BROWSER stays True on purpose: the wiki and
+        # forum links belong in the user's real browser, not trapped in the app.
+        # ⚠ MUST be a .ico — a PNG here throws deep inside System.Drawing.Icon on a
+        # .NET thread, OUTSIDE this try/except, and kills the app with no window and
+        # no fallback (cost: one silent exit, 2026-08-02). The frozen build carries
+        # the .ico as its exe icon too (see HeroCompanion.spec).
+        icon = os.path.join(BASE, "assets", "HeroCompanion.ico")
+        webview.create_window(
+            "Hero Companion", f"http://127.0.0.1:{port}",
+            width=1440, height=920, min_size=(1000, 640),
+            text_select=False, zoomable=False,
+            background_color="#11151c")   # style.css --bg: no white browser flash on open
+        # ⚠⚠ private_mode DEFAULTS TO TRUE, which throws localStorage away on every
+        # launch — that is the alignment theme, the update-check switch, the tour's
+        # saved spot and its "finished" flag, all silently forgotten each time the
+        # app opens. An app remembers; a private browsing window is what forgets.
+        # storage_path keeps it beside the app's other state.
+        webview.start(private_mode=False,
+                      storage_path=os.path.join(_APPDIR, "webview"),
+                      icon=icon if os.path.exists(icon) else None)
     except Exception as e:  # noqa: BLE001
         print(f"native window failed to start ({e}); falling back to browser + tray")
         server.SHUTDOWN_HOOK = None
         return False
     _quit()
     return True
-
-
-def _run_tray(port):
-    """Tray icon with Open / Check for updates / Quit. Returns False if the tray can't
-    start (then the caller just blocks so the server stays up).
-
-    The tray is the app's handle: Hero Companion keeps serving after you close the browser
-    tab (so re-opening is instant), and this menu is how you drive it — reopen the browser,
-    check for a new version, or quit for real."""
-    try:
-        import pystray
-        from PIL import Image
-        img = Image.open(os.path.join(BASE, "assets", "HeroCompanion-icon-512.png"))
-
-        def _open(icon, item):
-            webbrowser.open(f"http://localhost:{port}")
-
-        def _check_updates(icon, item):
-            """Query our own local endpoint, report via a tray balloon, and open the app
-            (where the one-click updater lives) when a new version exists."""
-            try:
-                import urllib.request
-                with urllib.request.urlopen(
-                        f"http://127.0.0.1:{port}/meta/update-check", timeout=8) as r:
-                    d = json.load(r)
-            except Exception:  # noqa: BLE001
-                d = None
-            try:
-                if d and d.get("ok") and d.get("update_available"):
-                    icon.notify(f"Version {d.get('latest')} is available "
-                                f"(you have {d.get('current')}). Opening Hero Companion to update.",
-                                "Hero Companion")
-                    webbrowser.open(f"http://localhost:{port}")
-                elif d and d.get("ok"):
-                    icon.notify(f"You're up to date (v{d.get('current')}).", "Hero Companion")
-                else:
-                    icon.notify("Couldn't check right now — offline, or updates aren't "
-                                "configured in this copy.", "Hero Companion")
-            except Exception:  # noqa: BLE001 — notifications are best-effort
-                pass
-
-        def _quit(icon, item):
-            icon.stop()            # stop() is what removes the tray icon (no ghost)
-            _clear_lock()          # os._exit skips atexit — release the instance lock here
-            os._exit(0)
-
-        def _toggle_autostart(icon, item):
-            _set_autostart(not _autostart_enabled())
-
-        icon = pystray.Icon(
-            "HeroCompanion", img, f"Hero Companion — running at localhost:{port}",
-            menu=pystray.Menu(
-                pystray.MenuItem("Open Hero Companion", _open, default=True),
-                pystray.MenuItem("Start automatically at login", _toggle_autostart,
-                                 checked=lambda item: _autostart_enabled()),
-                pystray.MenuItem("Check for updates…", _check_updates),
-                pystray.MenuItem("Quit Hero Companion", _quit)))
-
-        # Let a self-update (or any other instance) retire THIS copy cleanly via
-        # POST /app/shutdown, or the app retire ITSELF before its installer force-kills it
-        # (server._graceful_self_exit_for_update). icon.stop() is what removes the tray icon;
-        # it runs on the tray's own message loop (this hook may be called from a Flask/worker
-        # thread), so we give that loop a moment to actually delete the icon BEFORE os._exit —
-        # exiting too fast re-orphans the icon as the very "ghost" we're preventing.
-        def _graceful_quit():
-            try:
-                icon.stop()
-            except Exception:  # noqa: BLE001
-                pass
-            import time
-            time.sleep(0.6)          # let the message loop process the NIM_DELETE
-            _clear_lock()
-            os._exit(0)
-        server.SHUTDOWN_HOOK = _graceful_quit
-
-        def _first_run_notice(icon):
-            """Introduce the tray icon the first time this machine ever sees it."""
-            icon.visible = True          # pystray requires this in a setup callback
-            try:
-                if os.path.exists(_SEEN_NOTICE):
-                    return
-                icon.notify(
-                    "Hero Companion is running here in your system tray, so it "
-                    "reopens instantly. Right-click this icon to open it or to "
-                    "quit completely. Nothing is sent anywhere.",
-                    "Hero Companion is running")
-                os.makedirs(_APPDIR, exist_ok=True)
-                with open(_SEEN_NOTICE, "w", encoding="utf-8") as f:
-                    f.write("1")
-            except Exception:  # noqa: BLE001 — a balloon is best-effort, never fatal
-                pass
-
-        icon.run(setup=_first_run_notice)   # blocks until Quit
-        return True
-    except Exception as e:  # noqa: BLE001 — no tray support → fall back to blocking
-        print(f"tray unavailable ({e}); running headless")
-        return False
 
 
 def main():
@@ -392,9 +281,9 @@ def main():
     threading.Thread(
         target=lambda: server.app.run(host="127.0.0.1", port=port, debug=False),
         daemon=True).start()
-    # Window mode owns the whole lifecycle: no browser tab, no tray, no autostart
-    # MessageBox (that choice now lives in the app's own Settings). Falls through
-    # to the browser + tray path if pywebview/WebView2 aren't there.
+    # The window owns the whole lifecycle: it blocks here, and closing it quits.
+    # Everything below is the fallback for HC_WINDOW=0 or a machine with no
+    # WebView2 — a browser tab, exactly as the app worked before.
     if _WINDOW and _run_window(port):
         return
     if os.environ.get("HC_NO_BROWSER") != "1" and not from_autostart:
@@ -417,16 +306,20 @@ def main():
         else:
             threading.Timer(1.0, lambda: webbrowser.open(f"http://localhost:{port}")).start()
 
+    # ⚠ NO TRAY HERE ANY MORE. In the browser fallback the app has no icon and no
+    # menu, so a windowed (console-less) build would serve forever with nothing to
+    # close — the exact "something is running and I can't quit it" complaint. Say
+    # where it is and how to stop it; the log is the only voice this path has.
     if _WINDOWED:
-        threading.Thread(target=_maybe_ask_autostart, daemon=True).start()
-        if not _run_tray(port):
-            threading.Event().wait()      # tray failed — keep serving anyway
+        print(f"No app window available, so Hero Companion opened your browser at "
+              f"http://localhost:{port} instead. It keeps running until you end "
+              f"HeroCompanion.exe from Task Manager.")
     else:
         print("Keep this window open while you use the app; Ctrl+C (or close it) to stop.")
-        try:
-            threading.Event().wait()
-        except KeyboardInterrupt:
-            pass
+    try:
+        threading.Event().wait()
+    except KeyboardInterrupt:
+        pass
 
 
 if __name__ == "__main__":

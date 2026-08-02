@@ -24,7 +24,39 @@ About & Settings.
 
 ---
 
-## ✅ THE DESKTOP BATCH — BUILT 2026-08-02, ONE STEP LEFT
+## ✅ THE DESKTOP BATCH — DONE 2026-08-02, TRAY DELETED, EXE BUILT
+
+**Joel's verdict on the first prototype: "it appears to be a browser still, and
+obviously a python executable, its not a self contained application like Mids
+Reborn."** He was right on both counts and both are fixed:
+
+- **The python/console half was my scaffolding, not the product.** A `.bat` that
+  runs `python run_app.py` with a visible console is not what ships. The answer
+  is the frozen build: `dist\HeroCompanion\HeroCompanion.exe` — one icon, no
+  console, no Python on the user's machine. **Built and verified**: one process
+  named HeroCompanion, `MainWindowTitle "Hero Companion"`, serving on 5000, and
+  **closing the window exits the process** (proven with a WM_CLOSE: `HasExited
+  True`, port dead). Judge the app from the exe, never from the .bat.
+- **The browser half was real and is fixed in `_run_window`.** pywebview's
+  defaults are a *browser's* defaults: `SHOW_DEFAULT_MENUS` gave WebView2's
+  right-click Back/Reload/Save-as/View-source menu (the loudest tell), the
+  background flashed white on a dark app, and downloads were live. All off.
+- **⚠⚠ The bug that mattered most: `private_mode` defaults to TRUE**, which
+  throws localStorage away on every launch — the alignment theme, the update
+  switch, the tour's saved spot and finished flag, all silently forgotten each
+  time. Now `private_mode=False` with a `storage_path` beside the app's state.
+- **⚠ The window icon MUST be a `.ico`.** A `.png` throws inside
+  `System.Drawing.Icon` on a .NET thread, OUTSIDE the try/except, so the app
+  dies with no window and no fallback message. Cost one silent exit today.
+
+**The tray is DELETED** (`_run_tray`, the first-run notice, the autostart
+MessageBox, `app_state.json`, pystray in the spec, and
+`tools/test_tray_first_run_notice.py`). The window is the DEFAULT; `HC_WINDOW=0`
+is the escape hatch to a browser tab. The self-update hook survived the deletion.
+
+Battery `tools/test_desktop_app.py` **36/36**.
+
+### Superseded: the original one-step-left note
 
 All five pieces are in. `pywebview 6.2.1` + `pythonnet 3.1.0` installed; the
 window was launched for real on port 5083 and served the app through WebView2
