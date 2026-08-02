@@ -40,6 +40,18 @@ import server  # noqa: E402  — the Flask app module; loads the game data on im
 # The packaged app now defers to a live copy instead of starting a second one.
 _APPDIR = os.path.join(os.environ.get("APPDATA") or os.path.expanduser("~"), "HeroCompanion")
 _LOCK = os.path.join(_APPDIR, "instance.lock")
+# ⚠ FIRST-RUN NOTICE (field report, BasiliskXVIII 2026-08-01). His complaint was
+# that the app "doesn't tell you that oh, actually something else is running on
+# your machine, which you then have to know is there and manually quit from".
+# The download page DOES say so, in the same sentence that tells you to run the
+# portable build - but documentation answers a factual question, not the feeling
+# of finding an unexplained tray icon. A user who never reads the page is still a
+# real user, and a background process that never introduces itself looks like
+# something to be suspicious of.
+#
+# Shown ONCE, ever. A notice that repeats is nagging, and the second time it
+# appears the user already knows.
+_SEEN_NOTICE = os.path.join(_APPDIR, "tray_notice_seen")
 _SINGLE = getattr(sys, "frozen", False) or os.environ.get("HC_SINGLE_INSTANCE") == "1"
 
 
@@ -273,7 +285,24 @@ def _run_tray(port):
             os._exit(0)
         server.SHUTDOWN_HOOK = _graceful_quit
 
-        icon.run()          # blocks until Quit
+        def _first_run_notice(icon):
+            """Introduce the tray icon the first time this machine ever sees it."""
+            icon.visible = True          # pystray requires this in a setup callback
+            try:
+                if os.path.exists(_SEEN_NOTICE):
+                    return
+                icon.notify(
+                    "Hero Companion is running here in your system tray, so it "
+                    "reopens instantly. Right-click this icon to open it or to "
+                    "quit completely. Nothing is sent anywhere.",
+                    "Hero Companion is running")
+                os.makedirs(_APPDIR, exist_ok=True)
+                with open(_SEEN_NOTICE, "w", encoding="utf-8") as f:
+                    f.write("1")
+            except Exception:  # noqa: BLE001 — a balloon is best-effort, never fatal
+                pass
+
+        icon.run(setup=_first_run_notice)   # blocks until Quit
         return True
     except Exception as e:  # noqa: BLE001 — no tray support → fall back to blocking
         print(f"tray unavailable ({e}); running headless")
