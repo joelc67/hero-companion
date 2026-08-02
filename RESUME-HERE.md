@@ -1,259 +1,191 @@
-# Resume point — 2026-07-31 4:16 PM (laptop closing, resuming at home)
+# Resume point — 2026-08-02 (handoff to a fresh session)
 
-Nothing is running. No scheduled tasks armed. Working tree clean (tracked),
-zero unpushed commits, HEAD = `c2265c6b`, master in sync with origin.
-Safe to close the lid and pick up anywhere.
+Nothing is running. No scheduled tasks armed. Working tree clean, master in sync,
+HEAD = `276cf249`. A dev server may be on port 5080; restart it rather than trust it.
 
 **Read `coh-builder/CLAUDE.md` first** — standing rules and verified game facts.
-This file is the current state and the open queue.
+This file is current state, the open queue, and the traps earned today.
 
 ---
 
-## Joel's work order (given 2026-07-31 afternoon, in this order)
+## ⚠ THE ONE THING THAT MUST HAPPEN FIRST
 
-1. ✅ **DONE — fold in the CLAUDE.md staleness.** `c2265c6b`, pushed.
-2. ✅ **BUILT — the four-way alignment.** `3d62f4fa`, pushed (master `ae90662e`).
-   Verified in the real app in Edge, not from source. **Joel has not walked it
-   yet — that is the next thing.**
-3. ▶ **NEXT — close the verdict gate's legality hole.** Not started; approach
-   below.
+**Joel's forum reply is now factually wrong in one sentence.** It says:
 
-Plus Joel's standing instruction for this batch, in his words:
+> "The planner is fully offline, and the update check only runs when you click it."
 
-> **Drive the real app in Edge before claiming anything visual.** Most of my
-> errors today came from reading source and asserting what a user would see.
-
-Not optional and not satisfied by a JS probe. It means: dev server up, Edge via
-the Chrome connector, click through the actual control, look at it.
+He has since ruled that the **update check becomes automatic on launch**. When
+that ships, that sentence is false, and BasiliskXVIII is exactly the reader who
+will check. Either correct the post when the desktop build ships, or the claim
+has to change. Do not let this slip.
 
 ---
 
-## Item 1 — what changed in CLAUDE.md (`c2265c6b`)
+## ▶ THE ACTIVE BATCH: DESKTOP APP (approved, NOT started)
 
-Four blocks, all the same class: a gate or a hold, discharged, still written in
-the present tense.
+Joel, 2026-08-02: *"go ahead with the desktop app, keep the update check
+automatic on launch. No tray icon for Hero Companion, but Companion Lite remains
+a desktop app. One can easily enable/disable launching when windows starts."*
 
-- The 🛑 engine-accuracy work-order banner ("NO champion work, NO waves, NO
-  merges") → marked **CLOSED / freeze LIFTED**; the work order stays on disk as
-  the record of what was fixed, it is no longer a gate.
-- The ⛔ 2026-07-28 release hold → **discharged**; everything staged shipped in
-  0.12.30. The latest-release line (still said 0.12.29) now says 0.12.30, and in
-  the hold's place is the defect that is NOT closed — the verdict gate's
-  score-only comparison, with Joel's ruling recorded: **legality outranks score.**
-- The Journey ruling "the app toggle stays Hero/Villain" → struck through and
-  marked **OVERTURNED by Joel 2026-07-31**, with the four-way design and its
-  build-neutrality proof written in beside it.
-- The v38+HO wave's "NOTHING MERGED / awaits Joel's word" → merged.
+**Nothing has been installed or changed for this yet.** A `pip install pywebview`
+was proposed and Joel interrupted before it ran, to get this handoff written. His
+machine is untouched.
 
-CURRENT STATE re-dated 2026-07-31 and given the open queue in Joel's order.
+### The five pieces, and where each lives
 
----
+1. **Native window instead of a browser** — `run_app.py`.
+   Route: `pywebview` + WebView2. **WebView2 runtime is CONFIRMED present on
+   Joel's box (150.0.4078.105)** and ships with Win10/11, so end users need
+   nothing extra. Flask keeps serving on localhost; the window points at it.
+   ⚠ Needs `pywebview` and (Windows backend) `pythonnet`. Joel has APPROVED the
+   dependency. It still means PyInstaller spec changes (`HeroCompanion.spec`) and
+   a fresh Bitdefender FP submission per docs/signing-runbook.md.
+   ⚠ Prototype behind a flag first so he can see it before it is the default.
 
-## Item 2 — SHIPPED (`3d62f4fa`). What to look at, and what I still owe you
+2. **No tray icon for Hero Companion** — `run_app.py:_run_tray()` (~line 203).
+   The whole tray goes: `pystray.Icon`, the menu (Open / autostart / updates /
+   Quit), and `server.SHUTDOWN_HOOK = _graceful_quit`. Closing the window quits.
+   ⚠ `_graceful_quit` also serves the SELF-UPDATE path (`/app/shutdown`,
+   `server._graceful_self_exit_for_update`) — the window build must still expose
+   an equivalent, or in-place updates break.
+   ⚠ The first-run tray notice shipped TODAY (`270f03bb`) becomes dead code when
+   the tray goes. Remove it with the tray, and remove
+   `tools/test_tray_first_run_notice.py` with it.
 
-**Walk it:** start the dev server, open http://localhost:5080, and the entry
-screen now offers all four. Then the header button (it names your CURRENT
-alignment) opens a picker with all four and their one-line tips.
+3. **Automatic update check on launch** — the endpoint already exists,
+   `/meta/update-check` (`server.py:857+`, `update_check()`). Today it is only
+   called by a click (`app.js checkUpdates()`, wired at the `#update-check`
+   listener). Make it fire on launch. See the warning at the top of this file.
 
-**Verified on screen, not from source:**
-- Four entry cards; Vigilante and Rogue outlined in gold.
-- Header wordmark, tag line, tab title and button all change per alignment.
-- **Build-neutrality proven end-to-end through the real recompute**, with a
-  working negative control: hero ≡ vigilante, villain ≡ rogue, and hero ≠ villain
-  (so the comparison can actually detect a difference). Payload check: four
-  alignments produce exactly two values server-side — hero and villain.
-- Contrast measured: menu names 14.24:1, tips 5.74:1, header button 10.32:1.
-- Zero console errors. Gate 24/24 · tour 8/8 · mbd alignment 4/4.
+4. **Autostart toggle moves into the app** — currently ONLY in the tray menu
+   ("Start automatically at login" → `_toggle_autostart` / `_autostart_enabled`
+   / `_set_autostart` in `run_app.py`). With no tray it must appear in the UI.
+   Joel: *"One can easily enable/disable launching when windows starts."*
 
-**One real bug caught BY LOOKING** (the reason your Edge instruction matters):
-the middles' yellow wordmark rendered as a solid yellow BAR with the name
-invisible. `background:` shorthand resets `background-clip`, unclipping the
-text-clipped wordmark. Fixed with `background-image:` plus a restated clip.
-Same family as the button background/color trap. Source review would not have
-caught it — it looked correct.
+5. **Share prompt on launch, with SPECIFICS** — `server/pulse_feed.py`.
+   Joel wants the user asked whether to share, with the anonymity spelled out and
+   a link to the boards (**hero-companion.com/pulse**).
+   Current state, verified in code: sharing is OFF unless something explicitly
+   writes `feed_disabled = False` (`pulse_feed.py:165` — *"Absent = this app was
+   never asked = it does not upload"*), gated on `accept_terms()`.
 
-**Two things I decided and you should overrule if you disagree:**
-1. **The yellow is `#ffd166`** (token `--mid`). You said "the wizard section's
-   yellow" — I measured the wizard and **it has no yellow at all**: its headings
-   are `#e6edf3` and its buttons `#4da3ff`. `#ffd166` is the app's only yellow
-   token and it is what outlines the selected side card on the start screen, so
-   that is what I used. One-line change if you meant something else.
-2. **The header button now names your CURRENT alignment, not the destination.**
-   With four choices behind a picker there is no single "where this takes you".
-   This also fixed a pre-existing drift: the tour's mock header already said
-   "🦸 Hero" while the real app said "🦹 Villain" on the hero theme.
+   **What is actually shared** (read from `pulse_feed.py` + `TERMS`, quote this
+   accurately — being vague here is what started the whole thread):
+   - Captured locally, only while `/logchat` is on: your own rewards (XP,
+     influence, drops, merits, badges, defeats); recruitment facts from PUBLIC
+     channels (what is forming + the recruiting CHARACTER name); auction-house
+     sale prices. **Never raw chat. Never tells.**
+   - Before upload, the account login name is replaced by a SHA-256-derived code
+     (`_pseudonym`) — the real name never leaves the machine. Uploads carry an
+     anonymous install id.
+   - **Character names ARE included** and are not shown publicly today. That is
+     the one thing a user should consciously agree to.
+   - Never read at all: machine names, file paths, anything outside the game log.
+   - The public board shows what is forming and when, public-channel recruiter
+     character names, and per-item sale prices. Never account names, money
+     totals, who sold what, or machine details.
 
-**Also updated so nothing drifted:** the tour's alignment step (title, body,
-`absent:` text — `audit_tour` checks ids and anchors, NEVER copy, so this class
-of drift is caught only by reading it) and the `Your alignment` section of
-`docs/help.md`, which had TWO generations of staleness — it still claimed the
-other side's accolades are "dropped", which your 2026-07-31 design pass had
-already changed to remembered-and-greyed.
-
-**Known gap, your call:** the four-way mapping has no automated check — I proved
-it in the browser, but nothing in the battery suite would fail if a future edit
-made `charAlignment()` return a middle alignment. The batteries are Python and
-this logic is JS, so it would need a new harness. Cheap-ish, not free, and the
-guarantee is one heavily-commented line. Say the word if you want it pinned.
-
-## Item 2 — the original design notes (kept; all of this is now implemented)
-
-**The design (Joel's):** the app toggle becomes 🦸 Hero / 🛡️ Vigilante /
-😈 Rogue / 🦹 Villain. Both middles themed the **wizard section's yellow**. Each
-gives access to both sides' information. It is **BUILD-NEUTRAL** — verified
-game-first: Vigilante is hero-type and Rogue villain-type for the accolade
-`activate_requires` gate, so this changes what a user SEES and nothing about
-what their build scores.
-
-### The one insight that makes it build-neutral — do not lose this
-
-Everything hinges on **one function**, `charAlignment()` at `static/app.js:5325`.
-It currently returns the raw stored value, and it feeds four consumers:
-
-| consumer | line | what it does |
-|---|---|---|
-| `buildPayload()` | app.js:5676 | sends `alignment:` **to the server** — the engine gates accolades on it |
-| `_accInactiveAlign()` | app.js:5161 | greys off-side accolades |
-| `_accRow()` | app.js:5174 | the tooltip wording |
-| `preselectStandardAccolades()` | app.js:5337 | auto-ticks the standard set |
-
-**So: make `charAlignment()` return `_contentSide(raw)` — hero or villain,
-never vigilante/rogue — and every build path stays byte-identical by
-construction.** Add a separate `rawAlignment()` for theme and display. That one
-change IS the build-neutrality guarantee; everything else is presentation.
-
-`_contentSide()` already exists (app.js:857) and already maps
-vigilante→hero, rogue→villain. It is the function to reuse, not to rewrite.
-
-### What already exists (reuse, don't rebuild)
-
-- `_ALIGNMENTS` — app.js:864. All five entries with labels, css classes, tips,
-  in Null-the-Gull order. `praetorian` is 🌀 Flashback and is **Journey-only**
-  (Praetoria is not startable on Homecoming) — the app toggle takes the **first
-  four only**.
-- `_contentSide()` — app.js:857. The alignment→content-road map.
-- `_journeyAlign()` — app.js:850. Reads `cohAlignment` directly and **already
-  handles all four keys**. No change needed; it starts working app-wide for free
-  the moment the stored value can be a middle alignment.
-- `_alignNote()` — app.js:876. Plain-English sentence per alignment, already
-  written for vigilante and rogue.
-
-### What has to change
-
-- `applyAlignment()` — app.js:2232. Today: two theme classes, a hardcoded
-  `al === "villain" ? … : …` for name/glyph/tag/title, and it writes
-  `cohAlignment`. Needs four keys, theme picked off the **content side**, plus
-  the yellow treatment for the two middles.
-- `window.toggleAlignment` — app.js:2278. A two-way flip. Needs to become a
-  four-way cycle (or a small menu — **ask Joel which he wants**; a 4-cycle
-  button is 3 clicks to get back, a menu is one click plus a pick).
-- `#alignment-btn` — index.html:236, and its label logic at app.js:2247. ⚠ That
-  label was *just* fixed today (it used to eat its own label span); keep the
-  `glyph + <span>name</span>` shape.
-- Entry cards — index.html:19-22. Two `.align-card` buttons today; the four-way
-  probably belongs here too, and `applyAlignment` already syncs their `.on`
-  state via `data-align`.
-- CSS — style.css:1089-1139 (`body.theme-hero` / `body.theme-villain` and the
-  `#alignment-btn` colour pairs). The middles need the wizard yellow.
-  ⚠ **Any rule that restyles a button's `background` must restate `color`** —
-  the base `button` rule pairs near-black text with the light accent background;
-  override only the background and you get 1.27:1. This bit today, measured.
-  ⚠ There are already amber-ish alignment colours in the Journey switcher at
-  style.css:1835-1836 (`.al-vig` #7fc7e0, `.al-rogue` #e0a63c) — **those are the
-  Journey's palette, not necessarily Joel's "wizard yellow"**; find the actual
-  wizard section colour before picking (the wizard CSS starts at style.css:743).
-
-### Open question for Joel
-
-Cycle button or small menu for the four-way? Everything else is decided.
+6. **Companion Lite is UNCHANGED** — `run_lite.py`. Joel: *"Companion Lite
+   remains a desktop app."* Do not touch its tray or its lifecycle.
 
 ---
 
-## Item 3 — the verdict gate's legality hole (not started)
+## ✅ SHIPPED TODAY (all pushed, all green)
 
-`recert_verdicts` compares **canonical score only**. That is what let 8 of 24
-bundled champions ship unbuildable in 0.12.30 (Wall of Force / Misdirection /
-Weave held with one pool power where the game wants two): the illegal incumbents
-outscored their legal replacements, so the gate "kept" them.
+Field-report batch from BasiliskXVIII (forum topic 64761) plus Joel's own finds.
 
-The fix Joel described: run the pool-prereq check over **both sides** and refuse
-to supersede with an illegal build. The checker already exists —
-`tools/audit_pool_prereq_validator.py` (both arms through the real
-/build/validate route, negative-controlled, and its `--champions` mode already
-re-derives the illegal list independently). This is wiring an existing check
-into the gate, which is the pattern CLAUDE.md already names: *a lesson that
-lives only in a docstring is a note — wire it into the thing it protects.*
+| what | commit |
+|---|---|
+| Activation-gated procs pay only where they fire (Panacea family) | `053c76bd` |
+| Verdict gate: legality outranks score | `07ce596e` |
+| Travel powers: one list, six bugs | `e95e23f4` |
+| Roles explain themselves; Generalist stops nagging | `275c8b16` |
+| Type ladder + quieter export button | `a505d183` |
+| Grouped role picker | `f680c47a` |
+| Movers measured (20 of 24 moved) | `98098e5f` |
+| Wall of text: progressive disclosure + folded panels | `dcfb27c8` |
+| Assistant unburied (78% → 25% down page) + contrast | `eb34dacd` |
+| Motion/feedback pass (design doctrine audit) | `5879c5b6` |
+| Wordmark: gradient → solid | `cc095592` |
+| Tour diagram overlap + geometry check in audit_tour | `699b7df2` |
+| Exemplar report on the level plan | `0fd077ae`, `a1361956` |
+| Enhancement level rule pinned from client bins | `276cf249` |
+
+Earlier the same arc: four-way alignment (`3d62f4fa`, `eb1aa204`), archetype
+emblems (`e99524e1`, `59e25203`).
+
+**Reverted deliberately, do not resurrect without a new decision:** the alignment
+backdrop (`b6baa53b` reverts three commits) and the gold-forward palette "depth
+pass" (`0608986a`). Joel's verdict on the latter: *"This just looks like you
+messed with theme colors, put it back."*
+
+### Batteries added today
+`tools/test_proc_host_gate.py` (15) · `tools/test_verdict_legality.py` (7) ·
+`tools/audit_travel_powers.py` (14) · `tools/test_exemplar_levels.py` (8) ·
+`tools/test_tray_first_run_notice.py` (9, dies with the tray) ·
+`tools/measure_proc_host_movers.py` · `tools/extract_boost_level_tables.py` ·
+`tools/extract_gui_emblems.py`. Standing gate 24/24, `audit_tour` now 10/10.
 
 ---
 
-## Still open, needs Joel (unchanged from this morning)
+## ⏸ PARKED, NEEDS JOEL
 
-- **❓ Iron Man accolade** — does the Adamant / Iron Man badge actually GRANT its
-  power (+10% Max HP, +10 Max End)? The badge is real and game-corroborated;
-  only the grant is unverified, and +10/+10 would outsize every documented
-  accolade. **One look at a character holding it settles it.** The record STAYS
-  until then; do not "clean it up".
-- **Posts drafted, not sent** (full text in `session-report.md`): the Homecoming
-  forum post for 0.12.30 with a PS announcing hero-companion.com and /pulse, and
-  a two-part Discord DM to Guyver.
-- **Homecoming Discord announcement** — my read stands: not yet. Eight releases
-  in eleven days is a project still stabilising. Wait for the gaming-box install,
-  the FP/whitelist submissions, and about a week of quiet.
-- **The gaming box has not woken since 2026-07-29 11:51.** Orders unclaimed.
-  Check it before any wave counts on it.
-- Smaller, offered and not started: `prefers-reduced-motion` (three views animate
-  infinitely with no escape hatch), custom easing tokens, a static check for the
-  CSS contrast trap, the exploration-log parse (RAM), the strict-dominance
-  solver experiment.
+- **Champion re-cert.** The proc fix moved **20 of 24** contexts (11 up, 9 down,
+  median ±70, range +243.9 to −161.0; 19 of 20 are `itrial`). Re-run
+  `tools/measure_proc_host_movers.py` to reproduce. A wave needs his word, and
+  the gaming box has not woken since 2026-07-29 11:51.
+- **Iron Man accolade grant** — only his in-game look settles it.
+- **Exemplared stat totals.** Now possible because the enhancement rule is
+  pinned: recompute def/res/recharge at level L with only surviving powers,
+  slots, and working enhancements.
 
 ---
 
-## Traps recorded 2026-07-31 (each cost something)
+## ⚠ TRAPS EARNED TODAY (each cost real time)
 
-- ⚠ **`activate_requires` is a DIFFERENT field from `requires`.** Accolades gate
-  at runtime on `type char> hero|villain eq`. I reported "both sides stack, pool
-  doubles" from `requires`/`num_allowed`/no-mutex and was wrong — you can EARN
-  and HOLD both sides, but only your current side's APPLY. `engine.py:602-620`
-  already had this right since 2026-07-17.
-- ⚠ **Badge displays carry gender templates.** Iron Man is stored as `Adamant`
-  with villain display `Iron{Hero.gender=male man|woman}`, so a substring search
-  for "iron man" returns zero. I reported "no such badge in 2,396 records" off
-  that and recommended dropping a real badge.
-- ⚠ **Any CSS rule that restyles a button's `background` must restate `color`.**
-  Measured, not eyeballed: 1.27:1.
-- ⚠ **Never register a scheduled task with a near-future trigger AND call
-  `Start-ScheduledTask`** — it double-fires. Cost a duplicate wave on colliding
-  shard names (caught before any shard was written).
-- ⚠ **Never state a clock time or countdown without a same-turn `Get-Date`.**
-  Monitor ticks are not a clock; they queue and lag.
-- ⚠ **The tour's mock header is hand-built from the real markup** and drifts
-  silently. `audit_tour` checks ids and anchors, NOT copy or mock parity —
-  walking the tour is the only way to catch that class.
-
-**The through-line:** almost every error came from asserting what users see
-after reading source, or from a single search returning zero. Drive the real app
-in a browser (Edge via the Chrome connector — the Claude pane will not composite
-frames), measure rather than eyeball, and read whatever prior verification is
-attached to data before contradicting it.
+- **Client art is split across TWO asset sets with different naming.** live =
+  `texture_*.pigg`, issue24 = `tex*.pigg` / `stage*.pigg`. A `texture_*` glob
+  matches ZERO files in i24. Always glob `*.pigg` across both.
+- **`extract_power_icons.py` still has that glob bug** — its documented i24
+  fallback has never run. May close some of the 38 missing power icons.
+- **Never classify a power by its internal name.** `Leap` displays as
+  *Acrobatics*; `Long_Jump` is the real Super Jump; `Invisibility` is reused by
+  Illusion Control. Four of six travel-list entries were ghosts.
+- **`totals` holds floats and dicts ONLY.** Putting a list in it broke Force
+  Feedback seating downstream and the standing gate caught it.
+- **A bisect that reverts the wrong file proves nothing.** Testing "solver only"
+  reverted `engine.py`, where the FLAGS live, so the solver gate was inert and
+  passed for the wrong reason.
+- **Measure the composited backdrop, not the translucent overlay.** My first
+  contrast pass claimed 17 failures with ratios near 1.0 (i.e. invisible text
+  that is plainly readable). The real answer was 6.
+- **Minimum contrast lift is not enough** — a value computed at exactly 4.5 read
+  4.48 on a differently-nested card. Give margin.
+- **A check that cannot fail is worse than no check.** My first tour-geometry
+  check reported PASS on the exact bug it was written for; my first attempt to
+  prove that printed "bug re-introduced" *unconditionally* without verifying the
+  edit applied. Both now carry built-in negative controls.
+- **Scripted writes must be binary-preserving.** A text-mode write rewrote CRLF
+  across two files: 4,132 insertions for a 42-line change. The guard caught it.
+- **Verify what a number measured.** I nearly reported "5.4 screens / 4,096
+  words" as an improvement — measured while two panels were broken and rendering
+  nothing.
+- **The dev server does NOT reload Python.** `debug=False`. It ran for hours
+  serving pre-change server code while I told Joel to reload. Restart it after
+  every server-side edit.
 
 ---
 
 ## How to work here
 
-- Dev copy: `PORT=5080 python server/server.py` in the background, then Edge to
-  http://localhost:5080. The installed tray app owns 5000 — never touch it.
-- ⚠ Getting into the app requires picking an entry-modal choice; "Continue where
-  you left off" → Resume is fastest. Nothing is reachable until you do.
-- ⚠ `ACCOLADES_ROWS` and friends are script-scoped, not on `window` — read the
-  bare identifier when probing from the console.
-- ⚠ Static-file changes need NO restart (F5 on the ROOT url); **server-side
-  changes DO** — the server runs `debug=False`.
-- Batteries: `tools/demo_single_build_fixes.py` (24 checks, the standing gate),
-  `tools/audit_tour.py` (8), `tools/test_plateau_twostep.py` (6), plus
-  test_ho_solver / test_proc_trade_note / test_pet_hit_v38 /
-  test_mbd_alignment / audit_pool_prereq_validator.
-- Waves launch DETACHED via a scheduled task + `launch_hidden.vbs`. Shards are
-  the save file. Merge by context with `--verdicts`, never wholesale, and only
-  on Joel's explicit word.
-- `session-report.md` (outside the repo, never committed) is the outbound
-  channel; `ideas.md` is inbound; chat is 10 lines max.
+- Dev copy: `PORT=5080 python server/server.py` in the background, then
+  **http://127.0.0.1:5080**. The installed tray app owns 5000 — never touch it.
+- ⚠ Getting into the app requires an entry-modal choice; "Continue where you left
+  off" → Resume is fastest.
+- ⚠ The Claude browser pane **cannot screenshot** (no compositing) but CAN load
+  the page and run JS. `getComputedStyle` over the live DOM is the verifiable
+  half — pull real values and render them into an image to actually look.
+- Batteries: `tools/demo_single_build_fixes.py` (24, the standing gate),
+  `tools/audit_tour.py` (10), plus the ones listed above.
+- `session-report.md` (outside the repo) is outbound; `ideas.md` is inbound;
+  chat is 10 lines max.
