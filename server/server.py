@@ -6610,10 +6610,34 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
 # in-game power-icon assets. Suggested macros (e.g. a league low-FX toggle) are
 # added to trays 3 and 4 as non-power entries.
 # ---------------------------------------------------------------------------
-_TRAVEL_MAIN = {"Fly", "Super_Speed", "Super_Jump", "Long_Jump", "Teleport",
-                "Mystic_Flight", "Speed_of_Sound", "Mighty_Leap", "Infiltration"}
-_TRAVEL_EXTRA = {"Hover", "Afterburner", "Combat_Teleport", "Evasive_Maneuvers",
-                 "Jaunt", "Translocation", "Group_Fly"}
+# ⚠ ONE list, game-verified. There used to be THREE places answering "is this a
+# travel power" and they disagreed - the defect BasiliskXVIII reported
+# (2026-08-01). Every name below was checked against data/powers.json by leaf
+# name AND display name, which exposed four errors the old lists carried:
+#   "Leap"         -> Pool.Leaping.Leap DISPLAYS AS ACROBATICS, a mez toggle.
+#                     Counting it as travel told players with Acrobatics they
+#                     had "more than one travel power".
+#   "Long_Jump"    -> this is the real Super Jump, and it was MISSING from the
+#                     coaching list, so Super Jump users were nagged to take a
+#                     travel power they already had.
+#   "Mighty_Leap"  -> missing from the coaching list (the reported symptom).
+#   "Super_Jump" / "Infiltration" -> GHOSTS. Neither exists as a leaf name;
+#                     Infiltration is Pool.Invisibility.Invisibility. They could
+#                     never match anything.
+# tools/audit_travel_powers.py now fails if any name here stops resolving.
+#   Infiltration (Pool.Invisibility.Invisibility) is deliberately ABSENT: its
+#   leaf name "Invisibility" is REUSED by Illusion Control's Superior
+#   Invisibility, so leaf matching cannot tell them apart and a Controller
+#   would be told their stealth toggle is a travel power. Never classify a
+#   power off an ambiguous internal name.
+_TRAVEL_MAIN = {"Fly", "Super_Speed", "Long_Jump", "Teleport",
+                "Mystic_Flight", "Speed_of_Sound", "Mighty_Leap"}
+# ⚠ Hover is Pool.Flight.COMBAT_FLIGHT and Combat Teleport is
+# Pool.Teleportation.TELEPORT_FOE. The display names and the internal names
+# disagree, and the old entries used the display names, so neither ever
+# matched (found by tools/audit_travel_powers.py, 2026-08-02).
+_TRAVEL_EXTRA = {"Combat_Flight", "Afterburner", "Teleport_Foe",
+                 "Evasive_Maneuvers", "Jaunt", "Translocation", "Group_Fly"}
 _SPRINTS = {"Sprint", "Walk", "Ninja_Run", "Beast_Run", "Athletic_Run"}
 # "Hard" control = the mez types that DEFINE a control power. Excludes Stuns/Knockback,
 # which damaging attacks accept as a rider (so Boxing/Umbral Torrent stay attacks).
@@ -7449,8 +7473,9 @@ SIGNATURE_POWERS = {
 # Travel MOVEMENT powers (Homecoming names) — the ones that actually get you across a zone.
 # Combat Jumping / Combat Flight / Hasten are NOT travel (they're mules/utility), so they never
 # trip the "too many travel powers" check.
-_TRAVEL_POWER_NAMES = {"Super_Speed", "Leap", "Fly", "Teleport",
-                       "Mystic_Flight", "Speed_of_Sound", "Translocation"}
+# Single source of truth: the coaching check and the pick classifier must agree
+# about what a travel power is. This was a second, drifted copy.
+_TRAVEL_POWER_NAMES = _TRAVEL_MAIN
 # Low-value pool ATTACKS the guide says to drop first (Boxing/Kick are fine — Tough/Weave prereqs).
 _FILLER_POOL_ATTACKS = {"Flurry", "Jump_Kick"}
 # These never need extra slots.
