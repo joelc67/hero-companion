@@ -584,6 +584,60 @@ async function runDiscovery() {
 // Level-by-level path (v1): the ordered picks + their slotting, derived from the solved
 // build (each power carries its pick_level + slots). The interactive per-step stat popup
 // is the next iteration on this same data.
+// ── EXEMPLAR REPORT (field report, BasiliskXVIII 2026-08-01) ───────────────
+// "If most of what I do with that character involves exemping down to run TFs, I
+// don't want to be exemping out of all of my best tools."
+//
+// ⚠ WHAT THIS CAN AND CANNOT DO, stated because the honest limit IS the feature.
+// The number of powers you keep is FIXED by the game: exemplared to L you have
+// exactly the picks the ladder has granted by L, and no ordering changes that
+// count. So this does not promise to save your powers - it tells you, before you
+// commit, which ones will not be there. That is the difference between a nasty
+// surprise at level 25 in a task force and a choice you made knowingly.
+//
+// Levels are plain numbers on purpose: naming task forces would mean claiming
+// their level ranges, and that is a game fact I have not verified.
+const EXEMPLAR_KEY = "cohExemplarLevel";
+function exemplarLevel() {
+  try { return +(localStorage.getItem(EXEMPLAR_KEY) || 0) || 0; } catch (e) { return 0; }
+}
+window.setExemplarLevel = function (v) {
+  try { localStorage.setItem(EXEMPLAR_KEY, String(+v || 0)); } catch (e) {}
+  refreshBuildViews();
+};
+
+function exemplarReportHtml(ps) {
+  const L = exemplarLevel();
+  const opts = [0, 15, 20, 25, 30, 35, 40, 45].map(v =>
+    `<option value="${v}"${v === L ? " selected" : ""}>`
+    + (v ? `level ${v}` : "I don't usually") + `</option>`).join("");
+  const picker = `<div class="lvl-ex"><label>When you exemplar down, how low do you go? `
+    + `<select onchange="setExemplarLevel(this.value)">${opts}</select></label></div>`;
+  if (!L) return picker;
+
+  const kept = ps.filter(p => (p.pick_level || 99) <= L);
+  const lost = ps.filter(p => (p.pick_level || 99) > L);
+  if (!lost.length) {
+    return picker + `<div class="lvl-ex-note good">Exemplared to ${L} you keep every power `
+      + `in this build.</div>`;
+  }
+  const nm = p => escHtml(p.display_name || (p.full_name || "").split(".").pop().replace(/_/g, " "));
+  // Powers the game WOULD have granted by L but this plan seats later. Named
+  // separately because they are the ones that feel wrong to lose.
+  const early = lost.filter(p => (p.level_available || 1) <= L);
+  return picker
+    + `<div class="lvl-ex-note"><b>Exemplared to ${L} you keep ${kept.length} of `
+    + `${ps.length} powers.</b> You lose: ${lost.map(nm).join(", ")}.`
+    + `<br><span class="muted small">The game only grants ${kept.length} picks by level `
+    + `${L}, so the rest cannot come with you whatever order you take them in.`
+    + (early.length
+        ? ` ${early.length} of them (${early.map(nm).join(", ")}) `
+          + `are powers you could have had by ${L} — if one of those matters more than `
+          + `something you keep, take it earlier in game and the plan will follow.`
+        : "")
+    + `</span></div>`;
+}
+
 function levelingPlanHtml() {
   // Inherents (Health/Stamina/Brawl…) are AUTO-GRANTED — never a pick. They carry an
   // internal pick_level for sorting, but showing them as choices misleads (field
@@ -624,6 +678,7 @@ function levelingPlanHtml() {
       + ` — the game grants these; just place the slots.</span></span></div>`
     : "";
   return `<div class="lvl-head">📋 Your respec order — pick these in sequence in-game</div>`
+    + exemplarReportHtml(ps)
     + `<div class="lvl-list">${rows}${inc}${inh}</div>`
     + `<p class="muted small">This is the exact in-game order: take each power at the level shown. Drop your earned slots into them as you go and craft the sets when you can afford them — slot <strong>Attuned</strong> so they survive exemplaring. Travel + survival are taken early on purpose. By 50 you'll match the optimized build.</p>`;
 }

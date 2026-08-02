@@ -3210,7 +3210,7 @@ def _l1_seating_ok(powers, archetype):
     return kinds == {"p", "s"}
 
 
-def _assign_pick_levels(powers, archetype=None):
+def _assign_pick_levels(powers, archetype=None, exemplar_level=None):
     """Stamp pick_level onto every non-inherent power: the level-1 creation pair first
     (one primary + one secondary from each set's first two), then natural seating
     (earliest available first on the real pick ladder), then repaired by swapping heavy
@@ -3312,6 +3312,82 @@ def _assign_pick_levels(powers, archetype=None):
                 break
         if not improved:
             break                                    # no legal move left — report best effort
+    # -- EXEMPLAR PASS (field report, BasiliskXVIII 2026-08-01) --------------
+    # "Envenom coming in on my corruptor at level 49... if most of what I do with
+    # that character involves exemping down to run TFs, I don't want to be
+    # exemping out of all of my best tools, particularly when it's a power you
+    # can get at level 4."
+    #
+    # He is right, and the cause is the loop above: it optimises for SLOT
+    # FEASIBILITY alone. Nothing in it knows that a power the game offers at 4
+    # has been parked at 49, so exemplaring strips tools you could have had.
+    #
+    # !! NO INVENTED VALUE MODEL. The objective is the game's own fact: a pick is
+    # STRANDED when the game would grant it at or below your exemplar level but
+    # this plan seats it above. Minimising stranded picks needs no opinion about
+    # which powers matter - the solver already decided that when it chose them.
+    #
+    # Strict-improvement hill climb under the SAME guards as the repair loop: a
+    # swap is kept only if the pick order stays legal, the slot schedule stays
+    # satisfiable (_excess() == 0), and the stranded count strictly drops. It can
+    # never trade legality or slots for a nicer-looking level plan.
+    if exemplar_level:
+        _ex_l = max(1, min(50, int(exemplar_level)))
+
+        # ⚠ THE COUNT OF STRANDED PICKS IS INVARIANT - proved by the battery, not
+        # assumed. Every seat at or below L must hold a power the game grants by
+        # L (anything else would be seated illegally), so the number stranded is
+        # fixed at (picks available by L) minus (pick seats existing by L).
+        # Reordering cannot change it: rescuing one early power always pushes
+        # another across the boundary. The first version of this pass minimised
+        # that count and moved nothing, correctly, forever.
+        #
+        # So the objective is WHICH powers you keep, not how many. The build
+        # already says what it values - the solver put SLOTS where the value is -
+        # so we minimise the slot investment left outside the window. That keeps
+        # your six-slotted signature power and sacrifices a one-slot mule, which
+        # is the trade a player would make by hand.
+        def _stranded():
+            return sum(1 + _sched_added(p)
+                       for lv, p in seats if _sched_avail(p) <= _ex_l < lv)
+
+        for _ in range(200):
+            _before = _stranded()
+            if _before == 0:
+                break
+            _moved = False
+            for j in range(len(seats) - 1, pinned - 1, -1):
+                if not (_sched_avail(seats[j][1]) <= _ex_l < seats[j][0]):
+                    continue
+                for k in range(pinned, j):
+                    if seats[k][0] > _ex_l:
+                        continue                  # rescuing into a seat past L is pointless
+                    if _sched_avail(seats[j][1]) > seats[k][0]:
+                        continue                  # the game will not allow it that early
+                    # ⚠ ROTATE, NOT SWAP. A swap can never help here and the
+                    # battery proved it: any seat at or below L already holds a
+                    # power the game grants by L (anything else would be seated
+                    # illegally), so swapping simply strands whoever is displaced
+                    # - net zero, every time. Rotating pulls the stranded pick
+                    # early and pushes everyone between it one seat later, so the
+                    # cost lands on a power that was ALREADY past L.
+                    _mv = seats[j][1]
+                    for _m in range(j, k, -1):
+                        seats[_m][1] = seats[_m - 1][1]
+                    seats[k][1] = _mv
+                    if (_pick_order_legal(seats) and _excess() == 0
+                            and _stranded() < _before):
+                        _moved = True
+                        break
+                    _back = seats[k][1]           # undo the rotation
+                    for _m in range(k, j):
+                        seats[_m][1] = seats[_m + 1][1]
+                    seats[j][1] = _back
+                if _moved:
+                    break
+            if not _moved:
+                break
+
     for lv, p in seats:
         p["pick_level"] = lv
     return _excess() == 0

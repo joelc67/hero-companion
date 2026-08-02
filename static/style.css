@@ -2290,3 +2290,14 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
   button:active:not(:disabled) { transform: none; }
   .entry-card:hover { transform: none; }
 }
+
+/* Exemplar report on the level plan. The picker is quiet; the consequence is
+   the loud part, because the consequence is the whole point. */
+.lvl-ex { margin: 6px 0 4px; font-size: 12px; color: var(--muted); }
+.lvl-ex select { width: auto; margin-left: 6px; padding: 3px 6px; font-size: 12px; }
+.lvl-ex-note {
+  margin: 4px 0 10px; padding: 9px 11px; border-radius: 7px;
+  background: rgba(230,120,40,.10); border-left: 3px solid var(--res);
+  font-size: 12px; color: var(--ink); line-height: 1.5;
+}
+.lvl-ex-note.good { background: rgba(60,160,90,.10); border-left-color: var(--def); }
