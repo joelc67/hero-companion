@@ -125,9 +125,13 @@ Fit is by **zoom**, solved once for the whole app from the tallest tab, floor
    ESTIMATES (40/78px) — fine while the page never scrolls; re-measure if an
    overlap shows at the zoom floor.
    **Still open from the pass:** (a) **"targeted level" / exemplar-aware
-   planning** — BasiliskXVIII's ask, Joel's forum reply promised "going on the
-   list"; this IS the list entry (a power picked early is useless exemped down;
-   the planner is blind to it today). (b) **At release time the forum reply
+   planning** — design paper WRITTEN 2026-08-03 at
+   `C:\Users\joelc\code\exemplar-target-level-paper.md`, awaiting Joel's
+   rulings R1-R4. Key finding: Mids Reborn's exemplar support is a text label
+   (ExempHigh/Low feed one string, zero math) — nothing to align with, clear
+   room to be better. Layers: (1) "Played at level N" honest view, (2) advice
+   card in numbers, (3) solver objective = MODEL BUMP + recert, gated on R3.
+   Game rules in §2 are TO-PIN (wiki-verify) before any code trusts them. (b) **At release time the forum reply
    needs two edits**: "right-click the tray icon → Quit" (the tray is gone —
    window close quits) and "the update check only runs when you click it"
    (it runs automatically on launch since 2026-08-02). Both statements are
