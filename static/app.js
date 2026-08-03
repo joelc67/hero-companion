@@ -5273,6 +5273,61 @@ window.addPower = function (sel) {
 
 // The catalogue takes powers by name, so the picking logic can no longer live
 // inside a <select> handler.
+// ── GRANTED INHERENTS ───────────────────────────────────────────────────────
+// The game gives EVERY character these seven, all slottable in game — the wall
+// showed only Health and Stamina (Joel, 2026-08-03: "missing inherent Powers,
+// while rarely used to fill slots on, go beyond Stamina and Health").
+// ⚠ SOLVER-NEUTRAL BY CONSTRUCTION: solver._is_no_enhance_inherent caps the
+// utility five's budget to hand-placed SET pieces, so the ILP never adds slots
+// to them and no certified outcome moves — they exist to be seen and
+// hand-slotted (a Celerity +Stealth in Sprint is the classic case).
+// include_in_totals only for Autos (Swift/Hurdle/Health/Stamina genuinely
+// always apply); Sprint is toggled off in combat and Brawl/Rest are clicks.
+const GRANTED_INHERENTS = [
+  "Inherent.Inherent.Brawl", "Inherent.Inherent.Sprint", "Inherent.Inherent.Rest",
+  "Inherent.Fitness.Swift", "Inherent.Fitness.Hurdle",
+  "Inherent.Fitness.Health", "Inherent.Fitness.Stamina",
+];
+let _ensuringInherents = false;
+async function ensureInherents() {
+  if (!build.archetype || !(build.powers || []).length) return false;
+  // ⚠ SINGLE-FLIGHT. recompute() runs concurrently, and two in-flight calls
+  // both saw a grant "missing" across the loadPowers await and both pushed —
+  // Brawl x2, Swift x3 on the wall (caught live, 2026-08-03).
+  if (_ensuringInherents) return false;
+  _ensuringInherents = true;
+  try {
+  let added = false;
+  // self-heal: the pre-fix race may have persisted duplicates into a save.
+  // Keep the FIRST copy (it may carry slots), drop the rest.
+  for (const fn of GRANTED_INHERENTS) {
+    const idxs = build.powers.map((p, i) => p.full_name === fn ? i : -1).filter(i => i >= 0);
+    for (const i of idxs.slice(1).reverse()) { build.powers.splice(i, 1); added = true; }
+  }
+  for (const fn of GRANTED_INHERENTS) {
+    if (build.powers.some(x => x.full_name === fn)) continue;
+    const psFull = fn.split(".").slice(0, 2).join(".");
+    const rec = ((await loadPowers(psFull)) || []).find(x => x.full_name === fn);
+    if (!rec || !rec.slottable) continue;
+    if (build.powers.some(x => x.full_name === fn)) continue;  // re-check post-await
+    // a grant is not an edit: no recordEdit, no undo entry
+    added = true;
+    build.powers.push({
+      full_name: rec.full_name,
+      display_name: rec.display_name,
+      powerset_full_name: psFull,
+      accepted_set_category_ids: rec.accepted_set_category_ids || [],
+      accepted_set_categories: rec.accepted_set_categories || [],
+      power_type: rec.power_type,
+      include_in_totals: rec.power_type === 1,
+      slotCount: 1,
+      slots: [null],
+    });
+  }
+  return added;
+  } finally { _ensuringInherents = false; }
+}
+
 window.addPowerByName = function (psFull, fullName) {
   if (!fullName) return;
   const p = (POWERS_CACHE[psFull] || []).find(x => x.full_name === fullName);
@@ -5995,6 +6050,7 @@ function collapseLongExplanations(root) {
 async function recompute() {
   renderEndgameWarnings();   // warn if a leveling character previews epic/incarnate content
   syncNameField();           // build-tile Name rides every state change
+  if (await ensureInherents()) renderPowers();   // granted powers joined: show them
   const hasPowers = build.powers.length > 0;
   const ob = $("opt-btn");   // AI refine — hidden entirely when the AI seam is off
   if (ob) ob.style.display = (hasPowers && AI_ON) ? "block" : "none";
