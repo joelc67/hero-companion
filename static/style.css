@@ -110,6 +110,10 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
    then the tab strip. Below them exactly one panel is visible at a time and it
    owns the remaining height. The page itself never scrolls — see fitZoom() in
    app.js, and tabbed-layout-spec.md for why scale beats rearrangement. */
+/* The tile's rows belong to Powers & Slots ONLY (Joel, 2026-08-04: on every
+   other tab they buried the content). Inputs still exist and still work —
+   display:none, never removal. fitZoom reads the honest 0 into --chrome-h. */
+body:not(.tab-powers) .build-tile { display: none !important; }
 .build-tile {
   display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3) var(--s4);
   padding: var(--s2) var(--s4);
@@ -1975,17 +1979,25 @@ body { overflow: hidden; }
 .jny-route-places { font-size: 13px; line-height: 1.45; margin-top: 2px; }
 .jny-tf { font-size: 13px; margin-top: 3px; color: var(--accent); }
 .jny-route-src { font-size: 12px; color: var(--muted); font-style: italic; margin-top: 4px; }
+
+/* End Game: the current incarnate pick explained under its select (2026-08-04) */
+.inc-detail { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 4px 8px;
+  margin-top: 4px; font-size: 13px; color: var(--ink); min-width: 0; }
+.inc-d-ico { width: 20px; height: 20px; border-radius: 4px; flex: none; }
+.inc-fx { color: var(--accent); }
 /* THE LEVEL PANEL — art left, everything else right, and the RIGHT side scrolls
    in its own window. A fixed-height panel is what stops the road growing every
    time a level has a lot going on (the level-40 stop carries ten Task Forces). */
-.jny-panel { display: block; margin-top: 10px;
+.jny-panel { display: flex; gap: 14px; align-items: flex-start; margin-top: 10px;
   background: var(--panel2); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
-.jny-panel-info { min-width: 0; }
+.jny-panel-info { min-width: 0; flex: 1; }
 .jny-panel-h { margin: 0 0 6px; font-size: 16px; }
 .jny-panel-here { color: var(--warn); font-size: 13px; }
-/* The zone splash is the star now (Joel), so it takes ~40% of the panel and
-   fills it. 4:3 landscape art in this slot shows the whole scene. */
-.jny-art { width: 100%; height: 240px; margin-bottom: 12px;
+/* The zone splash lives on the panel's LEFT (Joel, 2026-08-04: the full-width
+   banner cropped tall art into "a statue from the hips down" and wasted
+   reading space). A tallish box shows the scene; it swaps with each stop. */
+.jny-art { width: 300px; flex: none; height: 360px; position: sticky;
+  top: calc(var(--chrome-h, 90px) + 8px);
   border-radius: 8px; border: 1px dashed var(--border);
   background: var(--bg); display: flex; flex-direction: column; align-items: center;
   justify-content: center; gap: 6px; text-align: center; padding: 10px; }

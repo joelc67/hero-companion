@@ -1379,12 +1379,10 @@ function renderJourneyLevelPanel() {
     return `<span class="rt-delta ${dv > 0 ? "up" : "down"}">${dv > 0 ? "+" : ""}${dv}${u} ${lab}</span>`;
   }).filter(Boolean).join(" ");
 
-  // The art rides ABOVE the road (Joel, 2026-08-03) and tracks the SELECTED
+  // The art sits LEFT of this panel (Joel, 2026-08-04) and tracks the SELECTED
   // stop, so the image always means something: it is the place the level
   // you're looking at sends you.
-  const artSlot = document.getElementById("jny-art-slot");
-  if (artSlot) artSlot.innerHTML = _zoneArtHtml(zoneNames);
-  host.innerHTML = (artSlot ? "" : _zoneArtHtml(zoneNames))
+  host.innerHTML = _zoneArtHtml(zoneNames)
     + `<div class="jny-panel-info">`
     + `<h4 class="jny-panel-h">Level ${s.level}`
     + (i === hereIdx ? ` <span class="jny-panel-here">★ you are here</span>`
@@ -1804,13 +1802,14 @@ function renderJourney() {
         ? `<div class="jny-current">⭐ <span class="jny-current-lv">Level 50</span> — a finished end-game build; this road is the 1–50 path behind it</div>`
         : "");
 
-  // ORDER (Joel, 2026-08-03): the art (tracking the level you're looking at),
-  // the 1-50 road right below it, then the level detail — the preview/consent
-  // chrome moves BELOW the road it used to sit on top of.
+  // ORDER (Joel, 2026-08-04, supersedes the art-above-the-road row): the road
+  // first, then the level detail with the art on ITS LEFT. The full-width
+  // banner cropped tall zone art into a strip ("a statue from the hips down")
+  // and wasted reading space; in the panel the art still changes with every
+  // stop you click, and renderJourneyLevelPanel's no-slot fallback renders it.
   $("journey-body").innerHTML =
     `<div class="jny">`
     + (journeyIntroDone() ? "" : `<details class="jny-fit jny-introwrap"><summary>👋 <b>New to the Journey?</b> <span class="muted small">what this road is and how to read it</span><span class="jny-expand-cue">click to expand ▾</span></summary>${_journeyIntroHtml()}</details>`)
-    + `<div class="jny-art-row" id="jny-art-slot"></div>`
     + lvBanner
     + `<div class="jny-head"><span class="muted small">Scroll or drag the road — click a card for what that level buys you.</span></div>`
     + `<div class="jny-viewport"><div class="jny-strip"><div class="jny-lane">${stops}</div></div></div>`
@@ -3739,8 +3738,38 @@ function renderIncarnates() {
   }
   const host = $("incarnate-selectors");
   if (!host || !INCARNATES) return;
+  // What the CURRENT pick actually is and does (Joel, 2026-08-04: "the End Game
+  // tab is weak — not much there to share or understand"). Every line is
+  // server-sourced: `desc` is the choice's own description, `effects` are the
+  // exact numbers the engine folds in when "Include incarnates (peak)" is on.
+  const _fxLabel = { Recovery: "recovery", RechargeTime: "recharge",
+    Regeneration: "regeneration", ToHit: "to-hit", Accuracy: "accuracy",
+    Defense: "defense", Resistance: "resistance", DamageBuff: "damage",
+    Damage: "damage", HitPoints: "max HP", Endurance: "max end",
+    EnduranceDiscount: "endurance discount" };
+  const _incDetail = (c) => {
+    if (!c) return "";
+    const ico = c.icon ? `<img class="inc-d-ico" src="${c.icon}" alt="" loading="lazy">` : "";
+    // Same effect + value across many damage types collapses to one entry —
+    // Cardiac's eight "+20% resistance (type)" rows blew the layout apart.
+    const groups = new Map();
+    (c.effects || []).forEach(e => {
+      const k = `${e.effect}|${e.value}`;
+      if (!groups.has(k)) groups.set(k, { e, types: [] });
+      if (e.damage_type && e.damage_type !== "None") groups.get(k).types.push(e.damage_type);
+    });
+    const fx = [...groups.values()].map(({ e, types }) => {
+      const dt = types.length > 3 ? ` (${types.length} damage types)`
+        : types.length ? ` (${types.map(escHtml).join(", ")})` : "";
+      return `+${Math.round((e.value || 0) * 100)}% ${escHtml(_fxLabel[e.effect] || e.effect)}${dt}`;
+    }).join(" · ");
+    return `<div class="inc-detail">${ico}<span>${escHtml(c.desc || "")}</span>`
+      + (fx ? `<b class="inc-fx" title="What our math folds into your totals when 'Include incarnates (peak)' is ticked on the Stats tab.">${fx}</b>` : "")
+      + `</div>`;
+  };
   host.innerHTML = INCARNATES.slots.map((s) => {
     const cur = (build.incarnates[s.slot] || {}).full_name || "";
+    const curCh = (s.choices || []).find(c => c.full_name === cur);
     // v34 item 6 (the honesty clause): a choice our math doesn't price says so
     // AT THE POINT OF CHOICE — no silent dead picks. `modeled` comes from the
     // server, computed from the engine's own INCARNATE_FX. A whole slot with
@@ -3755,6 +3784,7 @@ function renderIncarnates() {
         ${s.choices.map((c) => `<option value="${c.full_name}"${c.full_name === cur ? " selected" : ""}>${
           c.display_name}${(anyModeled && !c.modeled) ? " (not yet modeled)" : ""}</option>`).join("")}
       </select>
+      ${_incDetail(curCh)}
     </label>`;
   }).join("");
 }
@@ -3770,6 +3800,7 @@ window.onIncarnate = function (sel) {
       display_name: sel.options[sel.selectedIndex].text,
     };
   }
+  renderIncarnates();   // refresh the per-pick detail line under each select
   recompute();
 };
 
@@ -6321,6 +6352,10 @@ function activateTab(key, moveFocus) {
     btn.setAttribute("aria-selected", on ? "true" : "false");
     btn.tabIndex = on ? 0 : -1;
     panel.hidden = !on;
+    // body.tab-<key> lets CSS scope chrome per tab — the build tile's rows show
+    // ONLY on Powers & Slots (Joel, 2026-08-04: on every other tab they just
+    // buried the content). The tile's inputs keep working while hidden.
+    document.body.classList.toggle("tab-" + k, on);
     if (on && moveFocus) btn.focus();
   }
   try { localStorage.setItem("cohTab", key); } catch (e) {}
@@ -6404,7 +6439,10 @@ function fitZoom() {
   // fit pass: resize, tab change, recompute.
   const mh = ($("masthead") || {}).offsetHeight || 40;
   const th = ($("tabbar") || {}).offsetHeight || 38;
-  const bh = ($("build-tile") || {}).offsetHeight || 46;
+  // ⚠ no `|| 46` fallback: the tile is display:none off the Powers tab, and its
+  // honest 0 must reach --chrome-h or everything sticky sits 46px too low.
+  const tile = $("build-tile");
+  const bh = tile ? tile.offsetHeight : 46;
   const rs = document.documentElement.style;
   rs.setProperty("--masthead-h", mh + "px");
   rs.setProperty("--tabbar-h", th + "px");
@@ -7850,9 +7888,7 @@ async function applyImportedBuild(b) {
   // incarnates
   build.incarnates = {};
   for (const [slot, v] of Object.entries(b.incarnates || {})) build.incarnates[slot] = v;
-  document.querySelectorAll("#incarnate-selectors select").forEach((s) => {
-    const v = build.incarnates[s.dataset.slot]; if (v) s.value = v.full_name;
-  });
+  renderIncarnates();   // one renderer: selects AND the per-pick detail line
   build.level_reached = b.level_reached || null;   // restore where the player was in-game
   build.imported = true;    // an imported build → RETOOL mode; locks protect its sets
   // v35 §4: seed the visible locks. A save that already KNOWS about locks keeps
@@ -9156,10 +9192,7 @@ async function applyGeneratedBuild(res) {
   // Incarnates
   build.incarnates = {};
   for (const [slot, v] of Object.entries(res.incarnates || {})) build.incarnates[slot] = v;
-  document.querySelectorAll("#incarnate-selectors select").forEach((s) => {
-    const v = build.incarnates[s.dataset.slot];
-    s.value = v ? v.full_name : "";
-  });
+  renderIncarnates();   // one renderer: selects AND the per-pick detail line
 
   renderPowers();
   recompute();
