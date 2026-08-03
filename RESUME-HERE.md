@@ -124,14 +124,18 @@ Fit is by **zoom**, solved once for the whole app from the tallest tab, floor
    remembered tab is Leveling Guide). Sticky offsets for tabbar/build-tile are
    ESTIMATES (40/78px) — fine while the page never scrolls; re-measure if an
    overlap shows at the zoom floor.
-   **Still open from the pass:** (a) **"targeted level" / exemplar-aware
-   planning** — design paper WRITTEN 2026-08-03 at
-   `C:\Users\joelc\code\exemplar-target-level-paper.md`, awaiting Joel's
-   rulings R1-R4. Key finding: Mids Reborn's exemplar support is a text label
-   (ExempHigh/Low feed one string, zero math) — nothing to align with, clear
-   room to be better. Layers: (1) "Played at level N" honest view, (2) advice
-   card in numbers, (3) solver objective = MODEL BUMP + recert, gated on R3.
-   Game rules in §2 are TO-PIN (wiki-verify) before any code trusts them.
+   **(a) EXEMPLAR VIEW — LAYER 1 SHIPPED (`6fc88248`, 2026-08-03 evening,
+   installed).** Joel ruled: like Mids but better, my placement, unmistakable.
+   Built: Exemplar dial on the build tile (Off = full level) → bold banner on
+   Powers & Slots + Stats, per-card "⛔ NOT USABLE AT LEVEL ##" badges, every
+   number restated (totals, DPS, set bonuses, LotG-class globals, incarnates
+   off <45). Rules wiki-pinned + boundary-tested (test_exemplar_view.py,
+   12/12: 47/46 for io50, 36/35 for a L41 pick, attuned set_min−3, purple
+   exempt). A VIEW only — never saved/solved (suppression precedent).
+   **STILL OPEN from the paper:** Layer 2 (the advice card in numbers) and
+   Layer 3 (solver optimizes FOR a target level = MODEL BUMP + recert, needs
+   Joel's ruling). ⚠ The ⓘ set-detail card's tier list does not yet grey
+   exemplar-dead bonuses — the banner states the rule instead.
    (b) **NEXT AFTER EXEMPLAR (Joel's order, 2026-08-03): the Stats page
    provenance redesign** — spec captured verbatim in
    `C:\Users\joelc\code\stats-provenance-paper.md`: mini powers+slots wall
