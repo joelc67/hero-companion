@@ -469,6 +469,21 @@ in RESUME-HERE.md.
 - **⚠ `collapseLongExplanations` eats any muted block over 26 words.** It folded a
   rules line behind "more" the moment it was written. Rules lines carry
   `.keep-whole`.
+- **Build Assistant placement RULED (Joel, 2026-08-03): it stays on Powers &
+  Slots.** Do not re-litigate spec §10.2.
+- **⚠ STICKY CONTENT MUST CLEAR THE STICKY CHROME, and the chrome heights are
+  MEASURED, never guessed** — fitZoom writes `--masthead-h/--tabbar-h/--chrome-h`
+  CSS vars each pass (the tile wraps, so they change); the tabbar, build tile
+  and the sticky ⓘ detail card offsets all read them. The card at top:10px slid
+  UNDER the chrome and read as "the set info is missing" (Joel, 2026-08-03).
+- **Every character carries the game's SEVEN slottable inherents** (Brawl,
+  Sprint, Rest, Swift, Hurdle + Health, Stamina) — `ensureInherents()` grants
+  client-side in recompute, SOLVER-NEUTRAL because `_is_no_enhance_inherent`
+  caps the utility five to hand-placed set pieces (a Celerity +Stealth in
+  Sprint survives; the ILP can never add). Autos count in totals; Sprint/
+  Brawl/Rest do not. ⚠ The grant is SINGLE-FLIGHT with a post-await re-check —
+  concurrent recomputes raced it into Brawl×2/Swift×3, and a self-heal drops
+  duplicates a save may have persisted.
 - **Characters get NAMES.** autoSaveTick used to invent "{primary} {Archetype}",
   so two Blasters with the same sets were indistinguishable. Autosave now only
   UPDATES an already-named character; saves carry `plan.named`; old auto-named
