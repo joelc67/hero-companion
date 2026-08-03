@@ -2648,11 +2648,13 @@ async function loadMeta() {
   const hv = $("app-ver");
   if (hv && META) {
     // Build stamp: the server's commit next to the version, so "which code is
-    // this tab running" is answerable by eye. Only source checkouts have a
-    // commit — installed copies just show the version, as before.
-    hv.textContent = META.build_commit
+    // this tab running" is answerable by eye.
+    // ⚠ HEADER shows it on SOURCE runs only. Frozen builds carry a commit now
+    // (2026-08-02) but a git hash in the masthead is developer noise to a player
+    // — it belongs in About, which has a row for exactly this, and in the tooltip.
+    hv.textContent = (META.build_commit && !META.packaged)
       ? `v${META.app_version} · ${META.build_commit} ⓘ` : `v${META.app_version} ⓘ`;
-    hv.title = `server ${META.build_commit || "(packaged)"} · ${jsAssetToken()}`;
+    hv.title = `server ${META.build_commit || "(no build stamp)"} · ${jsAssetToken()}`;
     hv.hidden = false;
     hv.onclick = showAbout;
   }
@@ -2715,7 +2717,7 @@ function showAbout() {
       checked against the game client's own files</span></div>
     ${roster}
     <div class="about-row"><b>This build</b><span>server
-      ${escHtml(META.build_commit || "(packaged — no source commit)")}, browser loaded
+      ${escHtml(META.build_commit || "(no build stamp)")}, browser loaded
       ${escHtml(jsAssetToken())}. If those two ever look out of step with a change you
       were expecting, the page is running older code than the server.</span></div>
     ${settings}
