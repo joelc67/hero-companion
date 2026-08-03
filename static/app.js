@@ -4657,7 +4657,7 @@ function renderPowers() {
   } catch (e) { /* localStorage unavailable — skip the hint */ }
 
   host.innerHTML = html;
-  updateInfoCards(LAST_TOTALS);   // refill + re-dock the info bricks (masonry balance)
+  loadAccolades().then(renderAccolades);   // the accolade sync the deleted vitals card carried
   updateEditBar();
   updateEpicBadge();
   renderConverterGuide();
@@ -6197,7 +6197,7 @@ async function recompute() {
   renderExemplarBanners();   // the advice card needs the fresh numbers
   LAST_CALC = totals || null;   // v36: carries inherent_mechanics for the offense block
   build._accoladeHp = (LAST_TOTALS && LAST_TOTALS.accolade_hp) || 0;  // v34: live accolade HP for the panel line
-  updateInfoCards(LAST_TOTALS);
+  loadAccolades().then(renderAccolades);   // (summary band deleted — its accolade sync stays)
   // Server-corrected pick levels (older saves carry naive assignments — e.g. both
   // Poison powers badged level 1). Adopt them and repaint the wall once.
   let repaint = false;
@@ -6870,145 +6870,6 @@ function cardProvenanceFooterHtml() {
   return `<div class="pi-prov muted small">${bits.join(" · ")}</div>`;
 }
 
-// ── "What's in these numbers" — v34 UI deliverable 1 ────────────────────────
-// Joel's standing question, killed permanently: it was never clear whether the
-// Epic picks and incarnate recommendations actually reached the totals. This
-// line says so, at the top of Build Vitals, driven by LIVE engine state (never
-// a hardcoded sentence) so it updates the instant any regime toggles.
-// The law it serves: UI state == engine state, with provenance.
-function provenanceLineHtml(t) {
-  const parts = [];
-  // Epic picks are ordinary slotted powers — they have always been in totals.
-  parts.push(`<span class="prov-in">✓ powers, slotting, set bonuses & Epic picks</span>`);
-
-  // Accolades: the panel's checkmarks ARE the source of truth (item 2).
-  const n = (typeof ACCOLADES_CHECKED !== "undefined") ? ACCOLADES_CHECKED.size : 0;
-  const accHp = (t && t.accolade_hp) ? Math.round(t.accolade_hp) : 0;
-  parts.push(n
-    ? `<span class="prov-in">✓ accolades: ${n} applied${accHp ? ` (+${accHp} HP)` : ""}</span>`
-    : `<span class="prov-off">accolades: none ticked</span>`);
-
-  // Incarnates: excluded from passive totals unless the peak toggle is on. When
-  // a leveling character previews them below 50, say so honestly (endgame
-  // preview) rather than implying they're already available.
-  const incOn = !!(build && build.include_incarnates);
-  const incPreview = incOn && !incarnatesUnlocked();
-  parts.push(incOn
-    ? (incPreview
-        ? `<span class="prov-off">incarnates: peak values folded in — endgame preview (unlock at 50)</span>`
-        : `<span class="prov-in">✓ incarnates: peak values folded in</span>`)
-    : (incarnatesUnlocked()
-        ? `<span class="prov-off">incarnates: off — tick “Include incarnates (peak)” to preview</span>`
-        : `<span class="prov-off">incarnates: off — unlock at level 50</span>`));
-
-  // Amplifiers: their own toggle since the split (item 3).
-  if (build && build.include_amplifiers)
-    parts.push(`<span class="prov-in">✓ amplifiers</span>`);
-
-  return `<div class="prov-line" title="Exactly what is and is not folded into the numbers below — it updates the moment you change any of them.">${parts.join(" · ")}</div>`;
-}
-
-// ── Overview bar: the build's vitals in one horizontal line (Sidekick-style) ─
-// Color logic: defense vs the current-meta 35 (green ≥35, amber ≥25), resistance
-// vs the AT cap fraction, recharge green ≥70. Dim = not there yet, never red — the
-// bar is a dashboard, not a nag.
-function _ovCell(label, val, cls) {
-  return `<span class="ov-cell ${cls}"><span class="ov-num">${val}</span><span class="ov-lab">${label}</span></span>`;
-}
-function _ovDef(v) { return v >= 35 ? "ov-good" : v >= 25 ? "ov-mid" : "ov-dim"; }
-function updateOverviewBar(t) {
-  loadAccolades().then(renderAccolades);
-  // The vitals live in the OVERVIEW CARD — the gap-filling brick renderPowers
-  // docks at the end of the shortest level column.
-  const card = $("overview-card");
-  if (!card) return;
-  if (!t || !build.powers.length) { card.classList.add("hidden"); return; }
-  const num = (x) => Math.round((x && typeof x === "object" ? x.value : x) || 0);
-  const d = t.defense || {}, r = t.resistance || {}, off = t.offense || {};
-  const rcap = Math.round(((t.caps || {}).resistance || 75));
-  const _resCls = (v) => v >= rcap - 5 ? "ov-good" : v >= rcap * 0.6 ? "ov-mid" : "ov-dim";
-  const rech = num(t.recharge);
-  // A real table: damage types across the top, DEF and RES as rows. One glance.
-  const dv = { sl: Math.min(num(d.Smashing), num(d.Lethal)), fc: Math.min(num(d.Fire), num(d.Cold)),
-               en: Math.min(num(d.Energy), num(d.Negative)), mel: num(d.Melee),
-               rng: num(d.Ranged), aoe: num(d.AoE) };
-  const rv = { sl: Math.min(num(r.Smashing), num(r.Lethal)), fc: Math.min(num(r.Fire), num(r.Cold)),
-               en: Math.min(num(r.Energy), num(r.Negative)) };
-  const td = (v, cls) => `<td class="${cls}">${v}</td>`;
-  card.innerHTML =
-    `<div class="ovc-head">BUILD VITALS</div>
-     ${provenanceLineHtml(t)}
-     <table class="ov-table">
-       <tr><th></th><th>S/L</th><th>F/C</th><th>E/N</th><th>Mel</th><th>Rng</th><th>AoE</th></tr>
-       <tr><th>DEF %</th>${td(dv.sl, _ovDef(dv.sl))}${td(dv.fc, _ovDef(dv.fc))}${td(dv.en, _ovDef(dv.en))}
-           ${td(dv.mel, _ovDef(dv.mel))}${td(dv.rng, _ovDef(dv.rng))}${td(dv.aoe, _ovDef(dv.aoe))}</tr>
-       <tr><th>RES %</th>${td(rv.sl, _resCls(rv.sl))}${td(rv.fc, _resCls(rv.fc))}${td(rv.en, _resCls(rv.en))}
-           <td class="ov-dim">—</td><td class="ov-dim">—</td><td class="ov-dim">—</td></tr>
-     </table>
-     <div class="ov-buildline">
-       <span>Recharge <b class="${rech >= 70 ? "ov-good" : rech >= 40 ? "ov-mid" : "ov-dim"}">+${rech}%</b></span>
-       <span>Recovery <b>+${num(t.recovery)}%</b></span>
-       <span>HP <b>+${num(t.max_hp)}%</b></span>
-       <span>DPS <b>${num(off.st_dps)}</b> ST / <b>${num(off.aoe_dps)}</b> AoE</span>
-     </div>`;
-  card.classList.remove("hidden");
-}
-
-// Active set bonuses, aggregated: "+7.5% Recharge ×5" style, biggest stacks first.
-function updateBonusesCard(t) {
-  const card = $("bonuses-card");
-  if (!card) return;
-  const list = (t && t.applied_bonuses) || [];
-  if (!list.length || !build.powers.length) { card.classList.add("hidden"); return; }
-  const counts = {};
-  list.forEach(b => {
-    const label = (Array.isArray(b.text) ? b.text[0] : b.text) || `${b.set} ${b.pieces}pc`;
-    counts[label] = (counts[label] || 0) + 1;
-  });
-  const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-  const capped = (t.rule_of_five_capped || []).length;
-  const top = entries.slice(0, capped ? 6 : 7);   // fits the double-height brick exactly
-  card.innerHTML = `<div class="ovc-head">SET BONUSES <span class="muted">(${list.length} active)</span></div>`
-    + top.map(([label, n]) =>
-        `<div class="ovc-line ovc-clip">${n > 1 ? `<b>×${n}</b> ` : ""}${escHtml(label)}</div>`).join("")
-    + (entries.length > top.length ? `<div class="ovc-line ovc-dim">… +${entries.length - top.length} more</div>` : "")
-    + (capped ? `<div class="ovc-line ovc-dim">⚠ ${capped} bonus${capped > 1 ? "es" : ""} lost to the rule of five</div>` : "");
-  card.classList.remove("hidden");
-}
-
-// The meta-invariant uniques layer (per the master corpus: same ~9 uniques in both
-// eras) — a checklist of what this build carries.
-const _UNIQUE_CHECKS = [
-  ["LotG +Recharge", s => (s.set_name || "").includes("Luck of the Gambler") && (s.piece_name || "").includes("Recharge")],
-  ["Steadfast +Def", s => (s.set_name || "").includes("Steadfast") && (s.piece_name || "").includes("Def")],
-  ["Glad Armor +Def", s => (s.set_name || "").includes("Gladiator's Armor") && (s.piece_name || "").includes("Def")],
-  ["Shield Wall +Res", s => (s.set_name || "").includes("Shield Wall") && (s.piece_name || "").includes("Res")],
-  ["Panacea proc", s => (s.set_name || "").includes("Panacea") && (s.piece_name || "").includes("+")],
-  ["Miracle +Rec", s => (s.set_name || "").includes("Miracle") && (s.piece_name || "").includes("Recovery")],
-  ["Numina +Reg/Rec", s => (s.set_name || "").includes("Numina") && (s.piece_name || "").includes("+")],
-  ["Perf Shifter +End", s => (s.set_name || "").includes("Performance Shifter") && (s.piece_name || "").toLowerCase().includes("chance")],
-  ["Reactive scaling Res", s => (s.set_name || "").includes("Reactive Defenses") && (s.piece_name || "").includes("Scaling")],
-];
-function updateUniquesCard() {
-  const card = $("uniques-card");
-  if (!card) return;
-  if (!build.powers.length) { card.classList.add("hidden"); return; }
-  const slots = build.powers.flatMap(p => (p.slots || []).filter(Boolean));
-  const rows = _UNIQUE_CHECKS.map(([name, test]) => {
-    const n = slots.filter(test).length;
-    return `<div class="ovc-line ${n ? "" : "ovc-dim"}">${n ? "✓" : "·"} ${escHtml(name)}${n > 1 ? ` <b>×${n}</b>` : ""}</div>`;
-  });
-  card.innerHTML = `<div class="ovc-head">UNIQUES CARRIED</div>` + rows.join("");
-  card.classList.remove("hidden");
-}
-
-// One call fills every info brick. (The wall is snug by construction — uniform
-// bricks in a row-flow grid — so no balancing pass is needed anymore.)
-function updateInfoCards(t) {
-  updateOverviewBar(t);
-  updateBonusesCard(t);
-  updateUniquesCard();
-}
 let LAST_TOTALS = null;
 let LAST_CALC = null;   // full /build/calculate response (v36 inherent mechanics)
 
@@ -7322,6 +7183,18 @@ document.addEventListener("click", (e) => {
   const el = e.target.closest(".stat-clickable[data-statkey]");
   if (el) selectStat(el.dataset.statkey, el.dataset.statlabel || el.dataset.statkey);
 });
+// ↑ / ↓ walk the stat list while a stat is selected (Joel, 2026-08-04)
+document.addEventListener("keydown", (e) => {
+  if (!SELECTED_STAT || (e.key !== "ArrowUp" && e.key !== "ArrowDown")) return;
+  const t = e.target;
+  if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT")) return;
+  const rows = [...document.querySelectorAll(".stat-clickable[data-statkey]")];
+  const i = rows.findIndex(r => r.dataset.statkey === SELECTED_STAT.key);
+  if (i < 0) return;
+  e.preventDefault();
+  const next = rows[(i + (e.key === "ArrowDown" ? 1 : -1) + rows.length) % rows.length];
+  selectStat(next.dataset.statkey, next.dataset.statlabel || next.dataset.statkey);
+});
 
 // ── STATS PROVENANCE (Joel's spec, 2026-08-03) ──────────────────────────────
 // "Nothing really glues back where these numbers come from." Click any stat →
@@ -7514,14 +7387,18 @@ function renderStatBreakdown() {
     }
     const e = byPower.get(r.power);
     e.total += r.v;
+    const _sico = (img) => img
+      ? `<img class="sb-ico-s" src="${enhIconUrl(img)}" alt="" loading="lazy">` : "";
     if (r.kind === "set_bonus") {
+      let img = null;
       (build.powers[pi].slots || []).forEach((s, si) => {
-        if (s && s.set_uid === r.set_uid) { e.hotSet.add(si); hot(pi, si); }
+        if (s && s.set_uid === r.set_uid) { e.hotSet.add(si); hot(pi, si); img = img || s.image; }
       });
-      e.srcs.push(`${pct(r.v)} — ${r.pieces} pieces of ${escHtml(r.set)}`);
+      e.srcs.push(`${_sico(img)}${pct(r.v)} — ${r.pieces} pieces of ${escHtml(r.set)}`);
     } else if (r.kind === "global") {
       e.hotSet.add(r.slot); hot(pi, r.slot);
-      e.srcs.push(`${pct(r.v)} — ${escHtml(r.piece)} (always on)`);
+      const gs = (build.powers[pi].slots || [])[r.slot];
+      e.srcs.push(`${_sico(gs && gs.image)}${pct(r.v)} — ${escHtml(r.piece)} (always on)`);
     } else if (r.kind === "power") {
       e.headHot = true; hotPower(pi);
       e.srcs.push(`${pct(r.v)} — the power's own effect`);
@@ -7533,8 +7410,9 @@ function renderStatBreakdown() {
   html = `<h2><span>${escHtml(sel.label)}</span>
     <button class="iconbtn pi-close" onclick="clearSelectedStat()" title="close">✕</button></h2>
     <p class="sb-sub">Where the <b class="sb-shown">${shown != null ? `+${shown}%` : "number"}</b> comes
-    from. The contributing IOs ring <b class="sb-green">green</b> — here and in the wall
-    above. Click any IO to change it; every number updates live.</p>`;
+    from. The contributing IOs ring <b class="sb-green">green</b> — here and in the wall above.</p>
+    <p class="sb-editnote">✏️ <b>Editable:</b> click any IO chit below to change it —
+    the change is REAL and updates your build and every number, everywhere.</p>`;
   if (!byPower.size && !aggregates.length) {
     html += `<p class="muted small">Nothing in the build feeds this number — it is all base value.</p>`;
   }
