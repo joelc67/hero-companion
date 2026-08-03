@@ -352,8 +352,12 @@ async function refreshContinueCard() {
     const res = await api("/saves");
     const n = (res && res.saves && res.saves.length) || 0;
     const card = $("entry-continue");
-    if (n > 0) { $("continue-count").textContent = n; card.style.display = ""; }
-    else card.style.display = "none";
+    if (!card) return;
+    if (n > 0) {
+      const cc = $("continue-count");
+      if (cc) cc.textContent = n;
+      card.style.display = "";
+    } else card.style.display = "none";
   } catch (e) { /* offline-safe: just don't show the card */ }
 }
 
@@ -397,13 +401,13 @@ async function autoPickPowers() {
   // v34 item 5: same class rule — any path that GENERATES a level-50 build
   // assumes the standard accolades and says so.
   await preselectStandardAccolades();
-  build._exposure = $("autopick-exposure") && $("autopick-exposure").value;
+  build._exposure = $("wiz-exposure") && $("wiz-exposure").value;
   const res = await api("/build/autopick", postJson({
     archetype: build.archetype, primary: build.primary, secondary: build.secondary,
     role: $("preset-role") && $("preset-role").value, role_mix: roleMixPayload(),
     content: $("preset-content") && $("preset-content").value,
     exposure: build._exposure,
-    travel: $("autopick-travel") && $("autopick-travel").value,
+    travel: $("wiz-travel") && $("wiz-travel").value,
     custom_targets: build._custom_targets || null }));
   if (!res || !res.ok) { alert((res && res.error) || "Auto-pick failed."); return; }
   if (res.custom_note) {
@@ -421,7 +425,7 @@ async function autoPickPowers() {
     // Travel heads-up: Super Speed / Super Jump are GROUND travel. They share a pool
     // efficiently (Super Speed + Hasten = one Speed pool), but you can't run into some
     // iTrials (BAF, Lambda) — those need Flight or Teleport, or a P2W jet pack.
-    const tv = $("autopick-travel") && $("autopick-travel").value;
+    const tv = $("wiz-travel") && $("wiz-travel").value;
     if (tv === "super_speed" || tv === "super_jump") {
       const itrial = $("preset-content") && $("preset-content").value === "itrial";
       const tname = tv === "super_speed" ? "Super Speed" : "Super Jump";
@@ -834,7 +838,7 @@ async function renderTrayLayout(out) {
   try {
     const res = await api("/build/trays", postJson({ powers: build.powers, incarnates: build.incarnates || {},
       archetype: build.archetype, role: ($("preset-role") && $("preset-role").value) || null, role_mix: roleMixPayload(),
-      exposure: build._exposure || ($("autopick-exposure") && $("autopick-exposure").value) || null, totals: LAST_TOTALS }));
+      exposure: build._exposure || ($("wiz-exposure") && $("wiz-exposure").value) || null, totals: LAST_TOTALS }));
     if (!res || !res.ok) { out.innerHTML = head + "<p class='muted small'>Couldn't build the tray layout.</p>"; return; }
     out.innerHTML = head
       + incarnateTrayHtml()
@@ -3180,13 +3184,8 @@ async function init() {
       addPowerByName(row.dataset.ps, row.dataset.full);
     }
   });
-  $("saves-back").addEventListener("click", () => {
-    $("saves-panel").classList.add("hidden"); $("entry-cards").classList.remove("hidden"); });
   $("save-btn").addEventListener("click", saveProgress);
   $("journey-btn").addEventListener("click", toggleJourneyView);
-  // standard overlay affordances: Esc closes, so does clicking the dark backdrop
-  document.addEventListener("keydown", (e) => {
-  });
   if ($("tour-btn")) $("tour-btn").addEventListener("click",
     () => { if (typeof openTourMenu === "function") openTourMenu(); });
   if ($("bug-btn")) $("bug-btn").addEventListener("click", reportBug);
@@ -3275,9 +3274,18 @@ async function init() {
     // #ai-qa); only the AI-ON client shows the ask-a-question copy
     const _ar = $("ai-response");
     if (_ar && !_ar.innerHTML.trim()) _ar.textContent = "No question asked yet.";
-    $("claude-status").textContent = h.claude_available
-      ? "AI: Claude Code ready" : "AI: Claude Code not found";
-    $("claude-status").style.color = h.claude_available ? "var(--def)" : "var(--bad)";
+    // hub-only status chip; its static home died with the old layout, so make it
+    let chip = $("claude-status");
+    if (!chip && $("assistant-title")) {
+      chip = document.createElement("span");
+      chip.id = "claude-status"; chip.className = "small";
+      $("assistant-title").after(chip);
+    }
+    if (chip) {
+      chip.textContent = h.claude_available
+        ? "AI: Claude Code ready" : "AI: Claude Code not found";
+      chip.style.color = h.claude_available ? "var(--def)" : "var(--bad)";
+    }
   });
 
   INCARNATES = await api("/incarnates");
