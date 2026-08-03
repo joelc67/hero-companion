@@ -138,6 +138,49 @@ function showEntry(section) {
 }
 function hideEntry() { $("entry-overlay").classList.add("hidden"); }
 
+// Is there work here that closing (or switching archetype) would throw away?
+// Powers picked, and either never named or changed since the last write.
+window.hasUnsavedWork = function () {
+  if (!build.archetype || !(build.powers || []).length) return false;
+  if (!(CURRENT_SAVE && CURRENT_SAVE.id)) return true;
+  return buildSnapshot() !== _lastSavedSnapshot;
+};
+
+// ⚠ PUSH the answer to the window; never let it ask. The close handler runs ON
+// the GUI thread, so any call it makes into JS waits on the thread it is already
+// holding — the first version did exactly that and hung the app on its first
+// close ("Hero Companion (Not Responding)"). Telling the window whenever the
+// answer changes means the handler only ever reads a variable.
+let _dirtyPushed = null;
+function pushDirty() {
+  try {
+    const d = hasUnsavedWork();
+    if (d === _dirtyPushed) return;
+    _dirtyPushed = d;
+    if (window.pywebview && window.pywebview.api && window.pywebview.api.set_dirty) {
+      window.pywebview.api.set_dirty(d);
+    }
+  } catch (e) { /* browser fallback has no pywebview — nothing to tell */ }
+}
+
+// The window asked us to handle the close (run_app._on_closing). We own the
+// question because we know WHAT is unsaved and can name it; Python only knows
+// that something is. Whatever the answer, the app then closes — the native veto
+// is one-time, so nobody can be trapped in here by a dialog.
+window.confirmQuit = async function () {
+  const who = (CURRENT_SAVE && CURRENT_SAVE.name)
+    || (build.primary_display ? `this ${(build.archetype || "").replace("Class_", "")}` : "this character");
+  const wantSave = confirm(`Save ${who} before closing?
+
+OK: save it, then close — it reopens here next time.
+Cancel: close without saving.`);
+  if (wantSave) {
+    await saveProgress();
+    if (hasUnsavedWork()) return;      // they backed out of naming it — stay open
+  }
+  try { await api("/app/shutdown", postJson({})); } catch (e) { /* already going */ }
+};
+
 // ---- Save / resume: a from-scratch character is weeks of real play ----
 let CURRENT_SAVE = null;   // {id, name} once saved/loaded, so re-saves update in place
 
@@ -157,6 +200,7 @@ async function saveProgress() {
     build, plan, level_reached: build.level_reached || null }));
   if (res && res.ok) {
     CURRENT_SAVE = { id: res.id, name: res.name };
+    try { localStorage.setItem("cohLastSave", res.id); } catch (e) {}
     _lastSavedSnapshot = buildSnapshot();   // mark clean so auto-save doesn't re-fire
     const s = $("gen-status"); if (s) s.textContent = `💾 Saved “${res.name}”. Resume it any time from Start over → Continue.`;
   }
@@ -237,6 +281,7 @@ window.loadSave = async function (id) {
     return;
   }
   CURRENT_SAVE = { id, name: res.save.name };
+  try { localStorage.setItem("cohLastSave", id); } catch (e) {}
   const _plan = res.save.plan || {};
   build._mode = _plan.mode || build._mode;
   // Restore the saved plan into the visible controls: the content/role
@@ -303,10 +348,10 @@ function buildSnapshot() {
 }
 async function autoSaveTick() {
   if (!build.archetype || !(build.powers && build.powers.length)) return;  // nothing worth saving yet
+  if (!(CURRENT_SAVE && CURRENT_SAVE.id)) return;   // unnamed → the user has not said to keep it
   const snap = buildSnapshot();
   if (snap === _lastSavedSnapshot) return;                                  // unchanged → skip
-  const name = (CURRENT_SAVE && CURRENT_SAVE.name)
-    || (build.primary_display ? `${build.primary_display} ${(build.archetype || "").replace("Class_", "")}` : "Autosave");
+  const name = CURRENT_SAVE.name;
   const plan = { content: $("preset-content") && $("preset-content").value,
                  role: $("preset-role") && $("preset-role").value, role_mix: roleMixPayload(), mode: build._mode || null,
                  custom_targets: build._custom_targets || null };   // ruling 4: persist in the save
@@ -3220,6 +3265,15 @@ async function init() {
   // pools and epic. Joel, 2026-08-03: not a default character — a default
   // POSITION in every list, so the canvas starts populated and every part of it
   // is a choice. Skipped when a build is already loaded (resume / import).
+  // ⚠ COME BACK TO WHERE YOU LEFT OFF. The last character they were working on
+  // reopens on launch; only a machine that has never saved one gets the blank
+  // canvas cascade. Joel: "when they come back it launches with where they left
+  // off." A save that has since been deleted falls through to the cascade.
+  let _last = null;
+  try { _last = localStorage.getItem("cohLastSave"); } catch (err) {}
+  if (!build.archetype && _last) {
+    try { await loadSave(_last); } catch (err) { _last = null; }
+  }
   if (!build.archetype && sel.options.length > 1) {
     sel.selectedIndex = 1;
     await onArchetypeChange({ target: sel });
@@ -3667,8 +3721,28 @@ window.onIncarnate = function (sel) {
 // ---------------------------------------------------------------------------
 // Archetype / powerset selection
 // ---------------------------------------------------------------------------
+let _atGuard = false;      // re-entry guard: putting the select back fires change
+
 async function onArchetypeChange(e) {
   const at = e.target.value;
+  if (!_atGuard && at && at !== build.archetype && hasUnsavedWork()) {
+    const was = build.archetype;
+    const keep = confirm(`Changing archetype starts a new character — your powers, slots and pools cannot carry across.
+
+OK: save this character first, then start over.
+Cancel: throw it away and start over now.`);
+    if (keep) {
+      await saveProgress();
+      // A cancelled name prompt means they changed their mind: put it back.
+      if (hasUnsavedWork()) {
+        _atGuard = true;
+        e.target.value = was || "";
+        _atGuard = false;
+        return;
+      }
+    }
+    CURRENT_SAVE = null;         // whatever happens next is a DIFFERENT character
+  }
   build.archetype = at;
   build.primary = build.secondary = build.epic = null;
   build.pools = []; build.pools_display = [];
@@ -5853,6 +5927,7 @@ async function recompute() {
   refreshBuildViews();   // keep the always-visible respec-order + tray sections live
   if (ACCOLADES_ROWS && ACCOLADES_ROWS.length) renderAccolades();  // keep the panel synced (HP line + alignment greying)
   scheduleFit();           // content changed height — re-solve the fit
+  pushDirty();             // keep the window's close decision current
 }
 
 // ── MENUS ───────────────────────────────────────────────────────────────────

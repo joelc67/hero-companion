@@ -203,6 +203,18 @@ def _run_window(port):
     # remove, so the exit is immediate — the tray's "let the message loop delete the
     # icon first" delay was solving a problem that no longer exists.
     server.SHUTDOWN_HOOK = _quit
+
+    class _Api:
+        """What the page tells the window. Kept to the minimum that the close
+        decision needs, because anything the handler has to ASK for is a call
+        onto the GUI thread it is already running on."""
+        dirty = False
+
+        def set_dirty(self, flag):
+            _Api.dirty = bool(flag)
+            return True
+
+    _api = _Api()
     try:
         # ⚠ EVERY LINE BELOW IS A "THIS IS STILL A BROWSER" TELL, TURNED OFF
         # (Joel, 2026-08-02: "it appears to be a browser still… not a self
@@ -235,7 +247,7 @@ def _run_window(port):
             win_w, win_h = 1280, 860
         print(f"window: {win_w}x{win_h}")
         icon = os.path.join(BASE, "assets", "HeroCompanion.ico")
-        webview.create_window(
+        win = webview.create_window(
             "Hero Companion", f"http://127.0.0.1:{port}",
             # Mids Reborn opens at roughly 1075x800 and that is the size this
             # tool is judged against (Joel, 2026-08-03: "a dedicated size similar
@@ -244,8 +256,34 @@ def _run_window(port):
             # a single dense screen. min_size is small enough to still resize
             # onto a laptop; the layout scales to whatever it is given.
             width=win_w, height=win_h, min_size=(900, 600),
-            text_select=False, zoomable=False,
+            text_select=False, zoomable=False, js_api=_api,
             background_color="#11151c")   # style.css --bg: no white browser flash on open
+        # ⚠ CLOSING IS NOT A LICENCE TO THROW WORK AWAY (Joel, 2026-08-03). The
+        # window quits the app, so an unnamed character with powers picked would
+        # vanish on the X. The page owns the question — it knows WHAT is unsaved
+        # and can name it — so the close is vetoed once and handed back to it.
+        #
+        # ⚠⚠ NEVER CALL evaluate_js FROM INSIDE THE CLOSING HANDLER. The first
+        # version did, and it DEADLOCKED the app dead — "Hero Companion (Not
+        # Responding)" on the very first close. The handler runs ON the GUI
+        # thread; evaluate_js dispatches to that same thread and waits, so it
+        # waits on itself. Both halves are fixed here:
+        #   - the dirty flag is PUSHED from the page (js_api.set_dirty), so the
+        #     handler only reads a variable and never calls into JS;
+        #   - the prompt is fired from a worker thread, off the GUI thread.
+        _closing_asked = {"done": False}
+
+        def _on_closing():
+            if _closing_asked["done"] or not _api.dirty:
+                return True
+            _closing_asked["done"] = True          # one-time veto: never a trap
+            threading.Thread(
+                target=lambda: win.evaluate_js("window.confirmQuit && confirmQuit()"),
+                daemon=True).start()
+            return False        # stay open; the page is asking now
+
+        win.events.closing += _on_closing
+
         # ⚠⚠ private_mode DEFAULTS TO TRUE, which throws localStorage away on every
         # launch — that is the alignment theme, the update-check switch, the tour's
         # saved spot and its "finished" flag, all silently forgotten each time the
