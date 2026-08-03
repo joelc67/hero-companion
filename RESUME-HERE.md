@@ -114,11 +114,17 @@ Fit is by **zoom**, solved once for the whole app from the tallest tab, floor
    tile, desktop export FIXED (ALLOW_DOWNLOADS ate it; now a real Save As via
    js_api — verified: valid .mbd from the frozen exe), honest save badges
    (needs the rebuilt server, now installed), autosave named-stamp fix + save
-   repair. **Still open from the pass:** (a) Build Assistant placement ruling
-   (spec §10.2); (b) the Leveling Guide tab shows "Load or start a character…"
-   even when a level-50 character IS loaded (new50 plans have no road — the
-   empty text should say that instead); (c) remembered-tab reopens on Leveling
-   Guide, which combined with (b) reads as a broken screen.
+   repair.
+   **Second polish round same evening (`3869b135`, statics deployed to the
+   installed copy):** tabs moved to the very top (above the build tile), active
+   tab = solid accent block, header Journey pill DELETED (alignment mis-click),
+   Leveling Guide reordered art → level banner → road, green ✓-ringed completed
+   levels, 50-kits show the whole road green + "Level 50 — finished build"
+   banner (fixes the stale-placeholder read; the road also rebuilds when the
+   remembered tab is Leveling Guide). Sticky offsets for tabbar/build-tile are
+   ESTIMATES (40/78px) — fine while the page never scrolls; re-measure if an
+   overlap shows at the zoom floor.
+   **Still open from the pass:** Build Assistant placement ruling (spec §10.2).
 1. **The guided tour is stale and `audit_tour` is RED (57 of 58 targets)** —
    GATED behind item 0, do not prompt. It walks a mock of the OLD single-page
    layout. Joel ruled: *"all the tour slides will have to be redone completely.
