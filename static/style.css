@@ -1490,6 +1490,20 @@ body { overflow: hidden; }
 .eh-set-h .muted { font-weight: 400; }
 .eh-roster { display: flex; flex-direction: column; gap: 2px; margin: 4px 0 8px; }
 .eh-piece-ico { width: 24px; height: 24px; flex: none; }
+
+/* ── Exemplar view: unmistakable, per Joel's 2026-08-03 ruling ─────────────── */
+.exemp-banner {
+  background: color-mix(in srgb, var(--warn) 16%, var(--panel));
+  border: 2px solid var(--warn); border-radius: var(--r2);
+  padding: var(--s3) var(--s4); margin-bottom: var(--s3);
+  font-size: 15px;
+}
+.exemp-banner b { color: var(--warn); letter-spacing: .03em; }
+.power-card.exemp-off { opacity: .55; border: 2px dashed var(--warn); }
+.exemp-off-badge {
+  font-weight: 800; color: var(--warn); font-size: 12px;
+  letter-spacing: .05em; margin-bottom: 2px;
+}
 .eh-piece { display: flex; align-items: center; gap: 8px; font-size: 12px;
   padding: 3px 8px; border-radius: 5px; border: 1px solid var(--border); }
 .eh-piece-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

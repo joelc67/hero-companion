@@ -269,6 +269,9 @@
       <label>Secondary
         <select id="sel-secondary" disabled></select>
       </label>
+      <label title="View this build as it plays exemplared down to a level — powers and set bonuses the game switches off at that level leave every number. A view only: nothing about the build changes.">Exemplar
+        <select id="exemplar-sel"></select>
+      </label>
       <div id="identity-lock" class="identity-lock hidden">
         🔒 <strong>Archetype &amp; powersets are fixed</strong> — these are set at character creation, and <em>no respec can change them</em>. Your pools, epic, powers &amp; slotting stay fully editable. To change these, you'd be rolling a different character.
         <button type="button" class="linkchip reroll" onclick="rerollCharacter()">↻ Reroll as a new character (from level&nbsp;1)</button>
@@ -283,6 +286,7 @@
   <main id="tabpanels">
     <section id="tab-powers" class="tabpanel" role="tabpanel"
       aria-labelledby="tab-btn-powers">
+    <div id="exemp-banner-powers" class="exemp-banner" hidden></div>
     <div class="powers-layout">
       <div class="powers-main">
 <section id="builder" class="panel">
@@ -449,6 +453,7 @@
     </section>
     <section id="tab-stats" class="tabpanel" role="tabpanel"
       aria-labelledby="tab-btn-stats" hidden>
+      <div id="exemp-banner-stats" class="exemp-banner" hidden></div>
       <!-- The summary band, moved off the powers wall. Filled by app.js by id. -->
       <div class="info-course">
         <div id="overview-card" class="overview-card hidden"></div>

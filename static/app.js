@@ -3183,6 +3183,7 @@ async function init() {
   $("entry-close").addEventListener("click", hideEntry);
   initTabs();
   initMenus();
+  initExemplarControl();
   // Catalogue rows are delegated: renderPowers rebuilds them constantly, so
   // per-row listeners would be re-attached (or lost) on every edit.
   document.addEventListener("mouseover", e => {
@@ -4815,8 +4816,15 @@ function powerCardHtml(pw, idx, icon, lv) {
     </div>`;
   }
   const lvl = pw.pick_level || lv;
-  return `<div class="power-card${lockedCls}" title="${escHtml(pw.display_name)} — accepts: ${escHtml(cats)}\n(click the name for full power info)">
-    ${nameLine}
+  // Exemplar view: a power received past level+5 is unusable down there — the
+  // card says so in bold and dims, but its SET BONUSES may still count (the
+  // game keeps them alive per-enhancement; the engine gates those separately).
+  const exOff = EXEMPLAR_VIEW
+    && (pw.pick_level || pw.level_available || 1) > EXEMPLAR_VIEW + 5;
+  const exBadge = exOff
+    ? `<div class="exemp-off-badge">⛔ NOT USABLE AT LEVEL ${EXEMPLAR_VIEW}</div>` : "";
+  return `<div class="power-card${lockedCls}${exOff ? " exemp-off" : ""}" title="${escHtml(pw.display_name)} — accepts: ${escHtml(cats)}\n(click the name for full power info)">
+    ${exBadge}${nameLine}
     <div class="pc-sub">
       ${lvl ? `<span class="pick-lvl" title="${pw.pick_level ? `Chosen at level ${lvl}` : `Suggested pick order — about level ${lvl}`}">${pw.pick_level ? "" : "~"}L${lvl}</span>` : ""}
       <span class="pc-tools">
@@ -4850,6 +4858,49 @@ function _revealInfoCard() {
   if (!panel || panel.classList.contains("hidden")) return;
   panel.scrollIntoView({ block: "start", behavior: "smooth" });
 }
+
+// ── EXEMPLAR VIEW (Joel's ruling 2026-08-03: "very similar to Mids Reborn,
+// but better … not confusing to toggle on and off … updated data on
+// everything"). A VIEW, never a build property: not saved, not exported,
+// never on solve paths. Off = null = today's level-50 behavior.
+let EXEMPLAR_VIEW = null;
+
+function initExemplarControl() {
+  const sel = $("exemplar-sel");
+  if (!sel) return;
+  sel.innerHTML = `<option value="">Off — full level</option>`
+    + Array.from({ length: 49 }, (_, i) => 49 - i)
+        .map(l => `<option value="${l}">Level ${l}</option>`).join("");
+  sel.addEventListener("change", () => {
+    EXEMPLAR_VIEW = sel.value ? +sel.value : null;
+    renderPowers();     // cards gain/lose the bold not-usable badge
+    recompute();        // every number re-states at the exemplared level
+  });
+}
+
+// The unmistakable statement (his words: "bold letters at the top saying this
+// display an Exemplared level range for ##") — one banner per affected tab.
+function renderExemplarBanners() {
+  for (const id of ["exemp-banner-powers", "exemp-banner-stats"]) {
+    const el = $(id);
+    if (!el) continue;
+    el.hidden = !EXEMPLAR_VIEW;
+    if (EXEMPLAR_VIEW) {
+      el.innerHTML = `⚠ <b>EXEMPLARED VIEW — showing this build at LEVEL ${EXEMPLAR_VIEW}.</b>
+        Powers received after level ${Math.min(50, EXEMPLAR_VIEW + 5)} are off; set bonuses from IOs
+        above level ${EXEMPLAR_VIEW + 3} are off (attuned follow their set's minimum; purple,
+        PvP, Winter and Archetype sets always work)${EXEMPLAR_VIEW < 45 ? "; incarnates are off" : ""}.
+        <button class="linkbtn" onclick="clearExemplarView()">✕ Back to full level</button>`;
+    }
+  }
+}
+window.clearExemplarView = function () {
+  EXEMPLAR_VIEW = null;
+  const sel = $("exemplar-sel");
+  if (sel) sel.value = "";
+  renderPowers();
+  recompute();
+};
 
 window.selectPower = async function (fullName) {
   SELECTED_POWER = fullName;
@@ -6072,6 +6123,7 @@ function collapseLongExplanations(root) {
 async function recompute() {
   renderEndgameWarnings();   // warn if a leveling character previews epic/incarnate content
   syncNameField();           // build-tile Name rides every state change
+  renderExemplarBanners();   // the exemplared-view statement rides every recompute
   if (await ensureInherents()) renderPowers();   // granted powers joined: show them
   const hasPowers = build.powers.length > 0;
   const ob = $("opt-btn");   // AI refine — hidden entirely when the AI seam is off
@@ -6938,6 +6990,10 @@ function buildPayload() {
     alignment: charAlignment(),
     pvp: build.pvp,
     suppression: build.suppression,
+    // exemplar VIEW rides calculate/validate only — solve payloads are built
+    // elsewhere from build.powers directly (suppression precedent: a view of
+    // the totals, never a build property, never saved, never optimized on)
+    exemplar_level: EXEMPLAR_VIEW,
     powers: build.powers.map(p => ({
       full_name: p.full_name,
       display_name: p.display_name,

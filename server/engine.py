@@ -364,6 +364,8 @@ def _power_totals(build, totals, ctx):
         p = power_by_full.get(full)
         if not p:
             continue
+        if power.get("_exemplar_off"):     # exemplar view: power unusable at this level
+            continue
         if full in NONCOMBAT_POWERS:
             continue
         # Per-power override; default to auto/toggle powers being always-on.
@@ -491,6 +493,8 @@ def _incarnate_totals(build, totals, ctx):
                 "value": round(dmg_buff, 4)})
     if alpha_str["Resistance"] or alpha_str["Defense"]:
         for power in build.get("powers", []):
+            if power.get("_exemplar_off"):
+                continue
             for (kind, t), base in (power.get("_base_rd") or {}).items():
                 s = alpha_str.get(kind, 0.0)
                 bucket = "resistance" if kind == "Resistance" else "defense"
@@ -664,6 +668,25 @@ def _host_runs_continuously(power, ctx=None):
     return pt in _ALWAYS_RUNNING_TYPES
 
 
+# ── Exemplar view (display-only, wiki-pinned 2026-08-03) ────────────────────
+# Set bonuses die when the combat level drops more than 3 below the IO's level
+# — even though the HOST POWER's availability is a separate rule (bonuses
+# survive a lost host; both wikis state it). Attuned pieces follow the SET's
+# minimum level instead, and purple / PvP / Winter-O / Archetype sets are
+# exempt at every level. `ex` = ctx["exemplar"]: {"level", "exempt", "set_min"}
+# built once at server load. The solver/scorer never sets it (view, not a
+# build property — the suppression precedent).
+def _exemplar_bonus_alive(slot, ex):
+    if not ex:
+        return True
+    if slot.get("set_uid") in ex["exempt"]:
+        return True
+    lvl = ex["level"]
+    if slot.get("attuned") or str(slot.get("piece_uid") or "").startswith("Attuned_"):
+        return lvl >= (ex["set_min"].get(slot.get("set_uid")) or 10) - 3
+    return lvl >= (slot.get("io_level") or 50) - 3
+
+
 def _piece_globals(build, totals, ctx=None):
     """Add always-on special-IO piece globals (Steadfast +3% Def, LotG +7.5%
     Recharge, Shield Wall +5% Res, Kismet +6% ToHit, etc.). These work whether
@@ -673,9 +696,14 @@ def _piece_globals(build, totals, ctx=None):
     in-game, so it grants nothing here (field-report audit 2026-07-09)."""
     seen_unique = set()
     stack_count = defaultdict(int)
+    ex = (ctx or {}).get("exemplar")
     for power in build.get("powers", []):
         for slot in power.get("slots", []) or []:
             if not slot:
+                continue
+            # LotG-class globals follow the same enhancement-level exemplar
+            # rule as set bonuses (attuned/exempt-set exceptions included)
+            if not _exemplar_bonus_alive(slot, ex):
                 continue
             sn = (slot.get("set_name") or "").lower()
             pn = (slot.get("piece_name") or "").lower()
@@ -910,6 +938,8 @@ def _offense(build, totals, ctx):
     for power in build.get("powers", []):
         p = power_by_full.get(power.get("full_name"))
         if not p or not p.get("damage_effects"):
+            continue
+        if power.get("_exemplar_off"):     # exemplar view: attack unusable at this level
             continue
         fn = p.get("full_name") or ""
         if (not melee_native and (fn.startswith("Pool.") or fn.startswith("Inherent."))
@@ -1536,13 +1566,17 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
     # is structural: _piece_globals/_external_buffs never touch it.
     sb_only = _empty_totals()
 
+    ex = (ctx or {}).get("exemplar")
     for power in build.get("powers", []):
         # DISTINCT pieces per set, not slots: a duplicated set piece (an
         # in-game-impossible state validation errors on) must not conjure the
         # next bonus tier — the game grants tiers by distinct pieces.
+        # ⚠ Exemplar view gates PER PIECE here — and deliberately NOT on
+        # _exemplar_off: the game keeps a lost host power's set bonuses alive
+        # as long as each enhancement's own level rule passes (wiki-pinned).
         set_counts = defaultdict(set)
         for slot in power.get("slots", []) or []:
-            if slot and slot.get("set_uid"):
+            if slot and slot.get("set_uid") and _exemplar_bonus_alive(slot, ex):
                 set_counts[slot["set_uid"]].add(
                     slot.get("piece_uid") or slot.get("piece_name") or id(slot))
         set_counts = {uid: len(pieces) for uid, pieces in set_counts.items()}

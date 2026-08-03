@@ -296,6 +296,22 @@ for s in ENH_SETS:
         PIECE_BY_UID[pc["uid"]] = slot
         ENH_NAME_TO_PIECE[f"{s['name']}: {pc['name']}".lower()] = slot
 
+# Exemplar-exempt sets: bonuses live at EVERY level (wiki-pinned 2026-08-03) —
+# purples, PvP, Winter-O and Archetype sets. The purple/Winter/PvP rosters are
+# converter.py's (verified vs the data — one copy, per the travel-powers
+# lesson); ATOs are the "* Archetype Sets" categories. set_min feeds the
+# attuned rule (bonuses to the set's minimum − 3).
+_EXEMPLAR_EXEMPT_UIDS = set()
+_EXEMPLAR_SET_MIN = {}
+for _s in ENH_SETS:
+    _n = (_s.get("name") or "").lower()
+    _base = _n[9:] if _n.startswith("superior ") else _n
+    if ("Archetype Sets" in (_s.get("category") or "")
+            or _base in converter._PURPLE or _base in converter._WINTER
+            or any(_base.startswith(_p) for _p in converter._PVP)):
+        _EXEMPLAR_EXEMPT_UIDS.add(_s["uid"])
+    _EXEMPLAR_SET_MIN[_s["uid"]] = _s.get("level_min") or 10
+
 # full_name -> {slot, display_name} for incarnate choices (import resolution)
 INCARNATE_INDEX = {}
 for _slot in INCARNATES.get("slots", []):
@@ -2688,6 +2704,28 @@ def build_calculate():
     at = ARCH_BY_NAME.get(build.get("archetype"))
     res_cap = round(at["res_cap"] * 100, 1) if at else engine.RESISTANCE_HARD_CAP
     ctx = _stat_ctx(build.get("archetype"))
+    # EXEMPLAR VIEW (display-only, the suppression precedent: never a build
+    # property, never on solve paths). Rules wiki-pinned 2026-08-03: powers
+    # received above level+5 stop working (inherents/accolades/temps immune);
+    # incarnates off below 45; set bonuses/globals gate per piece in engine.
+    exl = build.get("exemplar_level")
+    try:
+        exl = int(exl)
+    except (TypeError, ValueError):
+        exl = None
+    if exl is not None and 1 <= exl <= 49:
+        if exl < 45:
+            build["include_incarnates"] = False
+        for p in build.get("powers", []):
+            fn = p.get("full_name") or ""
+            if fn.startswith("Inherent."):
+                continue
+            if (p.get("pick_level") or p.get("level_available") or 1) > exl + 5:
+                p["_exemplar_off"] = True
+        if ctx is not None:
+            ctx = dict(ctx)
+            ctx["exemplar"] = {"level": exl, "exempt": _EXEMPLAR_EXEMPT_UIDS,
+                               "set_min": _EXEMPLAR_SET_MIN}
     # When incarnates are folded into the totals, an Alpha res/def boost needs each
     # armor toggle's OWN base res/def — enrich the (frontend) powers with the DB
     # fields _attach_base_resdef relies on, then attach it. Gated so a normal
