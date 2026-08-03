@@ -221,6 +221,19 @@ def _run_window(port):
         # .NET thread, OUTSIDE this try/except, and kills the app with no window and
         # no fallback (cost: one silent exit, 2026-08-02). The frozen build carries
         # the .ico as its exe icon too (see HeroCompanion.spec).
+        # ⚠ SIZE TO THE SCREEN, NOT TO A NUMBER. A fixed 1600x1000 "dedicated
+        # size" opened wider than this machine's display and hung off the right
+        # edge. Mids can pick a fixed size because its rows are one line tall;
+        # this app has more to show, so it takes what the screen actually has and
+        # the layout scales into it (fitZoom). Capped so a 4K panel gets a window,
+        # not a wall.
+        try:
+            scr = webview.screens[0]
+            win_w = max(1024, min(1680, int(scr.width * 0.92)))
+            win_h = max(640, min(1050, int(scr.height * 0.92)))
+        except Exception:  # noqa: BLE001 — no screen info: a sane fixed default
+            win_w, win_h = 1280, 860
+        print(f"window: {win_w}x{win_h}")
         icon = os.path.join(BASE, "assets", "HeroCompanion.ico")
         webview.create_window(
             "Hero Companion", f"http://127.0.0.1:{port}",
@@ -230,7 +243,7 @@ def _run_window(port):
             # because five tabs of content need the vertical room Mids spends on
             # a single dense screen. min_size is small enough to still resize
             # onto a laptop; the layout scales to whatever it is given.
-            width=1600, height=1000, min_size=(900, 600),
+            width=win_w, height=win_h, min_size=(900, 600),
             text_select=False, zoomable=False,
             background_color="#11151c")   # style.css --bg: no white browser flash on open
         # ⚠⚠ private_mode DEFAULTS TO TRUE, which throws localStorage away on every
