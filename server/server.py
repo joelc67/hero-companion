@@ -7975,6 +7975,9 @@ def _all_saves():
                     # "respec"/"import" = a finished level-50 kit. Lets the Continue
                     # screen label the two differently instead of lumping them together.
                     "mode": (data.get("plan") or {}).get("mode"),
+                    # pick count so the Continue screen can label a half-built
+                    # character honestly instead of calling it a level-50 kit
+                    "picks": len((data.get("build") or {}).get("powers") or []),
                     "updated": os.path.getmtime(path)})
     out.sort(key=lambda x: x["updated"], reverse=True)
     return out

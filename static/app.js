@@ -222,6 +222,7 @@ async function saveProgress() {
   if (res && res.ok) {
     CURRENT_SAVE = { id: res.id, name: res.name };
     try { localStorage.setItem("cohLastSave", res.id); } catch (e) {}
+    syncNameField();
     _lastSavedSnapshot = buildSnapshot();   // mark clean so auto-save doesn't re-fire
     const s = $("gen-status"); if (s) s.textContent = `💾 Saved “${res.name}”. Resume it any time from Start over → Continue.`;
   }
@@ -273,9 +274,15 @@ async function openSavesList() {
         // distinction between "help me get to 50" and "optimize my 50".
         const lv = s.level || null;
         const leveling = s.mode === "new" && (!lv || lv < 50);
+        // "✓ Level-50 build" is EARNED by a full pick set — a hand-started save
+        // with 4 picks is not a finished kit and must not read as one. Older
+        // servers don't send `picks`; undefined keeps the old (trusting) label.
+        const partial = typeof s.picks === "number" && s.picks < 24;
         const pill = leveling
           ? `<span class="save-pill leveling">⏳ Leveling · L${lv || 1}/50</span>`
-          : `<span class="save-pill done">✓ Level-50 build</span>`;
+          : partial
+            ? `<span class="save-pill leveling">✏️ In progress · ${s.picks} of 24 picks</span>`
+            : `<span class="save-pill done">✓ Level-50 build</span>`;
         return `<div class="save-row">${_emblemImg(s.archetype, "save-emblem")}<div class="save-main">`
           + `<div class="save-name">${escHtml(s.name)} ${pill}</div>`
           + `<div class="save-sub">${escHtml(at)}${sub ? " · " + escHtml(sub) : ""}</div></div>`
@@ -380,7 +387,10 @@ async function autoSaveTick() {
   const name = CURRENT_SAVE.name;
   const plan = { content: $("preset-content") && $("preset-content").value,
                  role: $("preset-role") && $("preset-role").value, role_mix: roleMixPayload(), mode: build._mode || null,
-                 named: true,   // a person chose this name — never nudge it
+                 // ⚠ NOT a blanket true: an autosave is not a person choosing a
+                 // name. Stamping named:true here silently killed the rename
+                 // nudge on every auto-named save it touched (found 2026-08-03).
+                 named: !NEEDS_NAME,
                  custom_targets: build._custom_targets || null };   // ruling 4: persist in the save
   const res = await api("/saves", postJson({ name, id: CURRENT_SAVE && CURRENT_SAVE.id,
     build, plan, level_reached: build.level_reached || null }));
@@ -3026,13 +3036,11 @@ async function submitChampion() {
     build: { powers: build.powers, pools: build.pools },
   }));
   if (!res || !res.ok) { alert("Couldn't bundle the build — is the server running?"); return; }
-  // download the candidate file...
-  const blob = new Blob([JSON.stringify(res.bundle, null, 2)], { type: "application/json" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `champion-candidate-${(build.archetype || "at").replace("Class_", "")}`
-             + `-${(build.primary || "").split(".").pop()}-${(build.secondary || "").split(".").pop()}.json`;
-  a.click(); URL.revokeObjectURL(a.href);
+  // save the candidate file (desktop: real Save As; browser: download)...
+  const fname = `champion-candidate-${(build.archetype || "at").replace("Class_", "")}`
+              + `-${(build.primary || "").split(".").pop()}-${(build.secondary || "").split(".").pop()}.json`;
+  const r = await saveTextFile(fname, JSON.stringify(res.bundle, null, 2));
+  if (!r || !r.ok) return;   // cancelled the dialog — nothing saved, nothing to submit
   // ...then point at the submission queue (hub re-scores everything, so the file is safe to share)
   const url = (META && META.urls || {}).champion_submit;
   if (_urlReady(url)) {
@@ -3185,6 +3193,11 @@ async function init() {
     }
   });
   $("save-btn").addEventListener("click", saveProgress);
+  // Name commits on blur or Enter — never on every keystroke (each commit SAVES)
+  if ($("char-name")) {
+    $("char-name").addEventListener("change", commitNameField);
+    $("char-name").addEventListener("keydown", e => { if (e.key === "Enter") e.target.blur(); });
+  }
   $("journey-btn").addEventListener("click", toggleJourneyView);
   if ($("tour-btn")) $("tour-btn").addEventListener("click",
     () => { if (typeof openTourMenu === "function") openTourMenu(); });
@@ -4381,7 +4394,33 @@ function nameNudgeHtml() {
     + ` <button class="linkbtn" onclick="renameCharacter()">Give it a name</button></div>`;
 }
 
+// The Name FIELD on the build tile is the front door (Joel, 2026-08-03:
+// "perhaps we want a new field called name?") — the nudge just points at it.
+// An auto-invented name renders as an EMPTY field: the character has no name
+// of its own, and the placeholder says what to do about it.
+function syncNameField() {
+  const f = $("char-name");
+  if (!f || document.activeElement === f) return;   // never fight the typist
+  f.value = (CURRENT_SAVE && !NEEDS_NAME && CURRENT_SAVE.name) ? CURRENT_SAVE.name : "";
+}
+
+async function commitNameField() {
+  const f = $("char-name");
+  if (!f) return;
+  const name = f.value.trim();
+  if (!name) { syncNameField(); return; }           // blank never un-names
+  if (!build.archetype) return;                     // nothing to attach a name to yet
+  if (CURRENT_SAVE && CURRENT_SAVE.name === name && !NEEDS_NAME) return;
+  if (CURRENT_SAVE) CURRENT_SAVE.name = name;
+  else CURRENT_SAVE = { id: null, name };
+  NEEDS_NAME = false;
+  await saveProgress();                             // writes plan.named — never nudged again
+  renderPowers();                                   // clears the nudge
+}
+
 window.renameCharacter = async function () {
+  const f = $("char-name");
+  if (f) { f.focus(); f.select(); return; }         // the field IS the rename UI
   if (!CURRENT_SAVE) return;
   const name = prompt("Name this character:", CURRENT_SAVE.name || "");
   if (!name || !name.trim()) return;          // backing out is allowed; the nudge stays
@@ -5950,6 +5989,7 @@ function collapseLongExplanations(root) {
 
 async function recompute() {
   renderEndgameWarnings();   // warn if a leveling character previews epic/incarnate content
+  syncNameField();           // build-tile Name rides every state change
   const hasPowers = build.powers.length > 0;
   const jb = $("journey-btn");   // the header road icon rides with having a plan
   if (jb) jb.style.display = hasPowers ? "" : "none";
@@ -7110,24 +7150,44 @@ async function askAI() {
 // ---------------------------------------------------------------------------
 // Export current build to a Mids Reborn .mbd file
 // ---------------------------------------------------------------------------
+// Save a text file the way the surface allows. The desktop window DISABLES
+// downloads (a browser tell — run_app.py ALLOW_DOWNLOADS=False), which silently
+// ate the export until 2026-08-03: the blob click did nothing and no file
+// appeared. There the page asks the window for a real Save As dialog
+// (js_api.save_file); a browser tab keeps the classic blob download.
+async function saveTextFile(filename, text) {
+  const papi = window.pywebview && window.pywebview.api;
+  if (papi && papi.save_file) {
+    try {
+      const r = await papi.save_file(filename, text);
+      if (r && (r.ok || r.cancelled)) return r;
+    } catch (e) { /* fall through to the blob path */ }
+  }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], { type: "application/json" }));
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(a.href);
+  return { ok: true };
+}
+
 async function exportMids() {
   if (!build.archetype || !build.powers.length) {
     alert("Pick an archetype and add at least one power before exporting.");
     return;
   }
   const payload = buildPayload();
-  payload.name = "CoH Planner Build";
+  payload.name = (CURRENT_SAVE && CURRENT_SAVE.name) || "CoH Planner Build";
   try {
     const res = await api("/build/export", postJson(payload));
     if (!res.ok) { alert("Export failed."); return; }
-    const blob = new Blob([JSON.stringify(res.mbd, null, 1)], { type: "application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = res.filename || "build.mbd";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(a.href);
+    const r = await saveTextFile(res.filename || "build.mbd", JSON.stringify(res.mbd, null, 1));
+    const s = $("gen-status");
+    if (s && r && r.ok) s.textContent = r.path
+      ? `⬇ Exported to ${r.path} — open it in Mids Reborn.`
+      : "⬇ Exported — check your Downloads folder.";
   } catch (e) {
     alert("Export error: " + e);
   }

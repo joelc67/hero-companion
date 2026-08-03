@@ -234,6 +234,10 @@
 <!-- The game's own archetype emblem, beside the label rather than inside
            the select (a native <select> cannot render an image). Hidden until an
            archetype is chosen, and hidden again if the art is ever missing. -->
+      <label>Name
+        <input id="char-name" type="text" placeholder="Name your character…"
+               maxlength="40" autocomplete="off" spellcheck="false">
+      </label>
       <label>Archetype
         <img id="at-emblem" class="at-emblem" alt="" hidden>
         <select id="sel-archetype"></select>

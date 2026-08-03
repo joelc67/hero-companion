@@ -204,6 +204,13 @@ def _run_window(port):
     # icon first" delay was solving a problem that no longer exists.
     server.SHUTDOWN_HOOK = _quit
 
+    # ⚠ The window reference lives HERE, in a closure — NEVER as an attribute on
+    # the js_api object. pywebview walks the api object to build the JS bridge,
+    # and a Window attribute handed it the whole window graph to serialize ON
+    # the GUI thread: the app froze at "(Not Responding)" before first input
+    # (cost: one hung build, 2026-08-03).
+    _winref = {}
+
     class _Api:
         """What the page tells the window. Kept to the minimum that the close
         decision needs, because anything the handler has to ASK for is a call
@@ -213,6 +220,28 @@ def _run_window(port):
         def set_dirty(self, flag):
             _Api.dirty = bool(flag)
             return True
+
+        def save_file(self, filename, text):
+            """Real Save As for exports. ALLOW_DOWNLOADS stays False (the
+            download flyout is a browser tell), so the page routes every
+            file it produces through here; js_api methods run OFF the GUI
+            thread, so the dialog cannot deadlock the way closing did."""
+            try:
+                import webview as _wv
+                w = _winref.get("w")
+                if w is None:
+                    return {"ok": False, "error": "window not ready"}
+                path = w.create_file_dialog(
+                    _wv.SAVE_DIALOG, save_filename=str(filename or "export.txt"))
+                if not path:
+                    return {"ok": False, "cancelled": True}
+                if isinstance(path, (list, tuple)):
+                    path = path[0]
+                with open(path, "w", encoding="utf-8") as f:
+                    f.write(text)
+                return {"ok": True, "path": str(path)}
+            except Exception as e:  # noqa: BLE001 — surface it to the page, don't die
+                return {"ok": False, "error": str(e)}
 
     _api = _Api()
     try:
@@ -226,6 +255,11 @@ def _run_window(port):
         # an app. text_select/zoomable are already app-like defaults; they are
         # named here so a future pywebview flipping them is a visible change.
         webview.settings["SHOW_DEFAULT_MENUS"] = False
+        # ⚠ ALLOW_DOWNLOADS=False SILENTLY EATS blob downloads — the .mbd export
+        # clicked its <a download> and NOTHING happened, no file, no error (found
+        # 2026-08-03 driving the advanced path). Every file the page produces
+        # must route through _Api.save_file (a real Save As dialog) instead.
+        # The setting stays False on purpose: the download flyout is a browser tell.
         webview.settings["ALLOW_DOWNLOADS"] = False
         # …and OPEN_EXTERNAL_LINKS_IN_BROWSER stays True on purpose: the wiki and
         # forum links belong in the user's real browser, not trapped in the app.
@@ -258,6 +292,7 @@ def _run_window(port):
             width=win_w, height=win_h, min_size=(900, 600),
             text_select=False, zoomable=False, js_api=_api,
             background_color="#11151c")   # style.css --bg: no white browser flash on open
+        _winref["w"] = win                # save_file's dialog owner (closure, not api attr)
         # ⚠ CLOSING IS NOT A LICENCE TO THROW WORK AWAY (Joel, 2026-08-03). The
         # window quits the app, so an unnamed character with powers picked would
         # vanish on the X. The page owns the question — it knows WHAT is unsaved

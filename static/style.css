@@ -144,6 +144,7 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
   color: var(--muted); white-space: nowrap;
 }
 .build-tile select { min-width: 140px; max-width: none; width: auto; }
+#char-name { width: 160px; }
 /* ⚠ Pools are FOUR COMPACT SELECTS ON THE ROW, not a stack of full-width ones.
    As a <details> filling the remaining width it produced four stacked bars and
    a large void beside the archetype — the "empty frame" reading. */
