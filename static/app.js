@@ -138,6 +138,25 @@ function showEntry(section) {
 }
 function hideEntry() { $("entry-overlay").classList.add("hidden"); }
 
+// ⚠ OLD SAVES STILL OPEN — they are just asked for a name (Joel, 2026-08-03:
+// "maybe we want the ability for this updated client to still open old
+// non-named characters, but strongly encourages them to be given a name, once
+// opened"). Nothing is refused and nothing is migrated behind their back.
+//
+// The test is deliberately NARROW: a name is "not really a name" only if it is
+// exactly what autoSaveTick used to invent — "{primary} {Archetype}" or
+// "Autosave". Anyone who typed their own name, before or after this change, is
+// never nudged, and neither is a save carrying plan.named.
+function _isAutoName(save) {
+  if (!save || (save.plan || {}).named) return false;
+  const n = (save.name || "").trim();
+  if (!n || n === "Autosave") return true;
+  const b = save.build || {};
+  const auto = b.primary_display
+    ? `${b.primary_display} ${(b.archetype || "").replace("Class_", "")}` : null;
+  return !!auto && n === auto;
+}
+
 // Is there work here that closing (or switching archetype) would throw away?
 // Powers picked, and either never named or changed since the last write.
 window.hasUnsavedWork = function () {
@@ -183,6 +202,7 @@ Cancel: close without saving.`);
 
 // ---- Save / resume: a from-scratch character is weeks of real play ----
 let CURRENT_SAVE = null;   // {id, name} once saved/loaded, so re-saves update in place
+let NEEDS_NAME = false;    // opened a character the app had auto-named for them
 
 async function saveProgress() {
   if (!build.archetype) { alert("Pick an archetype (or import/start a build) before saving."); return; }
@@ -195,6 +215,7 @@ async function saveProgress() {
   }
   const plan = { content: $("preset-content") && $("preset-content").value,
                  role: $("preset-role") && $("preset-role").value, role_mix: roleMixPayload(), mode: build._mode || null,
+                 named: true,   // a person chose this name — never nudge it
                  custom_targets: build._custom_targets || null };   // ruling 4: persist in the save
   const res = await api("/saves", postJson({ name, id: CURRENT_SAVE && CURRENT_SAVE.id,
     build, plan, level_reached: build.level_reached || null }));
@@ -312,6 +333,7 @@ window.loadSave = async function (id) {
   const vd = res.save.version_drift;
   RESPEC_VERSION_DRIFT = (vd && !localStorage.getItem(
     `respecDriftDismissed:${id}:m${vd.current_model}`)) ? vd : null;
+  NEEDS_NAME = _isAutoName(res.save);
   applyIdentityLock();          // lock archetype/powersets if this is a real (imported/respec'd) character
   _lastSavedSnapshot = buildSnapshot();   // just loaded — already clean
   hideEntry();
@@ -354,6 +376,7 @@ async function autoSaveTick() {
   const name = CURRENT_SAVE.name;
   const plan = { content: $("preset-content") && $("preset-content").value,
                  role: $("preset-role") && $("preset-role").value, role_mix: roleMixPayload(), mode: build._mode || null,
+                 named: true,   // a person chose this name — never nudge it
                  custom_targets: build._custom_targets || null };   // ruling 4: persist in the save
   const res = await api("/saves", postJson({ name, id: CURRENT_SAVE && CURRENT_SAVE.id,
     build, plan, level_reached: build.level_reached || null }));
@@ -3791,8 +3814,13 @@ Cancel: throw it away and start over now.`);
   // on the first entry still free. Change any one and the rest re-offer around it.
   const _pools = [...document.querySelectorAll(".pool-sel")];
   if (!build.pools.length) {
+    // ⚠ FIRST *AVAILABLE*, not first option. Options are disabled rather than
+    // removed now (so the player can see the rule), which means index 1 is the
+    // same entry in every select — taking it four times gave four copies of
+    // Concealment, a build the game refuses.
     for (const s of _pools) {
-      if (s.options.length > 1) s.selectedIndex = 1;
+      const free = [...s.options].find(o => o.value && !o.disabled);
+      if (free) s.value = free.value;
       refreshPoolOptions();
     }
     await onPoolChange();
@@ -3837,14 +3865,35 @@ async function addPowersetPowers(sel, slot) {
 // Each pool select offers every pool EXCEPT the ones its siblings already hold.
 // Re-run after any change: freeing a pool has to put it back on offer, so this
 // rebuilds all four rather than only removing.
+function poolRules() {
+  return (META && META.pool_rules) || { max: 4, epic_counts: false, exclusive: [] };
+}
+
+// ⚠ GREY OUT, DO NOT REMOVE (Joel, 2026-08-03: "I would gray out the epic
+// choices, if one can supersede the other"). A pool that vanished from the list
+// taught the player nothing; a pool that is visible but disabled, with the
+// reason on it, teaches the rule. Two rules apply, both from the server's
+// legality gate via /meta.pool_rules rather than a second copy here:
+//   - a pool already taken in another slot
+//   - the origin-themed pools (Sorcery / Experimentation / Force of Will), of
+//     which the game allows exactly ONE per build
 function refreshPoolOptions() {
   const sels = [...document.querySelectorAll(".pool-sel")];
   const taken = sels.map(s => s.value).filter(Boolean);
+  const excl = poolRules().exclusive || [];
+  const exclTaken = taken.filter(t => excl.includes(t));
   for (const s of sels) {
     const mine = s.value;
-    const list = (POWERSETS_CACHE.pools || [])
-      .filter(ps => ps.full_name === mine || !taken.includes(ps.full_name));
-    fillPowersetSelect(s, list, "— pool —");
+    s.innerHTML = `<option value="">— pool —</option>` + (POWERSETS_CACHE.pools || []).map(ps => {
+      const f = ps.full_name;
+      let why = "";
+      if (f !== mine) {
+        if (taken.includes(f)) why = " — already chosen";
+        else if (excl.includes(f) && exclTaken.length) why = " — only one of these per build";
+      }
+      return `<option value="${f}"${why ? " disabled" : ""}>`
+        + `${ps.display_name}${why}</option>`;
+    }).join("");
     s.value = mine;
   }
 }
@@ -4312,6 +4361,28 @@ function powersetDisplayName(full) {
 // hid the same data behind "+ add power…" selects, which can only be read one
 // line at a time and tell you nothing about a power until it is already in the
 // build. This is that half: scan a set, read a power, take it if you want it.
+// Shown until the character has a name of its own. Persistent rather than a
+// modal — it is an encouragement, not a gate, and the build stays fully usable
+// with it up (the same rule as the Pulse consent line).
+function nameNudgeHtml() {
+  if (!NEEDS_NAME || !CURRENT_SAVE) return "";
+  return `<div class="name-nudge keep-whole">✏️ <b>This character has no name of its own.</b>`
+    + ` It was saved automatically as “${escHtml(CURRENT_SAVE.name)}”, which is what every`
+    + ` ${escHtml((build.archetype || "").replace("Class_", ""))} with these powersets was called —`
+    + ` so you cannot tell them apart in the Continue list.`
+    + ` <button class="linkbtn" onclick="renameCharacter()">Give it a name</button></div>`;
+}
+
+window.renameCharacter = async function () {
+  if (!CURRENT_SAVE) return;
+  const name = prompt("Name this character:", CURRENT_SAVE.name || "");
+  if (!name || !name.trim()) return;          // backing out is allowed; the nudge stays
+  CURRENT_SAVE.name = name.trim();
+  NEEDS_NAME = false;
+  await saveProgress();                        // writes plan.named, so it never asks again
+  renderPowers();
+};
+
 function catalogueHtml(sets) {
   const taken = build.powers.filter(p => !(p.full_name || "").startsWith("Inherent."));
   const takenNames = new Set(taken.map(p => p.full_name));
@@ -4360,12 +4431,21 @@ function catalogueHtml(sets) {
     // ⚠ REMOTE CONTROL, not a second picker: this select mirrors the real
     // .pool-sel in the build tile and writes through to it, so the dedupe and
     // the cascade stay in one place.
+    // Same rule as the bar's pickers: unavailable pools stay VISIBLE and say why.
+    const _excl = poolRules().exclusive || [];
+    const _exclTaken = (build.pools || []).filter(t => _excl.includes(t) && t !== ps);
     const swap = poolIdx >= 0
       ? `<select class="cat-swap" data-pool="${poolIdx}" title="Change this power pool">`
-        + ((POWERSETS_CACHE.pools || [])
-            .filter(o => o.full_name === ps || !(build.pools || []).includes(o.full_name))
-            .map(o => `<option value="${escHtml(o.full_name)}"${o.full_name === ps ? " selected" : ""}>`
-              + `${escHtml(o.display_name)}</option>`).join(""))
+        + ((POWERSETS_CACHE.pools || []).map(o => {
+            const f = o.full_name;
+            let why = "";
+            if (f !== ps) {
+              if ((build.pools || []).includes(f)) why = " — already chosen";
+              else if (_excl.includes(f) && _exclTaken.length) why = " — only one of these per build";
+            }
+            return `<option value="${escHtml(f)}"${f === ps ? " selected" : ""}`
+              + `${why ? " disabled" : ""}>${escHtml(o.display_name + why)}</option>`;
+          }).join(""))
         + `</select>`
       : "";
     return `<div class="cat-col ${roleCls}">`
@@ -4409,7 +4489,9 @@ function catalogueHtml(sets) {
       + ` 🔒 shows what it is waiting for.</div>`;
   const poolNote = poolSets.length
     ? `<div class="cat-poolnote muted small keep-whole">🎲 <b>Power pools</b> — you may take up to`
-      + ` <b>four</b>, and you have ${poolSets.length}. They open at level ${poolOpensAt}`
+      + ` <b>${poolRules().max}</b>, and you have ${poolSets.length}.`
+      + ` Your Epic pool is separate and does not count toward that.`
+      + ` They open at level ${poolOpensAt}`
       + `${atLevel < poolOpensAt ? " — not yet" : ""}.`
       + ` Change one with the dropdown on its column; the powers follow.</div>`
     : "";
@@ -4461,6 +4543,7 @@ function renderPowers() {
   const host = $("powers-list");
   const sets = chosenPowersets();
   if (!sets.length) { host.innerHTML = startHereHtml(); return; }
+  const nudge = nameNudgeHtml();
 
   // Power ICON lookup (records carry it since the /powers endpoint attaches one).
   const iconOf = (fullName) => {
@@ -4510,7 +4593,7 @@ function renderPowers() {
     ;
   }
 
-  html += catalogueHtml(sets);
+  html = nudge + html + catalogueHtml(sets);
 
   // One-time hint: the decision notes only answer skepticism if people find them
   // (field report: the "?" was found only by deliberate poking).

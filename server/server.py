@@ -901,6 +901,13 @@ def meta():
                     "packaged": bool(getattr(sys, "frozen", False)),
                     "form_champions": has_forms,
                     "champion_count": champion_count,
+                    # ⚠ THE POOL RULES, FROM THE ONE PLACE THAT ENFORCES THEM.
+                    # _picks_legal is the legality gate; the picker has to refuse
+                    # what it refuses, and a second copy in JavaScript would drift.
+                    # Four pools max, the epic does NOT count toward that, and the
+                    # origin-themed pools are one-per-build.
+                    "pool_rules": {"max": 4, "epic_counts": False,
+                                   "exclusive": sorted(_EXCLUSIVE_POOLS)},
                     "autostart": autostart,
                     "bug_report_key": CLIENT_CONFIG.get("bug_report_key", ""),
                     "urls": CLIENT_CONFIG.get("urls", {})})

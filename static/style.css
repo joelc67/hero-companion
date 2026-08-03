@@ -2565,3 +2565,8 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
   background: var(--bg); border: 1px solid var(--border); border-radius: var(--r1);
   padding: 1px 2px; }
 .cat-col .cat-head { gap: var(--s1); }
+
+/* The rename encouragement: visible until the character has a name of its own,
+   never a gate — the build stays fully usable with it up. */
+.name-nudge { margin: 0 0 var(--s3); padding: var(--s2) var(--s3);
+  background: var(--panel2); border: 1px solid var(--warn); border-radius: var(--r2); }
