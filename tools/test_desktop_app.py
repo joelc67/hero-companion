@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 49          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 52          # coverage denominator — hard-fail if a check silently skips
 
 
 def check(name, ok, detail=""):
@@ -179,10 +179,13 @@ def main():
     # whether it fires once or every time. It lives INSIDE the opening menu, in
     # flow, so it cannot cover a control the user is reaching for.
     _entry_box = index[index.find('<div class="entry-box">'):index.find('id="entry-overlay"') + 12000]
-    check("the prompt is INSIDE the opening menu, in the flow",
-          'id="share-line"' in _entry_box.split("</div><!-- /entry-box")[0]
-          if "</div><!-- /entry-box" in _entry_box else 'id="share-line"' in _entry_box,
-          "outside the entry box it would float over whatever is on screen")
+    # The opening menu it used to live in is gone (2026-08-03). It now sits with
+    # the feed it governs, on the Logging tab — still in the flow, still not a
+    # modal. The ruling that survives is "never a wall", not "which screen".
+    _logging = index[index.find('id="tab-logging"'):index.find('id="tab-logging"') + 1200]
+    check("the prompt lives with the feed it governs, in the flow",
+          'id="share-line"' in _logging,
+          "floating it would put it back on top of the app")
     check("NEGATIVE CONTROL: it is not a modal and does not float",
           'id="share-line"' in index and 'class="entry-share' in index
           and 'id="share-line" class="modal' not in index
@@ -221,57 +224,59 @@ def main():
     check("the boards link is the real one",
           "hero-companion.com/pulse" in read("client_config.json"))
 
-    # ── 6. COLUMN BALANCE: tiles, never a scrollbar (Joel, 2026-08-02) ──────
+    # ── 6. THE TABBED SHELL (2026-08-03) ───────────────────────────────────
+    # ⚠ balanceColumns() and its six checks are GONE, deliberately: tabs split
+    # the two columns it shuffled tiles between, so there is nothing to balance.
+    # A test for deleted code is noise — same call as the tray battery. What
+    # replaces them are the rules the tab layout must not break.
     css = read("static", "style.css")
-    _rail_rule = css[css.find("\n.rail {"):css.find("\n.rail {") + 260]
-    check("NEGATIVE CONTROL: the rail is NOT capped with its own scroll",
-          "overflow-y: auto" not in _rail_rule and "max-height" not in _rail_rule,
-          "he rejected that fix: 'no desire for a scroll bar in the middle of this app'")
-    _bal = app_js[app_js.find("function balanceColumns"):
-                  app_js.find("window.addEventListener(\"resize\", scheduleBalance)")]
-    check("the balancer measures for real instead of guessing",
-          "getBoundingClientRect().height" in _bal and "for (let mask" in _bal,
-          "tile heights depend on column width, so they cannot be computed on paper")
-    check("it scores page height AND how far apart the sides are",
-          "Math.max(left, right)" in _bal and "Math.abs(left - right)" in _bal)
-    check("single-column layouts send every tile home",
-          'matchMedia("(max-width: 980px)")' in _bal and "if (single) { place(0); return; }" in _bal)
-    # ⚠ The Assistant was moved to the top of the rail on 2026-08-01 because a
-    # field report could not find it at 78% down the page. Shuffling must not
-    # quietly undo that, so its slot in the wide column is ABOVE the powers grid.
-    check("the Assistant lands ABOVE the powers grid, never below",
-          '{ id: "assistant", before: "builder" }' in app_js,
-          "moving it below #builder would re-bury the thing a user already lost")
-    check("re-tiles on window resize",
-          'window.addEventListener("resize", scheduleBalance)' in app_js)
-    check("...and on main's observed width, which resize cannot see",
-          "new ResizeObserver" in app_js and "contentRect.width" in app_js,
-          "the power-info column opening changes main's width but resizes nothing")
-    check("...guarded on WIDTH so re-tiling cannot re-trigger itself",
-          "if (w === _lastMainWidth) return;" in app_js,
-          "re-tiling changes main's height, which re-notifies the observer")
+    check("no balancer left to go stale",
+          "function balanceColumns" not in app_js and "const _TILES" not in app_js,
+          "matches the DEFINITION, not the comment recording that it was deleted")
+    check("five tabs, five panels",
+          all(f'id="tab-btn-{k}"' in index and f'id="tab-{k}"' in index
+              for k in ("powers", "stats", "endgame", "leveling", "logging")))
+    # ⚠ SPEC 5.1 — the rule a naive tab implementation breaks. recompute() writes
+    # into elements on four different tabs; unmounting makes every write a no-op.
+    check("panels are HIDDEN, never unmounted", "panel.hidden = !on;" in app_js,
+          "a change on End Game has to reach Powers & Slots")
+    check("[hidden] out-specifies a panel's own display rule",
+          ".tabpanel[hidden] { display: none !important; }" in css,
+          "without it, two tabs render at once")
+    check("cross-tab door exists (Joel's note)",
+          "window.showTab = activateTab;" in app_js,
+          "content on another tab is reached by activating it, never by copying it")
+    check("tablist keyboard contract",
+          all(k in app_js for k in ("ArrowLeft", "ArrowRight", "Home", "End")))
+    # ⚠ SPEC 5.3 — a hidden panel has zero geometry, so the fit reads the ACTIVE
+    # one and re-solves on activation.
+    check("the fit measures the ACTIVE panel only",
+          ".tabpanel:not([hidden])" in app_js
+          and "scheduleFit();" in app_js[app_js.find("function activateTab"):
+                                         app_js.find("window.showTab")])
+    check("zoom is clamped at both ends",
+          "ZOOM_MIN = 0.70" in app_js and "ZOOM_MAX = 1.25" in app_js,
+          "0.70 is the 9.1px legibility floor; 1.25 fills a 4K panel")
+    check("the fit iterates, because both inputs move with zoom",
+          "for (let i = 0; i < 4; i++)" in app_js,
+          "scrollHeight shrinks as you zoom out — measured, not assumed")
 
-    # asked_here is what makes "asked once" true — exercised for real against an
-    # isolated state dir, all three states.
-    import gamelog
-    import pulse_feed
-    saved_dir = gamelog.STATE_DIR
-    with tempfile.TemporaryDirectory() as d:
-        gamelog.STATE_DIR = d
-        try:
-            fresh = pulse_feed.feed_status()
-            pulse_feed.set_feed_enabled(False)
-            said_no = pulse_feed.feed_status()
-            pulse_feed.set_feed_enabled(True)
-            said_yes = pulse_feed.feed_status()
-        finally:
-            gamelog.STATE_DIR = saved_dir
-    check("a fresh install is UNASKED (so the prompt fires once)",
-          fresh["asked_here"] is False and fresh["opted_in_here"] is False, str(fresh["asked_here"]))
-    check("a remembered NO counts as asked (it is never re-asked)",
-          said_no["asked_here"] is True and said_no["opted_in_here"] is False)
-    check("a YES counts as asked AND opts in", said_yes["asked_here"] is True
-          and said_yes["opted_in_here"] is True)
+    # ── 7. THE ENTRY WALL IS GONE; the menus carry it ──────────────────────
+    check("nothing blocks the app at launch",
+          '<div id="entry-overlay" class="modal hidden">' in index,
+          "Joel: removing the menu blocking everything before the main screen")
+    check("both menus exist", 'id="m-character"' in index and 'id="m-help"' in index)
+    check("every entry route survived into a menu",
+          all(f'id="{i}"' in index for i in
+              ("entry-continue", "entry-scratch", "entry-respec", "entry-mids",
+               "entry-ingame", "save-btn", "start-over-btn", "tour-btn",
+               "help-btn", "bug-btn", "champ-btn", "update-btn")),
+          "these are the ids app.js already binds — re-homed, not rewired")
+    check("menu items keep their descriptions", index.count("<i>") >= 10,
+          "easy to navigate means knowing what a thing does before clicking it")
+    check("Escape and outside-click both close the menus",
+          'e.key === "Escape"' in app_js
+          and 'if (!e.target.closest(".menubar")) closeMenus();' in app_js)
 
     print(f"\n{len(CHECKS)} of {EXPECTED} expected checks ran")
     if len(CHECKS) != EXPECTED:

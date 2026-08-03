@@ -19,6 +19,17 @@
   --bad: #e5534b;
   --warn: #d9a441;
   --border: #2c3848;
+  /* Spacing / radius / elevation tokens (2026-08-03, tabbed layout).
+     The audit found colour was tokenised and everything else was not: 10px grid
+     gaps, 7px/8px/5px radii and two literal shadows scattered through the sheet.
+     A five-tab shell multiplies every one of those decisions by five, so the new
+     chrome uses these and only these. ⚠ Existing literals are deliberately NOT
+     rewritten — that would be a whole-sheet refactor with no visual payoff and
+     every chance of moving a shipped panel by a pixel. */
+  --s1: 4px;  --s2: 6px;  --s3: 10px;  --s4: 14px;  --s5: 20px;
+  --r1: 5px;  --r2: 8px;  --r3: 10px;
+  --e1: 0 4px 18px #000a;
+  --e2: 0 8px 28px #000b;
 }
 
 * { box-sizing: border-box; }
@@ -110,56 +121,60 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
 .ov-dim .ov-num { color: var(--muted); }
 .ov-plain .ov-num { color: var(--ink); }
 
-/* HORIZONTAL layout, always: a LEFT column (setup on top, stats + assistant below)
-   and the POWERS GRID owning the wide side. The whole page is ONE scroll. */
-main {
-  display: grid;
-  grid-template-columns: minmax(300px, 370px) minmax(0, 1fr);
-  grid-template-areas:
-    "setup build"
-    "rail  build";
-  /* THE LOPSIDED-GAP FIX (Joel's left-side arrows, 2026-07-16). The build
-     column spans BOTH rows, so with implicit `auto auto` rows the grid shared
-     the tall build column's height between them — the taller the powers side
-     grew, the further the Stats card was pushed from the End-game plan card
-     above it, opening orphaned whitespace on the left. Pinning row 1 to `auto`
-     (setup's natural height) and letting row 2 absorb the slack keeps the rail
-     docked directly under setup no matter how tall the build side gets. */
-  grid-template-rows: auto 1fr;
-  gap: 10px;
-  padding: 10px 12px;
-  align-items: start;
+/* ── THE SHELL (2026-08-03, tabbed layout) ───────────────────────────────────
+   Chrome that never moves: masthead, then the BUILD TILE (identity, Mids-like),
+   then the tab strip. Below them exactly one panel is visible at a time and it
+   owns the remaining height. The page itself never scrolls — see fitZoom() in
+   app.js, and tabbed-layout-spec.md for why scale beats rearrangement. */
+.build-tile {
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--s4);
+  padding: var(--s3) var(--s4);
+  background: var(--panel); border-bottom: 1px solid var(--border);
 }
-/* Click a power card → the Sidekick-style POWER INFO column opens on the right. */
-main.has-info {
-  grid-template-columns: minmax(300px, 370px) minmax(0, 1fr) minmax(270px, 320px);
-  grid-template-areas:
-    "setup build info"
-    "rail  build info";
+.build-tile label { display: flex; flex-direction: column; gap: var(--s1); }
+.build-tile select { min-width: 150px; }
+/* Pools sit inline with the selects rather than under a disclosure: on one row
+   they are as glanceable as the archetype, which is the point of the tile. */
+.build-tile details { flex: 1 1 320px; min-width: 260px; }
+.build-tile details > summary { cursor: pointer; color: var(--muted); }
+.build-tile .identity-lock { flex: 1 1 100%; }
+
+.tabbar {
+  display: flex; gap: var(--s1); padding: 0 var(--s4);
+  background: var(--panel); border-bottom: 1px solid var(--border);
+  overflow-x: auto; scrollbar-width: none;
 }
-#setup { grid-area: setup; }
-/* The wide column = powers grid + Play Log stacked; the Log fills the space when empty. */
-.build-col { grid-area: build; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-/* RAIL-LEVEL RULE (Joel's eyeball): the right rail is a viewport-height panel
-   with its OWN scroll — a long card (6-piece set + all tiers) browses in place
-   while the build grid stays on screen. Applies to every rail view. */
-#power-info { grid-area: info; position: sticky; top: 84px;
-  max-height: calc(100vh - 94px); overflow-y: auto; }
+.tabbar::-webkit-scrollbar { display: none; }
+.tab {
+  appearance: none; border: 0; background: none; color: var(--muted);
+  font: inherit; font-weight: 600; white-space: nowrap; cursor: pointer;
+  padding: var(--s3) var(--s4); border-radius: var(--r2) var(--r2) 0 0;
+  border-top: 2px solid transparent; margin-bottom: -1px;
+}
+.tab:hover { color: var(--ink); background: var(--panel2); }
+.tab[aria-selected="true"] {
+  color: var(--ink); background: var(--bg);
+  border-top-color: var(--accent);
+  border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--bg);
+}
+.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+#tabpanels { padding: var(--s3) var(--s4); }
+/* ⚠ [hidden] must WIN. A panel is hidden, never unmounted (spec §5): app.js
+   writes into all five on every recompute. Without !important a panel's own
+   display rule would out-specify the attribute and show two tabs at once. */
+.tabpanel[hidden] { display: none !important; }
+
+/* Powers & Slots: the grid, with the power-info detail column beside it. */
+.powers-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s3); }
+.powers-layout.has-info { grid-template-columns: minmax(0, 1fr) minmax(270px, 320px); }
+.powers-main { min-width: 0; display: flex; flex-direction: column; gap: var(--s3); }
 #power-info.hidden { display: none; }
-/* ⚠ THE RAIL IS NOT CAPPED AND MUST NOT BE (Joel, 2026-08-02). Capping it the way
-   #power-info is capped did remove the dead space, and he rejected it: "there is no
-   desire for a scroll bar in the middle of this app." The imbalance is fixed by
-   MOVING TILES between the columns instead — his framing: "think of the spaces on
-   the left as tiles that can be shuffled to make it all balanced." See
-   balanceColumns() in app.js; [data-tile] marks what may move. */
-.rail { grid-area: rail; display: flex; flex-direction: column; gap: 10px; }
-/* A tile that has been moved into the wide column keeps its card look but is no
-   longer squeezed into a 370px lane, so its rows get room to breathe. */
-.build-col > [data-tile] { width: 100%; }
+
 @media (max-width: 980px) {
-  main, main.has-info { grid-template-columns: 1fr; grid-template-areas: "setup" "info" "build" "rail"; }
-  /* narrow layout: the panel flows inline, so no rail-height cap */
-  #power-info { position: static; max-height: none; overflow-y: visible; }
+  .powers-layout, .powers-layout.has-info { grid-template-columns: 1fr; }
+  .build-tile { gap: var(--s3); }
 }
 
 /* Power Info internals */
@@ -2327,3 +2342,39 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
   font-size: 12px; color: var(--ink); line-height: 1.5;
 }
 .lvl-ex-note.good { background: rgba(60,160,90,.10); border-left-color: var(--def); }
+
+/* ── MENUS (2026-08-03) ──────────────────────────────────────────────────────
+   The entry overlay's five ways in, re-homed. Each item keeps its sentence,
+   because "very easy to navigate" is about knowing what a thing does before you
+   click it, not about the list being short. */
+.menubar { display: flex; gap: var(--s1); }
+.menu { position: relative; }
+.menu-top {
+  appearance: none; border: 0; background: none; color: var(--ink); font: inherit;
+  font-weight: 600; cursor: pointer; padding: var(--s2) var(--s3);
+  border-radius: var(--r1);
+}
+.menu-top:hover, .menu-top[aria-expanded="true"] { background: var(--panel2); }
+.menu-top::after { content: " be"; color: var(--muted); }
+.menu-top:focus-visible, .menu-drop [role=menuitem]:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: -2px;
+}
+.menu-drop {
+  position: absolute; top: calc(100% + var(--s1)); left: 0; z-index: 120;
+  min-width: 330px; padding: var(--s2);
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--r2); box-shadow: var(--e2);
+}
+.menu-drop[hidden] { display: none; }
+.menu-drop [role=menuitem] {
+  display: block; width: 100%; text-align: left; appearance: none; border: 0;
+  background: none; color: var(--ink); font: inherit; cursor: pointer;
+  padding: var(--s2) var(--s3); border-radius: var(--r1); text-decoration: none;
+}
+.menu-drop [role=menuitem]:hover { background: var(--panel2); }
+.menu-drop [role=menuitem] b { display: block; font-weight: 600; }
+.menu-drop [role=menuitem] i {
+  display: block; font-style: normal; font-size: 11.5px; color: var(--muted);
+}
+.menu-sep { height: 1px; margin: var(--s2) var(--s3); background: var(--border); }
+.entry-box-narrow { max-width: 620px; }

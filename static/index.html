@@ -11,89 +11,33 @@
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <!-- ENTRY ROUTER: the first thing a user sees — how do you want to start? -->
-  <div id="entry-overlay" class="modal">
-    <div class="entry-box">
-      <h2>How do you want to start?</h2>
-      <p class="muted">Pick a starting point — you can switch any time from the header.</p>
-      <!-- All four alignments (Joel, 2026-07-31). The middles are not a third
-           side: a Vigilante levels in Paragon City like a hero and a Rogue in
-           the Rogue Isles like a villain — what changes is the other side's
-           content they can also reach. Your build scores identically either way. -->
-      <div class="align-cards" id="align-cards">
-        <button class="align-card hero" data-align="hero"><b>🦸 Hero</b><span>Paragon City — blue &amp; gold</span></button>
-        <button class="align-card vigilante" data-align="vigilante"><b>🛡️ Vigilante</b><span>Hero side, can also visit villain content</span></button>
-        <button class="align-card rogue" data-align="rogue"><b>😈 Rogue</b><span>Villain side, can also visit hero content</span></button>
-        <button class="align-card villain" data-align="villain"><b>🦹 Villain</b><span>Rogue Isles — crimson &amp; black</span></button>
+  <!-- CHARACTER DIALOG. ⚠ This used to be the ENTRY ROUTER — a full-screen wall
+       every launch. Joel, 2026-08-03: "we are removing the menu blocking
+       everything before seeing the main screen." It opens on demand from the
+       Character menu now, and holds only the two things that genuinely need a
+       list: saved characters, and the in-game scan. Everything else became a
+       menu item. #entry-overlay keeps its id so showEntry/hideEntry and every
+       existing binding still work. -->
+  <div id="entry-overlay" class="modal hidden">
+    <div class="entry-box entry-box-narrow">
+      <div class="wizard-head">
+        <h2 id="entry-title">Continue a saved character</h2>
+        <button id="entry-close" class="linkchip">✕ Close</button>
       </div>
-      <div class="entry-cards" id="entry-cards">
-        <button class="entry-card" id="entry-continue" style="display:none">
-          <span class="tour-help entry-q" role="button" tabindex="0" onclick="explainEntry('entry-continue', event)" title="What does this do?" aria-label="Explain: Continue where you left off">?</span>
-          <div class="entry-ico">⏯️</div>
-          <h3>Continue where you left off</h3>
-          <p>Pick up a character you're partway through — leveling one from scratch is weeks of play, so your plan and progress are saved.</p>
-          <span class="entry-go"><span id="continue-count"></span> saved — open →</span>
-        </button>
-        <button class="entry-card" id="entry-scratch">
-          <span class="tour-help entry-q" role="button" tabindex="0" onclick="explainEntry('entry-scratch', event)" title="What does this do?" aria-label="Explain: Start a new character">?</span>
-          <div class="entry-ico">✨</div>
-          <h3>Start a new character</h3>
-          <p>Not sure what to roll? Tell me what you want to do and where you'll play — I'll recommend an archetype and powers, walk each level's pick and slotting, and show the end-game IO build, caps, epics, and incarnates you're building toward.</p>
-          <span class="entry-go">Pick my character →</span>
-        </button>
-        <button class="entry-card" id="entry-respec">
-          <span class="tour-help entry-q" role="button" tabindex="0" onclick="explainEntry('entry-respec', event)" title="What does this do?" aria-label="Explain: Build a new level-50 character">?</span>
-          <div class="entry-ico">♻️</div>
-          <h3>Build a new level-50 character</h3>
-          <p>Planning an end-game build from scratch? Just tell me your archetype and main powersets (e.g. <em>Defender · Kinetics · Dark Blast</em>) and where you play — I'll build a brand-new optimized level-50 kit: power picks, slotting, soft/hard caps, epic, and incarnates. No file needed, and you can freely swap archetype or powersets while you plan.</p>
-          <span class="entry-go">Build a new 50 →</span>
-        </button>
-        <button class="entry-card" id="entry-mids">
-          <span class="tour-help entry-q" role="button" tabindex="0" onclick="explainEntry('entry-mids', event)" title="What does this do?" aria-label="Explain: Import a Mids Reborn build">?</span>
-          <div class="entry-ico">📋</div>
-          <h3>Import a Mids Reborn build</h3>
-          <p>Already have a <code>.mbd</code>? Load it for a critique, then optimize the slotting toward a goal — keeping the sets you've already invested in.</p>
-          <span class="entry-go">Choose a .mbd file →</span>
-        </button>
-        <div class="entry-card entry-card-static" id="entry-ingame">
-          <span class="tour-help entry-q" role="button" tabindex="0" onclick="explainEntry('entry-ingame', event)" title="What does this do?" aria-label="Explain: Import a character you play">?</span>
-          <div class="entry-ico">🎮</div>
-          <h3>Import a character you play</h3>
-          <p>In game, type <code>/build_save_file</code> in chat — then come back here:</p>
-          <span class="entry-go" id="ingame-scan-go">🔍 Find my characters for me →</span>
-          <div id="ingame-found" class="ingame-found hidden"></div>
-          <span class="entry-go entry-go-quiet" id="ingame-pick-go">…or choose the .txt file yourself →</span>
-          <p class="muted small">Heads-up: in-game build saves don't include boost
-          levels — import a Mids export (.mbd) to carry +1..+5 and HO levels.</p>
-        </div>
-      </div>
-      <!-- A permanent way into the tour from the opening screen. The header
-           compass and the ? circles sit BEHIND this overlay (it is z-index 50,
-           the header is 30), so on this screen they are dimmed and unreachable-
-           looking. Without this, a returning user sees "the menu, and nothing
-           else" and has no visible door. Always present, unlike the first-run
-           offer, which only greets a fresh install. -->
-      <div class="entry-tour-line">
-        <button class="linkchip" onclick="openTourMenu()">🧭 Show me around this app</button>
-      </div>
-
-      <!-- Pulse Boards consent, asked on the opening screen. ⚠ IN THE FLOW, not
-           floating and NOT a modal (Joel, 2026-08-02, twice): a consent question
-           must never sit between the user and the thing they opened the app to
-           do. Here it cannot cover a single control, it goes away with this
-           overlay the moment they pick a starting point, and it comes back next
-           launch if they never answered. The line carries the fact that actually
-           needs consent (character names); the rest expands on demand, so the
-           opening screen keeps its no-scroll promise. Filled by maybeAskShare. -->
-      <div id="share-line" class="entry-share hidden"></div>
-
-      <!-- saved characters list (shown when "Continue" is chosen) -->
       <div id="saves-panel" class="hidden">
         <div class="saves-head">
-          <strong>Continue a saved character</strong>
-          <button id="saves-back" class="linkchip">← Back</button>
+          <strong>Pick up where you left off</strong>
+          <button id="saves-back" class="linkchip hidden">← Back</button>
         </div>
         <div id="saves-list" class="saves-list"></div>
+      </div>
+      <div id="ingame-panel" class="hidden">
+        <p>In game, type <code>/build_save_file</code> in chat — then come back here:</p>
+        <span class="entry-go" id="ingame-scan-go">🔍 Find my characters for me →</span>
+        <div id="ingame-found" class="ingame-found hidden"></div>
+        <span class="entry-go entry-go-quiet" id="ingame-pick-go">…or choose the .txt file yourself →</span>
+        <p class="muted small">Heads-up: in-game build saves don't include boost
+        levels — import a Mids export (.mbd) to carry +1..+5 and HO levels.</p>
       </div>
     </div>
   </div>
@@ -223,44 +167,55 @@
         <button id="app-ver" class="muted" type="button" hidden
           title="About &amp; Settings: what the version numbers mean, startup and update options"></button>
         <span id="db-version" class="muted"></span></h1>
+      <!-- MENUS (Joel, 2026-08-03: the entry choices "need to be placed in a very
+           easy to navigate drop down menus"). Every item keeps an icon, a label
+           AND the one-line description its entry card had — a bare verb is not
+           easier to navigate, only smaller.
+           ⚠ DO NOT RENAME THESE IDS. app.js already binds #entry-continue,
+           #entry-scratch, #entry-respec, #entry-mids, #save-btn, #start-over-btn,
+           #tour-btn, #bug-btn, #champ-btn, #update-btn and #help-btn; the menu
+           re-homes them rather than rewiring anything. -->
+      <nav class="menubar" id="menubar">
+        <div class="menu">
+          <button class="menu-top" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="m-character">Character</button>
+          <div class="menu-drop" id="m-character" role="menu" hidden>
+            <button id="entry-continue" role="menuitem" type="button"><b>⏯️ Continue where you left off</b><i>Resume a character you have saved</i></button>
+            <button id="entry-scratch" role="menuitem" type="button"><b>✨ Start a new character</b><i>Tell me how you want to play and I will pick the build</i></button>
+            <button id="entry-respec" role="menuitem" type="button"><b>♻️ Build a new level 50</b><i>An end-game kit from scratch, no file needed</i></button>
+            <div class="menu-sep" role="separator"></div>
+            <button id="entry-mids" role="menuitem" type="button"><b>📋 Import a Mids build</b><i>Load a .mbd and keep the sets you invested in</i></button>
+            <button id="entry-ingame" role="menuitem" type="button"><b>🎮 Import a character you play</b><i>From an in-game /build_save_file export</i></button>
+            <div class="menu-sep" role="separator"></div>
+            <button id="save-btn" role="menuitem" type="button"><b>💾 Save this character</b><i>Plan and progress, so you can resume later</i></button>
+            <button id="start-over-btn" role="menuitem" type="button"><b>↺ Switch character</b><i>Load another one, or start over</i></button>
+          </div>
+        </div>
+        <div class="menu">
+          <button class="menu-top" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="m-help">Help</button>
+          <div class="menu-drop" id="m-help" role="menu" hidden>
+            <button id="tour-btn" role="menuitem" type="button"><b>🧭 Guided tour</b><i>Pick a section and I will walk you through it</i></button>
+            <a id="help-btn" role="menuitem" href="/static/help/HeroCompanion-Help.pdf" target="_blank" rel="noopener"><b>❓ User guide</b><i>The manual and release notes, as a PDF</i></a>
+            <div class="menu-sep" role="separator"></div>
+            <button id="bug-btn" role="menuitem" type="button"><b>🐞 Report a bug</b><i>Pre-filled; nothing sends until you press Send</i></button>
+            <button id="champ-btn" role="menuitem" type="button"><b>🏆 Submit a champion</b><i>Offer this build for verification</i></button>
+            <div class="menu-sep" role="separator"></div>
+            <button id="update-btn" role="menuitem" type="button"><b>⟳ Check for updates</b><i>Compares version numbers, sends nothing about you</i></button>
+            <button role="menuitem" type="button" onclick="showAbout()"><b>⚙ About &amp; Settings</b><i>Versions, startup and update options</i></button>
+          </div>
+        </div>
+      </nav>
       <div class="legend">
         <span id="autosave-ind" class="muted small" title="Auto-saves in the background when something changes"></span>
-        <button id="journey-btn" class="iconbtn journey-pill" title="The Leveling Journey — your 1-50 as a road. Click to open, click again to close." style="display:none">🗺️ <span class="journey-pill-label">Journey</span></button>
-        <!-- Sits next to the Journey button so the two "show me around" controls
-             live together. Opens the section chooser, never a tour directly. -->
-        <!-- EVERY header control carries its name (Joel, 2026-07-31: "all the
-             entries at the top probably deserve a name next to icons"). A bare
-             emoji is only legible to someone who already knows what it does, and
-             the tour needed a whole step to decode this row. .legend wraps, so a
-             narrow window stacks rather than clipping. -->
-        <button id="tour-btn" class="iconbtn iconbtn-labeled" title="Guided tour — pick a section and I'll explain it">🧭 <span>Tour</span></button>
-        <button id="save-btn" class="iconbtn iconbtn-labeled" title="Save this character's plan + progress so you can resume later">💾 <span>Save</span></button>
-        <!-- HEADER GROUPING (design review 2026-07-31, Joel's field note "the bug
-             report is not easy to find"): eight same-shaped emoji in one run meant
-             finding any of them required decoding all of them. Three groups now,
-             separated by a hairline: this-character actions, help + feedback, then
-             app/meta. The Journey button already proved a LABEL is what makes a
-             header control findable, so the feedback button carries one too. -->
-        <span class="legend-div" aria-hidden="true"></span>
-        <a id="help-btn" class="iconbtn iconbtn-labeled" href="/static/help/HeroCompanion-Help.pdf" target="_blank"
-           rel="noopener" title="User guide + release notes (PDF)">❓ <span>Guide</span></a>
-        <button id="bug-btn" class="iconbtn iconbtn-labeled"
-          title="Report a bug — opens a pre-filled report; nothing is sent until you press Send">🐞 <span>Report</span></button>
-        <span class="legend-div" aria-hidden="true"></span>
-        <button id="champ-btn" class="iconbtn iconbtn-labeled" title="Submit your build as a champion candidate — the hub re-verifies every claim">🏆 <span>Champion</span></button>
-        <button id="update-btn" class="iconbtn iconbtn-labeled" title="Check for updates">⟳ <span>Updates</span></button>
+        <button id="journey-btn" class="iconbtn journey-pill" title="The Leveling Journey" style="display:none">🗺️ <span class="journey-pill-label">Journey</span></button>
         <button id="alignment-btn" class="iconbtn iconbtn-labeled" title="Change alignment — Hero, Vigilante, Rogue or Villain">🦸 <span>Hero</span></button>
-        <button id="start-over-btn" class="iconbtn iconbtn-labeled" title="Load another character, or make a new one">↺ <span>Switch</span></button>
       </div>
     </div>
   </header>
 
-  <main>
-    <!-- LEFT RAIL, top: character setup (archetype, sets, pools, epic, incarnates) -->
-    <section id="setup" class="panel">
-      <h2>Build<button class="tour-help" onclick="startTour('build')" aria-label="Explain this section" title="Explain this section">?</button></h2>
-
-      <!-- The game's own archetype emblem, beside the label rather than inside
+    <!-- BUILD TILE — identity on every tab, Mids-like, blank until loaded. It is
+       chrome, not a panel: it never scrolls away and it owns no tab. -->
+  <section id="build-tile" class="build-tile">
+<!-- The game's own archetype emblem, beside the label rather than inside
            the select (a native <select> cannot render an image). Hidden until an
            archetype is chosen, and hidden again if the art is ever missing. -->
       <label>Archetype
@@ -282,34 +237,30 @@
         <summary>Power Pools (up to 4)</summary>
         <div id="pool-selectors"></div>
       </details>
+  </section>
 
-      <details open class="endgame">
-        <summary>🎯 End-game plan — Epic (lvl 35) &amp; Incarnates (lvl 50)</summary>
-        <div class="endgame-body">
-          <div class="endgame-block">
-            <div class="endgame-label">Epic / Ancillary Pool <span class="muted small">— survival / utility; unlocks at level 35</span></div>
-            <select id="sel-epic" disabled></select>
-            <div id="patron-note" class="patron-note hidden">⚔️ <strong>Patron pool</strong> — unlike Ancillary pools, this must be unlocked in-game by completing a <strong>Patron arc</strong> (the patron missions, available from level&nbsp;35). <a href="https://homecoming.wiki/wiki/Patron_Power_Pools" target="_blank" rel="noopener">How to unlock ↗</a></div>
-          </div>
-          <div class="endgame-block">
-            <div class="endgame-label">Incarnates <span class="muted small">— unlock at level 50; <strong>Solve</strong> recommends a set for your role + content</span></div>
-            <div id="incarnate-selectors" class="incarnates"></div>
-          </div>
-          <p class="muted small">Incarnate buffs are situational/timed, so they're left out of the passive
-            totals by default — tick <strong>"Include incarnates (peak)"</strong> above the Stats to fold
-            them in (Destiny, Hybrid &amp; Judgement) and match Mids' fully-buffed display.</p>
-        </div>
-      </details>
+  <!-- TABS. ⚠ Panels are HIDDEN, never unmounted: app.js writes into elements
+       across four of them on every recompute, and a change on one tab (an epic
+       pick, an accolade) must reach the others. See tabbed-layout-spec.md §5. -->
+  <nav class="tabbar" id="tabbar" role="tablist" aria-label="Sections">
+    <button class="tab" id="tab-btn-powers" role="tab" aria-controls="tab-powers"
+      aria-selected="true" tabindex="0">Powers &amp; Slots</button>
+    <button class="tab" id="tab-btn-stats" role="tab" aria-controls="tab-stats"
+      aria-selected="false" tabindex="-1">Stats</button>
+    <button class="tab" id="tab-btn-endgame" role="tab" aria-controls="tab-endgame"
+      aria-selected="false" tabindex="-1">End Game</button>
+    <button class="tab" id="tab-btn-leveling" role="tab" aria-controls="tab-leveling"
+      aria-selected="false" tabindex="-1">Leveling Guide</button>
+    <button class="tab" id="tab-btn-logging" role="tab" aria-controls="tab-logging"
+      aria-selected="false" tabindex="-1">Logging</button>
+  </nav>
 
-    </section>
-
-    <!-- RIGHT: Power Info — Sidekick-style detail panel for the selected power -->
-    <aside id="power-info" class="panel pinfo hidden"></aside>
-
-    <!-- WIDE column: the powers grid + the Play Log stacked beneath it, so when there's
-         no build yet the Play Log rises up to fill the wide right area (no dead space). -->
-    <div class="build-col">
-    <section id="builder" class="panel">
+  <main id="tabpanels">
+    <section id="tab-powers" class="tabpanel" role="tabpanel"
+      aria-labelledby="tab-btn-powers">
+    <div class="powers-layout">
+      <div class="powers-main">
+<section id="builder" class="panel">
       <h2>Powers &amp; Slots<button class="tour-help" onclick="startTour('powers')" aria-label="Explain this section" title="Explain this section">?</button></h2>
       <div id="edit-bar" class="edit-bar">
         <button id="undo-btn" class="ghost-btn" type="button" onclick="undoEdit()" disabled
@@ -341,40 +292,10 @@
 
 
     </section>
-
-    <!-- PLAY LOG: docked at the bottom of the wide build column — rises to fill the space
-         when no build is loaded, sits under the build when one is. Insights only. -->
-    <section id="gamelog" class="panel hidden">
-      <h2>📜 Play Log <span class="muted small">— insights from your game sessions</span>
-        <button id="gl-refresh" class="ghost-btn" type="button" onclick="gamelogIngest()">⟳ Read new log entries</button>
-      </h2>
-      <div id="gl-setup" class="muted small"></div>
-      <div id="gl-cards" class="gl-cards"></div>
-      <div id="gl-coverage" class="muted small"></div>
-      <!-- PULSE BOARDS (Lite parity): the private board is YOUR data, local only;
-           the public preview shows exactly what feeding would share; the feed is
-           an explicit, reversible opt-in behind the shown terms. -->
-      <div id="gl-pulse" class="gl-pulse">
-        <button class="ghost-btn" type="button" onclick="window.open('/gamelog/board', '_blank')"
-          title="Your private pulse board — scorecards, market ledger, raids seen. Built from your own capture store; never uploaded.">🗞 My private board</button>
-        <button class="ghost-btn" type="button" onclick="window.open('/gamelog/board/public', '_blank')"
-          title="A preview of the sanitized PUBLIC board variant — exactly what sharing shows, so the choice to feed is informed.">👁 What sharing shows</button>
-        <span id="gl-feed-block"></span>
       </div>
-    </section>
-    </div><!-- /build-col -->
-
-    <!-- RIGHT RAIL: live stats + AI controls in ONE sticky column; the page scrolls under it -->
-    <aside class="rail">
-    <!-- ⚠ THE ASSISTANT SITS ABOVE THE STATS PANEL ON PURPOSE (field report,
-         BasiliskXVIII 2026-08-01: "having to scrounge around in a bottom corner
-         to find it when loading an existing build seems counterproductive").
-         MEASURED: it used to start 3,206px down a 4,124px page - 78% of the way
-         to the bottom - because the stats panel above it is 2,153px tall. The
-         assistant is the thing that DOES something; stats are what you read
-         after. Order follows that. -->
-    <!-- RIGHT: AI Assistant -->
-    <section id="assistant" class="panel" data-tile>
+<aside id="power-info" class="panel pinfo hidden"></aside>
+    </div>
+<section id="assistant" class="panel" data-tile>
       <!-- The Need help? button sits OUTSIDE this h2 on purpose: app.js rewrites
            assistant-title's innerHTML when the Build Assistant renders, which
            would silently delete anything nested inside it. -->
@@ -498,8 +419,10 @@
            visibility must never depend on the AI seam. -->
       <div id="ai-response" class="ai-response muted"></div>
     </section>
-
-    <section id="stats" class="panel" data-tile>
+    </section>
+    <section id="tab-stats" class="tabpanel" role="tabpanel"
+      aria-labelledby="tab-btn-stats" hidden>
+<section id="stats" class="panel" data-tile>
       <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span><button class="tour-help" onclick="startTour('stats')" aria-label="Explain this section" title="Explain this section">?</button></h2>
       <div class="cap-chips">
         <span class="chip cap-def">Defense soft cap 45%</span>
@@ -545,8 +468,60 @@
       <div id="validation" class="validation"></div>
       <p id="stats-note" class="muted small"></p>
     </section>
-
-    </aside>
+    </section>
+    <section id="tab-endgame" class="tabpanel" role="tabpanel"
+      aria-labelledby="tab-btn-endgame" hidden>
+      <section class="panel" id="endgame-panel">
+        <h2>End Game</h2>
+<details open class="endgame">
+        <summary>🎯 End-game plan — Epic (lvl 35) &amp; Incarnates (lvl 50)</summary>
+        <div class="endgame-body">
+          <div class="endgame-block">
+            <div class="endgame-label">Epic / Ancillary Pool <span class="muted small">— survival / utility; unlocks at level 35</span></div>
+            <select id="sel-epic" disabled></select>
+            <div id="patron-note" class="patron-note hidden">⚔️ <strong>Patron pool</strong> — unlike Ancillary pools, this must be unlocked in-game by completing a <strong>Patron arc</strong> (the patron missions, available from level&nbsp;35). <a href="https://homecoming.wiki/wiki/Patron_Power_Pools" target="_blank" rel="noopener">How to unlock ↗</a></div>
+          </div>
+          <div class="endgame-block">
+            <div class="endgame-label">Incarnates <span class="muted small">— unlock at level 50; <strong>Solve</strong> recommends a set for your role + content</span></div>
+            <div id="incarnate-selectors" class="incarnates"></div>
+          </div>
+          <p class="muted small">Incarnate buffs are situational/timed, so they're left out of the passive
+            totals by default — tick <strong>"Include incarnates (peak)"</strong> above the Stats to fold
+            them in (Destiny, Hybrid &amp; Judgement) and match Mids' fully-buffed display.</p>
+        </div>
+      </details>
+      </section>
+    </section>
+    <section id="tab-leveling" class="tabpanel" role="tabpanel"
+      aria-labelledby="tab-btn-leveling" hidden>
+      <section class="panel" id="leveling-panel"></section>
+    </section>
+    <section id="tab-logging" class="tabpanel" role="tabpanel"
+      aria-labelledby="tab-btn-logging" hidden>
+      <!-- Pulse consent. ⚠ It used to sit in the opening menu; that menu is gone
+           (2026-08-03), so it lives with the feed it governs. Still in the flow,
+           still not a modal, still asks once — the ruling that matters is that a
+           consent question never blocks the app, not which screen it sits on. -->
+      <div id="share-line" class="entry-share hidden"></div>
+<section id="gamelog" class="panel hidden">
+      <h2>📜 Play Log <span class="muted small">— insights from your game sessions</span>
+        <button id="gl-refresh" class="ghost-btn" type="button" onclick="gamelogIngest()">⟳ Read new log entries</button>
+      </h2>
+      <div id="gl-setup" class="muted small"></div>
+      <div id="gl-cards" class="gl-cards"></div>
+      <div id="gl-coverage" class="muted small"></div>
+      <!-- PULSE BOARDS (Lite parity): the private board is YOUR data, local only;
+           the public preview shows exactly what feeding would share; the feed is
+           an explicit, reversible opt-in behind the shown terms. -->
+      <div id="gl-pulse" class="gl-pulse">
+        <button class="ghost-btn" type="button" onclick="window.open('/gamelog/board', '_blank')"
+          title="Your private pulse board — scorecards, market ledger, raids seen. Built from your own capture store; never uploaded.">🗞 My private board</button>
+        <button class="ghost-btn" type="button" onclick="window.open('/gamelog/board/public', '_blank')"
+          title="A preview of the sanitized PUBLIC board variant — exactly what sharing shows, so the choice to feed is informed.">👁 What sharing shows</button>
+        <span id="gl-feed-block"></span>
+      </div>
+    </section>
+    </section>
   </main>
 
   <!-- Enhancement picker modal -->

@@ -123,16 +123,18 @@ function resetTrayPanels() {
   if (o) { o.classList.add("hidden"); o.innerHTML = ""; }
 }
 
-function showEntry() {
+// ⚠ This no longer greets anyone. The entry overlay stopped being a startup wall
+// on 2026-08-03; it is the CHARACTER DIALOG the menu opens, on one section at a
+// time. "Switch character" still routes here, which is why the id survives.
+function showEntry(section) {
+  const which = section || "saves";
   $("entry-overlay").classList.remove("hidden");
-  $("entry-cards").classList.remove("hidden");
-  $("saves-panel").classList.add("hidden");
+  $("entry-title").textContent = which === "ingame"
+    ? "Import a character you play" : "Continue a saved character";
+  $("saves-panel").classList.toggle("hidden", which !== "saves");
+  $("ingame-panel").classList.toggle("hidden", which !== "ingame");
   resetTrayPanels();          // restart → don't show the prior build's trays/order
-  refreshContinueCard();
-  // Offer the tour on the entry screen, once, to someone who has never been
-  // offered it. Declining only silences the OFFER: every panel's "Need help?"
-  // link still starts it, so saying no is never a door closing.
-  if (typeof maybeOfferTour === "function") maybeOfferTour();
+  if (which === "saves") { refreshContinueCard(); openSavesList(); }
 }
 function hideEntry() { $("entry-overlay").classList.add("hidden"); }
 
@@ -216,7 +218,6 @@ async function openSavesList() {
           + `<button class="save-del" title="Delete" onclick="deleteSave('${escHtml(s.id)}')">🗑</button></div>`;
       }).join("")
     : `<div class="saves-empty">No saved characters yet. Start one, then hit 💾 Save in the header.</div>`;
-  $("entry-cards").classList.add("hidden");
   $("saves-panel").classList.remove("hidden");
 }
 
@@ -3083,7 +3084,11 @@ async function init() {
   $("ingame-pick-go").addEventListener("click", () => $("import-file").click());
   $("entry-scratch").addEventListener("click", () => { hideEntry(); startFromScratch(); });
   $("entry-respec").addEventListener("click", () => { hideEntry(); startNew50(); });
-  $("entry-continue").addEventListener("click", openSavesList);
+  $("entry-continue").addEventListener("click", () => showEntry("saves"));
+  $("entry-ingame").addEventListener("click", () => showEntry("ingame"));
+  $("entry-close").addEventListener("click", hideEntry);
+  initTabs();
+  initMenus();
   $("saves-back").addEventListener("click", () => {
     $("saves-panel").classList.add("hidden"); $("entry-cards").classList.remove("hidden"); });
   $("save-btn").addEventListener("click", saveProgress);
@@ -3551,8 +3556,8 @@ async function maybeAskShare() {
     <div class="muted">It is off until you say yes, and nothing has been sent so far.
       Your own rewards and public recruitment lines, never raw chat and never tells —
       and <b>your character names are included</b>, which is the one thing worth
-      deciding on consciously. Ignore this and pick a starting point if you would
-      rather decide later.</div>
+      deciding on consciously. Ignore it and carry on if you would rather decide
+      later.</div>
     <details><summary class="muted small">Exactly what is and is not shared</summary>
     <dl>
       <dt>What is captured</dt>
@@ -4368,7 +4373,7 @@ window.closePowerInfo = function () {
   SELECTED_ENH = null;
   const panel = $("power-info");
   if (panel) panel.classList.add("hidden");
-  document.querySelector("main").classList.remove("has-info");
+  document.querySelector(".powers-layout").classList.remove("has-info");
 };
 // The panel closes on Esc and outside-click, not only via its ✕ (the steady-
 // mouse tax, UX note 5). Undo (Ctrl+Z) stays edits-only and ignores the panel.
@@ -4540,7 +4545,7 @@ async function renderEnhInfo() {
     + (st ? `<h3 class="eh-set-h">${escHtml(st.display)} <span class="muted small">${escHtml(st.category_label || "")} · ${st.slotted_here} of ${st.roster.length} in this power</span></h3>`
       + enhSetSectionHtml(st) : "");
   panel.classList.remove("hidden");
-  document.querySelector("main").classList.add("has-info");
+  document.querySelector(".powers-layout").classList.add("has-info");
 }
 
 // One dispatcher for whichever rail view is open — recompute() calls this so
@@ -4635,7 +4640,7 @@ async function renderPowerInfo() {
        global recharge — they update with every change.</p>` : "")
     + cardProvenanceFooterHtml();
   panel.classList.remove("hidden");
-  document.querySelector("main").classList.add("has-info");
+  document.querySelector(".powers-layout").classList.add("has-info");
 }
 
 // A power's slots show as icons (set name only in the hover tooltip), which makes a
@@ -5573,94 +5578,159 @@ async function recompute() {
   renderRespecUI(totals && totals.respec_hint);
   refreshBuildViews();   // keep the always-visible respec-order + tray sections live
   if (ACCOLADES_ROWS && ACCOLADES_ROWS.length) renderAccolades();  // keep the panel synced (HP line + alignment greying)
-  scheduleBalance();       // the columns just changed height — re-tile them
+  scheduleFit();           // content changed height — re-solve the fit
 }
 
-// ── COLUMN BALANCE — tiles, not scrollbars (Joel's ruling, 2026-08-02) ───────
-// The two columns are independent stacks, so the taller one sets the page height
-// and the shorter one leaves a void beside it. Measured on a Warshade build at
-// 1900x1150: left 3982px, right 2237px — 1745px of empty right-hand side.
-//
-// Capping the rail with its own scroll fixed it and was REJECTED: "there is no
-// desire for a scroll bar in the middle of this app." His fix instead: "think of
-// the spaces on the left as tiles that can be shuffled to make it all balanced."
-// So the movable cards are placed in whichever column makes the page shortest
-// and the two sides closest, re-measured for real after every build edit and
-// resize — heights depend on width, so this cannot be computed on paper.
-//
-// ⚠ THE ASSISTANT LANDS ABOVE THE POWERS GRID, NEVER BELOW. It was moved to the
-// top of the rail on 2026-08-01 because a field report could not find it at 78%
-// down the page; shuffling must not quietly undo that. Its slot in the wide
-// column is BEFORE #builder, which is more prominent than where it started, not
-// less. Stats read after, so they land above the Play Log.
-const _TILES = [
-  { id: "assistant", before: "builder" },
-  { id: "stats", before: "gamelog" },
-];
-let _balanceTimer = null;
-
-function scheduleBalance() {
-  clearTimeout(_balanceTimer);
-  _balanceTimer = setTimeout(balanceColumns, 120);
-}
-
-function balanceColumns() {
-  const rail = document.querySelector(".rail");
-  const bc = document.querySelector(".build-col");
-  const setup = $("setup");
-  if (!rail || !bc || !setup) return;
-  const tiles = _TILES.map(t => ({ ...t, el: $(t.id) })).filter(t => t.el);
-  if (!tiles.length) return;
-  // Below 980px the grid collapses to ONE column, so there is nothing to balance
-  // and a "moved" tile would just land in a different place in the same stack.
-  // Put everything home and leave it alone.
-  const single = window.matchMedia("(max-width: 980px)").matches;
-  const place = mask => tiles.forEach((t, i) => {
-    if (!single && (mask & (1 << i))) bc.insertBefore(t.el, $(t.before) || null);
-    else rail.appendChild(t.el);        // appending in _TILES order restores order
+// ── MENUS ───────────────────────────────────────────────────────────────────
+// Joel, 2026-08-03: the entry choices "need to be placed in a very easy to
+// navigate drop down menus". Easy to navigate means: one open at a time, Escape
+// and outside-click both close, arrows walk the items, and every item still
+// carries the sentence its entry card had.
+function closeMenus(except) {
+  document.querySelectorAll(".menu-drop").forEach(d => {
+    if (d === except) return;
+    d.hidden = true;
+    const top = document.querySelector(`[aria-controls="${d.id}"]`);
+    if (top) top.setAttribute("aria-expanded", "false");
   });
-  if (single) { place(0); return; }
-  const h = el => (el ? el.getBoundingClientRect().height : 0);
-  // Score: page height first (that is what the void is made of), then how far
-  // apart the two sides are (that is what reads as "obvious imbalance").
-  const score = () => {
-    const left = h(setup) + h(rail), right = h(bc);
-    return Math.max(left, right) + Math.abs(left - right) * 0.5;
-  };
-  let best = 0, bestScore = Infinity;
-  for (let mask = 0; mask < (1 << tiles.length); mask++) {
-    place(mask);
-    const s = score();
-    if (s < bestScore - 0.5) { bestScore = s; best = mask; }
-  }
-  place(best);
 }
-// Two triggers, on purpose.
+
+function initMenus() {
+  const bar = $("menubar");
+  if (!bar) return;
+  bar.addEventListener("click", e => {
+    const top = e.target.closest(".menu-top");
+    if (top) {
+      const drop = $(top.getAttribute("aria-controls"));
+      const open = drop.hidden;
+      closeMenus(open ? drop : null);
+      drop.hidden = !open;
+      top.setAttribute("aria-expanded", open ? "true" : "false");
+      if (open) drop.querySelector("[role=menuitem]")?.focus();
+      return;
+    }
+    // A menu item does its job and gets out of the way — its own listener runs
+    // via the ids app.js already binds, so all this has to do is close.
+    if (e.target.closest("[role=menuitem]")) closeMenus();
+  });
+  bar.addEventListener("keydown", e => {
+    const drop = e.target.closest(".menu-drop");
+    if (e.key === "Escape") {
+      closeMenus();
+      document.querySelector(".menu-top")?.focus();
+      return;
+    }
+    if (!drop || (e.key !== "ArrowDown" && e.key !== "ArrowUp")) return;
+    e.preventDefault();
+    const items = [...drop.querySelectorAll("[role=menuitem]")];
+    const i = items.indexOf(e.target);
+    items[(i + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length].focus();
+  });
+  document.addEventListener("click", e => { if (!e.target.closest(".menubar")) closeMenus(); });
+}
+
+// ── TABS ────────────────────────────────────────────────────────────────────
+// Five destinations, one visible at a time. Panels are HIDDEN, never unmounted:
+// recompute() writes into elements on four different tabs, and a change on one
+// (an epic pick on End Game, an accolade) has to reach the others. Unmounting
+// would turn every one of those writes into a silent no-op.
+const _TABS = ["powers", "stats", "endgame", "leveling", "logging"];
+
+function activateTab(key, moveFocus) {
+  if (!_TABS.includes(key)) key = _TABS[0];
+  for (const k of _TABS) {
+    const btn = $(`tab-btn-${k}`), panel = $(`tab-${k}`);
+    if (!btn || !panel) continue;
+    const on = k === key;
+    btn.setAttribute("aria-selected", on ? "true" : "false");
+    btn.tabIndex = on ? 0 : -1;
+    panel.hidden = !on;
+    if (on && moveFocus) btn.focus();
+  }
+  try { localStorage.setItem("cohTab", key); } catch (e) {}
+  // A panel that was hidden had zero geometry, so its fit is unsolved until now.
+  scheduleFit();
+}
+// The cross-tab door (Joel, 2026-08-03: "make sure the layout knows where to
+// find content on another tab"). Anything that needs to send the user to
+// content living elsewhere calls this — it never duplicates the content.
+window.showTab = activateTab;
+
+function initTabs() {
+  const bar = $("tabbar");
+  if (!bar) return;
+  bar.addEventListener("click", e => {
+    const btn = e.target.closest(".tab");
+    if (btn) activateTab(btn.id.replace("tab-btn-", ""));
+  });
+  // Arrow keys move between tabs, Home/End jump to the ends — the ARIA tablist
+  // contract. Tab key moves INTO the panel, which is why inactive tabs are -1.
+  bar.addEventListener("keydown", e => {
+    const i = _TABS.indexOf(document.activeElement.id?.replace("tab-btn-", ""));
+    if (i < 0) return;
+    const to = { ArrowLeft: i - 1, ArrowRight: i + 1, Home: 0, End: _TABS.length - 1 }[e.key];
+    if (to === undefined) return;
+    e.preventDefault();
+    activateTab(_TABS[(to + _TABS.length) % _TABS.length], true);
+  });
+  let saved = null;
+  try { saved = localStorage.getItem("cohTab"); } catch (e) {}
+  activateTab(saved || "powers");
+}
+
+// ── FIT BY ZOOM, NOT BY REARRANGING (Joel, 2026-08-03) ──────────────────────
+// "Think of it like a zooming in or out. Not a break a working screen layout."
 //
-// `resize` is the obvious one. The ResizeObserver catches what `resize` cannot:
-// main's width also changes when the power-info column opens or closes, which
-// resizes nothing. The width guard is what stops the observer looping — re-tiling
-// changes main's HEIGHT, which would re-notify it forever.
+// One layout, designed once, scaled so the ACTIVE panel fits its band. CSS zoom
+// (not transform: scale) because WebView2 is Chromium, where zoom truly reflows
+// — hit-testing, focus rings and scrolling stay correct, and the CSS pixels a
+// zoom-out buys are real, so a wider effective viewport fits more power-card
+// columns. That compounding is what makes a 1366x768 laptop work.
 //
-// ⚠ NEITHER IS VERIFIABLE FROM THE CLAUDE PANE, and I briefly rewrote this on
-// that mistake. Measured 2026-08-02: the pane fires no `resize`, no matchMedia
-// `change`, and no ResizeObserver at all — not even the initial observation, and
-// not for a width change forced in script. That is the same class as the pane's
-// known 0x0-viewport geometry blindness, NOT a defect in these listeners. What IS
-// verifiable here is balanceColumns() itself, called directly at each viewport,
-// and it places tiles correctly at every one. The trigger needs a real window.
-let _lastMainWidth = 0;
-window.addEventListener("resize", scheduleBalance);
-(function watchLayoutWidth() {
-  const main = document.querySelector("main");
-  if (!main || typeof ResizeObserver !== "function") return;   // `resize` still covers it
-  new ResizeObserver(entries => {
-    const w = Math.round(entries[0].contentRect.width);
-    if (w === _lastMainWidth) return;
-    _lastMainWidth = w;
-    scheduleBalance();
-  }).observe(main);
-})();
+// ⚠ Replaces balanceColumns(), deleted here: tabs split the two columns it used
+// to shuffle tiles between, so there is nothing left to balance.
+// ⚠ Never measure a hidden panel (spec 5.3) — display:none is zero geometry, so
+// this reads the ACTIVE panel only and re-runs on tab activation.
+// ⚠ getBoundingClientRect() returns ZOOMED values, so the natural height has to
+// be divided back out or the solve chases its own tail. It is a clamped
+// one-shot per resize, never a feedback loop.
+const ZOOM_MIN = 0.70;    // 13px base type -> 9.1px; below this, legibility loses
+const ZOOM_MAX = 1.25;    // fill a 4K panel instead of stranding the layout
+let _fitTimer = null;
+
+function scheduleFit() {
+  clearTimeout(_fitTimer);
+  _fitTimer = setTimeout(fitZoom, 120);
+}
+
+function fitZoom() {
+  const panel = document.querySelector(".tabpanel:not([hidden])");
+  const shell = document.getElementById("tabpanels");
+  if (!panel || !shell) return;
+  // MEASURED SEMANTICS (2026-08-03, probed rather than assumed):
+  //   innerHeight            device px, does NOT move with zoom
+  //   getBoundingClientRect  device px, DOES scale with zoom
+  //   scrollHeight           CSS px, and it SHRINKS as you zoom out, because a
+  //                          zoomed-out layout is wider in CSS px so content
+  //                          reflows into fewer rows. That compounding is the
+  //                          whole reason zoom beats a fixed scale factor.
+  // Both inputs therefore depend on the zoom you are solving for, so this
+  // iterates a few times instead of pretending there is a closed form.
+  let z = parseFloat(document.body.style.zoom) || 1;
+  for (let i = 0; i < 4; i++) {
+    const avail = window.innerHeight - shell.getBoundingClientRect().top;  // device px
+    const need = panel.scrollHeight * z;                                   // device px
+    if (need <= 0 || avail <= 0) return;
+    const next = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN,
+      Math.floor(z * (avail / need) * 100) / 100));
+    if (Math.abs(next - z) < 0.02) break;      // dead-band: never chase a pixel
+    z = next;
+    document.body.style.zoom = z === 1 ? "" : String(z);
+    panel.getBoundingClientRect();             // force reflow before re-measuring
+  }
+}
+window.addEventListener("resize", scheduleFit);
+
 
 // ── Accolades panel (v34 scaffold, DISPLAY-ONLY) ─────────────────────────────
 // Joel's scope ruling: the ENTIRE accolade roster ships (badge-only rows too) —
