@@ -7254,26 +7254,41 @@ function renderOffense(off, t) {
     : d.end != null
       ? `<span title="points of the 100-endurance bar, per application, unenhanced.">≈ ${d.end} end</span>`
       : `${sign(d.pct)}%`;
+  // debuff/buff rows join the click system (Joel, 2026-08-04: "they too can be
+  // organized with similar function as the top defense and resistance")
+  const dbRow = (d, side, cls) => {
+    const tail = d.type && d.type !== "all" ? " (" + d.type + ")" : d.type === "all" ? " (all)" : "";
+    const key = `${side}:${d.effect}:${d.type || ""}`;
+    const selCls = (SELECTED_STAT && SELECTED_STAT.key === key) ? " stat-selected" : "";
+    return `<div class="o-row stat-clickable${selCls}" data-statkey="${escHtml(key)}"
+      data-statlabel="${escHtml(d.effect + tail)}"
+      title="Which powers apply this? Click to see them.">
+      <span>${d.effect}${tail}</span><span class="${cls}">${buffVal(d)}</span></div>`;
+  };
   if ((off.debuffs || []).length) {
     html += `<div class="o-sub">Enemy debuffs <span class="muted small">(all your powers applied once, unenhanced)</span></div>`
-      + off.debuffs.map(d => `<div class="o-row"><span>${d.effect}${d.type && d.type !== "all" ? " (" + d.type + ")" : d.type === "all" ? " (all)" : ""}</span><span class="deb">${buffVal(d)}</span></div>`).join("");
+      + off.debuffs.map(d => dbRow(d, "debuff", "deb")).join("");
   }
   if ((off.buffs || []).length) {
     const anyNeg = off.buffs.some(d => (d.pct ?? d.hp ?? d.end) < 0);
     html += `<div class="o-sub">Ally buffs <span class="muted small">(all your powers applied once, unenhanced)</span></div>`
-      + off.buffs.map(d => `<div class="o-row"><span>${d.effect}${d.type && d.type !== "all" ? " (" + d.type + ")" : d.type === "all" ? " (all)" : ""}</span><span class="buf">${buffVal(d)}</span></div>`).join("")
+      + off.buffs.map(d => dbRow(d, "buff", "buf")).join("")
       + (anyNeg ? `<div class="o-note muted small">Negative rows are a power's built-in cost to you (for example Absorb Pain's regeneration penalty), not a debuff on allies.</div>` : "");
   }
   // v36 (first-class display deliverable): the Inherent Mechanics block —
   // every meter family the AT (or slotted sets) carries, with its honest
   // status: scored (basis stated) / shown-not-scored / not yet modeled.
+  // folded away (Joel, 2026-08-04: it read as disconnected noise) — the honesty
+  // flags stay, one click away instead of mid-page
   const im = (LAST_CALC && LAST_CALC.inherent_mechanics) || [];
   if (im.length) {
     const tag = { scored: "scored", dormant: "shown, not scored", not_yet: "not yet modeled" };
-    html += `<div class="o-row o-head" style="margin-top:8px"><span>Inherent mechanics</span></div>`
+    html += `<details class="jny-fit" style="margin-top:8px"><summary><b>Inherent mechanics</b>
+        <span class="muted small">— what the model scores vs shows (${im.length})</span></summary>`
       + im.map(m => `<div class="o-row im-row im-${m.status}"><span><b>${escHtml(m.family)}</b>`
         + ` <span class="im-tag">${tag[m.status] || m.status}</span>`
-        + ` <span class="muted small">${escHtml(m.basis)}</span></span></div>`).join("");
+        + ` <span class="muted small">${escHtml(m.basis)}</span></span></div>`).join("")
+      + `</details>`;
   }
   $("offense-stats").innerHTML = html;
 }
@@ -7451,6 +7466,37 @@ function renderStatBreakdown() {
       recharge — change a piece and they update live.</p>`;
     host.innerHTML = html;
     host.classList.remove("hidden");
+    _alignBreakdown(host);
+    return;
+  }
+
+  if (sel.key.startsWith("debuff:") || sel.key.startsWith("buff:")) {
+    // ── DEBUFFS / BUFFS: the powers that apply them ─────────────────────────
+    const [side, effect, type] = sel.key.split(":");
+    const list = ((LAST_TOTALS && LAST_TOTALS.offense) || {})[side === "debuff" ? "debuffs" : "buffs"] || [];
+    const rowD = list.find(d => d.effect === effect && String(d.type || "") === (type || ""));
+    const unit = rowD && rowD.hp != null ? " HP" : rowD && rowD.end != null ? " end" : "%";
+    html = `<h2><span>${escHtml(sel.label)}</span>
+      <button class="iconbtn pi-close" onclick="clearSelectedStat()" title="close">✕</button></h2>
+      <p class="sb-sub">The powers that apply this — one application each, unenhanced.
+      This comes from the powers themselves, not from IOs.</p>`;
+    (rowD && rowD.sources || []).forEach(s => {
+      const pi = build.powers.findIndex(p => (p.display_name || "") === s.name
+        || (p.full_name || "") === s.name);
+      const val = `${s.v >= 0 ? "+" : ""}${s.v}${unit}`;
+      if (pi >= 0) {
+        hotPower(pi);
+        html += _sbpCardHtml(pi, null, `<b>${val}</b>`, "", true);
+      } else {
+        html += `<div class="sb-row"><span class="sb-who">${escHtml(s.name)}</span>
+          <span class="sb-val">${val}</span></div>`;
+      }
+    });
+    html += `<div class="sb-row sb-total"><span><b>All together</b></span>
+      <span class="sb-val">${rowD ? (rowD.hp != null ? `≈ ${rowD.hp} HP` : rowD.end != null ? `≈ ${rowD.end} end` : `${rowD.pct > 0 ? "+" : ""}${rowD.pct}%`) : "—"}</span></div>`;
+    host.innerHTML = html;
+    host.classList.remove("hidden");
+    _alignBreakdown(host);
     return;
   }
 
@@ -7507,6 +7553,22 @@ function renderStatBreakdown() {
     <p class="muted small">That total IS the number on the stat row you clicked.</p>`;
   host.innerHTML = html;
   host.classList.remove("hidden");
+  _alignBreakdown(host);
+}
+
+// The breakdown floats BESIDE the clicked row (Joel, 2026-08-04: "the data
+// should show up beside the stat you click on") — offsetTop chain, not
+// getBoundingClientRect: rects return zoomed values under fitZoom.
+function _alignBreakdown(host) {
+  const selRow = document.querySelector(".stat-selected");
+  const grid = host.parentElement;
+  if (!selRow || !grid) { host.style.marginTop = ""; return; }
+  let y = 0, el = selRow;
+  while (el && el !== grid && el !== document.body) {
+    y += el.offsetTop || 0;
+    el = el.offsetParent;
+  }
+  host.style.marginTop = Math.max(0, y - 6) + "px";
 }
 
 // the ✕ needs no key round-trip — closing is just closing

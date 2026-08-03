@@ -1550,8 +1550,16 @@ body { overflow: hidden; }
 
 .stats-provlayout { display: grid; gap: var(--s3);
   grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
-  align-items: start; }
-.stat-breakdown { position: sticky; top: calc(var(--chrome-h, 130px)); }
+  align-items: start; position: relative; }
+/* NOT A FRAME (Joel, 2026-08-04): the breakdown is loose content that floats
+   beside the stat you clicked — the cards carry their own chrome. JS sets
+   margin-top so it lines up with the clicked row. */
+#stat-breakdown { background: none; border: none; box-shadow: none;
+  padding: 0; position: static; }
+#stat-breakdown h2 { font-size: 15px; margin: 0 0 2px; }
+/* the summary band was ruled worthless on this tab (Joel, 2026-08-04) —
+   machinery stays (updateInfoCards writes are harmless no-ops when hidden) */
+#tab-stats .info-course { display: none !important; }
 .stat-clickable { cursor: pointer; }
 .stat-clickable:hover { background: var(--panel2); }
 /* UNMISTAKABLE selection (Joel, 2026-08-04: "a green bar around them") */

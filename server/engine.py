@@ -1448,6 +1448,9 @@ def _debuff_buff_summary(build, ctx):
     pvp = bool(build.get("pvp"))
     deb = defaultdict(float)
     buf = defaultdict(float)
+    # provenance (Stats page): which POWERS make each row — {key: {power: mag}}
+    dsrc = defaultdict(lambda: defaultdict(float))
+    bsrc = defaultdict(lambda: defaultdict(float))
     # POINT-VALUED effects must never be formatted "×100 %" (Joel's field
     # find, 2026-07-28: a ~943-HP heal total printed as "+94303.2%"). The
     # unit lives in the EFFECT, not the modifier table: Heal/Absorb are
@@ -1473,7 +1476,10 @@ def _debuff_buff_summary(build, ctx):
                     hp_keys.add(key)
                 elif d["effect"] == "Endurance":
                     end_keys.add(key)
-                deb[key] += _resolve_mag(d, row, col)
+                _mag = _resolve_mag(d, row, col)
+                deb[key] += _mag
+                dsrc[key][p.get("display_name")
+                          or power.get("full_name")] += _mag
         for d in p.get("buff_effects", []):
             if not _pv_ok(d.get("pv_mode", 0), pvp):
                 continue
@@ -1486,14 +1492,25 @@ def _debuff_buff_summary(build, ctx):
                     hp_keys.add(key)
                 elif d["effect"] == "Endurance":
                     end_keys.add(key)
-                buf[key] += _resolve_mag(d, row, col)
+                _mag = _resolve_mag(d, row, col)
+                buf[key] += _mag
+                bsrc[key][p.get("display_name")
+                          or power.get("full_name")] += _mag
 
-    def fmt(agg):
+    def fmt(agg, srcmap):
         # Collapse an effect that spans the whole elemental spread with one equal
         # value (e.g. -Damage to all types) into a single "(all)" row.
         by_effect = defaultdict(dict)
         for (et, dt), v in agg.items():
             by_effect[et][dt] = v
+        def _sources(et, dt, point):
+            # per-power contributors, in the ROW's unit (points vs percent)
+            m = srcmap.get((et, dt)) or {}
+            rows = [{"name": n, "v": round(x if point else x * 100, 1)}
+                    for n, x in m.items() if abs(x) >= 1e-4]
+            rows.sort(key=lambda r: -abs(r["v"]))
+            return rows
+
         out = []
         for et, by_dt in by_effect.items():
             label = "Damage" if et == "DamageBuff" else et
@@ -1502,7 +1519,9 @@ def _debuff_buff_summary(build, ctx):
             if spread:
                 v = vals[0]
                 if abs(v) >= 1e-4:
-                    out.append({"effect": label, "type": "all", "pct": round(v * 100, 1)})
+                    dt0 = next(iter(by_dt))
+                    out.append({"effect": label, "type": "all", "pct": round(v * 100, 1),
+                                "sources": _sources(et, dt0, False)})
                 continue
             for dt, v in by_dt.items():
                 if abs(v) < 1e-4:
@@ -1510,18 +1529,18 @@ def _debuff_buff_summary(build, ctx):
                 if (et, dt) in hp_keys:
                     # hit points, one application of each contributing power
                     out.append({"effect": label, "type": dt if dt != "None" else None,
-                                "hp": round(v, 1)})
+                                "hp": round(v, 1), "sources": _sources(et, dt, True)})
                 elif (et, dt) in end_keys:
                     out.append({"effect": label, "type": dt if dt != "None" else None,
-                                "end": round(v, 1)})
+                                "end": round(v, 1), "sources": _sources(et, dt, True)})
                 else:
                     out.append({"effect": label, "type": dt if dt != "None" else None,
-                                "pct": round(v * 100, 1)})
+                                "pct": round(v * 100, 1), "sources": _sources(et, dt, False)})
         out.sort(key=lambda r: abs(r.get("pct") if r.get("pct") is not None
                                    else r.get("hp") if r.get("hp") is not None
                                    else r.get("end", 0)), reverse=True)
         return out
-    return fmt(deb), fmt(buf)
+    return fmt(deb, dsrc), fmt(buf, bsrc)
 
 
 # Force Feedback: Chance for +Recharge — +100% recharge for 5s, PPM 2.0 (client data).
