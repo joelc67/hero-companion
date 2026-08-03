@@ -7261,27 +7261,44 @@ function renderMiniWall() {
   // A RECOGNIZABLE MINIATURE of the Powers & Slots wall (Joel, 2026-08-04:
   // "not recognizable as a duplicate of the main one") — same card anatomy,
   // power icon + name on top, the enhancement-icon row below, just small.
+  // Utility inherents with NOTHING slotted (Brawl/Sprint/Rest/Swift/Hurdle)
+  // fold into one thin strip instead of full cards — a lone Hurdle card was
+  // orphaning a whole grid row (Joel, 2026-08-04: "lop-sided"). Each name
+  // keeps its mwp-<pi> id so a self-granted stat can still green-box it;
+  // one slotted piece (a Celerity +Stealth in Sprint) earns the card back.
+  const UTIL_INH = new Set(["Brawl", "Sprint", "Rest", "Swift", "Hurdle"]);
+  const stripped = [];
+  const cards = pw.map((p, pi) => {
+    const name = p.display_name || (p.full_name || "").split(".").pop();
+    if (UTIL_INH.has(name) && !(p.slots || []).some(s => s && s.piece_uid)) {
+      stripped.push(`<span class="mw-name mw-inh" id="mwp-${pi}">${escHtml(name)}</span>`);
+      return "";
+    }
+    const ico = powerIconOf(p.full_name);
+    const lv = p.pick_level ? `<span class="mw-lv">L${p.pick_level}</span>` : "";
+    return `<div class="mw-card" id="mwp-${pi}" title="${escHtml(p.display_name || p.full_name)}">`
+      + `<div class="mw-head">`
+      + (ico ? `<img class="mw-pico" src="${ico}" alt="" loading="lazy" onerror="this.style.display='none'">` : "")
+      + `<span class="mw-name">${escHtml(name)}</span>${lv}</div>`
+      + `<div class="mw-slots">`
+      + (p.slots || []).map((s, si) => {
+          if (!s || !s.piece_uid) return `<span class="mw-slot"><span class="mw-slot-empty"></span></span>`;
+          const url = enhIconUrl(s.image);
+          const t = `${s.set_name || "Common IO"}: ${s.piece_name || ""}`;
+          return `<span class="mw-slot" id="mw-${pi}-${si}" title="${escHtml(t)}">`
+            + (url ? `<img class="mw-ico" src="${url}" alt="" loading="lazy">`
+                   : `<span class="mw-slot-empty"></span>`) + `</span>`;
+        }).join("")
+      + `</div></div>`;
+  }).join("");
   host.innerHTML =
     `<div class="mw-frame-label">🗂 Powers &amp; Slots, in miniature
        <span class="muted small">— click a stat below and the IOs feeding it ring green here</span></div>`
-    + `<div class="mw-grid">` + pw.map((p, pi) => {
-      const ico = powerIconOf(p.full_name);
-      const lv = p.pick_level ? `<span class="mw-lv">L${p.pick_level}</span>` : "";
-      return `<div class="mw-card" id="mwp-${pi}" title="${escHtml(p.display_name || p.full_name)}">`
-        + `<div class="mw-head">`
-        + (ico ? `<img class="mw-pico" src="${ico}" alt="" loading="lazy" onerror="this.style.display='none'">` : "")
-        + `<span class="mw-name">${escHtml(p.display_name || (p.full_name || "").split(".").pop())}</span>${lv}</div>`
-        + `<div class="mw-slots">`
-        + (p.slots || []).map((s, si) => {
-            if (!s || !s.piece_uid) return `<span class="mw-slot"><span class="mw-slot-empty"></span></span>`;
-            const url = enhIconUrl(s.image);
-            const t = `${s.set_name || "Common IO"}: ${s.piece_name || ""}`;
-            return `<span class="mw-slot" id="mw-${pi}-${si}" title="${escHtml(t)}">`
-              + (url ? `<img class="mw-ico" src="${url}" alt="" loading="lazy">`
-                     : `<span class="mw-slot-empty"></span>`) + `</span>`;
-          }).join("")
-        + `</div></div>`;
-    }).join("") + `</div>`;
+    + `<div class="mw-grid">` + cards
+    + (stripped.length
+        ? `<div class="mw-inh-strip muted small">Inherents, nothing slotted: ${stripped.join(" · ")}</div>`
+        : "")
+    + `</div>`;
 }
 
 window.selectStat = function (key, label) {

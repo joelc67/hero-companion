@@ -465,11 +465,12 @@
 <div class="stats-provlayout">
 <section id="stats" class="panel" data-tile>
       <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span><button class="tour-help" onclick="startTour('stats')" aria-label="Explain this section" title="Explain this section">?</button></h2>
-      <div class="cap-chips">
+      <!-- ONE narrow control line (Joel, 2026-08-04: the stacked chips/toggles/
+           exemplar block wasted a band of space and the exemplar dial looked
+           orphaned). Caps, view toggles and the exemplar dial share a row. -->
+      <div class="stats-ctlrow">
         <span class="chip cap-def">Defense soft cap 45%</span>
         <span class="chip cap-res" id="res-cap-chip">Resistance hard cap 75%</span>
-      </div>
-
       <label class="incarnate-toggle" title="Fold incarnate buffs (Destiny/Hybrid, e.g. Barrier) into the totals to match Mids' fully-buffed display.">
         <input type="checkbox" id="incarnate-peak-toggle">
         Include incarnates (peak)
@@ -487,9 +488,10 @@
         In-combat view (suppression)
       </label>
       <label class="incarnate-toggle" title="View this build exemplared down to a level — powers and set bonuses the game switches off at that level leave every number. A view only: nothing about the build changes, and Solve never sees it.">
-        ⏬ Exemplar view
+        View exemplared at
         <select id="exemplar-sel-stats"></select>
       </label>
+      </div>
 
       <!-- warn-but-allow banner: a leveling character previewing endgame content
            it hasn't unlocked yet (epics <35, incarnates <50). Populated by
