@@ -108,6 +108,17 @@ Fit is by **zoom**, solved once for the whole app from the tallest tab, floor
    exists but navigation work continues. **Do not raise or prompt about the tour
    rebuild until Joel says navigation is complete** — the tour describes whatever
    navigation ends up being, so redoing it earlier is wasted twice.
+   **Layer pass done 2026-08-03 evening (installed build stamp `df6c894`):**
+   audit_tabs.py built and green (caught autopick silently dropping wizard
+   exposure/travel — fixed), Switch-character fix, Name field on the build
+   tile, desktop export FIXED (ALLOW_DOWNLOADS ate it; now a real Save As via
+   js_api — verified: valid .mbd from the frozen exe), honest save badges
+   (needs the rebuilt server, now installed), autosave named-stamp fix + save
+   repair. **Still open from the pass:** (a) Build Assistant placement ruling
+   (spec §10.2); (b) the Leveling Guide tab shows "Load or start a character…"
+   even when a level-50 character IS loaded (new50 plans have no road — the
+   empty text should say that instead); (c) remembered-tab reopens on Leveling
+   Guide, which combined with (b) reads as a broken screen.
 1. **The guided tour is stale and `audit_tour` is RED (57 of 58 targets)** —
    GATED behind item 0, do not prompt. It walks a mock of the OLD single-page
    layout. Joel ruled: *"all the tour slides will have to be redone completely.

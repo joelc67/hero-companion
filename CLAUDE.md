@@ -383,7 +383,32 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   the RELEASED SIGNED installer. Preserved as
   `HeroCompanion-Setup-0.12.30.released-signed.exe`. Check before every ISCC run
   while VERSION is unchanged.
-- Battery: `tools/test_desktop_app.py` (49, negative-controlled both ways).
+- **⚠⚠ NEVER hang a Window object (or anything rich) on the js_api object.**
+  pywebview WALKS the api object's attributes to build the JS bridge —
+  `_Api.win = win` froze the app at "(Not Responding)" before first input
+  (2026-08-03, cost one hung build). The window ref lives in a `_winref`
+  closure inside `_run_window`; the api object carries only plain state.
+- **⚠ `ALLOW_DOWNLOADS=False` SILENTLY EATS blob downloads** — the .mbd export
+  clicked its `<a download>` and nothing happened, no file, no error (found
+  2026-08-03 driving the advanced path; audit passes could never see it).
+  Every file the page produces routes through `js_api.save_file` (a real
+  Save As dialog, saveTextFile() in app.js picks the path per surface). The
+  setting stays False on purpose — the download flyout is a browser tell.
+- **The build tile has a NAME field (Joel, 2026-08-03: "perhaps we want a new
+  field called name?").** Empty for auto-named saves (placeholder invites),
+  commits on blur/Enter through saveProgress, the nudge's "Give it a name"
+  now focuses it. ⚠ autoSaveTick sends `named: !NEEDS_NAME`, never a blanket
+  true — the blanket stamped person-chose-this on saves nobody named and
+  silently killed the rename nudge (found + repaired 2026-08-03).
+- **`/saves` sends `picks`** so the Continue list can label a half-built save
+  "✏️ In progress · N of 24 picks" — a 4-pick save read "✓ Level-50 build"
+  because the badge keyed on mode alone. Client tolerates a server without
+  the field (old label) — but only a REBUILT frozen server sends it.
+- Battery: `tools/test_desktop_app.py` (54, negative-controlled both ways).
+  `tools/audit_tabs.py` = the tab-shell audit (ids resolve, wiring, 4 negative
+  controls); it caught 5 dead nav-era references on its first run, one of
+  which (autopick reading retired ids) was silently dropping the wizard's
+  exposure/travel answers from every generated build.
 
 ## 🖥 THE TABBED APP (Joel's redesign, 2026-08-03 — supersedes the tile layout)
 
