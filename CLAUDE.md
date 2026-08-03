@@ -367,6 +367,67 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   while VERSION is unchanged.
 - Battery: `tools/test_desktop_app.py` (49, negative-controlled both ways).
 
+## 🖥 THE TABBED APP (Joel's redesign, 2026-08-03 — supersedes the tile layout)
+
+The single-page app became a **five-tab desktop application**: build tile
+(identity) + tab strip as sticky chrome, then Powers & Slots / Stats / End Game /
+Leveling Guide / Logging. `balanceColumns()` is DELETED — tabs split the columns
+it shuffled tiles between. Full detail in `tabbed-layout-spec.md`; handoff state
+in RESUME-HERE.md.
+
+- **⚠⚠ GET EYES BEFORE TOUCHING LAYOUT.** `mcp__computer-use__request_access`
+  (["Hero Companion", "MidsReborn"]) then `screenshot`/`zoom` on the REAL
+  installed window. Joel: *"I feel like you are going about this blind."* He was
+  right — roughly half the layout defects fixed on 08-03 were invisible to
+  measurement and obvious in a screenshot. The Claude pane fires NO layout
+  callbacks, has a 0×0 viewport where every hit-test falsely passes, and times
+  out at 30s: fine for logic, useless for appearance.
+- **⚠ Static-only changes need no rebuild** — copy app.js/style.css/index.html
+  into `%LOCALAPPDATA%\Programs\HeroCompanion\_internal\static\` and relaunch.
+  **server.py / run_app.py changes DO** — the frozen build carries them inside
+  the PYZ, so a file copy silently does nothing.
+- **It ZOOMS, it does not rearrange** (his words: *"like a zooming in or out.
+  Not a break a working screen layout"*). One zoom for the whole app from the
+  TALLEST tab — per-tab was measurably correct and awful, because every tab click
+  resized the masthead. Floor **1.00** (never shrink: shrinking to fit is what
+  made everything tiny), ceiling 1.60. ⚠ Solved by BINARY SEARCH — the obvious
+  `z ← z·(avail/need)` OSCILLATES, because scrollHeight is a STEP function of
+  zoom (zooming out adds a wall column, which drops a row).
+- **⚠ NO SCROLLBAR INSIDE THE APP.** Nested scroll boxes were removed from the
+  panels, the accolade list, the road cards and the journey panel. If a tab is
+  genuinely taller than the window, the WINDOW scrolls — one bar, at the edge.
+- **⚠ Panels are HIDDEN, never unmounted.** recompute() writes into elements on
+  four different tabs; unmounting makes every write a silent no-op. `[hidden]`
+  needs `!important` to beat a panel's own display rule. Nothing may MEASURE a
+  hidden panel — display:none is zero geometry.
+- **Powers & Slots is the in-game RESPEC**: picks in level order along the 24-rung
+  ladder, only what the game offers at that level, prereqs from
+  `server._prereq_need` shipped on `/powers` as `prereq_need` (never a second
+  copy in JS — that rule already cost a 12-hour wave once). Pool rules likewise
+  ship on `/meta.pool_rules` from `_picks_legal`: **max 4, the epic does NOT
+  count, and the origin-themed pools are one per build.**
+- **⚠ GREY OUT, NEVER HIDE** what the rules forbid (his ruling). A removed option
+  teaches nothing; a disabled one with the reason on it teaches the rule.
+  ⚠ Doing so changes what "first option" means — the pool cascade then chose
+  Concealment four times. Take the first AVAILABLE option.
+- **⚠ NEVER label a powerset from its internal name** — the app showed "Radiation
+  Manipulation" beside a dropdown reading Atomic Manipulation. One
+  `powersetDisplayName()`; internal-derived text is a visible last resort.
+- **⚠ evaluate_js from pywebview's `closing` handler DEADLOCKS the app** (shipped
+  it; "Not Responding" on the first close). The handler runs on the GUI thread
+  and evaluate_js waits on that same thread. The page PUSHES its dirty flag via
+  js_api; the prompt fires from a worker thread; the veto is one-time.
+- **⚠ A z-index on a child cannot escape its parent's stacking context.**
+  `#masthead` at 30 under sticky bars at 40/39 clipped its own dropdown.
+- **⚠ `collapseLongExplanations` eats any muted block over 26 words.** It folded a
+  rules line behind "more" the moment it was written. Rules lines carry
+  `.keep-whole`.
+- **Characters get NAMES.** autoSaveTick used to invent "{primary} {Archetype}",
+  so two Blasters with the same sets were indistinguishable. Autosave now only
+  UPDATES an already-named character; saves carry `plan.named`; old auto-named
+  ones still open and are nudged (narrow test: only the exact string autosave
+  would have produced). Closing prompts to save; launch reopens the last one.
+
 ## 🧩 Layout: tiles, never a scrollbar (Joel's ruling, 2026-08-02)
 
 - **⚠ NEVER cap the rail with its own scroll.** It removed 1745px of dead space
