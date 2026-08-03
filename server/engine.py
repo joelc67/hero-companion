@@ -359,6 +359,7 @@ def _power_totals(build, totals, ctx):
                 amp[sfx["modifies"]] += sfx.get("scale") or 0.0
                 amp_sources.add(power.get("full_name"))
 
+    attr = (ctx or {}).get("_attr")
     for power in build.get("powers", []):
         full = power.get("full_name")
         p = power_by_full.get(full)
@@ -368,6 +369,7 @@ def _power_totals(build, totals, ctx):
             continue
         if full in NONCOMBAT_POWERS:
             continue
+        _snap = _tsnap(totals) if attr is not None else None
         # Per-power override; default to auto/toggle powers being always-on.
         include = power.get("include_in_totals")
         if include is None:
@@ -409,6 +411,9 @@ def _power_totals(build, totals, ctx):
                 val *= (1.0 + fam)
             _add_power_effect(totals, fx["effect"], fx["damage_type"], val,
                               base_hp=ctx.get("at_base_hp"))
+        _attr_flush(attr, {"kind": "power", "power": full,
+                           "name": p.get("display_name") or full.split(".")[-1]},
+                    totals, _snap)
     if not amp:
         return None
     return {"sources": sorted(power_by_full[f].get("display_name") or f
@@ -697,8 +702,9 @@ def _piece_globals(build, totals, ctx=None):
     seen_unique = set()
     stack_count = defaultdict(int)
     ex = (ctx or {}).get("exemplar")
+    attr = (ctx or {}).get("_attr")
     for power in build.get("powers", []):
-        for slot in power.get("slots", []) or []:
+        for si, slot in enumerate(power.get("slots", []) or []):
             if not slot:
                 continue
             # LotG-class globals follow the same enhancement-level exemplar
@@ -727,8 +733,18 @@ def _piece_globals(build, totals, ctx=None):
                         stack_count[(g["set"], g["piece"])] += 1
                         if stack_count[(g["set"], g["piece"])] > RULE_OF_FIVE:
                             break
+                    _snap = _tsnap(totals) if attr is not None else None
                     for eff in g["effects"]:
                         _apply_effect(totals, eff)
+                    _attr_flush(attr, {"kind": "global",
+                                       "power": power.get("full_name"),
+                                       "name": power.get("display_name")
+                                       or (power.get("full_name") or "").split(".")[-1],
+                                       "slot": si,
+                                       "piece": slot.get("piece_name"),
+                                       "set": slot.get("set_name"),
+                                       "set_uid": slot.get("set_uid")},
+                                totals, _snap)
                     break   # at most one global per slotted piece
 
 
@@ -1548,14 +1564,25 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
     """
     totals = _empty_totals()
     pvp = bool(build.get("pvp"))
+    # Stats provenance: the opt-in attribution ledger (see _attr_flush). The
+    # per-piece detail lives in _power_totals / _piece_globals / the set-bonus
+    # loop; incarnates/amplifiers/accolades attribute as one row per layer.
+    attr = [] if (ctx or {}).get("attribution") else None
     if ctx is not None:                 # per-build character level for IO scaling
         ctx = dict(ctx)
         ctx["char_level"] = build.get("char_level") or 50
+        ctx["_attr"] = attr
     amp_preview = _power_totals(build, totals, ctx)
+    _snap = _tsnap(totals) if attr is not None else None
     _incarnate_totals(build, totals, ctx)
-    _piece_globals(build, totals, ctx)
+    _attr_flush(attr, {"kind": "incarnates", "name": "Incarnates (peak)"}, totals, _snap)
+    _piece_globals(build, totals, ctx)      # attributes per slot internally
+    _snap = _tsnap(totals) if attr is not None else None
     _amplifier_buffs(build, totals)
+    _attr_flush(attr, {"kind": "amplifiers", "name": "Amplifiers (buyable)"}, totals, _snap)
+    _snap = _tsnap(totals) if attr is not None else None
     _accolade_buffs(build, totals, ctx)
+    _attr_flush(attr, {"kind": "accolades", "name": "Accolades"}, totals, _snap)
     bonus_signature_count = defaultdict(int)
     applied_bonuses = []        # for display / AI context
     capped_out = []
@@ -1601,6 +1628,7 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
                     "pieces": bonus.get("pieces_required"),
                     "text": bonus.get("bonuses"),
                 })
+                _snap = _tsnap(totals) if attr is not None else None
                 for eff in bonus.get("effects", []):
                     if eff.get("effect") == "HitPoints":
                         # GAME-VERIFIED unit fix: a HitPoints set-bonus value is a
@@ -1612,6 +1640,13 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
                             eff.get("value", 0.0), ctx))
                     _apply_effect(totals, eff)
                     _apply_effect(sb_only, eff)
+                _attr_flush(attr, {"kind": "set_bonus",
+                                   "power": power.get("full_name"),
+                                   "name": power.get("display_name")
+                                   or (power.get("full_name") or "").split(".")[-1],
+                                   "set": sb.get("name"), "set_uid": set_uid,
+                                   "pieces": bonus.get("pieces_required")},
+                            totals, _snap)
 
     # FORCE FEEDBACK average recharge (v27): a slotted "Chance for +Recharge" in a cycled
     # attack sustains a real average global-recharge uplift — chance/roll = PPM × (base
@@ -1621,6 +1656,9 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
     ff = _ff_recharge_avg(build, totals, ctx)
     if ff:
         totals["recharge"] += ff
+        if attr is not None:
+            attr.append({"kind": "proc", "name": "Force Feedback +Recharge (average)",
+                         "effects": {"recharge": round(ff, 6)}})
 
     # Per-AT bonus caps for HP / regen / recovery (resistance handled separately).
     # hp_cap is ABSOLUTE max HP -> convert to a +%MaxHP ceiling off the AT's base HP;
@@ -1687,6 +1725,8 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
             "buffs; accolades are permanent.)")
     display["applied_bonus_count"] = len(applied_bonuses)
     display["applied_bonuses"] = applied_bonuses
+    if attr is not None:
+        display["attribution"] = attr
     display["rule_of_five_capped"] = sorted(set(capped_out))
     # Offense: enhanced per-attack damage + estimated single-target DPS, a
     # debuff/buff summary, and pet damage (shown separately) — so the damage/
@@ -1822,6 +1862,40 @@ def hp_bonus_fraction(val, ctx):
     except Exception:  # noqa: BLE001
         diag.swallowed("engine: AT hp-column scaling", "falling back to val*0.1")
     return val * 0.1
+
+
+# ── ATTRIBUTION LEDGER (Stats provenance, Joel's spec 2026-08-03) ────────────
+# Where every number comes from, captured by DIFFING totals around each apply —
+# one copy of the mapping (the apply functions themselves), so attribution can
+# never drift from the math. OPT-IN via ctx["attribution"] (set only by
+# /build/calculate): scoring hot paths pay nothing.
+def _tsnap(totals):
+    out = {}
+    for k, v in totals.items():
+        if isinstance(v, dict):
+            for t, x in v.items():
+                if isinstance(x, (int, float)):
+                    out[f"{k}:{t}"] = x
+        elif isinstance(v, (int, float)):
+            out[k] = v
+    return out
+
+
+def _attr_flush(ledger, src, totals, before):
+    """Append {**src, effects: {stat: delta}} for whatever changed since
+    `before`. No-op when the ledger is off or nothing moved."""
+    if ledger is None or before is None:
+        return
+    after = _tsnap(totals)
+    deltas = {}
+    for k, v in after.items():
+        d = v - before.get(k, 0.0)
+        if abs(d) > 1e-12:
+            deltas[k] = round(d, 6)
+    if deltas:
+        row = dict(src)
+        row["effects"] = deltas
+        ledger.append(row)
 
 
 def _apply_effect(totals, eff):

@@ -2743,7 +2743,15 @@ def build_calculate():
                 if not p.get(k):
                     p[k] = rec.get(k)
         _attach_base_resdef(build.get("powers", []), build.get("archetype"), ctx, res_cap)
+    # Stats provenance (Joel's spec): the attribution ledger rides the MAIN
+    # calculate only — the suppression/exemplar companion calls below reuse the
+    # same ctx with the flag popped, so they pay nothing.
+    if ctx is not None:
+        ctx = dict(ctx)
+        ctx["attribution"] = True
     res = engine.calculate_build(build, SET_BONUSES, res_cap=res_cap, ctx=ctx)
+    if ctx is not None:
+        ctx.pop("attribution", None)
     # EXEMPLAR LAYER 2 — the advice in NUMBERS (Joel, 2026-08-03): what this
     # level costs (vs full level) and what a fully-ATTUNED copy of the same
     # slotting would keep. Two extra display-only calculates; the attuned
