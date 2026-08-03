@@ -3196,9 +3196,15 @@ async function init() {
   renderIncarnates();
 
   renderSuggested();
-  // ⚠ Paint the empty level ladder BEFORE anything is chosen. renderPowers used
-  // to run only once a build existed, so a fresh launch showed an empty frame —
-  // which is exactly what it looked like.
+  // ⚠ Land the archetype on its first entry, which cascades into powersets,
+  // pools and epic. Joel, 2026-08-03: not a default character — a default
+  // POSITION in every list, so the canvas starts populated and every part of it
+  // is a choice. Skipped when a build is already loaded (resume / import).
+  if (!build.archetype && sel.options.length > 1) {
+    sel.selectedIndex = 1;
+    await onArchetypeChange({ target: sel });
+    refreshRoleUI(); updateAtEmblem();
+  }
   renderPowers();
   recompute();
   initGamelog();               // the Play Log course at the bottom (fire-and-forget)
@@ -3653,15 +3659,12 @@ async function onArchetypeChange(e) {
   POWERSETS_CACHE = await api(`/powersets/${encodeURIComponent(at)}`);
   fillPowersetSelect($("sel-primary"), POWERSETS_CACHE.primary, "— primary —");
   fillPowersetSelect($("sel-secondary"), POWERSETS_CACHE.secondary, "— secondary —");
-  // SINGLE-PATH ARCHETYPES (Kheldians): exactly one primary + one secondary exist —
-  // don't make the user open a one-item dropdown; pick them automatically.
-  if ((POWERSETS_CACHE.primary || []).length === 1) {
-    $("sel-primary").selectedIndex = 1;
-    $("sel-primary").dispatchEvent(new Event("change"));
-  }
-  if ((POWERSETS_CACHE.secondary || []).length === 1) {
-    $("sel-secondary").selectedIndex = 1;
-    $("sel-secondary").dispatchEvent(new Event("change"));
+  // Land on the FIRST entry of each list rather than an empty prompt. The old
+  // code did this only for one-item lists (Kheldians); doing it always is the
+  // same idea applied honestly — a list with one entry is not a special case.
+  for (const id of ["sel-primary", "sel-secondary"]) {
+    const s = $(id);
+    if (s.options.length > 1) { s.selectedIndex = 1; s.dispatchEvent(new Event("change")); }
   }
   // Kheldians travel innately (Energy Flight / Shadow Step) — default to NO extra travel
   // power; picking one anyway stays available in the dropdown.
@@ -3690,6 +3693,21 @@ async function onArchetypeChange(e) {
     s.onchange = () => onPoolChange();
   });
   refreshPoolOptions();
+  // …and the four pools take the first four the game offers, each select landing
+  // on the first entry still free. Change any one and the rest re-offer around it.
+  const _pools = [...document.querySelectorAll(".pool-sel")];
+  if (!build.pools.length) {
+    for (const s of _pools) {
+      if (s.options.length > 1) s.selectedIndex = 1;
+      refreshPoolOptions();
+    }
+    await onPoolChange();
+  }
+  const _ep = $("sel-epic");
+  if (_ep && !_ep.value && _ep.options.length > 1) {
+    _ep.selectedIndex = 1;
+    await addPowersetPowers(_ep, "epic");
+  }
   [$("sel-primary"), $("sel-secondary"), $("sel-epic")].forEach(s => s.disabled = false);
   renderPowers();
   recompute();
@@ -4172,6 +4190,27 @@ function startHereHtml() {
     + `</div></div>`;
 }
 
+// ⚠ NEVER LABEL A POWERSET FROM ITS INTERNAL NAME. This row used to print
+// `ps.split(".").pop().replace(/_/g," ")`, so the app showed "Radiation
+// Manipulation" for the set whose dropdown said Atomic Manipulation, and
+// "Invisibility" for Concealment. Internal names are historical identifiers and
+// are reused; the display name is what the player sees. Same rule as the power
+// records (see CLAUDE.md, "Naming: three namespaces").
+function powersetDisplayName(full) {
+  for (const grp of ["primary", "secondary", "epic", "pools"]) {
+    const hit = (POWERSETS_CACHE[grp] || []).find(ps => ps.full_name === full);
+    if (hit && hit.display_name) return hit.display_name;
+  }
+  for (const [k, v] of [[build.primary, build.primary_display],
+                        [build.secondary, build.secondary_display],
+                        [build.epic, build.epic_display]]) {
+    if (k === full && v) return v;
+  }
+  const i = (build.pools || []).indexOf(full);
+  if (i >= 0 && (build.pools_display || [])[i]) return build.pools_display[i];
+  return full.split(".").slice(-1)[0].replace(/_/g, " ");   // last resort, and it shows
+}
+
 function renderPowers() {
   applyIdentityLock();          // keep archetype/powerset lock in sync (onArchetypeChange re-enables them)
   const host = $("powers-list");
@@ -4231,7 +4270,7 @@ function renderPowers() {
   for (const ps of sets) {
     const powers = (POWERS_CACHE[ps] || []).filter(p => p.slottable);
     if (!powers.length) continue;
-    const psName = ps.split(".").slice(-1)[0].replace(/_/g, " ");
+    const psName = powersetDisplayName(ps);
     html += `<div class="add-power"><label class="muted small">Add from ${psName}
       <select data-ps="${ps}" onchange="addPower(this)">
         <option value="">+ add power…</option>
