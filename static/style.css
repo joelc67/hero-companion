@@ -1514,6 +1514,48 @@ body { overflow: hidden; }
 @keyframes exempulse {
   50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--warn) 55%, transparent); }
 }
+
+/* ── STATS PROVENANCE (Joel's spec 2026-08-03) ──────────────────────────────
+   Mini powers wall: floats above, NEVER scrolls off (sticky under the
+   measured chrome). Contributor highlight green = the tour green #22c55e —
+   deliberately outside every theme palette so it can't be mistaken for data. */
+.stats-miniwall {
+  position: sticky; top: calc(var(--chrome-h, 130px)); z-index: 35;
+  display: flex; flex-wrap: wrap; gap: var(--s2) var(--s3);
+  background: color-mix(in srgb, var(--panel) 96%, black);
+  border: 1px solid var(--border); border-radius: var(--r2);
+  padding: var(--s2) var(--s3); margin-bottom: var(--s3);
+  box-shadow: 0 6px 16px #0008;
+}
+.mw-power { display: flex; align-items: center; gap: 3px; padding: 1px 3px;
+  border-radius: var(--r1); border: 1px solid transparent; }
+.mw-power.stat-hot-power { border-color: #22c55e; }
+.mw-name { font-size: 10.5px; color: var(--muted); max-width: 86px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mw-power.stat-hot-power .mw-name { color: #22c55e; font-weight: 700; }
+.mw-ico { width: 17px; height: 17px; border-radius: 50%; display: block; }
+.mw-slot { flex: none; border-radius: 50%; border: 2px solid transparent; line-height: 0; }
+.mw-slot.stat-hot { border-color: #22c55e; box-shadow: 0 0 5px #22c55e88; }
+.mw-slot-empty { width: 13px; height: 13px; border-radius: 50%;
+  border: 1px solid var(--border); }
+
+.stats-provlayout { display: grid; gap: var(--s3);
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+  align-items: start; }
+.stat-breakdown { position: sticky; top: calc(var(--chrome-h, 130px)); }
+.bar-row.stat-clickable, .o-row.stat-clickable { cursor: pointer; }
+.bar-row.stat-clickable:hover, .o-row.stat-clickable:hover { background: var(--panel2); }
+.bar-row.stat-selected, .o-row.stat-selected {
+  outline: 2px solid #22c55e; outline-offset: -2px; border-radius: var(--r1);
+}
+.sb-row { display: flex; justify-content: space-between; gap: var(--s2);
+  padding: 3px 2px; border-bottom: 1px solid var(--border); font-size: 13px;
+  align-items: baseline; }
+.sb-row b { color: #22c55e; }
+.sb-kind { color: var(--muted); text-transform: uppercase; font-size: 11px;
+  letter-spacing: .06em; margin: var(--s3) 0 2px; }
+.sb-val { white-space: nowrap; font-weight: 600; }
+.sb-edit { margin-left: var(--s2); }
 .eh-piece { display: flex; align-items: center; gap: 8px; font-size: 12px;
   padding: 3px 8px; border-radius: 5px; border: 1px solid var(--border); }
 .eh-piece-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

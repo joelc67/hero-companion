@@ -6197,9 +6197,11 @@ async function recompute() {
     api("/build/calculate", postJson(payload)),
     api("/build/validate", postJson(payload)),
   ]);
+  // LAST_TOTALS lands BEFORE renderStats: the stat-breakdown panel inside it
+  // reads the fresh attribution ledger, not the previous recompute's.
+  LAST_TOTALS = (totals && (totals.totals || totals)) || null;  // feed the tray rotation + notes
   renderStats(totals);
   renderValidation(validation);
-  LAST_TOTALS = (totals && (totals.totals || totals)) || null;  // feed the tray rotation + notes
   renderExemplarBanners();   // the advice card needs the fresh numbers
   LAST_CALC = totals || null;   // v36: carries inherent_mechanics for the offense block
   build._accoladeHp = (LAST_TOTALS && LAST_TOTALS.accolade_hp) || 0;  // v34: live accolade HP for the panel line
@@ -7074,18 +7076,18 @@ function renderStats(t) {
     .map(([k, v]) => barRow(k, v, "res")).join("");
 
   const other = [
-    ["Recharge (global)", t.recharge],
-    ["Recovery", t.recovery],
-    ["Regeneration", t.regeneration],
-    ["Max HP", t.max_hp],
-    ["ToHit", t.tohit],
-    ["Accuracy", t.accuracy],
+    ["Recharge (global)", t.recharge, "recharge"],
+    ["Recovery", t.recovery, "recovery"],
+    ["Regeneration", t.regeneration, "regeneration"],
+    ["Max HP", t.max_hp, "max_hp"],
+    ["ToHit", t.tohit, "tohit"],
+    ["Accuracy", t.accuracy, "accuracy"],
   ];
   // HP / regen / recovery carry a per-AT hard cap: show the capped value + a CAP
   // badge and the wasted overage, so the build doesn't silently overstate.
   // Field report (Maelwys): "+% Max HP" alone answers nothing — show the RESULTANT
   // hit points (capped), regen in HP/sec, and recovery in end/sec, like the game does.
-  $("other-stats").innerHTML = other.map(([k, d]) => {
+  $("other-stats").innerHTML = other.map(([k, d, statkey]) => {
     const badge = d.at_cap ? ' <span class="aoe-tag">CAP</span>' : "";
     const over = (d.over_cap > 0) ? ` <span class="over">(+${d.over_cap} over)</span>` : "";
     let abs = "";
@@ -7099,7 +7101,10 @@ function renderStats(t) {
     } else if (k === "Recovery" && t.endurance && t.endurance.recovery_per_sec) {
       abs = ` <span class="muted small">= ${t.endurance.recovery_per_sec} end/s</span>`;
     }
-    return `<div class="o-row"><span>${k}${badge}</span><span>+${d.value}%${over}${abs}</span></div>`
+    const selCls = (SELECTED_STAT && SELECTED_STAT.key === statkey) ? " stat-selected" : "";
+    return `<div class="o-row stat-clickable${selCls}" data-statkey="${statkey}"
+      title="Where does this number come from? Click to see every IO feeding it."
+      onclick="selectStat('${statkey}', '${k}')"><span>${k}${badge}</span><span>+${d.value}%${over}${abs}</span></div>`
       + attributionRowsHtml(k, t);
   }).join("");
   // v30 bonus extras (the back-filled families) — only nonzero rows, so builds
@@ -7174,6 +7179,10 @@ function renderStats(t) {
     note = note ? `${note} ${tr}` : tr;
   }
   $("stats-note").textContent = note;
+  // Stats provenance rides every stats render: the mini wall mirrors the
+  // build, and an open breakdown re-derives from the fresh ledger.
+  renderMiniWall();
+  renderStatBreakdown();
 }
 
 // Damage/DPS + debuff/buff + pet summary. Hidden when there's no offense at all.
@@ -7281,13 +7290,125 @@ function barRow(label, d, kind) {
   // headline one so an "impossible" 77-88% never stands alone.
   const fight = (typeof d.in_combat === "number")
     ? ` <span class="over" title="Includes out-of-combat stealth defense that suppresses the moment you fight — in combat this is ${d.in_combat}%.">⚔ ${d.in_combat}%</span>` : "";
-  return `<div class="bar-row">
+  // provenance: every bar is a question you can click (Joel, 2026-08-03)
+  const key = `${kind === "def" ? "defense" : "resistance"}:${label}`;
+  const selCls = (SELECTED_STAT && SELECTED_STAT.key === key) ? " stat-selected" : "";
+  const lbl = `${kind === "def" ? "Defense" : "Resistance"}: ${label}`;
+  return `<div class="bar-row stat-clickable${selCls}" data-statkey="${key}"
+    title="Where does this number come from? Click to see every IO feeding it."
+    onclick="selectStat('${key}', '${lbl}')">
     <span class="bar-label">${label}</span>
     <div class="bar-track">
       <div class="bar-fill ${kind} ${capped?'capped':''}" style="width:${widthPct}%"></div>
     </div>
     <span class="bar-val ${capped?'capped':''}">${d.value}%${over}${fight}</span>
   </div>`;
+}
+
+// ── STATS PROVENANCE (Joel's spec, 2026-08-03) ──────────────────────────────
+// "Nothing really glues back where these numbers come from." Click any stat →
+// the IOs feeding it ring GREEN in the mini wall above, and the right panel
+// breaks the number down per power / set / IO — with edit routes into the
+// SAME slot editors the wall uses (one copy).
+let SELECTED_STAT = null;   // {key, label}
+
+function renderMiniWall() {
+  const host = $("stats-miniwall");
+  if (!host) return;
+  const pw = build.powers || [];
+  host.classList.toggle("hidden", !pw.length);
+  host.innerHTML = pw.map((p, pi) =>
+    `<span class="mw-power" id="mwp-${pi}" title="${escHtml(p.display_name || p.full_name)}">`
+    + `<span class="mw-name">${escHtml(p.display_name || (p.full_name || "").split(".").pop())}</span>`
+    + (p.slots || []).map((s, si) => {
+        if (!s || !s.piece_uid) return `<span class="mw-slot"><span class="mw-slot-empty"></span></span>`;
+        const url = enhIconUrl(s.image);
+        const t = `${s.set_name || "Common IO"}: ${s.piece_name || ""}`;
+        return `<span class="mw-slot" id="mw-${pi}-${si}" title="${escHtml(t)}">`
+          + (url ? `<img class="mw-ico" src="${url}" alt="" loading="lazy">`
+                 : `<span class="mw-slot-empty"></span>`) + `</span>`;
+      }).join("")
+    + `</span>`).join("");
+}
+
+window.selectStat = function (key, label) {
+  SELECTED_STAT = (SELECTED_STAT && SELECTED_STAT.key === key)
+    ? null : { key, label };            // same stat again = toggle off
+  renderStatBreakdown();
+};
+
+const _SB_KINDS = [["power", "Powers (their own effects)"],
+                   ["set_bonus", "Set bonuses"],
+                   ["global", "Special-IO globals"],
+                   ["proc", "Procs"],
+                   ["accolades", "Accolades"], ["incarnates", "Incarnates"],
+                   ["amplifiers", "Amplifiers"]];
+
+function renderStatBreakdown() {
+  const host = $("stat-breakdown");
+  if (!host) return;
+  document.querySelectorAll(".stat-hot").forEach(el => el.classList.remove("stat-hot"));
+  document.querySelectorAll(".stat-hot-power").forEach(el => el.classList.remove("stat-hot-power"));
+  document.querySelectorAll(".stat-selected").forEach(el => el.classList.remove("stat-selected"));
+  const sel = SELECTED_STAT;
+  if (!sel) { host.classList.add("hidden"); return; }
+  document.querySelectorAll(`[data-statkey="${sel.key}"]`)
+    .forEach(el => el.classList.add("stat-selected"));
+  const attr = (LAST_TOTALS && LAST_TOTALS.attribution) || [];
+  const rows = attr.map(r => Object.assign({}, r, { v: (r.effects || {})[sel.key] || 0 }))
+    .filter(r => Math.abs(r.v) > 1e-9);
+  // the mini wall lights up: sets by power+set_uid, globals by power+slot
+  const hot = (pi, si) => { const el = $(`mw-${pi}-${si}`); if (el) el.classList.add("stat-hot"); };
+  rows.forEach(r => {
+    build.powers.forEach((p, pi) => {
+      if (p.full_name !== r.power) return;
+      if (r.kind === "set_bonus") {
+        (p.slots || []).forEach((s, si) => { if (s && s.set_uid === r.set_uid) hot(pi, si); });
+      } else if (r.kind === "global") {
+        hot(pi, r.slot);
+      } else if (r.kind === "power") {
+        const el = $(`mwp-${pi}`);
+        if (el) el.classList.add("stat-hot-power");
+      }
+    });
+  });
+  const pct = v => `${v >= 0 ? "+" : ""}${(v * 100).toFixed(2)}%`;
+  const editFor = (r) => {
+    const pi = build.powers.findIndex(p => p.full_name === r.power);
+    if (pi < 0) return "";
+    let si = r.kind === "global" ? r.slot
+      : (build.powers[pi].slots || []).findIndex(s => s && s.set_uid === r.set_uid);
+    if (si == null || si < 0) return "";
+    return ` <button class="linkbtn sb-edit" title="Change this slot (opens the same picker as the wall)"
+        onclick="openSlot(${pi},${si})">change</button>`
+      + `<button class="linkbtn sb-edit" title="Full IO details"
+        onclick="openEnhInfo(${pi},${si}); showTab('powers')">ⓘ</button>`;
+  };
+  let html = `<h2><span>${escHtml(sel.label)}</span>
+    <button class="iconbtn pi-close" onclick="selectStat('${escHtml(sel.key)}')" title="close">✕</button></h2>`;
+  if (!rows.length) {
+    html += `<p class="muted small">Nothing in the build feeds this number — it is all base value.</p>`;
+  }
+  for (const [kind, kindLabel] of _SB_KINDS) {
+    const group = rows.filter(r => r.kind === kind);
+    if (!group.length) continue;
+    html += `<div class="sb-kind">${kindLabel}</div>`;
+    group.sort((a, b) => Math.abs(b.v) - Math.abs(a.v));
+    html += group.map(r => {
+      let who = escHtml(r.name || "");
+      if (kind === "set_bonus") who = `<b>${escHtml(r.set)}</b> ×${r.pieces} <span class="muted small">in ${escHtml(r.name)}</span>`;
+      if (kind === "global") who = `<b>${escHtml(r.set)}</b>: ${escHtml(r.piece)} <span class="muted small">in ${escHtml(r.name)}</span>`;
+      return `<div class="sb-row"><span>${who}${(kind === "set_bonus" || kind === "global") ? editFor(r) : ""}</span>
+        <span class="sb-val">${pct(r.v)}</span></div>`;
+    }).join("");
+  }
+  const total = rows.reduce((a, r) => a + r.v, 0);
+  html += `<div class="sb-row"><span><b>Total from the build</b></span>
+    <span class="sb-val">${pct(total)}</span></div>
+    <p class="muted small">Green rings in the wall above mark every IO feeding this
+    number. “change” opens the same enhancement picker the Powers wall uses.</p>`;
+  host.innerHTML = html;
+  host.classList.remove("hidden");
 }
 
 function renderValidation(v) {

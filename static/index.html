@@ -455,12 +455,18 @@
     <section id="tab-stats" class="tabpanel" role="tabpanel"
       aria-labelledby="tab-btn-stats" hidden>
       <div id="exemp-banner-stats" class="exemp-banner" hidden></div>
+      <!-- STATS PROVENANCE (Joel's spec, 2026-08-03): the mini powers wall
+           floats above and NEVER scrolls off (sticky under the chrome); click
+           any stat below and the IOs feeding it ring GREEN here while the
+           right panel breaks the number down. -->
+      <div id="stats-miniwall" class="stats-miniwall hidden"></div>
       <!-- The summary band, moved off the powers wall. Filled by app.js by id. -->
       <div class="info-course">
         <div id="overview-card" class="overview-card hidden"></div>
         <div id="bonuses-card" class="overview-card hidden"></div>
         <div id="uniques-card" class="overview-card hidden"></div>
       </div>
+<div class="stats-provlayout">
 <section id="stats" class="panel" data-tile>
       <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span><button class="tour-help" onclick="startTour('stats')" aria-label="Explain this section" title="Explain this section">?</button></h2>
       <div class="cap-chips">
@@ -519,6 +525,8 @@
       <div id="validation" class="validation"></div>
       <p id="stats-note" class="muted small"></p>
     </section>
+    <aside id="stat-breakdown" class="panel stat-breakdown hidden"></aside>
+    </div>
     </section>
     <section id="tab-endgame" class="tabpanel" role="tabpanel"
       aria-labelledby="tab-btn-endgame" hidden>
