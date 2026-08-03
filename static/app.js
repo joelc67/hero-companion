@@ -7250,6 +7250,27 @@ window.selectStat = function (key, label) {
   SELECTED_STAT = (SELECTED_STAT && SELECTED_STAT.key === key)
     ? null : { key, label };            // same stat again = toggle off
   renderStatBreakdown();
+  // Centre the picked row (Joel, 2026-08-04) — the breakdown floats at the
+  // row's height, so centring the row centres both; arrow-walking re-centres
+  // each step and the data on the right stays aligned. Only here, never in
+  // the recompute re-render — a background recalc must not yank the scroll.
+  // ⚠ Not scrollIntoView center: the sticky mini wall covers the viewport's
+  // middle, so "center" means the middle of the visible band BELOW it.
+  // Rects + scrollBy stay in one (zoomed) coordinate space — never mix rects
+  // with offsetTop math under fitZoom.
+  if (SELECTED_STAT) {
+    const row = document.querySelector(".stat-selected");
+    if (row) {
+      const mw = $("stats-miniwall");
+      const bandTop = (mw && !mw.classList.contains("hidden"))
+        ? mw.getBoundingClientRect().bottom : 0;
+      const target = bandTop + (window.innerHeight - bandTop) / 2;
+      // ⚠ the page scrolls inside #page-scroll (body is overflow:hidden) —
+      // window.scrollBy silently no-ops here.
+      const sc = $("page-scroll") || document.scrollingElement;
+      sc.scrollBy({ top: row.getBoundingClientRect().top - target, behavior: "smooth" });
+    }
+  }
 };
 
 // what the stat row itself shows for a key — the breakdown's headline number
@@ -7401,7 +7422,8 @@ function renderStatBreakdown() {
       e.srcs.push(`${_sico(gs && gs.image)}${pct(r.v)} — ${escHtml(r.piece)} (always on)`);
     } else if (r.kind === "power") {
       e.headHot = true; hotPower(pi);
-      e.srcs.push(`${pct(r.v)} — the power's own effect`);
+      e.srcs.push(`${pct(r.v)} — the power grants this by itself
+        <span class="sb-selfnote">(green name box = built in, not from an IO)</span>`);
     } else {
       e.srcs.push(`${pct(r.v)} — ${escHtml(r.name || r.kind)}`);
     }
