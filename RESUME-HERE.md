@@ -138,9 +138,20 @@ Fit is by **zoom**, solved once for the whole app from the tallest tab, floor
    keep N more tiers: +x% …"). Dial now in THREE synced places (build tile,
    Stats view-toggles row, View menu entry that pulses the tile dial) after
    Joel couldn't find it. Battery 18/18.
-   **STILL OPEN:** Layer 3 (solver optimizes FOR a target level = MODEL BUMP
-   + recert, needs Joel's ruling). ⚠ The ⓘ set-detail card's tier list does
-   not yet grey exemplar-dead bonuses — the banner states the rule instead.
+   **LAYER 3 SHIPPED (`36d98f7f`, same night — Joel's order):** solve_ilp
+   takes opt-in `target_level_ctx`; absent = byte-identical (pinned), so NO
+   model bump and NO recert — champions/deep_optimize never pass it. With it:
+   dead-set bonuses priced zero, past-L+5 powers become pure bonus mules (no
+   armor/end/HO/damage credit), surviving non-exempt sets EMIT ATTUNED
+   (pre-finalize; locked/preserved pieces untouched), fp arbitration skipped
+   (level-50 physics is the wrong judge). Client sends it only when solving
+   with the Exemplar view on; the solve states it in the goal echo + result.
+   Measured: Spines/FA at 27 keeps 47 tiers vs plain 19, zero cost at 50.
+   Battery test_target_level_solve.py 9/9; full sweep green.
+   **EXEMPLAR ARC COMPLETE (Layers 1-3).** ⚠ Small leftover: the ⓘ set-detail
+   card's tier list does not yet grey exemplar-dead bonuses — the banner
+   states the rule instead. ▶ NEXT: the Stats-page provenance redesign
+   (stats-provenance-paper.md).
    (b) **NEXT AFTER EXEMPLAR (Joel's order, 2026-08-03): the Stats page
    provenance redesign** — spec captured verbatim in
    `C:\Users\joelc\code\stats-provenance-paper.md`: mini powers+slots wall

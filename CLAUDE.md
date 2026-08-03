@@ -471,6 +471,25 @@ in RESUME-HERE.md.
   `.keep-whole`.
 - **Build Assistant placement RULED (Joel, 2026-08-03): it stays on Powers &
   Slots.** Do not re-litigate spec §10.2.
+- **🎚 EXEMPLAR ARC (Joel's rulings, built 2026-08-03 — Layers 1-3 complete).**
+  Rules wiki-pinned (both wikis): powers received > level+5 off (inherents/
+  accolades/temps immune); set bonuses live while level ≥ IO level − 3, PER
+  PIECE, and SURVIVE a lost host power; attuned follow set_min − 3; purple/
+  PvP/Winter/ATO exempt (rosters = converter.py's, one copy; ATO = "Archetype
+  Sets" category → `_EXEMPLAR_EXEMPT_UIDS`); LotG-class globals follow the
+  piece rule; PROCS keep firing (why proc builds exemplar well); incarnates
+  off <45. **Layer 1** = the VIEW (suppression precedent: never saved/solved):
+  dial in THREE synced places (build tile / Stats toggles row / View menu),
+  bold banner, ⛔ card badges, engine gates via ctx["exemplar"].
+  **Layer 2** = the advice in numbers on the banner incl. the fully-ATTUNED
+  counterfactual (2 extra display calculates). **Layer 3** = opt-in
+  `solve_ilp(target_level_ctx=)` — ABSENT IS BYTE-IDENTICAL (pinned); NOT a
+  model bump; champions/deep_optimize never pass it; dead bonuses zero,
+  past-L+5 powers = pure bonus mules, surviving sets EMIT ATTUNED (before
+  finalize — locked/preserved pieces untouched), fp arbitration skipped
+  (level-50 physics = wrong judge). Measured: Spines/FA solved for 27 keeps
+  47 tiers vs plain 19, zero cost at 50. Batteries: test_exemplar_view 18 ·
+  test_target_level_solve 9 (+ full sweep green).
 - **⚠ STICKY CONTENT MUST CLEAR THE STICKY CHROME, and the chrome heights are
   MEASURED, never guessed** — fitZoom writes `--masthead-h/--tabbar-h/--chrome-h`
   CSS vars each pass (the tile wraps, so they change); the tabbar, build tile
