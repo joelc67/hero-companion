@@ -3023,9 +3023,6 @@ async function init() {
   $("modal-close").addEventListener("click", closeModal);
   $("tier-close").addEventListener("click", () => $("tier-modal").classList.add("hidden"));
   $("about-close").addEventListener("click", () => $("about-modal").classList.add("hidden"));
-  // ✕ on the share prompt stores nothing — it asks again next launch rather than
-  // converting a dismissal into a remembered answer (closing is not a decision).
-  $("share-close").addEventListener("click", () => $("share-modal").classList.add("hidden"));
   $("about-modal").addEventListener("click", (e) => {
     if (e.target === $("about-modal")) $("about-modal").classList.add("hidden"); });
   $("modal-search").addEventListener("input", renderModalSets);
@@ -3533,44 +3530,56 @@ window.feedToggle = async function (on) {
 let _SHARE_ASKED_THIS_RUN = false;
 async function maybeAskShare() {
   if (_SHARE_ASKED_THIS_RUN) return;
-  if (!$("share-modal") || !$("share-modal").classList.contains("hidden")) return;
+  const host = $("share-line");
+  if (!host || !host.classList.contains("hidden")) return;
   const st = await api("/gamelog/feed").catch(() => null);
   if (!st || !st.ok || !st.key_present || st.asked_here) return;
   const url = ((META && META.urls) || {}).pulse_boards || "";
   const boards = url
     ? `<a href="${escHtml(url)}" target="_blank" rel="noopener">Pulse Boards</a>` : "Pulse Boards";
   _SHARE_ASKED_THIS_RUN = true;
-  $("share-body").innerHTML = `
-    <p>Hero Companion can feed the live ${boards} from what your game log already
-    records. It is off until you say yes, and nothing has been sent so far.</p>
-    <div class="about-row"><b>What is captured</b><span>Only while game logging is on
-      (<code>/logchat</code>): your own rewards (XP, influence, drops, merits, badges,
-      defeats); recruitment facts from PUBLIC channels (what is forming, and the
-      recruiting CHARACTER's name); auction-house sale prices.
-      <b>Never raw chat. Never tells.</b></span></div>
-    <div class="about-row"><b>What leaves this machine</b><span>Before upload, your account
-      login name is replaced by a code derived from it, so the real name never leaves.
-      Uploads carry an anonymous install id. <b>Your character names ARE included</b> so
-      your data can be attributed to your characters; they are not shown publicly today.
-      That is the one thing worth deciding on consciously.</span></div>
-    <div class="about-row"><b>Never read at all</b><span>Machine names, file paths, and
-      anything outside the game log.</span></div>
-    <div class="about-row"><b>What the public board shows</b><span>What is forming and when,
-      the character names of public-channel recruiters, and per-item sale prices. Never
-      account names, money totals, who sold what, or machine details.</span></div>
-    <details><summary class="muted small">Read the full terms</summary>
-      <pre class="gl-pre">${escHtml(st.terms)}</pre></details>
-    <p class="about-links">
-      <button class="linkbtn" onclick="shareAnswer(true)">Yes, share my play data</button>
-      <button class="linkbtn quiet" onclick="shareAnswer(false)">No thanks</button>
-      <span class="muted small">Either answer is remembered, and either one can be
-      changed later in the Play Log tab.</span></p>`;
-  $("share-modal").classList.remove("hidden");
+  host.innerHTML = `
+    <div class="es-head">
+      <b>📡 Feed the live ${boards} from your game log?</b>
+      <span class="es-acts">
+        <button class="linkbtn" onclick="shareAnswer(true)">Yes, share my play data</button>
+        <button class="linkbtn quiet" onclick="shareAnswer(false)">No thanks</button>
+      </span>
+    </div>
+    <div class="muted">It is off until you say yes, and nothing has been sent so far.
+      Your own rewards and public recruitment lines, never raw chat and never tells —
+      and <b>your character names are included</b>, which is the one thing worth
+      deciding on consciously. Ignore this and pick a starting point if you would
+      rather decide later.</div>
+    <details><summary class="muted small">Exactly what is and is not shared</summary>
+    <dl>
+      <dt>What is captured</dt>
+      <dd>Only while game logging is on (<code>/logchat</code>): your own rewards (XP,
+        influence, drops, merits, badges, defeats); recruitment facts from PUBLIC
+        channels (what is forming, and the recruiting CHARACTER's name); auction-house
+        sale prices. <b>Never raw chat. Never tells.</b></dd>
+      <dt>What leaves this machine</dt>
+      <dd>Before upload, your account login name is replaced by a code derived from it,
+        so the real name never leaves. Uploads carry an anonymous install id.
+        <b>Your character names ARE included</b> so your data can be attributed to your
+        characters; they are not shown publicly today. That is the one thing worth
+        deciding on consciously.</dd>
+      <dt>Never read at all</dt>
+      <dd>Machine names, file paths, and anything outside the game log.</dd>
+      <dt>What the public board shows</dt>
+      <dd>What is forming and when, the character names of public-channel recruiters,
+        and per-item sale prices. Never account names, money totals, who sold what, or
+        machine details.</dd>
+    </dl>
+    <div class="muted small" style="margin-top:8px">Either answer is remembered, and
+      either one can be changed later in the Play Log tab.</div>
+    <pre>${escHtml(st.terms)}</pre></details>`;
+  host.classList.remove("hidden");
 }
 window.shareAnswer = async function (yes) {
   await api("/gamelog/feed",
             postJson(yes ? { accept_terms: true, enabled: true } : { enabled: false }));
-  $("share-modal").classList.add("hidden");
+  $("share-line").classList.add("hidden");
   renderFeedBlock();
 };
 

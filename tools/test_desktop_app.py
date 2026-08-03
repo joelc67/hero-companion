@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 38          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 40          # coverage denominator — hard-fail if a check silently skips
 
 
 def check(name, ok, detail=""):
@@ -35,6 +35,13 @@ def check(name, ok, detail=""):
 def read(*parts):
     with open(os.path.join(ROOT, *parts), encoding="utf-8") as f:
         return f.read()
+
+
+def _share_css(css):
+    """Just the .entry-share block — so 'position: fixed' elsewhere in the sheet
+    can't make the not-a-modal check pass or fail for the wrong reason."""
+    i = css.find(".entry-share {")
+    return css[i:css.find("\n.", css.find("pre", i))] if i >= 0 else ""
 
 
 def main():
@@ -157,7 +164,21 @@ def main():
     srv.AUTOSTART_SET_FN = srv.AUTOSTART_STATE_FN = None
 
     # ── 5. THE SHARE PROMPT ─────────────────────────────────────────────────
-    check("the prompt exists in the page", 'id="share-modal"' in index and 'id="share-body"' in index)
+    check("the prompt exists in the page", 'id="share-line"' in index)
+    # ⚠⚠ IT IS NOT A MODAL, and that is the whole point (Joel, twice). A consent
+    # question that must be dismissed before the app can be used IS the complaint,
+    # whether it fires once or every time. It lives INSIDE the opening menu, in
+    # flow, so it cannot cover a control the user is reaching for.
+    _entry_box = index[index.find('<div class="entry-box">'):index.find('id="entry-overlay"') + 12000]
+    check("the prompt is INSIDE the opening menu, in the flow",
+          'id="share-line"' in _entry_box.split("</div><!-- /entry-box")[0]
+          if "</div><!-- /entry-box" in _entry_box else 'id="share-line"' in _entry_box,
+          "outside the entry box it would float over whatever is on screen")
+    check("NEGATIVE CONTROL: it is not a modal and does not float",
+          'id="share-line"' in index and 'class="entry-share' in index
+          and 'id="share-line" class="modal' not in index
+          and "position: fixed" not in _share_css(read("static", "style.css")),
+          "position:fixed or .modal would put it back on top of the app")
     # ⚠ It fired from hideEntry() at first, which runs on EVERY entry path — so the
     # consent question ambushed the first meaningful action every time, and ✕ stores
     # nothing by design, so it came right back on the next one. Joel: "when I load it
@@ -174,16 +195,20 @@ def main():
           "if (_SHARE_ASKED_THIS_RUN) return;" in _ask
           and "_SHARE_ASKED_THIS_RUN = true;" in _ask,
           "the guard is what keeps 'at launch' from meaning 'at every transition'")
-    check("NEGATIVE CONTROL: ✕ stores nothing — only the buttons answer",
-          "shareAnswer" not in app_js[app_js.find('$("share-close")'):
-                                      app_js.find('$("share-close")') + 200],
-          "closing is not a decision")
-    ask = app_js[app_js.find("async function maybeAskShare"):app_js.find("window.shareAnswer")]
+    check("NEGATIVE CONTROL: ignoring it stores nothing — only the buttons answer",
+          "asked_here" not in app_js[app_js.find("function hideEntry"):
+                                     app_js.find("function hideEntry") + 300]
+          and 'postJson(yes ?' in app_js,
+          "walking past the question must not be recorded as an answer")
+    ask = _ask
     check("it only asks where it could do something (key + never answered here)",
           "st.key_present" in ask and "st.asked_here" in ask)
+    # whitespace-flattened: these phrases wrap across source lines, and a check
+    # that fails on a line break is testing the formatter, not the promise.
+    _flat = re.sub(r"\s+", " ", ask)
     check("the specifics are spelled out, not paraphrased into vagueness",
-          all(s in ask for s in ["Never raw chat", "character names ARE included",
-                                 "auction-house sale", "public-channel recruiters"]))
+          all(s in _flat for s in ["Never raw chat", "character names ARE included",
+                                   "auction-house sale prices", "public-channel recruiters"]))
     check("the boards link is the real one",
           "hero-companion.com/pulse" in read("client_config.json"))
 
