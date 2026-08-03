@@ -4837,9 +4837,19 @@ function powerCardHtml(pw, idx, icon, lv) {
 // enhancement categories it accepts, and what's slotted in it right now.
 let SELECTED_POWER = null;
 
-window.selectPower = function (fullName) {
+// An EXPLICIT open scrolls the card into view (it is no longer sticky — a
+// pinned card floated over the Assistant and could never show its bottom half
+// when taller than the window). Re-renders from recompute never scroll.
+function _revealInfoCard() {
+  const panel = $("power-info");
+  if (!panel || panel.classList.contains("hidden")) return;
+  panel.scrollIntoView({ block: "start", behavior: "smooth" });
+}
+
+window.selectPower = async function (fullName) {
   SELECTED_POWER = fullName;
-  renderPowerInfo();
+  await renderPowerInfo();
+  _revealInfoCard();
 };
 window.closePowerInfo = function () {
   SELECTED_POWER = null;
@@ -4952,13 +4962,14 @@ function _enhDetailPayload(pw, s, slotIdx) {
   };
 }
 
-window.openEnhInfo = function (powerIdx, slotIdx) {
+window.openEnhInfo = async function (powerIdx, slotIdx) {
   const pw = build.powers[powerIdx];
   const s = pw && (pw.slots || [])[slotIdx];
   if (!s || !s.piece_uid) return;
   SELECTED_POWER = null;
   SELECTED_ENH = { powerFull: pw.full_name, slotIdx };
-  renderEnhInfo();
+  await renderEnhInfo();
+  _revealInfoCard();
 };
 
 async function renderEnhInfo() {
@@ -7494,7 +7505,11 @@ async function applyImportedBuild(b) {
     accepted_set_category_ids: p.accepted_set_category_ids || [],
     accepted_set_categories: p.accepted_set_categories || [],
     power_type: p.power_type,
-    include_in_totals: p.power_type === 1 || p.power_type === 2,
+    // ⚠ PRESERVE an explicit choice — re-deriving from power type here silently
+    // re-checked every toggle a user had unchecked before saving (surfaced by
+    // Sprint arriving include:false, 2026-08-03). Mirrors the resolve path.
+    include_in_totals: (p.include_in_totals !== undefined && p.include_in_totals !== null)
+      ? !!p.include_in_totals : (p.power_type === 1 || p.power_type === 2),
     pick_level: p.pick_level, level_available: p.level_available,
     earned_slot_count: p.earned_slot_count,
     slots: p.slots || [], slotCount: (p.slots || []).length,

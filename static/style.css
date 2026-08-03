@@ -204,12 +204,12 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
 .powers-main > .panel:first-child { flex: 1; }
 .powers-main, .powers-side { min-width: 0; display: flex; flex-direction: column; gap: var(--s3); }
 #power-info.hidden { display: none; }
-/* The detail card leads the side column and stays put while you scan the
-   catalogue — it is the thing you are reading, not a footnote.
-   ⚠ It must clear the STICKY CHROME above it (masthead + tabs + build tile,
-   measured by fitZoom) — at top:10px it slid underneath and read as
-   "partially covered as I scroll down" (Joel, 2026-08-03). */
-.powers-side #power-info { position: sticky; top: calc(var(--chrome-h, 130px) + var(--s3)); }
+/* The detail card is NOT sticky (Joel, 2026-08-03: "Why is the power I clicked
+   on floating on right and text scrolling under it?"). A sticky card floated
+   over the Assistant, and one taller than the window could never show its
+   bottom half. It sits in the normal flow now; opening it SCROLLS it into
+   view (_revealInfoCard), landing just below the sticky chrome. */
+.powers-side #power-info { scroll-margin-top: calc(var(--chrome-h, 130px) + var(--s3)); }
 
 /* ── The Stats board ─────────────────────────────────────────────────────────
    Defence, Resistance, Other and Offense were stacked in one column at full
@@ -2324,8 +2324,8 @@ body { overflow: hidden; }
   border-bottom: 1px solid var(--border);
 }
 .subpanel-fold > summary::-webkit-details-marker { display: none; }
-.subpanel-fold > summary::before { content: "B8 "; color: var(--accent); }
-.subpanel-fold[open] > summary::before { content: "BE "; }
+.subpanel-fold > summary::before { content: "▸ "; color: var(--accent); }
+.subpanel-fold[open] > summary::before { content: "▾ "; }
 .subpanel-fold > summary:hover { color: var(--ink); }
 .fold-body { padding-top: 10px; }
 
