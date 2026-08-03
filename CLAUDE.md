@@ -247,22 +247,24 @@ them from a parse without the same standard of proof.
   villain display `Iron{Hero.gender=male man|woman}`. A substring search for
   'iron man' returns ZERO and I wrongly reported 'no such badge exists in
   2,396 records' on the strength of it.
-- **❓ OPEN (2026-08-03): can you take a FIFTH power pool, at the cost of the
-  Epic?** Joel's field report: he once picked a fifth pool in game and his
-  Epic choice disappeared — a GM was involved. That contradicts our shipped
-  rule (`pool_rules` max 4, epic separate) — but the corpus is WEAK evidence
-  here: 2,255 optimized builds would never trade an Epic for a fifth pool
-  even if legal, so "zero found" proves nothing. Client corroboration found
-  2026-08-03: `NoEpicPoolTooltip: "Ancillary/Patron Powers Disabled"` — a
-  disabled-epic UI state EXISTS; the cap numbers themselves are server-side
-  templates (`ResetInstructions52: {actualnum} instead of {supposednum}`), so
-  bins cannot settle it. **Joel's in-game check settles it** (respec or 35+
-  character: try a power from a fifth pool; watch whether Ancillary greys).
-  If TRUE: pool_rules becomes a shared 5-cap tradeoff (5 pools XOR 4+epic),
-  UI gains a fifth pool slot that greys the Epic with the reason (and vice
-  versa), and the import validator must ACCEPT 5-pool/no-epic builds — the
-  travel-power lesson: over-strict = refusing legal builds. ⚠ Do NOT touch
-  `_picks_legal` / the solver gate before the check — harden-before-certify.
+- **✅ RESOLVED GAME-FIRST (2026-08-03): a FIFTH power pool is impossible, and
+  pools can NEVER disable the Epic — they are separate counters with separate
+  schedules.** Settled from Homecoming's own shipped `schedules.bin` (bin.pigg,
+  488 bytes, decoded): `PoolPowerSet = [4, 6, 8, 10]` — exactly 4 entries, so
+  `CountForLevel` can never return 5; `EpicPowerSet = [35]` — its own 1-entry
+  schedule. Engine code (leaked CoH source, `Common/entity/character_level.c` +
+  `power_system.c`, github odasm/coh-server-original — Common/ is SHARED
+  client+server): `character_CanBuyPoolPowerSet` and `character_CanBuyEpicPowerSet`
+  count independently; neither gate reads the other. Decode self-verified
+  against three known facts (24-pick Power ladder ending L49, 67 AssignableBoost
+  slots, epic at 35). Our `pool_rules` max-4/epic-separate stands; NO UI change.
+  Joel's field memory (picked a 5th pool, Epic vanished, GM involved) is real
+  but the mechanism must have been something else — the client DOES ship a
+  `NoEpicPoolTooltip: "Ancillary/Patron Powers Disabled"` state (Kheldians/VEATs
+  have no epic category; live-era villains needed a patron ARC to unlock patron
+  pools). ⚠ Method note: the schedule caps are DATA, so any future Homecoming
+  patch could add a 5th entry — the PATCH-WATCH re-export would catch it; check
+  schedules.bin on the next re-export.
 - **❓ OPEN (since 2026-07-16, re-confirmed 07-31): does the Adamant / Iron Man
   badge actually GRANT its accolade power (+10% Max HP, +10 Max End) on
   Homecoming?** The BADGE is real and game-corroborated (clientmessages-en.bin;
