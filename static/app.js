@@ -345,7 +345,12 @@ window.loadSave = async function (id) {
   _lastSavedSnapshot = buildSnapshot();   // just loaded — already clean
   hideEntry();
   recompute();
-  maybeAutoOpenJourney();       // resuming a 1-50 character leads with the road too
+  // resuming a 1-50 character leads with the road; and if the REMEMBERED tab is
+  // already Leveling Guide (launch reopens both the character and the tab), the
+  // road must be rebuilt for THIS character — the tab used to sit on its empty
+  // placeholder text with a level-50 character loaded (Joel, 2026-08-03).
+  if (!maybeAutoOpenJourney() && !$("tab-leveling").hidden
+      && (build.powers || []).length) openJourneyView();
 };
 
 window.deleteSave = async function (id) {
@@ -1370,7 +1375,12 @@ function renderJourneyLevelPanel() {
     return `<span class="rt-delta ${dv > 0 ? "up" : "down"}">${dv > 0 ? "+" : ""}${dv}${u} ${lab}</span>`;
   }).filter(Boolean).join(" ");
 
-  host.innerHTML = _zoneArtHtml(zoneNames)
+  // The art rides ABOVE the road (Joel, 2026-08-03) and tracks the SELECTED
+  // stop, so the image always means something: it is the place the level
+  // you're looking at sends you.
+  const artSlot = document.getElementById("jny-art-slot");
+  if (artSlot) artSlot.innerHTML = _zoneArtHtml(zoneNames);
+  host.innerHTML = (artSlot ? "" : _zoneArtHtml(zoneNames))
     + `<div class="jny-panel-info">`
     + `<h4 class="jny-panel-h">Level ${s.level}`
     + (i === hereIdx ? ` <span class="jny-panel-here">★ you are here</span>`
@@ -1534,8 +1544,6 @@ async function openJourneyView(auto = false) {
   _journeyAutoOpened = auto;
   const out = $("journey-body");
   activateTab("leveling");        // the road is a tab now, not an overlay
-  const jb = $("journey-btn");
-  if (jb) jb.classList.add("journey-open");   // the pill reads as "on" while the road is out
   out.innerHTML = "<p class='muted small'>Rolling out the road…</p>";
   // The road is CHARACTER-SPECIFIC (built from THIS build's archetype + powers),
   // so re-fetch it every open. Caching it (the old `if (!LEVELING_STEPS)`) meant
@@ -1618,8 +1626,7 @@ function _journeyIntroHtml() {
     what that level buys you. The ★ marker is you — it moves when you update your
     level in the plan.
     <div class="muted small" style="margin-top:6px">It lives on this
-    <b>Leveling Guide</b> tab — leave it and come back whenever you like; the
-    <b>🗺️ Journey</b> button in the header jumps straight here.</div>
+    <b>Leveling Guide</b> tab — leave it and come back whenever you like.</div>
     <div style="margin-top:8px">💡 <b>Worth doing now:</b> turn on the game's chat log.
     Hero Companion reads it (only on your machine, only with your say-so) and your
     Play Log fills with what you actually earned — influence, drops with keep/sell
@@ -1629,38 +1636,19 @@ function _journeyIntroHtml() {
   </div>`;
 }
 
-// One switch, both directions: the header "🗺️ Journey" pill opens the road
-// and closes it again. When the overlay closes any OTHER way (✕, Esc,
-// clicking the dark backdrop), the pill pulses for a moment so the user
-// learns where the road lives before they ever need to find it again.
-function closeJourneyView(teach = true) {
-  // "Closing" the road now means leaving its tab. Nothing is destroyed — the
-  // panel stays mounted so the next visit is instant and every renderer that
-  // writes into #journey-body keeps working from any tab.
+// The header 🗺️ Journey pill is GONE (Joel, 2026-08-03: reaching for the
+// alignment toggle he clicked Journey by mistake) — the Leveling Guide tab is
+// the one way in, so "closing" the road just means leaving its tab.
+function closeJourneyView() {
+  // Nothing is destroyed — the panel stays mounted so the next visit is
+  // instant and every renderer that writes into #journey-body keeps working.
   if (!$("tab-leveling").hidden) activateTab("powers");
-  const jb = $("journey-btn");
-  if (jb) jb.classList.remove("journey-open");
-  if (teach) teachJourneyPill();
   _journeyAutoOpened = false;   // closing is just closing — no decision recorded
   // The alignment preview is per-viewing: drop it on close so reopening always
   // shows the character's REAL side, and nothing about the preview outlives the
   // road. (It never touched the build to begin with — it only sets a local
   // view flag and never writes cohAlignment / applyAlignment / build.)
   _JNY_ALIGN = null;
-}
-
-function toggleJourneyView() {
-  if ($("tab-leveling").hidden) openJourneyView();
-  else closeJourneyView(false);           // they used the pill — no lesson needed
-}
-
-function teachJourneyPill() {
-  const jb = $("journey-btn");
-  if (!jb || getComputedStyle(jb).display === "none") return;
-  jb.classList.remove("journey-pulse");
-  void jb.offsetWidth;                    // restart the animation
-  jb.classList.add("journey-pulse");
-  setTimeout(() => jb.classList.remove("journey-pulse"), 2600);
 }
 
 // The road claims exactly the height its cards need, no more. Cards sit above
@@ -1714,9 +1702,13 @@ function _wireJourneyDrag() {
 
 function renderJourney() {
   const steps = LEVELING_STEPS;
-  // a leveling character starts the road at level 1 even before their first sync
+  // a leveling character starts the road at level 1 even before their first sync.
+  // A finished kit (new50/import) is PAST the road: every stop reads done —
+  // "assume that someone making a lvl 50 character has them all green" (Joel,
+  // 2026-08-03) — and the ★ marker stays deliberately absent (standing ruling).
   const hereLv = isLevelingBuild() ? (build.level_reached || 1) : null;
-  const hereIdx = hereLv != null ? _stepIndexForLevel(hereLv) : -1;
+  const hereIdx = hereLv != null ? _stepIndexForLevel(hereLv)
+    : ((build.level_reached || 50) >= 50 ? steps.length : -1);
   const jb = JOURNEY_BADGES || {};
   const lvBadges = jb.level_badges || {};
   // The route follows the character's side — hero, villain, or the separate
@@ -1770,7 +1762,8 @@ function renderJourney() {
                storyProv: (storyLayer.provenance || ""), storyUrls: storyLayer.urls || {},
                xpMacro: storyLayer.xp_macro || {},
                routeProv: (JOURNEY_PLACES || {}).provenance || "" };
-  if (_JNY_SEL == null || _JNY_SEL >= steps.length) _JNY_SEL = hereIdx >= 0 ? hereIdx : 0;
+  if (_JNY_SEL == null || _JNY_SEL >= steps.length)
+    _JNY_SEL = Math.min(hereIdx >= 0 ? hereIdx : 0, steps.length - 1);
 
   const badgeLocCredit = jb.location_credit || "";
   const zones = (jb.zones || []).map(z =>
@@ -1799,10 +1792,25 @@ function renderJourney() {
 
   // step-by-step lives in the wizard modal — only offer the jump when it's open
   const wizOpen = !document.getElementById("respec-wizard").classList.contains("hidden");
+  // The character's level, stated where it cannot be missed (Joel, 2026-08-03:
+  // "an unmistakable level of current character shown").
+  const lvBanner = hereLv != null
+    ? `<div class="jny-current">⭐ Your character is <span class="jny-current-lv">Level ${hereLv}</span> of 50</div>`
+    : (hereIdx >= steps.length
+        ? `<div class="jny-current">⭐ <span class="jny-current-lv">Level 50</span> — a finished end-game build; this road is the 1–50 path behind it</div>`
+        : "");
+
+  // ORDER (Joel, 2026-08-03): the art (tracking the level you're looking at),
+  // the 1-50 road right below it, then the level detail — the preview/consent
+  // chrome moves BELOW the road it used to sit on top of.
   $("journey-body").innerHTML =
     `<div class="jny">`
     + (journeyIntroDone() ? "" : `<details class="jny-fit jny-introwrap"><summary>👋 <b>New to the Journey?</b> <span class="muted small">what this road is and how to read it</span><span class="jny-expand-cue">click to expand ▾</span></summary>${_journeyIntroHtml()}</details>`)
+    + `<div class="jny-art-row" id="jny-art-slot"></div>`
+    + lvBanner
     + `<div class="jny-head"><span class="muted small">Scroll or drag the road — click a card for what that level buys you.</span></div>`
+    + `<div class="jny-viewport"><div class="jny-strip"><div class="jny-lane">${stops}</div></div></div>`
+    + `<div class="jny-panel" id="jny-panel"></div>`
     // The alignment switcher previews another side's leveling path. A leading
     // "Preview another side:" label makes the trailing reassurance read as one
     // thought — Joel: the bare "preview only — your build is unchanged" floating
@@ -1842,8 +1850,6 @@ function renderJourney() {
     + `Rogue and Villain for free — he can also toggle XP, inspiration drops, and a few other quality-of-life `
     + `settings. Heroes and Villains who go Vigilante or Rogue can then play <i>both</i> sides' content.`
     + `</div></details>`
-    + `<div class="jny-panel" id="jny-panel"></div>`
-    + `<div class="jny-viewport"><div class="jny-strip"><div class="jny-lane">${stops}</div></div></div>`
     + (zones
         ? `<details class="jny-zones"><summary>🧭 <b>Zones & badges</b> <span class="muted small">— the grounded
            catalog from the game's own files. ${escHtml(jb.pending || "")}</span></summary>
@@ -3198,7 +3204,6 @@ async function init() {
     $("char-name").addEventListener("change", commitNameField);
     $("char-name").addEventListener("keydown", e => { if (e.key === "Enter") e.target.blur(); });
   }
-  $("journey-btn").addEventListener("click", toggleJourneyView);
   if ($("tour-btn")) $("tour-btn").addEventListener("click",
     () => { if (typeof openTourMenu === "function") openTourMenu(); });
   if ($("bug-btn")) $("bug-btn").addEventListener("click", reportBug);
@@ -5991,8 +5996,6 @@ async function recompute() {
   renderEndgameWarnings();   // warn if a leveling character previews epic/incarnate content
   syncNameField();           // build-tile Name rides every state change
   const hasPowers = build.powers.length > 0;
-  const jb = $("journey-btn");   // the header road icon rides with having a plan
-  if (jb) jb.style.display = hasPowers ? "" : "none";
   const ob = $("opt-btn");   // AI refine — hidden entirely when the AI seam is off
   if (ob) ob.style.display = (hasPowers && AI_ON) ? "block" : "none";
   const sb = $("solve-btn");

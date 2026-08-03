@@ -222,11 +222,31 @@
       </nav>
       <div class="legend">
         <span id="autosave-ind" class="muted small" title="Auto-saves in the background when something changes"></span>
-        <button id="journey-btn" class="iconbtn journey-pill" title="The Leveling Journey" style="display:none">🗺️ <span class="journey-pill-label">Journey</span></button>
+        <!-- The 🗺️ Journey pill is GONE (Joel, 2026-08-03: reaching for the
+             alignment toggle, he clicked Journey by mistake). The Leveling
+             Guide tab is the one way to the road. -->
         <button id="alignment-btn" class="iconbtn iconbtn-labeled" title="Change alignment — Hero, Vigilante, Rogue or Villain">🦸 <span>Hero</span></button>
       </div>
     </div>
   </header>
+
+  <!-- TABS AT THE TOP (Joel, 2026-08-03: "the tabs exist at the top, right below
+       the tool title and version number") — above the build tile, not below it.
+       ⚠ Panels are HIDDEN, never unmounted: app.js writes into elements
+       across four of them on every recompute, and a change on one tab (an epic
+       pick, an accolade) must reach the others. See tabbed-layout-spec.md §5. -->
+  <nav class="tabbar" id="tabbar" role="tablist" aria-label="Sections">
+    <button class="tab" id="tab-btn-powers" role="tab" aria-controls="tab-powers"
+      aria-selected="true" tabindex="0">Powers &amp; Slots</button>
+    <button class="tab" id="tab-btn-stats" role="tab" aria-controls="tab-stats"
+      aria-selected="false" tabindex="-1">Stats</button>
+    <button class="tab" id="tab-btn-endgame" role="tab" aria-controls="tab-endgame"
+      aria-selected="false" tabindex="-1">End Game</button>
+    <button class="tab" id="tab-btn-leveling" role="tab" aria-controls="tab-leveling"
+      aria-selected="false" tabindex="-1">Leveling Guide</button>
+    <button class="tab" id="tab-btn-logging" role="tab" aria-controls="tab-logging"
+      aria-selected="false" tabindex="-1">Logging</button>
+  </nav>
 
     <!-- BUILD TILE — identity on every tab, Mids-like, blank until loaded. It is
        chrome, not a panel: it never scrolls away and it owns no tab. -->
@@ -258,22 +278,6 @@
         <div id="pool-selectors"></div>
       </details>
   </section>
-
-  <!-- TABS. ⚠ Panels are HIDDEN, never unmounted: app.js writes into elements
-       across four of them on every recompute, and a change on one tab (an epic
-       pick, an accolade) must reach the others. See tabbed-layout-spec.md §5. -->
-  <nav class="tabbar" id="tabbar" role="tablist" aria-label="Sections">
-    <button class="tab" id="tab-btn-powers" role="tab" aria-controls="tab-powers"
-      aria-selected="true" tabindex="0">Powers &amp; Slots</button>
-    <button class="tab" id="tab-btn-stats" role="tab" aria-controls="tab-stats"
-      aria-selected="false" tabindex="-1">Stats</button>
-    <button class="tab" id="tab-btn-endgame" role="tab" aria-controls="tab-endgame"
-      aria-selected="false" tabindex="-1">End Game</button>
-    <button class="tab" id="tab-btn-leveling" role="tab" aria-controls="tab-leveling"
-      aria-selected="false" tabindex="-1">Leveling Guide</button>
-    <button class="tab" id="tab-btn-logging" role="tab" aria-controls="tab-logging"
-      aria-selected="false" tabindex="-1">Logging</button>
-  </nav>
 
   <main id="tabpanels">
     <section id="tab-powers" class="tabpanel" role="tabpanel"

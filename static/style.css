@@ -136,8 +136,9 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
   padding: var(--s2) var(--s4);
   background: var(--panel); border-bottom: 1px solid var(--border);
   /* ⚠ CHROME, NOT CONTENT. It scrolled away with the page, taking the archetype
-     pickers with it — the one bar you always need in view. */
-  position: sticky; top: 0; z-index: 40;
+     pickers with it — the one bar you always need in view. Sits BELOW the tab
+     strip now (masthead 40 + tabbar ~38). */
+  position: sticky; top: 78px; z-index: 40;
 }
 .build-tile label {
   display: flex; align-items: center; gap: var(--s2);
@@ -161,7 +162,10 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
   display: flex; gap: var(--s1); padding: 0 var(--s4);
   background: var(--panel); border-bottom: 1px solid var(--border);
   overflow-x: auto; scrollbar-width: none;
-  position: sticky; top: 46px; z-index: 39;   /* directly under the build tile */
+  /* Directly under the masthead now — Joel, 2026-08-03: tabs at the TOP, above
+     the build tile. ponytail: sticky offsets are estimates (page scrolls only
+     at the zoom floor); re-measure if a real overlap ever shows. */
+  position: sticky; top: 40px; z-index: 41;
 }
 .tabbar::-webkit-scrollbar { display: none; }
 .tab {
@@ -171,11 +175,11 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
   border-top: 2px solid transparent; margin-bottom: -1px;
 }
 .tab:hover { color: var(--ink); background: var(--panel2); }
+/* UNMISTAKABLE (Joel, 2026-08-03: "Not so similar in color and only a tiny bump
+   at the top"): the active tab is a solid accent block, not a subtle underline. */
 .tab[aria-selected="true"] {
-  color: var(--ink); background: var(--bg);
-  border-top-color: var(--accent);
-  border-left: 1px solid var(--border); border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--bg);
+  color: var(--bg); background: var(--accent);
+  border-top-color: var(--accent); font-weight: 700;
 }
 .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
@@ -1767,16 +1771,8 @@ body { overflow: hidden; }
    z-index above the wizard modal (z 50) so "See the journey" opens on top. */
 #journey-modal { z-index: 60; }
 .journey-box { width: min(1560px, 97vw); overflow-y: auto; }
-/* the header pill: the ONE switch for the road — labeled (not a bare icon),
-   lit while the road is out, and it pulses after an ✕/Esc close so users
-   learn where to reopen it. */
-.journey-pill { width: auto; padding: 0 9px; display: inline-flex; align-items: center; gap: 4px; }
-.journey-pill-label { font-size: 14px; font-weight: 600; }
-.journey-pill.journey-open { border-color: var(--warn); color: var(--warn); }
-.journey-pill.journey-pulse { animation: jnybtnpulse 0.85s ease-in-out 3; }
-@keyframes jnybtnpulse {
-  50% { border-color: var(--warn); box-shadow: 0 0 10px rgba(217, 164, 65, .55); }
-}
+/* (the header Journey pill was removed 2026-08-03 — the Leveling Guide tab is
+   the one way to the road) */
 .jny-intro { background: var(--bg); border: 1px solid var(--accent); border-radius: 10px;
   padding: 12px 14px; margin: 10px 0 4px; font-size: 15px; }
 .jny-intro .gl-help { margin-top: 8px; }
@@ -1812,7 +1808,26 @@ body { overflow: hidden; }
   width: 38px; height: 38px; border-radius: 50%; background: var(--panel2);
   border: 3px solid var(--border); display: flex; align-items: center; justify-content: center;
   font-weight: 700; z-index: 2; }
-.jny-stop.done .jny-node { border-color: var(--def); color: var(--def); }
+/* COMPLETED levels read at a glance (Joel, 2026-08-03: "a check mark or green
+   circle around each level if they have been completed"): solid green ring,
+   green-tinted fill, and a ✓ badge riding the node. A level-50 kit shows the
+   whole road green. */
+.jny-stop.done .jny-node {
+  border-color: var(--def); color: var(--def);
+  background: color-mix(in srgb, var(--def) 18%, var(--panel2));
+}
+.jny-stop.done .jny-node::after {
+  content: "✓"; position: absolute; top: -7px; right: -7px;
+  width: 17px; height: 17px; border-radius: 50%;
+  background: var(--def); color: #10131a; font-size: 12px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+/* The character's level, stated where it cannot be missed. */
+.jny-current {
+  font-size: 17px; font-weight: 700; margin: var(--s2) 0;
+}
+.jny-current .jny-current-lv { color: var(--warn); }
+.jny-art-row { display: flex; align-items: flex-end; gap: var(--s4); flex-wrap: wrap; }
 .jny-stop.here .jny-node { border-color: var(--warn); color: var(--warn);
   box-shadow: 0 0 0 6px rgba(217, 164, 65, .18), 0 0 20px rgba(217, 164, 65, .45);
   animation: jnypulse 1.6s ease-in-out infinite; }
