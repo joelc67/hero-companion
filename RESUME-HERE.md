@@ -132,10 +132,15 @@ Fit is by **zoom**, solved once for the whole app from the tallest tab, floor
    off <45). Rules wiki-pinned + boundary-tested (test_exemplar_view.py,
    12/12: 47/46 for io50, 36/35 for a L41 pick, attuned set_min−3, purple
    exempt). A VIEW only — never saved/solved (suppression precedent).
-   **STILL OPEN from the paper:** Layer 2 (the advice card in numbers) and
-   Layer 3 (solver optimizes FOR a target level = MODEL BUMP + recert, needs
-   Joel's ruling). ⚠ The ⓘ set-detail card's tier list does not yet grey
-   exemplar-dead bonuses — the banner states the rule instead.
+   **LAYER 2 SHIPPED (`b65bed16`, same evening):** the banner carries the
+   advice in numbers — powers off, tiers before→after, biggest stat moves,
+   and the attuned counterfactual ("the SAME slotting fully attuned would
+   keep N more tiers: +x% …"). Dial now in THREE synced places (build tile,
+   Stats view-toggles row, View menu entry that pulses the tile dial) after
+   Joel couldn't find it. Battery 18/18.
+   **STILL OPEN:** Layer 3 (solver optimizes FOR a target level = MODEL BUMP
+   + recert, needs Joel's ruling). ⚠ The ⓘ set-detail card's tier list does
+   not yet grey exemplar-dead bonuses — the banner states the rule instead.
    (b) **NEXT AFTER EXEMPLAR (Joel's order, 2026-08-03): the Stats page
    provenance redesign** — spec captured verbatim in
    `C:\Users\joelc\code\stats-provenance-paper.md`: mini powers+slots wall
