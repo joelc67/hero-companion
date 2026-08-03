@@ -2525,3 +2525,13 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
 .menu-drop [role=menuitem].mi-on b::before {
   content: "✓"; position: absolute; left: 0; color: var(--def);
 }
+
+/* Respec gating: a power the game would not offer at this level is shown but
+   not takeable — Mids greys the same way. Showing it (rather than hiding it)
+   is the point: you can see what the set holds and what you are waiting for. */
+.cat-row.locked { color: var(--muted); opacity: .55; cursor: default; }
+.cat-row.locked:hover { background: none; }
+.cat-row.locked .cat-mark { font-size: 11px; }
+.cat-head { display: flex; align-items: center; gap: var(--s2); }
+.cat-count { margin-left: auto; }
+.cat-done { color: var(--def); }

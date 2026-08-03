@@ -3100,7 +3100,9 @@ async function init() {
   });
   document.addEventListener("click", e => {
     const row = e.target.closest(".cat-row");
-    if (row && !row.classList.contains("taken")) addPowerByName(row.dataset.ps, row.dataset.full);
+    if (row && !row.classList.contains("taken") && !row.classList.contains("locked")) {
+      addPowerByName(row.dataset.ps, row.dataset.full);
+    }
   });
   $("saves-back").addEventListener("click", () => {
     $("saves-panel").classList.add("hidden"); $("entry-cards").classList.remove("hidden"); });
@@ -4229,25 +4231,63 @@ function powersetDisplayName(full) {
 // line at a time and tell you nothing about a power until it is already in the
 // build. This is that half: scan a set, read a power, take it if you want it.
 function catalogueHtml(sets) {
-  const taken = new Set(build.powers.map(p => p.full_name));
+  const taken = build.powers.filter(p => !(p.full_name || "").startsWith("Inherent."));
+  const takenNames = new Set(taken.map(p => p.full_name));
+  // ⚠ THIS IS A RESPEC, NOT A SHOPPING LIST (Joel, 2026-08-03): "choices do not
+  // honor prerequisites, nor level restrictions... This should almost function
+  // as if it were a respec screen in game. Choosing all the powers, available
+  // only at each level, and then when all done, slots everything up."
+  //
+  // So picks go in LEVEL ORDER. The next unfilled rung of the game's ladder is
+  // the level you are picking AT, and a power is offered only if the game would
+  // offer it there: it unlocks by that level, and you already hold as many other
+  // powers of its own set as the game demands.
+  const pickIdx = Math.min(taken.length, LADDER.length - 1);
+  const atLevel = LADDER[pickIdx];
+  const full = taken.length >= LADDER.length;
+  const perSet = {};
+  for (const p of taken) perSet[p.powerset_full_name] = (perSet[p.powerset_full_name] || 0) + 1;
+
+  // Why a power cannot be taken right now — "" means it can.
+  const blocked = (p, ps) => {
+    if (takenNames.has(p.full_name)) return "have";
+    if (full) return "done";
+    if ((p.level_available || 1) > atLevel) return `L${p.level_available}`;
+    const need = p.prereq_need || 0;
+    const got = perSet[ps] || 0;
+    if (got < need) return `needs ${need - got} more`;
+    return "";
+  };
+
   const cols = sets.map(ps => {
     const powers = (POWERS_CACHE[ps] || []).filter(p => p.slottable);
     if (!powers.length) return "";
-    return `<div class="cat-col"><div class="cat-head">${escHtml(powersetDisplayName(ps))}</div>`
+    return `<div class="cat-col"><div class="cat-head">${escHtml(powersetDisplayName(ps))}`
+      + `<span class="cat-count muted small">${perSet[ps] || 0}</span></div>`
       + powers.map(p => {
-          const has = taken.has(p.full_name);
-          const lv = p.level_available || 1;
-          return `<div class="cat-row${has ? " taken" : ""}" data-ps="${escHtml(ps)}"`
+          const why = blocked(p, ps);
+          const has = why === "have";
+          const can = why === "";
+          const cls = has ? " taken" : (can ? "" : " locked");
+          const mark = has ? "✓" : (can ? "+" : "🔒");
+          return `<div class="cat-row${cls}" data-ps="${escHtml(ps)}"`
             + ` data-full="${escHtml(p.full_name)}"`
-            + ` title="${has ? "Already in the build" : "Click to add"} — hover for its numbers">`
-            + `<span class="cat-lv">${lv}</span>`
+            + ` title="${has ? "Already picked" : can ? `Pick this at level ${atLevel}`
+                 : why === "done" ? "All 24 picks are used" : `Not yet: ${why}`}">`
+            + `<span class="cat-lv">${p.level_available || 1}</span>`
             + `<span class="cat-name">${escHtml(p.display_name)}</span>`
-            + `<span class="cat-mark">${has ? "✓" : "+"}</span></div>`;
+            + `<span class="cat-mark">${mark}</span></div>`;
         }).join("")
       + `</div>`;
   }).join("");
-  return `<div class="catalogue"><div class="cat-hint muted small">Every power in your chosen sets.`
-    + ` Hover for its numbers, click to add it.</div><div class="cat-cols">${cols}</div></div>`;
+
+  const head = full
+    ? `<div class="cat-hint cat-done"><b>All 24 powers picked.</b> Now slot them:`
+      + ` <button class="linkbtn" onclick="$('solve-btn').click()">🧮 Slot everything up</button></div>`
+    : `<div class="cat-hint"><b>Pick ${taken.length + 1} of ${LADDER.length}</b>`
+      + ` — level ${atLevel}. Only what the game offers at this level is available;`
+      + ` 🔒 shows what it is waiting for.</div>`;
+  return `<div class="catalogue">${head}<div class="cat-cols">${cols}</div></div>`;
 }
 
 // Detail for ANY power, taken or not — the thing the ⓘ card could never do,

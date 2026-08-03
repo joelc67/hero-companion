@@ -1619,7 +1619,19 @@ def get_powers(powerset_full_name):
         # archetype/powerset form -> join with "."
         joined = powerset_full_name.replace("/", ".")
         powers = _powers_for(joined)
-    return jsonify({"powerset": powerset_full_name, "powers": powers})
+    # ⚠ SHIP THE PREREQUISITE COUNT. The picker has to refuse a power the game
+    # would refuse, and _prereq_need is THE authority for that (it prefers the
+    # game's own stated rule and falls back to the corpus-validated proxy).
+    # Computing it in JavaScript would be a second, drifting implementation of a
+    # rule that already cost this project a 12-hour wave when it was wrong.
+    # Shallow-copied so the enrichment never mutates the cached records.
+    out = []
+    for p in powers:
+        q = dict(p)
+        q["prereq_need"] = _prereq_need(p.get("full_name"),
+                                        p.get("powerset_full_name") or powerset_full_name)
+        out.append(q)
+    return jsonify({"powerset": powerset_full_name, "powers": out})
 
 
 # In-game incarnate art ships as one FAMILY icon per rarity ring:
