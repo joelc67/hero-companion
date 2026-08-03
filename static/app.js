@@ -4865,22 +4865,69 @@ function _revealInfoCard() {
 // never on solve paths. Off = null = today's level-50 behavior.
 let EXEMPLAR_VIEW = null;
 
+// TWO synced dials (Joel, 2026-08-03: "I see no obvious place to enable
+// Exemplar views") — the build tile AND the Stats view-toggles row, plus a
+// View-menu entry that walks you to the tile one. One state, one setter.
+window.setExemplarView = function (level) {
+  EXEMPLAR_VIEW = level || null;
+  for (const id of ["exemplar-sel", "exemplar-sel-stats"]) {
+    const s = $(id);
+    if (s) s.value = EXEMPLAR_VIEW ? String(EXEMPLAR_VIEW) : "";
+  }
+  renderPowers();     // cards gain/lose the bold not-usable badge
+  recompute();        // every number re-states at the exemplared level
+};
+
 function initExemplarControl() {
-  const sel = $("exemplar-sel");
-  if (!sel) return;
-  sel.innerHTML = `<option value="">Off — full level</option>`
+  const opts = `<option value="">Off — full level</option>`
     + Array.from({ length: 49 }, (_, i) => 49 - i)
         .map(l => `<option value="${l}">Level ${l}</option>`).join("");
-  sel.addEventListener("change", () => {
-    EXEMPLAR_VIEW = sel.value ? +sel.value : null;
-    renderPowers();     // cards gain/lose the bold not-usable badge
-    recompute();        // every number re-states at the exemplared level
+  for (const id of ["exemplar-sel", "exemplar-sel-stats"]) {
+    const sel = $(id);
+    if (!sel) continue;
+    sel.innerHTML = opts;
+    sel.addEventListener("change", () => setExemplarView(sel.value ? +sel.value : null));
+  }
+  // View menu → point at the tile dial and make it impossible to miss
+  if ($("view-exemplar-go")) $("view-exemplar-go").addEventListener("click", () => {
+    const sel = $("exemplar-sel");
+    if (!sel) return;
+    sel.focus();
+    const lab = sel.closest("label");
+    if (lab) {
+      lab.classList.remove("exemp-pulse");
+      void lab.offsetWidth;
+      lab.classList.add("exemp-pulse");
+      setTimeout(() => lab.classList.remove("exemp-pulse"), 2600);
+    }
   });
 }
 
 // The unmistakable statement (his words: "bold letters at the top saying this
 // display an Exemplared level range for ##") — one banner per affected tab.
 function renderExemplarBanners() {
+  // Layer 2 — the advice in NUMBERS, computed server-side per recompute
+  const adv = (LAST_TOTALS && LAST_TOTALS.exemplar_advice
+               && LAST_TOTALS.exemplar_advice.level === EXEMPLAR_VIEW)
+    ? LAST_TOTALS.exemplar_advice : null;
+  const fmt = (obj, sign) => Object.entries(obj)
+    .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 8)
+    .map(([k, v]) => `<b>${v > 0 ? "+" : ""}${v}%</b> ${escHtml(k)}`).join(" · ");
+  let advice = "";
+  if (adv) {
+    advice = `<div class="exemp-advice">`
+      + `<b>What level ${adv.level} costs you:</b> `
+      + (adv.lost_powers.length
+          ? `${adv.lost_powers.length} power${adv.lost_powers.length > 1 ? "s" : ""} off — ${adv.lost_powers.map(escHtml).join(", ")}. `
+          : `every power still works. `)
+      + `Set-bonus tiers: <b>${adv.bonuses_full} → ${adv.bonuses_now}</b> active.`
+      + (Object.keys(adv.deltas || {}).length
+          ? `<br>Biggest moves: ${fmt(adv.deltas)}.` : "")
+      + (Object.keys(adv.attuned_regains || {}).length
+          ? `<br>💡 The SAME slotting fully <b>attuned</b> would keep ${adv.bonuses_attuned - adv.bonuses_now} more tier${adv.bonuses_attuned - adv.bonuses_now === 1 ? "" : "s"} at this level: ${fmt(adv.attuned_regains)}.`
+          : `<br>💡 Attuned versions would change nothing here — what's off is off by power level, not IO level.`)
+      + `</div>`;
+  }
   for (const id of ["exemp-banner-powers", "exemp-banner-stats"]) {
     const el = $(id);
     if (!el) continue;
@@ -4890,7 +4937,7 @@ function renderExemplarBanners() {
         Powers received after level ${Math.min(50, EXEMPLAR_VIEW + 5)} are off; set bonuses from IOs
         above level ${EXEMPLAR_VIEW + 3} are off (attuned follow their set's minimum; purple,
         PvP, Winter and Archetype sets always work)${EXEMPLAR_VIEW < 45 ? "; incarnates are off" : ""}.
-        <button class="linkbtn" onclick="clearExemplarView()">✕ Back to full level</button>`;
+        <button class="linkbtn" onclick="clearExemplarView()">✕ Back to full level</button>${advice}`;
     }
   }
 }
@@ -6153,6 +6200,7 @@ async function recompute() {
   renderStats(totals);
   renderValidation(validation);
   LAST_TOTALS = (totals && (totals.totals || totals)) || null;  // feed the tray rotation + notes
+  renderExemplarBanners();   // the advice card needs the fresh numbers
   LAST_CALC = totals || null;   // v36: carries inherent_mechanics for the offense block
   build._accoladeHp = (LAST_TOTALS && LAST_TOTALS.accolade_hp) || 0;  // v34: live accolade HP for the panel line
   updateInfoCards(LAST_TOTALS);

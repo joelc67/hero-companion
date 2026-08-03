@@ -47,6 +47,10 @@ def calc(powers, exemplar=None):
 
 
 def canon(res):
+    # the Layer-2 advice companion rides every exemplared response by design —
+    # identity checks compare the TOTALS, so it is stripped here
+    res = dict(res)
+    res.pop("exemplar_advice", None)
     return json.dumps(res, sort_keys=True)
 
 
@@ -106,6 +110,18 @@ print("[6] LotG global follows the piece rule")
 bl = [host_power(lotg + [None] * 5)]
 check(canon(calc(bl, exemplar=47)) == canon(calc(bl)), "LotG(50) global alive at 47")
 check(canon(calc(bl, exemplar=46)) != canon(calc(bl)), "LotG(50) global dead at 46")
+
+print("[7] Layer-2 advice companion (numbers, not vibes)")
+adv = calc([host_power(normal), WEAVE], exemplar=27).get("exemplar_advice") or {}
+check(adv.get("level") == 27, "advice states its level")
+check(any("Weave" in p for p in adv.get("lost_powers", [])), "Weave named as lost at 27")
+check((adv.get("bonuses_full") or 0) > (adv.get("bonuses_now") or 0),
+      f"tiers drop ({adv.get('bonuses_full')} -> {adv.get('bonuses_now')})")
+check((adv.get("bonuses_attuned") or 0) > (adv.get("bonuses_now") or 0),
+      "attuned counterfactual regains tiers (set min 30 -> alive at 27 attuned)")
+check(bool(adv.get("deltas")), "stat deltas present")
+check("exemplar_advice" not in calc([host_power(normal)]),
+      "no advice without exemplar (negative control)")
 
 print(f"\n{CHECKS - len(FAILS)} of {CHECKS} checks passed")
 if FAILS:

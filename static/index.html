@@ -205,6 +205,7 @@
             <button role="menuitem" type="button" data-act="external-toggle" data-kind="check"><b>Include accolades + amplifiers</b><i>Add the permanent accolades and the three buyable amplifiers</i></button>
             <button role="menuitem" type="button" data-act="pvp-toggle" data-kind="check"><b>PvP build mode</b><i>Use PvP set bonuses and effect variants</i></button>
             <button role="menuitem" type="button" data-act="suppression-toggle" data-kind="check"><b>In-combat view (suppression)</b><i>Show defence as it is mid-fight, not standing still</i></button>
+            <button role="menuitem" type="button" id="view-exemplar-go"><b>⏬ Exemplared view…</b><i>See this build at a lower level — the dial is on the build bar</i></button>
           </div>
         </div>
         <div class="menu">
@@ -482,6 +483,10 @@
       <label class="incarnate-toggle" title="Combat suppression: powers like Stealth lose part of their defense the moment you attack, get hit, or take damage. This shows your totals as they are mid-fight — same as Mids' Options > Effects and Maths > Suppression (attacked / hit / attacking / damaged). Display only: Solve optimizes the same numbers either way.">
         <input type="checkbox" id="suppression-toggle">
         In-combat view (suppression)
+      </label>
+      <label class="incarnate-toggle" title="View this build exemplared down to a level — powers and set bonuses the game switches off at that level leave every number. A view only: nothing about the build changes, and Solve never sees it.">
+        ⏬ Exemplar view
+        <select id="exemplar-sel-stats"></select>
       </label>
 
       <!-- warn-but-allow banner: a leveling character previewing endgame content

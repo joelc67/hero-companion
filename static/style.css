@@ -1504,6 +1504,16 @@ body { overflow: hidden; }
   font-weight: 800; color: var(--warn); font-size: 12px;
   letter-spacing: .05em; margin-bottom: 2px;
 }
+.exemp-advice {
+  margin-top: var(--s3); padding-top: var(--s3);
+  border-top: 1px solid color-mix(in srgb, var(--warn) 40%, transparent);
+  font-size: 14px;
+}
+/* the View-menu entry points here — make the tile dial impossible to miss */
+.exemp-pulse { animation: exempulse 0.85s ease-in-out 3; border-radius: var(--r1); }
+@keyframes exempulse {
+  50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--warn) 55%, transparent); }
+}
 .eh-piece { display: flex; align-items: center; gap: 8px; font-size: 12px;
   padding: 3px 8px; border-radius: 5px; border: 1px solid var(--border); }
 .eh-piece-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

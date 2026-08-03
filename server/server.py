@@ -2713,7 +2713,11 @@ def build_calculate():
         exl = int(exl)
     except (TypeError, ValueError):
         exl = None
+    _exemplar_base = None
     if exl is not None and 1 <= exl <= 49:
+        import copy as _copy
+        _exemplar_base = _copy.deepcopy(build)   # pristine, for the advice deltas
+        _exemplar_base.pop("exemplar_level", None)
         if exl < 45:
             build["include_incarnates"] = False
         for p in build.get("powers", []):
@@ -2740,6 +2744,58 @@ def build_calculate():
                     p[k] = rec.get(k)
         _attach_base_resdef(build.get("powers", []), build.get("archetype"), ctx, res_cap)
     res = engine.calculate_build(build, SET_BONUSES, res_cap=res_cap, ctx=ctx)
+    # EXEMPLAR LAYER 2 — the advice in NUMBERS (Joel, 2026-08-03): what this
+    # level costs (vs full level) and what a fully-ATTUNED copy of the same
+    # slotting would keep. Two extra display-only calculates; the attuned
+    # counterfactual only flips the attuned flag on real set pieces.
+    if _exemplar_base is not None:
+        try:
+            base_ctx = _stat_ctx(build.get("archetype"))
+            base_res = engine.calculate_build(_exemplar_base, SET_BONUSES,
+                                              res_cap=res_cap, ctx=base_ctx)
+            import copy as _copy
+            att = _copy.deepcopy(build)          # keeps _exemplar_off + incarnate gate
+            for p in att.get("powers", []):
+                for s in p.get("slots", []) or []:
+                    if s and s.get("set_uid"):
+                        s["attuned"] = True
+            att_res = engine.calculate_build(att, SET_BONUSES, res_cap=res_cap, ctx=ctx)
+
+            def _snap(r):
+                out = {}
+                for t, row in (r.get("defense") or {}).items():
+                    out[f"{t} defense"] = row.get("value")
+                for t, row in (r.get("resistance") or {}).items():
+                    out[f"{t} resistance"] = row.get("value")
+                for k, lab in (("recharge", "recharge"), ("recovery", "recovery"),
+                               ("regeneration", "regeneration"), ("tohit", "ToHit"),
+                               ("accuracy", "accuracy"), ("max_hp", "max HP"),
+                               ("heal_strength", "healing strength")):
+                    v = r.get(k)
+                    if isinstance(v, dict):
+                        v = v.get("value")
+                    if isinstance(v, (int, float)):
+                        out[lab] = v
+                return out
+
+            now, full, kept = _snap(res), _snap(base_res), _snap(att_res)
+            deltas = {k: round(now.get(k, 0) - v, 2) for k, v in full.items()
+                      if abs(now.get(k, 0) - v) > 0.05}
+            regain = {k: round(kept.get(k, 0) - now.get(k, 0), 2) for k in now
+                      if abs(kept.get(k, 0) - now.get(k, 0)) > 0.05}
+            res["exemplar_advice"] = {
+                "level": exl,
+                "lost_powers": [p.get("display_name")
+                                or (p.get("full_name") or "").split(".")[-1].replace("_", " ")
+                                for p in build.get("powers", []) if p.get("_exemplar_off")],
+                "bonuses_full": base_res.get("applied_bonus_count") or 0,
+                "bonuses_now": res.get("applied_bonus_count") or 0,
+                "bonuses_attuned": att_res.get("applied_bonus_count") or 0,
+                "deltas": deltas,
+                "attuned_regains": regain,
+            }
+        except Exception:  # noqa: BLE001 — the advice is a companion, never a blocker
+            diag.swallowed("calculate: exemplar advice companion")
     # AoE-88 FIX (Joel's Stalker eyeball, question 3 — 0.12.20 cut-blocker):
     # passive totals show suppressible defense UNSUPPRESSED (Hide alone is
     # +45.6 AoE def on the Rad/Dark champion → an "impossible" 77-88% AoE
