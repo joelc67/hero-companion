@@ -1542,8 +1542,9 @@ body { overflow: hidden; }
 .mw-card.stat-hot-power .mw-name { color: #22c55e; font-weight: 700; }
 .mw-slots { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 2px; }
 .mw-ico { width: 16px; height: 16px; border-radius: 50%; display: block; }
-.mw-slot { flex: none; border-radius: 50%; border: 2px solid transparent; line-height: 0; }
-.mw-slot.stat-hot { border-color: #22c55e; box-shadow: 0 0 5px #22c55e88; }
+/* PROMINENT rings (Joel, 2026-08-04: "just as prominent" as the selection) */
+.mw-slot { flex: none; border-radius: 50%; border: 3px solid transparent; line-height: 0; }
+.mw-slot.stat-hot { border-color: #22c55e; box-shadow: 0 0 8px #22c55ecc; }
 .mw-slot-empty { width: 12px; height: 12px; border-radius: 50%;
   border: 1px solid var(--border); }
 
@@ -1551,11 +1552,28 @@ body { overflow: hidden; }
   grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
   align-items: start; }
 .stat-breakdown { position: sticky; top: calc(var(--chrome-h, 130px)); }
-.bar-row.stat-clickable, .o-row.stat-clickable { cursor: pointer; }
-.bar-row.stat-clickable:hover, .o-row.stat-clickable:hover { background: var(--panel2); }
-.bar-row.stat-selected, .o-row.stat-selected {
+.stat-clickable { cursor: pointer; }
+.stat-clickable:hover { background: var(--panel2); }
+/* UNMISTAKABLE selection (Joel, 2026-08-04: "a green bar around them") */
+.stat-selected {
   outline: 2px solid #22c55e; outline-offset: -2px; border-radius: var(--r1);
+  background: color-mix(in srgb, #22c55e 12%, transparent) !important;
 }
+.statval { font-weight: 700; }
+.statval.capped { color: var(--warn); }
+
+/* the breakdown's editable power cards — the wall's slot chits, reused */
+.sbp-card { background: var(--panel2); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: var(--s2) var(--s3); margin: var(--s2) 0; }
+.sbp-card.stat-hot-power { border-color: #22c55e; }
+.sbp-head { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+.sbp-name { font-weight: 700; min-width: 0; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.sbp-val { color: #22c55e; font-weight: 700; white-space: nowrap; }
+.sbp-src { margin-top: 3px; line-height: 1.5; }
+.sb-slotwrap { display: inline-block; border-radius: 50%;
+  border: 3px solid transparent; line-height: 0; }
+.sb-slotwrap.stat-hot-slot { border-color: #22c55e; box-shadow: 0 0 8px #22c55ecc; }
 .sb-sub { font-size: 13px; margin: 2px 0 var(--s2); color: var(--muted); }
 .sb-shown, .sb-green { color: #22c55e; }
 .sb-row { display: flex; justify-content: space-between; gap: var(--s2);

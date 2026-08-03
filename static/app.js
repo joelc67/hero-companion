@@ -7095,8 +7095,8 @@ function renderStats(t) {
     }
     const selCls = (SELECTED_STAT && SELECTED_STAT.key === statkey) ? " stat-selected" : "";
     return `<div class="o-row stat-clickable${selCls}" data-statkey="${statkey}"
-      title="Where does this number come from? Click to see every IO feeding it."
-      onclick="selectStat('${statkey}', '${k}')"><span>${k}${badge}</span><span>+${d.value}%${over}${abs}</span></div>`
+      data-statlabel="${escHtml(k)}"
+      title="Where does this number come from? Click to see every IO feeding it."><span>${k}${badge}</span><span class="statval">+${d.value}%${over}${abs}</span></div>`
       + attributionRowsHtml(k, t);
   }).join("");
   // v30 bonus extras (the back-filled families) — only nonzero rows, so builds
@@ -7187,17 +7187,25 @@ function renderOffense(off, t) {
   const sign = p => (p > 0 ? `+${p}` : `${p}`);
   let html = "";
   if (off.attack_count) {
+    // offense rows are clickable like every other stat (Joel, 2026-08-04) —
+    // the breakdown shows the contributing attacks as editable cards
+    const clk = (key, label) => `class="o-row stat-clickable${(SELECTED_STAT && SELECTED_STAT.key === key) ? " stat-selected" : ""}"
+      data-statkey="${key}" data-statlabel="${escHtml(label)}"
+      title="Which attacks and IOs make this number? Click to see and change them."`;
     if (off.aoe_count) {
-      html += `<div class="o-row o-head"><span>AoE throughput <span class="muted small">(farm DPS — ${off.aoe_count} AoE${off.aoe_count === 1 ? "" : "s"} cycled, per target)</span></span><span class="dps">${off.aoe_dps}</span></div>`;
-      html += `<div class="o-row"><span>AoE alpha <span class="muted small">(one full AoE volley)</span></span><span>${off.aoe_burst}</span></div>`;
+      html += `<div ${clk("offense:aoe", "AoE throughput")}><span>AoE throughput <span class="muted small">(farm DPS — ${off.aoe_count} AoE${off.aoe_count === 1 ? "" : "s"} cycled, per target)</span></span><span class="dps">${off.aoe_dps}</span></div>`;
+      html += `<div ${clk("offense:aoe", "AoE alpha")}><span>AoE alpha <span class="muted small">(one full AoE volley)</span></span><span>${off.aoe_burst}</span></div>`;
     }
-    html += `<div class="o-row o-head"><span>Single-target DPS <span class="muted small">(best-attack chain — EB/AV)</span></span><span class="dps">${off.st_dps}</span></div>`;
+    html += `<div ${clk("offense:st", "Single-target DPS")}><span>Single-target DPS <span class="muted small">(best-attack chain — EB/AV)</span></span><span class="dps">${off.st_dps}</span></div>`;
     // v34 #4: the Musculature case — a global +damage% that reaches every attack
     // but had no line of its own. It gets named right under the DPS it feeds.
     html += dpsAttributionHtml(t);
-    html += `<div class="o-row"><span>Top attack (damage / animation)</span><span>${off.top_dpa}</span></div>`;
+    html += `<div ${clk("offense:st", "Top attack")}><span>Top attack (damage / animation)</span><span>${off.top_dpa}</span></div>`;
     const top = (off.attacks || []).slice(0, 6).map(a =>
-      `<div class="o-atk"><span>${a.name}${a.is_aoe ? ' <span class="aoe-tag">AoE</span>' : ''}</span>`
+      `<div class="o-atk stat-clickable${(SELECTED_STAT && SELECTED_STAT.key === `offense:atk:${a.name}`) ? " stat-selected" : ""}"
+         data-statkey="offense:atk:${escHtml(a.name)}" data-statlabel="${escHtml(a.name)}"
+         title="This attack's slotting — click to see and change it.">
+       <span>${a.name}${a.is_aoe ? ' <span class="aoe-tag">AoE</span>' : ''}</span>`
       + `<span class="muted small">${a.damage} dmg · ${a.cast_time}s · ${a.recharge}s rech · ${a.dpa} DPA</span></div>`).join("");
     if (top) html += `<div class="o-atks">${top}</div>`;
   }
@@ -7270,32 +7278,35 @@ function renderOffense(off, t) {
   $("offense-stats").innerHTML = html;
 }
 
+// PERCENTAGES, NOT BARS (Joel, 2026-08-04: "change all stats to percentages
+// and remove the ridiculous bars") — every stat is a clickable percent row.
 function barRow(label, d, kind) {
-  const cap = d.cap;
-  const widthPct = Math.min(d.value / cap * 100, 100);
-  const capped = d.at_cap;
+  const capBadge = d.at_cap ? ' <span class="aoe-tag">CAP</span>' : "";
   // Defense can exceed its soft cap; show the overage. Resistance can't.
-  const over = (kind === "def" && d.over_cap > 0) ? ` <span class="over">(+${d.over_cap})</span>` : "";
+  const over = (kind === "def" && d.over_cap > 0) ? ` <span class="over">(+${d.over_cap} over)</span>` : "";
   // AoE-88 honesty (Joel's Stalker eyeball): when this row includes
   // suppressible out-of-combat defense (Hide/Stealth class), the server sends
   // the in-combat value too — print the fight number right beside the
   // headline one so an "impossible" 77-88% never stands alone.
   const fight = (typeof d.in_combat === "number")
     ? ` <span class="over" title="Includes out-of-combat stealth defense that suppresses the moment you fight — in combat this is ${d.in_combat}%.">⚔ ${d.in_combat}%</span>` : "";
-  // provenance: every bar is a question you can click (Joel, 2026-08-03)
   const key = `${kind === "def" ? "defense" : "resistance"}:${label}`;
   const selCls = (SELECTED_STAT && SELECTED_STAT.key === key) ? " stat-selected" : "";
   const lbl = `${kind === "def" ? "Defense" : "Resistance"}: ${label}`;
-  return `<div class="bar-row stat-clickable${selCls}" data-statkey="${key}"
-    title="Where does this number come from? Click to see every IO feeding it."
-    onclick="selectStat('${key}', '${lbl}')">
-    <span class="bar-label">${label}</span>
-    <div class="bar-track">
-      <div class="bar-fill ${kind} ${capped?'capped':''}" style="width:${widthPct}%"></div>
-    </div>
-    <span class="bar-val ${capped?'capped':''}">${d.value}%${over}${fight}</span>
+  return `<div class="o-row stat-clickable${selCls}" data-statkey="${key}"
+    data-statlabel="${escHtml(lbl)}"
+    title="Where does this number come from? Click to see every IO feeding it.">
+    <span>${label}${capBadge}</span>
+    <span class="statval ${d.at_cap ? "capped" : ""}">${d.value}%${over}${fight}</span>
   </div>`;
 }
+
+// ONE delegated listener for every clickable stat row (inline handlers broke
+// on names with apostrophes — Assassin's Strike — so the data attrs carry it).
+document.addEventListener("click", (e) => {
+  const el = e.target.closest(".stat-clickable[data-statkey]");
+  if (el) selectStat(el.dataset.statkey, el.dataset.statlabel || el.dataset.statkey);
+});
 
 // ── STATS PROVENANCE (Joel's spec, 2026-08-03) ──────────────────────────────
 // "Nothing really glues back where these numbers come from." Click any stat →
@@ -7353,18 +7364,7 @@ window.selectStat = function (key, label) {
   renderStatBreakdown();
 };
 
-// Plain-language layer names (Joel, 2026-08-04: the side bar was "not really
-// understandable" — no jargon headings, say what each group IS).
-const _SB_KINDS = [
-  ["power", "From the powers themselves", "toggles and autos you run"],
-  ["set_bonus", "From set bonuses", "rewards for slotting pieces of one set"],
-  ["global", "From special IOs", "always-on pieces like LotG +Recharge"],
-  ["proc", "From procs", ""],
-  ["accolades", "From accolades", ""],
-  ["incarnates", "From incarnates", "peak buffs, only while toggled on"],
-  ["amplifiers", "From amplifiers", "buyable temporary buffs"]];
-
-// what the bar itself shows for a stat key — the breakdown's headline number
+// what the stat row itself shows for a key — the breakdown's headline number
 function _shownStatValue(key) {
   const t = LAST_TOTALS || {};
   if (key.includes(":")) {
@@ -7376,6 +7376,29 @@ function _shownStatValue(key) {
   return (v && typeof v === "object") ? (v.raw != null ? v.raw : v.value) : v;
 }
 
+// The editable power-card the breakdown is built from (Joel, 2026-08-04: the
+// right side should be "a bar with IOs that can be changed, similar to the
+// powers and slots page"). slotHtml IS the wall's slot renderer — click to
+// change, ⓘ for details, right-click to clear — so edits here are the same
+// edits, one implementation. `hot` = Set of contributing slot indexes, or
+// "all" (offense: every slotted piece feeds the attack).
+function _sbpCardHtml(pi, hot, valueHtml, srcHtml, headHot) {
+  const p = build.powers[pi];
+  if (!p) return "";
+  const ico = powerIconOf(p.full_name);
+  const hotCls = si => (hot === "all"
+    ? ((p.slots || [])[si] && (p.slots || [])[si].piece_uid ? " stat-hot-slot" : "")
+    : (hot && hot.has(si) ? " stat-hot-slot" : ""));
+  return `<div class="sbp-card${headHot ? " stat-hot-power" : ""}">
+    <div class="sbp-head">${ico ? `<img class="mw-pico" src="${ico}" alt="" loading="lazy" onerror="this.style.display='none'">` : ""}
+      <span class="sbp-name">${escHtml(p.display_name || p.full_name)}</span>
+      <span class="sbp-val">${valueHtml}</span></div>
+    <div class="slot-row">${(p.slots || []).map((s, si) =>
+      `<span class="sb-slotwrap${hotCls(si)}">${slotHtml(pi, si, s)}</span>`).join("")}</div>
+    ${srcHtml ? `<div class="sbp-src muted small">${srcHtml}</div>` : ""}
+  </div>`;
+}
+
 function renderStatBreakdown() {
   const host = $("stat-breakdown");
   if (!host) return;
@@ -7384,77 +7407,113 @@ function renderStatBreakdown() {
   document.querySelectorAll(".stat-selected").forEach(el => el.classList.remove("stat-selected"));
   const sel = SELECTED_STAT;
   if (!sel) { host.classList.add("hidden"); return; }
-  document.querySelectorAll(`[data-statkey="${sel.key}"]`)
-    .forEach(el => el.classList.add("stat-selected"));
+  // manual match — attack names carry spaces/apostrophes a selector can't
+  document.querySelectorAll("[data-statkey]").forEach(el => {
+    if (el.dataset.statkey === sel.key) el.classList.add("stat-selected");
+  });
+  const hot = (pi, si) => { const el = $(`mw-${pi}-${si}`); if (el) el.classList.add("stat-hot"); };
+  const hotPower = (pi) => { const el = $(`mwp-${pi}`); if (el) el.classList.add("stat-hot-power"); };
+  const pct = v => `${v >= 0 ? "+" : ""}${(v * 100).toFixed(2)}%`;
+  let html;
+
+  if (sel.key.startsWith("offense:")) {
+    // ── OFFENSE: the contributing attacks, as editable cards ────────────────
+    const off = (LAST_TOTALS && LAST_TOTALS.offense) || {};
+    let atks = off.attacks || [];
+    if (sel.key === "offense:aoe") atks = atks.filter(a => a.is_aoe);
+    if (sel.key.startsWith("offense:atk:")) {
+      const n = sel.key.slice("offense:atk:".length);
+      atks = atks.filter(a => a.name === n);
+    }
+    html = `<h2><span>${escHtml(sel.label)}</span>
+      <button class="iconbtn pi-close" onclick="clearSelectedStat()" title="close">✕</button></h2>
+      <p class="sb-sub">The attacks behind this number — every slotted piece feeds them,
+      so all their IOs ring <b class="sb-green">green</b>. Click any IO to change it.</p>`;
+    if (!atks.length) html += `<p class="muted small">No attacks found for this number.</p>`;
+    atks.forEach(a => {
+      const pi = build.powers.findIndex(p => (p.display_name || "") === a.name);
+      if (pi < 0) return;
+      hotPower(pi);
+      (build.powers[pi].slots || []).forEach((s, si) => { if (s && s.piece_uid) hot(pi, si); });
+      html += _sbpCardHtml(pi, "all",
+        `${a.dpa} DPA`,
+        `${a.damage} dmg · ${a.cast_time}s cast · ${a.recharge}s recharge`
+        + (a.is_aoe ? " · AoE" : ""), true);
+    });
+    const srcs = (LAST_TOTALS && LAST_TOTALS.damage_buff_sources) || [];
+    if (srcs.length) {
+      html += `<div class="sb-kind">Global +damage feeding every attack</div>`
+        + srcs.map(s => `<div class="sb-row"><span class="sb-who">${escHtml(s.name)}
+            <span class="muted small">(${escHtml(s.slot)})</span></span>
+            <span class="sb-val">+${Math.round((s.value || 0) * 100)}%</span></div>`).join("");
+    }
+    html += `<p class="muted small">Damage numbers include slotted procs and your global
+      recharge — change a piece and they update live.</p>`;
+    host.innerHTML = html;
+    host.classList.remove("hidden");
+    return;
+  }
+
+  // ── REGULAR STATS: the ledger, grouped into editable power cards ──────────
   const attr = (LAST_TOTALS && LAST_TOTALS.attribution) || [];
   const rows = attr.map(r => Object.assign({}, r, { v: (r.effects || {})[sel.key] || 0 }))
     .filter(r => Math.abs(r.v) > 1e-9);
-  // the mini wall lights up: sets by power+set_uid, globals by power+slot
-  const hot = (pi, si) => { const el = $(`mw-${pi}-${si}`); if (el) el.classList.add("stat-hot"); };
+  const byPower = new Map();     // full_name -> {pi, total, hot:Set, headHot, srcs:[]}
+  const aggregates = [];
   rows.forEach(r => {
-    build.powers.forEach((p, pi) => {
-      if (p.full_name !== r.power) return;
-      if (r.kind === "set_bonus") {
-        (p.slots || []).forEach((s, si) => { if (s && s.set_uid === r.set_uid) hot(pi, si); });
-      } else if (r.kind === "global") {
-        hot(pi, r.slot);
-      } else if (r.kind === "power") {
-        const el = $(`mwp-${pi}`);
-        if (el) el.classList.add("stat-hot-power");
-      }
-    });
+    const pi = r.power ? build.powers.findIndex(p => p.full_name === r.power) : -1;
+    if (pi < 0) { aggregates.push(r); return; }
+    if (!byPower.has(r.power)) {
+      byPower.set(r.power, { pi, total: 0, hotSet: new Set(), headHot: false, srcs: [] });
+    }
+    const e = byPower.get(r.power);
+    e.total += r.v;
+    if (r.kind === "set_bonus") {
+      (build.powers[pi].slots || []).forEach((s, si) => {
+        if (s && s.set_uid === r.set_uid) { e.hotSet.add(si); hot(pi, si); }
+      });
+      e.srcs.push(`${pct(r.v)} — ${r.pieces} pieces of ${escHtml(r.set)}`);
+    } else if (r.kind === "global") {
+      e.hotSet.add(r.slot); hot(pi, r.slot);
+      e.srcs.push(`${pct(r.v)} — ${escHtml(r.piece)} (always on)`);
+    } else if (r.kind === "power") {
+      e.headHot = true; hotPower(pi);
+      e.srcs.push(`${pct(r.v)} — the power's own effect`);
+    } else {
+      e.srcs.push(`${pct(r.v)} — ${escHtml(r.name || r.kind)}`);
+    }
   });
-  const pct = v => `${v >= 0 ? "+" : ""}${(v * 100).toFixed(2)}%`;
-  // one lookup serves the icon, the change button and the ⓘ — same slot
-  const slotFor = (r) => {
-    const pi = build.powers.findIndex(p => p.full_name === r.power);
-    if (pi < 0) return null;
-    const si = r.kind === "global" ? r.slot
-      : (build.powers[pi].slots || []).findIndex(s => s && s.set_uid === r.set_uid);
-    if (si == null || si < 0) return null;
-    const s = (build.powers[pi].slots || [])[si];
-    return { pi, si, image: s && s.image };
-  };
   const shown = _shownStatValue(sel.key);
-  let html = `<h2><span>${escHtml(sel.label)}</span>
-    <button class="iconbtn pi-close" onclick="selectStat('${escHtml(sel.key)}')" title="close">✕</button></h2>
-    <p class="sb-sub">Where the <b class="sb-shown">${shown != null ? `+${shown}%` : "number"}</b> on that row
-    comes from — every piece counted, and ringed <b class="sb-green">green</b> in the wall above.</p>`;
-  if (!rows.length) {
+  html = `<h2><span>${escHtml(sel.label)}</span>
+    <button class="iconbtn pi-close" onclick="clearSelectedStat()" title="close">✕</button></h2>
+    <p class="sb-sub">Where the <b class="sb-shown">${shown != null ? `+${shown}%` : "number"}</b> comes
+    from. The contributing IOs ring <b class="sb-green">green</b> — here and in the wall
+    above. Click any IO to change it; every number updates live.</p>`;
+  if (!byPower.size && !aggregates.length) {
     html += `<p class="muted small">Nothing in the build feeds this number — it is all base value.</p>`;
   }
-  for (const [kind, kindLabel, kindSub] of _SB_KINDS) {
-    const group = rows.filter(r => r.kind === kind);
-    if (!group.length) continue;
-    html += `<div class="sb-kind">${kindLabel}${kindSub ? ` <span class="muted small">— ${kindSub}</span>` : ""}</div>`;
-    group.sort((a, b) => Math.abs(b.v) - Math.abs(a.v));
-    html += group.map(r => {
-      const at = slotFor(r);
-      const ico = (at && at.image && (kind === "set_bonus" || kind === "global"))
-        ? `<img class="sb-ico" src="${enhIconUrl(at.image)}" alt="" loading="lazy">` : "";
-      let who = escHtml(r.name || "");
-      if (kind === "set_bonus") who = `<b>${r.pieces} pieces of ${escHtml(r.set)}</b>
-        <span class="muted small">slotted in ${escHtml(r.name)}</span>`;
-      if (kind === "global") who = `<b>${escHtml(r.piece)}</b>
-        <span class="muted small">(${escHtml(r.set)}) in ${escHtml(r.name)}</span>`;
-      const btns = (at && (kind === "set_bonus" || kind === "global"))
-        ? ` <button class="linkbtn sb-edit" title="Change this slot — the same enhancement picker the Powers wall uses"
-              onclick="openSlot(${at.pi},${at.si})">change</button>`
-          + `<button class="linkbtn sb-edit" title="Full IO details"
-              onclick="openEnhInfo(${at.pi},${at.si}); showTab('powers')">ⓘ</button>` : "";
-      return `<div class="sb-row"><span class="sb-who">${ico}<span>${who}${btns}</span></span>
-        <span class="sb-val">${pct(r.v)}</span></div>`;
-    }).join("");
+  [...byPower.values()].sort((a, b) => Math.abs(b.total) - Math.abs(a.total)).forEach(e => {
+    html += _sbpCardHtml(e.pi, e.hotSet.size ? e.hotSet : null,
+      `<b>${pct(e.total)}</b>`, e.srcs.join("<br>"), e.headHot);
+  });
+  if (aggregates.length) {
+    html += `<div class="sb-kind">Not from IO slotting</div>`
+      + aggregates.map(r => `<div class="sb-row"><span class="sb-who">${escHtml(r.name || r.kind)}</span>
+          <span class="sb-val">${pct(r.v)}</span></div>`).join("");
   }
   const total = rows.reduce((a, r) => a + r.v, 0);
   html += `<div class="sb-row sb-total"><span><b>All together</b></span>
     <span class="sb-val">${pct(total)}</span></div>
-    <p class="muted small">That total IS the number on the stat row you clicked.
-    Use “change” to swap a piece — every number here updates live.</p>`;
+    <p class="muted small">That total IS the number on the stat row you clicked.</p>`;
   host.innerHTML = html;
   host.classList.remove("hidden");
 }
 
+// the ✕ needs no key round-trip — closing is just closing
+window.clearSelectedStat = function () {
+  SELECTED_STAT = null;
+  renderStatBreakdown();
+};
 function renderValidation(v) {
   const host = $("validation");
   let html = "";
