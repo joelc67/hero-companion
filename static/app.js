@@ -3078,7 +3078,6 @@ async function init() {
   // Entry router — the front door: how do you want to start?
   // entry stays visible until a file is actually CHOSEN (importMids hides it) —
   // a cancelled/failed OS dialog must never strand the user on the bare planner
-  $("entry-mids").addEventListener("click", () => $("import-file").click());
   // in-game card: scan-first (the app finds the saves), file picker as fallback
   $("ingame-scan-go").addEventListener("click", () => ingameScan());
   $("ingame-pick-go").addEventListener("click", () => $("import-file").click());
@@ -4152,12 +4151,14 @@ function renderPowers() {
       // the SUMMARY BAND with the Vitals / Set Bonuses / Uniques boxes, full
       // width of that course and sized to be read. No dead-space span maths any
       // more — the width is simply the course's width.
-      + `<div class="info-course">`
-      + `<div id="overview-card" class="overview-card hidden"></div>`
-      + `<div id="bonuses-card" class="overview-card hidden"></div>`
-      + `<div id="uniques-card" class="overview-card hidden"></div>`
-      + `<div id="accolades-card" class="accolades-card"></div>`
-      + `</div>`;
+      ;
+    // ⚠ THE SUMMARY BAND LEFT THIS WALL (2026-08-03). Vitals / Set Bonuses /
+    // Uniques now live on the Stats tab and Accolades on End Game, as STATIC
+    // hosts in index.html. renderPowers no longer creates them, but every
+    // filler (renderOverviewCard, renderBonusesCard, renderUniquesCard,
+    // renderAccolades) still finds them by id — which is the whole reason the
+    // panels are hidden rather than unmounted.
+    ;
   }
 
   // "Add power" pickers — the choices, below the build
@@ -5707,26 +5708,46 @@ function fitZoom() {
   const panel = document.querySelector(".tabpanel:not([hidden])");
   const shell = document.getElementById("tabpanels");
   if (!panel || !shell) return;
-  // MEASURED SEMANTICS (2026-08-03, probed rather than assumed):
+
+  // Does the active panel fit at this zoom? Set it, force layout, measure.
+  // MEASURED SEMANTICS (probed 2026-08-03, none of it guessed):
   //   innerHeight            device px, does NOT move with zoom
   //   getBoundingClientRect  device px, DOES scale with zoom
   //   scrollHeight           CSS px, and it SHRINKS as you zoom out, because a
-  //                          zoomed-out layout is wider in CSS px so content
-  //                          reflows into fewer rows. That compounding is the
-  //                          whole reason zoom beats a fixed scale factor.
-  // Both inputs therefore depend on the zoom you are solving for, so this
-  // iterates a few times instead of pretending there is a closed form.
-  let z = parseFloat(document.body.style.zoom) || 1;
-  for (let i = 0; i < 4; i++) {
-    const avail = window.innerHeight - shell.getBoundingClientRect().top;  // device px
-    const need = panel.scrollHeight * z;                                   // device px
-    if (need <= 0 || avail <= 0) return;
-    const next = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN,
-      Math.floor(z * (avail / need) * 100) / 100));
-    if (Math.abs(next - z) < 0.02) break;      // dead-band: never chase a pixel
-    z = next;
+  //                          zoomed-out layout is wider in CSS px so the powers
+  //                          wall gains columns and loses rows.
+  const fitsAt = z => {
     document.body.style.zoom = z === 1 ? "" : String(z);
-    panel.getBoundingClientRect();             // force reflow before re-measuring
+    panel.getBoundingClientRect();                       // force reflow
+    return panel.scrollHeight * z <= window.innerHeight - shell.getBoundingClientRect().top;
+  };
+
+  // ⚠ BINARY SEARCH, NOT FIXED-POINT ITERATION. The obvious solve —
+  // z <- z * (avail / need), repeated — OSCILLATES and was measured doing it:
+  // zooming out adds a wall column, which drops a row, which makes the panel
+  // suddenly much shorter, which asks to zoom back in, which removes the column
+  // again. scrollHeight is a STEP function of zoom, so there is no smooth fixed
+  // point to converge on. It settled at 1.04 while overflowing by 495px.
+  // A search over the range is immune to the steps and always lands on a zoom
+  // that actually fits, or on the floor.
+  const room = () => window.innerHeight - shell.getBoundingClientRect().top;
+  panel.style.maxHeight = "";
+  panel.classList.remove("scrolls");
+  if (fitsAt(ZOOM_MAX)) return;
+  let lo = ZOOM_MIN, hi = ZOOM_MAX;
+  for (let i = 0; i < 6; i++) {
+    const mid = Math.round(((lo + hi) / 2) * 100) / 100;
+    if (mid <= lo || mid >= hi) break;
+    if (fitsAt(mid)) lo = mid; else hi = mid;
+  }
+  const ok = fitsAt(lo);   // largest zoom that fits — or the floor, if none do
+  // ⚠ THE FLOOR. Below roughly 1440x900 the two heavy tabs cannot fit even at
+  // ZOOM_MIN, and shrinking past 9px text trades a scrollbar for something
+  // nobody can read. So the PANEL scrolls — never the page, and never the whole
+  // app. Measured at 1366x768: Powers needs 802 device px into 572.
+  if (!ok) {
+    panel.style.maxHeight = (room() / lo) + "px";   // CSS px: the panel is zoomed
+    panel.classList.add("scrolls");
   }
 }
 window.addEventListener("resize", scheduleFit);

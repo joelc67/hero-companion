@@ -165,12 +165,38 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
    writes into all five on every recompute. Without !important a panel's own
    display rule would out-specify the attribute and show two tabs at once. */
 .tabpanel[hidden] { display: none !important; }
+/* The floor (see fitZoom): on a screen too short to hold the tab at readable
+   type, THIS scrolls — one panel, not the page, not the whole app. */
+.tabpanel.scrolls { overflow-y: auto; }
 
-/* Powers & Slots: the grid, with the power-info detail column beside it. */
-.powers-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s3); }
-.powers-layout.has-info { grid-template-columns: minmax(0, 1fr) minmax(270px, 320px); }
-.powers-main { min-width: 0; display: flex; flex-direction: column; gap: var(--s3); }
+/* Powers & Slots: the wall, with a side column holding the Assistant and the
+   power detail card. Two columns ALWAYS — the tab's height is then
+   max(wall, side) instead of their sum, which is what got this tab to fit. */
+.powers-layout {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  gap: var(--s3); align-items: start;
+}
+.powers-main, .powers-side { min-width: 0; display: flex; flex-direction: column; gap: var(--s3); }
 #power-info.hidden { display: none; }
+
+/* ── The Stats board ─────────────────────────────────────────────────────────
+   Defence, Resistance, Other and Offense were stacked in one column at full
+   width: 1018px of height for four blocks whose tallest is 460. Side by side,
+   the section costs what its tallest block costs. Each heading travels with its
+   own bars inside .stat-group, so nothing can be orphaned from its label. */
+.stats-board {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--s4); align-items: start;
+}
+.stat-group { min-width: 0; }
+.stat-group > h3 { margin-top: 0; }
+/* The four view toggles read as a row, not a stack of four lines. */
+#stats > .incarnate-toggle { display: inline-flex; margin-right: var(--s4); }
+/* Vitals / Set Bonuses / Uniques, likewise. */
+.info-course {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--s3); align-items: start;
+}
 
 @media (max-width: 980px) {
   .powers-layout, .powers-layout.has-info { grid-template-columns: 1fr; }

@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 52          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 53          # coverage denominator — hard-fail if a check silently skips
 
 
 def check(name, ok, detail=""):
@@ -257,9 +257,19 @@ def main():
     check("zoom is clamped at both ends",
           "ZOOM_MIN = 0.70" in app_js and "ZOOM_MAX = 1.25" in app_js,
           "0.70 is the 9.1px legibility floor; 1.25 fills a 4K panel")
-    check("the fit iterates, because both inputs move with zoom",
-          "for (let i = 0; i < 4; i++)" in app_js,
-          "scrollHeight shrinks as you zoom out — measured, not assumed")
+    # ⚠ THE BUG THIS PINS. The obvious solve, z <- z * (avail / need) repeated,
+    # OSCILLATES: zooming out adds a powers-wall column, which drops a row, which
+    # makes the panel abruptly shorter, which asks to zoom back in. scrollHeight
+    # is a STEP function of zoom, so there is no smooth fixed point. Measured it
+    # settling at 1.04 while overflowing by 495px.
+    check("the fit SEARCHES the range instead of iterating toward a fixed point",
+          "if (fitsAt(mid)) lo = mid; else hi = mid;" in app_js
+          and "Math.floor(z * (avail / need) * 100)" not in app_js,
+          "matches the old EXPRESSION, not the comment explaining why it went")
+    check("...and a screen too short to fit scrolls the PANEL, never the page",
+          'panel.classList.add("scrolls")' in app_js
+          and ".tabpanel.scrolls { overflow-y: auto; }" in css,
+          "below ~1440x900 the heavy tabs cannot fit at readable type")
 
     # ── 7. THE ENTRY WALL IS GONE; the menus carry it ──────────────────────
     check("nothing blocks the app at launch",
@@ -268,9 +278,11 @@ def main():
     check("both menus exist", 'id="m-character"' in index and 'id="m-help"' in index)
     check("every entry route survived into a menu",
           all(f'id="{i}"' in index for i in
-              ("entry-continue", "entry-scratch", "entry-respec", "entry-mids",
-               "entry-ingame", "save-btn", "start-over-btn", "tour-btn",
-               "help-btn", "bug-btn", "champ-btn", "update-btn")),
+              # entry-mids retired: #import-btn does the same job and was
+              # already bound, so the menu carries the one that existed.
+              ("entry-continue", "entry-scratch", "entry-respec", "import-btn",
+               "export-btn", "entry-ingame", "save-btn", "start-over-btn",
+               "tour-btn", "help-btn", "bug-btn", "champ-btn", "update-btn")),
           "these are the ids app.js already binds — re-homed, not rewired")
     check("menu items keep their descriptions", index.count("<i>") >= 10,
           "easy to navigate means knowing what a thing does before clicking it")

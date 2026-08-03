@@ -183,7 +183,8 @@
             <button id="entry-scratch" role="menuitem" type="button"><b>✨ Start a new character</b><i>Tell me how you want to play and I will pick the build</i></button>
             <button id="entry-respec" role="menuitem" type="button"><b>♻️ Build a new level 50</b><i>An end-game kit from scratch, no file needed</i></button>
             <div class="menu-sep" role="separator"></div>
-            <button id="entry-mids" role="menuitem" type="button"><b>📋 Import a Mids build</b><i>Load a .mbd and keep the sets you invested in</i></button>
+            <button id="import-btn" role="menuitem" type="button"><b>📋 Import a build</b><i>A Mids .mbd or an in-game .txt, critiqued then optimised</i></button>
+            <button id="export-btn" role="menuitem" type="button"><b>⬇ Export to Mids Reborn</b><i>Write a .mbd you can open in Mids</i></button>
             <button id="entry-ingame" role="menuitem" type="button"><b>🎮 Import a character you play</b><i>From an in-game /build_save_file export</i></button>
             <div class="menu-sep" role="separator"></div>
             <button id="save-btn" role="menuitem" type="button"><b>💾 Save this character</b><i>Plan and progress, so you can resume later</i></button>
@@ -268,9 +269,7 @@
         <span id="slot-tally" class="slot-tally" title="Added enhancement slots in use, out of the 67-slot budget (every power gets 1 free base slot on top).">0 / 67 slots</span>
         <span class="edit-hint muted small">Your edits stay put — hit <strong>🧮 Solve</strong> to re-optimize the slotting around your picks (it won't change which powers you chose).</span>
       </div>
-      <p class="muted small">Pick a powerset above, then add powers. Click a slot to
-        choose an enhancement set — <strong>only sets that fit the power's
-        categories are shown.</strong> Right-click a slot to clear it; use −/+ to move slots between powers.</p>
+
       <div id="powers-list"></div>
 
       <!-- Full-width bricks under the grid: trays + respec order flow HORIZONTALLY here -->
@@ -283,18 +282,19 @@
         <div id="conv-guide-body" class="conv-guide-body"></div>
       </details>
 
-      <div class="io-row">
-        <button id="import-btn" class="import-btn" title="Load a Mids Reborn .mbd file OR an in-game /build_save_file .txt export, see a critique, then optimize it.">⬆ Import a build (.mbd or in-game .txt)</button>
-        <button id="export-btn" class="export-btn">⬇ Export to Mids Reborn (.mbd)</button>
-        <input type="file" id="import-file" accept=".mbd,.json,.txt,application/json,text/plain" class="hidden">
-      </div>
+      <!-- Import/Export moved into the Character menu (2026-08-03).
+           #import-file stays: it is the hidden file input they drive. -->
+      <input type="file" id="import-file" accept=".mbd,.json,.txt,application/json,text/plain" class="hidden">
       <div id="import-report" class="import-report hidden"></div>
 
 
     </section>
       </div>
-<aside id="power-info" class="panel pinfo hidden"></aside>
-    </div>
+      <!-- SIDE COLUMN. The Assistant lives beside the powers wall, not under
+           it: stacked, its 630px was pure addition to the tab's height; here
+           the tab costs max(wall, side). It stays above the fold either way,
+           which is the placement a field report earned on 2026-08-01. -->
+      <div class="powers-side">
 <section id="assistant" class="panel" data-tile>
       <!-- The Need help? button sits OUTSIDE this h2 on purpose: app.js rewrites
            assistant-title's innerHTML when the Build Assistant renders, which
@@ -419,9 +419,18 @@
            visibility must never depend on the AI seam. -->
       <div id="ai-response" class="ai-response muted"></div>
     </section>
+<aside id="power-info" class="panel pinfo hidden"></aside>
+      </div>
+    </div>
     </section>
     <section id="tab-stats" class="tabpanel" role="tabpanel"
       aria-labelledby="tab-btn-stats" hidden>
+      <!-- The summary band, moved off the powers wall. Filled by app.js by id. -->
+      <div class="info-course">
+        <div id="overview-card" class="overview-card hidden"></div>
+        <div id="bonuses-card" class="overview-card hidden"></div>
+        <div id="uniques-card" class="overview-card hidden"></div>
+      </div>
 <section id="stats" class="panel" data-tile>
       <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span><button class="tour-help" onclick="startTour('stats')" aria-label="Explain this section" title="Explain this section">?</button></h2>
       <div class="cap-chips">
@@ -451,20 +460,28 @@
            renderEndgameWarnings(); hidden otherwise. -->
       <div id="endgame-warn" class="endgame-warn hidden"></div>
 
-      <h3>Defense <span class="muted small">soft cap 45%</span></h3>
-      <div id="defense-bars" class="bars"></div>
+      <div class="stats-board">
+      <div class="stat-group">
+  <h3>Defense <span class="muted small">soft cap 45%</span></h3>
+  <div id="defense-bars" class="bars"></div>
+      </div>
 
-      <h3>Resistance <span class="muted small" id="res-cap-label">hard cap 75%</span></h3>
-      <div id="resistance-bars" class="bars"></div>
+      <div class="stat-group">
+  <h3>Resistance <span class="muted small" id="res-cap-label">hard cap 75%</span></h3>
+  <div id="resistance-bars" class="bars"></div>
+      </div>
 
-      <h3>Other</h3>
-      <div id="other-stats" class="other"></div>
+      <div class="stat-group">
+  <h3>Other</h3>
+  <div id="other-stats" class="other"></div>
+      </div>
 
-      <div id="offense-section" class="hidden">
+      <div id="offense-section" class="stat-group hidden">
         <h3>Offense <span class="muted small">damage / debuffs / buffs</span></h3>
         <div id="offense-stats" class="offense"></div>
       </div>
 
+      </div>
       <div id="validation" class="validation"></div>
       <p id="stats-note" class="muted small"></p>
     </section>
@@ -473,6 +490,7 @@
       aria-labelledby="tab-btn-endgame" hidden>
       <section class="panel" id="endgame-panel">
         <h2>End Game</h2>
+        <div id="accolades-card" class="accolades-card"></div>
 <details open class="endgame">
         <summary>🎯 End-game plan — Epic (lvl 35) &amp; Incarnates (lvl 50)</summary>
         <div class="endgame-body">
