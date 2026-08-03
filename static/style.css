@@ -1489,6 +1489,7 @@ body { overflow: hidden; }
 .eh-set-h { margin: 10px 0 6px; font-size: 13px; }
 .eh-set-h .muted { font-weight: 400; }
 .eh-roster { display: flex; flex-direction: column; gap: 2px; margin: 4px 0 8px; }
+.eh-piece-ico { width: 24px; height: 24px; flex: none; }
 .eh-piece { display: flex; align-items: center; gap: 8px; font-size: 12px;
   padding: 3px 8px; border-radius: 5px; border: 1px solid var(--border); }
 .eh-piece-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

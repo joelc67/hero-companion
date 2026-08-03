@@ -4933,8 +4933,12 @@ function enhSetSectionHtml(st) {
                  "missing": ["· missing", "eh-miss"] };
   return `<div class="eh-roster">${st.roster.map(x => {
       const [lab, cls] = chip[x.status] || ["", ""];
+      // the piece's own in-game graphic leads the row — the roster reads like
+      // the game's enhancement window (Joel, 2026-08-03); a frozen server
+      // without the image field just renders the text rows as before
+      const ico = x.image ? `<img class="eh-piece-ico" src="${enhIconUrl(x.image)}" alt="" loading="lazy">` : "";
       return `<div class="eh-piece ${cls}" title="${escHtml(x.title)}">
-                <span class="eh-piece-name">${escHtml(x.title.split(":").pop().trim())}</span>
+                ${ico}<span class="eh-piece-name">${escHtml(x.title.split(":").pop().trim())}</span>
                 <span class="eh-status">${lab}</span></div>`;
     }).join("")}</div>`
     + `<div class="eh-tiers">${st.tiers.map(t =>

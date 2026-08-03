@@ -2087,6 +2087,9 @@ def enhancement_detail():
                  for s in (p.get("slots") or []) if s}
     roster = [{"piece_uid": p["piece_uid"], "title": p["title"],
                "short": p.get("short") or "",
+               # the piece's in-game icon — the roster reads like the game's
+               # own enhancement window, not a text list (Joel, 2026-08-03)
+               "image": (PIECE_BY_UID.get(p["piece_uid"]) or {}).get("image") or "",
                "status": ("slotted-here" if p["piece_uid"] in here else
                           "elsewhere" if p["piece_uid"] in elsewhere else
                           "missing")}
