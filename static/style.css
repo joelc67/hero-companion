@@ -38,7 +38,8 @@ body {
   font-family: "Segoe UI", system-ui, sans-serif;
   background: var(--bg);
   color: var(--ink);
-  font-size: 13px;          /* density pass: tighter, Sidekick-style */
+  font-size: 15px;          /* readable on a high-res monitor (Joel, 2026-08-03:
+                               "the icons, fonts, and controls are tiny") */
   line-height: 1.42;
   -webkit-font-smoothing: antialiased;
 }
@@ -176,7 +177,7 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
 .tabpanel[hidden] { display: none !important; }
 /* The floor (see fitZoom): on a screen too short to hold the tab at readable
    type, THIS scrolls — one panel, not the page, not the whole app. */
-.tabpanel.scrolls { overflow-y: auto; }
+/* ⚠ NO per-panel scroll. Removed 2026-08-03 — see fitZoom. */
 
 /* Powers & Slots: the wall, with a side column holding the Assistant and the
    power detail card. Two columns ALWAYS — the tab's height is then
@@ -1612,7 +1613,7 @@ body { overflow: hidden; }
    only. Columns are WIDE (240px min) so a name + its effect fit on one line —
    the strip's 165px columns are what forced the clipping Joel photographed. */
 .acc-scroll {
-  flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; min-height: 0;
+  flex: 1 1 auto; min-height: 0;
   padding-right: 4px;
   display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 1px 16px; align-content: start;
@@ -1817,7 +1818,7 @@ body { overflow: hidden; }
    Task Forces and grew to 389px on its face alone, and the lane reserves room
    for its tallest card, so one busy stop was sizing the whole road again. Past
    the cap a card scrolls inside itself; the road stays a fixed, readable band. */
-.jny-card { max-height: 240px; overflow-y: auto; }
+/* ⚠ was max-height 240 + overflow — an inner scrollbar per road card. */
 .jny-card.open { z-index: 5; }
 /* ONE SIDE, not two (Joel: "the layout is not efficient with space" — he had to
    zoom to 67% to screenshot it). Alternating cards above AND below made the road
@@ -1850,14 +1851,15 @@ body { overflow: hidden; }
 /* THE LEVEL PANEL — art left, everything else right, and the RIGHT side scrolls
    in its own window. A fixed-height panel is what stops the road growing every
    time a level has a lot going on (the level-40 stop carries ten Task Forces). */
-.jny-panel { display: flex; gap: 14px; margin-top: 10px; height: 340px;
+.jny-panel { display: block; margin-top: 10px;
   background: var(--panel2); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
-.jny-panel-info { flex: 1; overflow-y: auto; min-width: 0; }
+.jny-panel-info { min-width: 0; }
 .jny-panel-h { margin: 0 0 6px; font-size: 16px; }
 .jny-panel-here { color: var(--warn); font-size: 13px; }
 /* The zone splash is the star now (Joel), so it takes ~40% of the panel and
    fills it. 4:3 landscape art in this slot shows the whole scene. */
-.jny-art { flex: none; width: 420px; border-radius: 8px; border: 1px dashed var(--border);
+.jny-art { width: 100%; height: 240px; margin-bottom: 12px;
+  border-radius: 8px; border: 1px dashed var(--border);
   background: var(--bg); display: flex; flex-direction: column; align-items: center;
   justify-content: center; gap: 6px; text-align: center; padding: 10px; }
 .jny-art.has-art { padding: 0; border-style: solid; overflow: hidden; }

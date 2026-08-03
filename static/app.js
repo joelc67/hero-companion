@@ -1719,7 +1719,7 @@ function renderJourney() {
   const wizOpen = !document.getElementById("respec-wizard").classList.contains("hidden");
   $("journey-body").innerHTML =
     `<div class="jny">`
-    + (journeyIntroDone() ? "" : _journeyIntroHtml())
+    + (journeyIntroDone() ? "" : `<details class="jny-fit jny-introwrap"><summary>👋 <b>New to the Journey?</b> <span class="muted small">what this road is and how to read it</span><span class="jny-expand-cue">click to expand ▾</span></summary>${_journeyIntroHtml()}</details>`)
     + `<div class="jny-head"><span class="muted small">Scroll or drag the road — click a card for what that level buys you.</span></div>`
     // The alignment switcher previews another side's leveling path. A leading
     // "Preview another side:" label makes the trailing reassurance read as one
@@ -1760,8 +1760,8 @@ function renderJourney() {
     + `Rogue and Villain for free — he can also toggle XP, inspiration drops, and a few other quality-of-life `
     + `settings. Heroes and Villains who go Vigilante or Rogue can then play <i>both</i> sides' content.`
     + `</div></details>`
-    + `<div class="jny-viewport"><div class="jny-strip"><div class="jny-lane">${stops}</div></div></div>`
     + `<div class="jny-panel" id="jny-panel"></div>`
+    + `<div class="jny-viewport"><div class="jny-strip"><div class="jny-lane">${stops}</div></div></div>`
     + (zones
         ? `<details class="jny-zones"><summary>🧭 <b>Zones & badges</b> <span class="muted small">— the grounded
            catalog from the game's own files. ${escHtml(jb.pending || "")}</span></summary>
@@ -5727,8 +5727,11 @@ function initTabs() {
 // ⚠ getBoundingClientRect() returns ZOOMED values, so the natural height has to
 // be divided back out or the solve chases its own tail. It is a clamped
 // one-shot per resize, never a feedback loop.
-const ZOOM_MIN = 0.70;    // 13px base type -> 9.1px; below this, legibility loses
-const ZOOM_MAX = 1.25;    // fill a 4K panel instead of stranding the layout
+const ZOOM_MIN = 1.00;    // ⚠ NEVER SHRINK. Joel, 2026-08-03: "the icons, fonts,
+                          // and controls are tiny". Zooming out to force a fit is
+                          // exactly what made them tiny. A tab taller than the
+                          // window scrolls at the WINDOW edge instead.
+const ZOOM_MAX = 1.60;    // and on a big screen it grows properly, not by 25%
 let _fitTimer = null;
 
 function scheduleFit() {
@@ -5768,7 +5771,6 @@ function fitZoom() {
     return tallest() * z <= room();
   };
 
-  panels.forEach(p => { p.style.maxHeight = ""; p.classList.remove("scrolls"); });
   if (fitsAt(ZOOM_MAX)) return;
   // ⚠ BINARY SEARCH, NOT FIXED-POINT ITERATION. z <- z * (avail / need) OSCILLATES:
   // zooming out adds a powers-wall column, which drops a row, which makes the
@@ -5781,13 +5783,11 @@ function fitZoom() {
     if (mid <= lo || mid >= hi) break;
     if (fitsAt(mid)) lo = mid; else hi = mid;
   }
-  const ok = fitsAt(lo);
-  // The floor: a window too short to hold the tallest tab at readable type
-  // scrolls THAT PANEL — never the page, never the whole app.
-  if (!ok) {
-    const cap = (room() / lo) + "px";
-    panels.forEach(p => { p.style.maxHeight = cap; p.classList.add("scrolls"); });
-  }
+  fitsAt(lo);
+  // ⚠ NO PANEL CAP, NO NESTED SCROLLBAR. If the tallest tab still does not fit at
+  // 1.0, the window scrolls — one bar, at the edge, where a desktop app puts it.
+  // Capping the panel put a slide bar inside the app, which is the thing Joel
+  // pointed at ("some elements force every tab to have slide bars").
 }
 window.addEventListener("resize", scheduleFit);
 

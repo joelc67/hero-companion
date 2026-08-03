@@ -260,9 +260,11 @@ def main():
     check("...and that measuring never paints an intermediate state",
           "p.hidden = was;" in app_js,
           "all inside one synchronous task")
-    check("zoom is clamped at both ends",
-          "ZOOM_MIN = 0.70" in app_js and "ZOOM_MAX = 1.25" in app_js,
-          "0.70 is the 9.1px legibility floor; 1.25 fills a 4K panel")
+    # ⚠ NEVER SHRINK. Joel, 2026-08-03: "even on a high res monitor, the icons,
+    # fonts, and controls are tiny." Zooming out to force a fit is what made them
+    # tiny, so the floor is 1.0 and the ceiling grows the app on a big screen.
+    check("the fit only ever scales UP",
+          "ZOOM_MIN = 1.00" in app_js and "ZOOM_MAX = 1.60" in app_js)
     # ⚠ THE BUG THIS PINS. The obvious solve, z <- z * (avail / need) repeated,
     # OSCILLATES: zooming out adds a powers-wall column, which drops a row, which
     # makes the panel abruptly shorter, which asks to zoom back in. scrollHeight
@@ -272,10 +274,13 @@ def main():
           "if (fitsAt(mid)) lo = mid; else hi = mid;" in app_js
           and "Math.floor(z * (avail / need) * 100)" not in app_js,
           "matches the old EXPRESSION, not the comment explaining why it went")
-    check("a screen too short to fit scrolls the PANEL, never the page",
-          'p.classList.add("scrolls")' in app_js
-          and ".tabpanel.scrolls { overflow-y: auto; }" in css,
-          "below ~1440x900 the heavy tabs cannot fit at readable type")
+    # ⚠ NO NESTED SCROLLBARS. Joel: "some elements force every tab to have slide
+    # bars." A capped panel put a slide bar inside the app; a tab taller than the
+    # window scrolls at the WINDOW edge, where a desktop app puts it.
+    check("nothing inside a tab makes its own scrollbar",
+          ".tabpanel.scrolls { overflow-y: auto; }" not in css
+          and 'classList.add("scrolls")' not in app_js
+          and ".jny-card { max-height: 240px; overflow-y: auto; }" not in css)
 
     # ── 7. THE ENTRY WALL IS GONE; the menus carry it ──────────────────────
     check("nothing blocks the app at launch",
