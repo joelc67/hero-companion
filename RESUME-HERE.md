@@ -124,7 +124,15 @@ Fit is by **zoom**, solved once for the whole app from the tallest tab, floor
    remembered tab is Leveling Guide). Sticky offsets for tabbar/build-tile are
    ESTIMATES (40/78px) — fine while the page never scrolls; re-measure if an
    overlap shows at the zoom floor.
-   **Still open from the pass:** Build Assistant placement ruling (spec §10.2).
+   **Still open from the pass:** (a) **"targeted level" / exemplar-aware
+   planning** — BasiliskXVIII's ask, Joel's forum reply promised "going on the
+   list"; this IS the list entry (a power picked early is useless exemped down;
+   the planner is blind to it today). (b) **At release time the forum reply
+   needs two edits**: "right-click the tray icon → Quit" (the tray is gone —
+   window close quits) and "the update check only runs when you click it"
+   (it runs automatically on launch since 2026-08-02). Both statements are
+   still TRUE for the released 0.12.30, so they only go stale when this
+   update publishes.
 1. **The guided tour is stale and `audit_tour` is RED (57 of 58 targets)** —
    GATED behind item 0, do not prompt. It walks a mock of the OLD single-page
    layout. Joel ruled: *"all the tour slides will have to be redone completely.
