@@ -2555,3 +2555,13 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
 /* The decisions the GAME opens at 35 and 50, prompted where the player is. */
 .cat-gate { margin: var(--s2) 0 var(--s3); padding: var(--s2) var(--s3);
   background: var(--panel2); border: 1px solid var(--warn); border-radius: var(--r2); }
+
+/* The pool group's own rules, stated where the pools are — not only in a bar at
+   the top of the window that you have to know to go to. */
+.cat-poolnote { margin: 0 0 var(--s3); padding: var(--s2) var(--s3);
+  background: var(--panel2); border-left: 3px solid var(--border); border-radius: var(--r1); }
+/* Changing a pool happens ON the column it belongs to. */
+.cat-swap { max-width: 100%; font: inherit; font-weight: 600; color: var(--ink);
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--r1);
+  padding: 1px 2px; }
+.cat-col .cat-head { gap: var(--s1); }

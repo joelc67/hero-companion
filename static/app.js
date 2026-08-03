@@ -3098,6 +3098,14 @@ async function init() {
     const row = e.target.closest(".cat-row");
     if (row) showPowerDetail(row.dataset.ps, row.dataset.full);
   });
+  // The in-column pool picker writes through to the real .pool-sel, so the
+  // dedupe and the powers cascade stay in one implementation.
+  document.addEventListener("change", e => {
+    const sw = e.target.closest(".cat-swap");
+    if (!sw) return;
+    const real = document.querySelectorAll(".pool-sel")[+sw.dataset.pool];
+    if (real) { real.value = sw.value; real.dispatchEvent(new Event("change", { bubbles: true })); }
+  });
   document.addEventListener("click", e => {
     const row = e.target.closest(".cat-row");
     if (row && !row.classList.contains("taken") && !row.classList.contains("locked")) {
@@ -4264,13 +4272,31 @@ function catalogueHtml(sets) {
     : ps === build.epic ? ["Epic / Ancillary pool", "r-epi"]
     : (build.pools || []).includes(ps) ? ["Power pool", "r-pool"]
     : ["", ""];
+  // The pool columns are a GROUP with rules of their own — a cap of four, and
+  // nothing takeable until the game opens them. Neither was stated anywhere.
+  const poolSets = (build.pools || []).filter(Boolean);
+  const poolOpensAt = Math.min(...poolSets.flatMap(ps =>
+    (POWERS_CACHE[ps] || []).filter(p => p.slottable).map(p => p.level_available || 1)
+  ).concat([4]));
   const cols = sets.map(ps => {
     const powers = (POWERS_CACHE[ps] || []).filter(p => p.slottable);
     if (!powers.length) return "";
     const [roleLabel, roleCls] = roleOf(ps);
+    const poolIdx = (build.pools || []).indexOf(ps);
+    // ⚠ REMOTE CONTROL, not a second picker: this select mirrors the real
+    // .pool-sel in the build tile and writes through to it, so the dedupe and
+    // the cascade stay in one place.
+    const swap = poolIdx >= 0
+      ? `<select class="cat-swap" data-pool="${poolIdx}" title="Change this power pool">`
+        + ((POWERSETS_CACHE.pools || [])
+            .filter(o => o.full_name === ps || !(build.pools || []).includes(o.full_name))
+            .map(o => `<option value="${escHtml(o.full_name)}"${o.full_name === ps ? " selected" : ""}>`
+              + `${escHtml(o.display_name)}</option>`).join(""))
+        + `</select>`
+      : "";
     return `<div class="cat-col ${roleCls}">`
       + `<div class="cat-role">${escHtml(roleLabel)}</div>`
-      + `<div class="cat-head">${escHtml(powersetDisplayName(ps))}`
+      + `<div class="cat-head">${swap || escHtml(powersetDisplayName(ps))}`
       + `<span class="cat-count muted small">${perSet[ps] || 0}</span></div>`
       + powers.map(p => {
           const why = blocked(p, ps);
@@ -4307,7 +4333,14 @@ function catalogueHtml(sets) {
     : `<div class="cat-hint"><b>Pick ${taken.length + 1} of ${LADDER.length}</b>`
       + ` — level ${atLevel}. Only what the game offers at this level is available;`
       + ` 🔒 shows what it is waiting for.</div>`;
-  return `<div class="catalogue">${head}${gate}<div class="cat-cols">${cols}</div></div>`;
+  const poolNote = poolSets.length
+    ? `<div class="cat-poolnote muted small keep-whole">🎲 <b>Power pools</b> — you may take up to`
+      + ` <b>four</b>, and you have ${poolSets.length}. They open at level ${poolOpensAt}`
+      + `${atLevel < poolOpensAt ? " — not yet" : ""}.`
+      + ` Change one with the dropdown on its column; the powers follow.</div>`
+    : "";
+  return `<div class="catalogue">${head}${gate}${poolNote}`
+    + `<div class="cat-cols">${cols}</div></div>`;
 }
 
 // Detail for ANY power, taken or not — the thing the ⓘ card could never do,
@@ -5717,6 +5750,12 @@ function collapseLongExplanations(root) {
   const scope = root || document;
   scope.querySelectorAll("p.muted.small, .o-note, .muted.small").forEach(el => {
     if (el.closest("details") || el.closest("#tour-mock")) return;
+    // ⚠ ESCAPE HATCH. Some muted text is not prose — it states a RULE the player
+    // has to see (how many power pools they may take, when they unlock). Folding
+    // that behind "more" hides the answer to the question it exists to answer.
+    // Marked .keep-whole and left alone. Found 2026-08-03: this helper ate the
+    // pool note's "they open at level 4" the moment it was written.
+    if (el.classList.contains("keep-whole")) return;
     if (el.querySelector(":scope > details.explain")) return;   // already folded
     // Leave anything the user can operate alone - collapsing a control is a bug.
     if (el.querySelector("button, select, input, textarea, a")) return;
