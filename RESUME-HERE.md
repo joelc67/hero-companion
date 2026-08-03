@@ -131,7 +131,15 @@ Fit is by **zoom**, solved once for the whole app from the tallest tab, floor
    (ExempHigh/Low feed one string, zero math) — nothing to align with, clear
    room to be better. Layers: (1) "Played at level N" honest view, (2) advice
    card in numbers, (3) solver objective = MODEL BUMP + recert, gated on R3.
-   Game rules in §2 are TO-PIN (wiki-verify) before any code trusts them. (b) **At release time the forum reply
+   Game rules in §2 are TO-PIN (wiki-verify) before any code trusts them.
+   (b) **NEXT AFTER EXEMPLAR (Joel's order, 2026-08-03): the Stats page
+   provenance redesign** — spec captured verbatim in
+   `C:\Users\joelc\code\stats-provenance-paper.md`: mini powers+slots wall
+   floating above (never scrolls off), stats on the left, click a stat →
+   contributing IOs ring GREEN in the mini wall + a detailed per-power/per-IO
+   breakdown on the right, which is EDITABLE (manual stat steering). Engine
+   attribution bones already exist; the work is a per-stat contribution map
+   on /build/calculate + the two new views. (b) **At release time the forum reply
    needs two edits**: "right-click the tray icon → Quit" (the tray is gone —
    window close quits) and "the update check only runs when you click it"
    (it runs automatically on launch since 2026-08-02). Both statements are
