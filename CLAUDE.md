@@ -247,6 +247,22 @@ them from a parse without the same standard of proof.
   villain display `Iron{Hero.gender=male man|woman}`. A substring search for
   'iron man' returns ZERO and I wrongly reported 'no such badge exists in
   2,396 records' on the strength of it.
+- **❓ OPEN (2026-08-03): can you take a FIFTH power pool, at the cost of the
+  Epic?** Joel's field report: he once picked a fifth pool in game and his
+  Epic choice disappeared — a GM was involved. That contradicts our shipped
+  rule (`pool_rules` max 4, epic separate) — but the corpus is WEAK evidence
+  here: 2,255 optimized builds would never trade an Epic for a fifth pool
+  even if legal, so "zero found" proves nothing. Client corroboration found
+  2026-08-03: `NoEpicPoolTooltip: "Ancillary/Patron Powers Disabled"` — a
+  disabled-epic UI state EXISTS; the cap numbers themselves are server-side
+  templates (`ResetInstructions52: {actualnum} instead of {supposednum}`), so
+  bins cannot settle it. **Joel's in-game check settles it** (respec or 35+
+  character: try a power from a fifth pool; watch whether Ancillary greys).
+  If TRUE: pool_rules becomes a shared 5-cap tradeoff (5 pools XOR 4+epic),
+  UI gains a fifth pool slot that greys the Epic with the reason (and vice
+  versa), and the import validator must ACCEPT 5-pool/no-epic builds — the
+  travel-power lesson: over-strict = refusing legal builds. ⚠ Do NOT touch
+  `_picks_legal` / the solver gate before the check — harden-before-certify.
 - **❓ OPEN (since 2026-07-16, re-confirmed 07-31): does the Adamant / Iron Man
   badge actually GRANT its accolade power (+10% Max HP, +10 Max End) on
   Homecoming?** The BADGE is real and game-corroborated (clientmessages-en.bin;
