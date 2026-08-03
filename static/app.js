@@ -3686,10 +3686,10 @@ async function onArchetypeChange(e) {
       "secondary carry more powers (and inherent travel) to make up for it.";
   }
   document.querySelectorAll(".pool-sel").forEach(s => {
-    fillPowersetSelect(s, POWERSETS_CACHE.pools, "— pool —");
     s.disabled = false;
     s.onchange = () => onPoolChange();
   });
+  refreshPoolOptions();
   [$("sel-primary"), $("sel-secondary"), $("sel-epic")].forEach(s => s.disabled = false);
   renderPowers();
   recompute();
@@ -3722,6 +3722,21 @@ async function addPowersetPowers(sel, slot) {
   recompute();
 }
 
+// Each pool select offers every pool EXCEPT the ones its siblings already hold.
+// Re-run after any change: freeing a pool has to put it back on offer, so this
+// rebuilds all four rather than only removing.
+function refreshPoolOptions() {
+  const sels = [...document.querySelectorAll(".pool-sel")];
+  const taken = sels.map(s => s.value).filter(Boolean);
+  for (const s of sels) {
+    const mine = s.value;
+    const list = (POWERSETS_CACHE.pools || [])
+      .filter(ps => ps.full_name === mine || !taken.includes(ps.full_name));
+    fillPowersetSelect(s, list, "— pool —");
+    s.value = mine;
+  }
+}
+
 async function onPoolChange() {
   recordEdit();
   const sels = [...document.querySelectorAll(".pool-sel")];
@@ -3733,6 +3748,7 @@ async function onPoolChange() {
       await loadPowers(s.value);
     }
   }
+  refreshPoolOptions();      // a pool just taken (or freed) changes the others
   renderPowers();
   recompute();
 }
@@ -4113,27 +4129,54 @@ function updateAssistantMode() {
 const LADDER = [1, 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28,
                 30, 32, 35, 38, 41, 44, 47, 49];
 
-// EMPTY STATE. Mids shows every level slot before you have chosen anything, and
-// that is why its opening screen reads as a tool rather than a blank frame. Ours
-// showed one sentence. These are the same 24 slots the wall will fill, in the
-// same grid, so picking an archetype fills the shape already on screen instead
-// of replacing emptiness with something unrelated.
-function emptyLadderHtml() {
-  return `<p class="pw-empty-hint muted">Choose an <b>archetype</b> and your two powersets above.`
+// THE OPENING SURFACE. ⚠ Joel, 2026-08-03: "burying the main menu in a drop down
+// while leaving the surface worthless is not a design. It's a flawed concept."
+// He is right. A first screen whose only affordance is hidden behind a menu is
+// not a starting point, and the level ladder alone — pretty as it was — gave a
+// beginner nothing to DO.
+//
+// So the ways in live HERE, on the surface, as the content of the empty state.
+// The Character menu still holds them (it is the permanent route, reachable once
+// a build exists) but it is no longer the ONLY place they are. Nothing blocks:
+// this is what the panel contains when there is nothing to show yet, and the
+// build replaces it the moment there is.
+function startHereHtml() {
+  const card = (fn, ico, title, body, go) =>
+    `<button class="entry-card" onclick="${fn}">`
+    + `<div class="entry-ico">${ico}</div><h3>${title}</h3><p>${body}</p>`
+    + `<span class="entry-go">${go}</span></button>`;
+  return `<div class="start-here">`
+    + `<h3 class="start-h">Start a character</h3>`
+    + `<div class="entry-cards">`
+    + card("showEntry('saves')", "⏯️", "Continue where you left off",
+           "Pick up a character you have already saved — your plan and your progress.",
+           "See my characters →")
+    + card("startFromScratch()", "✨", "Start a new character",
+           "Not sure what to roll? Say how you want to play and I will choose the archetype, the powers and the slotting, then walk you from level 1 to 50.",
+           "Help me choose →")
+    + card("startNew50()", "♻️", "Build a new level 50",
+           "Know your archetype and powersets? Get a finished end-game build: picks, slotting, caps, epic pool and incarnates.",
+           "Build a 50 →")
+    + card("$('import-file').click()", "📋", "Import a build",
+           "Load a Mids Reborn .mbd or an in-game /build_save_file export, get it critiqued, then optimised.",
+           "Choose a file →")
+    + `</div>`
+    + `<h3 class="start-h">…or fill in the build yourself</h3>`
+    + `<p class="muted">Pick an <b>archetype</b> and your two powersets in the bar above.`
     + ` These are the 24 powers the game lets you pick, and the level each unlocks.</p>`
     + `<div class="powers-wall skeleton">`
     + LADDER.map((lv, i) => `<div class="power-card empty" aria-hidden="true">`
         + `<div class="pc-head"><span class="lv-badge">L${lv}</span></div>`
         + `<div class="pc-sub muted">${i < 2 ? "starting power" : "power"}</div>`
         + `<div class="slot-row"><span class="ghost-slot"></span></div></div>`).join("")
-    + `</div>`;
+    + `</div></div>`;
 }
 
 function renderPowers() {
   applyIdentityLock();          // keep archetype/powerset lock in sync (onArchetypeChange re-enables them)
   const host = $("powers-list");
   const sets = chosenPowersets();
-  if (!sets.length) { host.innerHTML = emptyLadderHtml(); return; }
+  if (!sets.length) { host.innerHTML = startHereHtml(); return; }
 
   // Power ICON lookup (records carry it since the /powers endpoint attaches one).
   const iconOf = (fullName) => {
