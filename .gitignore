@@ -49,3 +49,6 @@ tools/gamedata/_coh_content_db.json
 
 # graphify derived output (rebuild with: graphify update .)
 graphify-out/
+
+# Derived at build time by HeroCompanion.spec (which commit this exe came from)
+build_commit.txt

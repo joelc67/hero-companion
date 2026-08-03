@@ -189,19 +189,29 @@ except OSError:
     APP_VERSION = "0.0.0"
 # Build stamp: which source commit is this process actually running? Answerable by
 # eye in the header chip, so "did my change reach that tab" never needs a guess
-# again (2026-07-23, the Journey-greeting harness-vs-reality gap). Empty in frozen
-# builds — no repo, no git; the version number is the identity there.
+# again (2026-07-23, the Journey-greeting harness-vs-reality gap).
+#
+# ⚠ FROZEN BUILDS NOW CARRY IT TOO (2026-08-02). "The version number is the
+# identity there" was wrong the moment two frozen builds shared a version: on
+# 2026-08-02 an installed 0.12.30 and a freshly built 0.12.30 sat on the same
+# machine, and NEITHER Joel nor I could tell from the app which one was on screen
+# — he reported a bug against a build that did not have the fix, twice. There is
+# no git in a frozen build, so HeroCompanion.spec stamps build_commit.txt at
+# BUILD time and it ships as data.
 BUILD_COMMIT = ""
 try:
     if getattr(sys, "frozen", False):
-        raise RuntimeError("packaged build — no repo, and no console flash to risk")
-    import subprocess as _sp
-    # --exclude='*' suppresses tag descriptions so this is just the hash, plus
-    # "-dirty" when the working tree has uncommitted edits (the mid-session case).
-    BUILD_COMMIT = _sp.check_output(
-        ["git", "describe", "--always", "--dirty", "--exclude=*", "--abbrev=7"],
-        cwd=ROOT, stderr=_sp.DEVNULL, text=True, timeout=5).strip()
-except Exception:  # noqa: BLE001 — no git / not a checkout / frozen: stamp stays blank
+        # Stamped into the bundle by HeroCompanion.spec; ROOT is _MEIPASS here.
+        with open(os.path.join(ROOT, "build_commit.txt"), encoding="utf-8") as _bc:
+            BUILD_COMMIT = _bc.read().strip()
+    else:
+        import subprocess as _sp
+        # --exclude='*' suppresses tag descriptions so this is just the hash, plus
+        # "-dirty" when the working tree has uncommitted edits (the mid-session case).
+        BUILD_COMMIT = _sp.check_output(
+            ["git", "describe", "--always", "--dirty", "--exclude=*", "--abbrev=7"],
+            cwd=ROOT, stderr=_sp.DEVNULL, text=True, timeout=5).strip()
+except Exception:  # noqa: BLE001 — no git / no stamp / not a checkout: stays blank
     BUILD_COMMIT = ""
 try:
     with open(os.path.join(ROOT, "client_config.json"), encoding="utf-8") as _cf:

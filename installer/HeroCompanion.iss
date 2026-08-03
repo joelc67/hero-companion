@@ -28,17 +28,19 @@ Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
 LicenseFile=..\LICENSE
-; The app runs WINDOWLESS in the tray, so users upgrading won't know it's running —
-; close it for them (force: a tray app has no window to ask politely).
+; Close a running copy for the user rather than asking. Force stays right even now
+; that the app HAS a window (2026-08-02, tray removed): the self-update path runs
+; this installer silently, where a prompt would hang forever with nobody to answer
+; it. The polite request happens earlier and elsewhere — run_app._kill_other_copies
+; asks the live copy to quit via POST /app/shutdown before any force-kill.
 CloseApplications=force
 RestartApplications=no
 ; Reinstalling over an existing folder is normal (upgrades, repairs) — don't interrogate.
 DirExistsWarning=no
 
 [Code]
-// A tray app is invisible; users can't be expected to quit it first. End it outright
-// before installing over it or uninstalling it (nothing is lost — saves are server-side
-// in %APPDATA% and write on change).
+// End any running copy before installing over it or uninstalling it. Nothing is
+// lost: saves live in %APPDATA%\HeroCompanion and are written on change, not on exit.
 procedure TaskKillApp();
 var
   R: Integer;
@@ -81,9 +83,10 @@ Filename: "{app}\HeroCompanion.exe"; Description: "Launch {#AppName} now"; Flags
 Filename: "{app}\HeroCompanion.exe"; Parameters: "--after-update"; Flags: nowait; Check: WantRelaunch
 
 [UninstallRun]
-; The app writes an HKCU Run value only if the user opts into auto-start at first
-; run. Remove it on uninstall regardless (choice doctrine: a remembered "yes"
-; leaves nothing behind once the app is gone). Same pattern as Companion Lite.
+; The app writes an HKCU Run value only if the user turns on "start when I sign in"
+; (About & Settings — it used to be the tray menu). Remove it on uninstall regardless
+; (choice doctrine: a remembered "yes" leaves nothing behind once the app is gone).
+; Same pattern as Companion Lite.
 Filename: "{sys}\reg.exe"; Parameters: "delete ""HKCU\Software\Microsoft\Windows\CurrentVersion\Run"" /v HeroCompanion /f"; Flags: runhidden; RunOnceId: "DelHCAutostart"
 
 [UninstallDelete]

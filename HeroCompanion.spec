@@ -3,7 +3,25 @@
 # and faster to start than onefile). Build:  python -m PyInstaller HeroCompanion.spec
 from PyInstaller.utils.hooks import collect_data_files
 
+# ⚠ BUILD STAMP. A frozen build has no git, so the commit is written HERE, at build
+# time, and shipped as data (server.py reads it when frozen). Added 2026-08-02 after
+# an installed 0.12.30 and a freshly built 0.12.30 sat on one machine and neither of
+# us could tell which was on screen — a bug got reported twice against a build that
+# did not contain the fix. The About dialog already promises to name "this build";
+# now it can, packaged or not. build_commit.txt is derived and gitignored.
+import subprocess as _sp
+try:
+    _commit = _sp.check_output(["git", "describe", "--always", "--dirty",
+                                "--exclude=*", "--abbrev=7"],
+                               stderr=_sp.DEVNULL, text=True, timeout=5).strip()
+except Exception:
+    _commit = ""
+with open("build_commit.txt", "w", encoding="utf-8") as _f:
+    _f.write(_commit)
+print(f"[spec] build stamp: {_commit or '(no git)'}")
+
 datas = [
+    ("build_commit.txt", "."),             # which commit this exe was built from
     ("data", "data"),                      # parsed game database snapshot
     ("static", "static"),                  # UI + help PDF
     ("assets/HeroCompanion-icon-512.png", "assets"),   # tray icon image

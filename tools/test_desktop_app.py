@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 40          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 41          # coverage denominator — hard-fail if a check silently skips
 
 
 def check(name, ok, detail=""):
@@ -93,6 +93,15 @@ def main():
           "a PNG kills the app on a .NET thread that this code cannot catch")
     check("...and that .ico actually ships in the frozen build",
           '("assets/HeroCompanion.ico", "assets")' in read("HeroCompanion.spec"))
+    # ⚠ Two frozen builds sharing a version number are indistinguishable in the UI,
+    # which is how a bug got reported twice against a build without the fix. Both
+    # ends of the stamp must be wired or the About dialog quietly says nothing.
+    _spec, _srv = read("HeroCompanion.spec"), read("server", "server.py")
+    check("a frozen build can say WHICH commit it is",
+          'open("build_commit.txt", "w"' in _spec
+          and '("build_commit.txt", ".")' in _spec
+          and 'ROOT, "build_commit.txt"' in _srv,
+          "spec stamps it at build time, server.py reads it when frozen")
 
     # The fallback is the whole reason the flag is safe: no pywebview / no
     # WebView2 must return False, not take the app down.
