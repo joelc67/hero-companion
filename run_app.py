@@ -224,7 +224,13 @@ def _run_window(port):
         icon = os.path.join(BASE, "assets", "HeroCompanion.ico")
         webview.create_window(
             "Hero Companion", f"http://127.0.0.1:{port}",
-            width=1440, height=920, min_size=(1000, 640),
+            # Mids Reborn opens at roughly 1075x800 and that is the size this
+            # tool is judged against (Joel, 2026-08-03: "a dedicated size similar
+            # to the size that mids reborn has by default"). A little taller,
+            # because five tabs of content need the vertical room Mids spends on
+            # a single dense screen. min_size is small enough to still resize
+            # onto a laptop; the layout scales to whatever it is given.
+            width=1600, height=1000, min_size=(900, 600),
             text_select=False, zoomable=False,
             background_color="#11151c")   # style.css --bg: no white browser flash on open
         # ⚠⚠ private_mode DEFAULTS TO TRUE, which throws localStorage away on every

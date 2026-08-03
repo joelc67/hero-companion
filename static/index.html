@@ -42,19 +42,6 @@
     </div>
   </div>
 
-  <!-- THE LEVELING JOURNEY: its own full-width overlay — a horizontal road wants
-       the whole screen, not the 720px wizard box. Reachable from the wizard's
-       result AND the header (🗺️) once a build has powers. -->
-  <div id="journey-modal" class="modal hidden">
-    <div class="entry-box journey-box">
-      <div class="wizard-head">
-        <h2>🗺️ The Leveling Journey</h2>
-        <button id="journey-close" class="linkchip">✕ Close</button>
-      </div>
-      <div id="journey-body"></div>
-    </div>
-  </div>
-
   <!-- RESPEC WIZARD: short guided flow so a level-50 respec isn't dropped on the dense builder cold -->
   <div id="respec-wizard" class="modal hidden">
     <div class="entry-box wizard-box">
@@ -512,7 +499,16 @@
     </section>
     <section id="tab-leveling" class="tabpanel" role="tabpanel"
       aria-labelledby="tab-btn-leveling" hidden>
-      <section class="panel" id="leveling-panel"></section>
+      <section class="panel" id="leveling-panel">
+        <h2>🗺️ The Leveling Journey</h2>
+        <!-- The road WAS a full-screen overlay. It is a tab now (2026-08-03), so
+             it stops being something you open and close and starts being one of
+             the five places the app has. #journey-body keeps its id: every
+             renderer writes into it by that name. -->
+        <div id="journey-body"><p class="muted">Load or start a character and your
+          road from level 1 to 50 appears here: what unlocks when, where to go, and
+          what to pick at each step.</p></div>
+      </section>
     </section>
     <section id="tab-logging" class="tabpanel" role="tabpanel"
       aria-labelledby="tab-btn-logging" hidden>

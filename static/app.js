@@ -1450,8 +1450,8 @@ async function openJourneyView(auto = false) {
   // button, the header 🗺️, or a resumed character. `auto` marks a first-
   // meeting self-open (maybeAutoOpenJourney) — only THAT close is a decision.
   _journeyAutoOpened = auto;
-  const modal = $("journey-modal"), out = $("journey-body");
-  modal.classList.remove("hidden");
+  const out = $("journey-body");
+  activateTab("leveling");        // the road is a tab now, not an overlay
   const jb = $("journey-btn");
   if (jb) jb.classList.add("journey-open");   // the pill reads as "on" while the road is out
   out.innerHTML = "<p class='muted small'>Rolling out the road…</p>";
@@ -1535,8 +1535,9 @@ function _journeyIntroHtml() {
     slots to place, milestones and badges along the way. Click any card to see
     what that level buys you. The ★ marker is you — it moves when you update your
     level in the plan.
-    <div class="muted small" style="margin-top:6px">Close it any time (✕ or Esc) and bring it
-    back with the <b>🗺️ Journey</b> button in the header — it's a simple on/off switch.</div>
+    <div class="muted small" style="margin-top:6px">It lives on this
+    <b>Leveling Guide</b> tab — leave it and come back whenever you like; the
+    <b>🗺️ Journey</b> button in the header jumps straight here.</div>
     <div style="margin-top:8px">💡 <b>Worth doing now:</b> turn on the game's chat log.
     Hero Companion reads it (only on your machine, only with your say-so) and your
     Play Log fills with what you actually earned — influence, drops with keep/sell
@@ -1551,7 +1552,10 @@ function _journeyIntroHtml() {
 // clicking the dark backdrop), the pill pulses for a moment so the user
 // learns where the road lives before they ever need to find it again.
 function closeJourneyView(teach = true) {
-  $("journey-modal").classList.add("hidden");
+  // "Closing" the road now means leaving its tab. Nothing is destroyed — the
+  // panel stays mounted so the next visit is instant and every renderer that
+  // writes into #journey-body keeps working from any tab.
+  if (!$("tab-leveling").hidden) activateTab("powers");
   const jb = $("journey-btn");
   if (jb) jb.classList.remove("journey-open");
   if (teach) teachJourneyPill();
@@ -1564,7 +1568,7 @@ function closeJourneyView(teach = true) {
 }
 
 function toggleJourneyView() {
-  if ($("journey-modal").classList.contains("hidden")) openJourneyView();
+  if ($("tab-leveling").hidden) openJourneyView();
   else closeJourneyView(false);           // they used the pill — no lesson needed
 }
 
@@ -3092,13 +3096,8 @@ async function init() {
     $("saves-panel").classList.add("hidden"); $("entry-cards").classList.remove("hidden"); });
   $("save-btn").addEventListener("click", saveProgress);
   $("journey-btn").addEventListener("click", toggleJourneyView);
-  $("journey-close").addEventListener("click", () => closeJourneyView());
   // standard overlay affordances: Esc closes, so does clicking the dark backdrop
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !$("journey-modal").classList.contains("hidden")) closeJourneyView();
-  });
-  $("journey-modal").addEventListener("click", (e) => {
-    if (e.target === $("journey-modal")) closeJourneyView();
   });
   if ($("tour-btn")) $("tour-btn").addEventListener("click",
     () => { if (typeof openTourMenu === "function") openTourMenu(); });
@@ -3197,6 +3196,10 @@ async function init() {
   renderIncarnates();
 
   renderSuggested();
+  // ⚠ Paint the empty level ladder BEFORE anything is chosen. renderPowers used
+  // to run only once a build existed, so a fresh launch showed an empty frame —
+  // which is exactly what it looked like.
+  renderPowers();
   recompute();
   initGamelog();               // the Play Log course at the bottom (fire-and-forget)
 }
@@ -4105,11 +4108,32 @@ function updateAssistantMode() {
   updateGenBtnLabel();   // the Generate button's replace-warning tracks the mode
 }
 
+// The game's 24 pick levels. ONE copy: the empty ladder and the real wall both
+// read it, so a skeleton slot can never disagree with the card that replaces it.
+const LADDER = [1, 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28,
+                30, 32, 35, 38, 41, 44, 47, 49];
+
+// EMPTY STATE. Mids shows every level slot before you have chosen anything, and
+// that is why its opening screen reads as a tool rather than a blank frame. Ours
+// showed one sentence. These are the same 24 slots the wall will fill, in the
+// same grid, so picking an archetype fills the shape already on screen instead
+// of replacing emptiness with something unrelated.
+function emptyLadderHtml() {
+  return `<p class="pw-empty-hint muted">Choose an <b>archetype</b> and your two powersets above.`
+    + ` These are the 24 powers the game lets you pick, and the level each unlocks.</p>`
+    + `<div class="powers-wall skeleton">`
+    + LADDER.map((lv, i) => `<div class="power-card empty" aria-hidden="true">`
+        + `<div class="pc-head"><span class="lv-badge">L${lv}</span></div>`
+        + `<div class="pc-sub muted">${i < 2 ? "starting power" : "power"}</div>`
+        + `<div class="slot-row"><span class="ghost-slot"></span></div></div>`).join("")
+    + `</div>`;
+}
+
 function renderPowers() {
   applyIdentityLock();          // keep archetype/powerset lock in sync (onArchetypeChange re-enables them)
   const host = $("powers-list");
   const sets = chosenPowersets();
-  if (!sets.length) { host.innerHTML = `<p class="muted small">Select powersets to add powers.</p>`; return; }
+  if (!sets.length) { host.innerHTML = emptyLadderHtml(); return; }
 
   // Power ICON lookup (records carry it since the /powers endpoint attaches one).
   const iconOf = (fullName) => {
@@ -4124,8 +4148,6 @@ function renderPowers() {
   // (the L-badge carries the level), with the three info bricks as double-height
   // blocks in the same flow. Snug by construction — no columns, no pockets.
   // Generated builds carry no pick_level — derive one from the real pick ladder.
-  const LADDER = [1, 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28,
-                  30, 32, 35, 38, 41, 44, 47, 49];
   let ladderI = 0;
   const cards = build.powers.map((pw, idx) => {
     // Inherents are auto-granted: no pick level, no ladder slot — they sort last
@@ -5636,6 +5658,7 @@ function initMenus() {
 // (an epic pick on End Game, an accolade) has to reach the others. Unmounting
 // would turn every one of those writes into a silent no-op.
 const _TABS = ["powers", "stats", "endgame", "leveling", "logging"];
+let _openingJourney = false;
 
 function activateTab(key, moveFocus) {
   if (!_TABS.includes(key)) key = _TABS[0];
@@ -5649,6 +5672,15 @@ function activateTab(key, moveFocus) {
     if (on && moveFocus) btn.focus();
   }
   try { localStorage.setItem("cohTab", key); } catch (e) {}
+  // ⚠ The road is built from THIS character, so opening its tab has to build it.
+  // Clicking the tab directly used to show an empty panel, because only the
+  // header pill ever called openJourneyView. The guard stops the recursion:
+  // openJourneyView activates this same tab.
+  if (key === "leveling" && !_openingJourney
+      && typeof build !== "undefined" && (build.powers || []).length) {
+    _openingJourney = true;
+    try { openJourneyView(); } finally { _openingJourney = false; }
+  }
   // A panel that was hidden had zero geometry, so its fit is unsolved until now.
   scheduleFit();
 }
@@ -5705,49 +5737,56 @@ function scheduleFit() {
 }
 
 function fitZoom() {
-  const panel = document.querySelector(".tabpanel:not([hidden])");
   const shell = document.getElementById("tabpanels");
-  if (!panel || !shell) return;
+  const panels = [...document.querySelectorAll(".tabpanel")];
+  if (!shell || !panels.length) return;
 
-  // Does the active panel fit at this zoom? Set it, force layout, measure.
-  // MEASURED SEMANTICS (probed 2026-08-03, none of it guessed):
-  //   innerHeight            device px, does NOT move with zoom
-  //   getBoundingClientRect  device px, DOES scale with zoom
-  //   scrollHeight           CSS px, and it SHRINKS as you zoom out, because a
-  //                          zoomed-out layout is wider in CSS px so the powers
-  //                          wall gains columns and loses rows.
+  // ⚠ ONE ZOOM FOR THE WHOLE APP, taken from the TALLEST tab — not per tab.
+  // Solving each tab separately looked right in the numbers and awful in use:
+  // Powers landed at 0.85 and the near-empty Leveling Guide at 1.25, so every
+  // tab click resized the masthead, the build tile and the type. A tab strip is
+  // one surface; it has to hold still. Measuring a hidden panel returns zero
+  // (spec 5.3), so each is briefly un-hidden to be measured — all inside one
+  // synchronous task, so the browser never paints an intermediate state.
+  const tallest = () => {
+    let max = 0;
+    for (const p of panels) {
+      const was = p.hidden;
+      p.hidden = false;
+      max = Math.max(max, p.scrollHeight);
+      p.hidden = was;
+    }
+    return max;
+  };
+  const room = () => window.innerHeight - shell.getBoundingClientRect().top;
+  // MEASURED SEMANTICS: innerHeight is device px and ignores zoom; rects are
+  // device px and scale; scrollHeight is CSS px and SHRINKS as you zoom out,
+  // because a wider effective viewport reflows content into fewer rows.
   const fitsAt = z => {
     document.body.style.zoom = z === 1 ? "" : String(z);
-    panel.getBoundingClientRect();                       // force reflow
-    return panel.scrollHeight * z <= window.innerHeight - shell.getBoundingClientRect().top;
+    shell.getBoundingClientRect();                    // force reflow
+    return tallest() * z <= room();
   };
 
-  // ⚠ BINARY SEARCH, NOT FIXED-POINT ITERATION. The obvious solve —
-  // z <- z * (avail / need), repeated — OSCILLATES and was measured doing it:
-  // zooming out adds a wall column, which drops a row, which makes the panel
-  // suddenly much shorter, which asks to zoom back in, which removes the column
-  // again. scrollHeight is a STEP function of zoom, so there is no smooth fixed
-  // point to converge on. It settled at 1.04 while overflowing by 495px.
-  // A search over the range is immune to the steps and always lands on a zoom
-  // that actually fits, or on the floor.
-  const room = () => window.innerHeight - shell.getBoundingClientRect().top;
-  panel.style.maxHeight = "";
-  panel.classList.remove("scrolls");
+  panels.forEach(p => { p.style.maxHeight = ""; p.classList.remove("scrolls"); });
   if (fitsAt(ZOOM_MAX)) return;
+  // ⚠ BINARY SEARCH, NOT FIXED-POINT ITERATION. z <- z * (avail / need) OSCILLATES:
+  // zooming out adds a powers-wall column, which drops a row, which makes the
+  // panel abruptly shorter, which asks to zoom back in. scrollHeight is a STEP
+  // function of zoom, so there is no smooth fixed point to converge on. Measured
+  // it settling at 1.04 while overflowing by 495px.
   let lo = ZOOM_MIN, hi = ZOOM_MAX;
   for (let i = 0; i < 6; i++) {
     const mid = Math.round(((lo + hi) / 2) * 100) / 100;
     if (mid <= lo || mid >= hi) break;
     if (fitsAt(mid)) lo = mid; else hi = mid;
   }
-  const ok = fitsAt(lo);   // largest zoom that fits — or the floor, if none do
-  // ⚠ THE FLOOR. Below roughly 1440x900 the two heavy tabs cannot fit even at
-  // ZOOM_MIN, and shrinking past 9px text trades a scrollbar for something
-  // nobody can read. So the PANEL scrolls — never the page, and never the whole
-  // app. Measured at 1366x768: Powers needs 802 device px into 572.
+  const ok = fitsAt(lo);
+  // The floor: a window too short to hold the tallest tab at readable type
+  // scrolls THAT PANEL — never the page, never the whole app.
   if (!ok) {
-    panel.style.maxHeight = (room() / lo) + "px";   // CSS px: the panel is zoomed
-    panel.classList.add("scrolls");
+    const cap = (room() / lo) + "px";
+    panels.forEach(p => { p.style.maxHeight = cap; p.classList.add("scrolls"); });
   }
 }
 window.addEventListener("resize", scheduleFit);

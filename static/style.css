@@ -127,16 +127,25 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
    owns the remaining height. The page itself never scrolls — see fitZoom() in
    app.js, and tabbed-layout-spec.md for why scale beats rearrangement. */
 .build-tile {
-  display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--s4);
-  padding: var(--s3) var(--s4);
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3) var(--s4);
+  padding: var(--s2) var(--s4);
   background: var(--panel); border-bottom: 1px solid var(--border);
 }
-.build-tile label { display: flex; flex-direction: column; gap: var(--s1); }
-.build-tile select { min-width: 150px; }
-/* Pools sit inline with the selects rather than under a disclosure: on one row
-   they are as glanceable as the archetype, which is the point of the tile. */
-.build-tile details { flex: 1 1 320px; min-width: 260px; }
-.build-tile details > summary { cursor: pointer; color: var(--muted); }
+.build-tile label {
+  display: flex; align-items: center; gap: var(--s2);
+  color: var(--muted); white-space: nowrap;
+}
+.build-tile select { min-width: 120px; max-width: 190px; }
+/* ⚠ Pools are FOUR COMPACT SELECTS ON THE ROW, not a stack of full-width ones.
+   As a <details> filling the remaining width it produced four stacked bars and
+   a large void beside the archetype — the "empty frame" reading. */
+.build-tile details { display: contents; }
+.build-tile details > summary { display: none; }
+#pool-selectors { display: flex; flex-wrap: nowrap; gap: var(--s2); align-items: center; }
+#pool-selectors select { min-width: 92px; max-width: 118px; }
+#pool-selectors::before {
+  content: "Pools"; color: var(--muted); margin-right: var(--s1);
+}
 .build-tile .identity-lock { flex: 1 1 100%; }
 
 .tabbar {
@@ -174,8 +183,11 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
    max(wall, side) instead of their sum, which is what got this tab to fit. */
 .powers-layout {
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
-  gap: var(--s3); align-items: start;
+  gap: var(--s3); align-items: stretch;
 }
+/* Both columns run to the same bottom edge. Unequal, the shorter one left a
+   void that read as "unfinished", which is what an empty frame IS. */
+.powers-main > .panel:first-child { flex: 1; }
 .powers-main, .powers-side { min-width: 0; display: flex; flex-direction: column; gap: var(--s3); }
 #power-info.hidden { display: none; }
 
@@ -2381,7 +2393,7 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
   border-radius: var(--r1);
 }
 .menu-top:hover, .menu-top[aria-expanded="true"] { background: var(--panel2); }
-.menu-top::after { content: " be"; color: var(--muted); }
+.menu-top::after { content: " ▾"; color: var(--muted); }
 .menu-top:focus-visible, .menu-drop [role=menuitem]:focus-visible {
   outline: 2px solid var(--accent); outline-offset: -2px;
 }
@@ -2404,3 +2416,30 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
 }
 .menu-sep { height: 1px; margin: var(--s2) var(--s3); background: var(--border); }
 .entry-box-narrow { max-width: 620px; }
+
+/* ── Empty-state ladder ──────────────────────────────────────────────────────
+   The same grid the real wall uses, so choosing an archetype fills a shape that
+   is already on screen instead of swapping a void for a layout. */
+.pw-empty-hint { margin: 0 0 var(--s3); }
+/* ⚠ The 152px band is PINNED for real cards by audit_card_strip_and_preselect —
+   it is what stops the set-summary strip being crushed. The skeleton gets its own
+   row height through a modifier instead of fighting that rule. */
+.powers-wall.skeleton { grid-auto-rows: 40px; }
+/* ⚠ A skeleton slot is a HINT, not a full card. Inheriting the real card's
+   height gave 24 boxes of mostly blank space that overflowed the tab — the
+   empty frame again, just with outlines drawn on it. */
+.power-card.empty {
+  border: 1px dashed var(--border); background: transparent; opacity: .5;
+  display: flex; flex-direction: row; align-items: center; gap: var(--s2);
+  min-height: 0; height: 40px; padding: 0 var(--s2);
+}
+.power-card.empty .pc-sub { margin: 0; font-size: 11.5px; }
+.power-card.empty .slot-row { margin-left: auto; }
+.power-card.empty .lv-badge {
+  display: inline-block; padding: 0 var(--s2); border-radius: var(--r1);
+  background: var(--panel2); color: var(--muted); font-weight: 600;
+}
+.power-card.empty .ghost-slot {
+  display: inline-block; width: 16px; height: 16px; border-radius: 50%;
+  border: 1px dashed var(--border);
+}

@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 53          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 54          # coverage denominator — hard-fail if a check silently skips
 
 
 def check(name, ok, detail=""):
@@ -250,10 +250,16 @@ def main():
           all(k in app_js for k in ("ArrowLeft", "ArrowRight", "Home", "End")))
     # ⚠ SPEC 5.3 — a hidden panel has zero geometry, so the fit reads the ACTIVE
     # one and re-solves on activation.
-    check("the fit measures the ACTIVE panel only",
-          ".tabpanel:not([hidden])" in app_js
-          and "scheduleFit();" in app_js[app_js.find("function activateTab"):
-                                         app_js.find("window.showTab")])
+    # ⚠ ONE ZOOM FOR THE APP, from the TALLEST tab. Solving per tab measured fine
+    # and used terribly: Powers landed at 0.85 and the near-empty Leveling Guide
+    # at 1.25, so every tab click resized the masthead and the type. A tab strip
+    # is one surface; it has to hold still.
+    check("the fit is solved once, from the tallest tab",
+          "const tallest = () =>" in app_js and "p.hidden = false;" in app_js,
+          "a hidden panel measures zero, so each is briefly un-hidden to be read")
+    check("...and that measuring never paints an intermediate state",
+          "p.hidden = was;" in app_js,
+          "all inside one synchronous task")
     check("zoom is clamped at both ends",
           "ZOOM_MIN = 0.70" in app_js and "ZOOM_MAX = 1.25" in app_js,
           "0.70 is the 9.1px legibility floor; 1.25 fills a 4K panel")
@@ -266,8 +272,8 @@ def main():
           "if (fitsAt(mid)) lo = mid; else hi = mid;" in app_js
           and "Math.floor(z * (avail / need) * 100)" not in app_js,
           "matches the old EXPRESSION, not the comment explaining why it went")
-    check("...and a screen too short to fit scrolls the PANEL, never the page",
-          'panel.classList.add("scrolls")' in app_js
+    check("a screen too short to fit scrolls the PANEL, never the page",
+          'p.classList.add("scrolls")' in app_js
           and ".tabpanel.scrolls { overflow-y: auto; }" in css,
           "below ~1440x900 the heavy tabs cannot fit at readable type")
 
