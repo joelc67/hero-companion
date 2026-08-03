@@ -221,6 +221,23 @@ def _run_window(port):
             _Api.dirty = bool(flag)
             return True
 
+        def pick_folder(self):
+            """Native folder browser for 'where is your game installed' —
+            typing a path is the fallback, not the front door (Joel,
+            2026-08-03). Same off-GUI-thread js_api seam as save_file."""
+            try:
+                import webview as _wv
+                w = _winref.get("w")
+                if w is None:
+                    return {"ok": False, "error": "window not ready"}
+                res = w.create_file_dialog(_wv.FOLDER_DIALOG)
+                if not res:
+                    return {"ok": False, "cancelled": True}
+                p = res[0] if isinstance(res, (list, tuple)) else res
+                return {"ok": True, "path": str(p)}
+            except Exception as e:  # noqa: BLE001 — surface it to the page, don't die
+                return {"ok": False, "error": str(e)}
+
         def save_file(self, filename, text):
             """Real Save As for exports. ALLOW_DOWNLOADS stays False (the
             download flyout is a browser tell), so the page routes every

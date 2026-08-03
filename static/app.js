@@ -133,6 +133,10 @@ function showEntry(section) {
     ? "Import a character you play" : "Continue a saved character";
   $("saves-panel").classList.toggle("hidden", which !== "saves");
   $("ingame-panel").classList.toggle("hidden", which !== "ingame");
+  // the folder browser exists only in the desktop window (pywebview injects
+  // its api after load, so decide each open, not once at startup)
+  const bg = $("ingame-browse-go");
+  if (bg) bg.hidden = !canBrowseFolders();
   resetTrayPanels();          // restart → don't show the prior build's trays/order
   if (which === "saves") { refreshContinueCard(); openSavesList(); }
 }
@@ -3170,6 +3174,7 @@ async function init() {
   // a cancelled/failed OS dialog must never strand the user on the bare planner
   // in-game card: scan-first (the app finds the saves), file picker as fallback
   $("ingame-scan-go").addEventListener("click", () => ingameScan());
+  if ($("ingame-browse-go")) $("ingame-browse-go").addEventListener("click", browseGameFolder);
   $("ingame-pick-go").addEventListener("click", () => $("import-file").click());
   $("entry-scratch").addEventListener("click", () => { hideEntry(); startFromScratch(); });
   $("entry-respec").addEventListener("click", () => { hideEntry(); startNew50(); });
@@ -5105,7 +5110,9 @@ async function renderPowerInfo() {
     setHtml = `<div class="muted small">Sets in this power</div>` + sets.map(st => {
       const nextT = st.tiers.find(t => !t.attained);
       const hint = nextT ? ` — next: ${nextT.values[0] || nextT.bonus_short || nextT.bonus_title}` : " — complete";
-      return `<details class="pi-set-row">
+      // open by default (Joel, 2026-08-03): the details ARE the card's point —
+      // arriving collapsed made the IO roster look missing
+      return `<details class="pi-set-row" open>
         <summary>${escHtml(st.display)} <span class="muted small">${st.slotted_here}/${st.roster.length}${escHtml(hint)}</span></summary>
         ${enhSetSectionHtml(st)}</details>`;
     }).join("");
@@ -7349,6 +7356,23 @@ function _ageOf(epoch) {
   return `${Math.round(s / 86400)} d ago`;
 }
 
+// The desktop window gets a REAL folder browser (Joel, 2026-08-03: navigate
+// and double-click, don't type paths). Browser tabs can't return a folder
+// path, so the affordance only shows where it can work.
+function canBrowseFolders() {
+  return !!(window.pywebview && window.pywebview.api && window.pywebview.api.pick_folder);
+}
+async function browseGameFolder() {
+  try {
+    const r = await window.pywebview.api.pick_folder();
+    if (r && r.ok && r.path) {
+      const inp = $("ingame-root");
+      if (inp) inp.value = r.path;
+      ingameScan(r.path);
+    }
+  } catch (e) { /* dialog unavailable — the typed-path row still works */ }
+}
+
 async function ingameScan(root) {
   const box = $("ingame-found");
   box.classList.remove("hidden");
@@ -7377,8 +7401,10 @@ function renderIngameFound(r, root) {
        (e.g. <code>C:\\Games\\Homecoming</code>):</p>`;
     box.innerHTML = explain
       + `<div class="ingame-root-row"><input id="ingame-root" placeholder="C:\\Games\\Homecoming">`
+      + (canBrowseFolders() ? `<button class="linkbtn" id="ingame-browse-row">📂 Browse…</button>` : "")
       + `<button class="linkbtn" id="ingame-root-go">Search there</button></div>`;
     if (root) $("ingame-root").value = root;   // keep what they typed — retry is one click
+    if ($("ingame-browse-row")) $("ingame-browse-row").addEventListener("click", browseGameFolder);
     $("ingame-root-go").addEventListener("click", () => {
       const root = $("ingame-root").value.trim();
       if (root) ingameScan(root);
