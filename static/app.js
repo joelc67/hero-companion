@@ -4602,15 +4602,7 @@ function renderPowers() {
   const sets = chosenPowersets();
   if (!sets.length) { host.innerHTML = startHereHtml(); return; }
   const nudge = nameNudgeHtml();
-
-  // Power ICON lookup (records carry it since the /powers endpoint attaches one).
-  const iconOf = (fullName) => {
-    for (const ps of Object.keys(POWERS_CACHE)) {
-      const rec = (POWERS_CACHE[ps] || []).find(p => p.full_name === fullName);
-      if (rec && rec.icon) return rec.icon;
-    }
-    return "";
-  };
+  const iconOf = powerIconOf;   // shared lookup — the mini wall uses the same one
 
   // THE BRICK WALL: uniform-size power cards flowing left-to-right in pick order
   // (the L-badge carries the level), with the three info bricks as double-height
@@ -7312,23 +7304,47 @@ function barRow(label, d, kind) {
 // SAME slot editors the wall uses (one copy).
 let SELECTED_STAT = null;   // {key, label}
 
+// Power ICON lookup (records carry it since the /powers endpoint attaches one).
+// Module-scope ON PURPOSE: it was a local inside renderPowers, and the mini
+// wall calling it threw a ReferenceError that silently killed renderStats
+// mid-paint (stale vitals, empty wall — caught with eyes, 2026-08-04).
+function powerIconOf(fullName) {
+  for (const ps of Object.keys(POWERS_CACHE)) {
+    const rec = (POWERS_CACHE[ps] || []).find(p => p.full_name === fullName);
+    if (rec && rec.icon) return rec.icon;
+  }
+  return "";
+}
+
 function renderMiniWall() {
   const host = $("stats-miniwall");
   if (!host) return;
   const pw = build.powers || [];
   host.classList.toggle("hidden", !pw.length);
-  host.innerHTML = pw.map((p, pi) =>
-    `<span class="mw-power" id="mwp-${pi}" title="${escHtml(p.display_name || p.full_name)}">`
-    + `<span class="mw-name">${escHtml(p.display_name || (p.full_name || "").split(".").pop())}</span>`
-    + (p.slots || []).map((s, si) => {
-        if (!s || !s.piece_uid) return `<span class="mw-slot"><span class="mw-slot-empty"></span></span>`;
-        const url = enhIconUrl(s.image);
-        const t = `${s.set_name || "Common IO"}: ${s.piece_name || ""}`;
-        return `<span class="mw-slot" id="mw-${pi}-${si}" title="${escHtml(t)}">`
-          + (url ? `<img class="mw-ico" src="${url}" alt="" loading="lazy">`
-                 : `<span class="mw-slot-empty"></span>`) + `</span>`;
-      }).join("")
-    + `</span>`).join("");
+  // A RECOGNIZABLE MINIATURE of the Powers & Slots wall (Joel, 2026-08-04:
+  // "not recognizable as a duplicate of the main one") — same card anatomy,
+  // power icon + name on top, the enhancement-icon row below, just small.
+  host.innerHTML =
+    `<div class="mw-frame-label">🗂 Powers &amp; Slots, in miniature
+       <span class="muted small">— click a stat below and the IOs feeding it ring green here</span></div>`
+    + `<div class="mw-grid">` + pw.map((p, pi) => {
+      const ico = powerIconOf(p.full_name);
+      const lv = p.pick_level ? `<span class="mw-lv">L${p.pick_level}</span>` : "";
+      return `<div class="mw-card" id="mwp-${pi}" title="${escHtml(p.display_name || p.full_name)}">`
+        + `<div class="mw-head">`
+        + (ico ? `<img class="mw-pico" src="${ico}" alt="" loading="lazy" onerror="this.style.display='none'">` : "")
+        + `<span class="mw-name">${escHtml(p.display_name || (p.full_name || "").split(".").pop())}</span>${lv}</div>`
+        + `<div class="mw-slots">`
+        + (p.slots || []).map((s, si) => {
+            if (!s || !s.piece_uid) return `<span class="mw-slot"><span class="mw-slot-empty"></span></span>`;
+            const url = enhIconUrl(s.image);
+            const t = `${s.set_name || "Common IO"}: ${s.piece_name || ""}`;
+            return `<span class="mw-slot" id="mw-${pi}-${si}" title="${escHtml(t)}">`
+              + (url ? `<img class="mw-ico" src="${url}" alt="" loading="lazy">`
+                     : `<span class="mw-slot-empty"></span>`) + `</span>`;
+          }).join("")
+        + `</div></div>`;
+    }).join("") + `</div>`;
 }
 
 window.selectStat = function (key, label) {
@@ -7337,12 +7353,28 @@ window.selectStat = function (key, label) {
   renderStatBreakdown();
 };
 
-const _SB_KINDS = [["power", "Powers (their own effects)"],
-                   ["set_bonus", "Set bonuses"],
-                   ["global", "Special-IO globals"],
-                   ["proc", "Procs"],
-                   ["accolades", "Accolades"], ["incarnates", "Incarnates"],
-                   ["amplifiers", "Amplifiers"]];
+// Plain-language layer names (Joel, 2026-08-04: the side bar was "not really
+// understandable" — no jargon headings, say what each group IS).
+const _SB_KINDS = [
+  ["power", "From the powers themselves", "toggles and autos you run"],
+  ["set_bonus", "From set bonuses", "rewards for slotting pieces of one set"],
+  ["global", "From special IOs", "always-on pieces like LotG +Recharge"],
+  ["proc", "From procs", ""],
+  ["accolades", "From accolades", ""],
+  ["incarnates", "From incarnates", "peak buffs, only while toggled on"],
+  ["amplifiers", "From amplifiers", "buyable temporary buffs"]];
+
+// what the bar itself shows for a stat key — the breakdown's headline number
+function _shownStatValue(key) {
+  const t = LAST_TOTALS || {};
+  if (key.includes(":")) {
+    const [bucket, ty] = key.split(":");
+    const row = (t[bucket] || {})[ty] || {};
+    return row.raw != null ? row.raw : row.value;
+  }
+  const v = t[key];
+  return (v && typeof v === "object") ? (v.raw != null ? v.raw : v.value) : v;
+}
 
 function renderStatBreakdown() {
   const host = $("stat-breakdown");
@@ -7373,40 +7405,52 @@ function renderStatBreakdown() {
     });
   });
   const pct = v => `${v >= 0 ? "+" : ""}${(v * 100).toFixed(2)}%`;
-  const editFor = (r) => {
+  // one lookup serves the icon, the change button and the ⓘ — same slot
+  const slotFor = (r) => {
     const pi = build.powers.findIndex(p => p.full_name === r.power);
-    if (pi < 0) return "";
-    let si = r.kind === "global" ? r.slot
+    if (pi < 0) return null;
+    const si = r.kind === "global" ? r.slot
       : (build.powers[pi].slots || []).findIndex(s => s && s.set_uid === r.set_uid);
-    if (si == null || si < 0) return "";
-    return ` <button class="linkbtn sb-edit" title="Change this slot (opens the same picker as the wall)"
-        onclick="openSlot(${pi},${si})">change</button>`
-      + `<button class="linkbtn sb-edit" title="Full IO details"
-        onclick="openEnhInfo(${pi},${si}); showTab('powers')">ⓘ</button>`;
+    if (si == null || si < 0) return null;
+    const s = (build.powers[pi].slots || [])[si];
+    return { pi, si, image: s && s.image };
   };
+  const shown = _shownStatValue(sel.key);
   let html = `<h2><span>${escHtml(sel.label)}</span>
-    <button class="iconbtn pi-close" onclick="selectStat('${escHtml(sel.key)}')" title="close">✕</button></h2>`;
+    <button class="iconbtn pi-close" onclick="selectStat('${escHtml(sel.key)}')" title="close">✕</button></h2>
+    <p class="sb-sub">Where the <b class="sb-shown">${shown != null ? `+${shown}%` : "number"}</b> on that row
+    comes from — every piece counted, and ringed <b class="sb-green">green</b> in the wall above.</p>`;
   if (!rows.length) {
     html += `<p class="muted small">Nothing in the build feeds this number — it is all base value.</p>`;
   }
-  for (const [kind, kindLabel] of _SB_KINDS) {
+  for (const [kind, kindLabel, kindSub] of _SB_KINDS) {
     const group = rows.filter(r => r.kind === kind);
     if (!group.length) continue;
-    html += `<div class="sb-kind">${kindLabel}</div>`;
+    html += `<div class="sb-kind">${kindLabel}${kindSub ? ` <span class="muted small">— ${kindSub}</span>` : ""}</div>`;
     group.sort((a, b) => Math.abs(b.v) - Math.abs(a.v));
     html += group.map(r => {
+      const at = slotFor(r);
+      const ico = (at && at.image && (kind === "set_bonus" || kind === "global"))
+        ? `<img class="sb-ico" src="${enhIconUrl(at.image)}" alt="" loading="lazy">` : "";
       let who = escHtml(r.name || "");
-      if (kind === "set_bonus") who = `<b>${escHtml(r.set)}</b> ×${r.pieces} <span class="muted small">in ${escHtml(r.name)}</span>`;
-      if (kind === "global") who = `<b>${escHtml(r.set)}</b>: ${escHtml(r.piece)} <span class="muted small">in ${escHtml(r.name)}</span>`;
-      return `<div class="sb-row"><span>${who}${(kind === "set_bonus" || kind === "global") ? editFor(r) : ""}</span>
+      if (kind === "set_bonus") who = `<b>${r.pieces} pieces of ${escHtml(r.set)}</b>
+        <span class="muted small">slotted in ${escHtml(r.name)}</span>`;
+      if (kind === "global") who = `<b>${escHtml(r.piece)}</b>
+        <span class="muted small">(${escHtml(r.set)}) in ${escHtml(r.name)}</span>`;
+      const btns = (at && (kind === "set_bonus" || kind === "global"))
+        ? ` <button class="linkbtn sb-edit" title="Change this slot — the same enhancement picker the Powers wall uses"
+              onclick="openSlot(${at.pi},${at.si})">change</button>`
+          + `<button class="linkbtn sb-edit" title="Full IO details"
+              onclick="openEnhInfo(${at.pi},${at.si}); showTab('powers')">ⓘ</button>` : "";
+      return `<div class="sb-row"><span class="sb-who">${ico}<span>${who}${btns}</span></span>
         <span class="sb-val">${pct(r.v)}</span></div>`;
     }).join("");
   }
   const total = rows.reduce((a, r) => a + r.v, 0);
-  html += `<div class="sb-row"><span><b>Total from the build</b></span>
+  html += `<div class="sb-row sb-total"><span><b>All together</b></span>
     <span class="sb-val">${pct(total)}</span></div>
-    <p class="muted small">Green rings in the wall above mark every IO feeding this
-    number. “change” opens the same enhancement picker the Powers wall uses.</p>`;
+    <p class="muted small">That total IS the number on the stat row you clicked.
+    Use “change” to swap a piece — every number here updates live.</p>`;
   host.innerHTML = html;
   host.classList.remove("hidden");
 }
