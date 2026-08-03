@@ -150,8 +150,18 @@ Fit is by **zoom**, solved once for the whole app from the tallest tab, floor
    Battery test_target_level_solve.py 9/9; full sweep green.
    **EXEMPLAR ARC COMPLETE (Layers 1-3).** ⚠ Small leftover: the ⓘ set-detail
    card's tier list does not yet grey exemplar-dead bonuses — the banner
-   states the rule instead. ▶ NEXT: the Stats-page provenance redesign
-   (stats-provenance-paper.md).
+   states the rule instead.
+   **✅ STATS PROVENANCE SHIPPED (2026-08-04 resume: `7fae0193` engine ledger
+   + `b6b40664` UI, installed).** Engine: opt-in ctx["attribution"] ledger by
+   totals-DIFFING around each apply (one copy — can't drift), rows for
+   power/set_bonus(power+set+tier)/global(power+slot)/aggregates; laws pinned:
+   conservation (rows sum to display, exact) + inertness (no flag = no ledger,
+   flag = byte-identical totals; solver paths never set it). UI: sticky mini
+   wall (never scrolls off), every stat row clickable, green (#22c55e) rings
+   on contributing IOs, right breakdown per layer in numbers with
+   change→openSlot / ⓘ→openEnhInfo on the exact slot. test_stat_attribution
+   16/16. ▶ Possible next: offense/DPS rows clickable (attack table), and the
+   ⓘ tier-grey exemplar leftover.
    (b) **NEXT AFTER EXEMPLAR (Joel's order, 2026-08-03): the Stats page
    provenance redesign** — spec captured verbatim in
    `C:\Users\joelc\code\stats-provenance-paper.md`: mini powers+slots wall
