@@ -5573,7 +5573,94 @@ async function recompute() {
   renderRespecUI(totals && totals.respec_hint);
   refreshBuildViews();   // keep the always-visible respec-order + tray sections live
   if (ACCOLADES_ROWS && ACCOLADES_ROWS.length) renderAccolades();  // keep the panel synced (HP line + alignment greying)
+  scheduleBalance();       // the columns just changed height — re-tile them
 }
+
+// ── COLUMN BALANCE — tiles, not scrollbars (Joel's ruling, 2026-08-02) ───────
+// The two columns are independent stacks, so the taller one sets the page height
+// and the shorter one leaves a void beside it. Measured on a Warshade build at
+// 1900x1150: left 3982px, right 2237px — 1745px of empty right-hand side.
+//
+// Capping the rail with its own scroll fixed it and was REJECTED: "there is no
+// desire for a scroll bar in the middle of this app." His fix instead: "think of
+// the spaces on the left as tiles that can be shuffled to make it all balanced."
+// So the movable cards are placed in whichever column makes the page shortest
+// and the two sides closest, re-measured for real after every build edit and
+// resize — heights depend on width, so this cannot be computed on paper.
+//
+// ⚠ THE ASSISTANT LANDS ABOVE THE POWERS GRID, NEVER BELOW. It was moved to the
+// top of the rail on 2026-08-01 because a field report could not find it at 78%
+// down the page; shuffling must not quietly undo that. Its slot in the wide
+// column is BEFORE #builder, which is more prominent than where it started, not
+// less. Stats read after, so they land above the Play Log.
+const _TILES = [
+  { id: "assistant", before: "builder" },
+  { id: "stats", before: "gamelog" },
+];
+let _balanceTimer = null;
+
+function scheduleBalance() {
+  clearTimeout(_balanceTimer);
+  _balanceTimer = setTimeout(balanceColumns, 120);
+}
+
+function balanceColumns() {
+  const rail = document.querySelector(".rail");
+  const bc = document.querySelector(".build-col");
+  const setup = $("setup");
+  if (!rail || !bc || !setup) return;
+  const tiles = _TILES.map(t => ({ ...t, el: $(t.id) })).filter(t => t.el);
+  if (!tiles.length) return;
+  // Below 980px the grid collapses to ONE column, so there is nothing to balance
+  // and a "moved" tile would just land in a different place in the same stack.
+  // Put everything home and leave it alone.
+  const single = window.matchMedia("(max-width: 980px)").matches;
+  const place = mask => tiles.forEach((t, i) => {
+    if (!single && (mask & (1 << i))) bc.insertBefore(t.el, $(t.before) || null);
+    else rail.appendChild(t.el);        // appending in _TILES order restores order
+  });
+  if (single) { place(0); return; }
+  const h = el => (el ? el.getBoundingClientRect().height : 0);
+  // Score: page height first (that is what the void is made of), then how far
+  // apart the two sides are (that is what reads as "obvious imbalance").
+  const score = () => {
+    const left = h(setup) + h(rail), right = h(bc);
+    return Math.max(left, right) + Math.abs(left - right) * 0.5;
+  };
+  let best = 0, bestScore = Infinity;
+  for (let mask = 0; mask < (1 << tiles.length); mask++) {
+    place(mask);
+    const s = score();
+    if (s < bestScore - 0.5) { bestScore = s; best = mask; }
+  }
+  place(best);
+}
+// Two triggers, on purpose.
+//
+// `resize` is the obvious one. The ResizeObserver catches what `resize` cannot:
+// main's width also changes when the power-info column opens or closes, which
+// resizes nothing. The width guard is what stops the observer looping — re-tiling
+// changes main's HEIGHT, which would re-notify it forever.
+//
+// ⚠ NEITHER IS VERIFIABLE FROM THE CLAUDE PANE, and I briefly rewrote this on
+// that mistake. Measured 2026-08-02: the pane fires no `resize`, no matchMedia
+// `change`, and no ResizeObserver at all — not even the initial observation, and
+// not for a width change forced in script. That is the same class as the pane's
+// known 0x0-viewport geometry blindness, NOT a defect in these listeners. What IS
+// verifiable here is balanceColumns() itself, called directly at each viewport,
+// and it places tiles correctly at every one. The trigger needs a real window.
+let _lastMainWidth = 0;
+window.addEventListener("resize", scheduleBalance);
+(function watchLayoutWidth() {
+  const main = document.querySelector("main");
+  if (!main || typeof ResizeObserver !== "function") return;   // `resize` still covers it
+  new ResizeObserver(entries => {
+    const w = Math.round(entries[0].contentRect.width);
+    if (w === _lastMainWidth) return;
+    _lastMainWidth = w;
+    scheduleBalance();
+  }).observe(main);
+})();
 
 // ── Accolades panel (v34 scaffold, DISPLAY-ONLY) ─────────────────────────────
 // Joel's scope ruling: the ENTIRE accolade roster ships (badge-only rows too) —

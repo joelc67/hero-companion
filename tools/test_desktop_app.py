@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 41          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 49          # coverage denominator — hard-fail if a check silently skips
 
 
 def check(name, ok, detail=""):
@@ -220,6 +220,36 @@ def main():
                                    "auction-house sale prices", "public-channel recruiters"]))
     check("the boards link is the real one",
           "hero-companion.com/pulse" in read("client_config.json"))
+
+    # ── 6. COLUMN BALANCE: tiles, never a scrollbar (Joel, 2026-08-02) ──────
+    css = read("static", "style.css")
+    _rail_rule = css[css.find("\n.rail {"):css.find("\n.rail {") + 260]
+    check("NEGATIVE CONTROL: the rail is NOT capped with its own scroll",
+          "overflow-y: auto" not in _rail_rule and "max-height" not in _rail_rule,
+          "he rejected that fix: 'no desire for a scroll bar in the middle of this app'")
+    _bal = app_js[app_js.find("function balanceColumns"):
+                  app_js.find("window.addEventListener(\"resize\", scheduleBalance)")]
+    check("the balancer measures for real instead of guessing",
+          "getBoundingClientRect().height" in _bal and "for (let mask" in _bal,
+          "tile heights depend on column width, so they cannot be computed on paper")
+    check("it scores page height AND how far apart the sides are",
+          "Math.max(left, right)" in _bal and "Math.abs(left - right)" in _bal)
+    check("single-column layouts send every tile home",
+          'matchMedia("(max-width: 980px)")' in _bal and "if (single) { place(0); return; }" in _bal)
+    # ⚠ The Assistant was moved to the top of the rail on 2026-08-01 because a
+    # field report could not find it at 78% down the page. Shuffling must not
+    # quietly undo that, so its slot in the wide column is ABOVE the powers grid.
+    check("the Assistant lands ABOVE the powers grid, never below",
+          '{ id: "assistant", before: "builder" }' in app_js,
+          "moving it below #builder would re-bury the thing a user already lost")
+    check("re-tiles on window resize",
+          'window.addEventListener("resize", scheduleBalance)' in app_js)
+    check("...and on main's observed width, which resize cannot see",
+          "new ResizeObserver" in app_js and "contentRect.width" in app_js,
+          "the power-info column opening changes main's width but resizes nothing")
+    check("...guarded on WIDTH so re-tiling cannot re-trigger itself",
+          "if (w === _lastMainWidth) return;" in app_js,
+          "re-tiling changes main's height, which re-notifies the observer")
 
     # asked_here is what makes "asked once" true — exercised for real against an
     # isolated state dir, all three states.

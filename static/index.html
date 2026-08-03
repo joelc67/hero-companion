@@ -374,7 +374,7 @@
          assistant is the thing that DOES something; stats are what you read
          after. Order follows that. -->
     <!-- RIGHT: AI Assistant -->
-    <section id="assistant" class="panel">
+    <section id="assistant" class="panel" data-tile>
       <!-- The Need help? button sits OUTSIDE this h2 on purpose: app.js rewrites
            assistant-title's innerHTML when the Build Assistant renders, which
            would silently delete anything nested inside it. -->
@@ -499,7 +499,7 @@
       <div id="ai-response" class="ai-response muted"></div>
     </section>
 
-    <section id="stats" class="panel">
+    <section id="stats" class="panel" data-tile>
       <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span><button class="tour-help" onclick="startTour('stats')" aria-label="Explain this section" title="Explain this section">?</button></h2>
       <div class="cap-chips">
         <span class="chip cap-def">Defense soft cap 45%</span>

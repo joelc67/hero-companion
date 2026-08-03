@@ -146,22 +146,20 @@ main.has-info {
 #power-info { grid-area: info; position: sticky; top: 84px;
   max-height: calc(100vh - 94px); overflow-y: auto; }
 #power-info.hidden { display: none; }
-/* …and the rule finally APPLIES to the rail it was written about (2026-08-02).
-   It only ever governed #power-info, so the left column was free to run far past
-   the right one: on a Storm Blast build, measured, setup+rail reached 3982px while
-   the powers grid and Play Log ended at 2237px — 1745px, more than a screen and a
-   half, of empty right-hand side to scroll through. Joel: "there is a lot of dead
-   space below a certain point."
-   Capping the rail the same way #power-info is capped means the page is as tall as
-   the BUILD side, which is the side with content, and the stats you are building
-   against stay on screen instead of scrolling away. */
-.rail { grid-area: rail; display: flex; flex-direction: column; gap: 10px;
-  position: sticky; top: 84px; max-height: calc(100vh - 94px); overflow-y: auto; }
+/* ⚠ THE RAIL IS NOT CAPPED AND MUST NOT BE (Joel, 2026-08-02). Capping it the way
+   #power-info is capped did remove the dead space, and he rejected it: "there is no
+   desire for a scroll bar in the middle of this app." The imbalance is fixed by
+   MOVING TILES between the columns instead — his framing: "think of the spaces on
+   the left as tiles that can be shuffled to make it all balanced." See
+   balanceColumns() in app.js; [data-tile] marks what may move. */
+.rail { grid-area: rail; display: flex; flex-direction: column; gap: 10px; }
+/* A tile that has been moved into the wide column keeps its card look but is no
+   longer squeezed into a 370px lane, so its rows get room to breathe. */
+.build-col > [data-tile] { width: 100%; }
 @media (max-width: 980px) {
   main, main.has-info { grid-template-columns: 1fr; grid-template-areas: "setup" "info" "build" "rail"; }
-  /* narrow layout: the panels flow inline in one column, so no height cap —
-     a capped, internally-scrolling box in a single-column stack is a trap. */
-  #power-info, .rail { position: static; max-height: none; overflow-y: visible; }
+  /* narrow layout: the panel flows inline, so no rail-height cap */
+  #power-info { position: static; max-height: none; overflow-y: visible; }
 }
 
 /* Power Info internals */
