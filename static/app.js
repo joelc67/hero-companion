@@ -7355,18 +7355,30 @@ async function ingameScan(root) {
   box.innerHTML = `<p class="muted small">🔍 Looking for your Homecoming characters…</p>`;
   const url = root ? `/ingame/scan?root=${encodeURIComponent(root)}` : "/ingame/scan";
   const r = await api(url).catch(() => null);
-  renderIngameFound(r);
+  renderIngameFound(r, root);
 }
 
-function renderIngameFound(r) {
+function renderIngameFound(r, root) {
   const box = $("ingame-found");
   if (!r || !r.ok || !(r.files || []).length) {
-    box.innerHTML =
-      `<p class="muted small">Couldn't find a Homecoming <code>accounts</code> folder with build saves in the
+    // ⚠ SAY WHAT WAS FOUND (field report, D:\CoH\Homecoming, 2026-08-03): the
+    // server reports which accounts folders it searched, and this message used
+    // to claim "couldn't find an accounts folder" even when the folder WAS
+    // found and simply held no readable build saves — the user stood in front
+    // of the folder and was told it didn't exist.
+    const searched = (r && r.searched) || [];
+    const explain = searched.length
+      ? `<p class="muted small">✔ Found your <code>accounts</code> folder
+         (<code>${escHtml(searched[0])}</code>) — but no readable build saves inside it.
+         In game, type <code>/build_save_file</code> on each character you want here,
+         then search again. You can also correct the folder:</p>`
+      : `<p class="muted small">Couldn't find a Homecoming <code>accounts</code> folder with build saves in the
        usual places. If you've run <code>/build_save_file</code> in game, paste your game folder here
-       (e.g. <code>C:\\Games\\Homecoming</code>):</p>`
+       (e.g. <code>C:\\Games\\Homecoming</code>):</p>`;
+    box.innerHTML = explain
       + `<div class="ingame-root-row"><input id="ingame-root" placeholder="C:\\Games\\Homecoming">`
       + `<button class="linkbtn" id="ingame-root-go">Search there</button></div>`;
+    if (root) $("ingame-root").value = root;   // keep what they typed — retry is one click
     $("ingame-root-go").addEventListener("click", () => {
       const root = $("ingame-root").value.trim();
       if (root) ingameScan(root);
