@@ -143,14 +143,14 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
   display: flex; align-items: center; gap: var(--s2);
   color: var(--muted); white-space: nowrap;
 }
-.build-tile select { min-width: 120px; max-width: 190px; }
+.build-tile select { min-width: 140px; max-width: none; width: auto; }
 /* ⚠ Pools are FOUR COMPACT SELECTS ON THE ROW, not a stack of full-width ones.
    As a <details> filling the remaining width it produced four stacked bars and
    a large void beside the archetype — the "empty frame" reading. */
 .build-tile details { display: contents; }
 .build-tile details > summary { display: none; }
-#pool-selectors { display: flex; flex-wrap: nowrap; gap: var(--s2); align-items: center; }
-#pool-selectors select { min-width: 92px; max-width: 118px; }
+#pool-selectors { display: flex; flex-wrap: wrap; gap: var(--s2); align-items: center; }
+#pool-selectors select { min-width: 132px; max-width: none; width: auto; }
 #pool-selectors::before {
   content: "Pools"; color: var(--muted); margin-right: var(--s1);
 }
@@ -2535,3 +2535,23 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
 .cat-head { display: flex; align-items: center; gap: var(--s2); }
 .cat-count { margin-left: auto; }
 .cat-done { color: var(--def); }
+
+/* ── Which set am I looking at? ──────────────────────────────────────────────
+   Joel: "I am not sure what 'Experimentation' is on one of the power pools...
+   put a colored line around an area one is working from." Each column says its
+   role in words AND carries a colour, so primary / secondary / pool / epic are
+   distinguishable at a glance rather than by memory. */
+.cat-role { font-size: 11px; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--muted); padding: 0 var(--s1) 2px; }
+.cat-col { border-left: 3px solid var(--border); }
+.cat-col.r-pri { border-left-color: var(--accent); }
+.cat-col.r-pri .cat-head, .cat-col.r-pri .cat-role { color: var(--accent); }
+.cat-col.r-sec { border-left-color: var(--def); }
+.cat-col.r-sec .cat-head, .cat-col.r-sec .cat-role { color: var(--def); }
+.cat-col.r-epi { border-left-color: var(--res); }
+.cat-col.r-epi .cat-head, .cat-col.r-epi .cat-role { color: var(--res); }
+.cat-col.r-pool .cat-head { color: var(--ink); }
+
+/* The decisions the GAME opens at 35 and 50, prompted where the player is. */
+.cat-gate { margin: var(--s2) 0 var(--s3); padding: var(--s2) var(--s3);
+  background: var(--panel2); border: 1px solid var(--warn); border-radius: var(--r2); }

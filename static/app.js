@@ -4259,10 +4259,18 @@ function catalogueHtml(sets) {
     return "";
   };
 
+  const roleOf = ps => ps === build.primary ? ["Primary power set", "r-pri"]
+    : ps === build.secondary ? ["Secondary power set", "r-sec"]
+    : ps === build.epic ? ["Epic / Ancillary pool", "r-epi"]
+    : (build.pools || []).includes(ps) ? ["Power pool", "r-pool"]
+    : ["", ""];
   const cols = sets.map(ps => {
     const powers = (POWERS_CACHE[ps] || []).filter(p => p.slottable);
     if (!powers.length) return "";
-    return `<div class="cat-col"><div class="cat-head">${escHtml(powersetDisplayName(ps))}`
+    const [roleLabel, roleCls] = roleOf(ps);
+    return `<div class="cat-col ${roleCls}">`
+      + `<div class="cat-role">${escHtml(roleLabel)}</div>`
+      + `<div class="cat-head">${escHtml(powersetDisplayName(ps))}`
       + `<span class="cat-count muted small">${perSet[ps] || 0}</span></div>`
       + powers.map(p => {
           const why = blocked(p, ps);
@@ -4281,13 +4289,25 @@ function catalogueHtml(sets) {
       + `</div>`;
   }).join("");
 
+  // Level gates the game itself opens. Silence here means the player reaches 35
+  // with an epic pool they never knew to choose.
+  let gate = "";
+  if (!full && atLevel >= 35 && !build.epic) {
+    gate = `<div class="cat-gate">⚔️ <b>Level 35 — your Epic / Ancillary pool is open.</b>`
+      + ` Choose it on End Game and its powers join the list here.`
+      + ` <button class="linkbtn" onclick="showTab('endgame')">Open End Game →</button></div>`;
+  } else if (full || atLevel >= 50) {
+    gate = `<div class="cat-gate">🏅 <b>Level 50 — accolades and incarnates are open.</b>`
+      + ` Tick the accolades you have earned and pick your incarnate slots.`
+      + ` <button class="linkbtn" onclick="showTab('endgame')">Open End Game →</button></div>`;
+  }
   const head = full
     ? `<div class="cat-hint cat-done"><b>All 24 powers picked.</b> Now slot them:`
       + ` <button class="linkbtn" onclick="$('solve-btn').click()">🧮 Slot everything up</button></div>`
     : `<div class="cat-hint"><b>Pick ${taken.length + 1} of ${LADDER.length}</b>`
       + ` — level ${atLevel}. Only what the game offers at this level is available;`
       + ` 🔒 shows what it is waiting for.</div>`;
-  return `<div class="catalogue">${head}<div class="cat-cols">${cols}</div></div>`;
+  return `<div class="catalogue">${head}${gate}<div class="cat-cols">${cols}</div></div>`;
 }
 
 // Detail for ANY power, taken or not — the thing the ⓘ card could never do,
