@@ -20,11 +20,24 @@
   still be found once the tray icon is gone.
 
 - **You are asked, once, whether to share your play data with the Pulse
-  Boards.** The prompt spells out exactly what is captured, what leaves your
-  machine, what is never read, and what the public board shows, with a link to
-  the boards themselves. Sharing stays off unless you say yes, either answer is
-  remembered, and both are reversible from the Play Log tab. Closing the prompt
-  answers nothing.
+  Boards.** The question sits on the opening menu, where it cannot get between
+  you and the character you came to open. It spells out exactly what is captured,
+  what leaves your machine, what is never read, and what the public board shows,
+  with a link to the boards themselves. Sharing stays off unless you say yes,
+  either answer is remembered, and both are reversible from the Play Log tab.
+  Ignoring it answers nothing.
+
+- **The panels rearrange themselves so the page is not half empty.** On a big
+  build the left-hand cards used to run more than a screen and a half past the
+  powers grid, leaving a tall empty strip to scroll through. The cards now move
+  to whichever side keeps the two columns even, and the Build Assistant ends up
+  at the top of the wide column where it is hard to miss. Nothing gets its own
+  scrollbar.
+
+- **The window remembers your settings again, and knows which build it is.** The
+  app's own window was starting like a private browsing session, so the theme,
+  the update switch and your saved place in the tour were forgotten every launch.
+  The About dialog also now names the exact build you are running.
 
 ## 0.12.30 — 2026-07-31 — Accuracy pass
 

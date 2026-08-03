@@ -1,10 +1,44 @@
-# Resume point — 2026-08-02 (handoff to a fresh session)
+# Resume point — 2026-08-02 evening (desktop-app night)
 
-Nothing is running. No scheduled tasks armed. Working tree clean, master in sync,
-HEAD = `276cf249`. A dev server may be on port 5080; restart it rather than trust it.
+Nothing is running that this session started. No scheduled tasks armed. Working
+tree clean, master in sync, **HEAD = `f5415132`**. One stray `python server/server.py`
+(PID 30776, Joel's own dev copy on 5080) predates this session — it is not mine and
+was left alone; a reboot clears it.
+
+**Hero Companion is INSTALLED from tonight's source**, not from a release:
+`%LOCALAPPDATA%\Programs\HeroCompanion`, build stamp `f541513`, **UNSIGNED**. The
+desktop shortcut opens it. Closing its window quits it — there is no tray any more.
 
 **Read `coh-builder/CLAUDE.md` first** — standing rules and verified game facts.
-This file is current state, the open queue, and the traps earned today.
+This file is current state, the open queue, and the traps earned.
+
+---
+
+## ▶ WHERE TO PICK UP TOMORROW
+
+Joel: *"Save progress, I am shutting down and we can explore this tomorrow."* The
+desktop batch is built, installed and working; what is left is judgement calls on
+how it now looks, plus the release chores it created.
+
+1. **Look at the balanced layout on a real screen.** The balancer moved the
+   Assistant into the wide column, above the powers grid. That is a visible change
+   to the app's primary layout and Joel has not seen it yet — measured good
+   (imbalance 1745px → 275px) but never eyeballed. If the wide Assistant reads
+   badly, the tile list is one array: `_TILES` in app.js.
+2. **The 275px residual.** Whole tiles are the unit, so that is the floor with the
+   current three cards. Going lower means splitting a card (e.g. the stats rows in
+   columns when the card is wide) — not started, may not be worth it.
+3. **Signing.** Tonight's installer is unsigned because `TRUSTED_SIGNING_PROFILE`
+   is unset and it needs Joel's `az login`. The copy he replaced WAS signed. The
+   released signed 0.12.30 installer is preserved as
+   `dist\HeroCompanion-Setup-0.12.30.released-signed.exe` (verified Valid) — do
+   not delete it; ISCC overwrites the unsuffixed name every build.
+4. **The forum sentence** — see below. Still uncorrected, now false in code.
+5. **Version.** Still 0.12.30 with a large batch of unreleased work under
+   "Unreleased" in the changelog. A bump is Joel's call.
+
+⚠ **`extract_power_icons.py` i24 glob bug** and the champion re-cert are still
+parked exactly where they were. **No wave was started.**
 
 ---
 
@@ -23,6 +57,40 @@ nothing about the user or their builds, and it can be turned off in
 About & Settings.
 
 ---
+
+## 🧩 LAYOUT: TILES, NEVER A SCROLLBAR (`f5415132`)
+
+Joel: *"I do not like the split, I mean it makes sense, but there is obvious
+imbalance, and there is no desire for a scroll bar in the middle of this app.
+Think of the spaces on the left as tiles that can be shuffled to make it all
+balanced."*
+
+- **⚠ NEVER cap the rail with its own scroll.** That fix worked and was rejected
+  on sight. `.rail` carries a comment saying so; the battery has a negative
+  control that fails if `overflow-y: auto` or `max-height` reappears on it.
+- `balanceColumns()` in app.js places `_TILES` (assistant, stats) in whichever
+  column minimises `max(left,right) + 0.5·|left−right|`, **measured for real** —
+  tile heights depend on column width, so no arrangement can be predicted.
+  1900×1150: imbalance **1745px → 275px**, page 3992 → 3268.
+- **⚠ The Assistant's slot is ABOVE `#builder`, never below.** It was moved to the
+  top of the rail on 2026-08-01 after a field report could not find it at 78% down
+  the page. Shuffling must not quietly undo a placement someone already complained
+  about.
+- Below 980px the grid is one column: every tile goes home in documented order.
+- Triggers: `resize` + a **width-guarded** ResizeObserver on `main` (the
+  power-info column changes main's width while resizing nothing; the guard exists
+  because re-tiling changes main's HEIGHT and would re-notify forever).
+
+## ⚠⚠ THE CLAUDE PANE FIRES NO LAYOUT CALLBACKS AT ALL (measured 2026-08-02)
+
+Not `resize`, not matchMedia `change`, not ResizeObserver — **not even the initial
+observation, and not for a width change forced in script.** This is the same class
+as its known 0×0-viewport geometry blindness, and it cost a wrong diagnosis: a
+viewport change failed to re-tile, I called the resize listener broken and rewrote
+it, then discovered nothing fires there. **Corollary for every future layout job:**
+`resize_window` first (or `elementFromPoint` returns null and every hit-test reads
+as a pass), verify the FUNCTION by calling it directly at each viewport, and treat
+any event-driven trigger as unverifiable here — it needs Joel's window.
 
 ## ✅ THE DESKTOP BATCH — DONE 2026-08-02, TRAY DELETED, EXE BUILT
 

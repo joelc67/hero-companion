@@ -349,7 +349,47 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
 - **⚠ The forum reply's "the update check only runs when you click it" is now
   FALSE in the code** and the post is uncorrected. See RESUME-HERE for the
   accurate replacement sentence.
-- Battery: `tools/test_desktop_app.py` (28, negative-controlled both ways).
+- **⚠ THE SHARE PROMPT IS NOT A MODAL, and that took three tries.** Hooked to
+  `hideEntry()` it ambushed the first meaningful action on every entry path;
+  moved to once-per-launch it was still a wall with a backdrop between the user
+  and his character. It now lives INSIDE the opening menu, in the flow, under the
+  tour line. **The lesson is the general one:** the first two fixes changed *when*
+  a wall appeared; only the third asked whether it should be a wall.
+- **⚠ JUDGE FROM THE FROZEN EXE, and know which one.** Handing Joel a `.bat` +
+  console + python.exe and calling it the app was my error. Frozen builds now
+  carry their commit (`HeroCompanion.spec` stamps `build_commit.txt`, server.py
+  reads it when frozen) because two 0.12.30 builds on one machine were
+  indistinguishable and a bug got reported twice against a build without the fix.
+  The header shows the hash on SOURCE runs only; About and the tooltip always.
+- **⚠ Installing overwrites `dist\HeroCompanion-Setup-{VERSION}.exe`** — which was
+  the RELEASED SIGNED installer. Preserved as
+  `HeroCompanion-Setup-0.12.30.released-signed.exe`. Check before every ISCC run
+  while VERSION is unchanged.
+- Battery: `tools/test_desktop_app.py` (49, negative-controlled both ways).
+
+## 🧩 Layout: tiles, never a scrollbar (Joel's ruling, 2026-08-02)
+
+- **⚠ NEVER cap the rail with its own scroll.** It removed 1745px of dead space
+  and he rejected it on sight: *"there is no desire for a scroll bar in the middle
+  of this app."* The battery negative-controls this — `overflow-y: auto` or
+  `max-height` back on `.rail` fails the build.
+- The fix is his: *"think of the spaces on the left as tiles that can be shuffled
+  to make it all balanced."* `balanceColumns()` places `_TILES` in whichever
+  column minimises page height and side-to-side difference, **measured live** —
+  tile height depends on column width, so arrangements cannot be predicted.
+  Measured 1900×1150: imbalance 1745px → 275px. Whole tiles are the unit, so 275px
+  is the floor until a card is split internally.
+- **⚠ The Assistant's slot is ABOVE `#builder`, never below** — it was moved to
+  the top of the rail on 2026-08-01 after a field report could not find it at 78%
+  down the page. A balancer must not undo a placement someone complained about.
+- **⚠⚠ THE CLAUDE PANE FIRES NO LAYOUT CALLBACKS AT ALL** (measured): no `resize`,
+  no matchMedia `change`, no ResizeObserver — not even the initial observation,
+  not even for a width change forced in script. Same class as its 0×0-viewport
+  geometry blindness, and it cost a wrong diagnosis (I called a working resize
+  listener broken and rewrote it). **Always `resize_window` first** — at 0×0
+  `elementFromPoint` returns null and every hit-test reads as a pass — verify the
+  FUNCTION by calling it directly per viewport, and treat event triggers as
+  unverifiable here.
 
 ## ⭐ CURRENT STATE & open queue (2026-07-31)
 
