@@ -5770,16 +5770,36 @@ function closeMenus(except) {
   });
 }
 
+// ⚠ THE MENU IS A REMOTE CONTROL, NOT A SECOND IMPLEMENTATION. Every Build/View
+// item carries data-act = the id of the REAL control and clicks it. Nothing is
+// duplicated, so a menu item cannot drift from the button it stands for, and a
+// control that is hidden or disabled makes its menu item disabled too.
+function syncMenu(drop) {
+  drop.querySelectorAll("[data-act]").forEach(mi => {
+    const el = $(mi.dataset.act);
+    const gone = !el || el.disabled
+      || (el.offsetParent === null && el.type !== "checkbox");
+    mi.disabled = !!gone;
+    mi.classList.toggle("mi-off", !!gone);
+    if (mi.dataset.kind === "check") mi.classList.toggle("mi-on", !!(el && el.checked));
+  });
+}
+
 function initMenus() {
   const bar = $("menubar");
   if (!bar) return;
   bar.addEventListener("click", e => {
+    const act = e.target.closest("[data-act]");
+    if (act && !act.disabled) { const el = $(act.dataset.act); if (el) el.click(); }
+    const tab = e.target.closest("[data-tab]");
+    if (tab) activateTab(tab.dataset.tab);
     const top = e.target.closest(".menu-top");
     if (top) {
       const drop = $(top.getAttribute("aria-controls"));
       const open = drop.hidden;
       closeMenus(open ? drop : null);
       drop.hidden = !open;
+      if (open) syncMenu(drop);      // reflect the real controls' state on open
       top.setAttribute("aria-expanded", open ? "true" : "false");
       if (open) drop.querySelector("[role=menuitem]")?.focus();
       return;

@@ -179,6 +179,35 @@
           </div>
         </div>
         <div class="menu">
+          <button class="menu-top" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="m-build">Build</button>
+          <div class="menu-drop" id="m-build" role="menu" hidden>
+            <button role="menuitem" type="button" data-act="solve-btn"><b>🧮 Solve the slotting</b><i>Re-optimise enhancements around the powers you chose</i></button>
+            <button role="menuitem" type="button" data-act="gen-btn"><b>🛠️ Build this for me</b><i>Pick the powers AND the slotting for your goal</i></button>
+            <button role="menuitem" type="button" data-act="opt-btn"><b>✨ Refine with AI</b><i>Ask for a targeted improvement in words</i></button>
+            <div class="menu-sep" role="separator"></div>
+            <button role="menuitem" type="button" data-act="custom-targets-btn"><b>🎯 Customise build targets…</b><i>Say what this build must reach, and see what it costs</i></button>
+            <button role="menuitem" type="button" data-act="changes-btn"><b>📋 What changed?</b><i>Compare the solve against the build you imported</i></button>
+            <div class="menu-sep" role="separator"></div>
+            <button role="menuitem" type="button" data-act="undo-btn"><b>↶ Undo</b><i>Revert the last edit (Ctrl+Z)</i></button>
+            <button role="menuitem" type="button" data-act="reset-btn"><b>↺ Reset to imported</b><i>Throw away the changes and go back to the file you loaded</i></button>
+          </div>
+        </div>
+        <div class="menu">
+          <button class="menu-top" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="m-view">View</button>
+          <div class="menu-drop" id="m-view" role="menu" hidden>
+            <button role="menuitem" type="button" data-tab="powers"><b>Powers & Slots</b><i>The build itself, and the power catalogue</i></button>
+            <button role="menuitem" type="button" data-tab="stats"><b>Stats</b><i>Defence, resistance, offense and set bonuses</i></button>
+            <button role="menuitem" type="button" data-tab="endgame"><b>End Game</b><i>Epic pool, incarnates and accolades</i></button>
+            <button role="menuitem" type="button" data-tab="leveling"><b>Leveling Guide</b><i>Your 1-50 as a road</i></button>
+            <button role="menuitem" type="button" data-tab="logging"><b>Logging</b><i>What your game sessions earned you</i></button>
+            <div class="menu-sep" role="separator"></div>
+            <button role="menuitem" type="button" data-act="incarnate-peak-toggle" data-kind="check"><b>Include incarnates (peak)</b><i>Fold Destiny, Hybrid and Judgement into the totals</i></button>
+            <button role="menuitem" type="button" data-act="external-toggle" data-kind="check"><b>Include accolades + amplifiers</b><i>Add the permanent accolades and the three buyable amplifiers</i></button>
+            <button role="menuitem" type="button" data-act="pvp-toggle" data-kind="check"><b>PvP build mode</b><i>Use PvP set bonuses and effect variants</i></button>
+            <button role="menuitem" type="button" data-act="suppression-toggle" data-kind="check"><b>In-combat view (suppression)</b><i>Show defence as it is mid-fight, not standing still</i></button>
+          </div>
+        </div>
+        <div class="menu">
           <button class="menu-top" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="m-help">Help</button>
           <div class="menu-drop" id="m-help" role="menu" hidden>
             <button id="tour-btn" role="menuitem" type="button"><b>🧭 Guided tour</b><i>Pick a section and I will walk you through it</i></button>

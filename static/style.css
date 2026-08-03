@@ -65,7 +65,11 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
 
 /* MASTHEAD: identity + vitals + icon actions as ONE tight sticky block. */
 #masthead {
-  position: sticky; top: 0; z-index: 30;
+  /* ⚠ ABOVE the build tile (40) and tab strip (39). At 30 the masthead formed a
+     stacking context BELOW them, so its dropdowns were clipped by the sticky
+     bars — the top two Build items rendered and were simply not visible. A
+     z-index on a child cannot escape its parent's context. */
+  position: sticky; top: 0; z-index: 60;
   background: color-mix(in srgb, var(--panel) 92%, black);
   border-bottom: 1px solid var(--border);
   box-shadow: 0 3px 12px #0007;
@@ -2509,3 +2513,15 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
 .pd-t td { text-align: right; font-variant-numeric: tabular-nums; }
 .pd-fx { margin-top: var(--s1); font-size: 12.5px; color: var(--muted); }
 .pd-fx b { color: var(--ink); }
+
+/* Menu items that stand for a real control: greyed when that control is not
+   available, ticked when it is a checkbox that is on. */
+.menu-drop [role=menuitem].mi-off { opacity: .4; cursor: default; }
+.menu-drop [role=menuitem].mi-off:hover { background: none; }
+/* ⚠ No CSS escapes here. "3 " (em space) rendered as a box followed by a
+   literal 3, so every toggle read "☐3 Include incarnates". Reserve the space
+   with padding and put a real tick in it. */
+.menu-drop [role=menuitem][data-kind="check"] b { position: relative; padding-left: 1.2em; }
+.menu-drop [role=menuitem].mi-on b::before {
+  content: "✓"; position: absolute; left: 0; color: var(--def);
+}
