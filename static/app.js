@@ -6224,6 +6224,20 @@ function fitZoom() {
   const panels = [...document.querySelectorAll(".tabpanel")];
   if (!shell || !panels.length) return;
 
+  // MEASURED chrome heights → CSS vars. The sticky offsets of the tab strip and
+  // build tile, and the clearance for the sticky power-info card, all depend on
+  // the bands above them — and those heights vary (the tile wraps its pools row).
+  // Guessed pixel offsets left the ⓘ card sliding UNDER the chrome on scroll
+  // (Joel, 2026-08-03: "partially covered as I scroll down"). This runs on every
+  // fit pass: resize, tab change, recompute.
+  const mh = ($("masthead") || {}).offsetHeight || 40;
+  const th = ($("tabbar") || {}).offsetHeight || 38;
+  const bh = ($("build-tile") || {}).offsetHeight || 46;
+  const rs = document.documentElement.style;
+  rs.setProperty("--masthead-h", mh + "px");
+  rs.setProperty("--tabbar-h", th + "px");
+  rs.setProperty("--chrome-h", (mh + th + bh) + "px");
+
   // ⚠ ONE ZOOM FOR THE WHOLE APP, taken from the TALLEST tab — not per tab.
   // Solving each tab separately looked right in the numbers and awful in use:
   // Powers landed at 0.85 and the near-empty Leveling Guide at 1.25, so every

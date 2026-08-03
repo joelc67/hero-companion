@@ -137,8 +137,8 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
   background: var(--panel); border-bottom: 1px solid var(--border);
   /* ⚠ CHROME, NOT CONTENT. It scrolled away with the page, taking the archetype
      pickers with it — the one bar you always need in view. Sits BELOW the tab
-     strip now (masthead 40 + tabbar ~38). */
-  position: sticky; top: 78px; z-index: 40;
+     strip; offsets measured by fitZoom. */
+  position: sticky; top: calc(var(--masthead-h, 40px) + var(--tabbar-h, 38px)); z-index: 40;
 }
 .build-tile label {
   display: flex; align-items: center; gap: var(--s2);
@@ -163,9 +163,9 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
   background: var(--panel); border-bottom: 1px solid var(--border);
   overflow-x: auto; scrollbar-width: none;
   /* Directly under the masthead now — Joel, 2026-08-03: tabs at the TOP, above
-     the build tile. ponytail: sticky offsets are estimates (page scrolls only
-     at the zoom floor); re-measure if a real overlap ever shows. */
-  position: sticky; top: 40px; z-index: 41;
+     the build tile. Offsets are MEASURED (fitZoom sets the vars): guessed
+     pixels put the sticky ⓘ card under the chrome. */
+  position: sticky; top: var(--masthead-h, 40px); z-index: 41;
 }
 .tabbar::-webkit-scrollbar { display: none; }
 .tab {
@@ -205,8 +205,11 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
 .powers-main, .powers-side { min-width: 0; display: flex; flex-direction: column; gap: var(--s3); }
 #power-info.hidden { display: none; }
 /* The detail card leads the side column and stays put while you scan the
-   catalogue — it is the thing you are reading, not a footnote. */
-.powers-side #power-info { position: sticky; top: var(--s3); }
+   catalogue — it is the thing you are reading, not a footnote.
+   ⚠ It must clear the STICKY CHROME above it (masthead + tabs + build tile,
+   measured by fitZoom) — at top:10px it slid underneath and read as
+   "partially covered as I scroll down" (Joel, 2026-08-03). */
+.powers-side #power-info { position: sticky; top: calc(var(--chrome-h, 130px) + var(--s3)); }
 
 /* ── The Stats board ─────────────────────────────────────────────────────────
    Defence, Resistance, Other and Offense were stacked in one column at full
