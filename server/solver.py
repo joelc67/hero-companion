@@ -259,10 +259,19 @@ def _pv_ok(pv_mode, pvp):
     return pm == 2 if pvp else pm == 1
 
 
-def _set_bonus_contrib(set_rec, n_pieces, used_sig, pvp=False):
+def _set_bonus_contrib(set_rec, n_pieces, used_sig, pvp=False, tl=None):
     """Cumulative bonus stat-vector for slotting `n_pieces` of a set, honoring
     the rule of five via `used_sig` (signature -> count, mutated on commit=False
-    only for scoring). Returns (contrib dict, list of signatures used)."""
+    only for scoring). Returns (contrib dict, list of signatures used).
+
+    `tl` = target-level context (Layer 3, opt-in — {"level","exempt","set_min"}):
+    a NON-exempt set whose minimum is too high even ATTUNED (set_min − 3 >
+    level) has DEAD bonuses at the target, so the ILP prices them at zero —
+    the search then naturally prefers exempt (purple/PvP/Winter/ATO) and
+    low-minimum sets. Alive non-exempt sets are emitted attuned afterwards."""
+    if tl is not None and set_rec.get("uid") not in tl["exempt"] \
+            and (tl["set_min"].get(set_rec.get("uid")) or 10) - 3 > tl["level"]:
+        return defaultdict(float), []
     contrib = defaultdict(float)
     sigs = []
     for b in set_rec.get("bonuses", []):
@@ -474,7 +483,7 @@ def _commit_set(p, srec, n, sigs, contrib, used_sig, totals):
 
 
 def _options_for_power(p, sets_by_category, targets, perks, piece_choices,
-                       allow_premium=False, pvp=False, ho_pieces=None):
+                       allow_premium=False, pvp=False, ho_pieces=None, tl=None):
     """Candidate (set, n-pieces) slotting options for a power. An option is
     functional by construction (a category-fitting set covers the power's
     aspects). Phase 1 solves CHEAP-only (allow_premium=False); the upgrade pass
@@ -501,9 +510,15 @@ def _options_for_power(p, sets_by_category, targets, perks, piece_choices,
     armor = p.get("_armor_res") or p.get("_armor_def")
     base_rd = p.get("_base_rd") or {}
     armor_kind = "Resistance" if p.get("_armor_res") else "Defense"
+    # Layer 3: a power unusable at the target level is a pure BONUS MULE — its
+    # enhancement/end-relief credit and damage reward are worthless down there,
+    # but the bonuses its pieces carry survive (the game keeps them per piece).
+    ex_off = bool(tl) and p.get("_exemplar_off_solve")
+    if ex_off:
+        armor = None
     opts = []
     for srec in cand:
-        contrib6, _ = _set_bonus_contrib(srec, 6, {}, pvp)
+        contrib6, _ = _set_bonus_contrib(srec, 6, {}, pvp, tl)
         touches = any(k in targets or k in perks for k in contrib6)
         # armor toggles keep their res/def-set options even if the BONUSES don't touch
         # a target — the ENHANCEMENT (credited below) does.
@@ -514,7 +529,7 @@ def _options_for_power(p, sets_by_category, targets, perks, piece_choices,
             # set (the strong pet-set bonuses live in the 5th/6th piece).
             if n > 6 or (must_set and not armor and not pet and n > 4):
                 continue
-            contrib, sigs = _set_bonus_contrib(srec, n, {}, pvp)
+            contrib, sigs = _set_bonus_contrib(srec, n, {}, pvp, tl)
             # Credit the res/def this set ENHANCES in the host armor toggle (base ×
             # ED-aware factor for n pieces) toward the matching target — so the ILP
             # values a 5-6 piece res set in the toggle, not the 3 it'd pick for bonuses.
@@ -538,12 +553,12 @@ def _options_for_power(p, sets_by_category, targets, perks, piece_choices,
     if p["_is_attack"] and not any(o["n"] >= 5 for o in opts):
         # ensure attacks have at least one full functional set option
         for srec in cand[:3]:
-            contrib, sigs = _set_bonus_contrib(srec, 6, {}, pvp)
+            contrib, sigs = _set_bonus_contrib(srec, 6, {}, pvp, tl)
             opts.append({"set": srec, "n": 6, "contrib": contrib, "sigs": sigs})
     elif must_set and not opts:
         # ensure a forced buff has at least one (small) set option
         for srec in cand[:3]:
-            contrib, sigs = _set_bonus_contrib(srec, 3, {}, pvp)
+            contrib, sigs = _set_bonus_contrib(srec, 3, {}, pvp, tl)
             opts.append({"set": srec, "n": 3, "contrib": contrib, "sigs": sigs})
     # ── HAMIDON ORIGIN options (Piece 3, R2 ruling 2026-07-28) ──────────────
     # The classic endgame move the option list never offered: 2-3 aspects in
@@ -877,7 +892,7 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
               slot_cap=67, tier="premium", perk_focus=None, roles=None, pvp=False,
               preserve=False, keep_layout=False, archetype=None,
               at_res_cap=None, at_base_hp=None, warm_hint=None, ho_pieces=None,
-              two_stage=None):
+              two_stage=None, target_level_ctx=None):
     """Optimal slot solve via integer linear programming.
 
     Phase 1 solves the targets with CHEAP sets only (the least-expensive build
@@ -893,7 +908,16 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
     totals = defaultdict(float, dict(base_totals or {}))
     slots_left = slot_cap
     buffing = "buffing" in (roles or [])
+    # LAYER 3 (opt-in, 2026-08-03): optimize FOR a target level. Absent → this
+    # function is byte-identical to before (champions/certification never pass
+    # it — the HO-options precedent: a search capability, not a model bump).
+    tl = target_level_ctx
     for p in powers:
+        if tl and not (p.get("full_name") or "").startswith("Inherent."):
+            _pl = p.get("pick_level") or p.get("level_available") or 1
+            if _pl > tl["level"] + 5:
+                # unusable at the target: a pure bonus mule for the solve
+                p["_exemplar_off_solve"] = True
         p["_slots"] = []
         p["_cats"] = set(p.get("accepted_set_category_ids", []))
         cats = p.get("accepted_set_categories", [])
@@ -996,7 +1020,7 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
     # ILP builds around them. Runs regardless of preserve (locks are the user's
     # explicit per-power word; preserve is the coarse mode for the rest).
     locked_charge, locked_empties, kept_sets, present_globals = _lock_all_powers(
-        powers, set_by_uid, piece_globals, totals, pvp)
+        powers, set_by_uid, piece_globals, totals, pvp, tl=tl)
     slots_left -= locked_charge
 
     # PRESERVE mode (the default "complete my fit"): keep the build's existing set
@@ -1007,7 +1031,7 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
     if preserve:
         locked, kept2, present2 = _preserve_locked(
             [p for p in powers if not p.get("_lock_all")],
-            set_by_uid, piece_globals, totals, pvp)
+            set_by_uid, piece_globals, totals, pvp, tl=tl)
         slots_left -= locked
         kept_sets.extend(kept2)
         present_globals |= present2
@@ -1213,7 +1237,7 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
               piece_choices=(6, 5, 4, 3, 2), objective_targets=targets,
               allow_premium=allow_premium, cost_w=cost_w, pref_cats=pref_cats, pvp=pvp,
               priority=priority, piece_meta=piece_meta, decay=decay,
-              warm_hint=warm_hint, ho_pieces=ho_pieces, tiebreak=tiebreak)
+              warm_hint=warm_hint, ho_pieces=ho_pieces, tiebreak=tiebreak, tl=tl)
     focus_keys = set(PERK_FOCUS.get(perk_focus, []))
     perk_kind_mult = dict(kind_mult)
     if focus_keys:                  # the 🧮 perk dial gets an outsized weight
@@ -1237,7 +1261,7 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
               piece_choices=(6, 5, 4, 3, 2), objective_targets=perks, perk_pass=True,
               allow_premium=allow_premium, cost_w=cost_w, priority=_perk_priority,
               kind_mult=perk_kind_mult, pref_cats=pref_cats, pvp=pvp, piece_meta=piece_meta,
-              warm_hint=warm_hint, ho_pieces=ho_pieces, tiebreak=tiebreak)
+              warm_hint=warm_hint, ho_pieces=ho_pieces, tiebreak=tiebreak, tl=tl)
 
     # DEFAULT: never drop a cheap IO for an empty slot — restore any the solve
     # didn't replace with a set (keeps Hasten/Fulcrum/etc. functional). Runs in
@@ -1262,12 +1286,27 @@ def solve_ilp(powers, targets_pct, sets_by_category, piece_globals, base_totals,
     added = _enforce_added_cap(powers, ADDED_SLOT_BUDGET - locked_empties) \
         + locked_empties
 
+    # Layer 3 emission: a non-exempt set whose bonuses survive the target level
+    # only ATTUNED gets emitted attuned — otherwise the solve would score value
+    # the delivered pieces don't actually keep in play. Runs BEFORE finalize
+    # (the _locked marker is stripped there): locked/preserved pieces are the
+    # player's own investment and stay exactly as they are.
+    if tl:
+        for p in powers:
+            if p.get("_lock_all"):
+                continue
+            for s in p.get("_slots") or []:
+                if (s and s.get("set_uid") and not s.get("_locked")
+                        and s["set_uid"] not in tl["exempt"]
+                        and (tl["set_min"].get(s["set_uid"]) or 10) - 3 <= tl["level"]):
+                    s["attuned"] = True
     out_powers = _finalize_powers(powers)
     used = sum(len(p["_slots"]) for p in powers)
     return {"powers": out_powers, "totals": dict(totals),
             "report": _report(totals, targets, used, slot_cap), "slots_used": used,
             "added_slots": added, "added_budget": ADDED_SLOT_BUDGET,
-            "kept_sets": kept_sets, "preserved": bool(preserve)}
+            "kept_sets": kept_sets, "preserved": bool(preserve),
+            "target_level": (tl or {}).get("level")}
 
 
 ADDED_SLOT_BUDGET = 67     # slots beyond each power's free base slot (MidsReborn MaxSlots)
@@ -1475,7 +1514,7 @@ def _enforce_added_cap(powers, budget):
 def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices,
               objective_targets, perk_pass=False, allow_premium=False, cost_w=0.0,
               kind_mult=None, pref_cats=None, pvp=False, priority=None, piece_meta=None,
-              decay=None, warm_hint=None, ho_pieces=None, tiebreak=None):
+              decay=None, warm_hint=None, ho_pieces=None, tiebreak=None, tl=None):
     """Run one ILP over powers that still have free slots / no set yet.
     `kind_mult` weights a stat KIND (e.g. {'Defense':2}) so the player's role
     leans coverage that way; `pref_cats` nudges set selection toward role-fitting
@@ -1569,7 +1608,7 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
         opt_src = dict(p, _is_attack=False) if force_func else p
         opts = _options_for_power(opt_src, sets_by_category, targets, objective_targets,
                                   choices, allow_premium=allow_premium, pvp=pvp,
-                                  ho_pieces=ho_pieces)
+                                  ho_pieces=ho_pieces, tl=tl)
         opts = [o for o in opts if o["n"] <= free and o["set"]["uid"] not in already
                 and not any((lambda uq, mk: uq and mk in placed_uniq)(*_uniq_key(pc))
                             for pc in o["set"].get("pieces", [])[:o["n"]])]
@@ -1615,7 +1654,8 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
             # base hit (premium attacks first) and the pieces it lands. Pieces 1-5 carry
             # the enhancement; the 6th is credited at proc-worth (_SIXTH_SLOT_W) — the old
             # min(n,5) cap priced it at zero and every real attack stalled at 5 slots.
-            if dmg_mode and p["_is_attack"] and _is_dmg_cat(o["set"].get("category")):
+            if (dmg_mode and p["_is_attack"] and _is_dmg_cat(o["set"].get("category"))
+                    and not (tl and p.get("_exemplar_off_solve"))):
                 base_w = ((p.get("_base_dmg") or 0.0) / max_base) if max_base > 0 else 1.0
                 vehicle = _is_proc_vehicle(p)
                 # A proc VEHICLE's slots become procs downstream, and proc damage is
@@ -1941,7 +1981,7 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
                             defaultdict(int), totals)
 
 
-def _lock_all_powers(powers, set_by_uid, piece_globals, totals, pvp):
+def _lock_all_powers(powers, set_by_uid, piece_globals, totals, pvp, tl=None):
     """PER-POWER LOCKS (v35 UX batch, Joel's Build-Assistant work order §4): a
     power the user LOCKED is frozen verbatim — every placed IO (set piece,
     generic, unresolved special) seats as a _locked slot, its empty allocated
@@ -1999,7 +2039,7 @@ def _lock_all_powers(powers, set_by_uid, piece_globals, totals, pvp):
         for suid, sl in by_set.items():
             srec = set_by_uid.get(suid)
             if srec:
-                contrib, _ = _set_bonus_contrib(srec, len(sl), {}, pvp)
+                contrib, _ = _set_bonus_contrib(srec, len(sl), {}, pvp, tl)
                 for k, v in contrib.items():
                     totals[k] += v
             kept.append({"power": p.get("display_name"),
@@ -2009,7 +2049,7 @@ def _lock_all_powers(powers, set_by_uid, piece_globals, totals, pvp):
     return charged, empties_total, kept, present
 
 
-def _preserve_locked(powers, set_by_uid, piece_globals, totals, pvp):
+def _preserve_locked(powers, set_by_uid, piece_globals, totals, pvp, tl=None):
     """PRESERVE mode. Keep each power's existing SET IOs (any slot with a set_uid —
     purples/Winters/ATOs/regular sets AND unique globals like LotG/Steadfast) by
     pre-placing them as LOCKED slots and crediting their set bonuses, so the ILP
@@ -2057,7 +2097,7 @@ def _preserve_locked(powers, set_by_uid, piece_globals, totals, pvp):
                         present_globals.add(g["set"])
             srec = set_by_uid.get(suid)
             if srec:
-                contrib, _ = _set_bonus_contrib(srec, n, {}, pvp)
+                contrib, _ = _set_bonus_contrib(srec, n, {}, pvp, tl)
                 for k, v in contrib.items():
                     totals[k] += v
             kept.append({"power": p.get("display_name"),

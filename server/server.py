@@ -4655,6 +4655,21 @@ def build_solve():
     if custom:
         targets = _apply_custom_targets(targets, custom, _rescap)
         understood.insert(0, "Custom targets (yours)")
+    # LAYER 3 (2026-08-03): optimize FOR a declared target level. Opt-in — the
+    # client sends it only when the user solves with the Exemplar view on;
+    # champions/deep_optimize never pass it (search capability, no model bump).
+    tlctx = None
+    _tl_req = body.get("target_level")
+    try:
+        _tl_req = int(_tl_req)
+    except (TypeError, ValueError):
+        _tl_req = None
+    if _tl_req is not None and 1 <= _tl_req <= 49:
+        tlctx = {"level": _tl_req, "exempt": _EXEMPLAR_EXEMPT_UIDS,
+                 "set_min": _EXEMPLAR_SET_MIN}
+        understood.insert(0, f"Optimized FOR level {_tl_req} (exemplar view): "
+                             "dead set bonuses priced at zero, unusable powers "
+                             "kept as bonus mules, surviving sets slotted attuned")
     target_summary = _targets_summary(targets)
     if not (archetype and powers_in):
         return jsonify({"ok": False, "response": "Need an archetype and a build "
@@ -4750,7 +4765,7 @@ def build_solve():
                                        archetype=archetype,
                                        ho_pieces=(_ho_solver_pieces()
                                                   if content in _HO_CONTENTS else None),
-                                       two_stage=two_stage,
+                                       two_stage=two_stage, target_level_ctx=tlctx,
                                        **_at_solve_phys(archetype))
             except Exception:  # noqa: BLE001
                 diag.swallowed("solver.solve_ilp")
@@ -4795,8 +4810,10 @@ def build_solve():
     # physics model pick — the shipped build is never worse than either
     # style. Preserve/keep-layout solves skip it (incremental, tie space
     # near-empty, latency matters).
+    # ⚠ fp scores at level 50 — arbitrating a TARGET-LEVEL solve with it would
+    # judge the wrong game. The eps tie-break still runs; the solve note states it.
     _arb = ((not preserve or _generated) and (content or role)
-            and not perk_focus and at is not None)
+            and not perk_focus and at is not None and tlctx is None)
     _pristine = copy.deepcopy(powers) if _arb else None
     sol = _serve_pipeline(powers)
     if sol is None:
@@ -4948,6 +4965,7 @@ def build_solve():
                     "ask_remedies": remedies,
                     "understood": understood,        # human-readable goal interpretation
                     "target_summary": target_summary,
+                    "target_level": sol.get("target_level"),   # Layer 3: solved FOR this level
                     "totals": final, "report": report,
                     "preserved": sol.get("preserved", False),
                     "kept_sets": sol.get("kept_sets", []),

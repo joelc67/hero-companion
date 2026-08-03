@@ -8629,6 +8629,7 @@ async function solveSlotting(perkFocus, opts) {
     // assessment (which re-solves alternatives from this same starting point).
     const presolvePowers = build.powers.map(p => ({ full_name: p.full_name,
       slots: p.slots, earned_slot_count: p.earned_slot_count,
+      pick_level: p.pick_level,          // the target-level solve judges usability by it
       locked: !!p._locked }));
     const res = await api("/build/solve", postJson({
       archetype: build.archetype, goal, tier: build.tier || "premium",
@@ -8637,6 +8638,10 @@ async function solveSlotting(perkFocus, opts) {
       custom_targets: build._custom_targets || null,   // YOUR numbers (derived, never certified)
       perk_focus: perkFocus || null, roles: selectedRoles(), pvp: build.pvp,
       preserve, keep_layout,
+      // Layer 3: solving with the Exemplar view ON declares the target level —
+      // the solver prices dead bonuses at zero, keeps unusable powers as bonus
+      // mules, and emits surviving sets attuned. Off = today's solve, untouched.
+      target_level: EXEMPLAR_VIEW,
       // powerset display names -> context-aware goal interpretation (e.g. a
       // Kinetics support set + "fire farm" = supporting a farmer, not solo)
       primary_display: build.primary_display, secondary_display: build.secondary_display,
@@ -8683,6 +8688,12 @@ async function solveSlotting(perkFocus, opts) {
     }
     md += `**Optimal slotting solved** — ${addedTxt}, no AI guesswork`;
     md += perkFocus ? ` (spare slots → ${perkFocus}).` : ".";
+    if (res.target_level) {
+      md += `\n\n⏬ **Optimized FOR level ${res.target_level}** (your Exemplar view): `
+        + `set bonuses that would be dead down there were priced at zero, powers `
+        + `unusable at that level were kept only as bonus mules, and surviving sets `
+        + `come slotted **attuned** so their bonuses actually work at level ${res.target_level}.`;
+    }
     // v35 (#15) refuse-with-remedy: any DECLARED ask the solve couldn't fully
     // reach is named with numbers and a concrete next move — never silent.
     if (res.ask_remedies && res.ask_remedies.length) {
