@@ -3092,6 +3092,16 @@ async function init() {
   $("entry-close").addEventListener("click", hideEntry);
   initTabs();
   initMenus();
+  // Catalogue rows are delegated: renderPowers rebuilds them constantly, so
+  // per-row listeners would be re-attached (or lost) on every edit.
+  document.addEventListener("mouseover", e => {
+    const row = e.target.closest(".cat-row");
+    if (row) showPowerDetail(row.dataset.ps, row.dataset.full);
+  });
+  document.addEventListener("click", e => {
+    const row = e.target.closest(".cat-row");
+    if (row && !row.classList.contains("taken")) addPowerByName(row.dataset.ps, row.dataset.full);
+  });
   $("saves-back").addEventListener("click", () => {
     $("saves-panel").classList.add("hidden"); $("entry-cards").classList.remove("hidden"); });
   $("save-btn").addEventListener("click", saveProgress);
@@ -4211,6 +4221,74 @@ function powersetDisplayName(full) {
   return full.split(".").slice(-1)[0].replace(/_/g, " ");   // last resort, and it shows
 }
 
+
+// ── BROWSER-FIRST: the powerset catalogue ───────────────────────────────────
+// Mids prints every power of every chosen set, always, and shows the numbers for
+// whatever you point at — so it is useful before you have built anything. Ours
+// hid the same data behind "+ add power…" selects, which can only be read one
+// line at a time and tell you nothing about a power until it is already in the
+// build. This is that half: scan a set, read a power, take it if you want it.
+function catalogueHtml(sets) {
+  const taken = new Set(build.powers.map(p => p.full_name));
+  const cols = sets.map(ps => {
+    const powers = (POWERS_CACHE[ps] || []).filter(p => p.slottable);
+    if (!powers.length) return "";
+    return `<div class="cat-col"><div class="cat-head">${escHtml(powersetDisplayName(ps))}</div>`
+      + powers.map(p => {
+          const has = taken.has(p.full_name);
+          const lv = p.level_available || 1;
+          return `<div class="cat-row${has ? " taken" : ""}" data-ps="${escHtml(ps)}"`
+            + ` data-full="${escHtml(p.full_name)}"`
+            + ` title="${has ? "Already in the build" : "Click to add"} — hover for its numbers">`
+            + `<span class="cat-lv">${lv}</span>`
+            + `<span class="cat-name">${escHtml(p.display_name)}</span>`
+            + `<span class="cat-mark">${has ? "✓" : "+"}</span></div>`;
+        }).join("")
+      + `</div>`;
+  }).join("");
+  return `<div class="catalogue"><div class="cat-hint muted small">Every power in your chosen sets.`
+    + ` Hover for its numbers, click to add it.</div><div class="cat-cols">${cols}</div></div>`;
+}
+
+// Detail for ANY power, taken or not — the thing the ⓘ card could never do,
+// because it only ever described powers already in the build.
+window.showPowerDetail = function (psFull, fullName) {
+  const p = (POWERS_CACHE[psFull] || []).find(x => x.full_name === fullName);
+  const host = $("power-info");
+  if (!p || !host) return;
+  const num = (v, unit) => (v || v === 0) ? `${(+v).toFixed(2).replace(/\.00$/, "")}${unit || ""}` : null;
+  const rows = [
+    ["Unlocks at", p.level_available ? `level ${p.level_available}` : null],
+    ["Endurance", num(p.end_cost)],
+    ["Cast time", num(p.cast_time, "s")],
+    ["Recharge", num(p.base_recharge, "s")],
+    ["Range", p.range ? num(p.range, "ft") : null],
+    ["Radius", p.radius ? num(p.radius, "ft") : null],
+    ["Max targets", p.max_targets || null],
+    // effect_area is an enum id, not something a player reads. Only show it
+    // when the data gives a word.
+    ["Area", (typeof p.effect_area === "string" && p.effect_area) ? p.effect_area : null],
+  ].filter(r => r[1] !== null && r[1] !== undefined && r[1] !== "");
+  // ⚠ A bare heading with nothing under it is worse than no heading: it reads as
+  // missing data. Only render the row when there is something to say.
+  const fx = (label, list) => {
+    const txt = (list || []).map(e => e.display || e.attribute || e.effect_type || "")
+      .filter(Boolean).slice(0, 6).join(", ");
+    return txt ? `<div class="pd-fx"><b>${label}</b> ${escHtml(txt)}</div>` : "";
+  };
+  host.classList.remove("hidden");
+  host.innerHTML = `<div class="pd">`
+    + `<div class="pd-h">${escHtml(p.display_name)}</div>`
+    + `<div class="pd-sub muted small">${escHtml(powersetDisplayName(psFull))}`
+    + `${build.powers.some(x => x.full_name === fullName) ? " · in your build" : ""}</div>`
+    + `<table class="pd-t">${rows.map(([k, v]) =>
+        `<tr><th>${k}</th><td>${escHtml(String(v))}</td></tr>`).join("")}</table>`
+    + fx("Damage", p.damage_effects) + fx("Heals", p.heal_effects)
+    + fx("Buffs", p.buff_effects) + fx("Debuffs", p.debuff_effects)
+    + fx("Control", p.control_effects) + fx("Self", p.self_effects)
+    + `</div>`;
+};
+
 function renderPowers() {
   applyIdentityLock();          // keep archetype/powerset lock in sync (onArchetypeChange re-enables them)
   const host = $("powers-list");
@@ -4265,19 +4343,7 @@ function renderPowers() {
     ;
   }
 
-  // "Add power" pickers — the choices, below the build
-  html += `<div class="add-powers-row">`;
-  for (const ps of sets) {
-    const powers = (POWERS_CACHE[ps] || []).filter(p => p.slottable);
-    if (!powers.length) continue;
-    const psName = powersetDisplayName(ps);
-    html += `<div class="add-power"><label class="muted small">Add from ${psName}
-      <select data-ps="${ps}" onchange="addPower(this)">
-        <option value="">+ add power…</option>
-        ${powers.map(p => `<option value="${p.full_name}">${p.display_name}</option>`).join("")}
-      </select></label></div>`;
-  }
-  html += `</div>`;
+  html += catalogueHtml(sets);
 
   // One-time hint: the decision notes only answer skepticism if people find them
   // (field report: the "?" was found only by deliberate poking).
@@ -4899,12 +4965,17 @@ function slotHtml(powerIdx, slotIdx, slot) {
 }
 
 window.addPower = function (sel) {
-  const psFull = sel.dataset.ps;
-  const fullName = sel.value;
+  addPowerByName(sel.dataset.ps, sel.value);
+  sel.value = "";
+};
+
+// The catalogue takes powers by name, so the picking logic can no longer live
+// inside a <select> handler.
+window.addPowerByName = function (psFull, fullName) {
   if (!fullName) return;
   const p = (POWERS_CACHE[psFull] || []).find(x => x.full_name === fullName);
   if (!p) return;
-  if (build.powers.some(x => x.full_name === fullName)) { sel.value=""; return; }
+  if (build.powers.some(x => x.full_name === fullName)) return;
   recordEdit();
   build.powers.push({
     full_name: p.full_name,
@@ -4917,7 +4988,6 @@ window.addPower = function (sel) {
     slotCount: 1,
     slots: [null],
   });
-  sel.value = "";
   renderPowers();
   recompute();
 };

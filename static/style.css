@@ -195,6 +195,9 @@ header h1 { font-size: 17px; margin: 0; font-weight: 600; }
 .powers-main > .panel:first-child { flex: 1; }
 .powers-main, .powers-side { min-width: 0; display: flex; flex-direction: column; gap: var(--s3); }
 #power-info.hidden { display: none; }
+/* The detail card leads the side column and stays put while you scan the
+   catalogue — it is the thing you are reading, not a footnote. */
+.powers-side #power-info { position: sticky; top: var(--s3); }
 
 /* ── The Stats board ─────────────────────────────────────────────────────────
    Defence, Resistance, Other and Offense were stacked in one column at full
@@ -2473,3 +2476,36 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
 .start-here .entry-ico { font-size: 22px; }
 .start-here .entry-go { color: var(--accent); font-size: 13px; margin-top: auto; }
 .start-here > .muted { margin: 0 0 var(--s3); }
+
+/* ── The powerset catalogue (browser-first) ──────────────────────────────────
+   Every power of every chosen set, printed. Mids' left column is the model:
+   readable before you have built anything, and the way you take powers. */
+.catalogue { margin-top: var(--s4); }
+.cat-hint { margin-bottom: var(--s2); }
+.cat-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: var(--s3); align-items: start; }
+.cat-col { min-width: 0; background: var(--panel2); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: var(--s2); }
+.cat-head { font-weight: 600; color: var(--accent); padding: 0 var(--s1) var(--s1);
+  border-bottom: 1px solid var(--border); margin-bottom: var(--s1); }
+.cat-row { display: flex; align-items: center; gap: var(--s2); cursor: pointer;
+  padding: 2px var(--s1); border-radius: var(--r1); }
+.cat-row:hover { background: var(--panel); }
+.cat-lv { color: var(--muted); font-size: 11.5px; min-width: 20px; text-align: right;
+  font-variant-numeric: tabular-nums; }
+.cat-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cat-mark { color: var(--muted); }
+/* Taken powers stay listed — the set reads as a whole, and the tick is the
+   answer to "have I got that one?" without cross-checking the wall. */
+.cat-row.taken { color: var(--muted); cursor: default; }
+.cat-row.taken .cat-mark { color: var(--def); }
+.cat-row.taken:hover { background: none; }
+
+/* Detail for any power, taken or not. */
+.pd-h { font-size: 16px; font-weight: 600; }
+.pd-sub { margin-bottom: var(--s2); }
+.pd-t { width: 100%; border-collapse: collapse; margin-bottom: var(--s2); }
+.pd-t th { text-align: left; font-weight: 400; color: var(--muted); padding: 1px 0; }
+.pd-t td { text-align: right; font-variant-numeric: tabular-nums; }
+.pd-fx { margin-top: var(--s1); font-size: 12.5px; color: var(--muted); }
+.pd-fx b { color: var(--ink); }
