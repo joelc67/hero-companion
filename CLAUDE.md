@@ -375,6 +375,10 @@ Leveling Guide / Logging. `balanceColumns()` is DELETED — tabs split the colum
 it shuffled tiles between. Full detail in `tabbed-layout-spec.md`; handoff state
 in RESUME-HERE.md.
 
+- **⚠ NAVIGATION REBUILD IS STILL IN PROGRESS (Joel, 2026-08-03) — the tour
+  rebuild is GATED behind it. Do not prompt about the tour until Joel declares
+  navigation done.**
+
 - **⚠⚠ GET EYES BEFORE TOUCHING LAYOUT.** `mcp__computer-use__request_access`
   (["Hero Companion", "MidsReborn"]) then `screenshot`/`zoom` on the REAL
   installed window. Joel: *"I feel like you are going about this blind."* He was

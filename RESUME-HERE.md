@@ -104,11 +104,16 @@ Fit is by **zoom**, solved once for the whole app from the tallest tab, floor
 
 ## ▶ OPEN, in the order I would take them
 
-1. **The guided tour is stale and `audit_tour` is RED (57 of 58 targets).** It
-   walks a mock of the OLD single-page layout. Joel ruled: *"all the tour slides
-   will have to be redone completely. But they can exist in the menu, perhaps
-   under Help."* It is already under Help. **I deliberately did NOT patch the
-   audit to pass** — a tour describing a dead screen should read as red.
+0. **THE NAVIGATION REBUILD IS NOT DONE (Joel, 2026-08-03).** The tabbed shell
+   exists but navigation work continues. **Do not raise or prompt about the tour
+   rebuild until Joel says navigation is complete** — the tour describes whatever
+   navigation ends up being, so redoing it earlier is wasted twice.
+1. **The guided tour is stale and `audit_tour` is RED (57 of 58 targets)** —
+   GATED behind item 0, do not prompt. It walks a mock of the OLD single-page
+   layout. Joel ruled: *"all the tour slides will have to be redone completely.
+   But they can exist in the menu, perhaps under Help."* It is already under
+   Help. **I deliberately did NOT patch the audit to pass** — a tour describing
+   a dead screen should read as red.
 2. **The advanced path is unverified against the new shell.** I drove the
    beginner path hard (open → pick → 24-pick ladder → save → quit → reopen) and
    an imported build, but NOT solve → respec → custom targets → export.
