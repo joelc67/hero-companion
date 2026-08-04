@@ -1725,9 +1725,12 @@ body { overflow: hidden; }
 .accolades-card {
   grid-column: 1 / -1;      /* the full width of the summary course */
   display: flex; flex-direction: column; min-height: 0;
-  max-height: 260px;        /* comfortable; the list scrolls inside it */
+  /* max-height 260 + overflow hidden were the SUMMARY-BAND era cap — in the
+     powers column they CLIPPED the list mid-row with no way to reach the rest
+     (Joel's arrow, 2026-08-04). The card grows to its content now; the WINDOW
+     scrolls, per the no-inner-scrollbars ruling. */
   background: var(--panel2); border: 1px solid var(--accent); border-radius: 6px;
-  padding: 8px 10px; font-size: 11px; overflow: hidden;
+  padding: 8px 10px; font-size: 11px;
 }
 .accolades-card.hidden { display: none; }
 /* header + search share ONE inline row — the width is the whole point */
@@ -2835,3 +2838,7 @@ summary:hover { color: var(--ink); }
 /* Accolades in the narrow side column: header controls wrap instead of
    overflowing, and the list is the single tall checklist Joel asked for. */
 .powers-side .acc-head { flex-wrap: wrap; }
+/* The catalogue row's ⓘ — quiet until reached for, same idiom as the wall's
+   info glyph. It replaced detail-on-hover, which bounced the side column. */
+.cat-row .cat-info { opacity: .4; cursor: pointer; padding: 0 3px; flex: none; }
+.cat-row:hover .cat-info { opacity: 1; color: var(--accent); }

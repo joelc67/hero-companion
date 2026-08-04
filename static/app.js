@@ -3233,10 +3233,11 @@ async function init() {
   initExemplarControl();
   // Catalogue rows are delegated: renderPowers rebuilds them constantly, so
   // per-row listeners would be re-attached (or lost) on every edit.
-  document.addEventListener("mouseover", e => {
-    const row = e.target.closest(".cat-row");
-    if (row) showPowerDetail(row.dataset.ps, row.dataset.full);
-  });
+  // ⚠ NO HOVER-PREVIEW here. Detail-on-mouseover re-rendered the #power-info
+  // card (top of the side column) for every row the pointer crossed, so the
+  // Epic/Incarnate fold and Assistant below it "bounced all around" (Joel,
+  // 2026-08-04, observer-confirmed: 72 mutations, 66px displacement per
+  // sweep). Detail now opens from each row's ⓘ — a click, like the wall.
   // The in-column pool picker writes through to the real .pool-sel, so the
   // dedupe and the powers cascade stay in one implementation.
   document.addEventListener("change", e => {
@@ -3246,6 +3247,13 @@ async function init() {
     if (real) { real.value = sw.value; real.dispatchEvent(new Event("change", { bubbles: true })); }
   });
   document.addEventListener("click", e => {
+    // the row's ⓘ opens the detail card and must NOT also pick the power
+    const info = e.target.closest(".cat-info");
+    if (info) {
+      const irow = info.closest(".cat-row");
+      if (irow) showPowerDetail(irow.dataset.ps, irow.dataset.full);
+      return;
+    }
     const row = e.target.closest(".cat-row");
     if (row && !row.classList.contains("taken") && !row.classList.contains("locked")) {
       addPowerByName(row.dataset.ps, row.dataset.full);
@@ -4846,6 +4854,7 @@ function catalogueHtml(sets) {
                  : why === "done" ? "All 24 picks are used" : `Not yet: ${why}`}">`
             + `<span class="cat-lv">${p.level_available || 1}</span>`
             + `<span class="cat-name">${escHtml(p.display_name)}</span>`
+            + `<span class="cat-info" title="What does this power do?">ⓘ</span>`
             + `<span class="cat-mark">${mark}</span></div>`;
         }).join("")
       + `</div>`;
