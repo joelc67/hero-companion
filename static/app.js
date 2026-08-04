@@ -3940,26 +3940,92 @@ async function loadPowers(psFullName) {
 
 // When a powerset is chosen we expose its powers as an "add power" picker
 let _swapOk = false;  // one accepted confirm covers the paired VEAT change in the same tick
+
+// The approved rebuild (Joel's ruling, 2026-08-04): after a primary/secondary
+// swap is confirmed, pick a fresh set of powers toward the declared goal and
+// solve the slotting — the user approved a restart, so deliver a FINISHED
+// build, not empty seats. Debounced one tick so a paired VEAT change (both
+// sets swap together) rebuilds ONCE with the final identity.
+let _rebuildTimer = null;
+function _scheduleIdentityRebuild() {
+  clearTimeout(_rebuildTimer);
+  _rebuildTimer = setTimeout(async () => {
+    const s = $("gen-status");
+    if (s) s.textContent = "🔨 Rebuilding this character around its new sets…";
+    const res = await api("/build/autopick", postJson({
+      archetype: build.archetype, primary: build.primary, secondary: build.secondary,
+      content: ($("preset-content") && $("preset-content").value) || "general",
+      role: ($("preset-role") && $("preset-role").value) || null,
+      exposure: build._exposure || null,
+      custom_targets: build._custom_targets || null })).catch(() => null);
+    if (!(res && res.ok && (res.powers || []).length)) {
+      if (s) s.textContent = "Couldn't rebuild automatically — pick powers below and hit 🧮 Solve.";
+      renderPowers(); recompute();
+      return;
+    }
+    build.powers = res.powers;
+    // pools + epic follow the fresh picks, exactly like a loaded build
+    await syncPoolsEpicFromPowers(build.powers, null, null);
+    renderPowers();
+    recompute();
+    if (s) s.textContent = "🔨 New powers picked — slotting them now…";
+    const btn = $("solve-btn");
+    if (btn) btn.click();   // the real Solve path, exactly as the user would
+    // The solve path pauses on confirmIntent's question (#intent-go, rendered
+    // into ai-response). The user already approved this rebuild in the swap
+    // popup — one approval carries through; parking them at a second question
+    // would be a second wall. (Scoped HERE: a hand-clicked Solve still asks.)
+    let tries = 0;
+    const autoYes = setInterval(() => {
+      const go = $("intent-go");
+      const gc = $("gen-confirm");
+      if (go) {
+        clearInterval(autoYes);
+        go.click();
+      } else if (gc && !gc.classList.contains("hidden")) {
+        clearInterval(autoYes);
+        const yes = $("gen-confirm-yes");
+        if (yes) yes.click();
+      } else if (++tries > 25) clearInterval(autoYes);   // ~5s: no question came
+    }, 200);
+  }, 60);
+}
 async function addPowersetPowers(sel, slot) {
   const psFull = sel.value;
   const psDisplay = sel.options[sel.selectedIndex]?.text;
-  // Switching a set REMOVES the old set's picked powers. They used to stay in
-  // build.powers invisibly — the wall didn't show them but the solver DID, so
-  // "re-slot this whole build" solved the old character's powers and looked
-  // like it did nothing (Joel's field report, 2026-08-04: Poison/Sonic IOs
-  // narrated on an Empathy/Energy build). Confirm names the cost; nothing to
-  // lose = no prompt.
+  // Switching a set used to leave the old set's picked powers in build.powers
+  // invisibly — the wall didn't show them but the solver DID, so "re-slot this
+  // whole build" solved the old character and looked like a no-op (Joel's
+  // field report, 2026-08-04). His ruling the same day: a PRIMARY/SECONDARY
+  // change warns that the character restarts, and on approval the tool
+  // REBUILDS EVERYTHING from the new choices — pick + slot, no empty seats
+  // left for the user to discover. Epic keeps the lighter prune-only confirm.
   const prev = { primary: build.primary, secondary: build.secondary, epic: build.epic }[slot];
-  if (prev && psFull !== prev) {
+  if ((slot === "primary" || slot === "secondary") && prev && psFull !== prev) {
+    const picks = (build.powers || []).filter(p => !(p.full_name || "").startsWith("Inherent."));
+    if (picks.length) {
+      if (!_swapOk) {
+        const prevName = { primary: build.primary_display,
+                           secondary: build.secondary_display }[slot] || "the old set";
+        const ok = confirm(`Changing your ${slot} set restarts this character's build — the current powers and slotting are replaced by a fresh build around the new set.
+
+OK: switch, then rebuild everything automatically.
+Cancel: keep ${prevName}.`);
+        if (!ok) { sel.value = prev; return; }
+        _swapOk = true; setTimeout(() => { _swapOk = false; }, 0);
+      }
+      recordEdit();
+      build.powers = (build.powers || []).filter(p => (p.full_name || "").startsWith("Inherent."));
+      _scheduleIdentityRebuild();
+    }
+  } else if (slot === "epic" && prev && psFull !== prev) {
     const victims = (build.powers || []).filter(p => (p.full_name || "").startsWith(prev + "."));
     if (victims.length) {
       if (!_swapOk) {
-        const prevName = { primary: build.primary_display, secondary: build.secondary_display,
-                           epic: build.epic_display }[slot] || "the old set";
-        const ok = confirm(`Changing your ${slot} set removes its ${victims.length} picked power${victims.length === 1 ? "" : "s"} and their slotting. The rest of the build keeps its own.
+        const ok = confirm(`Changing your epic set removes its ${victims.length} picked power${victims.length === 1 ? "" : "s"} and their slotting. The rest of the build keeps its own.
 
 OK: switch sets.
-Cancel: keep ${prevName}.`);
+Cancel: keep ${build.epic_display || "the old set"}.`);
         if (!ok) { sel.value = prev; return; }
         _swapOk = true; setTimeout(() => { _swapOk = false; }, 0);
       }
@@ -4654,7 +4720,11 @@ function catalogueHtml(sets) {
       + ` <button class="linkbtn" onclick="$('solve-btn').click()">🧮 Slot everything up</button></div>`
     : `<div class="cat-hint"><b>Pick ${taken.length + 1} of ${LADDER.length}</b>`
       + ` — level ${atLevel}. Only what the game offers at this level is available;`
-      + ` 🔒 shows what it is waiting for.</div>`;
+      + ` 🔒 shows what it is waiting for.`
+      // The seat-filler (Joel's field report, 2026-08-04): after a set swap
+      // pruned the old picks, nothing helped refill — he re-slotted a wall of
+      // pools and called it broken. He was right that the FLOW was.
+      + ` <button class="linkbtn" onclick="autopickRemaining()">✨ Auto-pick the rest toward my goal</button></div>`;
   const poolNote = poolSets.length
     ? `<div class="cat-poolnote muted small keep-whole">🎲 <b>Power pools</b> — you may take up to`
       + ` <b>${poolRules().max}</b>, and you have ${poolSets.length}.`
@@ -4666,6 +4736,57 @@ function catalogueHtml(sets) {
   return `<div class="catalogue">${head}${gate}${poolNote}`
     + `<div class="cat-cols">${cols}</div></div>`;
 }
+
+// Fill the EMPTY pick seats from autopick, keeping every existing pick.
+// Born from the set-swap flow (2026-08-04): changing primary/secondary prunes
+// the old set's powers, and until this existed the only way to refill was
+// clicking 14 powers by hand — the assistant re-slots but never picks.
+// Only powers from the build's OWN sets are taken from the proposal (autopick
+// chooses its own pools; forcing those in would silently change the user's
+// pool choices — advise-don't-override). Seats it can't fill stay open.
+window.autopickRemaining = async function () {
+  const picked = new Set(build.powers.filter(p => !(p.full_name || "").startsWith("Inherent."))
+    .map(p => p.full_name));
+  const room = LADDER.length - picked.size;
+  if (room <= 0 || !build.primary || !build.secondary) return;
+  const s = $("gen-status");
+  if (s) s.textContent = "✨ Picking the empty seats toward your goal…";
+  const res = await api("/build/autopick", postJson({
+    archetype: build.archetype, primary: build.primary, secondary: build.secondary,
+    content: ($("preset-content") && $("preset-content").value) || "general",
+    role: ($("preset-role") && $("preset-role").value) || null,
+    exposure: build._exposure || null,
+    custom_targets: build._custom_targets || null })).catch(() => null);
+  if (!(res && res.ok && (res.powers || []).length)) {
+    if (s) s.textContent = "Couldn't auto-pick just now — the ladder below still works by hand.";
+    return;
+  }
+  recordEdit();
+  const mySets = new Set([build.primary, build.secondary, build.epic,
+                          ...(build.pools || [])].filter(Boolean));
+  const usedLevels = new Set(build.powers.map(p => p.pick_level).filter(Boolean));
+  let added = 0;
+  for (const p of res.powers) {
+    if (added >= room) break;
+    const fn = p.full_name || "";
+    if (picked.has(fn) || fn.startsWith("Inherent.")) continue;
+    if (!mySets.has(fn.slice(0, fn.lastIndexOf(".")))) continue;
+    // keep the proposal's seat only if it's free — Solve re-seats the rest
+    if (p.pick_level && usedLevels.has(p.pick_level)) p.pick_level = null;
+    else if (p.pick_level) usedLevels.add(p.pick_level);
+    build.powers.push(p);
+    picked.add(fn);
+    added++;
+  }
+  renderPowers();
+  recompute();
+  const left = LADDER.length - picked.size;
+  if (s) s.textContent = added
+    ? `✨ Picked ${added} power${added === 1 ? "" : "s"} toward your goal`
+      + `${left ? ` (${left} seat${left === 1 ? "" : "s"} still open — the proposal used pools you haven't chosen)` : ""}`
+      + ` — hit 🧮 Solve to slot everything.`
+    : "Nothing to add from your current sets — pick the rest by hand below.";
+};
 
 // Detail for ANY power, taken or not — the thing the ⓘ card could never do,
 // because it only ever described powers already in the build.
