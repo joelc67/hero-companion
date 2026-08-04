@@ -95,7 +95,7 @@ Joel's session context is a limited resource. Do not spend it on prose.
 - Copy rules: never say "illegal" bare ("the game won't allow it"); plain English before jargon; "easiest route, never the only way"; **no em dashes in outward-facing text Joel sends**.
 - Hasten: Joel dislikes relying on it (Guyver's rule = never past 2 slots). Vocab: a "mule" = a dual-boxed alt character, not a bonus-holding power.
 
-## Guided tour — final design (shipped 0.12.29; every rule below is one of Joel's rulings, 2026-07-27)
+## Guided tour — final design (shipped 0.12.29; REBUILT for the tabbed app 2026-08-04, f9176684 — see the tabbed-app section for the rebuild's traps; every rule below is one of Joel's rulings, 2026-07-27, and still governs)
 
 - **The tour NEVER walks the live page.** It paints a full-screen MOCK (z-55): a made-up SS/WP Brute damage build + a copy of the opening menu, hand-built from the app's real markup shapes and painted by the real stylesheet, EXAMPLE badge on top. Items are explained AT THEIR ACTION LOCATION — the mock uses main's REAL grid areas. The live-page design dead-ended whenever a step's subject wasn't on screen (on a fresh install: everything — the tour's own audience).
 - **Opening ≠ explaining: click-payoffs OPEN as scenes.** Step `scene:` key; overlays carry `data-tm-overlay="<scene>"`, exactly ONE shown per step. Scenes: `info` (ⓘ details column), `picker` (set chooser), `targets` (editor w/ honest unreachable row), `changes` (before→after diff), `journey` (road + ★ + open stop), `bugreport` (prefilled form). Adding one = mock HTML + `scene:` on the step.
@@ -418,9 +418,17 @@ Leveling Guide / Logging. `balanceColumns()` is DELETED — tabs split the colum
 it shuffled tiles between. Full detail in `tabbed-layout-spec.md`; handoff state
 in RESUME-HERE.md.
 
-- **⚠ NAVIGATION REBUILD IS STILL IN PROGRESS (Joel, 2026-08-03) — the tour
-  rebuild is GATED behind it. Do not prompt about the tour until Joel declares
-  navigation done.**
+- **✅ Navigation declared done + TOUR REBUILT (Joel's word, 2026-08-04,
+  f9176684): 59 steps / 9 tab-shaped chapters over a mock of the REAL shell**
+  (menubar + five-tab strip + tile + one mock panel per tab; `TM_TAB` maps
+  chapter→tab, `_mockShowScene(scene, tab)` drives it). All 0.12.29 tour
+  rulings still apply (mock-never-live, scenes, anchors, tour green, stray
+  clicks, save-spot, deep links). New traps: the REAL
+  `body:not(.tab-powers)` tile-hide and sticky tabbar leak INTO the mock —
+  overridden `#tour-mock`-scoped; the mock's own tile-off must be a CLASS
+  (`.tm-tile-off`, later in source) because the flex override is !important.
+  statBar/headerRow diagrams retired with their surfaces; `.ov-table`/
+  `.prov-*` CSS deleted (the old mock was the last user).
 
 - **⚠⚠ GET EYES BEFORE TOUCHING LAYOUT.** `mcp__computer-use__request_access`
   (["Hero Companion", "MidsReborn"]) then `screenshot`/`zoom` on the REAL
