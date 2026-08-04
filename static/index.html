@@ -463,21 +463,29 @@
         </div>
       </details>
       </section>
+      <!-- THE INHERENT CARD, in the side column's tail (Joel's marked-up
+           screenshot, 2026-08-04: the green arrow). It is the column's last
+           tile, so the grout rule stretches it to the shared bottom edge. -->
+      <section class="panel hidden" id="inherent-card">
+        <h2 id="inherent-card-h">🧬 Your inherent</h2>
+        <div id="inherent-card-body"></div>
+      </section>
       </div>
     </div>
-    <!-- ── THE CARD BAND (Joel, 2026-08-04: "instead of finding balance you
-         moved… content to the right, now the left has a big empty space" —
-         moving panels between two competing columns is a see-saw, not
-         design). The two-column region ENDS with the wall; below it, the
-         four cards share ONE full-width row of equal columns. No side can
-         starve, no packer needed. -->
-    <div class="pw-cardband">
+    <!-- ── ACCOLADES: ITS OWN FULL-WIDTH ROW (Joel, 2026-08-04 marked-up
+         screenshot: "Accolades needs to take up the entire horizontal line it
+         is on"). The other three cards moved UP into the voids he circled —
+         the inherent card into the side column above, and the two below into
+         the catalogue grid's trailing cells (renderPowers seats them). What is
+         left here is their HOME: an innerHTML rebuild of the wall would eat
+         them, so they are parked back here before every render. -->
       <section class="panel" id="endgame-panel">
         <h2>Accolades<button class="tour-help" onclick="startTour('endgame')" aria-label="Explain this section" title="Explain this section">?</button></h2>
         <p class="muted small keep-whole">Permanent rewards worth chasing — tick the ones
           your character has earned and they feed the totals.</p>
         <div id="accolades-card" class="accolades-card"></div>
       </section>
+    <div class="pw-cardband" id="card-home">
       <section class="panel" id="cmd-card">
         <h2>⌨ In-game commands</h2>
         <p class="muted small keep-whole">Click a command to copy it — then <b>Ctrl+V</b> into the game's chat box.</p>
@@ -487,10 +495,6 @@
           <button type="button" class="cmd-row" data-cmd="/ah"><code>/ah</code><span>Open the auction house from anywhere — for the shopping the converters guide prices</span></button>
           <button type="button" class="cmd-row" data-cmd="/logchat"><code>/logchat</code><span>Turn the chat log on — the Logging tab reads it to build your Play Log</span></button>
         </div>
-      </section>
-      <section class="panel hidden" id="inherent-card">
-        <h2 id="inherent-card-h">🧬 Your inherent</h2>
-        <div id="inherent-card-body"></div>
       </section>
       <section class="panel" id="setbonus-blurb">
         <h2>💠 How set bonuses stack</h2>

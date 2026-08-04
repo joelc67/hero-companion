@@ -5127,7 +5127,18 @@ function renderPowers() {
     }
   } catch (e) { /* localStorage unavailable — skip the hint */ }
 
+  // ⌨ commands + 💠 set bonuses SIT IN THE CATALOGUE GRID (Joel's marked-up
+  // screenshot, 2026-08-04): its last row leaves 2-3 empty cells, and those
+  // cards were parked in a band below the hole instead of in it. Placement is
+  // FIXED — the cards are always the grid's last items and grid auto-flow puts
+  // them in whatever cells are free. Nothing is measured and nothing competes,
+  // so this is not the packer coming back. They go home FIRST: they live inside
+  // `host` once seated, and this innerHTML write would otherwise destroy them.
+  const _cards = ["cmd-card", "setbonus-blurb"], _home = $("card-home");
+  if (_home) for (const id of _cards) { const n = $(id); if (n) _home.append(n); }
   host.innerHTML = html;
+  const _cc = host.querySelector(".cat-cols");
+  if (_cc) for (const id of _cards) { const n = $(id); if (n) _cc.append(n); }
   loadAccolades().then(renderAccolades);   // the accolade sync the deleted vitals card carried
   updateEditBar();
   updateEpicBadge();

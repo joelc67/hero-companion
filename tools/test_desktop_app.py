@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 55          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 58          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement)
 
@@ -250,6 +250,23 @@ def main():
           < index.index('id="tab-stats"')
           and 'class="pw-cardband"' in index
           and "function packPowersTab" not in app_js)
+    # Joel's marked-up screenshot, 2026-08-04: Accolades owns its whole
+    # horizontal line, and the three small cards moved UP into the voids he
+    # circled — the inherent card into the side column's tail, ⌨ commands and
+    # 💠 set bonuses into the catalogue grid's trailing cells.
+    check("Accolades is full width, not a card-band column",
+          index.index('id="endgame-panel"') < index.index('id="card-home"'),
+          "inside the band it was one narrow column of four")
+    check("the inherent card is the side column's last tile",
+          index.index('id="inherent-card"') < index.index('id="endgame-panel"')
+          and index.index('id="endgame-plan-panel"') < index.index('id="inherent-card"'),
+          "it belongs in the green box of his screenshot, not below the wall")
+    check("the two small cards are SEATED in the catalogue grid, home first",
+          'const _cards = ["cmd-card", "setbonus-blurb"]' in app_js
+          and app_js.index("_home.append(n)") < app_js.index("host.innerHTML = html;")
+          < app_js.index("_cc.append(n)")
+          and ".cat-cols > .panel" in css,
+          "seat AFTER the rebuild, park them home BEFORE it or innerHTML eats them")
     # ⚠ SPEC 5.1 — the rule a naive tab implementation breaks. recompute() writes
     # into elements on four different tabs; unmounting makes every write a no-op.
     check("panels are HIDDEN, never unmounted", "panel.hidden = !on;" in app_js,

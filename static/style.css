@@ -2953,3 +2953,20 @@ summary:hover { color: var(--ink); }
   gap: var(--s3); margin-top: var(--s3); align-items: stretch; }
 .pw-cardband > .panel { margin: 0; }
 .pw-cardband > .panel.hidden { display: none; }
+/* the cards' HOME is empty once they are seated in the catalogue — an empty
+   grid still eats its margin, so it takes no room at all */
+.pw-cardband:empty { display: none; }
+
+/* ── THE CATALOGUE PACKS (Joel's second markup, 2026-08-04: the two green
+   arrows move the cards UP, and nothing may hang below the line where the
+   pool/epic boxes end). A GRID cannot do that: its void is INSIDE occupied
+   rows — short set columns in a row as tall as its tallest — so there are no
+   empty cells to seat a card in, and any fixed span eventually wraps below the
+   line. CSS multicol packs boxes into balanced columns instead: the cards flow
+   up under whichever set column ends early, the bottom edge comes out near
+   flat, and the whole catalogue gets SHORTER, which is what pulls Accolades up
+   under the line. Reading order becomes column-major (primary first, top
+   left) — the same wall, packed. */
+.cat-cols { display: block; column-width: 210px; column-gap: var(--s3); }
+.cat-cols > * { break-inside: avoid; margin-bottom: var(--s3); }
+.cat-cols > .panel { margin: 0 0 var(--s3); }
