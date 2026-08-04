@@ -2832,3 +2832,6 @@ summary:hover { color: var(--ink); }
 #endgame-panel, #endgame-plan-panel {
   scroll-margin-top: calc(var(--chrome-h, 130px) + var(--s3));
 }
+/* Accolades in the narrow side column: header controls wrap instead of
+   overflowing, and the list is the single tall checklist Joel asked for. */
+.powers-side .acc-head { flex-wrap: wrap; }

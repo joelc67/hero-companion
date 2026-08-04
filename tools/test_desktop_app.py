@@ -241,9 +241,9 @@ def main():
           all(f'id="tab-btn-{k}"' in index and f'id="tab-{k}"' in index
               for k in ("powers", "stats", "leveling", "logging"))
           and 'id="tab-btn-endgame"' not in index)
-    check("the End Game surfaces live inside the powers tab",
-          index.index('id="tab-powers"') < index.index('id="endgame-panel"')
-          < index.index('id="endgame-plan-panel"') < index.index('id="tab-stats"'))
+    check("the End Game surfaces live inside the powers tab (plan, then accolades)",
+          index.index('id="tab-powers"') < index.index('id="endgame-plan-panel"')
+          < index.index('id="endgame-panel"') < index.index('id="tab-stats"'))
     # ⚠ SPEC 5.1 — the rule a naive tab implementation breaks. recompute() writes
     # into elements on four different tabs; unmounting makes every write a no-op.
     check("panels are HIDDEN, never unmounted", "panel.hidden = !on;" in app_js,
