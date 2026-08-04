@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 67          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 68          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement)
 
@@ -254,20 +254,24 @@ def main():
     # horizontal line, and the three small cards moved UP into the voids he
     # circled — the inherent card into the side column's tail, ⌨ commands and
     # 💠 set bonuses into the catalogue grid's trailing cells.
-    check("Accolades is full width, not a card-band column",
-          index.index('id="endgame-panel"') < index.index('id="card-home"'),
-          "inside the band it was one narrow column of four")
+    check("Accolades is full width, and the card strip sits above it",
+          index.index('id="card-home"') < index.index('id="endgame-panel"')
+          and index.index('id="endgame-panel"') < index.index('id="tray-out"'),
+          "the strip is what follows the powerset rows; Accolades keeps its own row")
     check("the inherent card is the side column's last tile",
           index.index('id="inherent-card"') < index.index('id="endgame-panel"')
           and index.index('id="endgame-plan-panel"') < index.index('id="inherent-card"'),
           "it belongs in the green box of his screenshot, not below the wall")
-    check("the two small cards are SEATED beside the powersets, home first",
-          'const _cards = ["cmd-card", "setbonus-blurb"]' in app_js
-          and app_js.index("_home.append(n)") < app_js.index("host.innerHTML = html;")
-          < app_js.index("_cc.append(n)")
-          and '<div class="cat-side" id="cat-side">' in app_js
-          and ".cat-side" in css,
-          "seat AFTER the rebuild, park them home BEFORE it or innerHTML eats them")
+    # ⚠ NOTHING BESIDE THE COLUMNS (Joel's third markup, 2026-08-04): the cards'
+    # sidebar was taking exactly the width the pool/epic boxes needed to tile, so it
+    # bought two ragged voids. Both cards are STATIC in the strip now — no sidebar,
+    # no JS re-parenting around the innerHTML write, nothing to eat them.
+    check("the two small cards live in the strip, with no JS seating left",
+          index.index('id="card-home"') < index.index('id="cmd-card"')
+          < index.index('id="setbonus-blurb"') < index.index('id="endgame-panel"')
+          and "cat-side" not in css.replace("/* (.cat-body / .cat-side are DELETED", "")
+          and '_cc.append(n)' not in app_js and 'id="cat-side"' not in app_js,
+          "matches the definitions, not the comments recording that the sidebar went")
     # ⚠ REVERTED and pinned (work order 2026-08-04 3:11 PM): multicol assigns
     # boxes to columns by HEIGHT, so it flowed column-major and stacked Primary
     # under Secondary. The catalogue's premise is one powerset per column.
@@ -322,10 +326,13 @@ def main():
           "new ResizeObserver" not in _lay and "_laySnapshot" in _lay
           and 'addEventListener("pointerup"' in _lay,
           "the pane fires no layout callbacks, so an observer here is untestable code")
-    check("the catalogue is a GRID, never multicol",
-          "display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr))" in css
+    check("the catalogue is a GRID of wide tracks, never multicol",
+          ".cat-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(205px, 1fr))" in css
           and "column-width: 210px" not in css,
-          "matches the live rule, not the comment recording why multicol went")
+          "205px = four tracks in HIS ~870px column, so the 7 boxes tile as two rows")
+    check("...and the inherent card no longer stretches to the column's bottom",
+          ".powers-side > #inherent-card:last-child { flex: 0 0 auto; }" in css,
+          "Joel: it could be half its height with no text below it")
     # ⚠ SPEC 5.1 — the rule a naive tab implementation breaks. recompute() writes
     # into elements on four different tabs; unmounting makes every write a no-op.
     check("panels are HIDDEN, never unmounted", "panel.hidden = !on;" in app_js,

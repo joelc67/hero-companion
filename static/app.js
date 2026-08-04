@@ -4976,16 +4976,14 @@ function catalogueHtml(sets) {
     : "";
   // (The accolades panel lives in the full-width card band below the wall —
   // .pw-cardband in index.html; 2026-08-04, the structural-balance order.)
-  // The powerset columns and the two cards are PEERS side by side (work order
-  // 2026-08-04 3:11 PM): .cat-side is the trailing stack the cards are seated
-  // into, so their top edge lands on the first column's top edge at every width
-  // and the sets keep row-major order with Primary leftmost. ⚠ They are NOT
-  // grid items of .cat-cols: an item with a definite grid-row is placed BEFORE
-  // the auto-flow items, which put the cards in tracks 1-2 and pushed Primary to
-  // track 3 — measured, and the same reading-order damage the multicol had.
+  // ⚠ NOTHING SITS BESIDE THE COLUMNS ANY MORE (Joel's third markup, 2026-08-04):
+  // the two cards stood in a 400px sidebar, which is exactly the width the pool and
+  // epic boxes needed to tile evenly — so the sidebar bought two ragged voids. The
+  // cards moved to the full-width strip under the catalogue and the columns get the
+  // whole width back. No .cat-body, no .cat-side, no JS seating: the catalogue is
+  // just its columns again.
   return `<div class="catalogue">${head}${gate}${poolNote}`
-    + `<div class="cat-body"><div class="cat-cols">${cols}</div>`
-    + `<div class="cat-side" id="cat-side"></div></div></div>`;
+    + `<div class="cat-cols">${cols}</div></div>`;
 }
 
 // Fill the EMPTY pick seats from autopick, keeping every existing pick.
@@ -5138,18 +5136,10 @@ function renderPowers() {
     }
   } catch (e) { /* localStorage unavailable — skip the hint */ }
 
-  // ⌨ commands + 💠 set bonuses SIT IN THE CATALOGUE GRID (Joel's marked-up
-  // screenshot, 2026-08-04): its last row leaves 2-3 empty cells, and those
-  // cards were parked in a band below the hole instead of in it. Placement is
-  // FIXED — the cards are always the grid's last items and grid auto-flow puts
-  // them in whatever cells are free. Nothing is measured and nothing competes,
-  // so this is not the packer coming back. They go home FIRST: they live inside
-  // `host` once seated, and this innerHTML write would otherwise destroy them.
-  const _cards = ["cmd-card", "setbonus-blurb"], _home = $("card-home");
-  if (_home) for (const id of _cards) { const n = $(id); if (n) _home.append(n); }
+  // (the ⌨ commands / 💠 set-bonus seating is GONE with the sidebar — both cards
+  // live in the full-width strip in index.html, so nothing has to be re-parented
+  // around this innerHTML write any more)
   host.innerHTML = html;
-  const _cc = host.querySelector(".cat-side");
-  if (_cc) for (const id of _cards) { const n = $(id); if (n) _cc.append(n); }
   loadAccolades().then(renderAccolades);   // the accolade sync the deleted vitals card carried
   updateEditBar();
   updateEpicBadge();
@@ -9945,7 +9935,6 @@ const LAY_AREAS = [
   ["powers-side", ".powers-side", "right column (assistant + plan)"],
   ["builder", "#builder", "the powers wall + catalogue panel"],
   ["cat-cols", ".cat-cols", "powerset columns"],
-  ["cat-side", ".cat-side", "the two cards beside the powersets"],
   ["cmd-card", "#cmd-card", "⌨ in-game commands"],
   ["setbonus-blurb", "#setbonus-blurb", "💠 how set bonuses stack"],
   ["assistant", "#assistant", "build assistant"],

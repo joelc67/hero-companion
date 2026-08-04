@@ -483,12 +483,6 @@
          the catalogue grid's trailing cells (renderPowers seats them). What is
          left here is their HOME: an innerHTML rebuild of the wall would eat
          them, so they are parked back here before every render. -->
-      <section class="panel" id="endgame-panel">
-        <h2>Accolades<button class="tour-help" onclick="startTour('endgame')" aria-label="Explain this section" title="Explain this section">?</button></h2>
-        <p class="muted small keep-whole">Permanent rewards worth chasing — tick the ones
-          your character has earned and they feed the totals.</p>
-        <div id="accolades-card" class="accolades-card"></div>
-      </section>
     <div class="pw-cardband" id="card-home">
       <section class="panel" id="cmd-card">
         <h2>⌨ In-game commands</h2>
@@ -518,6 +512,15 @@
         </div>
       </section>
     </div>
+      <!-- ACCOLADES keeps its own full-width row, now UNDER the card strip
+           (Joel's third markup, 2026-08-04: commands out of the catalogue, so the
+           strip is what sits directly below the powerset rows). -->
+      <section class="panel" id="endgame-panel">
+        <h2>Accolades<button class="tour-help" onclick="startTour('endgame')" aria-label="Explain this section" title="Explain this section">?</button></h2>
+        <p class="muted small keep-whole">Permanent rewards worth chasing — tick the ones
+          your character has earned and they feed the totals.</p>
+        <div id="accolades-card" class="accolades-card"></div>
+      </section>
     <!-- THE BASE SLABS (Joel's perfect-wall order, 2026-08-04 night): trays,
          the level plan and the converters guide are giant references — packed
          into a column any one of them outruns the other side and strands a

@@ -2647,7 +2647,14 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
    readable before you have built anything, and the way you take powers. */
 .catalogue { margin-top: var(--s4); }
 .cat-hint { margin-bottom: var(--s2); }
-.cat-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+/* ⚠ TRACK MINIMUM 205px, AND THE NUMBER TO CHECK IT AGAINST IS HIS WINDOW, NOT MINE
+   (Joel's third markup, 2026-08-04: "put all the power pools and epic on two rows
+   horizontally"). With the cards' sidebar gone the columns own the whole left
+   column, which is ~870px in his window — so 205px gives FOUR tracks and the 7
+   powerset boxes tile as 4 + 3, two rows. I first set 300px after measuring in a
+   1920-wide pane, where it did give four; in his 1250-wide window it gave TWO
+   columns and four rows. Measure the width the user actually has. */
+.cat-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(205px, 1fr));
   gap: var(--s3); align-items: start; }
 .cat-col { min-width: 0; background: var(--panel2); border: 1px solid var(--border);
   border-radius: var(--r2); padding: var(--s2); }
@@ -2928,8 +2935,13 @@ summary:hover { color: var(--ink); }
 #tab-powers > .order-out { margin-top: var(--s3); }
 /* The wall's grout: each column's LAST tile stretches to the shared bottom
    edge, so whatever residual the discrete tiles leave is panel surface, not
-   raw page background. Discrete tiles can't split; this absorbs the rest. */
+   raw page background. Discrete tiles can't split; this absorbs the rest.
+   ⚠ EXCEPT the inherent card (Joel's third markup, 2026-08-04: "Your inherit
+   banner… could be half its height with no text below it"). Stretching it painted
+   550px of empty panel under four lines of text, which reads as a void whether or
+   not it is panel-coloured. It ends at its content; the column just ends. */
 .powers-main > :last-child, .powers-side > :last-child { flex: 1 0 auto; }
+.powers-side > #inherent-card:last-child { flex: 0 0 auto; }
 
 /* ── In-game commands card + inherent tile (2026-08-04 night) ────────────────
    A command row is a full-width button: code line, then what it does. */
@@ -2974,16 +2986,10 @@ summary:hover { color: var(--ink); }
    are trailing FULL-HEIGHT columns, so their top edge lands on the powerset
    boxes' top edge (the green arrows, expressed as geometry) and they absorb the
    catalogue's height instead of hanging past its bottom. */
-.cat-body { display: flex; gap: var(--s3); align-items: stretch; }
-.cat-body > .cat-cols { flex: 1 1 auto; min-width: 0; }
-/* the trailing stack: wide enough that the cards' own content goes two across
-   (measured: 416px turns the commands card from 486px tall into 256px, under the
-   288px tallest powerset column), never so wide it starves the wall. Empty on a
-   build with no sets, and then it costs nothing. */
-.cat-side { flex: 0 0 clamp(200px, 27%, 420px); display: flex; flex-direction: column;
-  gap: var(--s3); min-width: 0; }
-.cat-side:empty { display: none; }
-.cat-side > .panel { margin: 0; }
+/* (.cat-body / .cat-side are DELETED — Joel's third markup, 2026-08-04: the cards'
+   sidebar was taking exactly the width the pool and epic boxes needed to tile
+   evenly, so it bought two ragged voids. The cards are in the strip below now and
+   the columns own the full width.) */
 /* same reason as .cmd-list: two reading columns when the card is wide, one when
    it is narrow, no measuring either way */
 .sb-cols { columns: 24ch; column-gap: var(--s3); }
