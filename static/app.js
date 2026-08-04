@@ -202,11 +202,19 @@ function pushDirty() {
 window.confirmQuit = async function () {
   const who = (CURRENT_SAVE && CURRENT_SAVE.name)
     || (build.primary_display ? `this ${(build.archetype || "").replace("Class_", "")}` : "this character");
-  const wantSave = confirm(`Save ${who} before closing?
-
-OK: save it, then close — it reopens here next time.
-Cancel: close without saving.`);
-  if (wantSave) {
+  // Three options — the native confirm's two forced a choice between saving
+  // and losing work, with no way to just go back to what you were doing.
+  const ans = await askDialog({
+    title: "Save before closing?",
+    body: `<b>${escHtml(who)}</b> has changes that aren't saved yet. `
+      + `Saved characters reopen right where you left off next time.`,
+    actions: [
+      { key: "save", label: "Save and close" },
+      { key: "close", label: "Close without saving", kind: "danger" },
+      { key: "stay", label: "Keep working", kind: "ghost" }],
+    safe: "stay" });
+  if (ans === "stay") return;          // the one-time veto is spent — but nothing closes it
+  if (ans === "save") {
     await saveProgress();
     if (hasUnsavedWork()) return;      // they backed out of naming it — stay open
   }
@@ -367,7 +375,15 @@ window.loadSave = async function (id) {
 };
 
 window.deleteSave = async function (id) {
-  if (!confirm("Delete this saved character?")) return;
+  const ans = await askDialog({
+    title: "Delete this character?",
+    body: "The saved character is removed from the Continue list. "
+      + "This can't be undone from inside the app.",
+    actions: [
+      { key: "del", label: "Delete it", kind: "danger" },
+      { key: "keep", label: "Keep it", kind: "ghost" }],
+    safe: "keep" });
+  if (ans !== "del") return;
   await api(`/saves/${encodeURIComponent(id)}`, { method: "DELETE" });
   openSavesList();
 };
@@ -2106,7 +2122,15 @@ window.refitEndgame = async function () {
 };
 // Discard deviations and rebuild the solver's optimal plan for this AT + powersets.
 window.resetToOptimal = async function () {
-  if (!confirm("Reset to the solver's optimal plan?\n\nThis replaces your custom picks with the recommended end-game for your archetype and powersets. Your saved character isn't touched — this only changes the current plan.")) return;
+  if (await askDialog({
+    title: "Reset to the recommended plan?",
+    body: "Your custom picks are replaced by the recommended end-game plan for "
+      + "this archetype and powersets. "
+      + "<span class='muted'>Your saved character isn't touched — this only "
+      + "changes the plan on screen.</span>",
+    actions: [{ key: "reset", label: "Reset the plan" },
+              { key: "keep", label: "Keep my picks", kind: "ghost" }],
+    safe: "keep" }) !== "reset") return;
   const out = $("lvl-endgame"); if (out) out.innerHTML = "<p class='muted small'>Rebuilding the optimal plan…</p>";
   const goal = _wizGoal();
   recordEdit();
@@ -3067,7 +3091,13 @@ async function submitChampion() {
   // ...then point at the submission queue (hub re-scores everything, so the file is safe to share)
   const url = (META && META.urls || {}).champion_submit;
   if (_urlReady(url)) {
-    if (confirm("Candidate file saved. Open the champion submission page to post it?")) window.open(url, "_blank");
+    if (await askDialog({
+      title: "Candidate saved",
+      body: "Your candidate file is saved. Want to open the champion "
+        + "submission page to post it?",
+      actions: [{ key: "open", label: "Open the page" },
+                { key: "later", label: "Not now", kind: "ghost" }],
+      safe: "later" }) === "open") window.open(url, "_blank");
   } else {
     alert("Candidate file saved. The online submission queue isn't set up yet — once the GitHub "
         + "home exists, this button will open it for you. Keep the file; it stays valid.");
@@ -3832,11 +3862,27 @@ async function onArchetypeChange(e) {
   // something to lose; nothing picked = no prompt (resetToImported doctrine).
   if (!_atGuard && at && at !== build.archetype && (build.powers || []).length) {
     const was = build.archetype;
-    const keep = confirm(`Changing archetype starts a new character — your powers, slots and pools cannot carry across.
-
-OK: save this character first, then start over.
-Cancel: throw it away and start over now.`);
-    if (keep) {
+    const wasName = (CURRENT_SAVE && CURRENT_SAVE.name)
+      || `this ${(was || "character").replace("Class_", "")}`;
+    // Three real options now (the native confirm only ever had two, so
+    // "abort the change" didn't exist and Cancel was destructive).
+    const ans = await askDialog({
+      title: "Start a new character?",
+      body: `Archetypes are built differently from the ground up, so `
+        + `<b>${escHtml(wasName)}</b>'s powers, enhancements and pools can't `
+        + `carry over — changing archetype means starting a new character.`,
+      actions: [
+        { key: "save", label: "Save it, then start new" },
+        { key: "discard", label: "Discard it and start new", kind: "danger" },
+        { key: "keep", label: "Keep this character", kind: "ghost" }],
+      safe: "keep" });
+    if (ans === "keep") {
+      _atGuard = true;
+      e.target.value = was || "";
+      _atGuard = false;
+      return;
+    }
+    if (ans === "save") {
       await saveProgress();
       // A cancelled name prompt means they changed their mind: put it back.
       if (hasUnsavedWork()) {
@@ -3939,7 +3985,46 @@ async function loadPowers(psFullName) {
 }
 
 // When a powerset is chosen we expose its powers as an "add power" picker
+// ── THE ASK DIALOG (Joel, 2026-08-04: native confirm() "looks more like a
+// crash dialog than instructional information"). One themed, centered,
+// in-app surface for every decision. actions = [{key, label, kind}] where
+// kind is "primary" | "ghost" | "danger"; resolves the chosen key.
+// Esc and backdrop-click resolve `safe` — always the option that changes
+// nothing (closing a dialog is not a decision).
+function askDialog({ title, body, actions, safe }) {
+  return new Promise((resolve) => {
+    const ov = document.createElement("div");
+    ov.className = "ask-overlay";
+    ov.innerHTML = `<div class="ask-card" role="alertdialog" aria-modal="true"
+        aria-label="${escHtml(title)}">
+      <h3>${escHtml(title)}</h3>
+      <div class="ask-body">${body}</div>
+      <div class="ask-actions">${actions.map(a =>
+        `<button data-key="${escHtml(a.key)}" class="${
+          a.kind === "danger" ? "ask-danger" : a.kind === "ghost" ? "ask-ghost" : ""
+        }">${escHtml(a.label)}</button>`).join("")}</div></div>`;
+    const done = (key) => {
+      document.removeEventListener("keydown", onKey, true);
+      ov.remove();
+      resolve(key);
+    };
+    const onKey = (e) => {
+      if (e.key === "Escape") { e.stopPropagation(); done(safe); }
+      if (e.key === "Enter") { e.stopPropagation(); done(actions[0].key); }
+    };
+    document.addEventListener("keydown", onKey, true);
+    ov.addEventListener("click", (e) => { if (e.target === ov) done(safe); });
+    ov.querySelectorAll("button").forEach(b =>
+      b.addEventListener("click", () => done(b.dataset.key)));
+    document.body.appendChild(ov);
+    const first = ov.querySelector("button");
+    if (first) first.focus();
+  });
+}
+
 let _swapOk = false;  // one accepted confirm covers the paired VEAT change in the same tick
+let _swapAsk = null;  // a paired VEAT swap fires two handlers before any answer —
+//                       both await the SAME dialog, so one question decides both
 
 // The approved rebuild (Joel's ruling, 2026-08-04): after a primary/secondary
 // swap is confirmed, pick a fresh set of powers toward the declared goal and
@@ -4004,15 +4089,29 @@ async function addPowersetPowers(sel, slot) {
   if ((slot === "primary" || slot === "secondary") && prev && psFull !== prev) {
     const picks = (build.powers || []).filter(p => !(p.full_name || "").startsWith("Inherent."));
     if (picks.length) {
-      if (!_swapOk) {
-        const prevName = { primary: build.primary_display,
-                           secondary: build.secondary_display }[slot] || "the old set";
-        const ok = confirm(`Changing your ${slot} set restarts this character's build — the current powers and slotting are replaced by a fresh build around the new set.
-
-OK: switch, then rebuild everything automatically.
-Cancel: keep ${prevName}.`);
-        if (!ok) { sel.value = prev; return; }
-        _swapOk = true; setTimeout(() => { _swapOk = false; }, 0);
+      const prevName = { primary: build.primary_display,
+                         secondary: build.secondary_display }[slot] || "the old set";
+      if (!_swapAsk) {
+        _swapAsk = askDialog({
+          title: `Change your ${slot} power set?`,
+          body: `This character is built around <b>${escHtml(prevName)}</b>. `
+            + `Picking a different set starts the build over: the current powers `
+            + `and their enhancements are replaced.`
+            + `<span class="muted">If you go ahead, new powers are picked and `
+            + `slotted for your goal automatically — nothing else to do.</span>`,
+          actions: [
+            { key: "rebuild", label: `Switch and rebuild` },
+            { key: "keep", label: `Keep ${prevName}`, kind: "ghost" }],
+          safe: "keep" });
+        _swapAsk.finally(() => setTimeout(() => { _swapAsk = null; }, 0));
+      }
+      const ans = await _swapAsk;
+      if (ans !== "rebuild") {
+        sel.value = prev;
+        // a paired VEAT change may have already moved the sibling — re-pair back
+        if (slot === "primary") pairVeatSets(sel, $("sel-secondary"), VEAT_PAIR);
+        if (slot === "secondary") pairVeatSets(sel, $("sel-primary"), VEAT_PAIR_REV);
+        return;
       }
       recordEdit();
       build.powers = (build.powers || []).filter(p => (p.full_name || "").startsWith("Inherent."));
@@ -4021,14 +4120,18 @@ Cancel: keep ${prevName}.`);
   } else if (slot === "epic" && prev && psFull !== prev) {
     const victims = (build.powers || []).filter(p => (p.full_name || "").startsWith(prev + "."));
     if (victims.length) {
-      if (!_swapOk) {
-        const ok = confirm(`Changing your epic set removes its ${victims.length} picked power${victims.length === 1 ? "" : "s"} and their slotting. The rest of the build keeps its own.
-
-OK: switch sets.
-Cancel: keep ${build.epic_display || "the old set"}.`);
-        if (!ok) { sel.value = prev; return; }
-        _swapOk = true; setTimeout(() => { _swapOk = false; }, 0);
-      }
+      const ans = await askDialog({
+        title: "Change your epic pool?",
+        body: `<b>${escHtml(build.epic_display || "The current pool")}</b> has `
+          + `${victims.length} picked power${victims.length === 1 ? "" : "s"} in this build — `
+          + `switching pools removes ${victims.length === 1 ? "it" : "them"} and `
+          + `${victims.length === 1 ? "its" : "their"} enhancements. `
+          + `The rest of the build is not touched.`,
+        actions: [
+          { key: "swap", label: "Switch pools" },
+          { key: "keep", label: `Keep ${build.epic_display || "this pool"}`, kind: "ghost" }],
+        safe: "keep" });
+      if (ans !== "swap") { sel.value = prev; return; }
       recordEdit();
       build.powers = (build.powers || []).filter(p => !(p.full_name || "").startsWith(prev + "."));
     }
@@ -4094,11 +4197,17 @@ async function onPoolChange() {
       droppedPools.some(dp => (p.full_name || "").startsWith(dp + ".")));
     if (victims.length) {
       const names = victims.map(p => p.display_name || p.full_name).join(", ");
-      const ok = confirm(`Swapping that pool removes ${victims.length} picked power${victims.length === 1 ? "" : "s"} (${names}) and their slotting.
-
-OK: swap the pool.
-Cancel: keep it.`);
-      if (!ok) {
+      const ans = await askDialog({
+        title: "Swap this power pool?",
+        body: `You have <b>${escHtml(names)}</b> from it in your build — `
+          + `swapping the pool removes ${victims.length === 1 ? "that power" : "those powers"} `
+          + `and ${victims.length === 1 ? "its" : "their"} enhancements. `
+          + `The rest of the build is not touched.`,
+        actions: [
+          { key: "swap", label: "Swap the pool" },
+          { key: "keep", label: "Keep it", kind: "ghost" }],
+        safe: "keep" });
+      if (ans !== "swap") {
         // Put the changed select back — the pool that vanished is the one to restore.
         const changed = sels.find(s => s.value && !oldPools.includes(s.value)) || sels.find(s => !s.value);
         if (changed) changed.value = droppedPools[0] || "";
@@ -6084,8 +6193,16 @@ function applyIdentityLock() {
   });
   const note = $("identity-lock"); if (note) note.classList.toggle("hidden", !locked);
 }
-window.rerollCharacter = function () {
-  if (!confirm("Start a brand-new character from level 1?\n\nArchetype and powersets can't be changed on an existing character — only a reroll can. This clears the current powers & slotting (your saved character stays intact unless you save over it).")) return;
+window.rerollCharacter = async function () {
+  if (await askDialog({
+    title: "Start a brand-new character?",
+    body: "This clears the current powers and slotting and opens the "
+      + "new-character wizard from level 1. "
+      + "<span class='muted'>Your saved character stays intact unless you "
+      + "save over it.</span>",
+    actions: [{ key: "reroll", label: "Start fresh" },
+              { key: "keep", label: "Keep working on this one", kind: "ghost" }],
+    safe: "keep" }) !== "reroll") return;
   startFromScratch();   // sets build._mode = "new" and opens the new-character wizard
 };
 
@@ -7991,7 +8108,7 @@ function renderIngameFound(r, root) {
 
 // Restore the imported build exactly as it came in, so the user can try a
 // different goal/role/options without re-importing the file.
-function resetToImported() {
+async function resetToImported() {
   if (!IMPORTED_POWERS) return;
   // reset means reset (0.12.20 eyeball rule): the import didn't carry custom
   // targets, exposure, travel answers, or boost previews — restoring "exactly
@@ -8007,10 +8124,14 @@ function resetToImported() {
   if (hasTargetValues(build._custom_targets)) losing.push("your custom build targets");
   if (build._exposure) losing.push("your front/back line answer");
   if (build._travel) losing.push("your travel answer");
-  if (losing.length && !confirm(
-      "Reset to the imported build?\n\nThis also clears " + losing.join(", ")
-      + ".\n\nThe powers and slotting go back exactly as imported, and the "
-      + "solver returns to the preset targets for your Content and Role.")) {
+  if (losing.length && await askDialog({
+    title: "Reset to the imported build?",
+    body: `The powers and slotting go back exactly as imported, and the solver `
+      + `returns to the preset targets for your Content and Role. `
+      + `This also clears <b>${escHtml(losing.join(", "))}</b>.`,
+    actions: [{ key: "reset", label: "Reset it" },
+              { key: "keep", label: "Keep my changes", kind: "ghost" }],
+    safe: "keep" }) !== "reset") {
     return;                                  // he keeps his ask — nothing happens
   }
   resetBuildScopedState();
@@ -8550,12 +8671,16 @@ async function optimizeBuild() {
   if (!goal) { status.textContent = "Enter a goal to optimize toward."; return; }
   // Optimize is a from-scratch AI REDESIGN — it does NOT preserve your sets. For
   // an imported build, warn before discarding the player's invested slotting.
-  if (build.imported && !confirm(
-      "⚡ Optimize redesigns the WHOLE build with AI and will replace your current "
-      + "IO sets — it does NOT preserve them, and may relocate or drop expensive "
-      + "sets you already slotted.\n\nTo keep your sets and only fill the gaps, "
-      + "click “🧮 Solve” with “Preserve my IO sets” "
-      + "checked instead.\n\nContinue with a full AI redesign anyway?")) {
+  if (build.imported && await askDialog({
+    title: "Redesign the whole build?",
+    body: "⚡ Optimize redesigns the build from scratch and <b>replaces your "
+      + "current IO sets</b> — it may relocate or drop expensive sets you "
+      + "already slotted. "
+      + "<span class='muted'>To keep your sets and only fill the gaps, use "
+      + "🧮 Solve with “Preserve my IO sets” checked instead.</span>",
+    actions: [{ key: "go", label: "Redesign it" },
+              { key: "keep", label: "Keep my sets", kind: "ghost" }],
+    safe: "keep" }) !== "go") {
     status.textContent = "Optimize cancelled — use 🧮 Solve to keep your sets.";
     return;
   }
@@ -8849,8 +8974,14 @@ function updateCustomTargetsChip() {
   if (btn) btn.classList.toggle("hidden", has);
 }
 
-window.clearCustomTargets = function () {
-  if (!confirm("Remove your custom targets? The solver returns to the content preset's targets.")) {
+window.clearCustomTargets = async function () {
+  if (await askDialog({
+    title: "Remove your custom targets?",
+    body: "The solver goes back to the standard targets for your chosen "
+      + "Content and Role.",
+    actions: [{ key: "clear", label: "Remove them" },
+              { key: "keep", label: "Keep them", kind: "ghost" }],
+    safe: "keep" }) !== "clear") {
     return;
   }
   build._custom_targets = null;
@@ -9015,7 +9146,13 @@ window.loadTargetPreset = async function () {
 window.deleteTargetPreset = async function () {
   const sel = $("ct-preset-pick");
   if (!sel || !sel.value) return;
-  if (!confirm(`Delete your target preset "${sel.value}"?`)) return;
+  if (await askDialog({
+    title: "Delete this target preset?",
+    body: `“<b>${escHtml(sel.value)}</b>” is removed from your saved presets. `
+      + `Builds already solved with it are not affected.`,
+    actions: [{ key: "del", label: "Delete it", kind: "danger" },
+              { key: "keep", label: "Keep it", kind: "ghost" }],
+    safe: "keep" }) !== "del") return;
   await fetch(`/target_presets/${encodeURIComponent(sel.value)}`, { method: "DELETE" });
   openTargetsEditor();
 };

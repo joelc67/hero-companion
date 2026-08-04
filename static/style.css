@@ -2797,3 +2797,31 @@ html { scrollbar-color: var(--border) var(--bg); }
       (short windows, explains, journey) and gave no hover feedback at all —
       the only clickable text in the app that didn't. */
 summary:hover { color: var(--ink); }
+
+/* ── ASK DIALOG (2026-08-04, Joel: the native confirm() "looks more like a
+   crash dialog than instructional information" — WebView2 stamps it with
+   "127.0.0.1:5000 says" and OS chrome). One themed, centered surface for
+   every decision the app asks. Esc/backdrop always take the SAFE action
+   (never a destructive one — closing is not a decision). */
+.ask-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, .55);
+  animation: askIn 150ms var(--ease-out);
+}
+.ask-card {
+  max-width: 480px; margin: 16px; padding: var(--s5);
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--r3); box-shadow: var(--e2);
+  border-top: 3px solid var(--accent);
+}
+.ask-card h3 { margin: 0 0 var(--s3); font-size: 16px; }
+.ask-body { font-size: 13px; line-height: 1.55; color: var(--ink); margin: 0 0 var(--s4); }
+.ask-body .muted { display: block; margin-top: var(--s2); }
+.ask-actions { display: flex; gap: var(--s2); justify-content: flex-end; flex-wrap: wrap; }
+.ask-actions button { width: auto; padding: 7px 14px; font-weight: 600; }
+.ask-actions .ask-ghost { background: var(--panel2); color: var(--ink);
+  border: 1px solid var(--border); }
+.ask-actions .ask-danger { background: var(--bad); color: #fff; }
+@keyframes askIn { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .ask-overlay { animation: none; } }
