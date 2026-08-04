@@ -545,6 +545,61 @@ OPEN (`_foldOpen`: absent = open, explicit closes remembered). The L50
 catalogue banner is deleted (pointed at content on the same tab); the L35
 epic gate stays.
 
+## 🧩 LAYOUT MODE — the design tool, and the catalogue rulings around it (2026-08-04 evening)
+
+**Joel's order: "make it so I can move each area and change its width and height
+then have you check it and make the changes set."** Three evenings had gone into me
+guessing proportions off screenshots. `e8bf3159` + `e28d2227`: View menu or
+Ctrl+Shift+L; per-area toolbar (⠿ pick · ⤵ place before · ↑ ↓ nudge · ⇄ other
+column or full width · ✕ hide, reversible from the panel); native corner handle
+resizes; panel drags by its header and collapses; the draft (sizes, order, hidden,
+panel position) lives in localStorage and survives recomputes. **📋 Copy sizes for
+Claude** is the handoff — he pastes the JSON, I bake it into style.css. It is a
+VIEW tool: the battery negative-controls that it never calls recordEdit,
+saveProgress, a solve or autoSaveTick, and every CSS rule is scoped to
+`body.layout-mode` so leaving restores the shipped layout exactly.
+
+- **⚠⚠ HTML5 DRAG IS BANNED IN THIS APP, and the battery pins it out.** My first
+  version told him to drag a ⠿ badge that was a CSS `::before` with
+  `pointer-events: none` — ungrabbable, so *nothing* was draggable and every area
+  read as "stuck inside its own box". Drag also **cannot scroll the page
+  mid-gesture**, so an area could never be placed anywhere off-screen. **Pick then
+  place = two clicks, and scrolling in between is just scrolling.** Anything that
+  needs a pointer gesture (the panel) uses POINTER events, which do work.
+- **⚠ An injected label changes the geometry being measured.** The toolbar is
+  `position: absolute` for that reason. ⚠ And the two slabs whose renderers rewrite
+  innerHTML (`#tray-out`, `#order-out`) EAT injected nodes — `refreshBuildViews`
+  re-applies the draft, or 13 of 15 areas silently lose their toolbar.
+- **⚠ NEVER resolve a container key by CSS class.** A stray `theme-hero` key
+  matched `body.theme-hero` and would have appended five panels into `<body>`.
+  data-lay or id only, and the target must be inside `#tab-powers`.
+- **⚠ An absolutely positioned flex box shrink-fits and the label yields first**
+  (every name rendered "le…"): `width: max-content` on the bar + `flex: 0 0 auto`
+  on the label. Measured 16px → 84-164px.
+- **⚠ The size snapshot is a `pointerup` scan of the inline styles the native
+  handle already wrote — NOT a ResizeObserver.** The Claude pane fires no layout
+  callbacks at all, so an observer here is code neither of us can test; I shipped
+  one first and it recorded nothing.
+- **⛔ MULTICOL ON `.cat-cols` IS REVERTED AND BANNED** (work order 2026-08-04
+  3:11 PM, on Joel's annotated shots of `019b41f9`). Multicol assigns boxes to
+  columns by HEIGHT, so it flows column-major and stacked Primary under Secondary;
+  the catalogue's premise is ONE POWERSET PER COLUMN, side by side, the way the
+  game shows them. It also never bought the flat bottom it cost that for. The
+  battery pins the grid rule in and `column-width: 210px` out.
+- **⚠ A grid item with a DEFINITE `grid-row` is placed BEFORE the auto-flow items.**
+  `grid-row: 1 / -1` on the two cards put them in tracks 1-2 and shoved the Primary
+  powerset to track 3 — the same reading-order damage. They live in `.cat-side`, a
+  stretched flex sibling of `.cat-cols`, instead.
+- **📐 THE ONE-ROW ARITHMETIC (measured, and it is why the gate's flat-bottom test
+  cannot pass beside the wall):** 7 powerset boxes at the 190px track minimum need
+  ~1400px of the 1480 available at his window; each card needs ~400px to stay short
+  (measured: 203px wide → 486px tall, 399px → 254px, 924px → 165px, against a
+  tallest column of 290px). 1400 + 800 does not fit. Wall bottom spread at 1920:
+  cards stacked beside the wall 315px, side by side 498px, **full-width strip
+  101px**. The strip is the only arrangement under his 120px bar and the only one
+  that keeps the wall at one row — **and it reverses the `019b41f9` intent, so it
+  is HIS call, still pending.**
+
 ## 🧱 (superseded) THE PERFECT WALL packer (2026-08-04 night, 472a76a3)
 
 "Open all the drop downs on the first tab, then move the items around until
