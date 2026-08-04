@@ -70,9 +70,11 @@ ok("renderEndgameWarnings()" in setlvl,
 ok('id="endgame-warn"' in idx,
    "the warning banner container exists in index.html")
 
-# honest labeling: the provenance line marks an active sub-50 preview
-ok("endgame preview (unlock at 50)" in app,
-   "the provenance line marks incarnates as an endgame preview when previewed below 50")
+# honest labeling: the sub-50 preview announces itself. The provenance line
+# that used to carry this died with the summary band (2026-08-04); the honest
+# surface is now the endgame-warn banner text in endgameWarnings().
+ok("endgame preview" in app and "Incarnate abilities unlock at level 50" in app,
+   "the warning banner marks incarnates as an endgame preview when previewed below 50")
 
 print(f"\n{checks} checks, {fails} failed")
 sys.exit(1 if fails else 0)

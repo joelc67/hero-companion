@@ -114,8 +114,10 @@ try:
     try:
         html2 = urllib.request.urlopen(base + "/", timeout=10).read().decode("utf-8", "ignore")
         ok7 = all(m in html2 for m in
+                  # entry-mids retired 2026-08-03 with the entry overlay — the
+                  # Character menu's import-btn IS the Mids entry point now.
                   ('id="import-file"', 'id="import-btn"',
-                   'id="entry-mids"', 'id="ingame-pick-go"',
+                   'id="ingame-pick-go"',
                    # walk failure #3: the solve flow's output panel must live
                    # OUTSIDE the AI-only #ai-qa section (hidden on AI-free
                    # clients) or confirms/reports render invisibly
