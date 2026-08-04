@@ -282,17 +282,9 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
   grid-auto-flow: dense;   /* puzzle rule: any hole a 2-row brick would leave gets backfilled */ }
 .powers-wall .power-card { height: 100%; margin: 0; overflow: hidden;
   display: flex; flex-direction: column; }
-/* INFO COURSE: the three summary bricks as one level row under the wall. */
-.ov-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-.ov-table th { font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: .05em;
-  text-align: center; padding: 1px 2px; }
-.ov-table th:first-child { text-align: left; }
-.ov-table td { text-align: center; font-weight: 700; font-size: 12px; padding: 1px 2px; }
-.ov-table td.ov-good, .ov-buildline b.ov-good { color: var(--def); }
-.ov-table td.ov-mid, .ov-buildline b.ov-mid { color: var(--warn); }
-.ov-table td.ov-dim, .ov-buildline b.ov-dim { color: var(--muted); font-weight: 400; }
-.ov-buildline { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 6px;
-  font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 5px; }
+/* (.ov-table / .ov-buildline / .prov-* deleted 2026-08-04 with the tour
+   rebuild — the old mock was their last user; the summary band itself died
+   earlier that day) */
 .ov-buildline b { color: var(--ink); }
 .add-powers-row { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px;
   padding-top: 8px; border-top: 1px solid var(--border); }
@@ -1808,13 +1800,8 @@ body { overflow: hidden; }
 .acc-chain li span { display: block; color: var(--muted); font-size: 10px; }
 .acc-grants { margin: 0 0 6px; }
 .acc-src { margin-top: 8px; font-style: italic; }
-/* v34 deliverable 1: "what's in these numbers" — live provenance, never a
-   hardcoded sentence. Answers Joel's standing question (did the epic/incarnate
-   recommendations actually reach the totals?) at the point the numbers are read. */
-.prov-line { font-size: 10px; line-height: 1.5; margin: 0 0 5px; padding-bottom: 4px;
-  border-bottom: 1px solid var(--border); color: var(--muted); }
-.prov-in { color: var(--def); }
-.prov-off { color: var(--muted); font-style: italic; }
+/* (.prov-line family deleted 2026-08-04 — the v34 provenance line died with
+   the summary band; the Stats breakdown is its successor) */
 /* v34 deliverable 4: attributed lines — a named source under the stat it feeds */
 .attr-row { font-size: 10px; color: var(--muted); padding-left: 10px; }
 .attr-row span:last-child { color: var(--accent); }
@@ -2307,32 +2294,51 @@ body { overflow: hidden; }
   background: var(--panel2); color: var(--muted);
   border-bottom: 1px solid var(--border);
 }
-#tour-mock .tour-mock-screen { padding: 12px 16px 80px; max-width: 1440px; margin: 0 auto; }
+#tour-mock .tour-mock-screen { padding: 12px 16px 80px; max-width: 1440px; margin: 0 auto;
+  overflow-x: hidden; }
 #tour-mock .tm-center { display: flex; justify-content: center; padding-top: 40px; }
 #tour-mock .tm-head { position: static; margin-bottom: 12px; padding: 7px 10px; }
-/* The fake builder uses the REAL app's grid geography (main's template areas):
-   Build top-left, Stats + AI Assistant stacked under it, Powers wide on the
-   right, the ⓘ details column appearing as a third column -- so the tour never
-   teaches a layout the app does not have (Joel's third ruling). */
-#tour-mock .tm-main {
-  display: grid;
-  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
-  grid-template-areas: "setup build" "rail build";
-  grid-template-rows: auto 1fr;
-  gap: 10px; align-items: start;
-}
-#tour-mock .tm-main.tm-has-info {
-  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr) minmax(260px, 320px);
-  grid-template-areas: "setup build info" "rail build info";
-}
-#tour-mock .tm-setup { grid-area: setup; }
-#tour-mock .tm-buildcol { grid-area: build; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-#tour-mock .tm-rail { grid-area: rail; display: flex; flex-direction: column; gap: 10px; }
-#tour-mock .tm-info { grid-area: info; }
+/* The fake app uses the REAL app's shell (tabbed rebuild, 2026-08-04): the
+   menubar, the five-tab strip, the build tile, and one mock panel per tab --
+   so the tour never teaches a layout the app does not have (Joel's third
+   ruling). Two overrides guard against the real chrome rules leaking in:
+   the REAL tile is display:none off the Powers tab (body.tab-*), and the
+   REAL tabbar is sticky against measured chrome vars -- the mock's copies
+   must ignore both. */
+#tour-mock .build-tile { display: flex !important; position: static; }
+/* later in source than the flex override, so at equal specificity it wins:
+   the mock hides its tile off the Powers tab exactly like the real app */
+#tour-mock .tm-tile-off { display: none !important; }
+#tour-mock .tabbar { position: static; }
+#tour-mock .tm-main { position: relative; }
+#tour-mock .tm-main.tm-has-info { display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px); gap: 10px; align-items: start; }
+#tour-mock .tm-info { min-width: 0; }
+#tour-mock .tm-cols { display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr); gap: 10px; align-items: start; }
+#tour-mock .tm-statcols { display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 1fr); gap: 10px; align-items: start; }
+#tour-mock .tm-miniwall { background: var(--panel); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; }
+#tour-mock .tm-breakdown { background: var(--panel2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 10px; }
+#tour-mock .tm-lvlpanel { display: flex; gap: 12px; align-items: flex-start; margin-top: 8px; }
+#tour-mock .tm-art { width: 220px; height: 260px; flex: none; border: 1px solid var(--border);
+  border-radius: 8px; background: var(--bg); display: flex; flex-direction: column;
+  justify-content: center; align-items: center; gap: 8px; text-align: center; padding: 10px; }
+#tour-mock .tm-art-name { font-weight: 800; font-size: 18px; letter-spacing: .04em; }
+#tour-mock .tm-menu-list { position: static; display: flex !important; flex-direction: column;
+  gap: 4px; margin-top: 8px; }
+/* paint the fake menu items like the REAL closed menu — the default button
+   accent turned them bright blue with unreadable blue-on-blue descriptions */
+#tour-mock .tm-menu-list button { text-align: left; background: var(--panel2);
+  color: var(--ink); border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px 12px; font: inherit; }
+#tour-mock .tm-menu-list b { display: block; font-size: 13px; color: var(--ink); }
+#tour-mock .tm-menu-list i { display: block; font-size: 11px; color: var(--muted); font-style: normal; }
 @media (max-width: 980px) {
-  #tour-mock .tm-main, #tour-mock .tm-main.tm-has-info {
-    grid-template-columns: 1fr;
-    grid-template-areas: "setup" "info" "build" "rail";
+  #tour-mock .tm-cols, #tour-mock .tm-statcols, #tour-mock .tm-main.tm-has-info {
+    display: block;
   }
 }
 #tour-mock label { display: block; margin: 6px 0; font-size: 12px; }

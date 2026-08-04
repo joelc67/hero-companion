@@ -72,41 +72,10 @@ const TOUR_DIAGRAMS = {
   <path d="M370 96 L334 96" class="d-arrow"/><text x="374" y="99" class="d-lbl">drop it</text>
   <path d="M150 168 L150 132" class="d-arrow"/><text x="150" y="182" class="d-lbl d-mid">enhancement slots</text>
 </svg>`,
-  statBar: `
-<svg viewBox="0 0 440 170" class="tour-svg" role="img"
-     aria-label="An annotated stat bar showing the filled portion, the cap line, the printed figure, and the in-combat figure"><defs><marker id="tourArrowHead" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" class="d-head"/></marker></defs>
-  <text x="62" y="85" class="d-name d-end">Melee</text>
-  <rect x="70" y="72" width="240" height="16" rx="4" class="d-chip"/>
-  <rect x="70" y="72" width="204" height="16" rx="4" class="d-ico d-hot"/>
-  <path d="M310 62 L310 98" class="d-slot d-hot"/>
-  <text x="322" y="85" class="d-name">38.2%</text>
-  <rect x="368" y="70" width="66" height="20" rx="4" class="d-hotbox"/>
-  <text x="376" y="85" class="d-name">⚔ 31.9%</text>
-  <path d="M130 138 L130 92" class="d-arrow"/><text x="130" y="152" class="d-lbl d-mid">what you have</text>
-  <path d="M310 30 L310 58" class="d-arrow"/><text x="300" y="22" class="d-lbl d-mid">the bar ends at 45%</text>
-  <path d="M392 138 L392 94" class="d-arrow"/><text x="392" y="152" class="d-lbl d-mid">in combat</text>
-</svg>`,
-  headerRow: `
-<svg viewBox="0 0 580 170" class="tour-svg" role="img"
-     aria-label="The header toolbar: every button carries its name — Journey, Tour, Save, Guide, Report, Champion, Updates, Villain and Switch"><defs><marker id="tourArrowHead" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" class="d-head"/></marker></defs>
-  <rect x="10" y="62" width="560" height="38" rx="8" class="d-card"/>
-  <rect x="18" y="71" width="58" height="20" rx="5" class="d-ctl"/><text x="24" y="85" class="d-glyph" style="font-size:9px">🗺️ Journey</text>
-  <rect x="80" y="71" width="44" height="20" rx="5" class="d-ctl d-hot"/><text x="86" y="85" class="d-glyph" style="font-size:9px">🧭 Tour</text>
-  <rect x="128" y="71" width="44" height="20" rx="5" class="d-ctl"/><text x="134" y="85" class="d-glyph" style="font-size:9px">💾 Save</text>
-  <path d="M178 72 L178 90" class="d-div"/>
-  <rect x="184" y="71" width="48" height="20" rx="5" class="d-ctl"/><text x="190" y="85" class="d-glyph" style="font-size:9px">❓ Guide</text>
-  <rect x="236" y="71" width="54" height="20" rx="5" class="d-ctl d-hot"/><text x="242" y="85" class="d-glyph" style="font-size:9px">🐞 Report</text>
-  <path d="M296 72 L296 90" class="d-div"/>
-  <rect x="302" y="71" width="66" height="20" rx="5" class="d-ctl"/><text x="308" y="85" class="d-glyph" style="font-size:9px">🏆 Champion</text>
-  <rect x="372" y="71" width="60" height="20" rx="5" class="d-ctl d-hot"/><text x="378" y="85" class="d-glyph" style="font-size:9px">⟳ Updates</text>
-  <rect x="436" y="71" width="54" height="20" rx="5" class="d-ctl"/><text x="442" y="85" class="d-glyph" style="font-size:9px">🦹 Villain</text>
-  <rect x="494" y="71" width="56" height="20" rx="5" class="d-ctl d-hot"/><text x="500" y="85" class="d-glyph" style="font-size:9px">↺ Switch</text>
-  <path d="M108 40 L108 67" class="d-arrow"/><text x="108" y="32" class="d-lbl d-mid">this tour</text>
-  <path d="M263 40 L263 67" class="d-arrow"/><text x="263" y="32" class="d-lbl d-mid">tell me something is wrong</text>
-  <path d="M402 126 L402 95" class="d-arrow"/><text x="402" y="140" class="d-lbl d-mid">check for a newer version</text>
-  <path d="M522 156 L522 95" class="d-arrow"/><text x="522" y="168" class="d-lbl d-mid">leave this character</text>
-</svg>`,
 };
+// (statBar and headerRow diagrams retired with the tabbed rebuild, 2026-08-04:
+// the bars became percent rows with a live breakdown — better shown on the
+// mock itself — and the icon toolbar became four labelled menus.)
 
 // ── The fake screen the tour walks ───────────────────────────────────────────
 // A made-up Super Strength / Willpower Brute, built as a damage dealer -- the
@@ -122,41 +91,18 @@ const TOUR_DIAGRAMS = {
 const TOUR_MOCK_HTML = `
 <div class="tour-mock-badge">EXAMPLE — a Brute damage build, drawn for this tour. Nothing here is your character.</div>
 
-<div class="tour-mock-screen tm-center" data-tm-screen="entry">
-  <div class="entry-box" data-tm="entry-box" data-for="entry-overlay">
-    <h2>How do you want to start?</h2>
-    <p class="muted">Pick a starting point — you can switch any time from the header.</p>
-    <div class="entry-cards">
-      <div class="entry-card" data-for="entry-continue">
-        <div class="entry-ico">⏯️</div>
-        <h3>Continue where you left off</h3>
-        <p>Pick up a character you're partway through — leveling one from scratch is weeks of play, so your plan and progress are saved.</p>
-        <span class="entry-go">3 saved — open →</span>
-      </div>
-      <div class="entry-card" data-for="entry-scratch">
-        <div class="entry-ico">✨</div>
-        <h3>Start a new character</h3>
-        <p>Not sure what to roll? Tell me what you want to do and where you'll play — I'll recommend an archetype and powers and walk each level's pick and slotting.</p>
-        <span class="entry-go">Pick my character →</span>
-      </div>
-      <div class="entry-card" data-for="entry-respec">
-        <div class="entry-ico">♻️</div>
-        <h3>Build a new level-50 character</h3>
-        <p>Planning an end-game build from scratch? Tell me your archetype and main powersets — I'll build the optimized level-50 kit: picks, slotting, caps, epic, incarnates.</p>
-        <span class="entry-go">Build a new 50 →</span>
-      </div>
-      <div class="entry-card" data-for="entry-mids">
-        <div class="entry-ico">📋</div>
-        <h3>Import a Mids Reborn build</h3>
-        <p>Already have a <code>.mbd</code>? Load it for a critique, then optimize the slotting toward a goal — keeping the sets you've already invested in.</p>
-        <span class="entry-go">Choose a .mbd file →</span>
-      </div>
-      <div class="entry-card entry-card-static" data-for="entry-ingame">
-        <div class="entry-ico">🎮</div>
-        <h3>Import a character you play</h3>
-        <p>In game, type <code>/build_save_file</code> in chat — then come back here:</p>
-        <span class="entry-go">🔍 Find my characters for me →</span>
-      </div>
+<div class="tour-mock-screen tm-center" data-tm-screen="menus">
+  <div class="entry-box tm-menu-open" data-tm="entry-menu" data-for="m-character">
+    <h2>The Character menu</h2>
+    <p class="muted">Everything begins here — the menu bar's first entry.</p>
+    <div class="menu-drop tm-menu-list">
+      <button type="button" data-for="entry-continue"><b>⏯️ Continue where you left off</b><i>Resume one of your saved characters</i></button>
+      <button type="button" data-for="entry-scratch"><b>✨ Start a new character</b><i>Tell me how you want to play and I will pick the build</i></button>
+      <button type="button" data-for="entry-respec"><b>♻️ Build a new level 50</b><i>An end-game kit from scratch, no file needed</i></button>
+      <button type="button" data-for="import-btn"><b>📋 Import a build</b><i>A Mids .mbd or an in-game .txt, critiqued then optimised</i></button>
+      <button type="button" data-for="entry-ingame"><b>🎮 Import a character you play</b><i>From an in-game /build_save_file export</i></button>
+      <button type="button" data-for="save-btn"><b>💾 Save this character</b><i>Plan and progress, so you can resume later</i></button>
+      <button type="button" data-for="start-over-btn"><b>↺ Switch character</b><i>Load another one, or start over</i></button>
     </div>
   </div>
 </div>
@@ -164,43 +110,42 @@ const TOUR_MOCK_HTML = `
 <div class="tour-mock-screen" data-tm-screen="build">
   <header class="tm-head" data-for="masthead">
     <h1>🦸 Hero Companion <span class="muted small">— Bruiser Brawlwell · Brute · level 50</span></h1>
-    <div class="legend">
-      <button class="iconbtn journey-pill" data-for="journey-btn" type="button">🗺️ <span class="journey-pill-label">Journey</span></button>
-      <button class="iconbtn iconbtn-labeled" data-tm="compass" type="button">🧭 <span>Tour</span></button>
-      <button class="iconbtn iconbtn-labeled" data-for="save-btn" type="button">💾 <span>Save</span></button>
-      <span class="legend-div" aria-hidden="true"></span>
-      <button class="iconbtn iconbtn-labeled" data-for="help-btn" type="button">❓ <span>Guide</span></button>
-      <button class="iconbtn iconbtn-labeled" data-for="bug-btn" type="button">🐞 <span>Report</span></button>
-      <span class="legend-div" aria-hidden="true"></span>
-      <button class="iconbtn iconbtn-labeled" data-for="champ-btn" type="button">🏆 <span>Champion</span></button>
-      <button class="iconbtn iconbtn-labeled" data-for="update-btn" type="button">⟳ <span>Updates</span></button>
-      <button class="iconbtn iconbtn-labeled" data-for="alignment-btn" type="button">🦸 <span>Hero</span></button>
-      <button class="iconbtn iconbtn-labeled" data-for="start-over-btn" type="button">↺ <span>Switch</span></button>
-    </div>
+    <nav class="menubar" data-tm="menubar">
+      <button class="menu-top" type="button">Character</button>
+      <button class="menu-top" type="button" data-tm="menu-build" data-for="m-build">Build</button>
+      <button class="menu-top" type="button" data-tm="menu-view" data-for="m-view">View</button>
+      <button class="menu-top" type="button" data-tm="menu-help" data-for="m-help">Help</button>
+    </nav>
+    <button class="iconbtn iconbtn-labeled" data-for="alignment-btn" type="button">🦸 <span>Hero</span></button>
   </header>
 
-  <div class="tm-main">
-    <section class="panel tm-setup" data-for="setup">
-      <h2 data-tm="setup-head">Build</h2>
-      <label>Archetype <select data-for="sel-archetype" disabled><option>Brute</option></select></label>
-      <label>Primary <select data-for="sel-primary" disabled><option>Super Strength</option></select></label>
-      <label>Secondary <select disabled><option>Willpower</option></select></label>
-      <details open onclick="event.preventDefault()"><summary>Power Pools (up to 4)</summary>
-        <div data-for="pool-selectors">
-          <label>Pool 1 <select disabled><option>Fighting</option></select></label>
-          <label>Pool 2 <select disabled><option>Leaping</option></select></label>
-          <label>Pool 3 <select disabled><option>Speed</option></select></label>
-        </div>
-      </details>
-      <label>Epic / Ancillary <select data-for="sel-epic" disabled><option>Energy Mastery</option></select></label>
-      <label>Content <select data-for="preset-content" disabled><option>Task forces &amp; trials</option></select></label>
-      <label>Role <select data-for="preset-role" disabled><option>Damage dealer</option></select></label>
-      <div class="custom-targets-row">
-        <button class="mini" data-for="custom-targets-btn" type="button">Customize build targets…</button>
-      </div>
-    </section>
+  <nav class="tabbar tm-tabbar" data-for="tabbar">
+    <button class="tab" data-tm-tabbtn="powers" data-for="tab-btn-powers" type="button">Powers &amp; Slots</button>
+    <button class="tab" data-tm-tabbtn="stats" data-for="tab-btn-stats" type="button">Stats</button>
+    <button class="tab" data-tm-tabbtn="endgame" data-for="tab-btn-endgame" type="button">End Game</button>
+    <button class="tab" data-tm-tabbtn="leveling" data-for="tab-btn-leveling" type="button">Leveling Guide</button>
+    <button class="tab" data-tm-tabbtn="logging" data-for="tab-btn-logging" type="button">Logging</button>
+  </nav>
 
-    <div class="tm-buildcol">
+  <section class="build-tile tm-tile" data-for="build-tile" data-tm="tile">
+    <label>Name <input data-for="char-name" value="Bruiser Brawlwell" disabled></label>
+    <label>Archetype <select data-for="sel-archetype" disabled><option>Brute</option></select></label>
+    <label>Primary <select data-for="sel-primary" disabled><option>Super Strength</option></select></label>
+    <label>Secondary <select disabled><option>Willpower</option></select></label>
+    <label data-tm="exemp-dial">Exemplar <select data-for="exemplar-sel" disabled><option>Off — full level</option></select></label>
+    <details open onclick="event.preventDefault()"><summary>Power Pools (up to 4)</summary>
+      <div data-for="pool-selectors">
+        <label>Pool 1 <select disabled><option>Fighting — already chosen</option></select></label>
+        <label>Pool 2 <select disabled><option>Leaping — already chosen</option></select></label>
+        <label>Pool 3 <select disabled><option>Speed</option></select></label>
+      </div>
+    </details>
+  </section>
+
+  <div class="tm-main">
+
+  <div class="tm-tab" data-tm-tab="powers">
+    <div class="tm-cols">
     <section class="panel" data-for="builder">
       <h2 data-tm="builder-head">Powers &amp; Slots</h2>
       <div class="edit-bar">
@@ -247,52 +192,11 @@ const TOUR_MOCK_HTML = `
         </div>
         <div class="set-summary"><span class="muted small">sets:</span> Unbreakable Guard ×3 · Steadfast Protection</div>
       </div>
-
-      <div class="info-course">
-        <div class="overview-card" data-for="overview-card">
-          <div class="ovc-head">BUILD VITALS</div>
-          <table class="ov-table">
-            <tr><th></th><th>S/L</th><th>F/C</th><th>E/N</th><th>Mel</th><th>Rng</th><th>AoE</th></tr>
-            <tr><th>DEF %</th><td>32</td><td>28</td><td>26</td><td class="ov-good">41</td><td>36</td><td>30</td></tr>
-            <tr><th>RES %</th><td class="ov-good">90</td><td>52</td><td>46</td><td class="ov-dim">—</td><td class="ov-dim">—</td><td class="ov-dim">—</td></tr>
-          </table>
-          <div class="ov-buildline">
-            <span>Recharge <b class="ov-good">+72.5%</b></span>
-            <span>Recovery <b>+25%</b></span>
-            <span>HP <b>+21.4%</b></span>
-            <span>DPS <b>187</b> ST / <b>41</b> AoE</span>
-          </div>
-        </div>
-        <div class="overview-card" data-for="bonuses-card">
-          <div class="ovc-head">SET BONUSES <span class="muted">(23 active)</span></div>
-          <div class="muted small">×3 Large Improved Recharge Bonus</div>
-          <div class="muted small">×2 Moderate Increased Health Bonus</div>
-          <div class="muted small">×2 Small Smashing/Lethal Defense Bonus</div>
-          <div class="muted small">… +18 more</div>
-        </div>
-        <div class="overview-card" data-for="uniques-card">
-          <div class="ovc-head">UNIQUES CARRIED</div>
-          <div class="muted small">✓ Steadfast Protection +Def</div>
-          <div class="muted small">✓ Gladiator's Armor +Def</div>
-          <div class="muted small">✓ Numina +Regen/+Recovery</div>
-          <div class="muted small">✓ Performance Shifter +End</div>
-        </div>
-        <div class="accolades-card" data-for="accolades-card">
-          <div class="ovc-head">ACCOLADES <span class="acc-count">2/28</span></div>
-          <div class="muted small">☑ Freedom Phalanx Reserve <b>+10% HP</b></div>
-          <div class="muted small">☑ Task Force Commander <b>+5% HP</b></div>
-          <div class="muted small">☐ Portal Jockey <b>+5% HP · +5 End</b> ⓘ</div>
-          <div class="muted small" style="opacity:.45">☐ Born In Battle — villain-side only</div>
-          <div class="muted small">👁 Preview all — your numbers with every accolade in hand</div>
-        </div>
-      </div>
-
       <div class="add-powers-row" data-tm="addrow" data-for="powers-list">
         <label>Add from Super Strength <select disabled><option>+ add power…</option></select></label>
         <label>Add from Willpower <select disabled><option>+ add power…</option></select></label>
         <label>Add from Fighting <select disabled><option>+ add power…</option></select></label>
       </div>
-
       <div class="order-out subpanel" data-for="tray-out">
         <div class="ovc-head">IN-GAME TRAYS</div>
         <p class="muted small">Tray 1 — the chain: Punch · Haymaker · Knockout Blow · Foot Stomp ·
@@ -305,7 +209,6 @@ const TOUR_MOCK_HTML = `
           4 · Mind Over Body &nbsp; 5 · Combat Jumping &nbsp; … every pick in the order the
           respec screen will ask for it.</p>
       </div>
-
       <details class="conv-guide" open onclick="event.preventDefault()"><summary data-tm="conv-summary">💰 Get expensive IOs cheap — enhancement converters</summary>
         <div data-for="conv-tool">
           <div data-tm="conv-body">
@@ -319,68 +222,13 @@ const TOUR_MOCK_HTML = `
       </details>
     </section>
 
-    <section class="panel" data-for="gamelog">
-      <h2 data-tm="gamelog-head">📜 Play Log <span class="muted small">— insights from your game sessions</span></h2>
-      <div class="gl-cards" data-tm="gl-body">
-        <div class="tm-set-row"><b>Last session · 2h 10m · Bruiser Brawlwell</b>
-          <span class="muted small">Levelled 22 → 24 · haul: 2 rare recipes, 41 salvage —
-            appraised: keep 2, craft 1, sell the rest</span></div>
-        <div class="tm-set-row"><b>This week</b>
-          <span class="muted small">3 characters played · busiest evening: Thursday</span></div>
+    <section class="panel" data-for="assistant">
+      <h2>Build Assistant</h2>
+      <label>Content <select data-for="preset-content" disabled><option>Task forces &amp; trials</option></select></label>
+      <label>Role <select data-for="preset-role" disabled><option>Damage dealer</option></select></label>
+      <div class="custom-targets-row">
+        <button class="mini" data-for="custom-targets-btn" type="button">Customize build targets…</button>
       </div>
-    </section>
-    </div>
-
-    <div class="tm-rail">
-    <section class="panel" data-for="stats">
-      <h2 data-tm="stats-head">Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span></h2>
-      <div class="cap-chips">
-        <span class="chip cap-def">Defense soft cap 45%</span>
-        <span class="chip cap-res">Resistance hard cap 90%</span>
-      </div>
-      <label class="incarnate-toggle" data-tm="inc-label"><input type="checkbox" data-for="incarnate-peak-toggle" disabled> Include incarnates (peak)</label>
-      <label class="incarnate-toggle"><input type="checkbox" disabled> Include accolades + amplifiers</label>
-      <label class="incarnate-toggle" data-tm="sup-label"><input type="checkbox" data-for="suppression-toggle" disabled> In-combat view (suppression)</label>
-      <h3>Defense <span class="muted small">soft cap 45%</span></h3>
-      <div class="bars" data-for="defense-bars">
-        <div class="bar-row"><span class="bar-label">Melee</span><div class="bar-track"><div class="bar-fill def" style="width:92%"></div></div><span class="bar-val">41.3%</span></div>
-        <div class="bar-row"><span class="bar-label">Ranged</span><div class="bar-track"><div class="bar-fill def" style="width:80%"></div></div><span class="bar-val">36.2% <span class="over">⚔ 31.9%</span></span></div>
-        <div class="bar-row"><span class="bar-label">AoE</span><div class="bar-track"><div class="bar-fill def" style="width:67%"></div></div><span class="bar-val">30.1%</span></div>
-      </div>
-      <h3 data-tm="res-head">Resistance <span class="muted small" data-for="res-cap-label">hard cap 90%</span></h3>
-      <div class="bars">
-        <div class="bar-row"><span class="bar-label">S/L</span><div class="bar-track"><div class="bar-fill res capped" style="width:100%"></div></div><span class="bar-val capped">90%</span></div>
-        <div class="bar-row"><span class="bar-label">Energy</span><div class="bar-track"><div class="bar-fill res" style="width:51%"></div></div><span class="bar-val">46.2%</span></div>
-        <div class="bar-row"><span class="bar-label">Psionic</span><div class="bar-track"><div class="bar-fill res" style="width:35%"></div></div><span class="bar-val">31.8%</span></div>
-      </div>
-      <h3>Other</h3>
-      <div class="other">
-        <div class="o-row"><span>Recharge (global)</span><span>+72.5%</span></div>
-        <div class="o-row"><span>Recovery</span><span>+25% <span class="muted small">= 3.12 end/s</span></span></div>
-        <div class="o-row"><span>Max HP <span class="aoe-tag">CAP</span></span><span>+21.4% <span class="muted small">= 3212 HP</span></span></div>
-      </div>
-      <div data-for="offense-section">
-        <h3 data-tm="offense-head">Offense <span class="muted small">damage / debuffs / buffs</span></h3>
-        <div class="offense">
-          <div class="o-row"><span>Single-target DPS</span><span>187</span></div>
-          <div class="o-row"><span>AoE throughput</span><span>412 dmg / 10s</span></div>
-          <div class="o-row"><span>AoE alpha</span><span>498</span></div>
-        </div>
-        <div class="offense" data-tm="atk-table" data-for="offense-stats">
-          <div class="o-row"><span><b>Top attack</b> (damage / animation)</span><span>121.4</span></div>
-          <div class="o-row"><span>Knockout Blow</span><span class="muted small">243 dmg · 2.0s · 25s rech · 121.4 DPA</span></div>
-          <div class="o-row"><span>Haymaker</span><span class="muted small">98 dmg · 1.2s · 8s rech · 81.7 DPA</span></div>
-          <div class="o-row"><span>Foot Stomp <span class="aoe-tag">AoE</span></span><span class="muted small">86 dmg · 2.1s · 20s rech · 41.0 DPA</span></div>
-        </div>
-        <p class="muted small" data-tm="support-note">A support set, controller or Mastermind grows
-          this panel: per-pet damage, enemy debuffs (base, per application), and what your buffs
-          hand allies.</p>
-      </div>
-      <div class="validation" data-for="validation">✓ Legal build — nothing here breaks the game's rules.</div>
-    </section>
-
-    <section class="panel">
-      <h2>AI Assistant</h2>
       <label class="preserve-toggle" data-tm="preserve-label"><input type="checkbox" data-for="preserve-toggle" checked disabled>
         <span>Preserve my IO sets — 🔒 locks every power I hand-slotted; unlock exceptions on their cards</span></label>
       <button class="solve-btn" data-for="solve-btn" type="button">🧮 Solve optimal slotting for goal (instant)</button>
@@ -393,26 +241,168 @@ const TOUR_MOCK_HTML = `
         41.3% of the 45% asked; an unpicked power on this character would close
         the gap: Weave (about +5%).
       </div>
+      <div class="validation" data-for="validation">✓ Legal build — nothing here breaks the game's rules.</div>
     </section>
     </div>
-
-    <aside class="panel pinfo tm-info" data-for="power-info" data-tm-overlay="info" style="display:none">
-      <h2>Knockout Blow</h2>
-      <div class="pi-tags"><span class="pi-tag">Click</span><span class="pi-tag">Melee</span><span class="pi-tag">Single target</span></div>
-      <table>
-        <tr><td>Damage</td><td>Superior (smashing)</td></tr>
-        <tr><td>Endurance cost</td><td>≈19</td></tr>
-        <tr><td>Recharge</td><td>25 s</td></tr>
-        <tr><td>Accepts</td><td>Melee Damage sets</td></tr>
-      </table>
-      <p class="pi-note">Slotted: Superior Unrelenting Fury ×6 — the full set, with its
-        +regeneration proc and the set's build-wide bonuses.</p>
-      <p class="pi-trade" data-tm="trade-note">From this build's Foot Stomp ⓘ: “Why procs here:
-        4 procs add ≈118 damage every use. The Obliteration pieces they replaced would have
-        added ≈36 damage from enhancement instead — this build wanted the procs, and collects
-        set bonuses in other powers.”</p>
-    </aside>
   </div>
+
+  <div class="tm-tab" data-tm-tab="stats" style="display:none">
+    <div class="tm-miniwall" data-for="stats-miniwall" data-tm="mini-wall">
+      <div class="mw-frame-label">🗂 Powers &amp; Slots, in miniature <span class="muted small">— click a stat below and the IOs feeding it ring green here</span></div>
+      <div class="mw-grid">
+        <div class="mw-card"><div class="mw-head"><span class="mw-name">Knockout Blow</span><span class="mw-lv">L6</span></div>
+          <div class="mw-slots"><span class="mw-slot"><img class="mw-ico" src="/static/icons/enh/SAO_Brute2.png" alt=""></span><span class="mw-slot"><img class="mw-ico" src="/static/icons/enh/SAO_Brute2.png" alt=""></span></div></div>
+        <div class="mw-card stat-hot-power"><div class="mw-head"><span class="mw-name">Weave</span><span class="mw-lv">L30</span></div>
+          <div class="mw-slots"><span class="mw-slot stat-hot"><img class="mw-ico" src="/static/icons/enh/UnbreakableGuard.png" alt=""></span><span class="mw-slot stat-hot"><img class="mw-ico" src="/static/icons/enh/UnbreakableGuard.png" alt=""></span></div></div>
+        <div class="mw-card"><div class="mw-head"><span class="mw-name">Tough</span><span class="mw-lv">L28</span></div>
+          <div class="mw-slots"><span class="mw-slot"><img class="mw-ico" src="/static/icons/enh/sSteadfastProtection.png" alt=""></span></div></div>
+      </div>
+      <div class="mw-inh-strip muted small">Inherents, nothing slotted: Brawl · Sprint · Rest · Swift · Hurdle</div>
+    </div>
+    <section class="panel" data-for="stats">
+      <h2 data-tm="stats-head">Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span></h2>
+      <div class="stats-ctlrow" data-tm="ctl-row">
+        <span class="chip cap-def">Defense soft cap 45%</span>
+        <span class="chip cap-res" data-for="res-cap-chip">Resistance hard cap 90%</span>
+        <label class="incarnate-toggle"><input type="checkbox" data-for="incarnate-peak-toggle" disabled> Include incarnates (peak)</label>
+        <label class="incarnate-toggle" data-tm="sup-label"><input type="checkbox" data-for="suppression-toggle" disabled> In-combat view (suppression)</label>
+        <label class="incarnate-toggle" data-tm="exemp-dial-stats">View exemplared at <select data-for="exemplar-sel-stats" disabled><option>Off — full level</option></select></label>
+      </div>
+      <div class="tm-statcols">
+        <div>
+          <h3>Defense <span class="muted small">soft cap 45%</span></h3>
+          <div class="bars">
+            <div class="o-row stat-selected" data-tm="sel-row"><span>Melee</span><span>41.3%</span></div>
+            <div class="o-row"><span>Ranged</span><span>36.2% <span class="over">⚔ 31.9%</span></span></div>
+            <div class="o-row"><span>AoE</span><span>30.1%</span></div>
+          </div>
+          <h3 data-tm="res-head">Resistance <span class="muted small">hard cap 90%</span></h3>
+          <div class="bars">
+            <div class="o-row"><span>Smashing</span><span>90%</span></div>
+            <div class="o-row"><span>Energy</span><span>46.2%</span></div>
+          </div>
+          <div class="offense" data-tm="atk-table" data-for="offense-stats">
+            <div class="o-row"><span><b>Top attack</b> (damage / animation)</span><span>121.4</span></div>
+            <div class="o-row"><span>Knockout Blow</span><span class="muted small">243 dmg · 2.0s · 25s rech · 121.4 DPA</span></div>
+            <div class="o-row"><span>Foot Stomp <span class="aoe-tag">AoE</span></span><span class="muted small">86 dmg · 2.1s · 20s rech · 41.0 DPA</span></div>
+          </div>
+          <p class="muted small" data-tm="support-note">A support set, controller or Mastermind grows
+            this panel: per-pet damage, enemy debuffs (base, per application), and what your buffs
+            hand allies.</p>
+        </div>
+        <div class="tm-breakdown" data-for="stat-breakdown" data-tm="breakdown-box">
+          <h2><span>Defense: Melee</span></h2>
+          <p class="sb-sub">Where the <b class="sb-green">+41.3%</b> comes from. The contributing IOs
+            ring <b class="sb-green">green</b> — here and in the wall above.</p>
+          <p class="sb-editnote">✏️ <b>Editable:</b> click any IO chit below to change it —
+            the change is REAL and updates your build and every number, everywhere.</p>
+          <div class="sbp-card stat-hot-power"><div class="sbp-head"><span class="sbp-name">Weave</span>
+            <span class="sbp-val">+7.19%</span></div>
+            <div class="sbp-src muted small">+7.19% — the power grants this by itself
+              <span class="sb-selfnote">(green name box = built in, not from an IO)</span></div></div>
+          <div class="sbp-card"><div class="sbp-head"><span class="sbp-name">Knockout Blow</span>
+            <span class="sbp-val">+3.75%</span></div>
+            <div class="sbp-src muted small">+3.75% — 6 pieces of Superior Unrelenting Fury</div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="tm-tab" data-tm-tab="endgame" style="display:none">
+    <section class="panel">
+      <h2>End Game</h2>
+      <div class="accolades-card" data-for="accolades-card" data-tm="acc-box">
+        <div class="ovc-head">ACCOLADES <span class="acc-count">2/28</span></div>
+        <div class="muted small">☑ Freedom Phalanx Reserve <b>+10% HP</b></div>
+        <div class="muted small">☑ Task Force Commander <b>+5% HP</b></div>
+        <div class="muted small">☐ Portal Jockey <b>+5% HP · +5 End</b> ⓘ</div>
+        <div class="muted small" style="opacity:.45">☐ Born In Battle — villain-side only</div>
+        <div class="muted small">👁 Preview all — your numbers with every accolade in hand</div>
+      </div>
+      <div class="endgame-block" data-tm="epic-row">
+        <div class="endgame-label">Epic / Ancillary Pool <span class="muted small">— survival / utility; unlocks at level 35</span></div>
+        <select data-for="sel-epic" disabled><option>Energy Mastery</option></select>
+      </div>
+      <div class="endgame-block" data-tm="inc-row">
+        <div class="endgame-label">Incarnates <span class="muted small">— unlock at level 50</span></div>
+        <div class="incarnates" data-for="incarnate-selectors">
+          <label class="muted small">Alpha
+            <select disabled><option>Musculature Core Paragon</option></select>
+            <div class="inc-detail"><span>Increases Damage</span><b class="inc-fx">+45% damage</b></div>
+          </label>
+          <label class="muted small">Destiny
+            <select disabled><option>Ageless Radial Epiphany</option></select>
+            <div class="inc-detail"><span>Wide PBAoE Ally +End, +Recharge Rate</span><b class="inc-fx">+100% max end · +40% recharge</b></div>
+          </label>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="tm-tab" data-tm-tab="leveling" style="display:none">
+    <section class="panel" data-for="journey-body">
+      <h2>🗺️ The Leveling Journey</h2>
+      <div class="tm-road" data-tm="road">
+        <span class="tm-stop">1</span><span class="tm-stop">8</span><span class="tm-stop">15</span>
+        <span class="tm-stop here">★22</span><span class="tm-stop">30</span><span class="tm-stop">38</span>
+        <span class="tm-stop">44</span><span class="tm-stop">50</span>
+      </div>
+      <div class="tm-lvlpanel" data-tm="lvl-panel">
+        <div class="tm-art" data-tm="art-box"><div class="tm-art-name">TALOS ISLAND</div>
+          <div class="muted small">the zone this level sends you to — the picture follows your click</div></div>
+        <div class="tm-lvlinfo">
+          <b>Level 22 — your next stop</b>
+          <p class="muted small">Pick: Knockout Blow · a new enhancement slot arrives at 23 ·
+            zones that fit: Talos Island (20–27), Independence Port (20–30) — enemies there run even
+            with you · Citadel's Task Force opens at 25.</p>
+          <p class="muted small" data-tm="align-preview">Hero · Vigilante · Rogue · Villain · 🌀 Flashback —
+            a preview of other routes; changes nothing.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="tm-tab" data-tm-tab="logging" style="display:none">
+    <div class="entry-share" data-for="share-line" data-tm="share-row">
+      🛰 <b>Feed the live Pulse Boards from your game log?</b>
+      <span class="muted small">Off until you say yes; nothing has been sent. Your rewards and public
+        recruitment lines, never raw chat and never tells.</span>
+      <span class="muted small"><u>Yes, share my play data</u> · <u>No thanks</u></span>
+    </div>
+    <section class="panel" data-for="gamelog">
+      <h2 data-tm="gamelog-head">📜 Play Log <span class="muted small">— insights from your game sessions</span></h2>
+      <div class="gl-cards" data-tm="gl-body">
+        <div class="tm-set-row"><b>Last session · 2h 10m · Bruiser Brawlwell</b>
+          <span class="muted small">Levelled 22 → 24 · haul: 2 rare recipes, 41 salvage —
+            appraised: keep 2, craft 1, sell the rest</span></div>
+        <div class="tm-set-row"><b>This week</b>
+          <span class="muted small">3 characters played · busiest evening: Thursday</span></div>
+      </div>
+      <div class="gl-pulse" data-for="gl-pulse" data-tm="boards-row">
+        <button class="ghost-btn" type="button">🗞 My private board</button>
+        <button class="ghost-btn" type="button">👁 What sharing shows</button>
+      </div>
+    </section>
+  </div>
+
+  </div>
+
+  <aside class="panel pinfo tm-info" data-for="power-info" data-tm-overlay="info" style="display:none">
+    <h2>Knockout Blow</h2>
+    <div class="pi-tags"><span class="pi-tag">Click</span><span class="pi-tag">Melee</span><span class="pi-tag">Single target</span></div>
+    <table>
+      <tr><td>Damage</td><td>Superior (smashing)</td></tr>
+      <tr><td>Endurance cost</td><td>≈19</td></tr>
+      <tr><td>Recharge</td><td>25 s</td></tr>
+      <tr><td>Accepts</td><td>Melee Damage sets</td></tr>
+    </table>
+    <p class="pi-note">Slotted: Superior Unrelenting Fury ×6 — the full set, with its
+      +regeneration proc and the set's build-wide bonuses.</p>
+    <p class="pi-trade" data-tm="trade-note">From this build's Foot Stomp ⓘ: “Why procs here:
+      4 procs add ≈118 damage every use. The Obliteration pieces they replaced would have
+      added ≈36 damage from enhancement instead — this build wanted the procs, and collects
+      set bonuses in other powers.”</p>
+  </aside>
 
   <div class="modal tm-modal" data-for="modal" data-tm-overlay="picker" style="display:none">
     <div class="modal-box" data-tm="modal-box">
@@ -423,7 +413,6 @@ const TOUR_MOCK_HTML = `
         <div class="tm-set-row"><b>Superior Unrelenting Fury</b> <span class="muted small">Brute ATO · 6 pieces · +regeneration proc, strong build-wide bonuses</span></div>
         <div class="tm-set-row"><b>Hecatomb</b> <span class="muted small">Very rare · 6 pieces · big recharge and damage bonuses</span></div>
         <div class="tm-set-row"><b>Kinetic Combat</b> <span class="muted small">4 pieces · prized for smashing/lethal defense</span></div>
-        <div class="tm-set-row"><b>Crushing Impact</b> <span class="muted small">5 pieces · accuracy and recharge bonuses</span></div>
         <div class="tm-set-row" data-tm="ho-row"><b>Hamidon Origin: Nucleolus</b> <span class="muted small">special · accuracy AND damage in one slot · from Hamidon raids or merits · no set bonuses</span></div>
       </div>
     </div>
@@ -435,7 +424,6 @@ const TOUR_MOCK_HTML = `
       <p class="muted small">Anything you set here outranks the preset — it is what the optimizer chases first.</p>
       <div class="tm-set-row"><b>Melee defense — 45%</b> <span class="muted small">your ask · reached 41.3% so far</span></div>
       <div class="tm-set-row"><b>Smashing/Lethal resistance — 90%</b> <span class="muted small">your ask · reached, at your cap ✓</span></div>
-      <div class="tm-set-row"><b>Recharge — +70%</b> <span class="muted small">your ask · reached +72.5% ✓</span></div>
       <div class="tm-set-row"><b>Ranged defense — 45%</b> <span class="muted small">best reachable on this character ≈ 36.2 — the unpicked
         Weave would add about +5. Take it, lower the ask, or leave it: your call either way.</span></div>
       <p class="muted small">💾 Save these as a named preset to reuse on other characters.</p>
@@ -447,32 +435,15 @@ const TOUR_MOCK_HTML = `
       <div class="modal-head"><strong>📋 What the solve changed</strong><button type="button">✕</button></div>
       <div class="tm-set-row"><b>Knockout Blow</b> <span class="muted small">Crushing Impact ×5 → Superior Unrelenting Fury ×6 (one slot added)</span></div>
       <div class="tm-set-row"><b>Tough</b> <span class="muted small">generic resistance IO → Steadfast Protection: Resistance/+Def 3%</span></div>
-      <div class="tm-set-row"><b>Health</b> <span class="muted small">one slot moved out, to Knockout Blow</span></div>
       <div class="tm-set-row"><b>What it bought</b> <span class="muted small">+4.2% melee defense · +10% recharge · same endurance</span></div>
       <p class="muted small">⬇ Export as .mbd &nbsp;·&nbsp; Keep it &nbsp;·&nbsp; ↺ Reset to imported</p>
     </div>
   </div>
 
-  <div class="modal tm-modal tm-journey" data-tm-overlay="journey" style="display:none">
-    <div class="modal-box" data-tm="journey-box">
-      <div class="modal-head"><strong>🗺️ The Leveling Journey — Bruiser Brawlwell</strong><button type="button">✕</button></div>
-      <div class="tm-road">
-        <span class="tm-stop">1</span><span class="tm-stop">8</span><span class="tm-stop">15</span>
-        <span class="tm-stop here">★22</span><span class="tm-stop">30</span><span class="tm-stop">38</span>
-        <span class="tm-stop">44</span><span class="tm-stop">50</span>
-      </div>
-      <div class="tm-set-row"><b>Level 22 — your next stop</b>
-        <span class="muted small">Pick: Knockout Blow · a new enhancement slot arrives at 23 ·
-          zones that fit: Talos Island (20–27), Independence Port (20–30) — enemies there run even
-          with you · Citadel's Task Force opens at 25.</span></div>
-      <p class="muted small">Hero · Vigilante · Rogue · Villain · 🌀 Flashback — a preview of other routes; changes nothing.</p>
-    </div>
-  </div>
-
-  <div class="modal tm-modal" data-tm-overlay="bugreport" style="display:none">
+  <div class="modal tm-modal" data-for="bug-btn" data-tm-overlay="bugreport" style="display:none">
     <div class="modal-box" data-tm="bug-box">
       <div class="modal-head"><strong>🐞 Report a bug</strong><button type="button">✕</button></div>
-      <p class="muted small">App 0.12.28 · model v36 · Homecoming 2026.1.1242 — filled in for you.</p>
+      <p class="muted small">App version · model · game-data numbers — filled in for you.</p>
       <input placeholder="What happened?" disabled>
       <label class="incarnate-toggle"><input type="checkbox" checked disabled> Attach this build (.mbd) so it can be reproduced</label>
       <p class="muted small">Nothing leaves your machine until you press Send.</p>
@@ -504,16 +475,35 @@ function _closeTourMock() {
 //   build  - the fake builder, laid out exactly like the real app's grid
 //   info   - build + the power-details column open, as after clicking ⓘ
 //   picker - build + the enhancement-set chooser open, as after clicking a slot
-function _mockShowScene(scene) {
+// Which mock TAB a chapter's steps show — the tabbed rebuild's one addition
+// (2026-08-04): the mock reproduces the five-tab shell, and each step lights
+// the tab its subject lives on, tab strip state included.
+const TM_TAB = { build: "powers", powers: "powers", solve: "powers", header: "powers",
+                 stats: "stats", endgame: "endgame", leveling: "leveling", logging: "logging" };
+
+function _mockShowScene(scene, tab) {
   if (!_mockEl) return;
-  const entry = scene === "entry";
+  const menus = scene === "menus";
   _mockEl.querySelectorAll(".tour-mock-screen").forEach(sc => {
-    sc.style.display = (sc.dataset.tmScreen === (entry ? "entry" : "build")) ? "" : "none";
+    sc.style.display = (sc.dataset.tmScreen === (menus ? "menus" : "build")) ? "" : "none";
+  });
+  // exactly one mock tab panel shows, and the strip's button reads selected
+  _mockEl.querySelectorAll(".tm-tab").forEach(p => {
+    p.style.display = (p.dataset.tmTab === (tab || "powers")) ? "" : "none";
+  });
+  // the REAL tile shows only on Powers & Slots — the mock must not teach
+  // a layout the app does not have (rule 3). Class, not inline style: the
+  // mock tile carries a display:flex !important override (to beat the real
+  // body:not(.tab-powers) hide), which an inline style cannot outrank.
+  const tile = _mockEl.querySelector(".tm-tile");
+  if (tile) tile.classList.toggle("tm-tile-off", (tab || "powers") !== "powers");
+  _mockEl.querySelectorAll("[data-tm-tabbtn]").forEach(b => {
+    b.setAttribute("aria-selected", b.dataset.tmTabbtn === (tab || "powers") ? "true" : "false");
   });
   const grid = _mockEl.querySelector(".tm-main");
   if (grid) grid.classList.toggle("tm-has-info", scene === "info");
-  // Exactly one overlay (the ⓘ column, a chooser, the Journey, the report
-  // form...) is up at a time: the one whose data-tm-overlay names this scene.
+  // Exactly one overlay (the ⓘ column, a chooser, the report form...) is up
+  // at a time: the one whose data-tm-overlay names this scene.
   _mockEl.querySelectorAll("[data-tm-overlay]").forEach(ov => {
     ov.style.display = (ov.dataset.tmOverlay === scene) ? "" : "none";
   });
@@ -521,185 +511,189 @@ function _mockShowScene(scene) {
 
 const TOUR_CHAPTERS = {
   start:     "Getting started",
-  build:     "Choosing your character",
+  build:     "Your character's identity",
   powers:    "Powers and slots",
-  stats:     "Reading your numbers",
   solve:     "Letting it build for you",
-  extras:    "The other tools",
-  header:    "Saving, updates and help",
+  stats:     "Where your numbers come from",
+  endgame:   "The end game",
+  leveling:  "The leveling guide",
+  logging:   "Your play log",
+  header:    "Menus, saving and help",
 };
 
 // One line per section for the chooser. Deliberately a separate map from
 // TOUR_CHAPTERS: the audit parses that block to know which chapters exist, and
 // turning it into objects would break the thing that keeps this honest.
 const TOUR_CHAPTER_BLURB = {
-  start:  "The opening screen and what each of the five ways in actually does.",
-  build:  "Archetype, powersets, and the two choices that steer everything: Content and Role.",
-  powers: "Taking powers, spending your 67 slots, and locking what you have already decided.",
-  stats:  "Reading the bars, the cap lines, and the second number that appears in combat.",
-  solve:  "Letting it work out the slotting, and how to read what it gives you back.",
-  extras: "The Leveling Journey, the enhancement converter, and the Play Log.",
-  header: "Saving, alignment, updates, and reporting something that looks wrong.",
+  start:    "The Character menu — every way to start — and the five tabs.",
+  build:    "Name, archetype, powersets and pools on the build bar; goal and role in the Assistant.",
+  powers:   "Taking powers, spending your 67 slots, and locking what you have already decided.",
+  solve:    "Letting it work out the slotting, and how to read what it gives you back.",
+  stats:    "Click any stat and see exactly which powers and IOs make it — and change them there.",
+  endgame:  "Accolades to chase, your epic pool at 35, and the incarnates at 50.",
+  leveling: "Your 1-to-50 as a road: every level's pick, zones and task forces.",
+  logging:  "What your game sessions earned you, read from your own chat log.",
+  header:   "The four menus, alignment, updates, and reporting something wrong.",
 };
 
 // `target`  - the element this step explains (id selector).
-// `absent`  - what to say when that element is not on screen right now.
 // `spine`   - true = part of the short first-run tour.
 const TOUR_STEPS = [
   // ── Getting started ────────────────────────────────────────────────────────
-  { chapter: "start", target: "#entry-overlay", spine: true, anchor: "[data-tm=entry-box]",
-    title: "Five ways in",
-    body: "Everything starts here, and which card you pick decides how much you "
-        + "have to type: two build a character from nothing, two read one you "
-        + "already have, and one resumes earlier work.\n\n"
+  { chapter: "start", target: "#m-character", spine: true, anchor: "[data-tm=entry-menu]",
+    title: "Everything starts in the Character menu",
+    body: "The first entry on the menu bar holds every way in: two build a "
+        + "character from nothing, two read one you already have, and one "
+        + "resumes earlier work.\n\n"
         + "A rule of thumb: new to the game, take Start a new character. Know "
-        + "exactly what you want at 50, take Build a new level 50. Already playing "
-        + "the character, import it instead -- a plan is worth more when it is "
-        + "built around what you really own. You can come back to this screen any "
-        + "time.",
-    absent: "This is the first screen you see when the app opens. Reach it again "
-          + "with the ↺ button in the header." },
+        + "exactly what you want at 50, take Build a new level 50. Already "
+        + "playing the character, import it instead — a plan is worth more when "
+        + "it is built around what you really own." },
   { chapter: "start", target: "#entry-continue",
     title: "Continue where you left off",
-    body: "Levelling a character is weeks of real play, so the app keeps the whole "
-        + "plan on your machine: powers, slotting, levelling progress, locks and "
-        + "targets. This card lists every character you have saved and reopens one "
-        + "exactly where you stopped.\n\n"
-        + "You rarely need to save by hand -- the app saves quietly in the "
-        + "background as you work, and a small note in the header tells you when "
-        + "it has.",
-    absent: "Appears on the opening screen once you have saved at least one character." },
+    body: "Levelling a character is weeks of real play, so the app keeps the "
+        + "whole plan on your machine: powers, slotting, levelling progress, "
+        + "locks and targets. This lists every character you have saved and "
+        + "reopens one exactly where you stopped — and on launch, the app "
+        + "reopens your last character by itself.\n\n"
+        + "You rarely need to save by hand: it saves quietly in the background "
+        + "as you work." },
   { chapter: "start", target: "#entry-scratch",
     title: "Start a new character",
     body: "For a character that does not exist yet. If you are not sure what to "
-        + "roll, this is the one: you answer a few questions about how you like to "
-        + "play and it suggests archetypes that fit, with reasons.\n\n"
-        + "From there it walks the whole road on the game's real schedule -- a "
-        + "power on even levels, slots on odd ones, pools from level 4, epics at "
-        + "35 -- so at every level you know what to pick and where to put it.",
-    absent: "One of the cards on the opening screen." },
+        + "roll, this is the one: you answer a few questions about how you like "
+        + "to play and it suggests archetypes that fit, with reasons.\n\n"
+        + "From there it walks the whole road on the game's real schedule — a "
+        + "power on even levels, slots on odd ones, pools from level 4, epics "
+        + "at 35 — so at every level you know what to pick and where to put it." },
   { chapter: "start", target: "#entry-respec",
     title: "Build a new level 50",
     body: "You already know what you want to play and you want the finished "
         + "article: every power, every slot, epic pool and incarnates, ready to "
         + "respec into.\n\n"
         + "Tell it the archetype and your two powersets and it does the rest, "
-        + "aimed at your Content and Role -- both explained later in this tour. "
-        + "Anything it produces, you can still adjust by hand.",
-    absent: "One of the cards on the opening screen." },
-  { chapter: "start", target: "#entry-mids",
-    title: "Import from Mids Reborn",
-    body: "Already have a build in Mids? Load the .mbd file and the app reads it "
-        + "and tells you what it thinks of it first -- what is strong, what is "
-        + "loose -- before changing anything.\n\n"
-        + "From there it can improve the slotting while keeping the sets you have "
-        + "already paid for, and export the result back out as a .mbd that Mids "
-        + "can open. Your file is never touched.",
-    absent: "One of the cards on the opening screen." },
+        + "aimed at your Content and Role — both explained later in this tour. "
+        + "Anything it produces, you can still adjust by hand." },
+  { chapter: "start", target: "#import-btn",
+    title: "Import a build file",
+    body: "Already have a build in Mids Reborn, or an in-game .txt export? Load "
+        + "it and the app reads it and tells you what it thinks of it first — "
+        + "what is strong, what is loose — before changing anything.\n\n"
+        + "From there it can improve the slotting while keeping the sets you "
+        + "have already paid for, and export the result back out as a .mbd that "
+        + "Mids can open. Your file is never touched." },
   { chapter: "start", target: "#entry-ingame",
     title: "Import a character you actually play",
     body: "The character straight from the game. Type /build_save_file in the "
-        + "game's chat box; Homecoming writes a small text file, and the app finds "
-        + "those saves by itself -- you just pick the character from a list.\n\n"
+        + "game's chat box; Homecoming writes a small text file, and the app "
+        + "finds those saves by itself — you just pick the character from a "
+        + "list. There is a Browse button too, if your game lives somewhere "
+        + "unusual.\n\n"
         + "This is the most honest starting point there is: the plan is built "
-        + "around exactly the powers and enhancements you really have, and the "
-        + "Preserve setting (covered in the Powers section) keeps the sets you "
-        + "have already paid for.",
-    absent: "One of the cards on the opening screen." },
+        + "around exactly the powers and enhancements you really have." },
+  { chapter: "start", target: "#save-btn",
+    title: "Saving and switching",
+    body: "The same menu holds Save this character and Switch character. Saving "
+        + "keeps the plan and progress on your machine; switching loads another "
+        + "one.\n\n"
+        + "Nothing is lost on the way out: the character you are leaving has "
+        + "been saved in the background as you worked, and closing the app "
+        + "offers to save anything unsaved." },
+  { chapter: "start", target: "#tabbar", spine: true,
+    title: "Five tabs, one character",
+    body: "The whole app is five tabs across the top. Powers & Slots is the "
+        + "build itself. Stats shows every number and where it comes from. End "
+        + "Game holds accolades, your epic pool and incarnates. The Leveling "
+        + "Guide is your 1-to-50 as a road, and Logging reads what your real "
+        + "game sessions earned.\n\n"
+        + "Everything on every tab describes the same character — change "
+        + "something on one and the others update." },
 
-  // ── Choosing your character ────────────────────────────────────────────────
-  { chapter: "build", target: "#setup", spine: true, anchor: "[data-tm=setup-head]", side: "right",
-    title: "The Build panel",
-    body: "Your character's identity lives here: archetype, primary and secondary "
-        + "powersets, pools and epic. Change anything and everything below it -- "
-        + "the power list, the slots, the numbers -- updates to match.\n\n"
-        + "As in the Powers section, the examples in this chapter follow a Brute "
-        + "built as a damage dealer, so the details stay consistent as you read.",
-    absent: "The 'Build' panel, once you are past the opening screen." },
-  { chapter: "build", target: "#sel-archetype", side: "right",
+  // ── Your character's identity ──────────────────────────────────────────────
+  { chapter: "build", target: "#build-tile", spine: true, anchor: "[data-tm=tile]", side: "bottom",
+    title: "The build bar",
+    body: "Your character's identity lives on this bar, on the Powers & Slots "
+        + "tab: name, archetype, primary and secondary powersets, pools, and "
+        + "the exemplar dial. Change anything and every number in the app "
+        + "updates to match.\n\n"
+        + "The examples in this tour follow a Brute built as a damage dealer, "
+        + "so the details stay consistent as you read." },
+  { chapter: "build", target: "#sel-archetype", side: "bottom",
     title: "Archetype first",
     body: "Everything else follows from this one choice. The archetype decides "
-        + "which powersets exist for you, the resistance cap your bars are "
-        + "measured against, which roles make sense, and how strongly your powers "
-        + "land at all.\n\n"
-        + "Our example Brute is melee damage with a 90% resistance cap -- pick a "
-        + "Defender instead and the whole panel reshapes around buffs and debuffs.",
-    absent: "The first dropdown in the Build panel." },
-  { chapter: "build", target: "#sel-primary", side: "right",
+        + "which powersets exist for you, the resistance cap your numbers are "
+        + "measured against, which roles make sense, and how strongly your "
+        + "powers land at all.\n\n"
+        + "Our example Brute is melee damage with a 90% resistance cap — pick a "
+        + "Defender instead and the whole app reshapes around buffs and debuffs." },
+  { chapter: "build", target: "#sel-primary", side: "bottom",
     title: "Primary and secondary",
-    body: "The primary set is your archetype's main job and the secondary is its "
-        + "supporting half. On the Brute that means attacks first and armour "
-        + "second; a Defender is the reverse -- buffs and debuffs first, blasts "
-        + "second.\n\n"
+    body: "The primary set is your archetype's main job and the secondary is "
+        + "its supporting half. On the Brute that means attacks first and "
+        + "armour second; a Defender is the reverse.\n\n"
         + "Both lists are already filtered to your archetype, so everything "
-        + "offered is a choice the game will allow -- including the special cases, "
-        + "like Kheldian form powers living inside their own sets.",
-    absent: "The primary and secondary dropdowns in the Build panel." },
-  { chapter: "build", target: "#pool-selectors", side: "right",
+        + "offered is a choice the game will allow — including the special "
+        + "cases, like Kheldian form powers living inside their own sets." },
+  { chapter: "build", target: "#pool-selectors", side: "bottom",
     title: "Power pools",
-    body: "Pools add what your sets lack: travel, extra toughness like Tough and "
-        + "Weave, utility. The game allows four at most, opening from level 4, and "
-        + "only one of the five origin pools -- Sorcery, Experimentation, Force of "
-        + "Will, Gadgetry, Utility Belt.\n\n"
-        + "You do not have to fill these by hand: the Build action later in this "
-        + "tour picks pools too, following exactly the rules the game enforces.",
-    absent: "The pool dropdowns in the Build panel." },
-  { chapter: "build", target: "#sel-epic", side: "right",
-    title: "Epic pools",
-    body: "Epic and patron pools open at level 35 and reach outside your "
-        + "archetype's normal toolkit -- armour for a damage dealer, or a ranged "
-        + "attack for our melee Brute.\n\n"
-        + "The list is per archetype and tiered like the game's own, and the "
-        + "special cases are honoured: Kheldians have no epic at all, so none is "
-        + "ever offered.",
-    absent: "The epic dropdown in the Build panel." },
-  { chapter: "build", target: "#preset-content", side: "right",
+    body: "Pools add what your sets lack: travel, extra toughness like Tough "
+        + "and Weave, utility. The game allows four at most, opening from "
+        + "level 4, and only one of the origin pools — which is why a pool you "
+        + "cannot take is greyed out with the reason on it, never hidden.\n\n"
+        + "You do not have to fill these by hand: the Assistant's Generate "
+        + "picks pools too, following exactly the rules the game enforces." },
+  { chapter: "build", target: "#exemplar-sel", anchor: "[data-tm=exemp-dial]", side: "bottom",
+    title: "The exemplar dial",
+    body: "Set a level here and the whole app shows your build as it plays "
+        + "exemplared down to that level: powers the game switches off leave "
+        + "every number, set bonuses above the piece's level go quiet, and a "
+        + "bold banner says exactly what view you are in.\n\n"
+        + "It is a view only — nothing about the build changes, and turning it "
+        + "off puts every number back. The same dial lives on the Stats tab "
+        + "and in the View menu." },
+  { chapter: "build", target: "#preset-content", side: "left",
     title: "Content: where you play",
-    body: "General play, task forces, incarnate trials, farming, PvP. This sets "
-        + "what the build has to survive and what it needs to deliver -- an "
-        + "incarnate trial hits far harder than street sweeping, and a fire farmer "
-        + "cares mostly about a single damage type.\n\n"
-        + "It is not cosmetic: Content changes the targets the optimizer chases, "
-        + "so the same character solved for different content comes out slotted "
-        + "differently.",
-    absent: "A dropdown in the Build panel, next to Role." },
-  { chapter: "build", target: "#preset-role", side: "right",
+    body: "General play, task forces, incarnate trials, farming, PvP — set in "
+        + "the Build Assistant beside the powers. This decides what the build "
+        + "has to survive and what it needs to deliver: an incarnate trial hits "
+        + "far harder than street sweeping.\n\n"
+        + "It is not cosmetic: Content changes the targets the optimizer "
+        + "chases, so the same character solved for different content comes "
+        + "out slotted differently." },
+  { chapter: "build", target: "#preset-role", side: "left",
     title: "Role: what you are there to do",
     body: "Damage, tanking, support, control, healing. The optimizer maximises "
         + "your role's output rather than a generic score.\n\n"
-        + "That matters most for support and control: a Defender is judged on how "
-        + "much its buffs and debuffs actually change a fight -- their size times "
-        + "how often they are up -- not on how well it survives alone. The aim is "
-        + "characters that get noticed as contributors.",
-    absent: "A dropdown in the Build panel, next to Content." },
+        + "That matters most for support and control: a Defender is judged on "
+        + "how much its buffs and debuffs actually change a fight — their size "
+        + "times how often they are up — not on how well it survives alone." },
   { chapter: "build", target: "#custom-targets-btn", scene: "targets", anchor: "[data-tm=targets-box]", side: "right", slim: true,
     title: "Your own targets",
-    body: "This is what Customize build targets opens. Each row is an ask -- "
-        + "defence by type or position, resistance, recharge, recovery and more "
-        + "-- and anything you set outranks the preset: it is what the optimizer "
-        + "chases first. The save line at the bottom keeps the whole set as a "
-        + "named preset for your other characters.\n\n"
+    body: "This is what Customize build targets opens. Each row is an ask — "
+        + "defence by type or position, resistance, recharge and more — and "
+        + "anything you set outranks the preset: it is what the optimizer "
+        + "chases first.\n\n"
         + "The Ranged row shows the honest answer to an ask that cannot be "
         + "reached: how close it can get, and which unpicked power would close "
-        + "the gap. Your ask is honored either way -- the tool states what a "
-        + "goal costs rather than quietly overriding it.",
-    absent: "A button on the build summary card, labelled 'Customize build targets'." },
+        + "the gap. Your ask is honored either way — the tool states what a "
+        + "goal costs rather than quietly overriding it." },
 
-  // -- Powers and slots ------------------------------------------------------
-  { chapter: "powers", target: "#builder", spine: true, anchor: "[data-tm=builder-head]", side: "left",
+  // ── Powers and slots ───────────────────────────────────────────────────────
+  { chapter: "powers", target: "#builder", spine: true, anchor: "[data-tm=builder-head]", side: "right",
     title: "Powers and slots",
     body: "This is where a build is actually built. Every power you have taken "
-        + "gets a card, and the card shows the enhancement slots in it.\n\n"
-        + "The examples in this tour describe a Brute built as a damage dealer, "
-        + "so the set names and numbers stay consistent as you read. Your own "
-        + "character will show its own powers; everything works the same way." },
-  { chapter: "powers", target: "#powers-list", anchor: "[data-tm=addrow]", side: "left",
+        + "gets a card, and the card shows the enhancement slots in it — laid "
+        + "out the way the in-game respec screen offers them.\n\n"
+        + "Your own character will show its own powers; everything works the "
+        + "same way." },
+  { chapter: "powers", target: "#powers-list", anchor: "[data-tm=addrow]", side: "right",
     title: "Adding a power",
     body: "Below the cards, every powerset you own has its own Add from… menu. "
         + "Pick a power and its card appears above, ready to slot.\n\n"
-        + "Only legal picks are ever offered -- right tier, right level, real "
-        + "prerequisites -- so you cannot assemble a character the game would "
-        + "reject. Dropped something by accident? Undo, at the top of the panel." },
+        + "Only legal picks are ever offered — right tier, right level, real "
+        + "prerequisites — and anything the rules forbid is greyed out with "
+        + "the reason on it, so the rule teaches itself. Dropped something by "
+        + "accident? Undo, at the top of the panel." },
   { chapter: "powers", target: "#builder", diagram: "powerCard", key: "power-card", anchor: "[data-tm=card1]", side: "bottom", top: 0.08,
     title: "What is on a power card",
     body: "The drawing labels everything on a card: the power's name with the ⓘ "
@@ -711,162 +705,205 @@ const TOUR_STEPS = [
     body: "The game gives you 67 placeable slots across a career, plus one free "
         + "base slot in each power you take. This counter shows what you have "
         + "spent.\n\n"
-        + "That budget is what makes build planning interesting. Six slots in one "
-        + "attack are six not spread across three others, and at 67 of 67 the "
-        + "only way to improve anything is to take a slot from somewhere else." },
+        + "That budget is what makes build planning interesting. Six slots in "
+        + "one attack are six not spread across three others, and at 67 of 67 "
+        + "the only way to improve anything is to take a slot from somewhere "
+        + "else." },
   { chapter: "powers", target: "#power-info", scene: "info", side: "left",
     title: "What the ⓘ opens",
-    body: "Click a power's name or its ⓘ and this panel opens beside the build "
-        + "-- exactly here, on the right. It shows what the power does, its "
-        + "endurance cost and recharge, the enhancement categories it accepts, "
-        + "and what is slotted in it right now.\n\n"
+    body: "Click a power's name or its ⓘ and this panel opens beside the build. "
+        + "It shows what the power does, its endurance cost and recharge, the "
+        + "enhancement categories it accepts, and what is slotted in it right "
+        + "now.\n\n"
         + "It is also where enhancement details live: click a slotted piece and "
-        + "you get the piece, its set, and the set's bonuses -- the same numbers "
+        + "you get the piece, its set, and the set's bonuses — the same numbers "
         + "the game uses." },
   { chapter: "powers", target: "#power-info", scene: "info", side: "left", key: "proc-why",
     anchor: "[data-tm=trade-note]", slim: true,
     title: "Why these enhancements",
-    body: "When the optimizer chooses damage procs over a full set -- or seats a "
-        + "-resistance or Force Feedback proc -- this panel says why, in one "
+    body: "When the optimizer chooses damage procs over a full set — or seats a "
+        + "-resistance or Force Feedback proc — this panel says why, in one "
         + "sentence with both numbers: what the procs add every use, and what "
-        + "the replaced pieces would have added instead. The numbers come from "
-        + "the same engine that prices your build; nothing is re-estimated for "
-        + "the explanation.\n\n"
+        + "the replaced pieces would have added instead.\n\n"
         + "Prefer the set after reading the trade? Slot it back and lock the "
-        + "power -- a re-solve honors the lock exactly and rebalances the rest "
-        + "of the build around your choice." },
+        + "power — a re-solve honors the lock exactly." },
   { chapter: "powers", target: "#modal", scene: "picker", anchor: "[data-tm=modal-box]", side: "right", slim: true,
     title: "Filling a slot, and why the list is short",
-    body: "Click a slot and this chooser opens, offering the sets that power can "
-        + "actually take, not every set in the game. An armour toggle offers "
-        + "defence and resistance sets, an attack offers damage sets, because "
-        + "each power declares which categories it accepts.\n\n"
-        + "Right-click a slot to empty it. Minus and plus on the card move slots "
-        + "between powers, so a slot sitting in something over-invested can go "
-        + "where it earns more." },
+    body: "Click a slot and this chooser opens, offering the sets that power "
+        + "can actually take, not every set in the game. An armour toggle "
+        + "offers defence and resistance sets, an attack offers damage sets, "
+        + "because each power declares which categories it accepts.\n\n"
+        + "Right-click a slot to empty it. Minus and plus on the card move "
+        + "slots between powers, so a slot sitting in something over-invested "
+        + "can go where it earns more." },
   { chapter: "powers", target: "#modal", scene: "picker", key: "ho-why",
     anchor: "[data-tm=ho-row]", side: "right", slim: true,
     title: "Hamidon Origins: two aspects in one slot",
-    body: "A Hamidon Origin is a special enhancement that carries two or three "
-        + "aspects at once -- accuracy AND damage, resistance AND endurance -- "
-        + "in a single slot. That is the classic endgame move: more raw "
+    body: "A Hamidon Origin carries two or three aspects at once — accuracy AND "
+        + "damage, resistance AND endurance — in a single slot. More raw "
         + "enhancement per slot than any set piece.\n\n"
         + "The price is that an HO earns no set bonuses, and they come from "
         + "endgame play: Hamidon raids, or merit conversion. That is why the "
-        + "optimizer only proposes them for endgame content (incarnate trials "
-        + "and farms) -- and why every HO it places carries a note saying "
-        + "where it comes from. Slot them by hand anywhere you like." },
+        + "optimizer only proposes them for endgame content, and why every HO "
+        + "it places carries a note saying where it comes from. Slot them by "
+        + "hand anywhere you like." },
   { chapter: "powers", target: "#builder", anchor: "[data-tm=card1-sets]", side: "bottom",
     title: "Set bonuses: why six of one set beats six good pieces",
-    body: "Slotting several pieces of the SAME set earns set bonuses -- recharge, "
-        + "defence, health -- on top of what each piece does. That is why a card "
-        + "reads something like \"Superior Unrelenting Fury x6\" with a Full set tag.\n\n"
-        + "You will also see Partial set, Frankenslot (pieces from different sets "
-        + "picked purely for raw numbers), and Global mules: a power taken mainly "
-        + "to carry one always-on unique, such as Luck of the Gambler's recharge." },
-  { chapter: "powers", target: "#builder", anchor: "[data-tm=card2-lock]", side: "left",
+    body: "Slotting several pieces of the SAME set earns set bonuses — "
+        + "recharge, defence, health — on top of what each piece does. That is "
+        + "why a card reads something like \"Superior Unrelenting Fury x6\" "
+        + "with a Full set tag.\n\n"
+        + "You will also see Partial set, Frankenslot (pieces from different "
+        + "sets picked purely for raw numbers), and Global mules: a power taken "
+        + "mainly to carry one always-on unique." },
+  { chapter: "powers", target: "#builder", anchor: "[data-tm=card2-lock]", side: "right",
     title: "The padlock: open or closed",
     body: "Open means the optimizer may re-slot that power. Closed means hands "
         + "off, and it means it absolutely: a locked power returns from a "
-        + "re-solve exactly as you left it, down to individual enhancements, and "
-        + "an empty slot inside it stays empty.\n\n"
-        + "Lock what you have already decided. You own those sets in game and do "
-        + "not want a plan that assumes you re-buy them; you want a particular "
-        + "proc in a particular power; or you are asking what would change if "
-        + "this part stayed fixed." },
-  { chapter: "powers", target: "#builder", anchor: "[data-tm=card2]", side: "left",
+        + "re-solve exactly as you left it, down to individual enhancements, "
+        + "and an empty slot inside it stays empty.\n\n"
+        + "Lock what you have already decided — sets you own in game, a "
+        + "particular proc in a particular power." },
+  { chapter: "powers", target: "#builder", anchor: "[data-tm=card2]", side: "right",
     title: "When a lock is costing you",
-    body: "Locks constrain the answer. A locked power that is slotted poorly caps "
-        + "how good everything around it can be, and a lower result afterwards is "
-        + "the solver being honest rather than failing.\n\n"
+    body: "Locks constrain the answer. A locked power that is slotted poorly "
+        + "caps how good everything around it can be, and a lower result "
+        + "afterwards is the solver being honest rather than failing.\n\n"
         + "So when a target you used to reach suddenly falls short, check your "
         + "locks first. Unlock, re-solve, compare." },
-  { chapter: "powers", target: "#preserve-toggle", anchor: "[data-tm=preserve-label]", side: "right",
+  { chapter: "powers", target: "#preserve-toggle", anchor: "[data-tm=preserve-label]", side: "left",
     title: "Preserve my IO sets",
-    body: "The broad-stroke alternative to locking, and usually the right choice "
-        + "for a character you actually play: keep every set you have already "
-        + "paid for, and let the optimizer improve only the generic enhancements "
-        + "and the empty slots around them." },
-  { chapter: "powers", target: "#builder", anchor: "[data-tm=response]", side: "right",
-    title: "Chasing a number, in practice",
-    body: "Say you want 45% ranged defence on that Brute. Set it under Customize "
-        + "build targets, then Solve. The optimizer works out which sets in which "
-        + "powers get you there, because defence at that level comes mostly from "
-        + "set BONUSES rather than from the defence powers themselves.\n\n"
-        + "If it cannot reach the number it says so, tells you how close it got, "
-        + "and names unpicked powers that would close the gap and roughly what "
-        + "each would add. That is your decision point: take the extra power, "
-        + "accept the lower number, or unlock whatever is in the way." },
+    body: "The broad-stroke alternative to locking, and usually the right "
+        + "choice for a character you actually play: keep every set you have "
+        + "already paid for, and let the optimizer improve only the generic "
+        + "enhancements and the empty slots around them." },
 
-  // ── Reading your numbers ───────────────────────────────────────────────────
+  // ── Letting it build for you ───────────────────────────────────────────────
+  { chapter: "solve", target: "#solve-btn", spine: true, side: "left",
+    title: "Solve the slotting",
+    body: "This works out the best enhancement layout it can find for the "
+        + "powers you have taken, aimed at your Content, Role and any targets "
+        + "you set. It is real arithmetic over the game's actual numbers, not a "
+        + "template.\n\n"
+        + "Two promises it always keeps: it never changes which powers you "
+        + "chose, and it obeys your padlocks and the Preserve setting." },
+  { chapter: "solve", target: "#gen-btn", side: "left",
+    title: "Or have it pick the powers too",
+    body: "Generate goes further than Solve: it chooses which powers to take as "
+        + "well as how to slot them — pools, epic and incarnates included — "
+        + "following the same rules the game enforces.\n\n"
+        + "Where a certified champion build exists for your combination it "
+        + "starts from there rather than from nothing. Whatever it produces, "
+        + "you can still change anything by hand afterwards." },
+  { chapter: "solve", target: "#ai-response", anchor: "[data-tm=response]", side: "left",
+    title: "Achieved versus target",
+    body: "After a solve you get the result in plain terms: what you asked for, "
+        + "what it reached, and what it changed. If something fell short it "
+        + "does not go quiet about it — it names the unpicked powers on your "
+        + "character that would close the gap and roughly what each would add.\n\n"
+        + "A goal you cannot reach is worth knowing about rather than chasing." },
+  { chapter: "solve", target: "#changes-btn", scene: "changes", anchor: "[data-tm=changes-box]", side: "right", slim: true,
+    title: "What changed?",
+    body: "For imported characters, the What changed? button opens this window: "
+        + "one line per power — what was slotted, what it is now — and a "
+        + "closing line saying what the changes bought you.\n\n"
+        + "It is a report, not a confirmation: open and close it as often as "
+        + "you like. From here you can also export the result as a .mbd, keep "
+        + "it, or put everything back with Reset." },
+  { chapter: "solve", target: "#reset-btn", side: "left",
+    title: "Reset to imported",
+    body: "Puts an imported build back exactly as it came in, so you can try a "
+        + "different goal, role or options without re-importing.\n\n"
+        + "Reset means reset: custom targets and similar settings attached to "
+        + "the build are cleared with it. When there is something like that to "
+        + "lose, the app tells you first — nothing is dropped silently." },
+  { chapter: "solve", target: "#tray-out", side: "right",
+    title: "Your in-game trays",
+    body: "After a solve, the plan lands the way you will actually play it: a "
+        + "suggested layout for the game's power trays — the attack chain "
+        + "together where your fingers live, toggles and autos parked out of "
+        + "the click path.\n\n"
+        + "Copy it into the game once and muscle memory does the rest." },
+  { chapter: "solve", target: "#order-out", side: "right",
+    title: "The respec order",
+    body: "The respec screen in game asks you to re-place every pick, in "
+        + "order, from level 1 up. This is that order, one line per pick, so "
+        + "at the trainer you just read down the list instead of "
+        + "reconstructing it from memory." },
+  { chapter: "solve", target: "#validation", side: "left",
+    title: "The rules check",
+    body: "Anything the game would not allow shows up here: too many pools, an "
+        + "enhancement in a power that cannot take it, a power taken before "
+        + "its level, a second copy of a unique. If this is clear, the build "
+        + "is legal — you can respec into it in game exactly as shown.\n\n"
+        + "The checks are the game's own rules, which is also why the app "
+        + "sometimes refuses a request: it will not plan something the game "
+        + "would reject." },
+
+  // ── Where your numbers come from ───────────────────────────────────────────
   { chapter: "stats", target: "#stats", spine: true, anchor: "[data-tm=stats-head]", side: "right",
     title: "Your numbers, live",
-    body: "Defence, resistance, recharge, recovery, damage. These update as you "
-        + "change anything, and they include your enhancements, your set bonuses, "
-        + "and the toggles and auto powers you would actually be running.\n\n"
-        + "Every figure is computed from the game's own data. If the app and the "
-        + "game ever disagree, the game is right -- and that is a bug worth "
-        + "reporting with the 🐞 button.",
-    absent: "The 'Stats' panel, once a character is loaded." },
-  { chapter: "stats", target: "#defense-bars", diagram: "statBar", side: "right",
-    title: "How to read a bar",
-    body: "Every bar tells you three things at once, marked on the drawing above: "
-        + "the filled part is what you have, and the END of the bar is the number "
-        + "that matters -- each bar is drawn against its own target, so a full "
-        + "bar means done. The exact figure is printed too, so you never have to "
-        + "estimate from a picture.\n\n"
-        + "For defence the bar runs to 45% -- the soft cap, where most incoming "
-        + "attacks start missing you. If a row also shows a ⚔ figure, part of that "
-        + "defence switches off in combat, and the ⚔ number is the one to plan "
-        + "around, because it is what you have when it counts.",
-    absent: "The Defence rows in the Stats panel." },
-  { chapter: "stats", target: "#res-cap-label", anchor: "[data-tm=res-head]", side: "right",
+    body: "Defence, resistance, recharge, recovery, damage — every figure "
+        + "computed from the game's own data, updating as you change anything. "
+        + "They include your enhancements, your set bonuses, and the toggles "
+        + "and auto powers you would actually be running.\n\n"
+        + "If the app and the game ever disagree, the game is right — and that "
+        + "is a bug worth reporting from the Help menu." },
+  { chapter: "stats", target: "#stats-miniwall", anchor: "[data-tm=mini-wall]", side: "bottom",
+    title: "Your build, in miniature",
+    body: "The wall above the stats is your Powers & Slots in miniature — same "
+        + "cards, same enhancement icons, just small. It exists for one "
+        + "reason: when you click a stat below, the IOs feeding that stat ring "
+        + "green up here, so the number and its sources are visible together.\n\n"
+        + "Inherents with nothing slotted fold into the one-line strip at the "
+        + "bottom." },
+  { chapter: "stats", target: "#stat-breakdown", anchor: "[data-tm=breakdown-box]", side: "left",
+    title: "Click a stat, get its receipts",
+    body: "Click any stat row and this breakdown opens beside it: every power "
+        + "and IO that feeds the number, with the exact contribution of each — "
+        + "set bonuses by tier, always-on globals, and powers that grant the "
+        + "stat by themselves, marked with a green box on their name because "
+        + "there is no IO to ring.\n\n"
+        + "It is editable in place: click any IO chit in the breakdown to "
+        + "change it, and the change is real — your build and every number "
+        + "update, everywhere. The arrow keys walk you up and down the stat "
+        + "list." },
+  { chapter: "stats", target: "#res-cap-chip", anchor: "[data-tm=ctl-row]", side: "bottom",
     title: "Caps are per archetype",
-    body: "Resistance stops counting at your archetype's cap: 90% for Tankers and "
-        + "Brutes, 85% for Kheldians and the Arachnos archetypes, 75% for everyone "
-        + "else.\n\n"
-        + "Points past the line are wasted, which is why the app will not chase "
-        + "them: a slot buying resistance past the cap is a slot better spent "
-        + "anywhere else on the build.",
-    absent: "Shown beside the Resistance heading in the Stats panel." },
-  { chapter: "stats", target: "#suppression-toggle", anchor: "[data-tm=sup-label]", side: "right",
-    title: "The in-combat view",
-    body: "Powers like Stealth lose part of their defence the moment you attack, "
-        + "get hit, or take damage -- the game calls this suppression. This switch "
-        + "shows all your totals as they are mid-fight instead of at rest.\n\n"
-        + "It is a display choice only: Solve optimizes the same numbers either "
-        + "way. Turn it on when you want the honest in-combat picture, which is "
-        + "usually the one worth planning around.",
-    absent: "A checkbox under the stat bars, once a character is loaded." },
-  { chapter: "stats", target: "#incarnate-peak-toggle", anchor: "[data-tm=inc-label]", side: "right",
-    title: "What-if switches",
-    body: "Two more switches live beside the in-combat view. Include incarnates "
-        + "folds your Destiny and Hybrid buffs into the totals, matching the "
-        + "fully-buffed display Mids users know. The amplifiers switch adds the "
-        + "three buyable amplifier buffs and permanent accolades.\n\n"
-        + "Useful for answering 'what am I really at during a fight' -- just "
-        + "remember which switches are on before comparing numbers with someone "
-        + "else's build.",
-    absent: "Checkboxes under the stat bars, once a character is loaded." },
-  { chapter: "stats", target: "#offense-section", anchor: "[data-tm=offense-head]", side: "right",
-    title: "The output half",
-    body: "Below the defensive bars, the panel speaks your role's language: a "
-        + "damage dealer sees single-target and area damage throughput, a "
-        + "Mastermind sees pet damage, a support character sees what its debuffs "
-        + "and buffs are actually worth in a fight.\n\n"
-        + "This is the side the optimizer is maximising for your role -- so when "
-        + "you want to know whether a change helped, look here, not only at the "
-        + "defensive bars.",
-    absent: "The Offense section of the Stats panel, once a character is loaded." },
+    body: "Resistance stops counting at your archetype's cap: 90% for Tankers "
+        + "and Brutes, 85% for Kheldians and the Arachnos archetypes, 75% for "
+        + "everyone else. Defence has a soft cap at 45%, where most incoming "
+        + "attacks already miss.\n\n"
+        + "Points past the line are wasted, which is why the app will not "
+        + "chase them: a slot buying resistance past the cap is a slot better "
+        + "spent anywhere else." },
+  { chapter: "stats", target: "#suppression-toggle", anchor: "[data-tm=sup-label]", side: "bottom",
+    title: "The view switches",
+    body: "The control line holds the what-if switches. In-combat view shows "
+        + "your totals as they are mid-fight — powers like Stealth lose part "
+        + "of their defence the moment you attack, and the mid-fight number is "
+        + "usually the one worth planning around. Include incarnates folds "
+        + "your Destiny and Hybrid buffs in, matching Mids' fully-buffed "
+        + "display; the accolades switch adds those.\n\n"
+        + "All display choices only: Solve optimizes the same numbers either "
+        + "way." },
+  { chapter: "stats", target: "#exemplar-sel-stats", anchor: "[data-tm=exemp-dial-stats]", side: "bottom",
+    title: "Exemplared numbers",
+    body: "The same exemplar dial from the build bar lives here too. Set a "
+        + "level and every stat on this page becomes the exemplared truth: "
+        + "powers received above that level plus five switch off, set bonuses "
+        + "above the piece's level go quiet — per piece, exactly as the game "
+        + "does it — and a banner states the view in bold.\n\n"
+        + "The advice on the banner is numeric: what you lose at that level, "
+        + "and what fully-attuned IOs would win back." },
   { chapter: "stats", target: "#offense-stats", anchor: "[data-tm=atk-table]", side: "right",
     title: "Every attack, priced",
-    body: "Under the headline numbers, each attack you own is priced: its damage, "
-        + "how long its animation locks you in place, its recharge, and DPA -- "
+    body: "The offense numbers are clickable like everything else. Under the "
+        + "headline figures, each attack you own is priced: its damage, how "
+        + "long its animation locks you in place, its recharge, and DPA — "
         + "damage per second of animation, the honest measure of an attack's "
-        + "worth. A huge hit with a slow animation can price out worse than a "
-        + "quick one, and this table is where that shows.\n\n"
-        + "The Top attack line names the best of them; a good attack chain is "
-        + "built from the top of this table down." },
+        + "worth.\n\n"
+        + "A good attack chain is built from the top of this table down." },
   { chapter: "stats", target: "#offense-stats", anchor: "[data-tm=support-note]", side: "right",
     title: "When you play support",
     body: "This example is a damage Brute, so the panel stays lean. Play a "
@@ -874,245 +911,134 @@ const TOUR_STEPS = [
         + "damage, your enemy debuffs at their base value per application, and "
         + "what your buffs hand allies.\n\n"
         + "Pet damage is honest about hit chance: pets are scored with their "
-        + "real chance to hit at their own level. Lower-tier henchmen fight "
-        + "higher-level enemies and miss more -- which is exactly why ToHit "
-        + "buffs like Tactics and accuracy slotted in the summon power "
-        + "visibly raise pet damage.\n\n"
-        + "Those numbers are the invisible half of the game made visible -- and "
-        + "for a support role they are exactly what the optimizer maximises: "
-        + "size times how often they are up." },
-  { chapter: "stats", target: "#overview-card", side: "left",
-    title: "Build Vitals: the report card",
-    body: "The summary band under your powers starts with the report card: "
-        + "defence and resistance by type AND position in one grid -- marked "
-        + "where a number is done -- with the build's pulse underneath: "
-        + "recharge, recovery, hit points, and damage per second single-target "
-        + "and area.\n\n"
-        + "It is the same truth as the Stats panel, folded small enough to read "
-        + "at a glance while you work the slots above it." },
-  { chapter: "stats", target: "#bonuses-card", side: "left",
-    title: "Set bonuses, totted up",
-    body: "Every set bonus currently active, aggregated -- ×3 of one, ×2 of "
-        + "another -- so you can see where your recharge and defence actually "
-        + "come from.\n\n"
-        + "When a number on the report card needs to move, look here first: "
-        + "this list says which bonuses you are stacking, and what disappears "
-        + "if you swap a set out." },
-  { chapter: "stats", target: "#uniques-card", side: "left",
-    title: "Uniques carried",
-    body: "The one-slot wonders: globals that give a build-wide effect from a "
-        + "single slot -- a +defense IO here, a +recovery proc there. This card "
-        + "lists every one you carry, so you always know what you already have.\n\n"
-        + "A solve parks them in low-priority powers where they cost nothing -- "
-        + "the Global mules pattern from the Powers section." },
-  { chapter: "stats", target: "#accolades-card", side: "left",
+        + "real chance to hit at their own level — which is exactly why ToHit "
+        + "buffs like Tactics visibly raise pet damage." },
+
+  // ── The end game ───────────────────────────────────────────────────────────
+  { chapter: "endgame", target: "#accolades-card", spine: true, anchor: "[data-tm=acc-box]", side: "right",
     title: "Accolades",
-    body: "Accolades are permanent bonus powers the game awards for collections "
-        + "of badges -- real hit points and endurance. Tick the ones your "
-        + "character has earned and your totals recalculate; the greyed rows "
-        + "belong to the other side, which is exactly why flipping Hero/Villain "
-        + "moves your numbers.\n\n"
+    body: "Accolades are permanent bonus powers the game awards for "
+        + "collections of badges — real hit points and endurance. Tick the "
+        + "ones your character has earned and your totals recalculate; the "
+        + "greyed rows belong to the other alignment, which is exactly why "
+        + "flipping Hero/Villain moves your numbers.\n\n"
         + "The ⓘ on each row tells you how to earn it in game, and Preview all "
-        + "shows your numbers with every accolade in hand -- a ceiling worth "
-        + "knowing about." },
+        + "shows your numbers with every accolade in hand." },
+  { chapter: "endgame", target: "#sel-epic", anchor: "[data-tm=epic-row]", side: "right",
+    title: "Epic pools",
+    body: "Epic and patron pools open at level 35 and reach outside your "
+        + "archetype's normal toolkit — armour for a damage dealer, or a "
+        + "ranged attack for our melee Brute.\n\n"
+        + "The list is per archetype and tiered like the game's own, and the "
+        + "special cases are honoured: Kheldians have no epic at all, and a "
+        + "patron pool says on it that a patron arc unlocks it in game." },
+  { chapter: "endgame", target: "#incarnate-selectors", spine: false, anchor: "[data-tm=inc-row]", side: "right",
+    title: "Incarnates, explained per pick",
+    body: "The incarnate system opens at level 50. Under every slot's dropdown, "
+        + "the current pick shows its own description and the exact numbers "
+        + "our math folds into your totals at peak — and a choice our math "
+        + "does not price yet says so at the point of choice, rather than "
+        + "silently doing nothing.\n\n"
+        + "Incarnate buffs are situational, so they stay out of the passive "
+        + "totals until you tick Include incarnates (peak) on the Stats tab." },
 
-  // ── Letting it build for you ───────────────────────────────────────────────
-  { chapter: "solve", target: "#solve-btn", spine: true, side: "right",
-    title: "Solve the slotting",
-    body: "This works out the best enhancement layout it can find for the powers "
-        + "you have taken, aimed at your Content, Role and any targets you set. It "
-        + "is real arithmetic over the game's actual numbers, not a template, and "
-        + "it can take up to a minute on a complicated build. It will say so while "
-        + "it works.\n\n"
-        + "Two promises it always keeps: it never changes which powers you chose, "
-        + "and it obeys your padlocks and the Preserve setting from the Powers "
-        + "section.",
-    absent: "The solve button, once a character is loaded." },
-  { chapter: "solve", target: "#gen-btn", side: "right",
-    title: "Or have it pick the powers too",
-    body: "Build goes further than Solve: it chooses which powers to take as well "
-        + "as how to slot them -- pools, epic and incarnates included -- following "
-        + "the same rules the game enforces: four pools at most, one origin pool, "
-        + "real prerequisites and level availability.\n\n"
-        + "Where a certified champion build exists for your combination it starts "
-        + "from there rather than from nothing. And whatever it produces, you can "
-        + "still change anything by hand afterwards.",
-    absent: "The build button, near the solve controls." },
-  { chapter: "solve", target: "#ai-response", side: "right",
-    title: "Achieved versus target",
-    body: "After a solve you get the result in plain terms: what you asked for, "
-        + "what it reached, and what it changed. If something fell short it does "
-        + "not go quiet about it -- it names the unpicked powers on your character "
-        + "that would close the gap and roughly what each would add.\n\n"
-        + "If nothing on your character supplies a stat at all, it says that "
-        + "plainly too. A goal you cannot reach is worth knowing about rather than "
-        + "chasing.",
-    absent: "Appears below the build once you have run a solve." },
-  { chapter: "solve", target: "#changes-btn", scene: "changes", anchor: "[data-tm=changes-box]", side: "right", slim: true,
-    title: "What changed?",
-    body: "For imported characters, the What changed? button opens this window: "
-        + "one line per power -- what was slotted, what it is now -- and a "
-        + "closing line saying what the changes bought you, so you can judge the "
-        + "trade before committing to anything in game.\n\n"
-        + "It is a report, not a confirmation: open and close it as often as you "
-        + "like. From here you can also export the result as a .mbd, keep it, or "
-        + "put everything back with Reset.",
-    absent: "Appears after you solve an imported build." },
-  { chapter: "solve", target: "#reset-btn", side: "right",
-    title: "Reset to imported",
-    body: "Puts an imported build back exactly as it came in, so you can try a "
-        + "different goal, role or options without re-importing.\n\n"
-        + "Reset means reset: custom targets and similar settings attached to the "
-        + "build are cleared with it. When there is something like that to lose, "
-        + "the app tells you first and cancelling keeps it -- nothing is dropped "
-        + "silently.",
-    absent: "Appears once you have imported a build." },
-  { chapter: "solve", target: "#tray-out", side: "left",
-    title: "Your in-game trays",
-    body: "After a solve, the plan lands the way you will actually play it: a "
-        + "suggested layout for the game's power trays -- the attack chain "
-        + "together where your fingers live, toggles and autos parked out of "
-        + "the click path.\n\n"
-        + "Copy it into the game once and muscle memory does the rest.",
-    absent: "Appears under the powers once a solve has produced a layout." },
-  { chapter: "solve", target: "#order-out", side: "left",
-    title: "The respec order",
-    body: "The respec screen in game asks you to re-place every pick, in order, "
-        + "from level 1 up. This is that order, one line per pick, so at the "
-        + "trainer you just read down the list instead of reconstructing it "
-        + "from memory.\n\n"
-        + "It appears once there is a plan worth respeccing into.",
-    absent: "Appears under the powers when a plan differs from what you imported." },
-  { chapter: "solve", target: "#validation", side: "right",
-    title: "The rules check",
-    body: "Anything the game would not allow shows up here: too many pools, an "
-        + "enhancement in a power that cannot take it, a power taken before its "
-        + "level, a second copy of a unique. If this is clear, the build is legal "
-        + "-- you can respec into it in game exactly as shown.\n\n"
-        + "The checks are the game's own rules, which is also why the app "
-        + "sometimes refuses a request: it will not plan something the game would "
-        + "reject.",
-    absent: "Appears when something about the build needs attention." },
+  // ── The leveling guide ─────────────────────────────────────────────────────
+  { chapter: "leveling", target: "#journey-body", spine: true, anchor: "[data-tm=road]", side: "bottom",
+    title: "Your 1-to-50 as a road",
+    body: "Every marker is a level, and the ★ is where your character stands — "
+        + "green rings mean levels already reached. Click any stop and the "
+        + "panel below reads that level: its pick, when the next enhancement "
+        + "slot arrives, the zones that fit you and how their enemies will "
+        + "feel, badges worth grabbing, and which task forces have just "
+        + "opened.\n\n"
+        + "It follows the game's real schedule, special careers included." },
+  { chapter: "leveling", target: "#journey-body", anchor: "[data-tm=art-box]", side: "right",
+    title: "The place you are going",
+    body: "The picture is the game's own art for the zone the selected level "
+        + "sends you to, and it changes as you click along the road — Atlas "
+        + "Park at 1, Peregrine Island at 50.\n\n"
+        + "Where the game ships no art for a zone, the slot says so instead of "
+        + "showing a picture of the wrong place." },
+  { chapter: "leveling", target: "#journey-body", anchor: "[data-tm=align-preview]", side: "right",
+    title: "Previewing other routes",
+    body: "The alignment row previews where somebody on another side would "
+        + "level — Hero, Vigilante, Rogue, Villain, and the 🌀 Flashback view "
+        + "of content that can no longer be started fresh.\n\n"
+        + "It is a preview and nothing more: your character, your build and "
+        + "your numbers are unchanged. Your real alignment is the button at "
+        + "the top right of the app." },
 
-  // ── The other tools ────────────────────────────────────────────────────────
-  { chapter: "extras", target: "#journey-btn", spine: true, scene: "journey", anchor: "[data-tm=journey-box]", side: "bottom",
-    title: "The Leveling Journey",
-    body: "Click the 🗺️ button in the header and this opens: your whole 1-to-50 "
-        + "as a road. Every marker is a level, and the ★ is where your character "
-        + "stands. The open stop reads like the one shown -- that level's pick, "
-        + "when the next slot arrives, the zones that fit you and how their "
-        + "enemies will feel, and which task forces have just opened.\n\n"
-        + "It follows the game's real schedule, special careers included -- an "
-        + "Arachnos character gets the mandatory level-24 respec walked properly, "
-        + "branch and all. The alignment switch inside is a preview of where "
-        + "somebody on another side would level; it changes nothing about your "
-        + "character.",
-    absent: "The 🗺️ button in the header, once a character is loaded." },
-  { chapter: "extras", target: "#conv-tool", anchor: "[data-tm=conv-body]", side: "left",
-    title: "Enhancement Converter",
-    body: "This is the converter planner, and the highlighted example is what an "
-        + "answer looks like: the piece to start from, the conversions to run, "
-        + "and the price -- so 'expensive' becomes a shopping list.\n\n"
-        + "Ask it the two money questions. 'How do I get this enhancement "
-        + "cheaply?' returns a path like the one shown. 'Is this drop worth "
-        + "anything?' reads drops pasted straight from the game and answers "
-        + "keep, craft, or sell for each. Its paths only use conversions the "
-        + "game actually allows -- there is no cheap-pool-to-purple shortcut, "
-        + "because the game won't allow one.",
-    absent: "The Converter panel." },
-  { chapter: "extras", target: "#gamelog", anchor: "[data-tm=gl-body]", side: "left",
+  // ── Your play log ──────────────────────────────────────────────────────────
+  { chapter: "logging", target: "#gamelog", spine: true, anchor: "[data-tm=gl-body]", side: "right",
     title: "Play Log",
     body: "Turn it on and this is what it builds from your own chat logs, on "
-        + "your machine -- the highlighted cards are the shape of it: each "
-        + "session with who you played and what you levelled, and your haul "
-        + "appraised for you, so 'worth keeping?' is already answered.\n\n"
-        + "It is entirely optional and off until you turn it on. And turning it "
-        + "on shares nothing: reading your logs locally and sharing anything "
-        + "anywhere are separate choices, each asked separately.",
-    absent: "The 📜 Play Log panel, shown when you enable it." },
+        + "your machine: each session with who you played and what you "
+        + "levelled, and your haul appraised for you — keep, craft, or sell, "
+        + "answered per drop.\n\n"
+        + "It is entirely optional and off until you turn it on." },
+  { chapter: "logging", target: "#gl-pulse", anchor: "[data-tm=boards-row]", side: "right",
+    title: "Your boards",
+    body: "My private board is your own data, built locally and never "
+        + "uploaded. What sharing shows is a preview of the sanitized public "
+        + "variant — exactly what feeding the community boards would share, so "
+        + "the choice to share is an informed one." },
+  { chapter: "logging", target: "#share-line", anchor: "[data-tm=share-row]", side: "bottom",
+    title: "Sharing is a separate choice",
+    body: "Reading your logs locally and sharing anything anywhere are "
+        + "separate choices, each asked separately. The feed is off until you "
+        + "say yes, and the prompt states exactly what would be shared: your "
+        + "own rewards and public recruitment lines — never raw chat, never "
+        + "private tells.\n\n"
+        + "Closing the question stores nothing; it is not a decision." },
 
-  // ── Saving, updates and help ───────────────────────────────────────────────
-  { chapter: "header", target: "#masthead", diagram: "headerRow", anchor: "[data-tm=compass]", side: "bottom",
-    title: "The header toolbar",
-    body: "Nine buttons run across the top, and each one says its own name, so "
-        + "you should not have to memorise any of them.\n\n"
-        + "The one pair still worth calling out is the two circular arrows, "
-        + "because the words are close: ⟳ Updates checks whether a newer "
-        + "version of the app exists, while ↺ Switch leaves this character and "
-        + "returns to the opening screen. Nothing is lost either way -- your "
-        + "plan is already saved.\n\n"
-        + "The rest of this section takes the important ones in turn.",
-    absent: "The bar across the top of the app." },
-
-  { chapter: "header", target: "#save-btn", spine: true,
-    title: "Saving",
-    body: "Keeps the character's plan and levelling progress on your machine so "
-        + "you can resume any time -- powers, slots, locks, targets, everything.\n\n"
-        + "You will rarely need it: the app also saves quietly in the background "
-        + "as you work, and a small note appears in the header when it does. The "
-        + "button is for peace of mind before you close.",
-    absent: "The 💾 button in the header." },
-  { chapter: "header", target: "#start-over-btn",
-    title: "Load another character",
-    body: "Returns to the opening screen -- the five cards from the start of this "
-        + "tour -- to continue another saved character, start a new one, or "
-        + "import.\n\n"
-        + "Nothing is lost on the way out: the character you are leaving has been "
-        + "saved in the background as you worked.",
-    absent: "The ↺ button at the right end of the header." },
-  { chapter: "header", target: "#alignment-btn",
+  // ── Menus, saving and help ─────────────────────────────────────────────────
+  { chapter: "header", target: "#masthead", spine: true, anchor: "[data-tm=menubar]", side: "bottom",
+    title: "Four menus run the app",
+    body: "Character holds every way in and out: continue, new, import, "
+        + "export, save, switch. Build holds the solver actions. View switches "
+        + "tabs and display toggles. Help holds this tour, the guide, updates "
+        + "and the bug report.\n\n"
+        + "Every item carries its one-line description, so nothing needs "
+        + "memorising." },
+  { chapter: "header", target: "#m-build", anchor: "[data-tm=menu-build]", side: "bottom",
+    title: "The Build menu",
+    body: "Solve, Generate, and Refine with AI live here, along with Customize "
+        + "build targets, the What changed? report, Undo and Reset — the same "
+        + "actions the Assistant panel offers, reachable from any tab." },
+  { chapter: "header", target: "#m-view", anchor: "[data-tm=menu-view]", side: "bottom",
+    title: "The View menu",
+    body: "The five tabs, the display toggles — incarnates at peak, accolades "
+        + "and amplifiers, PvP mode, the in-combat view — and the exemplared "
+        + "view, which takes you to the dial.\n\n"
+        + "Display toggles change what you SEE, never what the solver builds." },
+  { chapter: "header", target: "#m-help", anchor: "[data-tm=menu-help]", side: "bottom",
+    title: "The Help menu",
+    body: "The guided tour you are in now, the full user guide as a PDF stored "
+        + "with the app, the bug report, champion submission, and Check for "
+        + "updates — which compares version numbers with the project's release "
+        + "page and sends nothing else. Nothing is ever downloaded or "
+        + "installed without you saying so." },
+  { chapter: "header", target: "#alignment-btn", side: "bottom",
     title: "Your alignment",
-    body: "Opens a short list of the four alignments: Hero, Vigilante, Rogue and "
-        + "Villain. It reskins the whole app, and it decides which side's "
-        + "information you see -- a Vigilante levels in Paragon City like a hero "
-        + "and can also visit villain content; a Rogue is the mirror of that.\n\n"
-        + "It will not change how your build scores. The game treats a Vigilante "
-        + "as hero-side and a Rogue as villain-side, so Hero and Vigilante give "
-        + "identical numbers, as do Villain and Rogue. Moving between the hero "
-        + "pair and the villain pair can shift your totals slightly, because "
-        + "accolades are side-specific in game and the app assumes the standard "
-        + "set for your side. Nothing you ticked is ever thrown away: an accolade "
-        + "for the other side stays remembered, greys out, and counts as zero "
-        + "until you switch back.\n\n"
-        + "Do not confuse it with the Leveling Journey's own alignment switch -- "
-        + "that one is a preview of somebody else's route through the game and "
-        + "changes nothing at all.",
-    absent: "The alignment button in the header -- it shows your current one." },
-  { chapter: "header", target: "#help-btn",
-    title: "The user guide",
-    body: "The full guide as a PDF: everything this tour covers and more, plus "
-        + "the release notes for every version. It is stored with the app, so it "
-        + "always matches the version you are actually running.",
-    absent: "The ❓ button in the header." },
-  { chapter: "header", target: "#champ-btn",
-    title: "Submit a champion",
-    body: "Think your build beats the shipped champion for its archetype, "
-        + "powersets and role? This saves it as a champion candidate. Every "
-        + "candidate is re-scored with the same math, and if yours genuinely wins "
-        + "it becomes the shipped champion in a future update -- with credit to "
-        + "you.\n\n"
-        + "Champions are how the optimizer starts smart: the best certified build "
-        + "for each combination ships with the app.",
-    absent: "The 🏆 button in the header." },
-  { chapter: "header", target: "#update-btn",
-    title: "Updates",
-    body: "Checks whether a newer version exists -- it compares version numbers "
-        + "with the project's release page and sends nothing else. Nothing is "
-        + "ever downloaded or installed without you saying so.\n\n"
-        + "On first run the app asks once whether to check automatically at "
-        + "startup; say no and this button is the only check that ever runs.",
-    absent: "The ⟳ button in the header." },
-  { chapter: "header", target: "#bug-btn", spine: true, scene: "bugreport", anchor: "[data-tm=bug-box]", side: "right", slim: true,
+    body: "Opens the four alignments: Hero, Vigilante, Rogue and Villain. It "
+        + "reskins the whole app and decides which side's information you see "
+        + "— a Vigilante levels like a hero and can also visit villain "
+        + "content; a Rogue is the mirror of that.\n\n"
+        + "It will not change how your build scores: the game treats a "
+        + "Vigilante as hero-side and a Rogue as villain-side. Accolades are "
+        + "side-specific, so moving between the pairs can shift totals "
+        + "slightly — nothing you ticked is thrown away; the other side's "
+        + "accolades grey out and wait." },
+  { chapter: "header", target: "#bug-btn", spine: false, scene: "bugreport", anchor: "[data-tm=bug-box]", side: "right", slim: true,
     title: "Something wrong? Say so",
-    body: "This is the form behind the 🐞 button, and it goes straight to the "
-        + "developer with no account needed. The hard part of a good report -- "
-        + "your version, model and game-data numbers -- is filled in for you; "
-        + "you describe what happened, and the checkbox attaches the build "
-        + "itself so the problem can be reproduced. Nothing leaves your machine "
-        + "until you press Send.\n\n"
-        + "That is the tour. Every panel has a ? that brings you back to just "
-        + "that part, and the 🧭 compass holds the rest, whenever you want it.",
-    absent: "The 🐞 button in the header." },
+    body: "This is the form behind Report a bug, and it goes straight to the "
+        + "developer with no account needed. The hard part of a good report — "
+        + "your version, model and game-data numbers — is filled in for you; "
+        + "the checkbox attaches the build itself so the problem can be "
+        + "reproduced. Nothing leaves your machine until you press Send.\n\n"
+        + "That is the tour. Every ? in the app brings you back to the exact "
+        + "part it sits on, and the Help menu holds the rest, whenever you "
+        + "want it." },
 ];
 
 
@@ -1210,7 +1136,8 @@ function _tourToDriverStep(s, i, all) {
   const art = s.diagram && TOUR_DIAGRAMS[s.diagram] ? TOUR_DIAGRAMS[s.diagram] : "";
   return {
     element: _tourMockEl(s),
-    __tmScene: s.scene || (s.chapter === "start" ? "entry" : "build"),
+    __tmScene: s.scene || (s.chapter === "start" ? "menus" : "build"),
+    __tmTab: s.tab || TM_TAB[s.chapter] || "powers",
     __tmTop: s.top,
     // `side` steers the card into empty space instead of over the subject
     // (rail steps open rightward into the build column, build-column steps
@@ -1267,7 +1194,8 @@ window.startTour = function (chapter, atIndex) {
 
   endTour();
   _openTourMock();
-  _mockShowScene(live[0].scene || (live[0].chapter === "start" ? "entry" : "build"));
+  _mockShowScene(live[0].scene || (live[0].chapter === "start" ? "menus" : "build"),
+                 live[0].tab || TM_TAB[live[0].chapter] || "powers");
   _driver = window.driver.js.driver({
     steps: live.map((s, i) => _tourToDriverStep(s, i, live)),
     showProgress: true,
@@ -1294,7 +1222,7 @@ window.startTour = function (chapter, atIndex) {
     // place it happens. Fires before positioning, so the element is visible
     // when measured.
     onHighlightStarted: (el, step) => {
-      if (step && step.__tmScene) _mockShowScene(step.__tmScene);
+      if (step && step.__tmScene) _mockShowScene(step.__tmScene, step.__tmTab);
       // Pre-scroll the subject into the UPPER THIRD of the screen. driver
       // centres it, which leaves ~half a screen below -- less than a card,
       // so the card got clamped upward OVER the subject (Joel's screenshots:
