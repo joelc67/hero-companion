@@ -2930,3 +2930,17 @@ summary:hover { color: var(--ink); }
    edge, so whatever residual the discrete tiles leave is panel surface, not
    raw page background. Discrete tiles can't split; this absorbs the rest. */
 .powers-main > :last-child, .powers-side > :last-child { flex: 1 0 auto; }
+
+/* ── In-game commands card + inherent tile (2026-08-04 night) ────────────────
+   A command row is a full-width button: code line, then what it does. */
+.cmd-list { display: flex; flex-direction: column; gap: var(--s2); }
+.cmd-row { display: block; width: 100%; text-align: left; padding: 7px 10px;
+  background: var(--panel2); color: var(--ink); border: 1px solid var(--border);
+  border-radius: var(--r1); cursor: copy; }
+.cmd-row code { display: block; font-size: 12px; color: var(--accent);
+  background: none; padding: 0; }
+.cmd-row span { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; }
+.cmd-row:hover { border-color: var(--accent); }
+.cmd-row.cmd-copied { border-color: var(--def); }
+.cmd-row.cmd-copied code { color: var(--def); }
+.ih-row { margin: 8px 0; }

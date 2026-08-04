@@ -965,7 +965,8 @@ function packPowersTab() {
   // trays / level plan / conv-guide are NOT tiles: they are the full-width
   // base slabs under the wall — giant references that outrun any column, and
   // whose content flows horizontally at full width (short and dense there).
-  const TILES = ["endgame-plan-panel", "endgame-panel"];
+  const TILES = ["endgame-plan-panel", "endgame-panel", "cmd-card",
+                 "inherent-card", "setbonus-blurb"];
   const h = el => el.getBoundingClientRect().height;
   // column base = everything that is NOT a movable tile
   const base = col => [...col.children]
@@ -987,6 +988,69 @@ window.addEventListener("resize", schedulePack);
 document.addEventListener("toggle", (e) => {
   if (e.target && e.target.closest && e.target.closest("#tab-powers")) schedulePack();
 }, true);
+
+// Click-to-copy for the in-game commands card (Joel, 2026-08-04). Clipboard
+// API first; the textarea fallback covers WebView2 configurations where the
+// async API needs a permission the shell never grants.
+function copyToClipboard(text) {
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch (e) { /* fall through */ }
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+    return true;
+  } catch (e) { return false; }
+}
+document.addEventListener("click", (e) => {
+  const row = e.target.closest(".cmd-row");
+  if (!row) return;
+  const ok = copyToClipboard(row.dataset.cmd);
+  const code = row.querySelector("code");
+  if (code && ok) {
+    const orig = code.textContent;
+    code.textContent = "✓ copied — Ctrl+V in game";
+    row.classList.add("cmd-copied");
+    setTimeout(() => { code.textContent = orig; row.classList.remove("cmd-copied"); }, 1400);
+  }
+});
+
+// The archetype's inherent, explained in place (Joel: "#3 sounds cool too.
+// If explained well.") — rendered from the ENGINE's inherent_mechanics data,
+// same source as the Stats fold, so the two can never disagree.
+let _IM_CACHE = null;   // inherent_mechanics rides only SOME calculate calls —
+//                         cache the last non-empty set per archetype so a
+//                         lighter recompute can't blank the card mid-session
+function renderInherentCard() {
+  const card = $("inherent-card"), body = $("inherent-card-body");
+  if (!card || !body) return;
+  let im = (LAST_CALC && LAST_CALC.inherent_mechanics) || [];
+  if (im.length) _IM_CACHE = { at: build.archetype, im };
+  else if (_IM_CACHE && _IM_CACHE.at === build.archetype) im = _IM_CACHE.im;
+  if (!im.length) { card.classList.add("hidden"); return; }
+  card.classList.remove("hidden");
+  const at = (build.archetype || "").replace("Class_", "").replace(/_/g, " ");
+  const h = $("inherent-card-h");
+  if (h) h.textContent = `🧬 Your inherent — what a ${at} gets for free`;
+  const tag = { scored: "counted in your numbers", dormant: "shown, not counted",
+                not_yet: "not modeled yet — honest gap" };
+  body.innerHTML =
+    `<p class="muted small keep-whole">The game gives every archetype a built-in
+      mechanic that no power pick grants. Yours, and how this planner treats it:</p>`
+    + im.map(m => `<div class="ih-row">
+        <div><b>${escHtml(m.family)}</b> <span class="im-tag im-${m.status}">${tag[m.status] || m.status}</span></div>
+        <div class="muted small keep-whole">${escHtml(m.basis)}</div>
+      </div>`).join("");
+  schedulePack();
+}
 
 async function refreshBuildViews() {
   const o = $("order-out"), t = $("tray-out");
@@ -6659,6 +6723,7 @@ async function recompute() {
   renderValidation(validation);
   renderExemplarBanners();   // the advice card needs the fresh numbers
   LAST_CALC = totals || null;   // v36: carries inherent_mechanics for the offense block
+  renderInherentCard();         // the Powers-tab inherent tile reads the same data
   build._accoladeHp = (LAST_TOTALS && LAST_TOTALS.accolade_hp) || 0;  // v34: live accolade HP for the panel line
   loadAccolades().then(renderAccolades);   // (summary band deleted — its accolade sync stays)
   // Server-corrected pick levels (older saves carry naive assignments — e.g. both
@@ -7609,12 +7674,17 @@ function renderOffense(off, t) {
       if (p.acc_mult != null && p.acc_mult !== 1) bits.push(`acc ×${p.acc_mult}`);
       return bits.length ? ` · ${bits.join(" · ")}` : "";
     };
-    // Pet rows are ALREADY their own breakdown (source power, scope, uptime,
-    // notes inline) — a click-through would have nothing more to show, and the
-    // title says so instead of leaving a dead-feeling row (Joel, 2026-08-04).
-    const petTitle = ` title="Already itemized — the source and scope are named on each line; there is no per-IO layer underneath these."`;
+    // Pet rows are CLICKABLE like every other stat (Joel, 2026-08-04: "I just
+    // don't like stats that have very little or NO explanation") — the
+    // breakdown panel explains each number and names its sources.
+    const petClk = (key, label) => {
+      const selCls = (SELECTED_STAT && SELECTED_STAT.key === key) ? " stat-selected" : "";
+      return `class="o-atk stat-clickable${selCls}" data-statkey="${escHtml(key)}"
+        data-statlabel="${escHtml(label)}"
+        title="Why this number? Click for the explanation."`;
+    };
     html += `<div class="o-sub">Pet damage <span class="muted small">(per pet · squad size not multiplied)</span></div>`
-      + off.pets.map(p => `<div class="o-atk"${petTitle}><span>${p.name}</span>`
+      + off.pets.map(p => `<div ${petClk(`pet:unit:${p.name}`, p.name)}><span>${p.name}</span>`
         + `<span class="muted small">~${p.dps_each} DPS each · ${p.attack_count} atk · via ${p.from_power}${petTag(p)}</span></div>`).join("");
     // v34 #13: the pet-directed damage-buff ledger — attribution is display of the
     // engine's ledger, never new math (the three laws). Each source names its scope
@@ -7622,7 +7692,7 @@ function renderOffense(off, t) {
     const pbs = (off.pet_damage_buff_sources || []);
     const dmgSrc = pbs.filter(s => s.effect !== "tohit");
     const thSrc = pbs.filter(s => s.effect === "tohit");
-    const srcRow = s => `<div class="o-row"${petTitle}><span>${s.name}`
+    const srcRow = s => `<div ${petClk(`pet:src:${s.name}:${s.effect}`, `${s.name} → pets`)}><span>${s.name}`
       + `<span class="muted small"> · ${s.scope}${s.uptime != null && s.uptime < 1 ? ` · ${Math.round(s.uptime * 100)}% uptime` : ""}</span></span>`
       + `<span class="buf">+${s.pct}%</span></div>`
       + (s.note ? `<div class="o-note muted small">↳ ${s.note}</div>` : "");
@@ -7923,6 +7993,69 @@ function renderStatBreakdown() {
     }
     html += `<p class="muted small">Damage numbers include slotted procs and your global
       recharge — change a piece and they update live.</p>`;
+    host.innerHTML = html;
+    host.classList.remove("hidden");
+    _alignBreakdown(host);
+    return;
+  }
+
+  if (sel.key.startsWith("pet:")) {
+    // ── PETS: the "because" panel (Joel, 2026-08-04: a dialogue that says
+    // they get X because of Y, with the details). Everything below is the
+    // engine's own data — nothing asserted that the model didn't price.
+    const off = (LAST_TOTALS && LAST_TOTALS.offense) || {};
+    const at = (build.archetype || "").replace("Class_", "").replace(/_/g, " ");
+    const isMM = build.archetype === "Class_Mastermind";
+    const hotByName = name => {
+      const pi = build.powers.findIndex(p => (p.display_name || "") === name
+        || (p.full_name || "") === name);
+      if (pi >= 0) hotPower(pi);
+      return pi;
+    };
+    html = `<h2><span>${escHtml(sel.label)}</span>
+      <button class="iconbtn pi-close" onclick="clearSelectedStat()" title="close">✕</button></h2>`;
+    if (sel.key.startsWith("pet:unit:")) {
+      const n = sel.key.slice("pet:unit:".length);
+      const p = (off.pets || []).find(x => x.name === n) || {};
+      const pi = hotByName(p.from_power);
+      html += `<p class="sb-sub">Where <b>~${p.dps_each} DPS each</b> comes from:</p>`
+        + `<div class="sb-row"><span class="sb-who">Its own ${p.attack_count} attack${p.attack_count === 1 ? "" : "s"}</span>
+           <span class="sb-val">priced like yours</span></div>
+           <div class="o-note muted small">↳ same math as your powers: damage, cast time, recharge — and its REAL chance to hit at its own level.</div>`
+        + (p.level_shift ? `<div class="sb-row"><span class="sb-who">Fights at −${p.level_shift}</span>
+           <span class="sb-val">hits less</span></div>
+           <div class="o-note muted small">↳ a lower-tier pet faces higher-level enemies, so the game reduces its chance to hit (the purple patch). That reduction is priced in.</div>` : "")
+        + (p.acc_mult != null && p.acc_mult !== 1 ? `<div class="sb-row"><span class="sb-who">Accuracy ×${p.acc_mult}</span>
+           <span class="sb-val">from the summon power</span></div>
+           <div class="o-note muted small">↳ accuracy slotted in ${escHtml(p.from_power || "the summon power")} is credited back to the pet's hit chance.</div>` : "")
+        + (pi >= 0 ? `<div class="o-note muted small">Its summon power, ${escHtml(p.from_power)}, is ringed on the mini wall above — its slots ARE this pet's slots.</div>` : "")
+        + (isMM
+            ? `<div class="sb-kind">Because you are a Mastermind</div>
+               <div class="o-note muted small">Your henchmen inherit <b>50% of your set bonuses</b> and Supremacy's ToHit while under your command — both are already in this number.</div>`
+            : `<div class="sb-kind">Because you are a ${escHtml(at)}</div>
+               <div class="o-note muted small">This pet is a fixed ally: its own numbers come from the game's pet data, and every buff below applies on top.</div>`)
+        + ((off.pet_damage_buff_sources || []).length
+            ? `<div class="sb-kind">Your buffs raising it</div>`
+              + off.pet_damage_buff_sources.map(s =>
+                `<div class="sb-row"><span class="sb-who">${escHtml(s.name)}
+                   <span class="muted small">(${escHtml(s.scope)})</span></span>
+                 <span class="sb-val">+${s.pct}%${s.effect === "tohit" ? " to-hit" : ""}</span></div>`).join("")
+            : "");
+    } else {
+      const rest = sel.key.slice("pet:src:".length);
+      const eff = rest.slice(rest.lastIndexOf(":") + 1);
+      const n = rest.slice(0, rest.lastIndexOf(":"));
+      const s = (off.pet_damage_buff_sources || []).find(x => x.name === n && x.effect === eff) || {};
+      const pi = hotByName(s.name);
+      html += `<p class="sb-sub"><b>+${s.pct}%</b> ${s.effect === "tohit" ? "to-hit for" : "damage for"} <b>${escHtml(s.scope || "your pets")}</b> — because you have <b>${escHtml(s.name || "this power")}</b>:</p>`
+        + (pi >= 0 ? _sbpCardHtml(pi, null, `<b>+${s.pct}%</b>`, escHtml(s.scope || ""), true)
+                   : `<div class="sb-row"><span class="sb-who">${escHtml(s.name)}</span><span class="sb-val">+${s.pct}%</span></div>`)
+        + (s.uptime != null && s.uptime < 1
+            ? `<div class="o-note muted small">↳ counted at ${Math.round(s.uptime * 100)}% uptime — the buff isn't permanent, so only the sustainable share is priced.</div>` : "")
+        + (s.note ? `<div class="o-note muted small">↳ ${escHtml(s.note)}</div>` : "")
+        + (s.effect === "tohit"
+            ? `<div class="o-note muted small">To-hit raises the pet's REAL chance to land its attacks — damage follows hit chance, which is why this shows up as more pet damage.</div>` : "");
+    }
     host.innerHTML = html;
     host.classList.remove("hidden");
     _alignBreakdown(host);
