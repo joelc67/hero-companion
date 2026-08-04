@@ -111,7 +111,12 @@ def main():
     # ("confirm all nine", 2026-07-08 — incl. Build_Up = the client's Ice_Slick
     # record). The residual roster reconciliation is the open data workstream;
     # refresh_champions bans register powers from certification builds.
-    KNOWN_UNVERIFIED_TOTAL = 57
+    # Re-pinned 57 → 52 (2026-08-04): the five Scrapper Mace Mastery records
+    # left the register when e4d63760 removed the set from our data entirely
+    # (the client has no Scrapper Mace Mastery — the game gives Mace to
+    # Stalkers). The remaining 52 = 40 inherents the snapshot omits + 12
+    # roster diffs.
+    KNOWN_UNVERIFIED_TOTAL = 52
     print(f"Coverage: {len(player) - len(unverified)} of {len(player)} player-facing "
           f"powers verifiable against the client snapshot ({len(aliases)} via the "
           f"alias map; {len(unverified)} unverified; pinned register {KNOWN_UNVERIFIED_TOTAL}).")
