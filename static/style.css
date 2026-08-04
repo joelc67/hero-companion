@@ -2901,3 +2901,18 @@ summary:hover { color: var(--ink); }
 .acc-badgefold > summary { font-size: 10px; font-weight: 700; letter-spacing: .05em;
   color: var(--muted); cursor: pointer; padding: 2px 0; }
 .acc-badgefold > summary:hover { color: var(--ink); }
+
+/* ── Header + fold-row + road art corrections (Joel, 2026-08-04 evening) ─────
+   The four menus sit on the RIGHT of the header, where the alignment button
+   used to be (it moved into the View menu). */
+.tb-row .menubar { margin-left: auto; }
+/* An OPENED fold takes the whole row — a tray layout or level plan crammed
+   into a third of the width was the "poorly designed when expanded" look. */
+.fold-row { flex-wrap: wrap; }
+.fold-row > details[open],
+.fold-row > div:has(> details[open]) { flex: 1 1 100%; }
+/* The road art fills its column and CANNOT overflow it: absolute inside the
+   stretch-height column, so a tall portrait crops instead of bleeding over
+   the text below (the overlap Joel screenshotted). */
+.jny-roadart { position: relative; overflow: hidden; border-radius: var(--r2); }
+.jny-roadart .jny-art { position: absolute; inset: 0; height: auto; min-height: 0; }

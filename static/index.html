@@ -193,7 +193,7 @@
           </div>
         </div>
         <div class="menu">
-          <button class="menu-top" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="m-view">View</button>
+          <button class="menu-top" id="menu-view-top" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="m-view">View</button>
           <div class="menu-drop" id="m-view" role="menu" hidden>
             <button role="menuitem" type="button" data-tab="powers"><b>Powers & Slots</b><i>The build itself, and the power catalogue</i></button>
             <button role="menuitem" type="button" data-tab="stats"><b>Stats</b><i>Defence, resistance, offense and set bonuses</i></button>
@@ -201,10 +201,10 @@
             <button role="menuitem" type="button" data-tab="leveling"><b>Leveling Guide</b><i>Your 1-50 as a road</i></button>
             <button role="menuitem" type="button" data-tab="logging"><b>Logging</b><i>What your game sessions earned you</i></button>
             <div class="menu-sep" role="separator"></div>
-            <button role="menuitem" type="button" data-act="incarnate-peak-toggle" data-kind="check"><b>Include incarnates (peak)</b><i>Fold Destiny, Hybrid and Judgement into the totals</i></button>
-            <button role="menuitem" type="button" data-act="external-toggle" data-kind="check"><b>Include accolades + amplifiers</b><i>Add the permanent accolades and the three buyable amplifiers</i></button>
-            <button role="menuitem" type="button" data-act="pvp-toggle" data-kind="check"><b>PvP build mode</b><i>Use PvP set bonuses and effect variants</i></button>
-            <button role="menuitem" type="button" data-act="suppression-toggle" data-kind="check"><b>In-combat view (suppression)</b><i>Show defence as it is mid-fight, not standing still</i></button>
+            <!-- The display TOGGLES left this menu (Joel, 2026-08-04: "they
+                 are already on the page they belong to… redundant and
+                 meaningless") — the Stats control row is their one home. -->
+            <button role="menuitem" type="button" id="align-menu-item" onclick="toggleAlignment(this)"><b>🦸 Alignment — Hero</b><i>Hero, Vigilante, Rogue or Villain — themes the whole app</i></button>
             <button role="menuitem" type="button" id="view-exemplar-go"><b>⏬ Exemplared view…</b><i>See this build at a lower level — takes you to the dial</i></button>
           </div>
         </div>
@@ -224,10 +224,9 @@
       </nav>
       <div class="legend">
         <span id="autosave-ind" class="muted small" title="Auto-saves in the background when something changes"></span>
-        <!-- The 🗺️ Journey pill is GONE (Joel, 2026-08-03: reaching for the
-             alignment toggle, he clicked Journey by mistake). The Leveling
-             Guide tab is the one way to the road. -->
-        <button id="alignment-btn" class="iconbtn iconbtn-labeled" title="Change alignment — Hero, Vigilante, Rogue or Villain">🦸 <span>Hero</span></button>
+        <!-- The alignment button moved INTO the View menu (Joel, 2026-08-04);
+             the theme itself shows the current side. The 🗺️ Journey pill is
+             long gone (2026-08-03). -->
       </div>
     </div>
   </header>

@@ -116,7 +116,7 @@ const TOUR_MOCK_HTML = `
       <button class="menu-top" type="button" data-tm="menu-view" data-for="m-view">View</button>
       <button class="menu-top" type="button" data-tm="menu-help" data-for="m-help">Help</button>
     </nav>
-    <button class="iconbtn iconbtn-labeled" data-for="alignment-btn" type="button">🦸 <span>Hero</span></button>
+    <!-- (the alignment button moved into the View menu, 2026-08-04) -->
   </header>
 
   <nav class="tabbar tm-tabbar" data-for="tabbar">
@@ -968,12 +968,12 @@ const TOUR_STEPS = [
         + "showing a picture of the wrong place." },
   { chapter: "leveling", target: "#journey-body", anchor: "[data-tm=align-preview]", side: "right",
     title: "Previewing other routes",
-    body: "The alignment row previews where somebody on another side would "
+    body: "This alignment row previews where somebody on another side would "
         + "level — Hero, Vigilante, Rogue, Villain, and the 🌀 Flashback view "
         + "of content that can no longer be started fresh.\n\n"
         + "It is a preview and nothing more: your character, your build and "
-        + "your numbers are unchanged. Your real alignment is the button at "
-        + "the top right of the app." },
+        + "your numbers are unchanged. Your real alignment is set from the "
+        + "View menu's Alignment entry." },
 
   // ── Your play log ──────────────────────────────────────────────────────────
   { chapter: "logging", target: "#gamelog", spine: true, anchor: "[data-tm=gl-body]", side: "right",
@@ -1014,10 +1014,11 @@ const TOUR_STEPS = [
         + "actions the Assistant panel offers, reachable from any tab." },
   { chapter: "header", target: "#m-view", anchor: "[data-tm=menu-view]", side: "bottom",
     title: "The View menu",
-    body: "The five tabs, the display toggles — incarnates at peak, accolades "
-        + "and amplifiers, PvP mode, the in-combat view — and the exemplared "
+    body: "Every tab, one click away — plus your alignment and the exemplared "
         + "view, which takes you to the dial.\n\n"
-        + "Display toggles change what you SEE, never what the solver builds." },
+        + "The display toggles (incarnates at peak, PvP mode, the in-combat "
+        + "view…) live on the Stats control row, right where their numbers "
+        + "move." },
   { chapter: "header", target: "#m-help", anchor: "[data-tm=menu-help]", side: "bottom",
     title: "The Help menu",
     body: "The guided tour you are in now, the full user guide as a PDF stored "
@@ -1025,9 +1026,10 @@ const TOUR_STEPS = [
         + "updates — which compares version numbers with the project's release "
         + "page and sends nothing else. Nothing is ever downloaded or "
         + "installed without you saying so." },
-  { chapter: "header", target: "#alignment-btn", side: "bottom",
+  { chapter: "header", target: "#m-view", anchor: "[data-tm=menu-view]", side: "bottom",
     title: "Your alignment",
-    body: "Opens the four alignments: Hero, Vigilante, Rogue and Villain. It "
+    body: "The View menu's Alignment entry opens the four choices: Hero, "
+        + "Vigilante, Rogue and Villain. It "
         + "reskins the whole app and decides which side's information you see "
         + "— a Vigilante levels like a hero and can also visit villain "
         + "content; a Rogue is the mirror of that.\n\n"

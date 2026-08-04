@@ -2663,15 +2663,14 @@ function applyAlignment(al) {
   if ($("app-name")) $("app-name").textContent = d.name;
   if ($("app-glyph")) $("app-glyph").textContent = d.glyph;
   const tagEl = document.querySelector(".app-tag"); if (tagEl) tagEl.textContent = d.tag;
-  const btn = $("alignment-btn");
-  if (btn) {
-    // Keep the NAME beside the glyph (Joel, 2026-07-31) — this used to set
-    // textContent, which silently ate the label span every time the side
-    // switched, leaving the one unlabeled control in the header.
-    // ⚠ The label now names the CURRENT alignment, not the destination: with
-    // four choices behind a menu there is no single "where this takes you".
-    btn.innerHTML = `${d.glyph} <span>${d.short}</span>`;
-    btn.title = "Change alignment — Hero, Vigilante, Rogue or Villain";
+  // The View menu's item names the CURRENT alignment (the header button that
+  // used to carry this state moved into the menu, Joel 2026-08-04 — the
+  // "label names the current alignment, not the destination" ruling rides
+  // along with it).
+  const mi = $("align-menu-item");
+  if (mi) {
+    const b = mi.querySelector("b");
+    if (b) b.textContent = `${d.glyph} Alignment — ${d.short}`;
   }
   document.title = d.name + " — City of Heroes";
   document.querySelectorAll(".align-card").forEach(c =>
@@ -2707,10 +2706,13 @@ function applyAlignment(al) {
 // The header control opens a PICKER rather than cycling: four states behind a
 // cycle button means three clicks to get back and no way to see what the other
 // choices are without clicking through them. Legibility beats cleverness.
-window.toggleAlignment = function () {
+window.toggleAlignment = function (anchor) {
   const open = $("align-menu");
-  if (open) { open.remove(); return; }        // click the button again = close
-  const btn = $("alignment-btn"); if (!btn) return;
+  if (open) { open.remove(); return; }        // click the trigger again = close
+  // Anchor to whatever OPENED the picker — the View menu item since
+  // 2026-08-04 (Joel moved it off the header).
+  const btn = anchor || $("menu-view-top");
+  if (!btn) return;
   const cur = rawAlignment();
   const menu = document.createElement("div");
   menu.id = "align-menu";
@@ -3155,7 +3157,7 @@ async function init() {
   document.querySelectorAll(".align-card").forEach(c =>
     c.addEventListener("click", () => applyAlignment(c.dataset.align)));
   applyAlignment(localStorage.getItem("cohAlignment") || "hero");
-  if ($("alignment-btn")) $("alignment-btn").addEventListener("click", toggleAlignment);
+  // (alignment-btn is gone — the View menu item carries onclick="toggleAlignment(this)")
 
   // pool selectors (4)
   $("pool-selectors").innerHTML = [0,1,2,3].map(i =>
