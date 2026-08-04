@@ -7092,14 +7092,17 @@ function renderOffense(off, t) {
       data-statkey="${key}" data-statlabel="${escHtml(label)}"
       title="Which attacks and IOs make this number? Click to see and change them."`;
     if (off.aoe_count) {
+      // ⚠ every row gets its OWN key (Joel, 2026-08-04: "why are these stats
+      // bound together?" — two rows sharing offense:aoe both lit up green).
+      // The breakdown treats offense:aoe* alike; the highlight matches exactly.
       html += `<div ${clk("offense:aoe", "AoE throughput")}><span>AoE throughput <span class="muted small">(farm DPS — ${off.aoe_count} AoE${off.aoe_count === 1 ? "" : "s"} cycled, per target)</span></span><span class="dps">${off.aoe_dps}</span></div>`;
-      html += `<div ${clk("offense:aoe", "AoE alpha")}><span>AoE alpha <span class="muted small">(one full AoE volley)</span></span><span>${off.aoe_burst}</span></div>`;
+      html += `<div ${clk("offense:aoe:alpha", "AoE alpha")}><span>AoE alpha <span class="muted small">(one full AoE volley)</span></span><span>${off.aoe_burst}</span></div>`;
     }
     html += `<div ${clk("offense:st", "Single-target DPS")}><span>Single-target DPS <span class="muted small">(best-attack chain — EB/AV)</span></span><span class="dps">${off.st_dps}</span></div>`;
     // v34 #4: the Musculature case — a global +damage% that reaches every attack
     // but had no line of its own. It gets named right under the DPS it feeds.
     html += dpsAttributionHtml(t);
-    html += `<div ${clk("offense:st", "Top attack")}><span>Top attack (damage / animation)</span><span>${off.top_dpa}</span></div>`;
+    html += `<div ${clk("offense:st:top", "Top attack")}><span>Top attack (damage / animation)</span><span>${off.top_dpa}</span></div>`;
     const top = (off.attacks || []).slice(0, 6).map(a =>
       `<div class="o-atk stat-clickable${(SELECTED_STAT && SELECTED_STAT.key === `offense:atk:${a.name}`) ? " stat-selected" : ""}"
          data-statkey="offense:atk:${escHtml(a.name)}" data-statlabel="${escHtml(a.name)}"
@@ -7384,7 +7387,7 @@ function renderStatBreakdown() {
     // ── OFFENSE: the contributing attacks, as editable cards ────────────────
     const off = (LAST_TOTALS && LAST_TOTALS.offense) || {};
     let atks = off.attacks || [];
-    if (sel.key === "offense:aoe") atks = atks.filter(a => a.is_aoe);
+    if (sel.key.startsWith("offense:aoe")) atks = atks.filter(a => a.is_aoe);
     if (sel.key.startsWith("offense:atk:")) {
       const n = sel.key.slice("offense:atk:".length);
       atks = atks.filter(a => a.name === n);
