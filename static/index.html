@@ -302,15 +302,18 @@
 
       <div id="powers-list"></div>
 
-      <!-- Full-width bricks under the grid: trays + respec order flow HORIZONTALLY here -->
-      <div id="tray-out" class="order-out subpanel hidden"></div>
-      <div id="order-out" class="order-out subpanel hidden"></div>
-
-      <details class="conv-guide" id="conv-guide-details">
-        <summary>💰 Get expensive IOs cheap — enhancement converters</summary>
-        <div id="conv-tool" class="conv-tool"></div>
-        <div id="conv-guide-body" class="conv-guide-body"></div>
-      </details>
+      <!-- The three folds share ONE row (Joel, 2026-08-04: "take up all
+           three choices horizontally"), each in the same box style with the
+           same summary weight. A hidden fold drops out of the row. -->
+      <div class="fold-row">
+        <div id="tray-out" class="order-out subpanel hidden"></div>
+        <div id="order-out" class="order-out subpanel hidden"></div>
+        <details class="conv-guide order-out" id="conv-guide-details">
+          <summary>💰 Get expensive IOs cheap — enhancement converters</summary>
+          <div id="conv-tool" class="conv-tool"></div>
+          <div id="conv-guide-body" class="conv-guide-body"></div>
+        </details>
+      </div>
 
       <!-- Import/Export moved into the Character menu (2026-08-03).
            #import-file stays: it is the hidden file input they drive. -->
@@ -318,17 +321,10 @@
 
 
     </section>
-      <!-- ACCOLADES fill the main column's tail (Joel's red boxes,
-           2026-08-04): the side column had grown taller than main, which
-           stretched the builder panel into dead space AND clipped this list
-           at 260px. Here the multi-column grid spreads the checklist wide,
-           the card grows to its content, and the columns balance. -->
-      <section class="panel" id="endgame-panel">
-        <h2>Accolades<button class="tour-help" onclick="startTour('endgame')" aria-label="Explain this section" title="Explain this section">?</button></h2>
-        <p class="muted small keep-whole">Permanent rewards worth chasing — tick the ones
-          your character has earned and they feed the totals.</p>
-        <div id="accolades-card" class="accolades-card"></div>
-      </section>
+      <!-- (the ACCOLADES panel is emitted by catalogueHtml in app.js — it
+           lives INSIDE the catalogue beside the pool/epic columns, filling
+           what used to be empty grid cells. It cannot live here: renderPowers
+           owns that region's innerHTML.) -->
       </div>
       <!-- SIDE COLUMN. The Assistant lives beside the powers wall, not under
            it: stacked, its 630px was pure addition to the tab's height; here

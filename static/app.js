@@ -4898,15 +4898,22 @@ function catalogueHtml(sets) {
       + `${atLevel < poolOpensAt ? " — not yet" : ""}.`
       + ` Change one with the dropdown on its column; the powers follow.</div>`
     : "";
-  // The archetype's own emblem fills the catalogue's trailing space as a
-  // faint watermark (Joel, 2026-08-04: "themed images for empty spaces" —
-  // the pool/epic row has fewer columns than the sets row, and the leftover
-  // grid cells read as a void).
-  const artSrc = atEmblemSrc(build.archetype);
-  const art = artSrc
-    ? `<img class="cat-art" src="${artSrc}" alt="" onerror="this.hidden=true">` : "";
+  // ACCOLADES fill the catalogue's trailing space (Joel, 2026-08-04: "needs
+  // Accolades to take up the entire red rectangle" — the pool/epic row has
+  // fewer columns than the sets row, and the leftover cells read as a void).
+  // Emitted HERE because renderPowers owns this region's innerHTML: a panel
+  // parked in index.html would be destroyed on every wall re-render, while
+  // this one is re-created each pass and renderAccolades() (already called
+  // at the end of renderPowers) repopulates #accolades-card right after.
+  const accPanel =
+    `<section class="panel cat-acc" id="endgame-panel">
+      <h2>Accolades<button class="tour-help" onclick="startTour('endgame')" aria-label="Explain this section" title="Explain this section">?</button></h2>
+      <p class="muted small keep-whole">Permanent rewards worth chasing — tick the ones
+        your character has earned and they feed the totals.</p>
+      <div id="accolades-card" class="accolades-card"></div>
+    </section>`;
   return `<div class="catalogue">${head}${gate}${poolNote}`
-    + `<div class="cat-cols">${cols}</div>${art}</div>`;
+    + `<div class="cat-flex"><div class="cat-cols">${cols}</div>${accPanel}</div></div>`;
 }
 
 // Fill the EMPTY pick seats from autopick, keeping every existing pick.
@@ -7422,20 +7429,30 @@ function renderStats(t) {
   // without these bonuses see nothing new. KB protection is points, not %.
   const bx = t.bonus_extras || {};
   const extraRows = [];
+  // The extras join the click system (Joel, 2026-08-04: "these three items…
+  // show nothing associated with them"). Their statkeys are the ledger's own
+  // snapshot keys, so the regular breakdown branch just works. KB protection
+  // stays a plain row: it is a MAGNITUDE, and the % breakdown would lie.
+  const exRow = (key, lab, valHtml) => {
+    const selCls = (SELECTED_STAT && SELECTED_STAT.key === key) ? " stat-selected" : "";
+    return `<div class="o-row stat-clickable${selCls}" data-statkey="${key}"
+      data-statlabel="${escHtml(lab)}"
+      title="Where does this number come from? Click to see every IO feeding it."><span>${lab}</span><span class="statval">${valHtml}</span></div>`;
+  };
   if (bx.kb_protection && bx.kb_protection.value) {
-    extraRows.push(`<div class="o-row"><span>KB protection</span><span>mag ${bx.kb_protection.value}</span></div>`);
+    extraRows.push(`<div class="o-row" title="Knockback protection magnitude — from the named KB-protection uniques and set bonuses on your pieces (each ⓘ card lists its own)."><span>KB protection</span><span>mag ${bx.kb_protection.value}</span></div>`);
   }
   if (bx.slow_resist && bx.slow_resist.value) {
-    extraRows.push(`<div class="o-row"><span>Slow resistance</span><span>+${bx.slow_resist.value}%</span></div>`);
+    extraRows.push(exRow("slow_resist", "Slow resistance", `+${bx.slow_resist.value}%`));
   }
   const mezNames = {Confused: "Confuse", Held: "Hold", Stunned: "Stun",
                     Immobilized: "Immobilize", Sleep: "Sleep", Terrorized: "Fear"};
   Object.entries(bx.mez_duration || {}).forEach(([m, v]) => {
-    if (v) extraRows.push(`<div class="o-row"><span>${mezNames[m] || m} duration</span><span>+${v}%</span></div>`);
+    if (v) extraRows.push(exRow(`mez_duration:${m}`, `${mezNames[m] || m} duration`, `+${v}%`));
   });
   [["movement", "Movement speed"], ["range", "Range"], ["end_discount", "Endurance discount"],
    ["slow_strength", "Slow strength"], ["kb_strength", "Knockback strength"]].forEach(([k, lab]) => {
-    if (bx[k] && bx[k].value) extraRows.push(`<div class="o-row"><span>${lab}</span><span>+${bx[k].value}%</span></div>`);
+    if (bx[k] && bx[k].value) extraRows.push(exRow(k, lab, `+${bx[k].value}%`));
   });
   if (extraRows.length) {
     $("other-stats").innerHTML += extraRows.join("");
@@ -7541,8 +7558,12 @@ function renderOffense(off, t) {
       if (p.acc_mult != null && p.acc_mult !== 1) bits.push(`acc ×${p.acc_mult}`);
       return bits.length ? ` · ${bits.join(" · ")}` : "";
     };
+    // Pet rows are ALREADY their own breakdown (source power, scope, uptime,
+    // notes inline) — a click-through would have nothing more to show, and the
+    // title says so instead of leaving a dead-feeling row (Joel, 2026-08-04).
+    const petTitle = ` title="Already itemized — the source and scope are named on each line; there is no per-IO layer underneath these."`;
     html += `<div class="o-sub">Pet damage <span class="muted small">(per pet · squad size not multiplied)</span></div>`
-      + off.pets.map(p => `<div class="o-atk"><span>${p.name}</span>`
+      + off.pets.map(p => `<div class="o-atk"${petTitle}><span>${p.name}</span>`
         + `<span class="muted small">~${p.dps_each} DPS each · ${p.attack_count} atk · via ${p.from_power}${petTag(p)}</span></div>`).join("");
     // v34 #13: the pet-directed damage-buff ledger — attribution is display of the
     // engine's ledger, never new math (the three laws). Each source names its scope
@@ -7550,7 +7571,7 @@ function renderOffense(off, t) {
     const pbs = (off.pet_damage_buff_sources || []);
     const dmgSrc = pbs.filter(s => s.effect !== "tohit");
     const thSrc = pbs.filter(s => s.effect === "tohit");
-    const srcRow = s => `<div class="o-row"><span>${s.name}`
+    const srcRow = s => `<div class="o-row"${petTitle}><span>${s.name}`
       + `<span class="muted small"> · ${s.scope}${s.uptime != null && s.uptime < 1 ? ` · ${Math.round(s.uptime * 100)}% uptime` : ""}</span></span>`
       + `<span class="buf">+${s.pct}%</span></div>`
       + (s.note ? `<div class="o-note muted small">↳ ${s.note}</div>` : "");
@@ -7800,10 +7821,11 @@ function renderStatBreakdown() {
     host.classList.remove("hidden");
     host.innerHTML = `<div class="sb-empty">
       <h2>Where does a number come from?</h2>
-      <p class="sb-sub">Click <b>any percentage</b> on the left — every row is
-      clickable. This panel then breaks the number down to the exact powers
-      and IOs feeding it, and the IOs ring <b class="sb-green">green</b> on
-      the mini wall above.</p>
+      <p class="sb-sub">Click <b>any percentage</b> on the left — defense,
+      resistance, the other stats, and every attack row. This panel then
+      breaks the number down to the exact powers and IOs feeding it, and the
+      IOs ring <b class="sb-green">green</b> on the mini wall above. (Pet
+      rows carry their sources inline — nothing hides beneath them.)</p>
       <p class="sb-sub">The breakdown is <b>hands-on</b>: click any IO in it
       to swap that enhancement and watch the number move immediately.</p></div>`;
     return;

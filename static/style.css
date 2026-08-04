@@ -2859,11 +2859,28 @@ summary:hover { color: var(--ink); }
    height so portrait zone shots aren't cropped to a strip. */
 .jny-roadrow { display: flex; gap: var(--s3); align-items: stretch; }
 .jny-roadart { width: 260px; flex: none; display: flex; }
+/* relative, NOT static: the caption is absolutely anchored to .jny-art —
+   static let "ATLAS PARK" float to the page corner (Joel, 2026-08-04). */
 .jny-roadart .jny-art { width: 100%; height: auto; min-height: 220px;
-  position: static; flex: 1; }
+  position: relative; flex: 1; }
 .jny-roadrow .jny-viewport { flex: 1; min-width: 0; }
 @media (max-width: 980px) {
   .jny-roadrow { flex-direction: column; }
   .jny-roadart { width: 100%; }
   .jny-roadart .jny-art { min-height: 200px; }
 }
+
+/* ── Catalogue + accolades share the row; folds share theirs (2026-08-04) ── */
+.cat-flex { display: flex; gap: var(--s3); align-items: flex-start; }
+.cat-flex .cat-cols { flex: 1 1 auto; min-width: 0; }
+.cat-acc { flex: 0 1 400px; min-width: 300px; }
+@media (max-width: 1200px) { .cat-flex { flex-direction: column; } .cat-acc { flex: none; width: 100%; } }
+/* The three bottom folds side by side, same box, same summary voice. */
+.fold-row { display: flex; gap: var(--s3); align-items: flex-start; margin-top: 10px; }
+.fold-row > * { flex: 1 1 0; min-width: 0; margin: 0; }
+.fold-row > .hidden { display: none; }
+.fold-row .subpanel-fold > summary,
+.fold-row .conv-guide > summary { font-size: 13px; font-weight: 600;
+  color: var(--accent); border-bottom: none; padding: 2px 0; }
+.fold-row .conv-guide { padding: 6px 12px 10px; }
+@media (max-width: 1200px) { .fold-row { flex-direction: column; } .fold-row > * { width: 100%; } }
