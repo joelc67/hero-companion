@@ -1,10 +1,44 @@
-# Resume point — 2026-08-03 (handoff: the tabbed-layout / desktop-app arc)
+# Resume point — 2026-08-04 (handoff: navigation DONE, tour rebuilt)
 
-Working tree clean, master in sync, **HEAD = `add31d66`**. Nothing running that
-this session started; no scheduled tasks armed.
+Working tree clean (tracked), master in sync, **HEAD = `2c0ad897`**. Nothing
+running that this session started; no scheduled tasks armed. Untracked root
+files are old wave artifacts, deliberately uncommitted.
 
-**Installed and working: `%LOCALAPPDATA%\Programs\HeroCompanion`, build stamp
-`add31d6`, UNSIGNED.** The desktop shortcut opens it. Closing the window quits it.
+**Installed and working: `%LOCALAPPDATA%\Programs\HeroCompanion`, UNSIGNED dev
+build — statics deployed by copy through `2c0ad897`; the frozen PYZ (server.py/
+run_app.py) is still the older build, which is fine: everything since was
+static-only.** Closing the window quits it.
+
+## What landed 2026-08-04 (all committed + pushed; detail in session-report.md)
+
+- **Navigation declared DONE by Joel; the TOUR IS REBUILT** (`f9176684`):
+  59 steps / 9 tab-shaped chapters over a mock of the real shell (menubar,
+  tab strip, tile hidden off-Powers, one mock panel per tab). audit_tour ALL
+  PASS. Joel has NOT walked it yet — his walk is the real acceptance test.
+- **Stats provenance polish**: summary band machinery deleted; one-column
+  percent rows; click-a-stat centres row + breakdown (panel centres on the
+  row, fills the space above); unique keys per offense row; green name box
+  for self-granted stats; mini-wall inherent strip; one-line control row.
+- **Tile rows Powers-only; journey art left + whole, swaps per stop; End
+  Game explains every incarnate pick with engine numbers.**
+- **tools/audit_links.py** = the standing design once-over (it caught the
+  exemplar View-menu item pulsing a hidden dial — fixed to route to Stats).
+- **Champions: NO recert needed** — checked, gate 24/24 at HEAD; everything
+  since 0.12.30 is display-layer with byte-identity pins.
+- coh-old comparison worktree deleted.
+
+## Tomorrow's likely openers
+
+- Joel walks the rebuilt tour → expect placement/copy fixes from his eyes.
+- End Game deepening if asked: "what your six picks add at peak" totals
+  diff, or surfacing the Solve incarnate recommendation with an apply
+  button — both buildable on what's there (offered in session-report).
+- ⓘ set-detail card: tier list doesn't grey exemplar-dead bonuses (small,
+  queued).
+- Release still HELD at 0.12.30; all dev builds UNSIGNED; publishing is
+  Joel's call (at release: rebuild frozen exe — server.py changes like
+  /saves `picks` only ship with a rebuild — and his forum reply needs the
+  two sentence corrections noted in CLAUDE.md).
 
 **Read `coh-builder/CLAUDE.md` first** — standing rules and verified game facts.
 This file is the live handoff.
