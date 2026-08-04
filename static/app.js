@@ -928,9 +928,10 @@ async function renderTrayLayout(out) {
 // This is a default, not a decision made for the user.
 function _foldKey(id) { return "cohFold_" + id; }
 function _foldOpen(id) {
-  // Default OPEN (Joel, 2026-08-04 night: the perfect wall stands with every
-  // drop-down expanded). A user's explicit close is still remembered.
-  try { return localStorage.getItem(_foldKey(id)) !== "0"; } catch (e) { return true; }
+  // Default CLOSED (Joel, 2026-08-04: "default all these closed" — supersedes the
+  // earlier default-open, which existed only so the wall could be judged with every
+  // drop-down expanded). A user's explicit OPEN is remembered.
+  try { return localStorage.getItem(_foldKey(id)) === "1"; } catch (e) { return false; }
 }
 function _fold(id, title, sub, innerHtml) {
   return `<details class="subpanel-fold" data-fold="${escHtml(id)}"${_foldOpen(id) ? " open" : ""}>`

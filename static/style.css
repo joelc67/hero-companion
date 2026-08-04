@@ -2460,14 +2460,17 @@ body { overflow: hidden; }
 .explain-body { font-size: 11px; color: var(--muted); line-height: 1.5; margin-top: 4px; }
 
 /* Folded reference panels (level plan, power trays). Reads as a section header,
-   not a hidden feature - the point is that you can SEE what is in there. */
+   not a hidden feature - the point is that you can SEE what is in there.
+   ⚠ SAME FONT AND SAME ARROW AS THE CONVERTERS FOLD (Joel, 2026-08-04: "make sure
+   the two top sets of fonts and arrow are the same as the bottom larger font and
+   arrow"). These two used to hide the native marker and draw a small CSS "▸" while
+   the converters fold showed the browser's larger triangle — three slabs, two
+   different disclosure languages. The native marker is the one that stays. */
 .subpanel-fold > summary {
-  cursor: pointer; padding: 8px 2px; list-style: none;
+  cursor: pointer; padding: 8px 2px;
+  font-weight: 600; color: var(--accent); font-size: 13px;
   border-bottom: 1px solid var(--border);
 }
-.subpanel-fold > summary::-webkit-details-marker { display: none; }
-.subpanel-fold > summary::before { content: "▸ "; color: var(--accent); }
-.subpanel-fold[open] > summary::before { content: "▾ "; }
 .subpanel-fold > summary:hover { color: var(--ink); }
 .fold-body { padding-top: 10px; }
 
