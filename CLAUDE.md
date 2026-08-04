@@ -549,23 +549,34 @@ epic gate stays.
 
 **Joel's order: "make it so I can move each area and change its width and height
 then have you check it and make the changes set."** Three evenings had gone into me
-guessing proportions off screenshots. `e8bf3159` + `e28d2227`: View menu or
-Ctrl+Shift+L; per-area toolbar (⠿ pick · ⤵ place before · ↑ ↓ nudge · ⇄ other
-column or full width · ✕ hide, reversible from the panel); native corner handle
-resizes; panel drags by its header and collapses; the draft (sizes, order, hidden,
-panel position) lives in localStorage and survives recomputes. **📋 Copy sizes for
-Claude** is the handoff — he pastes the JSON, I bake it into style.css. It is a
-VIEW tool: the battery negative-controls that it never calls recordEdit,
-saveProgress, a solve or autoSaveTick, and every CSS rule is scoped to
+guessing proportions off screenshots. View menu or Ctrl+Shift+L; per-area toolbar;
+native corner handle resizes; panel drags by its header and collapses; the draft
+(sizes, hidden, panel position) lives in localStorage and survives recomputes.
+**📋 Copy sizes for Claude** is the handoff — he pastes the JSON, I bake it into
+style.css. It is a VIEW tool: the battery negative-controls that it never calls
+recordEdit, saveProgress, a solve or autoSaveTick, and every CSS rule is scoped to
 `body.layout-mode` so leaving restores the shipped layout exactly.
+
+- **⛔ IT RESIZES AND HIDES. MOVING IS DELETED AND STAYS DELETED (Joel, 2026-08-04:
+  "Let's remove all this moves functions, they are simply not working" — `c11c6c28`,
+  −172 lines, pinned out of BOTH app.js and style.css by the battery).** Three
+  shapes were built and all three failed him in one evening: HTML5 drag, then a
+  12px ⤵ target, then whole-area drop targets. A legacy draft's `order` is dropped
+  on read so old moves cannot re-parent anything. **Moving panels is MY job, in
+  CSS, from his numbers and his word** — the tool's purpose is to hand me measured
+  sizes, not to be a layout engine.
 
 - **⚠⚠ HTML5 DRAG IS BANNED IN THIS APP, and the battery pins it out.** My first
   version told him to drag a ⠿ badge that was a CSS `::before` with
   `pointer-events: none` — ungrabbable, so *nothing* was draggable and every area
   read as "stuck inside its own box". Drag also **cannot scroll the page
-  mid-gesture**, so an area could never be placed anywhere off-screen. **Pick then
-  place = two clicks, and scrolling in between is just scrolling.** Anything that
-  needs a pointer gesture (the panel) uses POINTER events, which do work.
+  mid-gesture**, so an area could never be placed anywhere off-screen. Anything
+  that needs a pointer gesture (the panel) uses POINTER events, which do work.
+- **⚠ THE WHOLE ARC IS ONE LESSON: I shipped three mechanisms for the same feature
+  in one evening and none of them earned its keep.** The right move after the second
+  failure was to stop and ask whether the feature should exist, not to build a third
+  shape. His answer, when it came, was to delete it — and the deletion is the
+  version that works.
 - **⚠⚠ TEST INPUT WITH A REAL MOUSE, NOT `dispatchEvent`.** Joel reported "I still
   cannot move any objects" on a build whose every path I had "verified" with
   synthetic clicks. Driven with the real pointer, the mechanism was fine and the

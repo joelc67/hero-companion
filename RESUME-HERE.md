@@ -35,25 +35,24 @@ his decision, so it is NOT shipped. One-line flip when he says so:
 `.cat-side` -> `card-home` in app.js, plus move `#card-home` above
 `#endgame-panel` so the strip sits under the catalogue, not under Accolades.
 
-**2. 🧩 LAYOUT MODE — the design tool he asked for (`e8bf3159`, reworked
-`e28d2227`).** View menu or Ctrl+Shift+L. Per-area toolbar: ⠿ pick · ⤵ place
-before · ↑ ↓ nudge · ⇄ other column / full width · ✕ hide (reversible from the
-panel). Native corner handle resizes. Panel drags by its header and collapses.
-Draft (sizes, order, hidden, panel position) persists in localStorage and survives
-recomputes. **📋 Copy sizes for Claude** puts the whole draft on the clipboard —
-that is the handoff: he pastes it, I bake it into style.css.
+**2. 🧩 LAYOUT MODE — RESIZE AND HIDE ONLY (`c11c6c28`).** View menu or
+Ctrl+Shift+L. Each area gets a name badge and **✕ hide** (restorable from the
+panel); resize by the browser's own **bottom-right corner** handle; the panel lists
+every area's live width × height, marks what he changed, drags by its header,
+collapses, and its remembered position is clamped into the window. **📋 Copy sizes
+for Claude** is the handoff. Draft persists and survives recomputes.
 
-⚠ HTML5 drag is BANNED here and the battery pins it out: a ::before badge cannot
-be grabbed, and drag cannot scroll the page mid-gesture. Pick-then-place is two
-clicks precisely so scrolling in between is just scrolling.
+**⛔ MOVING AREAS IS DELETED — Joel, after three attempts in one evening: "Let's
+remove all this moves functions, they are simply not working."** HTML5 drag, then a
+12px ⤵ target, then whole-area drop targets. The battery pins the machinery out of
+both app.js and style.css, and a legacy draft's `order` is dropped on read so old
+moves cannot re-parent anything. **Moving panels is a CSS job I do from his
+numbers** — that is what the tool is for.
 
-**⚠ FIXED after his second report (`8c03c546`): while an area is held, the WHOLE
-area is the drop target** — click anywhere in it. The aim was the bug: the placing
-click used to require another area's 12px ⤵ glyph. Found only by testing with a
-real mouse; every earlier check used `dispatchEvent`, which exercised only the path
-I chose. Buttons now read "⠿ move" / "⤵ here"; let go by clicking ⠿ move again or
-✖ in the panel. **Escape does not reach the page in the frozen shell** (measured
-twice, capture phase did not help) — never advertise it.
+⚠ Two facts from that arc, both in CLAUDE.md: **Escape never reaches the page in
+the frozen shell** (measured twice, capture phase did not help), and **test input
+with a real mouse** — every path I had "verified" with `dispatchEvent` passed on a
+build where nothing was actually movable.
 
 ## ▶ Open / next
 
