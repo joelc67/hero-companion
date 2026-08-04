@@ -3002,10 +3002,9 @@ body.layout-mode .lay-target {
   outline: 1px dashed var(--accent); outline-offset: 2px; position: relative;
 }
 /* THE TOOLBAR: absolute, so it takes no space in the box being measured — an
-   in-flow badge added height to the very thing he is sizing. It is a real element
-   with real buttons, because the ::before badge it replaces could not be clicked
-   at all (pseudo-element, pointer-events: none) and that is what made every area
-   feel "stuck inside its own box". */
+   in-flow badge added height to the very thing he is sizing. It names the area and
+   carries the one action left, ✕ hide. ⛔ No move controls: three attempts at
+   moving areas from in here all failed and the whole mechanism is deleted. */
 body.layout-mode .lay-bar {
   position: absolute; top: 0; left: 0; z-index: 4;
   /* ⚠ width: max-content is load-bearing. An absolutely positioned flex box
@@ -3031,25 +3030,8 @@ body.layout-mode .lay-bar button:hover { background: #111; color: var(--accent);
 body.layout-mode .lay-target .lay-bar { top: 15px; }
 body.layout-mode .lay-target .lay-target .lay-bar { top: 30px; }
 body.layout-mode .lay-target .lay-target .lay-target .lay-bar { top: 45px; }
-/* the area waiting to be placed */
-body.layout-mode .lay-target.lay-picked { outline: 2px solid var(--def); outline-offset: 2px; }
-body.layout-mode .lay-target.lay-picked > .lay-bar { background: var(--def); }
-/* WHILE HOLDING: every other area is a target, and says so. The aim was the whole
-   problem — a 12px glyph is not a drop zone. */
-body.lay-holding.layout-mode .lay-target { cursor: copy; }
-body.lay-holding.layout-mode .lay-target:hover {
-  outline: 2px dashed var(--def); outline-offset: 2px;
-  box-shadow: inset 0 0 0 9999px rgba(34, 197, 94, .07);
-}
-body.lay-holding.layout-mode .lay-target.lay-picked { cursor: default; }
-body.lay-holding.layout-mode .lay-target.lay-picked:hover { box-shadow: none; }
-body.lay-holding.layout-mode .lay-bar [data-lay-act="place"] { background: #111; color: var(--def); }
-.lay-pick { background: var(--panel2); border-left: 3px solid var(--def);
-  padding: 3px 6px; margin: 4px 0; font-size: 11px; }
-.lay-cancel { margin-left: 4px; font-size: 10px; padding: 1px 5px; border-radius: var(--r1);
-  border: 1px solid var(--def); background: var(--panel); color: inherit; cursor: pointer;
-  white-space: nowrap; }
-.lay-cancel:hover { background: var(--def); color: #111; }
+/* (the picked / holding / place-target styles went with the move machinery —
+   Joel, 2026-08-04: "remove all this moves functions") */
 .lay-hidden-h { color: var(--muted); font-size: 10px; text-transform: uppercase;
   letter-spacing: .05em; margin: 6px 0 2px; }
 .lay-restore { display: block; width: 100%; text-align: left; font-size: 11px;

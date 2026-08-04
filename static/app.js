@@ -9929,20 +9929,17 @@ function renderMarkdown(md) {
   return html;
 }
 
-// ── 🧩 LAYOUT MODE — a design tool, not a feature (Joel, 2026-08-04: "make it so
-// I can move each area and change its width and height then have you check it and
-// make the changes set"). Three evenings went into me guessing at proportions from
-// screenshots; this hands the ruler to the person whose eyes are the acceptance
-// test, and hands me his actual numbers to bake into the stylesheet.
+// ── 🧩 LAYOUT MODE — RESIZE ONLY (Joel, 2026-08-04: "Let's remove all this moves
+// functions, they are simply not working.")
 //
-// Deliberately built out of platform features, no library and no new dependency:
-// CSS `resize: both` gives every area its own native corner handle, HTML5
-// draggable moves an area to another slot, localStorage remembers the draft so it
-// survives the relaunch that static changes need anyway.
-//
-// ⚠ It NEVER touches build state: no recordEdit, no saveProgress, no solve. A
-// layout draft is CSS in a pocket, and "Bake it" is a Claude edit to style.css,
-// never something the app writes to itself.
+// ⛔ THE MOVE MACHINERY IS DELETED AND MUST NOT COME BACK: pick/place, ↑ ↓ nudge,
+// ⇄ send-to-other-column, the held state, and the per-parent order the draft used
+// to persist. Three shapes were tried in one evening — HTML5 drag (a ::before badge
+// cannot be grabbed, and drag cannot scroll the page mid-gesture), then a 12px ⤵
+// target, then whole-area drop targets — and his verdict on the lot is above. What
+// remains is the part that always worked: the browser's own resize handle, a live
+// size readout, hiding an area, and the handoff that puts his numbers where I can
+// bake them into the stylesheet. Moving panels is MY job, in CSS, from his numbers.
 const LAY_AREAS = [
   ["powers-main", ".powers-main", "left column (wall + catalogue)"],
   ["powers-side", ".powers-side", "right column (assistant + plan)"],
@@ -9955,19 +9952,22 @@ const LAY_AREAS = [
   ["endgame-plan-panel", "#endgame-plan-panel", "epic + incarnate plan"],
   ["inherent-card", "#inherent-card", "🧬 your inherent"],
   ["endgame-panel", "#endgame-panel", "accolades"],
-  ["card-home", "#card-home", "card strip (empty while the cards sit elsewhere)"],
+  ["card-home", "#card-home", "card strip"],
   ["tray-out", "#tray-out", "in-game power trays"],
   ["order-out", "#order-out", "level-by-level plan"],
   ["conv-guide-details", "#conv-guide-details", "converters guide"],
 ];
 let LAY_ON = false;
-let LAY_PICK = null;      // the area waiting to be placed, by key
 const _layDraft = () => {
-  try { return JSON.parse(localStorage.getItem("hcLayoutDraft") || "{}"); }
-  catch (e) { return {}; }
+  try {
+    const d = JSON.parse(localStorage.getItem("hcLayoutDraft") || "{}");
+    delete d.order;          // a legacy draft's moves are dropped, never re-applied
+    return d;
+  } catch (e) { return {}; }
 };
 const _laySave = (d) => {
-  try { localStorage.setItem("hcLayoutDraft", JSON.stringify(d)); } catch (e) { /* ignore */ }
+  try { delete d.order; localStorage.setItem("hcLayoutDraft", JSON.stringify(d)); }
+  catch (e) { /* ignore */ }
 };
 function _layEls() {
   const out = [];
@@ -9977,8 +9977,8 @@ function _layEls() {
   }
   return out;
 }
-// Re-applied after every render: renderPowers rebuilds the catalogue, so the
-// draft has to be re-stamped or a recompute silently reverts his work.
+// Re-applied after every render: renderPowers rebuilds the catalogue, so a size or
+// a hide has to be re-stamped or a recompute silently reverts his work.
 function applyLayoutDraft() {
   const d = _layDraft(), hidden = d.hidden || [];
   for (const el of _layEls()) {
@@ -9990,69 +9990,27 @@ function applyLayoutDraft() {
     if (s.w) { el.style.width = s.w + "px"; el.style.flex = "0 0 auto"; }
     if (s.h) { el.style.height = s.h + "px"; }
   }
-  const order = d.order || {};
-  for (const [parentKey, keys] of Object.entries(order)) {
-    // ⚠ RESOLVE BY data-lay OR ID ONLY. The class fallback that used to be here
-    // matched `body.theme-hero` for a stray "theme-hero" key and would have
-    // appended five panels straight into <body>. Caught by reading the draft the
-    // round trip produced, not by reasoning about it.
-    const parent = document.querySelector(`[data-lay="${parentKey}"]`)
-      || document.getElementById(parentKey);
-    if (!parent || parent === document.body || !document.getElementById("tab-powers")
-        || !document.getElementById("tab-powers").contains(parent)
-        && parent.id !== "tab-powers") continue;
-    for (const k of keys) {
-      const el = document.querySelector(`[data-lay="${k}"]`);
-      if (el) parent.appendChild(el);          // appending in draft order re-sorts
-    }
-  }
-  // ⚠ renderPowers RE-CREATES .cat-cols and .cat-side, so their layout-mode class
-  // and their saved size both have to be re-stamped after every render or his work
-  // vanishes on the next recompute.
   if (LAY_ON) { _layDecorate(); _layHudRefresh(); }
 }
-// ⚠⚠ HTML5 DRAG IS GONE, and it was my error (Joel, 2026-08-04: "It won't let me
-// drag windows from one window to another window, or remove empty windows, or drag
-// a window down... They all seem stuck inside their own box"). Three reasons it
-// could never work, all mine:
-//   1. I told him to drag the ⠿ badge, which was a CSS ::before with
-//      pointer-events: none — a pseudo-element cannot be grabbed at all.
-//   2. HTML5 drag does not scroll the page mid-gesture, so an area could never be
-//      placed anywhere further down than the screen already showed.
-//   3. There was no way to remove an area, empty or otherwise.
-// PICK THEN PLACE replaces it: two separate clicks, so scrolling in between is
-// just... scrolling. Every action is a real button on a real toolbar.
-const _LAY_BAR = `<div class="lay-bar">
-  <button type="button" data-lay-act="pick" title="Pick this area up, then click the area it should go before">⠿ move</button>
-  <span class="lay-bar-name"></span>
-  <button type="button" data-lay-act="place" title="Put the picked area before this one">⤵ here</button>
-  <button type="button" data-lay-act="up" title="Move up one slot">↑</button>
-  <button type="button" data-lay-act="down" title="Move down one slot">↓</button>
-  <button type="button" data-lay-act="col" title="Send to the other column (or to full width)">⇄</button>
-  <button type="button" data-lay-act="hide" title="Hide this area — restorable from the panel">✕</button>
-</div>`;
 // ⚠ The toolbar is position: absolute, so it takes NO space in the box being
 // measured. An in-flow badge added height to the very thing he is sizing, and the
 // two slabs whose renderers rewrite innerHTML silently ate it.
+const _LAY_BAR = `<div class="lay-bar">
+  <span class="lay-bar-name"></span>
+  <button type="button" data-lay-act="hide" title="Hide this area — it comes back from the panel">✕ hide</button>
+</div>`;
 function _layDecorate() {
-  const d = _layDraft(), hidden = d.hidden || [];
   for (const el of _layEls()) {
     el.classList.add("lay-target");
-    el.draggable = false;
     if (!el.querySelector(":scope > .lay-bar")) {
       el.insertAdjacentHTML("afterbegin", _LAY_BAR);
       el.querySelector(":scope > .lay-bar .lay-bar-name").textContent = el.dataset.layLabel;
     }
-    el.classList.toggle("lay-hidden", hidden.includes(el.dataset.lay));
-    el.classList.toggle("lay-picked", LAY_PICK === el.dataset.lay);
   }
-  // the whole page says whether something is being held, so the next click is
-  // never a guess
-  document.body.classList.toggle("lay-holding", !!LAY_PICK);
 }
 function _layStrip() {
   for (const el of document.querySelectorAll(".lay-target")) {
-    el.classList.remove("lay-target", "lay-picked", "lay-hidden");
+    el.classList.remove("lay-target");
     const bar = el.querySelector(":scope > .lay-bar");
     if (bar) bar.remove();
   }
@@ -10067,26 +10025,14 @@ window.toggleLayoutMode = function () {
 };
 document.addEventListener("keydown", (e) => {
   if (e.ctrlKey && e.shiftKey && (e.key === "L" || e.key === "l")) {
-    e.preventDefault(); toggleLayoutMode(); return;
+    e.preventDefault(); toggleLayoutMode();
   }
 });
-// ⚠ Esc needs the CAPTURE phase: the app's own Escape handling (menus, modals) runs
-// first and swallows it, so a bubble-phase listener here never fired — measured
-// with a real key press, not assumed. Guarded on LAY_PICK so nothing else's Escape
-// is stolen: a held area with no way to put it down is a trap.
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && LAY_ON && LAY_PICK) {
-    e.preventDefault(); e.stopPropagation();
-    LAY_PICK = null; _layDecorate(); _layHudRefresh();
-  }
-}, true);
 // SIZE: the browser's own resize handle writes width/height straight onto the
 // element's inline style, so there is nothing to track while the mouse moves — the
 // truth is already in the DOM. One snapshot when the mouse comes up saves it, so a
-// later recompute (which rebuilds .cat-cols and .cat-side from scratch) can put it
-// back. ⚠ NOT a ResizeObserver, deliberately: the Claude pane fires no layout
-// callbacks at all, so an observer here is code neither of us can test — and the
-// snapshot needs no observer to be correct.
+// later recompute can put it back. ⚠ NOT a ResizeObserver: the Claude pane fires no
+// layout callbacks at all, so an observer here is code neither of us can test.
 function _laySnapshot() {
   if (!LAY_ON) return;
   const d = _layDraft(); d.size = d.size || {};
@@ -10097,88 +10043,18 @@ function _laySnapshot() {
   _laySave(d); _layHudRefresh();
 }
 document.addEventListener("pointerup", () => { if (LAY_ON) setTimeout(_laySnapshot, 0); });
-// MOVE / HIDE — every action is a button, and the toolbar swallows the click so it
-// can never reach the app underneath it.
-// data-lay or ID, never a class: a class key can resolve to <body> on the way back.
-const _layParentKey = (p) => (p.dataset && p.dataset.lay) || p.id || null;
-function _layRecordOrder(parent) {
-  const key = _layParentKey(parent);
-  if (!key) return;                       // an unnamed parent is not a slot we own
-  const d = _layDraft(); d.order = d.order || {};
-  d.order[key] = [...parent.children]
-    .filter(n => n.dataset && n.dataset.lay).map(n => n.dataset.lay);
-  _laySave(d);
-}
-// The two containers an area can be sent BETWEEN. Full width means the tab itself,
-// which is how a slab (trays, level plan, converters) lives.
-const _layHomes = () => [document.querySelector(".powers-main"),
-                         document.querySelector(".powers-side"),
-                         document.getElementById("tab-powers")].filter(Boolean);
-// One place-before, used by the ⤵ button AND by a plain click anywhere in a target
-// area while holding one. Placing into the held area itself just cancels.
-function _layPlaceBefore(el) {
-  const src = LAY_PICK && document.querySelector(`[data-lay="${LAY_PICK}"]`);
-  LAY_PICK = null;
-  if (!src || src === el || src.contains(el)) return;
-  const from = src.parentNode;
-  el.parentNode.insertBefore(src, el);
-  _layRecordOrder(el.parentNode);
-  if (from !== el.parentNode) _layRecordOrder(from);
-}
+// HIDE — the one structural action left, and it is reversible from the panel.
 document.addEventListener("click", (e) => {
   if (!LAY_ON) return;
-  const btn = e.target.closest && e.target.closest(".lay-bar [data-lay-act]");
-  // ⚠ WHILE HOLDING, THE WHOLE AREA IS THE TARGET (Joel, 2026-08-04: "I still
-  // cannot move any objects"). Real-mouse testing showed the mechanism worked and
-  // the AIM did not: the second click had to hit another area's 12px ⤵ glyph, and
-  // a click anywhere else did nothing at all, which reads as "stuck in its box".
-  // Now: holding + click anywhere in another area places it there.
-  if (!btn && LAY_PICK) {
-    const tgt = e.target.closest && e.target.closest(".lay-target");
-    if (tgt) {
-      e.preventDefault(); e.stopPropagation();
-      _layPlaceBefore(tgt);
-      applyLayoutDraft(); _layHudRefresh();
-      return;
-    }
-  }
+  const btn = e.target.closest && e.target.closest('.lay-bar [data-lay-act="hide"]');
   if (!btn) return;
   e.preventDefault(); e.stopPropagation();          // never let it reach the app
-  const el = btn.closest(".lay-target"), act = btn.dataset.layAct;
-  const parent = el.parentNode;
-  const sibs = () => [...parent.children].filter(n => n.dataset && n.dataset.lay);
-  if (act === "pick") {
-    LAY_PICK = (LAY_PICK === el.dataset.lay) ? null : el.dataset.lay;   // click again = cancel
-  } else if (act === "place") {
-    _layPlaceBefore(el);
-  } else if (act === "up" || act === "down") {
-    const list = sibs(), i = list.indexOf(el);
-    const j = act === "up" ? i - 1 : i + 1;
-    if (j >= 0 && j < list.length) {
-      if (act === "up") parent.insertBefore(el, list[j]);
-      else parent.insertBefore(list[j], el);
-      _layRecordOrder(parent);
-    }
-  } else if (act === "col") {
-    const homes = _layHomes();
-    const cur = homes.indexOf(parent);
-    const next = homes[(cur + 1) % homes.length] || homes[0];
-    if (next && next !== parent) {
-      next.appendChild(el);
-      _layRecordOrder(next); _layRecordOrder(parent);
-    }
-  } else if (act === "hide") {
-    const d = _layDraft(); d.hidden = d.hidden || [];
-    if (!d.hidden.includes(el.dataset.lay)) d.hidden.push(el.dataset.lay);
-    _laySave(d);
-  }
-  // through the APPLIER, not just the decorator: ✕ recorded the hide but nothing
-  // hid until a later render, because display is written in one place only.
+  const el = btn.closest(".lay-target");
+  const d = _layDraft(); d.hidden = d.hidden || [];
+  if (!d.hidden.includes(el.dataset.lay)) d.hidden.push(el.dataset.lay);
+  _laySave(d);
   applyLayoutDraft(); _layHudRefresh();
 }, true);
-window.layCancelPick = function () {
-  LAY_PICK = null; _layDecorate(); _layHudRefresh();
-};
 window.layShow = function (key) {
   const d = _layDraft();
   d.hidden = (d.hidden || []).filter(k => k !== key);
@@ -10189,19 +10065,12 @@ function _layHud() {
   if (!h) {
     h = document.createElement("div");
     h.id = "lay-hud";
-    // ⚠ THE PANEL ITSELF WAS IN THE WAY (Joel: "glued overtop an area I want to
-    // place something"). Its header is a drag handle (pointer events, which is
-    // also why this one works where the HTML5 drag did not) and it collapses to a
-    // single bar. Both remembered.
     h.innerHTML = `<div class="lay-hud-h" id="lay-hud-grip" title="Drag me out of the way">🧩 Layout mode
         <button type="button" onclick="layHudCollapse()" id="lay-hud-min" title="Collapse to a bar">–</button>
         <button type="button" onclick="toggleLayoutMode()" title="Leave layout mode">✕</button></div>
-      <p class="muted small keep-whole">Click <b>⠿ move</b> on an area, scroll to wherever you
-        want it, then <b>click that area</b> — anywhere in it — and the held one drops in above it.
-        To let go without moving anything, click <b>⠿ move</b> again. <b>↑ ↓</b> nudge a slot,
-        <b>⇄</b> sends it to the other column or to full width, <b>✕</b> hides it. Drag any area's
-        bottom-right corner to resize it. Nothing here changes your build.</p>
-      <div id="lay-pick" class="lay-pick" hidden></div>
+      <p class="muted small keep-whole">Drag any area's <b>bottom-right corner</b> to set its width
+        and height. <b>✕ hide</b> takes an area out, and it comes back from the list below. Then send
+        me the sizes and I will make them the real layout. Nothing here changes your build.</p>
       <div id="lay-hud-list"></div>
       <div id="lay-hidden"></div>
       <div class="lay-hud-btns">
@@ -10211,8 +10080,7 @@ function _layHud() {
     document.body.appendChild(h);
     _layHudGrip(h);
     // ⚠ CLAMP the remembered position: a panel parked where the window used to be
-    // wider is invisible and unreachable, and its own ✕ is the only way to close it
-    // (seen: the app window sat partly off-screen and the panel went with it).
+    // wider is invisible, and its own ✕ is the only way to close it.
     const pos = _layDraft().hud;
     if (pos) {
       h.style.left = Math.max(0, Math.min(innerWidth - 120, pos.x)) + "px";
@@ -10224,7 +10092,7 @@ function _layHud() {
   _layHudRefresh();
 }
 // Pointer-drag the panel by its header. Pointer events, not HTML5 drag: they fire
-// while the pointer is captured, work over any element, and need no drop target.
+// while the pointer is captured and need no drop target.
 function _layHudGrip(h) {
   const grip = h.querySelector("#lay-hud-grip");
   let dx = 0, dy = 0, on = false;
@@ -10257,16 +10125,16 @@ function _layHudRefresh() {
   const list = $("lay-hud-list"); if (!list) return;
   const d = _layDraft(), rows = [], hidden = d.hidden || [];
   for (const el of _layEls()) {
+    if (hidden.includes(el.dataset.lay)) continue;
     const r = el.getBoundingClientRect();
     const edited = (d.size || {})[el.dataset.lay];
-    if (hidden.includes(el.dataset.lay)) continue;
     rows.push(`<div class="lay-row${edited ? " lay-edited" : ""}">
       <span>${escHtml(el.dataset.layLabel)}</span>
       <b>${Math.round(r.width)}×${Math.round(r.height)}</b></div>`);
   }
   list.innerHTML = rows.join("");
-  // Hiding is REVERSIBLE and says so — the choice doctrine applies to a design
-  // tool too: a removed area that cannot come back is a trap, not a decision.
+  // Hiding is REVERSIBLE and says so — the choice doctrine applies to a design tool
+  // too: an area that cannot come back is a trap, not a decision.
   const hz = $("lay-hidden");
   if (hz) {
     hz.innerHTML = hidden.length
@@ -10275,17 +10143,6 @@ function _layHudRefresh() {
             const meta = LAY_AREAS.find(a => a[0] === k);
             return `<button type="button" class="lay-restore" onclick="layShow('${k}')">↩ ${escHtml(meta ? meta[2] : k)}</button>`;
           }).join("")
-      : "";
-  }
-  const pk = $("lay-pick");
-  if (pk) {
-    const meta = LAY_PICK && LAY_AREAS.find(a => a[0] === LAY_PICK);
-    pk.hidden = !LAY_PICK;
-    // a held area needs a VISIBLE way down, not only a key: Escape is swallowed by
-    // the app's own handlers in the frozen shell (measured with a real key press)
-    pk.innerHTML = LAY_PICK
-      ? `holding <b>${escHtml(meta ? meta[2] : LAY_PICK)}</b> — now click the area it should sit
-         above <button type="button" class="lay-cancel" onclick="layCancelPick()">✖ put it back</button>`
       : "";
   }
 }
@@ -10298,34 +10155,31 @@ window.copyLayoutForClaude = function () {
       key: el.dataset.lay, label: el.dataset.layLabel,
       w: Math.round(r.width), h: Math.round(r.height),
       x: Math.round(r.x), y: Math.round(r.y + scrollY),
-      parent: (p.dataset && p.dataset.lay) || p.id || (p.className || "").split(" ")[0],
-      index: [...p.children].indexOf(el),
+      parent: (p.dataset && p.dataset.lay) || p.id || null,
+      hidden: (d.hidden || []).includes(el.dataset.lay),
       edited: !!(d.size || {})[el.dataset.lay],
     });
   }
   const payload = {
-    what: "hero-companion layout draft", tab: "powers",
+    what: "hero-companion layout draft (sizes + hidden areas)", tab: "powers",
     viewport: { w: innerWidth, h: innerHeight },
     zoom: getComputedStyle(document.documentElement).zoom || "1",
     build: { archetype: build.archetype, primary: build.primary, secondary: build.secondary,
              pools: build.pools, epic: build.epic, picks: (build.powers || []).length },
-    moved: d.order || {}, areas,
+    areas,
   };
   const ok = copyToClipboard(JSON.stringify(payload, null, 1));
-  const btns = document.querySelector("#lay-hud .lay-hud-btns button");
-  if (btns) {
-    const t = btns.textContent;
-    btns.textContent = ok ? "✓ copied — paste it to Claude" : "✕ copy failed";
-    setTimeout(() => { btns.textContent = t; }, 2200);
+  const btn = document.querySelector("#lay-hud .lay-hud-btns button");
+  if (btn) {
+    const t = btn.textContent;
+    btn.textContent = ok ? "✓ copied — paste it to Claude" : "✕ copy failed";
+    setTimeout(() => { btn.textContent = t; }, 2200);
   }
 };
 window.resetLayoutDraft = function () {
   try { localStorage.removeItem("hcLayoutDraft"); } catch (e) { /* ignore */ }
   for (const el of _layEls()) { el.style.width = ""; el.style.height = ""; el.style.flex = ""; }
-  // ⚠ A MOVED area was physically re-parented, so clearing the draft is not enough
-  // to undo it — the page has to come back from the shipped HTML. Reload does that
-  // and costs nothing here (the build is saved; layout mode never edited it).
-  location.reload();
+  location.reload();          // the shipped layout comes back from the shipped HTML
 };
 
 init();

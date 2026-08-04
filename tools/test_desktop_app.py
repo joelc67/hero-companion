@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 69          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 67          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement)
 
@@ -295,37 +295,29 @@ def main():
           not any(s in _lay for s in ("recordEdit(", "saveProgress(", "solveSlotting(",
                                       "autoSaveTick(", "/build/solve")),
           "a design tool that can dirty a character is a bug with a nice outline")
-    # ⚠ HTML5 DRAG IS BANNED HERE and the reason is Joel's field report: a
-    # ::before badge cannot be grabbed, drag does not scroll the page mid-gesture,
-    # and every area therefore felt "stuck inside its own box". Pick-then-place is
-    # two clicks, so scrolling in between is just scrolling.
-    check("moving an area is CLICKS, not HTML5 drag",
-          "dataTransfer" not in _lay and "dragstart" not in _lay
-          and 'data-lay-act="pick"' in _lay and 'data-lay-act="place"' in _lay,
-          "matches the definition, not the comment explaining why drag went")
     check("the toolbar is a real element with real buttons",
           "_LAY_BAR" in _lay and 'class="lay-bar"' in _lay
           and "body.layout-mode .lay-bar" in css,
           "a ::before badge has pointer-events: none and can never be clicked")
-    # ⚠ THE AIM WAS THE BUG (Joel, 2026-08-04, after real-mouse testing proved the
-    # mechanism worked): the second click had to hit another area's 12px ⤵ glyph, so
-    # clicking the area itself did nothing and every area read as stuck in its box.
-    check("while holding, a click ANYWHERE in a target area places it",
-          "_layPlaceBefore" in _lay and "lay-holding" in _lay
-          and "body.lay-holding" in css,
-          "a 12px glyph is not a drop zone")
-    check("...and there are two visible ways to let go",
-          "layCancelPick" in _lay and "lay-cancel" in css
-          and 'LAY_PICK === el.dataset.lay) ? null' in _lay,
-          "Escape alone is not enough: the frozen shell's own handlers swallow it")
-    check("an area can leave its column, and hiding one is REVERSIBLE",
-          "_layHomes" in _lay and 'data-lay-act="col"' in _lay
-          and "window.layShow" in _lay and "lay-restore" in _lay,
+    # ⛔ MOVING AREAS IS DELETED (Joel, 2026-08-04: "Let's remove all this moves
+    # functions, they are simply not working"). Three shapes were tried in one
+    # evening — HTML5 drag, a 12px ⤵ target, whole-area drop targets — and all three
+    # went with it. Resizing is what survived; moving panels is a CSS job done from
+    # his numbers. This is the pin, same class as "no packer, ever again".
+    check("NEGATIVE CONTROL: no move machinery anywhere in layout mode",
+          not any(s in _lay for s in ("LAY_PICK", "_layPlaceBefore", "_layHomes",
+                                      "_layRecordOrder", "lay-holding", "dataTransfer",
+                                      "dragstart", 'data-lay-act="pick"',
+                                      'data-lay-act="place"', 'data-lay-act="col"'))
+          and "lay-holding" not in css and ".lay-picked" not in css,
+          "matches the definitions, in BOTH files, not the comments recording why")
+    check("...and a legacy draft's saved moves are dropped, never re-applied",
+          "delete d.order" in _lay,
+          "an old draft must not re-parent panels after the feature is gone")
+    check("hiding an area survives, and is REVERSIBLE",
+          'data-lay-act="hide"' in _lay and "window.layShow" in _lay
+          and "lay-restore" in css,
           "choice doctrine: a removed area that cannot come back is a trap")
-    check("NEGATIVE CONTROL: a parent slot is never resolved by CSS class",
-          'querySelector("." + parentKey)' not in app_js
-          and "|| p.id || null" in _lay,
-          "a class key matched body.theme-hero and would append panels into <body>")
     check("...and the size snapshot needs no layout callback to work",
           "new ResizeObserver" not in _lay and "_laySnapshot" in _lay
           and 'addEventListener("pointerup"' in _lay,
