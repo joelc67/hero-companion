@@ -9,6 +9,7 @@ tools/parse_mids.py (sourced from Mids Reborn).
 import copy
 import json
 import os
+import shutil
 import time
 import re
 import sys
@@ -8130,7 +8131,18 @@ def saves_put():
             # even though the current solver + game data would build it better.
             "versions": {"app": APP_VERSION, "model": fp.MODEL_VERSION},
             "build": b}
-    with open(os.path.join(_saves_dir(), sid + ".json"), "w", encoding="utf-8") as f:
+    path = os.path.join(_saves_dir(), sid + ".json")
+    # One-deep safety net: whatever this write replaces survives as .json.bak
+    # until the next overwrite. A full 67-slot build was lost 2026-08-04 when
+    # an identity change autosaved a 5-pick skeleton over its slug — with no
+    # backup, that build was simply gone. (.bak never matches the *.json glob,
+    # so the Continue list can't see it.)
+    if os.path.exists(path):
+        try:
+            shutil.copyfile(path, path + ".bak")
+        except OSError:
+            pass  # a failed backup must never block the save itself
+    with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=1)
     return jsonify({"ok": True, "id": sid, "name": name})
 

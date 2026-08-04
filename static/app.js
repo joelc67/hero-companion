@@ -158,7 +158,16 @@ function _isAutoName(save) {
   const b = save.build || {};
   const auto = b.primary_display
     ? `${b.primary_display} ${(b.archetype || "").replace("Class_", "")}` : null;
-  return !!auto && n === auto;
+  if (auto && n === auto) return true;
+  // STALE machine name: the build's identity changed after the name was minted
+  // ("Dual Blades Scrapper" holding a Defender — Joel's field report,
+  // 2026-08-04), so the exact-match test above can never fire again and the
+  // name lies forever. Recognize the machine-name SHAPE instead: un-named
+  // (plan.named falsy) + ends in any archetype's display name. Person-chosen
+  // names carry plan.named and never reach this test.
+  const atSel = $("sel-archetype");
+  const ats = atSel ? [...atSel.options].map(o => (o.textContent || "").trim()).filter(Boolean) : [];
+  return ats.some(at => n === at || n.endsWith(" " + at));
 }
 
 // Is there work here that closing (or switching archetype) would throw away?
@@ -393,7 +402,12 @@ async function autoSaveTick() {
   if (!(CURRENT_SAVE && CURRENT_SAVE.id)) return;   // unnamed → the user has not said to keep it
   const snap = buildSnapshot();
   if (snap === _lastSavedSnapshot) return;                                  // unchanged → skip
-  const name = CURRENT_SAVE.name;
+  // An auto-named save's title follows its identity: if the primary changed
+  // since the name was minted, re-derive it so the Continue list never shows
+  // "Dual Blades Scrapper" over a Defender. Person-named saves keep their name.
+  const name = (NEEDS_NAME && build.primary_display)
+    ? `${build.primary_display} ${(build.archetype || "").replace("Class_", "")}`
+    : CURRENT_SAVE.name;
   const plan = { content: $("preset-content") && $("preset-content").value,
                  role: $("preset-role") && $("preset-role").value, role_mix: roleMixPayload(), mode: build._mode || null,
                  // ⚠ NOT a blanket true: an autosave is not a person choosing a
@@ -3811,7 +3825,12 @@ let _atGuard = false;      // re-entry guard: putting the select back fires chan
 
 async function onArchetypeChange(e) {
   const at = e.target.value;
-  if (!_atGuard && at && at !== build.archetype && hasUnsavedWork()) {
+  // Guard on CONTENT, not unsaved work: a freshly-loaded character has no
+  // unsaved edits, so the old hasUnsavedWork() test let an archetype flip wipe
+  // it with no prompt — and autosave then wrote the wipe over the same save
+  // slug within seconds (the 2026-08-04 Pyrotechnic loss). Powers picked =
+  // something to lose; nothing picked = no prompt (resetToImported doctrine).
+  if (!_atGuard && at && at !== build.archetype && (build.powers || []).length) {
     const was = build.archetype;
     const keep = confirm(`Changing archetype starts a new character — your powers, slots and pools cannot carry across.
 
@@ -3827,7 +3846,15 @@ Cancel: throw it away and start over now.`);
         return;
       }
     }
-    CURRENT_SAVE = null;         // whatever happens next is a DIFFERENT character
+  }
+  // A real archetype change is a DIFFERENT character however we got here.
+  // Detach the save UNCONDITIONALLY (the old code only detached on the
+  // unsaved-work branch) so autosave can never overwrite the previous
+  // character's slug with the new one's skeleton. Load paths run under
+  // _atGuard and manage CURRENT_SAVE themselves.
+  if (!_atGuard && at !== build.archetype && CURRENT_SAVE) {
+    CURRENT_SAVE = null; NEEDS_NAME = false;
+    try { syncNameField(); } catch (err) {}
   }
   build.archetype = at;
   build.primary = build.secondary = build.epic = null;
@@ -3912,9 +3939,34 @@ async function loadPowers(psFullName) {
 }
 
 // When a powerset is chosen we expose its powers as an "add power" picker
+let _swapOk = false;  // one accepted confirm covers the paired VEAT change in the same tick
 async function addPowersetPowers(sel, slot) {
   const psFull = sel.value;
   const psDisplay = sel.options[sel.selectedIndex]?.text;
+  // Switching a set REMOVES the old set's picked powers. They used to stay in
+  // build.powers invisibly — the wall didn't show them but the solver DID, so
+  // "re-slot this whole build" solved the old character's powers and looked
+  // like it did nothing (Joel's field report, 2026-08-04: Poison/Sonic IOs
+  // narrated on an Empathy/Energy build). Confirm names the cost; nothing to
+  // lose = no prompt.
+  const prev = { primary: build.primary, secondary: build.secondary, epic: build.epic }[slot];
+  if (prev && psFull !== prev) {
+    const victims = (build.powers || []).filter(p => (p.full_name || "").startsWith(prev + "."));
+    if (victims.length) {
+      if (!_swapOk) {
+        const prevName = { primary: build.primary_display, secondary: build.secondary_display,
+                           epic: build.epic_display }[slot] || "the old set";
+        const ok = confirm(`Changing your ${slot} set removes its ${victims.length} picked power${victims.length === 1 ? "" : "s"} and their slotting. The rest of the build keeps its own.
+
+OK: switch sets.
+Cancel: keep ${prevName}.`);
+        if (!ok) { sel.value = prev; return; }
+        _swapOk = true; setTimeout(() => { _swapOk = false; }, 0);
+      }
+      recordEdit();
+      build.powers = (build.powers || []).filter(p => !(p.full_name || "").startsWith(prev + "."));
+    }
+  }
   if (slot === "primary") { build.primary = psFull; build.primary_display = psDisplay; }
   if (slot === "secondary") { build.secondary = psFull; build.secondary_display = psDisplay; }
   if (slot === "epic") { build.epic = psFull; build.epic_display = psDisplay; }
@@ -3964,6 +4016,33 @@ function refreshPoolOptions() {
 async function onPoolChange() {
   recordEdit();
   const sels = [...document.querySelectorAll(".pool-sel")];
+  // Same rule as set changes: a swapped-out pool takes its picked powers with
+  // it, out loud — they used to linger in build.powers where only the solver
+  // could see them. (The archetype cascade calls this with powers already
+  // emptied, so it never prompts there.)
+  {
+    const oldPools = [...(build.pools || [])];
+    const newPools = sels.map(s => s.value).filter(Boolean);
+    const droppedPools = oldPools.filter(p => !newPools.includes(p));
+    const victims = (build.powers || []).filter(p =>
+      droppedPools.some(dp => (p.full_name || "").startsWith(dp + ".")));
+    if (victims.length) {
+      const names = victims.map(p => p.display_name || p.full_name).join(", ");
+      const ok = confirm(`Swapping that pool removes ${victims.length} picked power${victims.length === 1 ? "" : "s"} (${names}) and their slotting.
+
+OK: swap the pool.
+Cancel: keep it.`);
+      if (!ok) {
+        // Put the changed select back — the pool that vanished is the one to restore.
+        const changed = sels.find(s => s.value && !oldPools.includes(s.value)) || sels.find(s => !s.value);
+        if (changed) changed.value = droppedPools[0] || "";
+        refreshPoolOptions();
+        return;
+      }
+      build.powers = build.powers.filter(p =>
+        !droppedPools.some(dp => (p.full_name || "").startsWith(dp + ".")));
+    }
+  }
   build.pools = []; build.pools_display = [];
   for (const s of sels) {
     if (s.value) {
@@ -7889,7 +7968,11 @@ async function applyImportedBuild(b) {
   // archetype cascade (loads powerset options)
   $("sel-archetype").value = b.archetype || "";
   updateAtEmblem();   // setting .value programmatically does not fire `change`
-  await onArchetypeChange({ target: { value: b.archetype || "" } });
+  // Under _atGuard: swapping a build in is not the USER flipping archetypes —
+  // no confirm, and CURRENT_SAVE stays whatever the caller set it to.
+  _atGuard = true;
+  try { await onArchetypeChange({ target: { value: b.archetype || "" } }); }
+  finally { _atGuard = false; }
   // primary / secondary / epic
   if (b.primary) { $("sel-primary").value = b.primary; build.primary = b.primary;
     build.primary_display = $("sel-primary").selectedOptions[0]?.text; await loadPowers(b.primary); }
