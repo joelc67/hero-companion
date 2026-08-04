@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 67          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 69          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement)
 
@@ -284,7 +284,8 @@ def main():
     _laysel = [ln.split("{")[0].strip() for ln in _laycss.splitlines() if "{" in ln
                and not ln.strip().startswith(("/*", "*"))]
     check("...and it is scoped: no layout-mode rule touches an app selector unscoped",
-          bool(_laysel) and all("body.layout-mode" in s
+          bool(_laysel) and all("layout-mode" in s          # body.layout-mode, or
+                                                            # body.lay-holding.layout-mode
                                 or all(p.lstrip().startswith((".lay-", "#lay-"))
                                        for p in s.split(","))
                                 for s in _laysel),
@@ -306,6 +307,17 @@ def main():
           "_LAY_BAR" in _lay and 'class="lay-bar"' in _lay
           and "body.layout-mode .lay-bar" in css,
           "a ::before badge has pointer-events: none and can never be clicked")
+    # ⚠ THE AIM WAS THE BUG (Joel, 2026-08-04, after real-mouse testing proved the
+    # mechanism worked): the second click had to hit another area's 12px ⤵ glyph, so
+    # clicking the area itself did nothing and every area read as stuck in its box.
+    check("while holding, a click ANYWHERE in a target area places it",
+          "_layPlaceBefore" in _lay and "lay-holding" in _lay
+          and "body.lay-holding" in css,
+          "a 12px glyph is not a drop zone")
+    check("...and there are two visible ways to let go",
+          "layCancelPick" in _lay and "lay-cancel" in css
+          and 'LAY_PICK === el.dataset.lay) ? null' in _lay,
+          "Escape alone is not enough: the frozen shell's own handlers swallow it")
     check("an area can leave its column, and hiding one is REVERSIBLE",
           "_layHomes" in _lay and 'data-lay-act="col"' in _lay
           and "window.layShow" in _lay and "lay-restore" in _lay,

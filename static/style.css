@@ -3022,7 +3022,8 @@ body.layout-mode .lay-bar-name { flex: 0 0 auto; max-width: 190px; overflow: hid
   text-overflow: ellipsis; white-space: nowrap; margin: 0 3px; }
 body.layout-mode .lay-bar button {
   background: rgba(0, 0, 0, .18); color: #111; border: 0; border-radius: 3px;
-  font-size: 11px; line-height: 1; padding: 2px 4px; cursor: pointer;
+  font-size: 11px; line-height: 1; padding: 2px 5px; cursor: pointer;
+  white-space: nowrap;          /* "⠿ move" wrapped onto two lines without this */
 }
 body.layout-mode .lay-bar button:hover { background: #111; color: var(--accent); }
 /* a nested area's toolbar sits on its parent's; step each depth DOWN (across
@@ -3033,8 +3034,22 @@ body.layout-mode .lay-target .lay-target .lay-target .lay-bar { top: 45px; }
 /* the area waiting to be placed */
 body.layout-mode .lay-target.lay-picked { outline: 2px solid var(--def); outline-offset: 2px; }
 body.layout-mode .lay-target.lay-picked > .lay-bar { background: var(--def); }
+/* WHILE HOLDING: every other area is a target, and says so. The aim was the whole
+   problem — a 12px glyph is not a drop zone. */
+body.lay-holding.layout-mode .lay-target { cursor: copy; }
+body.lay-holding.layout-mode .lay-target:hover {
+  outline: 2px dashed var(--def); outline-offset: 2px;
+  box-shadow: inset 0 0 0 9999px rgba(34, 197, 94, .07);
+}
+body.lay-holding.layout-mode .lay-target.lay-picked { cursor: default; }
+body.lay-holding.layout-mode .lay-target.lay-picked:hover { box-shadow: none; }
+body.lay-holding.layout-mode .lay-bar [data-lay-act="place"] { background: #111; color: var(--def); }
 .lay-pick { background: var(--panel2); border-left: 3px solid var(--def);
   padding: 3px 6px; margin: 4px 0; font-size: 11px; }
+.lay-cancel { margin-left: 4px; font-size: 10px; padding: 1px 5px; border-radius: var(--r1);
+  border: 1px solid var(--def); background: var(--panel); color: inherit; cursor: pointer;
+  white-space: nowrap; }
+.lay-cancel:hover { background: var(--def); color: #111; }
 .lay-hidden-h { color: var(--muted); font-size: 10px; text-transform: uppercase;
   letter-spacing: .05em; margin: 6px 0 2px; }
 .lay-restore { display: block; width: 100%; text-align: left; font-size: 11px;

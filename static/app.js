@@ -10023,9 +10023,9 @@ function applyLayoutDraft() {
 // PICK THEN PLACE replaces it: two separate clicks, so scrolling in between is
 // just... scrolling. Every action is a real button on a real toolbar.
 const _LAY_BAR = `<div class="lay-bar">
-  <button type="button" data-lay-act="pick" title="Pick this area up, then click ⤵ on the area it should go before">⠿</button>
+  <button type="button" data-lay-act="pick" title="Pick this area up, then click the area it should go before">⠿ move</button>
   <span class="lay-bar-name"></span>
-  <button type="button" data-lay-act="place" title="Put the picked area before this one">⤵</button>
+  <button type="button" data-lay-act="place" title="Put the picked area before this one">⤵ here</button>
   <button type="button" data-lay-act="up" title="Move up one slot">↑</button>
   <button type="button" data-lay-act="down" title="Move down one slot">↓</button>
   <button type="button" data-lay-act="col" title="Send to the other column (or to full width)">⇄</button>
@@ -10046,6 +10046,9 @@ function _layDecorate() {
     el.classList.toggle("lay-hidden", hidden.includes(el.dataset.lay));
     el.classList.toggle("lay-picked", LAY_PICK === el.dataset.lay);
   }
+  // the whole page says whether something is being held, so the next click is
+  // never a guess
+  document.body.classList.toggle("lay-holding", !!LAY_PICK);
 }
 function _layStrip() {
   for (const el of document.querySelectorAll(".lay-target")) {
@@ -10064,9 +10067,19 @@ window.toggleLayoutMode = function () {
 };
 document.addEventListener("keydown", (e) => {
   if (e.ctrlKey && e.shiftKey && (e.key === "L" || e.key === "l")) {
-    e.preventDefault(); toggleLayoutMode();
+    e.preventDefault(); toggleLayoutMode(); return;
   }
 });
+// ⚠ Esc needs the CAPTURE phase: the app's own Escape handling (menus, modals) runs
+// first and swallows it, so a bubble-phase listener here never fired — measured
+// with a real key press, not assumed. Guarded on LAY_PICK so nothing else's Escape
+// is stolen: a held area with no way to put it down is a trap.
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && LAY_ON && LAY_PICK) {
+    e.preventDefault(); e.stopPropagation();
+    LAY_PICK = null; _layDecorate(); _layHudRefresh();
+  }
+}, true);
 // SIZE: the browser's own resize handle writes width/height straight onto the
 // element's inline style, so there is nothing to track while the mouse moves — the
 // truth is already in the DOM. One snapshot when the mouse comes up saves it, so a
@@ -10101,9 +10114,34 @@ function _layRecordOrder(parent) {
 const _layHomes = () => [document.querySelector(".powers-main"),
                          document.querySelector(".powers-side"),
                          document.getElementById("tab-powers")].filter(Boolean);
+// One place-before, used by the ⤵ button AND by a plain click anywhere in a target
+// area while holding one. Placing into the held area itself just cancels.
+function _layPlaceBefore(el) {
+  const src = LAY_PICK && document.querySelector(`[data-lay="${LAY_PICK}"]`);
+  LAY_PICK = null;
+  if (!src || src === el || src.contains(el)) return;
+  const from = src.parentNode;
+  el.parentNode.insertBefore(src, el);
+  _layRecordOrder(el.parentNode);
+  if (from !== el.parentNode) _layRecordOrder(from);
+}
 document.addEventListener("click", (e) => {
   if (!LAY_ON) return;
   const btn = e.target.closest && e.target.closest(".lay-bar [data-lay-act]");
+  // ⚠ WHILE HOLDING, THE WHOLE AREA IS THE TARGET (Joel, 2026-08-04: "I still
+  // cannot move any objects"). Real-mouse testing showed the mechanism worked and
+  // the AIM did not: the second click had to hit another area's 12px ⤵ glyph, and
+  // a click anywhere else did nothing at all, which reads as "stuck in its box".
+  // Now: holding + click anywhere in another area places it there.
+  if (!btn && LAY_PICK) {
+    const tgt = e.target.closest && e.target.closest(".lay-target");
+    if (tgt) {
+      e.preventDefault(); e.stopPropagation();
+      _layPlaceBefore(tgt);
+      applyLayoutDraft(); _layHudRefresh();
+      return;
+    }
+  }
   if (!btn) return;
   e.preventDefault(); e.stopPropagation();          // never let it reach the app
   const el = btn.closest(".lay-target"), act = btn.dataset.layAct;
@@ -10112,15 +10150,7 @@ document.addEventListener("click", (e) => {
   if (act === "pick") {
     LAY_PICK = (LAY_PICK === el.dataset.lay) ? null : el.dataset.lay;   // click again = cancel
   } else if (act === "place") {
-    const src = LAY_PICK && document.querySelector(`[data-lay="${LAY_PICK}"]`);
-    if (!src || src === el || src.contains(el)) { LAY_PICK = null; }
-    else {
-      const from = src.parentNode;
-      el.parentNode.insertBefore(src, el);
-      _layRecordOrder(el.parentNode);
-      if (from !== el.parentNode) _layRecordOrder(from);
-      LAY_PICK = null;
-    }
+    _layPlaceBefore(el);
   } else if (act === "up" || act === "down") {
     const list = sibs(), i = list.indexOf(el);
     const j = act === "up" ? i - 1 : i + 1;
@@ -10146,6 +10176,9 @@ document.addEventListener("click", (e) => {
   // hid until a later render, because display is written in one place only.
   applyLayoutDraft(); _layHudRefresh();
 }, true);
+window.layCancelPick = function () {
+  LAY_PICK = null; _layDecorate(); _layHudRefresh();
+};
 window.layShow = function (key) {
   const d = _layDraft();
   d.hidden = (d.hidden || []).filter(k => k !== key);
@@ -10163,10 +10196,11 @@ function _layHud() {
     h.innerHTML = `<div class="lay-hud-h" id="lay-hud-grip" title="Drag me out of the way">🧩 Layout mode
         <button type="button" onclick="layHudCollapse()" id="lay-hud-min" title="Collapse to a bar">–</button>
         <button type="button" onclick="toggleLayoutMode()" title="Leave layout mode">✕</button></div>
-      <p class="muted small keep-whole">Click <b>⠿</b> to pick an area up, scroll to wherever
-        you want it, then click <b>⤵</b> on the area it should sit before. <b>↑ ↓</b> nudge it a
-        slot, <b>⇄</b> sends it to the other column or to full width, <b>✕</b> hides it.
-        Drag any area's bottom-right corner to resize it. Nothing here changes your build.</p>
+      <p class="muted small keep-whole">Click <b>⠿ move</b> on an area, scroll to wherever you
+        want it, then <b>click that area</b> — anywhere in it — and the held one drops in above it.
+        To let go without moving anything, click <b>⠿ move</b> again. <b>↑ ↓</b> nudge a slot,
+        <b>⇄</b> sends it to the other column or to full width, <b>✕</b> hides it. Drag any area's
+        bottom-right corner to resize it. Nothing here changes your build.</p>
       <div id="lay-pick" class="lay-pick" hidden></div>
       <div id="lay-hud-list"></div>
       <div id="lay-hidden"></div>
@@ -10176,9 +10210,15 @@ function _layHud() {
       </div>`;
     document.body.appendChild(h);
     _layHudGrip(h);
+    // ⚠ CLAMP the remembered position: a panel parked where the window used to be
+    // wider is invisible and unreachable, and its own ✕ is the only way to close it
+    // (seen: the app window sat partly off-screen and the panel went with it).
     const pos = _layDraft().hud;
-    if (pos) { h.style.left = pos.x + "px"; h.style.top = pos.y + "px";
-               h.style.right = "auto"; h.style.bottom = "auto"; }
+    if (pos) {
+      h.style.left = Math.max(0, Math.min(innerWidth - 120, pos.x)) + "px";
+      h.style.top = Math.max(0, Math.min(innerHeight - 40, pos.y)) + "px";
+      h.style.right = "auto"; h.style.bottom = "auto";
+    }
     if (_layDraft().hudMin) h.classList.add("lay-min");
   }
   _layHudRefresh();
@@ -10241,8 +10281,11 @@ function _layHudRefresh() {
   if (pk) {
     const meta = LAY_PICK && LAY_AREAS.find(a => a[0] === LAY_PICK);
     pk.hidden = !LAY_PICK;
+    // a held area needs a VISIBLE way down, not only a key: Escape is swallowed by
+    // the app's own handlers in the frozen shell (measured with a real key press)
     pk.innerHTML = LAY_PICK
-      ? `holding <b>${escHtml(meta ? meta[2] : LAY_PICK)}</b> — scroll to where you want it and click ⤵`
+      ? `holding <b>${escHtml(meta ? meta[2] : LAY_PICK)}</b> — now click the area it should sit
+         above <button type="button" class="lay-cancel" onclick="layCancelPick()">✖ put it back</button>`
       : "";
   }
 }
