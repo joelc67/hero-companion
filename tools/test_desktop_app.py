@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 59          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 63          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement)
 
@@ -271,6 +271,26 @@ def main():
     # ⚠ REVERTED and pinned (work order 2026-08-04 3:11 PM): multicol assigns
     # boxes to columns by HEIGHT, so it flowed column-major and stacked Primary
     # under Secondary. The catalogue's premise is one powerset per column.
+    # 🧩 LAYOUT MODE — the design tool Joel asked for (2026-08-04). It must be a
+    # VIEW-only tool: if it can ever touch build state it is a bug, not a feature.
+    check("layout mode exists and is reachable from the View menu",
+          'id="layout-mode-item"' in index and "window.toggleLayoutMode" in app_js
+          and "body.layout-mode .lay-target" in css)
+    check("...and it is scoped: every layout-mode rule hangs off body.layout-mode",
+          all(ln.strip().startswith(("body.layout-mode", "#lay-hud", ".lay-hud", ".lay-row", "/*", "*", "}"))
+              or not ln.strip()
+              for ln in css[css.find("/* ── 🧩 LAYOUT MODE"):css.find("\n\n", css.find("/* ── 🧩 LAYOUT MODE"))]
+                         .splitlines() if "{" in ln),
+          "leaving the mode has to restore the shipped layout exactly")
+    _lay = app_js[app_js.find("const LAY_AREAS"):app_js.find("init();", app_js.find("const LAY_AREAS"))]
+    check("NEGATIVE CONTROL: layout mode never writes build state",
+          not any(s in _lay for s in ("recordEdit(", "saveProgress(", "solveSlotting(",
+                                      "autoSaveTick(", "/build/solve")),
+          "a design tool that can dirty a character is a bug with a nice outline")
+    check("...and the size snapshot needs no layout callback to work",
+          "new ResizeObserver" not in _lay and "_laySnapshot" in _lay
+          and 'addEventListener("pointerup"' in _lay,
+          "the pane fires no layout callbacks, so an observer here is untestable code")
     check("the catalogue is a GRID, never multicol",
           "display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr))" in css
           and "column-width: 210px" not in css,

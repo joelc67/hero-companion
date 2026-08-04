@@ -2989,3 +2989,46 @@ summary:hover { color: var(--ink); }
 .sb-cols { columns: 24ch; column-gap: var(--s3); }
 .sb-cols > p { break-inside: avoid; }
 #cmd-card, #setbonus-blurb { margin: 0; }
+
+/* ── 🧩 LAYOUT MODE (design tool, 2026-08-04) ───────────────────────────────────
+   Every rule here is scoped to body.layout-mode, so the shipped layout cannot be
+   changed by accident and leaving the mode restores it exactly. The resize handle
+   is the BROWSER's own (`resize: both`), which is why there is no drag maths in
+   app.js: the platform already ships this. `overflow: auto` is required for
+   `resize` to apply at all — inside this mode only, so the no-inner-scrollbar
+   ruling still holds everywhere a user ever sees. */
+body.layout-mode .lay-target {
+  resize: both; overflow: auto;
+  outline: 1px dashed var(--accent); outline-offset: 2px; position: relative;
+}
+body.layout-mode .lay-target.lay-dragging { opacity: .45; }
+/* the name badge is ABSOLUTE on purpose: a badge in the flow would add height to
+   the box being measured, and the numbers he sends me would be wrong by its size */
+body.layout-mode .lay-target::before {
+  content: "⠿ " attr(data-lay-label);
+  position: absolute; top: 0; left: 0; z-index: 3; pointer-events: none;
+  font-size: 10.5px; letter-spacing: .03em; padding: 1px 6px;
+  background: var(--accent); color: #111; border-radius: 0 0 var(--r1) 0;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#lay-hud {
+  position: fixed; right: 12px; bottom: 12px; z-index: 60; width: 320px;
+  max-height: 70vh; overflow: auto;                 /* the HUD is not app surface */
+  background: var(--panel); border: 2px solid var(--accent); border-radius: var(--r2);
+  padding: 8px 10px; box-shadow: 0 8px 26px rgba(0, 0, 0, .5); font-size: 12px;
+}
+.lay-hud-h { display: flex; align-items: center; gap: 8px; font-weight: 700;
+  color: var(--accent); margin-bottom: 4px; }
+.lay-hud-h button { margin-left: auto; background: none; border: 0; color: var(--muted);
+  cursor: pointer; font-size: 13px; }
+.lay-row { display: flex; gap: 8px; padding: 1px 0; color: var(--muted); }
+.lay-row span { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; }
+.lay-row b { font-variant-numeric: tabular-nums; }
+.lay-row.lay-edited { color: var(--ink); }
+.lay-row.lay-edited b { color: var(--accent); }
+.lay-hud-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.lay-hud-btns button { flex: 1 1 auto; font-size: 11px; padding: 4px 6px;
+  border-radius: var(--r1); border: 1px solid var(--accent); background: var(--panel2);
+  color: inherit; cursor: pointer; }
+.lay-hud-btns button:hover { background: var(--accent); color: #111; }

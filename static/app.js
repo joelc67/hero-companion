@@ -5151,6 +5151,7 @@ function renderPowers() {
   updateEditBar();
   updateEpicBadge();
   renderConverterGuide();
+  applyLayoutDraft();   // a render would otherwise revert the layout draft silently
 }
 
 // ── Totals-checkbox redesign (Joel's four-state visual language, completed
@@ -9924,6 +9925,217 @@ function renderMarkdown(md) {
   }
   return html;
 }
+
+// ── 🧩 LAYOUT MODE — a design tool, not a feature (Joel, 2026-08-04: "make it so
+// I can move each area and change its width and height then have you check it and
+// make the changes set"). Three evenings went into me guessing at proportions from
+// screenshots; this hands the ruler to the person whose eyes are the acceptance
+// test, and hands me his actual numbers to bake into the stylesheet.
+//
+// Deliberately built out of platform features, no library and no new dependency:
+// CSS `resize: both` gives every area its own native corner handle, HTML5
+// draggable moves an area to another slot, localStorage remembers the draft so it
+// survives the relaunch that static changes need anyway.
+//
+// ⚠ It NEVER touches build state: no recordEdit, no saveProgress, no solve. A
+// layout draft is CSS in a pocket, and "Bake it" is a Claude edit to style.css,
+// never something the app writes to itself.
+const LAY_AREAS = [
+  ["powers-main", ".powers-main", "left column (wall + catalogue)"],
+  ["powers-side", ".powers-side", "right column (assistant + plan)"],
+  ["builder", "#builder", "the powers wall + catalogue panel"],
+  ["cat-cols", ".cat-cols", "powerset columns"],
+  ["cat-side", ".cat-side", "the two cards beside the powersets"],
+  ["cmd-card", "#cmd-card", "⌨ in-game commands"],
+  ["setbonus-blurb", "#setbonus-blurb", "💠 how set bonuses stack"],
+  ["assistant", "#assistant", "build assistant"],
+  ["endgame-plan-panel", "#endgame-plan-panel", "epic + incarnate plan"],
+  ["inherent-card", "#inherent-card", "🧬 your inherent"],
+  ["endgame-panel", "#endgame-panel", "accolades"],
+  ["card-home", "#card-home", "card strip (empty while the cards sit elsewhere)"],
+  ["tray-out", "#tray-out", "in-game power trays"],
+  ["order-out", "#order-out", "level-by-level plan"],
+  ["conv-guide-details", "#conv-guide-details", "converters guide"],
+];
+let LAY_ON = false;
+const _layDraft = () => {
+  try { return JSON.parse(localStorage.getItem("hcLayoutDraft") || "{}"); }
+  catch (e) { return {}; }
+};
+const _laySave = (d) => {
+  try { localStorage.setItem("hcLayoutDraft", JSON.stringify(d)); } catch (e) { /* ignore */ }
+};
+function _layEls() {
+  const out = [];
+  for (const [key, sel, label] of LAY_AREAS) {
+    const el = document.querySelector(sel);
+    if (el) { el.dataset.lay = key; el.dataset.layLabel = label; out.push(el); }
+  }
+  return out;
+}
+// Re-applied after every render: renderPowers rebuilds the catalogue, so the
+// draft has to be re-stamped or a recompute silently reverts his work.
+function applyLayoutDraft() {
+  const d = _layDraft();
+  for (const el of _layEls()) {
+    const s = (d.size || {})[el.dataset.lay];
+    if (!s) continue;
+    if (s.w) { el.style.width = s.w + "px"; el.style.flex = "0 0 auto"; }
+    if (s.h) { el.style.height = s.h + "px"; }
+  }
+  const order = d.order || {};
+  for (const [parentKey, keys] of Object.entries(order)) {
+    const parent = document.querySelector(`[data-lay="${parentKey}"]`)
+      || document.querySelector("." + parentKey) || document.getElementById(parentKey);
+    if (!parent) continue;
+    for (const k of keys) {
+      const el = document.querySelector(`[data-lay="${k}"]`);
+      if (el) parent.appendChild(el);          // appending in draft order re-sorts
+    }
+  }
+  // ⚠ renderPowers RE-CREATES .cat-cols and .cat-side, so their layout-mode class
+  // and their saved size both have to be re-stamped after every render or his work
+  // vanishes on the next recompute.
+  if (LAY_ON) { _layDecorate(); _layHudRefresh(); }
+}
+// ⚠ The name badge is a CSS ::before reading data-lay-label, NEVER an injected
+// node: an injected label ADDS HEIGHT to the very box he is measuring, and the two
+// slabs whose renderers rewrite innerHTML (#tray-out, #order-out) silently ate it.
+function _layDecorate() {
+  for (const el of _layEls()) { el.classList.add("lay-target"); el.draggable = true; }
+}
+function _layStrip() {
+  for (const el of document.querySelectorAll(".lay-target")) {
+    el.classList.remove("lay-target");
+    el.draggable = false;
+  }
+}
+window.toggleLayoutMode = function () {
+  LAY_ON = !LAY_ON;
+  document.body.classList.toggle("layout-mode", LAY_ON);
+  const item = $("layout-mode-item");
+  if (item) item.querySelector("b").textContent = `🧩 Layout mode — ${LAY_ON ? "ON" : "off"}`;
+  if (LAY_ON) { showTab("powers"); _layDecorate(); _layHud(); }
+  else { _layStrip(); const h = $("lay-hud"); if (h) h.remove(); }
+};
+document.addEventListener("keydown", (e) => {
+  if (e.ctrlKey && e.shiftKey && (e.key === "L" || e.key === "l")) {
+    e.preventDefault(); toggleLayoutMode();
+  }
+});
+// SIZE: the browser's own resize handle writes width/height straight onto the
+// element's inline style, so there is nothing to track while the mouse moves — the
+// truth is already in the DOM. One snapshot when the mouse comes up saves it, so a
+// later recompute (which rebuilds .cat-cols and .cat-side from scratch) can put it
+// back. ⚠ NOT a ResizeObserver, deliberately: the Claude pane fires no layout
+// callbacks at all, so an observer here is code neither of us can test — and the
+// snapshot needs no observer to be correct.
+function _laySnapshot() {
+  if (!LAY_ON) return;
+  const d = _layDraft(); d.size = d.size || {};
+  for (const el of _layEls()) {
+    const w = parseInt(el.style.width, 10), h = parseInt(el.style.height, 10);
+    if (w || h) d.size[el.dataset.lay] = { w: w || 0, h: h || 0 };
+  }
+  _laySave(d); _layHudRefresh();
+}
+document.addEventListener("pointerup", () => { if (LAY_ON) setTimeout(_laySnapshot, 0); });
+// MOVE: drop an area onto another and it takes that slot, including across columns.
+document.addEventListener("dragstart", (e) => {
+  if (!LAY_ON) return;
+  const el = e.target.closest && e.target.closest(".lay-target");
+  if (!el) return;
+  e.dataTransfer.setData("text/plain", el.dataset.lay);
+  el.classList.add("lay-dragging");
+});
+document.addEventListener("dragover", (e) => { if (LAY_ON) e.preventDefault(); });
+document.addEventListener("dragend", () => {
+  document.querySelectorAll(".lay-dragging").forEach(n => n.classList.remove("lay-dragging"));
+});
+document.addEventListener("drop", (e) => {
+  if (!LAY_ON) return;
+  e.preventDefault();
+  const key = e.dataTransfer.getData("text/plain");
+  const src = document.querySelector(`[data-lay="${key}"]`);
+  const tgt = e.target.closest && e.target.closest(".lay-target");
+  if (!src || !tgt || src === tgt || src.contains(tgt)) return;
+  tgt.parentNode.insertBefore(src, tgt);
+  const d = _layDraft(); d.order = d.order || {};
+  const pkey = tgt.parentNode.dataset.lay
+    || (tgt.parentNode.className || "").split(" ").filter(Boolean)[0]
+    || tgt.parentNode.id;
+  d.order[pkey] = [...tgt.parentNode.children]
+    .filter(n => n.dataset && n.dataset.lay).map(n => n.dataset.lay);
+  _laySave(d); _layHudRefresh();
+});
+function _layHud() {
+  let h = $("lay-hud");
+  if (!h) {
+    h = document.createElement("div");
+    h.id = "lay-hud";
+    h.innerHTML = `<div class="lay-hud-h">🧩 Layout mode
+        <button type="button" onclick="toggleLayoutMode()" title="Leave layout mode">✕</button></div>
+      <p class="muted small keep-whole">Drag an area's ⠿ label onto another area to move it.
+        Drag any area's bottom-right corner to resize it. Nothing here changes your build.</p>
+      <div id="lay-hud-list"></div>
+      <div class="lay-hud-btns">
+        <button type="button" onclick="copyLayoutForClaude()">📋 Copy sizes for Claude</button>
+        <button type="button" onclick="resetLayoutDraft()">↺ Reset to the shipped layout</button>
+      </div>`;
+    document.body.appendChild(h);
+  }
+  _layHudRefresh();
+}
+function _layHudRefresh() {
+  const list = $("lay-hud-list"); if (!list) return;
+  const d = _layDraft(), rows = [];
+  for (const el of _layEls()) {
+    const r = el.getBoundingClientRect();
+    const edited = (d.size || {})[el.dataset.lay];
+    rows.push(`<div class="lay-row${edited ? " lay-edited" : ""}">
+      <span>${escHtml(el.dataset.layLabel)}</span>
+      <b>${Math.round(r.width)}×${Math.round(r.height)}</b></div>`);
+  }
+  list.innerHTML = rows.join("");
+}
+// The handoff: everything I need to bake it into style.css, on the clipboard.
+window.copyLayoutForClaude = function () {
+  const d = _layDraft(), areas = [];
+  for (const el of _layEls()) {
+    const r = el.getBoundingClientRect(), p = el.parentNode;
+    areas.push({
+      key: el.dataset.lay, label: el.dataset.layLabel,
+      w: Math.round(r.width), h: Math.round(r.height),
+      x: Math.round(r.x), y: Math.round(r.y + scrollY),
+      parent: (p.dataset && p.dataset.lay) || p.id || (p.className || "").split(" ")[0],
+      index: [...p.children].indexOf(el),
+      edited: !!(d.size || {})[el.dataset.lay],
+    });
+  }
+  const payload = {
+    what: "hero-companion layout draft", tab: "powers",
+    viewport: { w: innerWidth, h: innerHeight },
+    zoom: getComputedStyle(document.documentElement).zoom || "1",
+    build: { archetype: build.archetype, primary: build.primary, secondary: build.secondary,
+             pools: build.pools, epic: build.epic, picks: (build.powers || []).length },
+    moved: d.order || {}, areas,
+  };
+  const ok = copyToClipboard(JSON.stringify(payload, null, 1));
+  const btns = document.querySelector("#lay-hud .lay-hud-btns button");
+  if (btns) {
+    const t = btns.textContent;
+    btns.textContent = ok ? "✓ copied — paste it to Claude" : "✕ copy failed";
+    setTimeout(() => { btns.textContent = t; }, 2200);
+  }
+};
+window.resetLayoutDraft = function () {
+  try { localStorage.removeItem("hcLayoutDraft"); } catch (e) { /* ignore */ }
+  for (const el of _layEls()) { el.style.width = ""; el.style.height = ""; el.style.flex = ""; }
+  // ⚠ A MOVED area was physically re-parented, so clearing the draft is not enough
+  // to undo it — the page has to come back from the shipped HTML. Reload does that
+  // and costs nothing here (the build is saved; layout mode never edited it).
+  location.reload();
+};
 
 init();
 setTimeout(() => collapseLongExplanations(), 800);   // static prose present at load
