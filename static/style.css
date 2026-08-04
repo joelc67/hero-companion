@@ -3017,8 +3017,14 @@ body.layout-mode .lay-target::before {
   background: var(--panel); border: 2px solid var(--accent); border-radius: var(--r2);
   padding: 8px 10px; box-shadow: 0 8px 26px rgba(0, 0, 0, .5); font-size: 12px;
 }
+/* A nested area's badge sits exactly on its parent's and the two names read as one
+   ("build assistant ssistant + plan)"). Stepping ACROSS clipped the parent's name
+   behind the child's badge, so each depth steps DOWN instead. */
+body.layout-mode .lay-target .lay-target::before { top: 15px; }
+body.layout-mode .lay-target .lay-target .lay-target::before { top: 30px; }
+body.layout-mode .lay-target .lay-target .lay-target .lay-target::before { top: 45px; }
 .lay-hud-h { display: flex; align-items: center; gap: 8px; font-weight: 700;
-  color: var(--accent); margin-bottom: 4px; }
+  color: var(--accent); margin-bottom: 4px; white-space: nowrap; }
 .lay-hud-h button { margin-left: auto; background: none; border: 0; color: var(--muted);
   cursor: pointer; font-size: 13px; }
 .lay-row { display: flex; gap: 8px; padding: 1px 0; color: var(--muted); }
