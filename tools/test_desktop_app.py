@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 63          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 67          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement)
 
@@ -276,17 +276,44 @@ def main():
     check("layout mode exists and is reachable from the View menu",
           'id="layout-mode-item"' in index and "window.toggleLayoutMode" in app_js
           and "body.layout-mode .lay-target" in css)
-    check("...and it is scoped: every layout-mode rule hangs off body.layout-mode",
-          all(ln.strip().startswith(("body.layout-mode", "#lay-hud", ".lay-hud", ".lay-row", "/*", "*", "}"))
-              or not ln.strip()
-              for ln in css[css.find("/* ── 🧩 LAYOUT MODE"):css.find("\n\n", css.find("/* ── 🧩 LAYOUT MODE"))]
-                         .splitlines() if "{" in ln),
-          "leaving the mode has to restore the shipped layout exactly")
+    # Scoping is the whole safety story: a layout-mode rule that touches an APP
+    # selector without body.layout-mode in front of it would leak into the shipped
+    # layout, and leaving the mode would no longer restore it. Rules that only
+    # target the tool's own furniture (#lay-hud, .lay-*) are fine unscoped.
+    _laycss = css[css.find("/* ── 🧩 LAYOUT MODE"):]
+    _laysel = [ln.split("{")[0].strip() for ln in _laycss.splitlines() if "{" in ln
+               and not ln.strip().startswith(("/*", "*"))]
+    check("...and it is scoped: no layout-mode rule touches an app selector unscoped",
+          bool(_laysel) and all("body.layout-mode" in s
+                                or all(p.lstrip().startswith((".lay-", "#lay-"))
+                                       for p in s.split(","))
+                                for s in _laysel),
+          f"checked {len(_laysel)} selectors; leaving the mode must restore the shipped layout")
     _lay = app_js[app_js.find("const LAY_AREAS"):app_js.find("init();", app_js.find("const LAY_AREAS"))]
     check("NEGATIVE CONTROL: layout mode never writes build state",
           not any(s in _lay for s in ("recordEdit(", "saveProgress(", "solveSlotting(",
                                       "autoSaveTick(", "/build/solve")),
           "a design tool that can dirty a character is a bug with a nice outline")
+    # ⚠ HTML5 DRAG IS BANNED HERE and the reason is Joel's field report: a
+    # ::before badge cannot be grabbed, drag does not scroll the page mid-gesture,
+    # and every area therefore felt "stuck inside its own box". Pick-then-place is
+    # two clicks, so scrolling in between is just scrolling.
+    check("moving an area is CLICKS, not HTML5 drag",
+          "dataTransfer" not in _lay and "dragstart" not in _lay
+          and 'data-lay-act="pick"' in _lay and 'data-lay-act="place"' in _lay,
+          "matches the definition, not the comment explaining why drag went")
+    check("the toolbar is a real element with real buttons",
+          "_LAY_BAR" in _lay and 'class="lay-bar"' in _lay
+          and "body.layout-mode .lay-bar" in css,
+          "a ::before badge has pointer-events: none and can never be clicked")
+    check("an area can leave its column, and hiding one is REVERSIBLE",
+          "_layHomes" in _lay and 'data-lay-act="col"' in _lay
+          and "window.layShow" in _lay and "lay-restore" in _lay,
+          "choice doctrine: a removed area that cannot come back is a trap")
+    check("NEGATIVE CONTROL: a parent slot is never resolved by CSS class",
+          'querySelector("." + parentKey)' not in app_js
+          and "|| p.id || null" in _lay,
+          "a class key matched body.theme-hero and would append panels into <body>")
     check("...and the size snapshot needs no layout callback to work",
           "new ResizeObserver" not in _lay and "_laySnapshot" in _lay
           and 'addEventListener("pointerup"' in _lay,

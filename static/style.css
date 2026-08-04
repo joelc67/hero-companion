@@ -3001,16 +3001,50 @@ body.layout-mode .lay-target {
   resize: both; overflow: auto;
   outline: 1px dashed var(--accent); outline-offset: 2px; position: relative;
 }
-body.layout-mode .lay-target.lay-dragging { opacity: .45; }
-/* the name badge is ABSOLUTE on purpose: a badge in the flow would add height to
-   the box being measured, and the numbers he sends me would be wrong by its size */
-body.layout-mode .lay-target::before {
-  content: "⠿ " attr(data-lay-label);
-  position: absolute; top: 0; left: 0; z-index: 3; pointer-events: none;
-  font-size: 10.5px; letter-spacing: .03em; padding: 1px 6px;
+/* THE TOOLBAR: absolute, so it takes no space in the box being measured — an
+   in-flow badge added height to the very thing he is sizing. It is a real element
+   with real buttons, because the ::before badge it replaces could not be clicked
+   at all (pseudo-element, pointer-events: none) and that is what made every area
+   feel "stuck inside its own box". */
+body.layout-mode .lay-bar {
+  position: absolute; top: 0; left: 0; z-index: 4;
+  /* ⚠ width: max-content is load-bearing. An absolutely positioned flex box
+     shrink-fits, and the label (overflow: hidden) is the part that yields — every
+     name rendered as "le…". Sizing to content puts the names back. */
+  width: max-content;
+  display: flex; align-items: center; gap: 2px; padding: 1px 4px;
   background: var(--accent); color: #111; border-radius: 0 0 var(--r1) 0;
-  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 10.5px; max-width: 100%;
 }
+/* ⚠ flex: 0 0 auto — with the default 0 1 auto the label shrank to 16px inside the
+   shrink-to-fit bar and every name read "le…" (measured, not guessed) */
+body.layout-mode .lay-bar-name { flex: 0 0 auto; max-width: 190px; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; margin: 0 3px; }
+body.layout-mode .lay-bar button {
+  background: rgba(0, 0, 0, .18); color: #111; border: 0; border-radius: 3px;
+  font-size: 11px; line-height: 1; padding: 2px 4px; cursor: pointer;
+}
+body.layout-mode .lay-bar button:hover { background: #111; color: var(--accent); }
+/* a nested area's toolbar sits on its parent's; step each depth DOWN (across
+   clipped the parent's name behind the child's) */
+body.layout-mode .lay-target .lay-bar { top: 15px; }
+body.layout-mode .lay-target .lay-target .lay-bar { top: 30px; }
+body.layout-mode .lay-target .lay-target .lay-target .lay-bar { top: 45px; }
+/* the area waiting to be placed */
+body.layout-mode .lay-target.lay-picked { outline: 2px solid var(--def); outline-offset: 2px; }
+body.layout-mode .lay-target.lay-picked > .lay-bar { background: var(--def); }
+.lay-pick { background: var(--panel2); border-left: 3px solid var(--def);
+  padding: 3px 6px; margin: 4px 0; font-size: 11px; }
+.lay-hidden-h { color: var(--muted); font-size: 10px; text-transform: uppercase;
+  letter-spacing: .05em; margin: 6px 0 2px; }
+.lay-restore { display: block; width: 100%; text-align: left; font-size: 11px;
+  padding: 2px 5px; margin-bottom: 2px; border-radius: var(--r1);
+  border: 1px dashed var(--border); background: var(--panel2); color: inherit;
+  cursor: pointer; }
+.lay-restore:hover { border-color: var(--accent); color: var(--accent); }
+/* collapsed: just the header bar, so it can sit anywhere without covering an area */
+#lay-hud.lay-min > *:not(.lay-hud-h) { display: none; }
+#lay-hud.lay-min { width: auto; }
 #lay-hud {
   position: fixed; right: 12px; bottom: 12px; z-index: 60; width: 320px;
   max-height: 70vh; overflow: auto;                 /* the HUD is not app surface */

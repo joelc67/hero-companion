@@ -1031,6 +1031,9 @@ async function refreshBuildViews() {
         "a suggested tray layout and attack order", tmp.innerHTML);
     }
   }
+  // ⚠ These two slabs REPLACE their own innerHTML, which eats the layout-mode
+  // toolbar injected into them (13 of 15 areas had one until this line existed).
+  if (typeof LAY_ON !== "undefined" && LAY_ON) applyLayoutDraft();
 }
 
 // Interactive leveling STEPPER: walk each pick, see the stat it contributes (delta) +
@@ -9958,6 +9961,7 @@ const LAY_AREAS = [
   ["conv-guide-details", "#conv-guide-details", "converters guide"],
 ];
 let LAY_ON = false;
+let LAY_PICK = null;      // the area waiting to be placed, by key
 const _layDraft = () => {
   try { return JSON.parse(localStorage.getItem("hcLayoutDraft") || "{}"); }
   catch (e) { return {}; }
@@ -9976,8 +9980,11 @@ function _layEls() {
 // Re-applied after every render: renderPowers rebuilds the catalogue, so the
 // draft has to be re-stamped or a recompute silently reverts his work.
 function applyLayoutDraft() {
-  const d = _layDraft();
+  const d = _layDraft(), hidden = d.hidden || [];
   for (const el of _layEls()) {
+    // hiding survives a render and survives leaving layout mode — it is a layout
+    // decision, not a highlight
+    el.style.display = hidden.includes(el.dataset.lay) ? "none" : "";
     const s = (d.size || {})[el.dataset.lay];
     if (!s) continue;
     if (s.w) { el.style.width = s.w + "px"; el.style.flex = "0 0 auto"; }
@@ -9985,9 +9992,15 @@ function applyLayoutDraft() {
   }
   const order = d.order || {};
   for (const [parentKey, keys] of Object.entries(order)) {
+    // ⚠ RESOLVE BY data-lay OR ID ONLY. The class fallback that used to be here
+    // matched `body.theme-hero` for a stray "theme-hero" key and would have
+    // appended five panels straight into <body>. Caught by reading the draft the
+    // round trip produced, not by reasoning about it.
     const parent = document.querySelector(`[data-lay="${parentKey}"]`)
-      || document.querySelector("." + parentKey) || document.getElementById(parentKey);
-    if (!parent) continue;
+      || document.getElementById(parentKey);
+    if (!parent || parent === document.body || !document.getElementById("tab-powers")
+        || !document.getElementById("tab-powers").contains(parent)
+        && parent.id !== "tab-powers") continue;
     for (const k of keys) {
       const el = document.querySelector(`[data-lay="${k}"]`);
       if (el) parent.appendChild(el);          // appending in draft order re-sorts
@@ -9998,16 +10011,47 @@ function applyLayoutDraft() {
   // vanishes on the next recompute.
   if (LAY_ON) { _layDecorate(); _layHudRefresh(); }
 }
-// ⚠ The name badge is a CSS ::before reading data-lay-label, NEVER an injected
-// node: an injected label ADDS HEIGHT to the very box he is measuring, and the two
-// slabs whose renderers rewrite innerHTML (#tray-out, #order-out) silently ate it.
+// ⚠⚠ HTML5 DRAG IS GONE, and it was my error (Joel, 2026-08-04: "It won't let me
+// drag windows from one window to another window, or remove empty windows, or drag
+// a window down... They all seem stuck inside their own box"). Three reasons it
+// could never work, all mine:
+//   1. I told him to drag the ⠿ badge, which was a CSS ::before with
+//      pointer-events: none — a pseudo-element cannot be grabbed at all.
+//   2. HTML5 drag does not scroll the page mid-gesture, so an area could never be
+//      placed anywhere further down than the screen already showed.
+//   3. There was no way to remove an area, empty or otherwise.
+// PICK THEN PLACE replaces it: two separate clicks, so scrolling in between is
+// just... scrolling. Every action is a real button on a real toolbar.
+const _LAY_BAR = `<div class="lay-bar">
+  <button type="button" data-lay-act="pick" title="Pick this area up, then click ⤵ on the area it should go before">⠿</button>
+  <span class="lay-bar-name"></span>
+  <button type="button" data-lay-act="place" title="Put the picked area before this one">⤵</button>
+  <button type="button" data-lay-act="up" title="Move up one slot">↑</button>
+  <button type="button" data-lay-act="down" title="Move down one slot">↓</button>
+  <button type="button" data-lay-act="col" title="Send to the other column (or to full width)">⇄</button>
+  <button type="button" data-lay-act="hide" title="Hide this area — restorable from the panel">✕</button>
+</div>`;
+// ⚠ The toolbar is position: absolute, so it takes NO space in the box being
+// measured. An in-flow badge added height to the very thing he is sizing, and the
+// two slabs whose renderers rewrite innerHTML silently ate it.
 function _layDecorate() {
-  for (const el of _layEls()) { el.classList.add("lay-target"); el.draggable = true; }
+  const d = _layDraft(), hidden = d.hidden || [];
+  for (const el of _layEls()) {
+    el.classList.add("lay-target");
+    el.draggable = false;
+    if (!el.querySelector(":scope > .lay-bar")) {
+      el.insertAdjacentHTML("afterbegin", _LAY_BAR);
+      el.querySelector(":scope > .lay-bar .lay-bar-name").textContent = el.dataset.layLabel;
+    }
+    el.classList.toggle("lay-hidden", hidden.includes(el.dataset.lay));
+    el.classList.toggle("lay-picked", LAY_PICK === el.dataset.lay);
+  }
 }
 function _layStrip() {
   for (const el of document.querySelectorAll(".lay-target")) {
-    el.classList.remove("lay-target");
-    el.draggable = false;
+    el.classList.remove("lay-target", "lay-picked", "lay-hidden");
+    const bar = el.querySelector(":scope > .lay-bar");
+    if (bar) bar.remove();
   }
 }
 window.toggleLayoutMode = function () {
@@ -10040,63 +10084,167 @@ function _laySnapshot() {
   _laySave(d); _layHudRefresh();
 }
 document.addEventListener("pointerup", () => { if (LAY_ON) setTimeout(_laySnapshot, 0); });
-// MOVE: drop an area onto another and it takes that slot, including across columns.
-document.addEventListener("dragstart", (e) => {
-  if (!LAY_ON) return;
-  const el = e.target.closest && e.target.closest(".lay-target");
-  if (!el) return;
-  e.dataTransfer.setData("text/plain", el.dataset.lay);
-  el.classList.add("lay-dragging");
-});
-document.addEventListener("dragover", (e) => { if (LAY_ON) e.preventDefault(); });
-document.addEventListener("dragend", () => {
-  document.querySelectorAll(".lay-dragging").forEach(n => n.classList.remove("lay-dragging"));
-});
-document.addEventListener("drop", (e) => {
-  if (!LAY_ON) return;
-  e.preventDefault();
-  const key = e.dataTransfer.getData("text/plain");
-  const src = document.querySelector(`[data-lay="${key}"]`);
-  const tgt = e.target.closest && e.target.closest(".lay-target");
-  if (!src || !tgt || src === tgt || src.contains(tgt)) return;
-  tgt.parentNode.insertBefore(src, tgt);
+// MOVE / HIDE — every action is a button, and the toolbar swallows the click so it
+// can never reach the app underneath it.
+// data-lay or ID, never a class: a class key can resolve to <body> on the way back.
+const _layParentKey = (p) => (p.dataset && p.dataset.lay) || p.id || null;
+function _layRecordOrder(parent) {
+  const key = _layParentKey(parent);
+  if (!key) return;                       // an unnamed parent is not a slot we own
   const d = _layDraft(); d.order = d.order || {};
-  const pkey = tgt.parentNode.dataset.lay
-    || (tgt.parentNode.className || "").split(" ").filter(Boolean)[0]
-    || tgt.parentNode.id;
-  d.order[pkey] = [...tgt.parentNode.children]
+  d.order[key] = [...parent.children]
     .filter(n => n.dataset && n.dataset.lay).map(n => n.dataset.lay);
-  _laySave(d); _layHudRefresh();
-});
+  _laySave(d);
+}
+// The two containers an area can be sent BETWEEN. Full width means the tab itself,
+// which is how a slab (trays, level plan, converters) lives.
+const _layHomes = () => [document.querySelector(".powers-main"),
+                         document.querySelector(".powers-side"),
+                         document.getElementById("tab-powers")].filter(Boolean);
+document.addEventListener("click", (e) => {
+  if (!LAY_ON) return;
+  const btn = e.target.closest && e.target.closest(".lay-bar [data-lay-act]");
+  if (!btn) return;
+  e.preventDefault(); e.stopPropagation();          // never let it reach the app
+  const el = btn.closest(".lay-target"), act = btn.dataset.layAct;
+  const parent = el.parentNode;
+  const sibs = () => [...parent.children].filter(n => n.dataset && n.dataset.lay);
+  if (act === "pick") {
+    LAY_PICK = (LAY_PICK === el.dataset.lay) ? null : el.dataset.lay;   // click again = cancel
+  } else if (act === "place") {
+    const src = LAY_PICK && document.querySelector(`[data-lay="${LAY_PICK}"]`);
+    if (!src || src === el || src.contains(el)) { LAY_PICK = null; }
+    else {
+      const from = src.parentNode;
+      el.parentNode.insertBefore(src, el);
+      _layRecordOrder(el.parentNode);
+      if (from !== el.parentNode) _layRecordOrder(from);
+      LAY_PICK = null;
+    }
+  } else if (act === "up" || act === "down") {
+    const list = sibs(), i = list.indexOf(el);
+    const j = act === "up" ? i - 1 : i + 1;
+    if (j >= 0 && j < list.length) {
+      if (act === "up") parent.insertBefore(el, list[j]);
+      else parent.insertBefore(list[j], el);
+      _layRecordOrder(parent);
+    }
+  } else if (act === "col") {
+    const homes = _layHomes();
+    const cur = homes.indexOf(parent);
+    const next = homes[(cur + 1) % homes.length] || homes[0];
+    if (next && next !== parent) {
+      next.appendChild(el);
+      _layRecordOrder(next); _layRecordOrder(parent);
+    }
+  } else if (act === "hide") {
+    const d = _layDraft(); d.hidden = d.hidden || [];
+    if (!d.hidden.includes(el.dataset.lay)) d.hidden.push(el.dataset.lay);
+    _laySave(d);
+  }
+  // through the APPLIER, not just the decorator: ✕ recorded the hide but nothing
+  // hid until a later render, because display is written in one place only.
+  applyLayoutDraft(); _layHudRefresh();
+}, true);
+window.layShow = function (key) {
+  const d = _layDraft();
+  d.hidden = (d.hidden || []).filter(k => k !== key);
+  _laySave(d); applyLayoutDraft(); _layHudRefresh();
+};
 function _layHud() {
   let h = $("lay-hud");
   if (!h) {
     h = document.createElement("div");
     h.id = "lay-hud";
-    h.innerHTML = `<div class="lay-hud-h">🧩 Layout mode
+    // ⚠ THE PANEL ITSELF WAS IN THE WAY (Joel: "glued overtop an area I want to
+    // place something"). Its header is a drag handle (pointer events, which is
+    // also why this one works where the HTML5 drag did not) and it collapses to a
+    // single bar. Both remembered.
+    h.innerHTML = `<div class="lay-hud-h" id="lay-hud-grip" title="Drag me out of the way">🧩 Layout mode
+        <button type="button" onclick="layHudCollapse()" id="lay-hud-min" title="Collapse to a bar">–</button>
         <button type="button" onclick="toggleLayoutMode()" title="Leave layout mode">✕</button></div>
-      <p class="muted small keep-whole">Drag an area's ⠿ label onto another area to move it.
+      <p class="muted small keep-whole">Click <b>⠿</b> to pick an area up, scroll to wherever
+        you want it, then click <b>⤵</b> on the area it should sit before. <b>↑ ↓</b> nudge it a
+        slot, <b>⇄</b> sends it to the other column or to full width, <b>✕</b> hides it.
         Drag any area's bottom-right corner to resize it. Nothing here changes your build.</p>
+      <div id="lay-pick" class="lay-pick" hidden></div>
       <div id="lay-hud-list"></div>
+      <div id="lay-hidden"></div>
       <div class="lay-hud-btns">
         <button type="button" onclick="copyLayoutForClaude()">📋 Copy sizes for Claude</button>
         <button type="button" onclick="resetLayoutDraft()">↺ Reset to the shipped layout</button>
       </div>`;
     document.body.appendChild(h);
+    _layHudGrip(h);
+    const pos = _layDraft().hud;
+    if (pos) { h.style.left = pos.x + "px"; h.style.top = pos.y + "px";
+               h.style.right = "auto"; h.style.bottom = "auto"; }
+    if (_layDraft().hudMin) h.classList.add("lay-min");
   }
   _layHudRefresh();
 }
+// Pointer-drag the panel by its header. Pointer events, not HTML5 drag: they fire
+// while the pointer is captured, work over any element, and need no drop target.
+function _layHudGrip(h) {
+  const grip = h.querySelector("#lay-hud-grip");
+  let dx = 0, dy = 0, on = false;
+  grip.addEventListener("pointerdown", (e) => {
+    if (e.target.tagName === "BUTTON") return;
+    on = true; grip.setPointerCapture(e.pointerId);
+    const r = h.getBoundingClientRect();
+    dx = e.clientX - r.x; dy = e.clientY - r.y;
+    h.style.right = "auto"; h.style.bottom = "auto";
+  });
+  grip.addEventListener("pointermove", (e) => {
+    if (!on) return;
+    h.style.left = Math.max(0, Math.min(innerWidth - 60, e.clientX - dx)) + "px";
+    h.style.top = Math.max(0, Math.min(innerHeight - 30, e.clientY - dy)) + "px";
+  });
+  grip.addEventListener("pointerup", () => {
+    if (!on) return;
+    on = false;
+    const d = _layDraft();
+    d.hud = { x: parseInt(h.style.left, 10) || 0, y: parseInt(h.style.top, 10) || 0 };
+    _laySave(d);
+  });
+}
+window.layHudCollapse = function () {
+  const h = $("lay-hud"); if (!h) return;
+  h.classList.toggle("lay-min");
+  const d = _layDraft(); d.hudMin = h.classList.contains("lay-min"); _laySave(d);
+};
 function _layHudRefresh() {
   const list = $("lay-hud-list"); if (!list) return;
-  const d = _layDraft(), rows = [];
+  const d = _layDraft(), rows = [], hidden = d.hidden || [];
   for (const el of _layEls()) {
     const r = el.getBoundingClientRect();
     const edited = (d.size || {})[el.dataset.lay];
+    if (hidden.includes(el.dataset.lay)) continue;
     rows.push(`<div class="lay-row${edited ? " lay-edited" : ""}">
       <span>${escHtml(el.dataset.layLabel)}</span>
       <b>${Math.round(r.width)}×${Math.round(r.height)}</b></div>`);
   }
   list.innerHTML = rows.join("");
+  // Hiding is REVERSIBLE and says so — the choice doctrine applies to a design
+  // tool too: a removed area that cannot come back is a trap, not a decision.
+  const hz = $("lay-hidden");
+  if (hz) {
+    hz.innerHTML = hidden.length
+      ? `<div class="lay-hidden-h">hidden — click to bring back</div>`
+        + hidden.map(k => {
+            const meta = LAY_AREAS.find(a => a[0] === k);
+            return `<button type="button" class="lay-restore" onclick="layShow('${k}')">↩ ${escHtml(meta ? meta[2] : k)}</button>`;
+          }).join("")
+      : "";
+  }
+  const pk = $("lay-pick");
+  if (pk) {
+    const meta = LAY_PICK && LAY_AREAS.find(a => a[0] === LAY_PICK);
+    pk.hidden = !LAY_PICK;
+    pk.innerHTML = LAY_PICK
+      ? `holding <b>${escHtml(meta ? meta[2] : LAY_PICK)}</b> — scroll to where you want it and click ⤵`
+      : "";
+  }
 }
 // The handoff: everything I need to bake it into style.css, on the clipboard.
 window.copyLayoutForClaude = function () {
