@@ -498,6 +498,11 @@
       </section>
       <section class="panel" id="setbonus-blurb">
         <h2>💠 How set bonuses stack</h2>
+        <!-- the prose splits into two reading columns when the card is wide and
+             stays one when it is not (work order step 3). ⚠ .keep-whole stays on
+             every paragraph: it is what stops collapseLongExplanations folding
+             rules text behind a "more" link. -->
+        <div class="sb-cols">
         <p class="muted small keep-whole">Slot <b>2 or more pieces</b> of the same IO set in one power
           and bonuses unlock tier by tier — each power card's <b>sets:</b> line names its sets, and
           the ⓘ on any piece lists every tier.</p>
@@ -506,6 +511,7 @@
           The planner obeys this automatically; if you hand-slot, it's the one trap to watch.</p>
         <p class="muted small keep-whole">To see where any total comes from, open <b>Stats</b> and
           click the number — the exact pieces feeding it ring green.</p>
+        </div>
       </section>
     </div>
     <!-- THE BASE SLABS (Joel's perfect-wall order, 2026-08-04 night): trays,

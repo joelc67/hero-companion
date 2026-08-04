@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 58          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 59          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement)
 
@@ -261,12 +261,20 @@ def main():
           index.index('id="inherent-card"') < index.index('id="endgame-panel"')
           and index.index('id="endgame-plan-panel"') < index.index('id="inherent-card"'),
           "it belongs in the green box of his screenshot, not below the wall")
-    check("the two small cards are SEATED in the catalogue grid, home first",
+    check("the two small cards are SEATED beside the powersets, home first",
           'const _cards = ["cmd-card", "setbonus-blurb"]' in app_js
           and app_js.index("_home.append(n)") < app_js.index("host.innerHTML = html;")
           < app_js.index("_cc.append(n)")
-          and ".cat-cols > .panel" in css,
+          and '<div class="cat-side" id="cat-side">' in app_js
+          and ".cat-side" in css,
           "seat AFTER the rebuild, park them home BEFORE it or innerHTML eats them")
+    # ⚠ REVERTED and pinned (work order 2026-08-04 3:11 PM): multicol assigns
+    # boxes to columns by HEIGHT, so it flowed column-major and stacked Primary
+    # under Secondary. The catalogue's premise is one powerset per column.
+    check("the catalogue is a GRID, never multicol",
+          "display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr))" in css
+          and "column-width: 210px" not in css,
+          "matches the live rule, not the comment recording why multicol went")
     # ⚠ SPEC 5.1 — the rule a naive tab implementation breaks. recompute() writes
     # into elements on four different tabs; unmounting makes every write a no-op.
     check("panels are HIDDEN, never unmounted", "panel.hidden = !on;" in app_js,

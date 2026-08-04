@@ -4973,8 +4973,16 @@ function catalogueHtml(sets) {
     : "";
   // (The accolades panel lives in the full-width card band below the wall —
   // .pw-cardband in index.html; 2026-08-04, the structural-balance order.)
+  // The powerset columns and the two cards are PEERS side by side (work order
+  // 2026-08-04 3:11 PM): .cat-side is the trailing stack the cards are seated
+  // into, so their top edge lands on the first column's top edge at every width
+  // and the sets keep row-major order with Primary leftmost. ⚠ They are NOT
+  // grid items of .cat-cols: an item with a definite grid-row is placed BEFORE
+  // the auto-flow items, which put the cards in tracks 1-2 and pushed Primary to
+  // track 3 — measured, and the same reading-order damage the multicol had.
   return `<div class="catalogue">${head}${gate}${poolNote}`
-    + `<div class="cat-cols">${cols}</div></div>`;
+    + `<div class="cat-body"><div class="cat-cols">${cols}</div>`
+    + `<div class="cat-side" id="cat-side"></div></div></div>`;
 }
 
 // Fill the EMPTY pick seats from autopick, keeping every existing pick.
@@ -5137,7 +5145,7 @@ function renderPowers() {
   const _cards = ["cmd-card", "setbonus-blurb"], _home = $("card-home");
   if (_home) for (const id of _cards) { const n = $(id); if (n) _home.append(n); }
   host.innerHTML = html;
-  const _cc = host.querySelector(".cat-cols");
+  const _cc = host.querySelector(".cat-side");
   if (_cc) for (const id of _cards) { const n = $(id); if (n) _cc.append(n); }
   loadAccolades().then(renderAccolades);   // the accolade sync the deleted vitals card carried
   updateEditBar();
