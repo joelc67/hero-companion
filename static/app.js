@@ -1413,11 +1413,12 @@ function renderJourneyLevelPanel() {
     return `<span class="rt-delta ${dv > 0 ? "up" : "down"}">${dv > 0 ? "+" : ""}${dv}${u} ${lab}</span>`;
   }).filter(Boolean).join(" ");
 
-  // The art sits LEFT of this panel (Joel, 2026-08-04) and tracks the SELECTED
-  // stop, so the image always means something: it is the place the level
-  // you're looking at sends you.
-  host.innerHTML = _zoneArtHtml(zoneNames)
-    + `<div class="jny-panel-info">`
+  // The art rides BESIDE THE ROAD (Joel, 2026-08-04 evening) and tracks the
+  // SELECTED stop, so the image always means something: it is the place the
+  // level you're looking at sends you. The panel below is pure text.
+  const artHost = document.getElementById("jny-roadart");
+  if (artHost) artHost.innerHTML = _zoneArtHtml(zoneNames);
+  host.innerHTML = `<div class="jny-panel-info">`
     + `<h4 class="jny-panel-h">Level ${s.level}`
     + (i === hereIdx ? ` <span class="jny-panel-here">★ you are here</span>`
        : i < hereIdx ? ` <span class="muted small">— reached</span>` : "")
@@ -1701,8 +1702,11 @@ function _fitJourneyLane() {
   if (!lane) return;
   let tallest = 0;
   lane.querySelectorAll(".jny-card").forEach(c => { tallest = Math.max(tallest, c.offsetHeight); });
-  lane.style.paddingTop = "56px";                                    // ★ marker + air
-  if (tallest) lane.style.paddingBottom = `${Math.ceil(tallest) + 46}px`;
+  // Trimmed 56/+46 → 36/+14 (Joel, 2026-08-04: "a lot of head/foot room") —
+  // still clears the ★ marker and the tallest open card, without the slab
+  // of dead sky above and below the line.
+  lane.style.paddingTop = "36px";                                    // ★ marker + air
+  if (tallest) lane.style.paddingBottom = `${Math.ceil(tallest) + 14}px`;
 }
 
 // Grab-and-drag panning (Joel's report: the road wouldn't drag with the mouse
@@ -1836,17 +1840,20 @@ function renderJourney() {
         ? `<div class="jny-current">⭐ <span class="jny-current-lv">Level 50</span> — a finished end-game build; this road is the 1–50 path behind it</div>`
         : "");
 
-  // ORDER (Joel, 2026-08-04, supersedes the art-above-the-road row): the road
-  // first, then the level detail with the art on ITS LEFT. The full-width
-  // banner cropped tall zone art into a strip ("a statue from the hips down")
-  // and wasted reading space; in the panel the art still changes with every
-  // stop you click, and renderJourneyLevelPanel's no-slot fallback renders it.
+  // ORDER (Joel, 2026-08-04 evening, supersedes art-in-the-panel): the zone
+  // art rides BESIDE the road — image left, the level line starts to its
+  // right — and the detail panel below is pure text. The art still tracks
+  // the selected stop (it swaps on every card click), and portrait art gets
+  // the full band height instead of being cropped to a strip.
   $("journey-body").innerHTML =
     `<div class="jny">`
     + (journeyIntroDone() ? "" : `<details class="jny-fit jny-introwrap"><summary>👋 <b>New to the Journey?</b> <span class="muted small">what this road is and how to read it</span><span class="jny-expand-cue">click to expand ▾</span></summary>${_journeyIntroHtml()}</details>`)
     + lvBanner
     + `<div class="jny-head"><span class="muted small">Scroll or drag the road — click a card for what that level buys you.</span></div>`
-    + `<div class="jny-viewport"><div class="jny-strip"><div class="jny-lane">${stops}</div></div></div>`
+    + `<div class="jny-roadrow">`
+    +   `<div class="jny-roadart" id="jny-roadart"></div>`
+    +   `<div class="jny-viewport"><div class="jny-strip"><div class="jny-lane">${stops}</div></div></div>`
+    + `</div>`
     + `<div class="jny-panel" id="jny-panel"></div>`
     // The alignment switcher previews another side's leveling path. A leading
     // "Preview another side:" label makes the trailing reassurance read as one
@@ -4891,8 +4898,15 @@ function catalogueHtml(sets) {
       + `${atLevel < poolOpensAt ? " — not yet" : ""}.`
       + ` Change one with the dropdown on its column; the powers follow.</div>`
     : "";
+  // The archetype's own emblem fills the catalogue's trailing space as a
+  // faint watermark (Joel, 2026-08-04: "themed images for empty spaces" —
+  // the pool/epic row has fewer columns than the sets row, and the leftover
+  // grid cells read as a void).
+  const artSrc = atEmblemSrc(build.archetype);
+  const art = artSrc
+    ? `<img class="cat-art" src="${artSrc}" alt="" onerror="this.hidden=true">` : "";
   return `<div class="catalogue">${head}${gate}${poolNote}`
-    + `<div class="cat-cols">${cols}</div></div>`;
+    + `<div class="cat-cols">${cols}</div>${art}</div>`;
 }
 
 // Fill the EMPTY pick seats from autopick, keeping every existing pick.
@@ -6660,8 +6674,15 @@ function closeMenus(except) {
 function syncMenu(drop) {
   drop.querySelectorAll("[data-act]").forEach(mi => {
     const el = $(mi.dataset.act);
+    // ⚠ Living on a HIDDEN TAB is not "unavailable" (Joel, 2026-08-04: the
+    // whole Build menu greyed out from any other tab). A control on another
+    // tab still works — clicking the item switches there first. Only a
+    // control hidden ON ITS OWN visible tab (state-hidden, e.g. solve-btn
+    // before a build exists) or truly disabled greys out.
+    const panel = el && el.closest ? el.closest(".tabpanel") : null;
+    const crossTab = !!(panel && panel.hidden);
     const gone = !el || el.disabled
-      || (el.offsetParent === null && el.type !== "checkbox");
+      || (!crossTab && el.offsetParent === null && el.type !== "checkbox");
     mi.disabled = !!gone;
     mi.classList.toggle("mi-off", !!gone);
     if (mi.dataset.kind === "check") mi.classList.toggle("mi-on", !!(el && el.checked));
@@ -6680,7 +6701,19 @@ function initMenus() {
   if (!bar) return;
   bar.addEventListener("click", e => {
     const act = e.target.closest("[data-act]");
-    if (act && !act.disabled) { const el = $(act.dataset.act); if (el) el.click(); }
+    if (act && !act.disabled) {
+      const el = $(act.dataset.act);
+      if (el) {
+        // Show the effect where it lives (Joel, 2026-08-04: "the View
+        // toggles do not seem to have any effect" — they did, on a tab he
+        // wasn't looking at). Any menu action whose control sits on another
+        // tab switches there, checks included: seeing the numbers move IS
+        // the point of a view toggle.
+        const panel = el.closest(".tabpanel");
+        if (panel && panel.hidden) activateTab(panel.id.replace("tab-", ""));
+        el.click();
+      }
+    }
     const tab = e.target.closest("[data-tab]");
     if (tab) {
       activateTab(tab.dataset.tab);
@@ -7760,7 +7793,21 @@ function renderStatBreakdown() {
   document.querySelectorAll(".stat-hot-power").forEach(el => el.classList.remove("stat-hot-power"));
   document.querySelectorAll(".stat-selected").forEach(el => el.classList.remove("stat-selected"));
   const sel = SELECTED_STAT;
-  if (!sel) { host.classList.add("hidden"); return; }
+  if (!sel) {
+    // Not empty space — an INVITATION (Joel, 2026-08-04: "big empty space on
+    // the right… nor is it obvious the user can make changes"). Every row on
+    // the left is clickable; say so, and say the payoff is editable.
+    host.classList.remove("hidden");
+    host.innerHTML = `<div class="sb-empty">
+      <h2>Where does a number come from?</h2>
+      <p class="sb-sub">Click <b>any percentage</b> on the left — every row is
+      clickable. This panel then breaks the number down to the exact powers
+      and IOs feeding it, and the IOs ring <b class="sb-green">green</b> on
+      the mini wall above.</p>
+      <p class="sb-sub">The breakdown is <b>hands-on</b>: click any IO in it
+      to swap that enhancement and watch the number move immediately.</p></div>`;
+    return;
+  }
   // manual match — attack names carry spaces/apostrophes a selector can't
   document.querySelectorAll("[data-statkey]").forEach(el => {
     if (el.dataset.statkey === sel.key) el.classList.add("stat-selected");

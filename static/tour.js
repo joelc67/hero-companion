@@ -925,7 +925,9 @@ const TOUR_STEPS = [
         + "greyed rows belong to the other alignment, which is exactly why "
         + "flipping Hero/Villain moves your numbers.\n\n"
         + "The ⓘ on each row tells you how to earn it in game, and Preview all "
-        + "shows your numbers with every accolade in hand." },
+        + "shows your numbers with every accolade in hand.\n\n"
+        + "You'll find this checklist on Powers & Slots, right under the "
+        + "powers wall." },
   { chapter: "endgame", target: "#sel-epic", anchor: "[data-tm=epic-row]", side: "right",
     title: "Epic pools",
     body: "Epic and patron pools open at level 35 and reach outside your "
@@ -933,7 +935,10 @@ const TOUR_STEPS = [
         + "ranged attack for our melee Brute.\n\n"
         + "The list is per archetype and tiered like the game's own, and the "
         + "special cases are honoured: Kheldians have no epic at all, and a "
-        + "patron pool says on it that a patron arc unlocks it in game." },
+        + "patron pool says on it that a patron arc unlocks it in game.\n\n"
+        + "The Epic & Ancillary fold lives in the right column of Powers & "
+        + "Slots, under the Build Assistant — the incarnate pickers are "
+        + "inside the same fold." },
   { chapter: "endgame", target: "#incarnate-selectors", spine: false, anchor: "[data-tm=inc-row]", side: "right",
     title: "Incarnates, explained per pick",
     body: "The incarnate system opens at level 50. Under every slot's dropdown, "
