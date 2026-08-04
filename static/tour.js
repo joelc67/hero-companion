@@ -122,7 +122,6 @@ const TOUR_MOCK_HTML = `
   <nav class="tabbar tm-tabbar" data-for="tabbar">
     <button class="tab" data-tm-tabbtn="powers" data-for="tab-btn-powers" type="button">Powers &amp; Slots</button>
     <button class="tab" data-tm-tabbtn="stats" data-for="tab-btn-stats" type="button">Stats</button>
-    <button class="tab" data-tm-tabbtn="endgame" data-for="tab-btn-endgame" type="button">End Game</button>
     <button class="tab" data-tm-tabbtn="leveling" data-for="tab-btn-leveling" type="button">Leveling Guide</button>
     <button class="tab" data-tm-tabbtn="logging" data-for="tab-btn-logging" type="button">Logging</button>
   </nav>
@@ -308,7 +307,10 @@ const TOUR_MOCK_HTML = `
     </section>
   </div>
 
-  <div class="tm-tab" data-tm-tab="endgame" style="display:none">
+  <!-- The End Game TAB is retired (2026-08-04): these surfaces live on
+       Powers & Slots, so this mock block carries the powers tag and stacks
+       under the wall mock — exactly like the real layout. -->
+  <div class="tm-tab" data-tm-tab="powers" style="display:none">
     <section class="panel">
       <h2>End Game</h2>
       <div class="accolades-card" data-for="accolades-card" data-tm="acc-box">
@@ -479,7 +481,7 @@ function _closeTourMock() {
 // (2026-08-04): the mock reproduces the five-tab shell, and each step lights
 // the tab its subject lives on, tab strip state included.
 const TM_TAB = { build: "powers", powers: "powers", solve: "powers", header: "powers",
-                 stats: "stats", endgame: "endgame", leveling: "leveling", logging: "logging" };
+                 stats: "stats", endgame: "powers", leveling: "leveling", logging: "logging" };
 
 function _mockShowScene(scene, tab) {
   if (!_mockEl) return;
@@ -530,7 +532,7 @@ const TOUR_CHAPTER_BLURB = {
   powers:   "Taking powers, spending your 67 slots, and locking what you have already decided.",
   solve:    "Letting it work out the slotting, and how to read what it gives you back.",
   stats:    "Click any stat and see exactly which powers and IOs make it — and change them there.",
-  endgame:  "Accolades to chase, your epic pool at 35, and the incarnates at 50.",
+  endgame:  "Accolades, your epic pool at 35, and the incarnates at 50 — all on Powers & Slots.",
   leveling: "Your 1-to-50 as a road: every level's pick, zones and task forces.",
   logging:  "What your game sessions earned you, read from your own chat log.",
   header:   "The four menus, alignment, updates, and reporting something wrong.",

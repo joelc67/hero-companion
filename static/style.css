@@ -2826,3 +2826,9 @@ summary:hover { color: var(--ink); }
 @keyframes askIn { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .ask-overlay { animation: none; } }
 .ask-input { margin: 0 0 var(--s4); font-size: 14px; }
+
+/* End Game tab retired (2026-08-04): its surfaces live on Powers & Slots.
+   Scroll targets clear the sticky chrome like the detail card does. */
+#endgame-panel, #endgame-plan-panel {
+  scroll-margin-top: calc(var(--chrome-h, 130px) + var(--s3));
+}

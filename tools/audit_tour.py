@@ -154,8 +154,10 @@ else:
     defined = set(re.findall(r"(--[a-z0-9-]+)\s*:", css))
     block = css[css.index(marker):]
     # --h* are set from JS at runtime (the spotlight rect), so they are expected
-    # to be absent from the stylesheet.
-    used_vars = {v for v in re.findall(r"var\((--[a-z0-9-]+)", block)
+    # to be absent from the stylesheet. A var USED WITH A FALLBACK cannot
+    # "render invisible" either — var(--chrome-h, 130px) degrades visibly —
+    # so only fallback-less uses are held to the defined-in-stylesheet rule.
+    used_vars = {v for v in re.findall(r"var\((--[a-z0-9-]+)\)", block)
                  if not v.startswith("--h")}
     undefined = sorted(used_vars - defined)
     check(f"every themed colour the tour uses is defined ({len(used_vars)} used)",

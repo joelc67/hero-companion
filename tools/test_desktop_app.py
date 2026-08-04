@@ -22,7 +22,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 54          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 55          # coverage denominator — hard-fail if a check silently skips
+#                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
+#                        living inside the powers tab after the tab retirement)
 
 
 def check(name, ok, detail=""):
@@ -233,9 +235,15 @@ def main():
     check("no balancer left to go stale",
           "function balanceColumns" not in app_js and "const _TILES" not in app_js,
           "matches the DEFINITION, not the comment recording that it was deleted")
-    check("five tabs, five panels",
+    # (was "five tabs" — End Game retired 2026-08-04, its surfaces live on
+    # Powers & Slots; the moved ids are checked right below)
+    check("four tabs, four panels",
           all(f'id="tab-btn-{k}"' in index and f'id="tab-{k}"' in index
-              for k in ("powers", "stats", "endgame", "leveling", "logging")))
+              for k in ("powers", "stats", "leveling", "logging"))
+          and 'id="tab-btn-endgame"' not in index)
+    check("the End Game surfaces live inside the powers tab",
+          index.index('id="tab-powers"') < index.index('id="endgame-panel"')
+          < index.index('id="endgame-plan-panel"') < index.index('id="tab-stats"'))
     # ⚠ SPEC 5.1 — the rule a naive tab implementation breaks. recompute() writes
     # into elements on four different tabs; unmounting makes every write a no-op.
     check("panels are HIDDEN, never unmounted", "panel.hidden = !on;" in app_js,

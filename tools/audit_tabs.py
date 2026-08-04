@@ -21,8 +21,9 @@ ROOT = Path(__file__).resolve().parent.parent
 STATIC = ROOT / "static"
 
 # The spec's information architecture is the independent denominator: these
-# five tabs, no more, no fewer (tabbed-layout-spec.md section 4).
-EXPECTED_TABS = ["powers", "stats", "endgame", "leveling", "logging"]
+# four tabs, no more, no fewer. (Was five: the End Game tab was retired
+# 2026-08-04 — Joel's ruling — and its surfaces moved into Powers & Slots.)
+EXPECTED_TABS = ["powers", "stats", "leveling", "logging"]
 
 # app.js references at least this many distinct ids today (measured 2026-08-03).
 # If the scanner ever reports fewer, the scanner broke — fail, don't bless.

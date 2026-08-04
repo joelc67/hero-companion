@@ -197,7 +197,7 @@
           <div class="menu-drop" id="m-view" role="menu" hidden>
             <button role="menuitem" type="button" data-tab="powers"><b>Powers & Slots</b><i>The build itself, and the power catalogue</i></button>
             <button role="menuitem" type="button" data-tab="stats"><b>Stats</b><i>Defence, resistance, offense and set bonuses</i></button>
-            <button role="menuitem" type="button" data-tab="endgame"><b>End Game</b><i>Epic pool, incarnates and accolades</i></button>
+            <button role="menuitem" type="button" data-tab="powers" data-jump="endgame-panel"><b>End Game</b><i>Epic pool, incarnates and accolades — on Powers &amp; Slots</i></button>
             <button role="menuitem" type="button" data-tab="leveling"><b>Leveling Guide</b><i>Your 1-50 as a road</i></button>
             <button role="menuitem" type="button" data-tab="logging"><b>Logging</b><i>What your game sessions earned you</i></button>
             <div class="menu-sep" role="separator"></div>
@@ -242,8 +242,9 @@
       aria-selected="true" tabindex="0">Powers &amp; Slots</button>
     <button class="tab" id="tab-btn-stats" role="tab" aria-controls="tab-stats"
       aria-selected="false" tabindex="-1">Stats</button>
-    <button class="tab" id="tab-btn-endgame" role="tab" aria-controls="tab-endgame"
-      aria-selected="false" tabindex="-1">End Game</button>
+    <!-- End Game tab RETIRED (Joel, 2026-08-04): its tools live on Powers &
+         Slots now — accolades under the wall, the epic/incarnate plan in the
+         side column, echoing the pre-tab rail he preferred. -->
     <button class="tab" id="tab-btn-leveling" role="tab" aria-controls="tab-leveling"
       aria-selected="false" tabindex="-1">Leveling Guide</button>
     <button class="tab" id="tab-btn-logging" role="tab" aria-controls="tab-logging"
@@ -314,10 +315,18 @@
       <!-- Import/Export moved into the Character menu (2026-08-03).
            #import-file stays: it is the hidden file input they drive. -->
       <input type="file" id="import-file" accept=".mbd,.json,.txt,application/json,text/plain" class="hidden">
-      <div id="import-report" class="import-report hidden"></div>
 
 
     </section>
+      <!-- ACCOLADES, home again (Joel, 2026-08-04: the End Game tab is
+           retired). Full-width under the powers wall — the placement his
+           2026-07-2x ruling established before the tabs existed. -->
+      <section class="panel" id="endgame-panel">
+        <h2>End Game — accolades<button class="tour-help" onclick="startTour('endgame')" aria-label="Explain this section" title="Explain this section">?</button></h2>
+        <p class="muted small keep-whole">Permanent rewards worth chasing past the leveling road — tick the ones
+          your character has earned and they feed the totals.</p>
+        <div id="accolades-card" class="accolades-card"></div>
+      </section>
       </div>
       <!-- SIDE COLUMN. The Assistant lives beside the powers wall, not under
            it: stacked, its 630px was pure addition to the tab's height; here
@@ -432,6 +441,9 @@
         <button id="changes-btn" class="changes-btn" style="display:none" title="Open a window summarizing exactly what the solve changed from your imported build. Close it any time." onclick="showChangeModal()">📋 What changed? (open / close anytime)</button>
         <button id="reset-btn" class="reset-btn" style="display:none" title="Restore your imported build exactly as it came in, so you can try a different goal/options without re-importing." onclick="resetToImported()">↺ Reset to imported build (try again)</button>
         <div id="gen-status" class="muted small"></div>
+        <!-- The solve/import outcome report lives WITH the buttons that made
+             it (Joel, 2026-08-04: at the page bottom it "makes no sense"). -->
+        <div id="import-report" class="import-report hidden"></div>
       </div>
       <div id="ai-qa">
         <hr class="sep">
@@ -449,6 +461,28 @@
            visibility must never depend on the AI seam. -->
       <div id="ai-response" class="ai-response muted"></div>
     </section>
+      <!-- THE END-GAME PLAN, back beside the build controls (Joel's
+           2026-08-04 screenshot of the pre-tab layout: this fold lived in
+           the rail near Build, and that is the placement he wants back). -->
+      <section class="panel" id="endgame-plan-panel">
+<details open class="endgame">
+        <summary>🎯 End-game plan — Epic (lvl 35) &amp; Incarnates (lvl 50)</summary>
+        <div class="endgame-body">
+          <div class="endgame-block">
+            <div class="endgame-label">Epic / Ancillary Pool <span class="muted small">— survival / utility; unlocks at level 35</span></div>
+            <select id="sel-epic" disabled></select>
+            <div id="patron-note" class="patron-note hidden">⚔️ <strong>Patron pool</strong> — unlike Ancillary pools, this must be unlocked in-game by completing a <strong>Patron arc</strong> (the patron missions, available from level&nbsp;35). <a href="https://homecoming.wiki/wiki/Patron_Power_Pools" target="_blank" rel="noopener">How to unlock ↗</a></div>
+          </div>
+          <div class="endgame-block">
+            <div class="endgame-label">Incarnates <span class="muted small">— unlock at level 50; <strong>Solve</strong> recommends a set for your role + content</span></div>
+            <div id="incarnate-selectors" class="incarnates"></div>
+          </div>
+          <p class="muted small">Incarnate buffs are situational/timed, so they're left out of the passive
+            totals by default — tick <strong>"Include incarnates (peak)"</strong> on the <strong>Stats</strong> tab to fold
+            them in (Destiny, Hybrid &amp; Judgement) and match Mids' fully-buffed display.</p>
+        </div>
+      </details>
+      </section>
       </div>
     </div>
     </section>
@@ -526,33 +560,9 @@
     <aside id="stat-breakdown" class="panel stat-breakdown hidden"></aside>
     </div>
     </section>
-    <section id="tab-endgame" class="tabpanel" role="tabpanel"
-      aria-labelledby="tab-btn-endgame" hidden>
-      <section class="panel" id="endgame-panel">
-        <h2>End Game</h2>
-        <p class="muted small keep-whole">Everything that arrives past the leveling road: the accolades worth
-          chasing, your epic pool at 35, and the incarnate abilities that open at 50 — each pick
-          explained with the numbers it adds.</p>
-        <div id="accolades-card" class="accolades-card"></div>
-<details open class="endgame">
-        <summary>🎯 End-game plan — Epic (lvl 35) &amp; Incarnates (lvl 50)</summary>
-        <div class="endgame-body">
-          <div class="endgame-block">
-            <div class="endgame-label">Epic / Ancillary Pool <span class="muted small">— survival / utility; unlocks at level 35</span></div>
-            <select id="sel-epic" disabled></select>
-            <div id="patron-note" class="patron-note hidden">⚔️ <strong>Patron pool</strong> — unlike Ancillary pools, this must be unlocked in-game by completing a <strong>Patron arc</strong> (the patron missions, available from level&nbsp;35). <a href="https://homecoming.wiki/wiki/Patron_Power_Pools" target="_blank" rel="noopener">How to unlock ↗</a></div>
-          </div>
-          <div class="endgame-block">
-            <div class="endgame-label">Incarnates <span class="muted small">— unlock at level 50; <strong>Solve</strong> recommends a set for your role + content</span></div>
-            <div id="incarnate-selectors" class="incarnates"></div>
-          </div>
-          <p class="muted small">Incarnate buffs are situational/timed, so they're left out of the passive
-            totals by default — tick <strong>"Include incarnates (peak)"</strong> on the <strong>Stats</strong> tab to fold
-            them in (Destiny, Hybrid &amp; Judgement) and match Mids' fully-buffed display.</p>
-        </div>
-      </details>
-      </section>
-    </section>
+    <!-- (the End Game TAB is retired — its two surfaces moved into
+         #tab-powers: #endgame-panel under the wall, #endgame-plan-panel in
+         the side column) -->
     <section id="tab-leveling" class="tabpanel" role="tabpanel"
       aria-labelledby="tab-btn-leveling" hidden>
       <section class="panel" id="leveling-panel">

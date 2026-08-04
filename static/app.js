@@ -4856,12 +4856,13 @@ function catalogueHtml(sets) {
   let gate = "";
   if (!full && atLevel >= 35 && !build.epic) {
     gate = `<div class="cat-gate">⚔️ <b>Level 35 — your Epic / Ancillary pool is open.</b>`
-      + ` Choose it on End Game and its powers join the list here.`
-      + ` <button class="linkbtn" onclick="showTab('endgame')">Open End Game →</button></div>`;
+      + ` Choose it in the End-game plan (right column) and its powers join the list here.`
+      + ` <button class="linkbtn" onclick="openEndgame('endgame-plan-panel')">Go to the plan →</button></div>`;
   } else if (full || atLevel >= 50) {
     gate = `<div class="cat-gate">🏅 <b>Level 50 — accolades and incarnates are open.</b>`
-      + ` Tick the accolades you have earned and pick your incarnate slots.`
-      + ` <button class="linkbtn" onclick="showTab('endgame')">Open End Game →</button></div>`;
+      + ` Tick the accolades you have earned (below the wall) and pick your`
+      + ` incarnate slots in the End-game plan.`
+      + ` <button class="linkbtn" onclick="openEndgame('endgame-panel')">Go there →</button></div>`;
   }
   const head = full
     ? `<div class="cat-hint cat-done"><b>All 24 powers picked.</b> Now slot them:`
@@ -6658,6 +6659,13 @@ function syncMenu(drop) {
   });
 }
 
+// The End Game surfaces live on Powers & Slots now — jump the tab, then the eye.
+window.openEndgame = function (which) {
+  if (typeof showTab === "function") showTab("powers");
+  const el = $(which || "endgame-panel");
+  if (el) setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+};
+
 function initMenus() {
   const bar = $("menubar");
   if (!bar) return;
@@ -6665,7 +6673,13 @@ function initMenus() {
     const act = e.target.closest("[data-act]");
     if (act && !act.disabled) { const el = $(act.dataset.act); if (el) el.click(); }
     const tab = e.target.closest("[data-tab]");
-    if (tab) activateTab(tab.dataset.tab);
+    if (tab) {
+      activateTab(tab.dataset.tab);
+      // data-jump: land ON the named section (the End Game menu item keeps
+      // working now that its tools live inside Powers & Slots).
+      const j = tab.dataset.jump && $(tab.dataset.jump);
+      if (j) setTimeout(() => j.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+    }
     const top = e.target.closest(".menu-top");
     if (top) {
       const drop = $(top.getAttribute("aria-controls"));
@@ -6702,7 +6716,9 @@ function initMenus() {
 // recompute() writes into elements on four different tabs, and a change on one
 // (an epic pick on End Game, an accolade) has to reach the others. Unmounting
 // would turn every one of those writes into a silent no-op.
-const _TABS = ["powers", "stats", "endgame", "leveling", "logging"];
+// "endgame" retired 2026-08-04 (Joel): its tools live ON Powers & Slots now.
+// showTab falls back to powers for any stale remembered "endgame" key.
+const _TABS = ["powers", "stats", "leveling", "logging"];
 let _openingJourney = false;
 
 function activateTab(key, moveFocus) {
