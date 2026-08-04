@@ -7514,6 +7514,10 @@ function renderStatBreakdown() {
 // The breakdown floats BESIDE the clicked row (Joel, 2026-08-04: "the data
 // should show up beside the stat you click on") — offsetTop chain, not
 // getBoundingClientRect: rects return zoomed values under fitZoom.
+// Refined same day (Joel): the panel CENTRES on the clicked row instead of
+// hanging its top from it — a tall breakdown takes up the empty space ABOVE
+// the row too (never past the column top), so you scroll less to reach the
+// other contributing powers. The ➜ arrow on the row points into its middle.
 function _alignBreakdown(host) {
   const selRow = document.querySelector(".stat-selected");
   const grid = host.parentElement;
@@ -7523,7 +7527,7 @@ function _alignBreakdown(host) {
     y += el.offsetTop || 0;
     el = el.offsetParent;
   }
-  host.style.marginTop = Math.max(0, y - 6) + "px";
+  host.style.marginTop = Math.max(0, y + selRow.offsetHeight / 2 - host.offsetHeight / 2) + "px";
 }
 
 // the ✕ needs no key round-trip — closing is just closing
