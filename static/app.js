@@ -231,7 +231,11 @@ async function saveProgress() {
   if (!name) {
     const dflt = build.primary_display
       ? `${build.primary_display} ${(build.archetype || "").replace("Class_", "")}` : "My character";
-    name = prompt("Name this character (so you can resume it later):", dflt);
+    name = await askPrompt({
+      title: "Name this character",
+      body: "It shows up under this name in the Continue list, ready to "
+        + "resume any time.",
+      value: dflt, okLabel: "Save character" });
     if (!name) return;
   }
   const plan = { content: $("preset-content") && $("preset-content").value,
@@ -4022,6 +4026,39 @@ function askDialog({ title, body, actions, safe }) {
   });
 }
 
+// Text-input sibling of askDialog (the last native prompt() holdouts, Joel
+// 2026-08-04). Resolves the trimmed string, or null on cancel/Esc/backdrop —
+// backing out is always allowed and never saves anything.
+function askPrompt({ title, body, value, placeholder, okLabel }) {
+  return new Promise((resolve) => {
+    const ov = document.createElement("div");
+    ov.className = "ask-overlay";
+    ov.innerHTML = `<div class="ask-card" role="dialog" aria-modal="true"
+        aria-label="${escHtml(title)}">
+      <h3>${escHtml(title)}</h3>
+      ${body ? `<div class="ask-body">${body}</div>` : ""}
+      <input class="ask-input" type="text" maxlength="60"
+        value="${escHtml(value || "")}" placeholder="${escHtml(placeholder || "")}">
+      <div class="ask-actions">
+        <button data-key="ok">${escHtml(okLabel || "Save")}</button>
+        <button data-key="cancel" class="ask-ghost">Cancel</button>
+      </div></div>`;
+    const inp = ov.querySelector(".ask-input");
+    const done = (v) => { ov.remove(); resolve(v); };
+    inp.addEventListener("keydown", (e) => {
+      e.stopPropagation();          // the app's own key handlers stay out of typing
+      if (e.key === "Enter") done(inp.value.trim() || null);
+      if (e.key === "Escape") done(null);
+    });
+    ov.addEventListener("click", (e) => { if (e.target === ov) done(null); });
+    ov.querySelector('[data-key="ok"]').addEventListener("click", () => done(inp.value.trim() || null));
+    ov.querySelector('[data-key="cancel"]').addEventListener("click", () => done(null));
+    document.body.appendChild(ov);
+    inp.focus();
+    inp.select();
+  });
+}
+
 let _swapOk = false;  // one accepted confirm covers the paired VEAT change in the same tick
 let _swapAsk = null;  // a paired VEAT swap fires two handlers before any answer —
 //                       both await the SAME dialog, so one question decides both
@@ -4718,7 +4755,9 @@ window.renameCharacter = async function () {
   const f = $("char-name");
   if (f) { f.focus(); f.select(); return; }         // the field IS the rename UI
   if (!CURRENT_SAVE) return;
-  const name = prompt("Name this character:", CURRENT_SAVE.name || "");
+  const name = await askPrompt({
+    title: "Name this character",
+    value: CURRENT_SAVE.name || "", okLabel: "Rename" });
   if (!name || !name.trim()) return;          // backing out is allowed; the nudge stays
   CURRENT_SAVE.name = name.trim();
   NEEDS_NAME = false;
@@ -9128,7 +9167,10 @@ window.closeTargetsEditor = function () {
   if (m) m.classList.add("hidden");
 };
 window.saveTargetPreset = async function () {
-  const name = prompt("Name this target preset (yours, reusable on any build):");
+  const name = await askPrompt({
+    title: "Name this target preset",
+    body: "Yours to reuse on any build, from the preset picker in this editor.",
+    placeholder: "e.g. Softcap melee + recharge", okLabel: "Save preset" });
   if (!name) return;
   await api("/target_presets", postJson({ name, targets: _collectTargetsEditor() }));
   openTargetsEditor();     // re-render with the library refreshed
