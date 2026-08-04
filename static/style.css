@@ -1650,11 +1650,25 @@ body { overflow: hidden; }
 #custom-targets-btn.hidden { display: none; }
 @media (max-width: 760px) { .ct-grid { grid-template-columns: 1fr; } }
 
-/* v35 UX batch §4: per-power LOCKS. The padlock is a real control (visible at
-   rest, state-colored); a locked card reads locked at a glance. */
-.lock-btn { font-size: 11px; }
-.lock-btn.locked { border-color: #e0b84e; color: #e0b84e; }
-.power-card.pc-locked { border-color: #e0b84e; box-shadow: 0 0 0 1px #e0b84e33 inset; }
+/* v35 UX batch §4: per-power LOCKS — restyled 2026-08-04 (ui-ux-pro-max review).
+   The base `button` rule filled every padlock accent-blue, and emoji glyphs
+   ignore `color:` — so locked and unlocked rendered as the SAME loud blue pill,
+   ×24 down the wall: the brightest repeated element in the app carried no
+   state. Now the STATE carries the color: unlocked is quiet (reveals on
+   hover), locked is amber-tinted. The glyph (🔒/🔓) + tooltip still say it
+   in words, never color alone. */
+.lock-btn { font-size: 11px; background: transparent; border: 1px solid transparent;
+  opacity: .6; }
+.lock-btn:hover { opacity: 1; border-color: var(--border); background: var(--panel2); }
+.lock-btn.locked { opacity: 1; border-color: #e0b84e88;
+  background: rgba(224, 184, 78, .16); }
+/* A locked CARD keeps its amber signal but stops shouting: on an imported
+   build EVERY card is locked, and 24 full gold frames made the whole wall
+   vibrate. One amber edge per card reads the same state calmly. */
+.power-card.pc-locked {
+  border-color: color-mix(in srgb, #e0b84e 30%, var(--border));
+  border-left: 3px solid #e0b84e;   /* declared AFTER border-color: it must win */
+}
 .power-card.pc-locked .slot { opacity: 0.92; }
 
 /* v36: the Inherent Mechanics block — status tags read at a glance; dormant/
@@ -2714,3 +2728,42 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
    never a gate — the build stays fully usable with it up. */
 .name-nudge { margin: 0 0 var(--s3); padding: var(--s2) var(--s3);
   background: var(--panel2); border: 1px solid var(--warn); border-radius: var(--r2); }
+
+/* ══ UI-UX-PRO-MAX REVIEW PASS (2026-08-04) ══ Findings applied from the
+   skill's priority ladder, each one measured against the shipped rulings
+   (legibility beats cleverness; grey-out never hide; the active tab stays a
+   solid block per Joel 2026-08-03). The lock-button/locked-card calm-down
+   lives with its original rules further up. */
+
+/* 1. FOCUS IS UNIVERSAL (priority-1 accessibility). Tabs, menus and two
+      buttons had focus-visible rings; every input, select, checkbox, link
+      and summary had only the browser default, which on this dark palette
+      is a near-invisible hairline. One consistent ring, keyboard-only
+      (:focus-visible never fires on mouse click). */
+a:focus-visible, input:focus-visible, select:focus-visible,
+textarea:focus-visible, summary:focus-visible, button:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+
+/* 2. THE WINDOW SCROLLBAR IS PART OF THE APP. The one scroll surface we
+      kept (the window edge, per the no-inner-scrollbars ruling) rendered
+      Chromium's stock light-grey track — the only unthemed pixels in the
+      frame, and a loud "this is a browser" tell in a desktop app. */
+html { scrollbar-color: var(--border) var(--bg); }
+
+/* 3. CARD HOVER AFFORDANCE. The card title opens the detail view, but the
+      card itself gave no sign it was live until you hit the exact title
+      pixels. A border lift on the whole card telegraphs it (150ms, inside
+      the doctrine's band). Locked cards keep their amber edge — the state
+      signal outranks the hover hint. */
+.power-card { transition: border-color 150ms ease; }
+.power-card:not(.pc-locked):hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+
+/* 4. STAT ROWS ANNOUNCE THEIR CLICK (the breakdown panel is the payoff).
+      .stat-clickable already had cursor + a flat fill; a left-accent nudge
+      on hover makes "these rows open something" discoverable without
+      reading the hint line. */
+.stat-clickable { transition: background 120ms ease, box-shadow 120ms ease; }
+.stat-clickable:hover { box-shadow: inset 2px 0 0 var(--accent); }
