@@ -1,13 +1,16 @@
-"""REPRO: preserve-mode solve oscillates (period 2) since 053c76bd.
+"""REPRO (FIXED same day): preserve-mode solve oscillated, period 2.
 
-The activation-gated-proc host rule (HC_PROC_HOST_GATE, correct in itself)
-interacts with preserve mode: pressing "solve" repeatedly on a fully-imported
-preserve=True build flips Blazing Aura between {Perfect Zinger, Overwhelming
-Force} and {Fury of the Gladiator, Eradication} procs on EVERY press — locked
-slots are supposed to be byte-identical. Decisive A/B: HC_PROC_HOST_GATE=0
-makes all three presses byte-stable, gate on flips A->B->A.
-Standing detector: audit_slot_conservation.py (arm 2) stays RED until fixed.
-Found by the 2026-08-04 full-sweep; bisected v0.12.30 (green) -> 053c76bd (red).
+The symptom pointed at 053c76bd (the activation-gated-proc host rule), but
+that commit only UNMASKED the real defect: build_solve derived _generated
+from `p.get("_earned")` on the RAW request — an internal field that never
+appears on the wire (the wire name is earned_slot_count) — so _generated was
+ALWAYS true and the proc pass ran on every preserve solve, rewriting sets
+_preserve_locked had just pinned. Stable pre-gate only because the pass then
+re-picked the same pieces; the gate made its choice incumbent-dependent, so
+presses flipped A->B->A. Fix: _generated reads earned_slot_count (server.py).
+Standing detector: audit_slot_conservation.py (arm 2). This script prints the
+per-press piece diff — expected output now: 0 power(s) changed, twice.
+Found by the 2026-08-04 full sweep; bisected v0.12.30 green -> 053c76bd red.
 """
 import sys, os, json, copy, tempfile
 sys.path.insert(0, r"C:\Users\joelc\code\coh-builder")

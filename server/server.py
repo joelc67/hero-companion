@@ -4753,7 +4753,17 @@ def build_solve():
     _add_typed_def_route(powers, targets, archetype)
     _attach_base_dmg(powers, ctx)
 
-    _generated = not any(p.get("_earned") for p in powers_in)
+    # ⚠ powers_in is the RAW request: the wire field is earned_slot_count —
+    # `_earned` is the INTERNAL name minted during ingestion and never appears
+    # on the wire. Reading only `_earned` here made _generated ALWAYS true, so
+    # the proc pass ran on every preserve solve and rewrote sets that
+    # _preserve_locked had just pinned ("keep each power's existing SET IOs").
+    # Harmless-looking until 053c76bd made the proc pass's aura choice depend
+    # on the incumbent pieces — then repeated preserve presses flipped A→B→A
+    # (the 2026-08-04 oscillation; repro_preserve_gate_flip.py). A build with
+    # ANY earned slots is a player's build, not a generated kit.
+    _generated = not any((p.get("earned_slot_count") or p.get("_earned"))
+                         for p in powers_in)
     # In-game slot rule: each power has 1 FREE base slot; you distribute 67
     # ADDITIONAL slots (MidsReborn MaxSlots=67). So total placeable slots =
     # 67 + one base per power.
