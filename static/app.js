@@ -946,7 +946,7 @@ async function refreshBuildViews() {
   const has = !!(build.powers && build.powers.length);
   if (o) {
     o.classList.toggle("hidden", !has);
-    if (has) o.innerHTML = _fold("order-out", "Level-by-level plan",
+    if (has) o.innerHTML = _fold("order-out", "📋 Level-by-level plan",
       "the exact in-game order to take your powers", levelingPlanHtml());
   }
   if (t) {
@@ -954,7 +954,7 @@ async function refreshBuildViews() {
     if (has) {
       const tmp = document.createElement("div");
       await renderTrayLayout(tmp);
-      t.innerHTML = _fold("tray-out", "In-game power trays",
+      t.innerHTML = _fold("tray-out", "🎮 In-game power trays",
         "a suggested tray layout and attack order", tmp.innerHTML);
     }
   }
@@ -6981,8 +6981,10 @@ function _accInactiveAlign(a) {
 function _accRow(a) {
   const on = ACCOLADES_CHECKED.has(a.key);
   const off = _accInactiveAlign(a);   // this accolade's side ≠ the character's
-  const note = a.tier === "click" ? `not in passive totals`
-    : a.tier === "badge_only" ? `no build effect` : "";
+  // badge_only rows carry NO per-row note: their group's fold label says
+  // "cosmetic — no build effect" ONCE, instead of fourteen italic echoes
+  // (design pass, 2026-08-04).
+  const note = a.tier === "click" ? `not in passive totals` : "";
   // Correction 2's whole point is LEGIBILITY: the checkbox, the name and the
   // effect stay together on one readable line, the name is allowed to wrap
   // rather than be clipped, and nothing overflows sideways.
@@ -7033,7 +7035,16 @@ function renderAccolades() {
   for (const [tier, label] of groups) {
     const g = shown.filter(a => a.tier === tier);
     if (!g.length) continue;
-    body += `<div class="acc-group">${label} (${g.length})</div>` + g.map(_accRow).join("");
+    // Badge-only accolades fold away closed: they change no number, and the
+    // open list was 14 rows of tail that made the card twice the height of
+    // everything beside it (the void Joel photographed twice).
+    if (tier === "badge_only") {
+      body += `<details class="acc-badgefold"><summary>${label} (${g.length})
+        <span class="muted small">— cosmetic, no build effect</span></summary>
+        ${g.map(_accRow).join("")}</details>`;
+    } else {
+      body += `<div class="acc-group">${label} (${g.length})</div>` + g.map(_accRow).join("");
+    }
   }
   if (!body) body = `<div class="acc-empty">No accolade matches “${escHtml(ACCOLADES_FILTER)}”.</div>`;
   const nPassiveChecked = [...ACCOLADES_CHECKED].filter(k =>

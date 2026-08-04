@@ -2884,3 +2884,20 @@ summary:hover { color: var(--ink); }
   color: var(--accent); border-bottom: none; padding: 2px 0; }
 .fold-row .conv-guide { padding: 6px 12px 10px; }
 @media (max-width: 1200px) { .fold-row { flex-direction: column; } .fold-row > * { width: 100%; } }
+
+/* ── Design pass on the moved surfaces (2026-08-04, from screenshots) ────────
+   Fold summaries: title line + muted description line, same voice in all
+   three boxes; the ▸ marker rides the title line. */
+.fold-row summary { line-height: 1.35; }
+.fold-row summary b { font-size: 13px; color: var(--accent); }
+.fold-row summary .muted { display: block; margin-top: 1px; font-style: normal; }
+.fold-row > * { padding: 8px 12px 10px; }
+/* Accolade card header wraps instead of overflowing its narrow column; the
+   hint gets its own full-width line below the controls. */
+.acc-head { flex-wrap: wrap; }
+.acc-hint { white-space: normal; flex: 1 1 100%; order: 9; }
+/* Badge-only fold: quiet summary in the group-label voice. */
+.acc-badgefold { margin: 6px 0 0; }
+.acc-badgefold > summary { font-size: 10px; font-weight: 700; letter-spacing: .05em;
+  color: var(--muted); cursor: pointer; padding: 2px 0; }
+.acc-badgefold > summary:hover { color: var(--ink); }
