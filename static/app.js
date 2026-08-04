@@ -973,6 +973,12 @@ function packPowersTab() {
     .filter(c => !TILES.includes(c.id) && !c.classList.contains("hidden"))
     .reduce((a, c) => a + h(c), 0);
   let hm = base(main), hs = base(side);
+  // ⚠ ZERO-GEOMETRY GUARD (the Doh! bug, 2026-08-04): a pack that fires while
+  // layout is mid-measure reads every height as 0, concludes "main is
+  // shorter", and drags EVERY tile left — which is exactly the state Joel
+  // photographed. No real measurement, no moves; a real-geometry pack always
+  // follows on the next recompute.
+  if (hm < 50 && hs < 50) return;
   for (const id of TILES) {
     const el = $(id);
     if (!el) continue;
@@ -4988,12 +4994,10 @@ function catalogueHtml(sets) {
     gate = `<div class="cat-gate">⚔️ <b>Level 35 — your Epic / Ancillary pool is open.</b>`
       + ` Choose it in the End-game plan (right column) and its powers join the list here.`
       + ` <button class="linkbtn" onclick="openEndgame('endgame-plan-panel')">Go to the plan →</button></div>`;
-  } else if (full || atLevel >= 50) {
-    gate = `<div class="cat-gate">🏅 <b>Level 50 — accolades and incarnates are open.</b>`
-      + ` Tick the accolades you have earned (below the wall) and pick your`
-      + ` incarnate slots in the End-game plan.`
-      + ` <button class="linkbtn" onclick="openEndgame('endgame-panel')">Go there →</button></div>`;
   }
+  // (the level-50 "accolades and incarnates are open" banner is GONE —
+  // Joel, 2026-08-04: "This is pointless… It is two spaces below." Both
+  // surfaces are on this very tab now; a signpost to the visible is noise.)
   const head = full
     ? `<div class="cat-hint cat-done"><b>All 24 powers picked.</b> Now slot them:`
       + ` <button class="linkbtn" onclick="$('solve-btn').click()">🧮 Slot everything up</button></div>`

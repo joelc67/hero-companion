@@ -307,49 +307,6 @@
 
 
     </section>
-      <!-- ── FREE TILES (Joel, 2026-08-04 night: "move the items around until
-           they fit into a perfect wall with zero gaps"). packPowersTab()
-           measures and moves each of these between the two columns so both
-           columns end together. DOM order here is only the packing order. -->
-      <section class="panel" id="endgame-panel">
-        <h2>Accolades<button class="tour-help" onclick="startTour('endgame')" aria-label="Explain this section" title="Explain this section">?</button></h2>
-        <p class="muted small keep-whole">Permanent rewards worth chasing — tick the ones
-          your character has earned and they feed the totals.</p>
-        <div id="accolades-card" class="accolades-card"></div>
-      </section>
-      <!-- ⌨ In-game commands (Joel, 2026-08-04: "with a click to copy them
-           and then Ctrl-V to paste them in game"). Every command here is one
-           this app's own workflow meets. -->
-      <section class="panel" id="cmd-card">
-        <h2>⌨ In-game commands</h2>
-        <p class="muted small keep-whole">Click a command to copy it — then <b>Ctrl+V</b> into the game's chat box.</p>
-        <div class="cmd-list">
-          <button type="button" class="cmd-row" data-cmd="/build_save_file mybuild.txt"><code>/build_save_file mybuild.txt</code><span>Save your live character to a file — then Character → Import brings it in here</span></button>
-          <button type="button" class="cmd-row" data-cmd="/respec"><code>/respec</code><span>Start a respec in game (if you have one earned) — follow the Level-by-level plan's order</span></button>
-          <button type="button" class="cmd-row" data-cmd="/ah"><code>/ah</code><span>Open the auction house from anywhere — for the shopping the converters guide prices</span></button>
-          <button type="button" class="cmd-row" data-cmd="/logchat"><code>/logchat</code><span>Turn the chat log on — the Logging tab reads it to build your Play Log</span></button>
-        </div>
-      </section>
-      <!-- 💠 Set bonuses, explained near the IOs (Joel: "it would have to be
-           near the IO sets to be of any value"). -->
-      <section class="panel" id="setbonus-blurb">
-        <h2>💠 How set bonuses stack</h2>
-        <p class="muted small keep-whole">Slot <b>2 or more pieces</b> of the same IO set in one power
-          and bonuses unlock tier by tier — each power card's <b>sets:</b> line names its sets, and
-          the ⓘ on any piece lists every tier.</p>
-        <p class="muted small keep-whole"><b>The rule of five:</b> the game counts each identical
-          bonus at most <b>5 times</b> across your whole build — a sixth copy adds nothing.
-          The planner obeys this automatically; if you hand-slot, it's the one trap to watch.</p>
-        <p class="muted small keep-whole">To see where any total comes from, open <b>Stats</b> and
-          click the number — the exact pieces feeding it ring green.</p>
-      </section>
-      <!-- 🧬 The archetype's inherent, explained (Joel: "#3 sounds cool too.
-           If explained well."). Filled by renderInherentCard from the same
-           engine data the Stats fold uses — never a second copy of game facts. -->
-      <section class="panel hidden" id="inherent-card">
-        <h2 id="inherent-card-h">🧬 Your inherent</h2>
-        <div id="inherent-card-body"></div>
-      </section>
       </div>
       <!-- SIDE COLUMN. The Assistant lives beside the powers wall, not under
            it: stacked, its 630px was pure addition to the tab's height; here
@@ -505,6 +462,48 @@
             them in (Destiny, Hybrid &amp; Judgement) and match Mids' fully-buffed display.</p>
         </div>
       </details>
+      </section>
+      <!-- ── FREE TILES, seated in the RIGHT RAIL by default (Joel,
+           2026-08-04: these exist to fill the empty right side — "you just
+           made it a larger space by placing them on the left. Doh!").
+           packPowersTab() may still move one to the main column when the
+           rail genuinely overflows, measured with REAL geometry only. -->
+      <section class="panel" id="endgame-panel">
+        <h2>Accolades<button class="tour-help" onclick="startTour('endgame')" aria-label="Explain this section" title="Explain this section">?</button></h2>
+        <p class="muted small keep-whole">Permanent rewards worth chasing — tick the ones
+          your character has earned and they feed the totals.</p>
+        <div id="accolades-card" class="accolades-card"></div>
+      </section>
+      <!-- ⌨ In-game commands (Joel: "with a click to copy them and then
+           Ctrl-V to paste them in game"). Every command here is one this
+           app's own workflow meets. -->
+      <section class="panel" id="cmd-card">
+        <h2>⌨ In-game commands</h2>
+        <p class="muted small keep-whole">Click a command to copy it — then <b>Ctrl+V</b> into the game's chat box.</p>
+        <div class="cmd-list">
+          <button type="button" class="cmd-row" data-cmd="/build_save_file mybuild.txt"><code>/build_save_file mybuild.txt</code><span>Save your live character to a file — then Character → Import brings it in here</span></button>
+          <button type="button" class="cmd-row" data-cmd="/respec"><code>/respec</code><span>Start a respec in game (if you have one earned) — follow the Level-by-level plan's order</span></button>
+          <button type="button" class="cmd-row" data-cmd="/ah"><code>/ah</code><span>Open the auction house from anywhere — for the shopping the converters guide prices</span></button>
+          <button type="button" class="cmd-row" data-cmd="/logchat"><code>/logchat</code><span>Turn the chat log on — the Logging tab reads it to build your Play Log</span></button>
+        </div>
+      </section>
+      <!-- 🧬 The archetype's inherent, explained. Filled by renderInherentCard
+           from the same engine data the Stats fold uses. -->
+      <section class="panel hidden" id="inherent-card">
+        <h2 id="inherent-card-h">🧬 Your inherent</h2>
+        <div id="inherent-card-body"></div>
+      </section>
+      <!-- 💠 Set bonuses, explained near the IOs. -->
+      <section class="panel" id="setbonus-blurb">
+        <h2>💠 How set bonuses stack</h2>
+        <p class="muted small keep-whole">Slot <b>2 or more pieces</b> of the same IO set in one power
+          and bonuses unlock tier by tier — each power card's <b>sets:</b> line names its sets, and
+          the ⓘ on any piece lists every tier.</p>
+        <p class="muted small keep-whole"><b>The rule of five:</b> the game counts each identical
+          bonus at most <b>5 times</b> across your whole build — a sixth copy adds nothing.
+          The planner obeys this automatically; if you hand-slot, it's the one trap to watch.</p>
+        <p class="muted small keep-whole">To see where any total comes from, open <b>Stats</b> and
+          click the number — the exact pieces feeding it ring green.</p>
       </section>
       </div>
     </div>
