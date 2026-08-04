@@ -463,20 +463,21 @@
         </div>
       </details>
       </section>
-      <!-- ── FREE TILES, seated in the RIGHT RAIL by default (Joel,
-           2026-08-04: these exist to fill the empty right side — "you just
-           made it a larger space by placing them on the left. Doh!").
-           packPowersTab() may still move one to the main column when the
-           rail genuinely overflows, measured with REAL geometry only. -->
+      </div>
+    </div>
+    <!-- ── THE CARD BAND (Joel, 2026-08-04: "instead of finding balance you
+         moved… content to the right, now the left has a big empty space" —
+         moving panels between two competing columns is a see-saw, not
+         design). The two-column region ENDS with the wall; below it, the
+         four cards share ONE full-width row of equal columns. No side can
+         starve, no packer needed. -->
+    <div class="pw-cardband">
       <section class="panel" id="endgame-panel">
         <h2>Accolades<button class="tour-help" onclick="startTour('endgame')" aria-label="Explain this section" title="Explain this section">?</button></h2>
         <p class="muted small keep-whole">Permanent rewards worth chasing — tick the ones
           your character has earned and they feed the totals.</p>
         <div id="accolades-card" class="accolades-card"></div>
       </section>
-      <!-- ⌨ In-game commands (Joel: "with a click to copy them and then
-           Ctrl-V to paste them in game"). Every command here is one this
-           app's own workflow meets. -->
       <section class="panel" id="cmd-card">
         <h2>⌨ In-game commands</h2>
         <p class="muted small keep-whole">Click a command to copy it — then <b>Ctrl+V</b> into the game's chat box.</p>
@@ -487,13 +488,10 @@
           <button type="button" class="cmd-row" data-cmd="/logchat"><code>/logchat</code><span>Turn the chat log on — the Logging tab reads it to build your Play Log</span></button>
         </div>
       </section>
-      <!-- 🧬 The archetype's inherent, explained. Filled by renderInherentCard
-           from the same engine data the Stats fold uses. -->
       <section class="panel hidden" id="inherent-card">
         <h2 id="inherent-card-h">🧬 Your inherent</h2>
         <div id="inherent-card-body"></div>
       </section>
-      <!-- 💠 Set bonuses, explained near the IOs. -->
       <section class="panel" id="setbonus-blurb">
         <h2>💠 How set bonuses stack</h2>
         <p class="muted small keep-whole">Slot <b>2 or more pieces</b> of the same IO set in one power
@@ -505,7 +503,6 @@
         <p class="muted small keep-whole">To see where any total comes from, open <b>Stats</b> and
           click the number — the exact pieces feeding it ring green.</p>
       </section>
-      </div>
     </div>
     <!-- THE BASE SLABS (Joel's perfect-wall order, 2026-08-04 night): trays,
          the level plan and the converters guide are giant references — packed

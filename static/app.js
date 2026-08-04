@@ -943,57 +943,14 @@ document.addEventListener("toggle", (e) => {
   try { localStorage.setItem(_foldKey(d.dataset.fold), d.open ? "1" : "0"); } catch (err) {}
 }, true);
 
-// ── THE PERFECT WALL (Joel, 2026-08-04 night: "move the items around until
-// they fit into a perfect wall with zero gaps any where"). The Powers tab's
-// free tiles — accolades, the epic/incarnate plan, trays, level plan,
-// converters — are placed into whichever column is currently SHORTER, so the
-// two columns end together instead of one trailing a void. Measured live
-// (tile height depends on column width — the old balanceColumns lesson);
-// fixed seats stay fixed: the wall+catalogue lead the main column, the
-// Assistant leads the side column (the 2026-08-01 findability ruling).
-let _packTimer = null;
-function schedulePack() {
-  clearTimeout(_packTimer);
-  _packTimer = setTimeout(packPowersTab, 80);
-}
-function packPowersTab() {
-  const tab = $("tab-powers");
-  if (!tab || tab.hidden) return;          // hidden tab = zero geometry, skip
-  const main = document.querySelector(".powers-main");
-  const side = document.querySelector(".powers-side");
-  if (!main || !side) return;
-  // trays / level plan / conv-guide are NOT tiles: they are the full-width
-  // base slabs under the wall — giant references that outrun any column, and
-  // whose content flows horizontally at full width (short and dense there).
-  const TILES = ["endgame-plan-panel", "endgame-panel", "cmd-card",
-                 "inherent-card", "setbonus-blurb"];
-  const h = el => el.getBoundingClientRect().height;
-  // column base = everything that is NOT a movable tile
-  const base = col => [...col.children]
-    .filter(c => !TILES.includes(c.id) && !c.classList.contains("hidden"))
-    .reduce((a, c) => a + h(c), 0);
-  let hm = base(main), hs = base(side);
-  // ⚠ ZERO-GEOMETRY GUARD (the Doh! bug, 2026-08-04): a pack that fires while
-  // layout is mid-measure reads every height as 0, concludes "main is
-  // shorter", and drags EVERY tile left — which is exactly the state Joel
-  // photographed. No real measurement, no moves; a real-geometry pack always
-  // follows on the next recompute.
-  if (hm < 50 && hs < 50) return;
-  for (const id of TILES) {
-    const el = $(id);
-    if (!el) continue;
-    if (el.classList.contains("hidden")) continue;   // empty view = no tile
-    const target = hm <= hs ? main : side;
-    if (el.parentElement !== target) target.appendChild(el);
-    const bh = h(el);
-    if (target === main) hm += bh; else hs += bh;
-  }
-}
-window.addEventListener("resize", schedulePack);
-// any fold opening/closing changes tile heights — repack
-document.addEventListener("toggle", (e) => {
-  if (e.target && e.target.closest && e.target.closest("#tab-powers")) schedulePack();
-}, true);
+// ── packPowersTab is DEAD (Joel, 2026-08-04: "Instead of finding balance
+// you moved… content to the right, now the left has a big empty space.
+// Please stop wasting tokens on terrible design ideas."). Moving whole
+// panels between two competing columns is a see-saw — whichever side loses
+// content gains a void. The layout is STRUCTURAL now: the two-column region
+// ends with the wall; below it the four cards share one full-width
+// equal-column band (.pw-cardband), then the reference slabs. Nothing to
+// measure, nothing to move, no side to starve.
 
 // Click-to-copy for the in-game commands card (Joel, 2026-08-04). Clipboard
 // API first; the textarea fallback covers WebView2 configurations where the
@@ -1055,7 +1012,6 @@ function renderInherentCard() {
         <div><b>${escHtml(m.family)}</b> <span class="im-tag im-${m.status}">${tag[m.status] || m.status}</span></div>
         <div class="muted small keep-whole">${escHtml(m.basis)}</div>
       </div>`).join("");
-  schedulePack();
 }
 
 async function refreshBuildViews() {
@@ -1075,7 +1031,6 @@ async function refreshBuildViews() {
         "a suggested tray layout and attack order", tmp.innerHTML);
     }
   }
-  schedulePack();     // tray/plan tiles just changed height
 }
 
 // Interactive leveling STEPPER: walk each pick, see the stat it contributes (delta) +
@@ -5016,8 +4971,8 @@ function catalogueHtml(sets) {
       + `${atLevel < poolOpensAt ? " — not yet" : ""}.`
       + ` Change one with the dropdown on its column; the powers follow.</div>`
     : "";
-  // (The accolades panel moved back OUT to a free tile in powers-main —
-  // packPowersTab() places it now; 2026-08-04 night, the perfect-wall order.)
+  // (The accolades panel lives in the full-width card band below the wall —
+  // .pw-cardband in index.html; 2026-08-04, the structural-balance order.)
   return `<div class="catalogue">${head}${gate}${poolNote}`
     + `<div class="cat-cols">${cols}</div></div>`;
 }
@@ -5177,7 +5132,6 @@ function renderPowers() {
   updateEditBar();
   updateEpicBadge();
   renderConverterGuide();
-  schedulePack();                          // the wall changed height — repack the tiles
 }
 
 // ── Totals-checkbox redesign (Joel's four-state visual language, completed
@@ -6894,7 +6848,6 @@ function activateTab(key, moveFocus) {
     if (on && moveFocus) btn.focus();
   }
   try { localStorage.setItem("cohTab", key); } catch (e) {}
-  if (key === "powers") schedulePack();   // packing skips hidden tabs — pack on arrival
   // ⚠ The road is built from THIS character, so opening its tab has to build it.
   // Clicking the tab directly used to show an empty panel, because only the
   // header pill ever called openJourneyView. The guard stops the recursion:

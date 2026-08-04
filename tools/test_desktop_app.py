@@ -241,12 +241,15 @@ def main():
           all(f'id="tab-btn-{k}"' in index and f'id="tab-{k}"' in index
               for k in ("powers", "stats", "leveling", "logging"))
           and 'id="tab-btn-endgame"' not in index)
-    check("the End Game surfaces are free tiles inside the powers tab (packPowersTab seats them)",
+    # (packPowersTab is DEAD — Joel 2026-08-04: column see-saw, not design.
+    # The cards live in the structural .pw-cardband; no packer may return.)
+    check("the End Game surfaces live in the powers tab's card band; no packer",
           index.index('id="tab-powers"') < index.index('id="endgame-panel"')
           < index.index('id="tab-stats"')
           and index.index('id="tab-powers"') < index.index('id="endgame-plan-panel"')
           < index.index('id="tab-stats"')
-          and "function packPowersTab" in app_js)
+          and 'class="pw-cardband"' in index
+          and "function packPowersTab" not in app_js)
     # ⚠ SPEC 5.1 — the rule a naive tab implementation breaks. recompute() writes
     # into elements on four different tabs; unmounting makes every write a no-op.
     check("panels are HIDDEN, never unmounted", "panel.hidden = !on;" in app_js,

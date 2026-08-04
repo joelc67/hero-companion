@@ -2944,3 +2944,12 @@ summary:hover { color: var(--ink); }
 .cmd-row.cmd-copied { border-color: var(--def); }
 .cmd-row.cmd-copied code { color: var(--def); }
 .ih-row { margin: 8px 0; }
+
+/* ── THE CARD BAND (2026-08-04, supersedes the packer): below the wall, the
+   four cards share one full-width row of equal columns — structural balance,
+   nothing measured, no side to starve. Wraps to fewer columns when narrow;
+   grid stretch keeps the row's card heights level. */
+.pw-cardband { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--s3); margin-top: var(--s3); align-items: stretch; }
+.pw-cardband > .panel { margin: 0; }
+.pw-cardband > .panel.hidden { display: none; }
