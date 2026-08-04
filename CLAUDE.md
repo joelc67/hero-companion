@@ -412,9 +412,17 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
 
 ## 🖥 THE TABBED APP (Joel's redesign, 2026-08-03 — supersedes the tile layout)
 
-The single-page app became a **five-tab desktop application**: build tile
-(identity) + tab strip as sticky chrome, then Powers & Slots / Stats / End Game /
-Leveling Guide / Logging. `balanceColumns()` is DELETED — tabs split the columns
+The single-page app became a tabbed desktop application: build tile
+(identity) + tab strip as sticky chrome, then **FOUR tabs — Powers & Slots /
+Stats / Leveling Guide / Logging. The END GAME TAB WAS RETIRED (Joel,
+2026-08-04, 21d5fdd7): accolades = full-width panel under the powers wall
+(#endgame-panel); epic + incarnates = the End-game plan fold in the side
+column under the Assistant (#endgame-plan-panel — the pre-tab rail
+placement his screenshot asked for); the import/solve Improvement report
+sits in the Assistant under the solve buttons. Menu + ladder gates jump
+via openEndgame(); stale remembered "endgame" tab keys fall back to
+powers; tour chapter endgame maps TM_TAB→powers with its mock block
+re-tagged powers (stacks under the wall mock).** `balanceColumns()` is DELETED — tabs split the columns
 it shuffled tiles between. Full detail in `tabbed-layout-spec.md`; handoff state
 in RESUME-HERE.md.
 
