@@ -525,6 +525,28 @@ in RESUME-HERE.md.
   ones still open and are nudged (narrow test: only the exact string autosave
   would have produced). Closing prompts to save; launch reopens the last one.
 
+## 🧱 THE PERFECT WALL on Powers & Slots (Joel's order, 2026-08-04 night, 472a76a3)
+
+"Open all the drop downs on the first tab, then move the items around until
+they fit into a perfect wall with zero gaps any where." The architecture:
+- **All folds default OPEN** (`_foldOpen`: absent key = open; explicit closes
+  remembered). The wall is judged with everything expanded.
+- **packPowersTab()** seats the two COLUMN TILES (#endgame-plan-panel,
+  #endgame-panel) into whichever column is currently shorter — measured
+  live, on render/recompute/toggle/resize/tab-arrival (hidden tab = zero
+  geometry, skip). The balanceColumns lesson: measure, never predict.
+- **BASE SLABS**: trays, level plan, converters are giant references — in a
+  column any one strands a void. They sit FULL WIDTH under the columns where
+  their content flows horizontally (the wide-brick CSS: the 24-row respec
+  order becomes a 5-across course). ⚠ Found twice the hard way: conv guide
+  first, level plan second — a "tile" taller than everything else can never
+  be balanced; promote it to a slab.
+- **GROUT**: each column's last tile stretches to the shared bottom edge
+  (`.powers-main/.powers-side > :last-child { flex: 1 0 auto }`) — the
+  residual discrete tiles can't split is panel surface, never raw page.
+- The builder flex-stretch rule is DELETED (it painted the void); the 3-up
+  fold row is gone; accolades are a free tile in index.html again.
+
 ## 🧩 Layout: tiles, never a scrollbar (Joel's ruling, 2026-08-02)
 
 - **⚠ NEVER cap the rail with its own scroll.** It removed 1745px of dead space
