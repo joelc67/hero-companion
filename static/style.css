@@ -182,9 +182,9 @@ body:not(.tab-powers) .build-tile { display: none !important; }
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
   gap: var(--s3); align-items: stretch;
 }
-/* Both columns run to the same bottom edge. Unequal, the shorter one left a
-   void that read as "unfinished", which is what an empty frame IS. */
-.powers-main > .panel:first-child { flex: 1; }
+/* (the first-panel stretch rule is GONE, 2026-08-04 night: packPowersTab
+   equalizes the columns by MOVING tiles — stretching the builder just painted
+   the leftover as an internal void) */
 .powers-main, .powers-side { min-width: 0; display: flex; flex-direction: column; gap: var(--s3); }
 #power-info.hidden { display: none; }
 /* The detail card is NOT sticky (Joel, 2026-08-03: "Why is the power I clicked
@@ -2916,3 +2916,17 @@ summary:hover { color: var(--ink); }
    the text below (the overlap Joel screenshotted). */
 .jny-roadart { position: relative; overflow: hidden; border-radius: var(--r2); }
 .jny-roadart .jny-art { position: absolute; inset: 0; height: auto; min-height: 0; }
+
+/* ── Perfect-wall tiles (2026-08-04 night) ───────────────────────────────────
+   The fold tiles keep one voice wherever the packer seats them. */
+.order-out summary b, .conv-guide > summary b { font-size: 13px; color: var(--accent); }
+.order-out summary .muted, .conv-guide > summary .muted { display: block; margin-top: 1px; font-style: normal; }
+.subpanel-fold > summary { border-bottom: none; padding: 2px 0; }
+.conv-guide.order-out { padding: 6px 12px 10px; margin: 0; }
+/* the base slab sits below the two columns, full width */
+#tab-powers > .conv-guide { margin-top: var(--s3); }
+#tab-powers > .order-out { margin-top: var(--s3); }
+/* The wall's grout: each column's LAST tile stretches to the shared bottom
+   edge, so whatever residual the discrete tiles leave is panel surface, not
+   raw page background. Discrete tiles can't split; this absorbs the rest. */
+.powers-main > :last-child, .powers-side > :last-child { flex: 1 0 auto; }

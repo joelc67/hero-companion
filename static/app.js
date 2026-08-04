@@ -928,7 +928,9 @@ async function renderTrayLayout(out) {
 // This is a default, not a decision made for the user.
 function _foldKey(id) { return "cohFold_" + id; }
 function _foldOpen(id) {
-  try { return localStorage.getItem(_foldKey(id)) === "1"; } catch (e) { return false; }
+  // Default OPEN (Joel, 2026-08-04 night: the perfect wall stands with every
+  // drop-down expanded). A user's explicit close is still remembered.
+  try { return localStorage.getItem(_foldKey(id)) !== "0"; } catch (e) { return true; }
 }
 function _fold(id, title, sub, innerHtml) {
   return `<details class="subpanel-fold" data-fold="${escHtml(id)}"${_foldOpen(id) ? " open" : ""}>`
@@ -939,6 +941,51 @@ document.addEventListener("toggle", (e) => {
   const d = e.target;
   if (!d || !d.classList || !d.classList.contains("subpanel-fold")) return;
   try { localStorage.setItem(_foldKey(d.dataset.fold), d.open ? "1" : "0"); } catch (err) {}
+}, true);
+
+// ── THE PERFECT WALL (Joel, 2026-08-04 night: "move the items around until
+// they fit into a perfect wall with zero gaps any where"). The Powers tab's
+// free tiles — accolades, the epic/incarnate plan, trays, level plan,
+// converters — are placed into whichever column is currently SHORTER, so the
+// two columns end together instead of one trailing a void. Measured live
+// (tile height depends on column width — the old balanceColumns lesson);
+// fixed seats stay fixed: the wall+catalogue lead the main column, the
+// Assistant leads the side column (the 2026-08-01 findability ruling).
+let _packTimer = null;
+function schedulePack() {
+  clearTimeout(_packTimer);
+  _packTimer = setTimeout(packPowersTab, 80);
+}
+function packPowersTab() {
+  const tab = $("tab-powers");
+  if (!tab || tab.hidden) return;          // hidden tab = zero geometry, skip
+  const main = document.querySelector(".powers-main");
+  const side = document.querySelector(".powers-side");
+  if (!main || !side) return;
+  // trays / level plan / conv-guide are NOT tiles: they are the full-width
+  // base slabs under the wall — giant references that outrun any column, and
+  // whose content flows horizontally at full width (short and dense there).
+  const TILES = ["endgame-plan-panel", "endgame-panel"];
+  const h = el => el.getBoundingClientRect().height;
+  // column base = everything that is NOT a movable tile
+  const base = col => [...col.children]
+    .filter(c => !TILES.includes(c.id) && !c.classList.contains("hidden"))
+    .reduce((a, c) => a + h(c), 0);
+  let hm = base(main), hs = base(side);
+  for (const id of TILES) {
+    const el = $(id);
+    if (!el) continue;
+    if (el.classList.contains("hidden")) continue;   // empty view = no tile
+    const target = hm <= hs ? main : side;
+    if (el.parentElement !== target) target.appendChild(el);
+    const bh = h(el);
+    if (target === main) hm += bh; else hs += bh;
+  }
+}
+window.addEventListener("resize", schedulePack);
+// any fold opening/closing changes tile heights — repack
+document.addEventListener("toggle", (e) => {
+  if (e.target && e.target.closest && e.target.closest("#tab-powers")) schedulePack();
 }, true);
 
 async function refreshBuildViews() {
@@ -958,6 +1005,7 @@ async function refreshBuildViews() {
         "a suggested tray layout and attack order", tmp.innerHTML);
     }
   }
+  schedulePack();     // tray/plan tiles just changed height
 }
 
 // Interactive leveling STEPPER: walk each pick, see the stat it contributes (delta) +
@@ -4900,22 +4948,10 @@ function catalogueHtml(sets) {
       + `${atLevel < poolOpensAt ? " — not yet" : ""}.`
       + ` Change one with the dropdown on its column; the powers follow.</div>`
     : "";
-  // ACCOLADES fill the catalogue's trailing space (Joel, 2026-08-04: "needs
-  // Accolades to take up the entire red rectangle" — the pool/epic row has
-  // fewer columns than the sets row, and the leftover cells read as a void).
-  // Emitted HERE because renderPowers owns this region's innerHTML: a panel
-  // parked in index.html would be destroyed on every wall re-render, while
-  // this one is re-created each pass and renderAccolades() (already called
-  // at the end of renderPowers) repopulates #accolades-card right after.
-  const accPanel =
-    `<section class="panel cat-acc" id="endgame-panel">
-      <h2>Accolades<button class="tour-help" onclick="startTour('endgame')" aria-label="Explain this section" title="Explain this section">?</button></h2>
-      <p class="muted small keep-whole">Permanent rewards worth chasing — tick the ones
-        your character has earned and they feed the totals.</p>
-      <div id="accolades-card" class="accolades-card"></div>
-    </section>`;
+  // (The accolades panel moved back OUT to a free tile in powers-main —
+  // packPowersTab() places it now; 2026-08-04 night, the perfect-wall order.)
   return `<div class="catalogue">${head}${gate}${poolNote}`
-    + `<div class="cat-flex"><div class="cat-cols">${cols}</div>${accPanel}</div></div>`;
+    + `<div class="cat-cols">${cols}</div></div>`;
 }
 
 // Fill the EMPTY pick seats from autopick, keeping every existing pick.
@@ -5073,6 +5109,7 @@ function renderPowers() {
   updateEditBar();
   updateEpicBadge();
   renderConverterGuide();
+  schedulePack();                          // the wall changed height — repack the tiles
 }
 
 // ── Totals-checkbox redesign (Joel's four-state visual language, completed
@@ -6788,6 +6825,7 @@ function activateTab(key, moveFocus) {
     if (on && moveFocus) btn.focus();
   }
   try { localStorage.setItem("cohTab", key); } catch (e) {}
+  if (key === "powers") schedulePack();   // packing skips hidden tabs — pack on arrival
   // ⚠ The road is built from THIS character, so opening its tab has to build it.
   // Clicking the tab directly used to show an empty panel, because only the
   // header pill ever called openJourneyView. The guard stops the recursion:

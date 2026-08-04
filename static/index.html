@@ -301,29 +301,22 @@
 
       <div id="powers-list"></div>
 
-      <!-- The three folds share ONE row (Joel, 2026-08-04: "take up all
-           three choices horizontally"), each in the same box style with the
-           same summary weight. A hidden fold drops out of the row. -->
-      <div class="fold-row">
-        <div id="tray-out" class="order-out subpanel hidden"></div>
-        <div id="order-out" class="order-out subpanel hidden"></div>
-        <details class="conv-guide order-out" id="conv-guide-details">
-          <summary><b>💰 Get expensive IOs cheap</b> <span class="muted small">enhancement converters — cheap sets become the expensive ones</span></summary>
-          <div id="conv-tool" class="conv-tool"></div>
-          <div id="conv-guide-body" class="conv-guide-body"></div>
-        </details>
-      </div>
-
       <!-- Import/Export moved into the Character menu (2026-08-03).
            #import-file stays: it is the hidden file input they drive. -->
       <input type="file" id="import-file" accept=".mbd,.json,.txt,application/json,text/plain" class="hidden">
 
 
     </section>
-      <!-- (the ACCOLADES panel is emitted by catalogueHtml in app.js — it
-           lives INSIDE the catalogue beside the pool/epic columns, filling
-           what used to be empty grid cells. It cannot live here: renderPowers
-           owns that region's innerHTML.) -->
+      <!-- ── FREE TILES (Joel, 2026-08-04 night: "move the items around until
+           they fit into a perfect wall with zero gaps"). packPowersTab()
+           measures and moves each of these between the two columns so both
+           columns end together. DOM order here is only the packing order. -->
+      <section class="panel" id="endgame-panel">
+        <h2>Accolades<button class="tour-help" onclick="startTour('endgame')" aria-label="Explain this section" title="Explain this section">?</button></h2>
+        <p class="muted small keep-whole">Permanent rewards worth chasing — tick the ones
+          your character has earned and they feed the totals.</p>
+        <div id="accolades-card" class="accolades-card"></div>
+      </section>
       </div>
       <!-- SIDE COLUMN. The Assistant lives beside the powers wall, not under
            it: stacked, its 630px was pure addition to the tab's height; here
@@ -482,6 +475,18 @@
       </section>
       </div>
     </div>
+    <!-- THE BASE SLABS (Joel's perfect-wall order, 2026-08-04 night): trays,
+         the level plan and the converters guide are giant references — packed
+         into a column any one of them outruns the other side and strands a
+         void. Full width, their content flows HORIZONTALLY (the .order-out
+         wide-brick CSS) so each slab is short and dense. -->
+    <div id="tray-out" class="order-out subpanel hidden"></div>
+    <div id="order-out" class="order-out subpanel hidden"></div>
+    <details class="conv-guide order-out" id="conv-guide-details" open>
+      <summary><b>💰 Get expensive IOs cheap</b> <span class="muted small">enhancement converters — cheap sets become the expensive ones</span></summary>
+      <div id="conv-tool" class="conv-tool"></div>
+      <div id="conv-guide-body" class="conv-guide-body"></div>
+    </details>
     </section>
     <section id="tab-stats" class="tabpanel" role="tabpanel"
       aria-labelledby="tab-btn-stats" hidden>
