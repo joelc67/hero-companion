@@ -2767,3 +2767,33 @@ html { scrollbar-color: var(--border) var(--bg); }
       reading the hint line. */
 .stat-clickable { transition: background 120ms ease, box-shadow 120ms ease; }
 .stat-clickable:hover { box-shadow: inset 2px 0 0 var(--accent); }
+
+/* ══ REVIEW PASS, ROUND 2 (2026-08-04) ══ */
+
+/* 5. THE PREVIEW-ALL BAR WAS A LAYOUT BUG, not a design choice. The global
+      `select, input, textarea, button { width: 100% }` rule gives every
+      button a 100% width; .acc-preview-btn pairs that with flex-shrink: 0,
+      so inside the .acc-head flex row it claimed the container's full width
+      and crushed the search box to its 80px minimum. A compact control was
+      rendering as a panel-wide empty band with 10px text lost in it. */
+.acc-preview-btn { width: auto; }
+
+/* 6. SELECTS SIZED TO THEIR CONTENT, not the panel. The same global 100%
+      width stretched the epic-pool select to ~1200px and each incarnate
+      select to ~600px on End Game — a dropdown wider than the text it holds
+      is pure mouse travel (and reads as a text field, not a choice). Capped
+      at what the longest option actually needs. */
+#endgame-panel select { max-width: 460px; }
+
+/* 7. THE ASSISTANT'S ? SITS IN THE HEADER ROW. The markup keeps it OUTSIDE
+      the h2 on purpose (app.js rewrites assistant-title's innerHTML, which
+      would delete anything nested there) — but visually it rendered as an
+      orphan button floating alone under the heading. Seat it top-right of
+      the panel; the markup constraint and the click target are unchanged. */
+#assistant { position: relative; }
+#assistant > .tour-help { position: absolute; top: 12px; right: 13px; }
+
+/* 8. DISCLOSURES ACKNOWLEDGE THE POINTER. Summary folds are everywhere
+      (short windows, explains, journey) and gave no hover feedback at all —
+      the only clickable text in the app that didn't. */
+summary:hover { color: var(--ink); }
