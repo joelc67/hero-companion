@@ -525,7 +525,27 @@ in RESUME-HERE.md.
   ones still open and are nudged (narrow test: only the exact string autosave
   would have produced). Closing prompts to save; launch reopens the last one.
 
-## 🧱 THE PERFECT WALL on Powers & Slots (Joel's order, 2026-08-04 night, 472a76a3)
+## 🧱 STRUCTURAL BALANCE on Powers & Slots (Joel, 2026-08-04, FINAL — 29cc3bbc supersedes the packer)
+
+**⛔ NO PANEL PACKER, EVER AGAIN.** packPowersTab (and balanceColumns before
+it) moved whole panels between two competing columns — Joel's verdict after
+one evening of see-saw: "Instead of finding balance you moved… content to
+the right, now the left has a big empty space. Please stop wasting tokens
+on terrible design ideas." A mover can only RELOCATE a void. The battery
+now pins that no packer function exists.
+
+The layout is STRUCTURAL: (1) two-column region ends with the wall —
+builder+catalogue left, assistant + epic/incarnate plan right (side's last
+tile stretches to the shared bottom edge as grout); (2) below it,
+**.pw-cardband** — Accolades / ⌨ In-game commands (click-to-copy) /
+🧬 Your inherent / 💠 How set bonuses stack — one full-width row of
+equal-height auto-fit columns; (3) the reference slabs (trays, level plan,
+converters), full width, content flowing horizontally; all folds default
+OPEN (`_foldOpen`: absent = open, explicit closes remembered). The L50
+catalogue banner is deleted (pointed at content on the same tab); the L35
+epic gate stays.
+
+## 🧱 (superseded) THE PERFECT WALL packer (2026-08-04 night, 472a76a3)
 
 "Open all the drop downs on the first tab, then move the items around until
 they fit into a perfect wall with zero gaps any where." The architecture:
