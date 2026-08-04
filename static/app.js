@@ -4911,9 +4911,15 @@ function initExemplarControl() {
     sel.innerHTML = opts;
     sel.addEventListener("change", () => setExemplarView(sel.value ? +sel.value : null));
   }
-  // View menu → point at the tile dial and make it impossible to miss
+  // View menu → point at a dial the user can SEE and make it impossible to
+  // miss. ⚠ The tile dial is hidden off the Powers tab (2026-08-04), so
+  // pulsing it there was an invisible no-op — off Powers this routes to the
+  // Stats tab and pulses ITS dial, where the numbers react anyway. (Found by
+  // the design once-over, the day the tile went Powers-only.)
   if ($("view-exemplar-go")) $("view-exemplar-go").addEventListener("click", () => {
-    const sel = $("exemplar-sel");
+    const onPowers = document.body.classList.contains("tab-powers");
+    if (!onPowers) showTab("stats");
+    const sel = $(onPowers ? "exemplar-sel" : "exemplar-sel-stats");
     if (!sel) return;
     sel.focus();
     const lab = sel.closest("label");
