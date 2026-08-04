@@ -47,6 +47,14 @@ that is the handoff: he pastes it, I bake it into style.css.
 be grabbed, and drag cannot scroll the page mid-gesture. Pick-then-place is two
 clicks precisely so scrolling in between is just scrolling.
 
+**⚠ FIXED after his second report (`8c03c546`): while an area is held, the WHOLE
+area is the drop target** — click anywhere in it. The aim was the bug: the placing
+click used to require another area's 12px ⤵ glyph. Found only by testing with a
+real mouse; every earlier check used `dispatchEvent`, which exercised only the path
+I chose. Buttons now read "⠿ move" / "⤵ here"; let go by clicking ⠿ move again or
+✖ in the panel. **Escape does not reach the page in the frozen shell** (measured
+twice, capture phase did not help) — never advertise it.
+
 ## ▶ Open / next
 
 1. **Joel's word on the card strip** (item 1 above) — everything else on the

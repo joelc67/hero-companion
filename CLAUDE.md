@@ -566,6 +566,22 @@ saveProgress, a solve or autoSaveTick, and every CSS rule is scoped to
   mid-gesture**, so an area could never be placed anywhere off-screen. **Pick then
   place = two clicks, and scrolling in between is just scrolling.** Anything that
   needs a pointer gesture (the panel) uses POINTER events, which do work.
+- **⚠⚠ TEST INPUT WITH A REAL MOUSE, NOT `dispatchEvent`.** Joel reported "I still
+  cannot move any objects" on a build whose every path I had "verified" with
+  synthetic clicks. Driven with the real pointer, the mechanism was fine and the
+  AIM was the bug: the placing click had to hit another area's 12px glyph, and a
+  click anywhere else did nothing with no feedback. Fix = **while holding, the
+  WHOLE area is the target** (`body.lay-holding`, hover outline, click swallowed so
+  it never reaches the app), and the buttons carry WORDS ("⠿ move", "⤵ here").
+  Synthetic-event checks are the same defect class as verification theater: they
+  only ever exercise the path I chose.
+- **⚠ ESCAPE DOES NOT REACH THE PAGE in the frozen shell** — the app's own Escape
+  handlers swallow it, and a capture-phase listener did not help either (measured
+  twice with real key presses). Anything cancellable needs a VISIBLE way out: here
+  it is clicking ⠿ move again, plus a ✖ button in the panel. Do not advertise Esc.
+- **⚠ Clamp any REMEMBERED window position into the viewport.** The panel had
+  drifted off-screen with a window that sat partly off-display, and its own ✕ is
+  the only way to close it — an unreachable control is a trap.
 - **⚠ An injected label changes the geometry being measured.** The toolbar is
   `position: absolute` for that reason. ⚠ And the two slabs whose renderers rewrite
   innerHTML (`#tray-out`, `#order-out`) EAT injected nodes — `refreshBuildViews`
