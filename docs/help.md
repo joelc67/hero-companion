@@ -211,11 +211,11 @@ gates it the same way, so a held off-side accolade does nothing until you switch
 back. Switch back and it counts again. Powers, slotting and targets are never
 touched by any of this.
 
-**A separate control, easy to confuse with this one:** the Leveling Journey has its
+**A separate control, easy to confuse with this one:** the Leveling Guide has its
 own alignment switch, which additionally offers 🌀 Flashback. That one is a
 **preview** of somebody else's route through the game, so you can see where a
 villain would level. It changes nothing about your character and resets when you
-close the Journey.
+leave the Leveling Guide.
 
 ## Bugs, Champions, and Updates
 

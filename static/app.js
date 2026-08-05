@@ -1734,13 +1734,13 @@ function maybeAutoOpenJourney() {
 }
 function _journeyIntroHtml() {
   return `<div class="jny-intro" id="jny-intro">
-    <b>👋 This is your Leveling Journey</b> — the whole 1–50 as a road. Every stop
+    <b>👋 This is your Leveling Guide</b> — the whole 1–50 as a road. Every stop
     is a level where your plan does something: the power to pick, the enhancement
     slots to place, milestones and badges along the way. Click any card to see
     what that level buys you. The ★ marker is you — it moves when you update your
     level in the plan.
-    <div class="muted small" style="margin-top:6px">It lives on this
-    <b>Leveling Guide</b> tab — leave it and come back whenever you like.</div>
+    <div class="muted small" style="margin-top:6px">It lives on this tab — leave
+    it and come back whenever you like.</div>
     <div style="margin-top:8px">💡 <b>Worth doing now:</b> turn on the game's chat log.
     Hero Companion reads it (only on your machine, only with your say-so) and your
     Play Log fills with what you actually earned — influence, drops with keep/sell
@@ -1924,7 +1924,7 @@ function renderJourney() {
   // the full band height instead of being cropped to a strip.
   $("journey-body").innerHTML =
     `<div class="jny">`
-    + (journeyIntroDone() ? "" : `<details class="jny-fit jny-introwrap"><summary>👋 <b>New to the Journey?</b> <span class="muted small">what this road is and how to read it</span><span class="jny-expand-cue">click to expand ▾</span></summary>${_journeyIntroHtml()}</details>`)
+    + (journeyIntroDone() ? "" : `<details class="jny-fit jny-introwrap"><summary>👋 <b>New to the Leveling Guide?</b> <span class="muted small">what this road is and how to read it</span><span class="jny-expand-cue">click to expand ▾</span></summary>${_journeyIntroHtml()}</details>`)
     + lvBanner
     + `<div class="jny-head"><span class="muted small">Scroll or drag the road — click a card for what that level buys you.</span></div>`
     + `<div class="jny-roadrow">`
@@ -2457,7 +2457,7 @@ async function buildRespec() {
           ? `<p class="lvl-tip">🚀 <strong>iTrial access:</strong> some trials (BAF, Lambda) can only be entered by <strong>Flight or Teleport</strong> — you can't run in. With ${travel === "super_speed" ? "Super Speed" : "Super Jump"} you'll want a P2W <strong>jet pack</strong> on hand. Switching travel to Fly/Teleport fixes it but costs an extra pool (Super Speed shares its pool with Hasten; Fly/Teleport don't).</p>`
           : "")
       + `<div class="wiz-result-btns"><button id="wiz-step" class="secondary" style="width:auto">▶ Walk it step-by-step</button>`
-      + `<button id="wiz-journey" class="secondary" style="width:auto">🗺️ See the journey</button>`
+      + `<button id="wiz-journey" class="secondary" style="width:auto">🗺️ See the Leveling Guide</button>`
       + `<button id="wiz-open" class="solve-btn" style="width:auto">Open the full build →</button></div>`
       + `<div id="wiz-plan-out"></div>`;
     $("wiz-plan-out").innerHTML = levelingPlanHtml();   // show the full in-game respec order up front

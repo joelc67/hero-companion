@@ -370,7 +370,7 @@ const TOUR_MOCK_HTML = `
 
   <div class="tm-tab" data-tm-tab="leveling" style="display:none">
     <section class="panel" data-for="journey-body">
-      <h2>🗺️ The Leveling Journey</h2>
+      <h2>🗺️ Leveling Guide</h2>
       <div class="tm-road" data-tm="road">
         <span class="tm-stop">1</span><span class="tm-stop">8</span><span class="tm-stop">15</span>
         <span class="tm-stop here">★22</span><span class="tm-stop">30</span><span class="tm-stop">38</span>
@@ -545,7 +545,7 @@ const TOUR_CHAPTERS = {
   solve:     "Letting it build for you",
   stats:     "Where your numbers come from",
   endgame:   "The end game",
-  leveling:  "The leveling guide",
+  leveling:  "The Leveling Guide",
   logging:   "Your play log",
   header:    "Menus, saving and help",
 };

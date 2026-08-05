@@ -22,11 +22,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 93          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 94          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement;
 #                        82 -> 88, 2026-08-05: portable-vs-installed detection
-#                        and the Play Log's on-surface off switch)
+#                        and the Play Log's on-surface off switch;
+#                        88 -> 94, same day: one import door + the leveling
+#                        surface calling itself one thing)
 
 
 def check(name, ok, detail=""):
@@ -560,6 +562,16 @@ def main():
     # of why; only a live RULE is a dead reference. This battery already learned
     # that lesson once ("matches the old EXPRESSION, not the comment").
     css_rules = re.sub(r"/\*.*?\*/", "", read("static", "style.css"), flags=re.S)
+    # ⚠ ONE DISPLAY NAME PER SURFACE. The tab said "Leveling Guide" and the panel
+    # it opened said "The Leveling Journey" (Joel, 2026-08-05). The internal
+    # names stay journey-*/.jny-*/`/journey/...` on purpose — identifier, not
+    # identity — so this pins the RENDERED text only.
+    check("the leveling surface calls itself the same thing everywhere",
+          "Leveling Journey" not in index and "Leveling Journey" not in app_js
+          and "Leveling Journey" not in read("static", "tour.js")
+          and "<h2>🗺️ Leveling Guide</h2>" in index,
+          "tab label, panel heading, greeting and tour all read Leveling Guide")
+
     check("no dead reference to the retired menu item survives",
           "entry-ingame" not in read("static", "tour.js")
           and "#entry-ingame" not in css_rules and ".entry-steps" not in css_rules,
