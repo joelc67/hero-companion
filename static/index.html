@@ -520,13 +520,9 @@
         </div>
       </details>
       </section>
-      <!-- THE INHERENT CARD, in the side column's tail (Joel's marked-up
-           screenshot, 2026-08-04: the green arrow). It is the column's last
-           tile, so the grout rule stretches it to the shared bottom edge. -->
-      <section class="panel hidden" id="inherent-card">
-        <h2 id="inherent-card-h">🧬 Your inherent</h2>
-        <div id="inherent-card-body"></div>
-      </section>
+      <!-- The inherent card left Powers & Slots (Joel, 2026-08-05): it is a
+           STAT, so it reads as one — the Archetype bonus group at the top of
+           Stats, above Defence. -->
       </div>
     </div>
     <!-- ── ACCOLADES: ITS OWN FULL-WIDTH ROW (Joel, 2026-08-04 marked-up
@@ -636,6 +632,14 @@
       <div id="endgame-warn" class="endgame-warn hidden"></div>
 
       <div class="stats-board">
+      <!-- ARCHETYPE BONUS, ABOVE DEFENCE (Joel, 2026-08-05: "make it a stat just
+           above defense heading, by labeling it a archetype bonus, and a brief
+           explanation"). Same inherent_mechanics data the Powers-tab card used,
+           so the two could never have disagreed — and now there is only one. -->
+      <div class="stat-group hidden" id="at-bonus-group">
+        <h3>Archetype bonus <span class="muted small">what you get for free</span></h3>
+        <div id="at-bonus-rows" class="bars"></div>
+      </div>
       <div class="stat-group">
   <h3>Defense <span class="muted small">soft cap 45%</span></h3>
   <div id="defense-bars" class="bars"></div>

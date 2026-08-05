@@ -993,26 +993,33 @@ document.addEventListener("click", (e) => {
 let _IM_CACHE = null;   // inherent_mechanics rides only SOME calculate calls —
 //                         cache the last non-empty set per archetype so a
 //                         lighter recompute can't blank the card mid-session
-function renderInherentCard() {
-  const card = $("inherent-card"), body = $("inherent-card-body");
-  if (!card || !body) return;
+// ⚠ IT IS A STAT, SO IT LIVES WITH THE STATS (Joel, 2026-08-05). This was a
+// panel on Powers & Slots; it is now the Archetype bonus group at the top of
+// Stats, above Defence, in the same row shape as every other stat: name, a
+// one-line meaning, and the value. Same inherent_mechanics data as before —
+// moved, not re-implemented, so there is still exactly one source.
+function renderArchetypeBonus() {
+  const group = $("at-bonus-group"), rows = $("at-bonus-rows");
+  if (!group || !rows) return;
   let im = (LAST_CALC && LAST_CALC.inherent_mechanics) || [];
   if (im.length) _IM_CACHE = { at: build.archetype, im };
   else if (_IM_CACHE && _IM_CACHE.at === build.archetype) im = _IM_CACHE.im;
-  if (!im.length) { card.classList.add("hidden"); return; }
-  card.classList.remove("hidden");
-  const at = (build.archetype || "").replace("Class_", "").replace(/_/g, " ");
-  const h = $("inherent-card-h");
-  if (h) h.textContent = `🧬 Your inherent — what a ${at} gets for free`;
-  const tag = { scored: "counted in your numbers", dormant: "shown, not counted",
-                not_yet: "not modeled yet — honest gap" };
-  body.innerHTML =
-    `<p class="muted small keep-whole">The game gives every archetype a built-in
-      mechanic that no power pick grants. Yours, and how this planner treats it:</p>`
-    + im.map(m => `<div class="ih-row">
-        <div><b>${escHtml(m.family)}</b> <span class="im-tag im-${m.status}">${tag[m.status] || m.status}</span></div>
-        <div class="muted small keep-whole">${escHtml(m.basis)}</div>
-      </div>`).join("");
+  if (!im.length) { group.classList.add("hidden"); return; }
+  group.classList.remove("hidden");
+  // The VALUE column is the honest one-word answer to "is this in my numbers?".
+  // scored = the optimizer's score already carries it; dormant/not_yet say so
+  // rather than implying a number that is not there.
+  const val = { scored: "counted", dormant: "shown only", not_yet: "not modeled" };
+  const why = {
+    scored: "This is in the score the optimizer chases, on the basis shown.",
+    dormant: "Real in game, but the measurement is not clean enough to score — so it is shown, never counted.",
+    not_yet: "An honest gap: the game does this and the model does not price it yet.",
+  };
+  rows.innerHTML = im.map(m => `<div class="o-row at-bonus-row">
+      <span class="o-name">${escHtml(m.family)}</span>
+      <span class="o-desc">${escHtml(m.basis)}</span>
+      <span class="statval im-${m.status}" title="${escHtml(why[m.status] || "")}">${val[m.status] || m.status}</span>
+    </div>`).join("");
 }
 
 async function refreshBuildViews() {
@@ -6855,7 +6862,7 @@ async function recompute() {
   renderValidation(validation);
   renderExemplarBanners();   // the advice card needs the fresh numbers
   LAST_CALC = totals || null;   // v36: carries inherent_mechanics for the offense block
-  renderInherentCard();         // the Powers-tab inherent tile reads the same data
+  renderArchetypeBonus();         // the Powers-tab inherent tile reads the same data
   build._accoladeHp = (LAST_TOTALS && LAST_TOTALS.accolade_hp) || 0;  // v34: live accolade HP for the panel line
   loadAccolades().then(renderAccolades);   // (summary band deleted — its accolade sync stays)
   // Server-corrected pick levels (older saves carry naive assignments — e.g. both
@@ -10238,7 +10245,6 @@ const LAY_AREAS = [
   ["setbonus-blurb", "#setbonus-blurb", "💠 how set bonuses stack"],
   ["assistant", "#assistant", "build assistant"],
   ["endgame-plan-panel", "#endgame-plan-panel", "epic + incarnate plan"],
-  ["inherent-card", "#inherent-card", "🧬 your inherent"],
   ["endgame-panel", "#endgame-panel", "accolades"],
   ["card-home", "#card-home", "card strip"],
   ["tray-out", "#tray-out", "in-game power trays"],

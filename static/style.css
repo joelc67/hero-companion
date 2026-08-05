@@ -3085,7 +3085,6 @@ summary:hover { color: var(--ink); }
    550px of empty panel under four lines of text, which reads as a void whether or
    not it is panel-coloured. It ends at its content; the column just ends. */
 .powers-main > :last-child, .powers-side > :last-child { flex: 1 0 auto; }
-.powers-side > #inherent-card:last-child { flex: 0 0 auto; }
 
 /* ── In-game commands card + inherent tile (2026-08-04 night) ────────────────
    A command row is a full-width button: code line, then what it does. */
@@ -3105,7 +3104,12 @@ summary:hover { color: var(--ink); }
 .cmd-row:hover { border-color: var(--accent); }
 .cmd-row.cmd-copied { border-color: var(--def); }
 .cmd-row.cmd-copied code { color: var(--def); }
-.ih-row { margin: 8px 0; }
+/* Archetype-bonus rows read as stats: the status word is the value column, tinted
+   by how honestly the model treats it (scored / dormant / not yet modeled). */
+.at-bonus-row .statval { font-weight: 600; font-size: 12px; text-transform: uppercase;
+  letter-spacing: .04em; }
+.at-bonus-row .statval.im-scored { color: var(--def); }
+.at-bonus-row .statval.im-dormant, .at-bonus-row .statval.im-not_yet { color: var(--muted); }
 
 /* ── THE CARD BAND (2026-08-04, supersedes the packer): below the wall, the
    four cards share one full-width row of equal columns — structural balance,

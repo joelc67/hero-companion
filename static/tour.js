@@ -258,15 +258,7 @@ const TOUR_MOCK_HTML = `
       </div>
       <div class="validation" data-for="validation">✓ Legal build — nothing here breaks the game's rules.</div>
     </section>
-    <!-- the inherent card, last tile of the side column (2026-08-04) -->
-    <section class="panel" data-for="inherent-card" data-tm="inh-box">
-      <h2>🧬 Your inherent — what a Brute gets for free</h2>
-      <p class="muted small">The game gives every archetype a built-in mechanic that no power
-        pick grants. Yours, and how this planner treats it:</p>
-      <div class="ih-row"><div><b>Fury</b> <span class="im-tag im-dormant">shown, not counted</span></div>
-        <div class="muted small">builds as you fight and get hit; the planner shows it but does
-          not fold an assumed Fury bar into your damage</div></div>
-    </section>
+    <!-- the inherent moved to Stats as the Archetype bonus group (2026-08-05) -->
     </div>
   </div>
 
@@ -294,6 +286,14 @@ const TOUR_MOCK_HTML = `
       </div>
       <div class="tm-statcols">
         <div>
+          <div data-for="at-bonus-group">
+            <h3>Archetype bonus <span class="muted small">what you get for free</span></h3>
+            <div class="bars">
+              <div class="o-row at-bonus-row"><span class="o-name">Fury</span>
+                <span class="o-desc">builds as you fight and get hit</span>
+                <span class="statval im-dormant">shown only</span></div>
+            </div>
+          </div>
           <h3>Defense <span class="muted small">soft cap 45%</span></h3>
           <div class="bars">
             <div class="o-row stat-selected" data-tm="sel-row"><span>Melee</span><span>41.3%</span></div>
@@ -874,16 +874,17 @@ const TOUR_STEPS = [
         + "import; /respec starts the respec you follow with the level plan; "
         + "/ah opens the auction house for the shopping list; /logchat turns on "
         + "the log the Logging tab reads." },
-  { chapter: "powers", target: "#inherent-card", anchor: "[data-tm=inh-box]", side: "left",
+  { chapter: "stats", target: "#at-bonus-group", side: "right",
     title: "What your archetype gets for free",
     body: "Every archetype has a built-in mechanic no power pick grants — Fury "
-        + "on a Brute, Vigilance on a Defender, Domination on a Dominator. This "
-        + "card names yours and, more importantly, says how this planner treats "
-        + "it.\n\n"
-        + "Counted in your numbers means it is already in the totals. Shown, "
-        + "not counted means it is real in game but deliberately left out, "
-        + "because assuming it would flatter your build. The card never pretends "
-        + "either way." },
+        + "on a Brute, Vigilance on a Defender, Domination on a Dominator. It "
+        + "sits at the top of your stats, above Defence, because that is what it "
+        + "is: a stat you did not have to spend a pick on.\n\n"
+        + "The right-hand word is the honest part. Counted means it is already "
+        + "in the score the optimizer chases, on the basis shown beside it. "
+        + "Shown only means it is real in game but deliberately left out, "
+        + "because assuming it would flatter your build. Not modeled is an "
+        + "admitted gap. It never pretends either way." },
   { chapter: "solve", target: "#validation", side: "left",
     title: "The rules check",
     body: "Anything the game would not allow shows up here: too many pools, an "

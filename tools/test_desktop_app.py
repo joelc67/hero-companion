@@ -262,10 +262,13 @@ def main():
           index.index('id="card-home"') < index.index('id="endgame-panel"')
           and index.index('id="endgame-panel"') < index.index('id="tray-out"'),
           "the strip is what follows the powerset rows; Accolades keeps its own row")
-    check("the inherent card is the side column's last tile",
-          index.index('id="inherent-card"') < index.index('id="endgame-panel"')
-          and index.index('id="endgame-plan-panel"') < index.index('id="inherent-card"'),
-          "it belongs in the green box of his screenshot, not below the wall")
+    # ⚠ The inherent LEFT Powers & Slots (Joel, 2026-08-05): "make it a stat just
+    # above defense heading". It is the Archetype bonus group at the top of Stats
+    # now, and nothing may hold a second copy on the powers tab.
+    check("the inherent is a STAT above Defence, not a panel on Powers & Slots",
+          'id="inherent-card"' not in index
+          and index.index('id="at-bonus-group"') < index.index('id="defense-bars"'),
+          "one home; the powers-tab card and its CSS are deleted, not hidden")
     # ⚠ NOTHING BESIDE THE COLUMNS (Joel's third markup, 2026-08-04): the cards'
     # sidebar was taking exactly the width the pool/epic boxes needed to tile, so it
     # bought two ragged voids. Both cards are STATIC in the strip now — no sidebar,
@@ -438,9 +441,9 @@ def main():
           "right: 0; left: auto;" in css
           and "max-width: min(420px, calc(100vw - var(--s4) * 2));" in css,
           "left-anchored, a 330px menu on a right-hand button ran off the window")
-    check("...and the inherent card no longer stretches to the column's bottom",
-          ".powers-side > #inherent-card:last-child { flex: 0 0 auto; }" in css,
-          "Joel: it could be half its height with no text below it")
+    check("...and the inherent card's CSS went with the card",
+          "#inherent-card" not in css and ".ih-row" not in css,
+          "dead rules dressing nothing is how a sheet rots")
     # ⚠ SPEC 5.1 — the rule a naive tab implementation breaks. recompute() writes
     # into elements on four different tabs; unmounting makes every write a no-op.
     check("panels are HIDDEN, never unmounted", "panel.hidden = !on;" in app_js,
