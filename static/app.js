@@ -10390,7 +10390,8 @@ function renderImproveDiff(before, res) {
   // things the engine computed from real game data, so a scenario the game does
   // not have cannot appear. It also means nothing needs adding here when the
   // engine learns a new family — the row shows up on its own.
-  const stat = (label, b, a, unit, group) => {
+  const powerRows = [];    // the same diff, power by power (Joel: "Empty Clips +18 DPS")
+  const stat = (label, b, a, unit, group, into) => {
     if (b == null && a == null) return;
     const d = (a || 0) - (b || 0);
     const eps = unit === "%" ? 0.1 : 0.05;
@@ -10398,7 +10399,7 @@ function renderImproveDiff(before, res) {
     const arrow = d > 0 ? "▲" : "▼";
     const cls = d > 0 ? "up" : "down";
     const f = n => (Math.abs(n) >= 100 ? Math.round(n) : +n.toFixed(1));
-    rows.push(`<tr><td>${group ? `<span class="muted small">${group}</span> ` : ""}${escHtml(label)}</td>`
+    (into || rows).push(`<tr><td>${group ? `<span class="muted small">${group}</span> ` : ""}${escHtml(label)}</td>`
       + `<td>${f(b || 0)}${unit}</td><td>${f(a || 0)}${unit}</td>`
       + `<td class="diff-${cls}">${arrow} ${f(Math.abs(d))}${unit}</td></tr>`);
   };
@@ -10443,6 +10444,31 @@ function renderImproveDiff(before, res) {
         stat(k, mag(b), mag(a), unit, lab);
       });
     }
+    // ⚠ NOT diffed per power: buffs/debuffs. The rows carry per-power provenance
+    // (engine._debuff_buff_summary's dsrc/bsrc → row.sources), but the magnitudes
+    // come from _resolve_mag — BASE scale × table, no slot boosts — so a re-solve
+    // can never move them and a per-power row there would always read 0.
+    // PER POWER: every attack the engine priced, by its cycled DPS — the same
+    // number the power's ⓘ card calls "Cycled DPS", so the two never disagree.
+    {
+      const key = list => Object.fromEntries((list || []).map(a => [a.name, a]));
+      const ba = key(bo.attacks), aa = key(ao.attacks);
+      [...new Set([...Object.keys(ba), ...Object.keys(aa)])].sort().forEach(n => {
+        stat(n, (ba[n] || {}).dps_spam, (aa[n] || {}).dps_spam, " DPS", null, powerRows);
+        stat(`${n} — per hit`, (ba[n] || {}).damage, (aa[n] || {}).damage, "", "damage", powerRows);
+      });
+    }
+    // PER POWER, pets: Joel's henchman case — each pet carries the power that
+    // summons it, and its DPS DOES move with what you slot in that power.
+    {
+      const key = list => Object.fromEntries((list || []).map(p => [p.name, p]));
+      const bp = key(bo.pets), ap = key(ao.pets);
+      [...new Set([...Object.keys(bp), ...Object.keys(ap)])].sort().forEach(n => {
+        const from = (ap[n] || bp[n] || {}).from_power;
+        stat(from && from !== n ? `${from} → ${n}` : n,
+             (bp[n] || {}).dps_total, (ap[n] || {}).dps_total, " DPS", "pets", powerRows);
+      });
+    }
   }
   stat("Set bonuses", bt.applied_bonus_count, after.applied_bonus_count, "");
 
@@ -10467,8 +10493,13 @@ function renderImproveDiff(before, res) {
   // solver may legitimately have almost nothing to re-slot, and a blank report
   // reads as a broken button rather than as "your build already does this".
   const locked = (res.powers || []).filter(p => p.locked).length;
-  const tbl = rows.length
-    ? `<table class="diff-tbl"><tr><th>Stat</th><th>Before</th><th>After</th><th>Δ</th></tr>${rows.join("")}</table>`
+  const head = `<tr><th>Stat</th><th>Before</th><th>After</th><th>Δ</th></tr>`;
+  const perPower = powerRows.length
+    ? `<details open><summary>Power by power (${powerRows.length} moved)</summary>
+       <table class="diff-tbl">${head.replace("<th>Stat", "<th>Power")}${powerRows.join("")}</table></details>`
+    : "";
+  const tbl = (rows.length || powerRows.length)
+    ? (rows.length ? `<table class="diff-tbl">${head}${rows.join("")}</table>` : "")
     : `<p class="muted small keep-whole">Nothing measurable moved. That is a real answer, not
        a failure: this build already delivers what the goal asks for.${locked
         ? ` ⚠ ${locked} of your powers are locked by <b>Preserve my IO sets</b>, so the solver
@@ -10479,6 +10510,7 @@ function renderImproveDiff(before, res) {
     <div class="import-head"><strong>Improvement — ${before.name}</strong>
       <span class="muted small">solved for your goal · review before exporting</span></div>
     ${tbl}
+    ${perPower}
     ${changes.length ? `<details open><summary>${changes.length} power(s) re-slotted</summary><ul class="crit-list">${changes.join("")}</ul></details>` : ""}
     <p class="muted small">Happy with it? Use <strong>⬇ Export to Mids Reborn</strong> above to save the improved build.</p>`;
 }
