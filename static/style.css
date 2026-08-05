@@ -26,10 +26,12 @@
      chrome uses these and only these. ⚠ Existing literals are deliberately NOT
      rewritten — that would be a whole-sheet refactor with no visual payoff and
      every chance of moving a shipped panel by a pixel. */
-  /* the edge an OPEN menu draws around itself and its panel: the theme accent,
-     dimmed, because the tabs are the loud thing on this screen and a menu is not
-     (Joel, 2026-08-04: "not as bright"). Derived, so every alignment carries it. */
-  --menu-edge: color-mix(in srgb, var(--accent) 55%, #05080d);
+  /* ⚠⚠ --menu-edge USED TO LIVE HERE AND IT WAS A BUG (measured 2026-08-04): a
+     var() inside a custom property resolves where the property is DECLARED, so a
+     `--menu-edge: color-mix(…var(--accent)…)` on :root baked in :root's blue and
+     every alignment kept it — Villain drew a blue menu edge. The mix is written
+     INLINE at each use site now, where it resolves against the themed body.
+     Same trap for any future "derived" colour token. */
   --s1: 4px;  --s2: 6px;  --s3: 10px;  --s4: 14px;  --s5: 20px;
   --r1: 5px;  --r2: 8px;  --r3: 10px;
   --e1: 0 4px 18px #000a;
@@ -2632,7 +2634,7 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
 }
 .menu-top:hover { color: var(--ink); }
 .menu-top[aria-expanded="true"] {
-  border-color: var(--menu-edge); background: var(--panel);
+  border-color: color-mix(in srgb, var(--accent) 55%, #05080d); background: var(--panel);
   position: relative; z-index: 121;      /* covers the panel's top edge below it */
   margin-bottom: -2px; padding-bottom: calc(var(--s2) + 2px);
 }
@@ -2651,7 +2653,7 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
      made them read as two unrelated things */
   position: absolute; top: 100%; right: 0; left: auto; z-index: 120;
   min-width: 330px; max-width: min(420px, calc(100vw - var(--s4) * 2)); padding: var(--s2);
-  background: var(--panel); border: 2px solid var(--menu-edge);
+  background: var(--panel); border: 2px solid color-mix(in srgb, var(--accent) 55%, #05080d);
   border-radius: var(--r2) 0 var(--r2) var(--r2); box-shadow: var(--e2);
 }
 .menu-drop[hidden] { display: none; }
