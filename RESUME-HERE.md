@@ -1,7 +1,22 @@
 # Resume point — 2026-08-06 (new session starts here)
 
-**HEAD = `809c9190`, pushed, tracked tree clean. Nothing running.** Release still
+**HEAD = `c78f552b`, pushed, tracked tree clean. Nothing running.** Release still
 HELD at 0.12.30.
+
+## 🔨 THE FROZEN REBUILD IS DONE — but only `dist` has it
+
+`dist\HeroCompanion` is rebuilt and stamped **`c78f552`** (was `297ddcf`), so the
+2026-08-05 server work finally exists in a frozen artifact: the portable-update
+refusal (`_install_kind`) and the special-origin names in `PIECE_BY_UID`.
+Frozen smoke PASS · frozen gold **24 of 24 SERVED**.
+
+⚠ **The INSTALLED copy is still `297ddcf`** — `%LOCALAPPDATA%\Programs\HeroCompanion`
+carries statics from today but the OLD server inside its PYZ, and that is the
+copy Joel's shortcut opens. Getting the server fixes there means running the
+installer (ISCC + install), which **overwrites `dist\HeroCompanion-Setup-0.12.30.exe`**
+— the released signed installer, preserved as `.released-signed.exe` — and
+changes how the app lives on his machine. **His call, not mine.** Until then:
+launch `dist\HeroCompanion\HeroCompanion.exe` to see the server-side fixes.
 
 ## ✅ DONE, last thing before Joel left: no side bar on Powers & Slots — `809c9190`
 
@@ -33,11 +48,6 @@ asked to be displayed."* Built and eyes-verified on the installed window.
 he last had open.
 
 ---
-
-🔨 **THE FROZEN REBUILD IS STILL OWED** — the two `server.py` changes from
-2026-08-05 (portable-update refusal, `_SPECIAL_ORIGIN_SETS` in `PIECE_BY_UID`)
-live in the PYZ. Everything from THIS session is static and is already pushed
-into both frozen copies.
 
 ## ✅ DONE: per-power deltas in the improvement report — `10a7ed0b`
 
