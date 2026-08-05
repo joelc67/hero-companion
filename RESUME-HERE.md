@@ -1,6 +1,39 @@
 # Resume point — 2026-08-06 (new session starts here)
 
-**HEAD = `3a01bcf3`, pushed. Nothing running.** Release still HELD at 0.12.30.
+**HEAD = `809c9190`, pushed, tracked tree clean. Nothing running.** Release still
+HELD at 0.12.30.
+
+## ✅ DONE, last thing before Joel left: no side bar on Powers & Slots — `809c9190`
+
+His words: *"The output of a build assistant is terrible on the far right. Why
+not put it and the whole epic and incarnate right below the All 24 powers picked
+section. Epic and incarnate first, then Build Assistant. Let it take up the
+entire horizontal width so no side bar appears at all, unless IO details are
+asked to be displayed."* Built and eyes-verified on the installed window.
+
+- `#endgame-plan-panel` then `#assistant` are full-width sections under the
+  builder. `.powers-side` keeps the ⓘ card and nothing else.
+- The column is opened **by the card, in CSS** —
+  `.powers-layout:has(#power-info:not(.hidden))`. ⚠ The 1400px and 980px
+  overrides must REPEAT that whole selector (`:has()` takes its argument's
+  specificity, so a bare `.powers-layout` loses to the id inside it).
+- Dead `has-info` class deleted; the grout rule retired with the second column.
+- Measured: wall 4 cards → 6, catalogue's 7 powerset columns in ONE row, the
+  improvement table 1489px wide with every row a single 22px line (it used to
+  wrap in the 340px column — that WAS his complaint).
+- `test_desktop_app` 121 → 126, every new check sabotage-proven.
+
+**▶ Two things worth his eye next session:**
+1. The two diff tables (totals + power-by-power) now each span ~1490px, which is
+   generous for four numeric columns. Offer to pair them side by side.
+2. ⚠ His app was left showing **Hero**; it was on Villain when the session
+   started. Alignment lives in localStorage and I cycled all four verifying the
+   wordmarks — set it back if he notices.
+⚠ Relaunch the app: statics were pushed to both frozen copies AFTER the window
+he last had open.
+
+---
+
 🔨 **THE FROZEN REBUILD IS STILL OWED** — the two `server.py` changes from
 2026-08-05 (portable-update refusal, `_SPECIAL_ORIGIN_SETS` in `PIECE_BY_UID`)
 live in the PYZ. Everything from THIS session is static and is already pushed

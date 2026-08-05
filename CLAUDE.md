@@ -601,6 +601,22 @@ in RESUME-HERE.md.
   measurement and obvious in a screenshot. The Claude pane fires NO layout
   callbacks, has a 0×0 viewport where every hit-test falsely passes, and times
   out at 30s: fine for logic, useless for appearance.
+- **🚫 NO SIDE BAR ON POWERS & SLOTS UNLESS AN ENHANCEMENT IS ASKED FOR (Joel,
+  2026-08-06, `809c9190`).** *"The output of a build assistant is terrible on the
+  far right… Epic and incarnate first, then Build Assistant. Let it take up the
+  entire horizontal width so no side bar appears at all, unless IO details are
+  asked to be displayed."* He named the cause: the Assistant's output is
+  **tabular**, and 340px turned a four-column table into wrapped fragments
+  (measured after: 1489px wide, every row one 22px line). `#endgame-plan-panel`
+  then `#assistant` are full-width under the builder; `.powers-side` holds the ⓘ
+  card alone. ⚠ **The card opens the column in CSS** —
+  `.powers-layout:has(#power-info:not(.hidden))` — never a JS class: the card is
+  shown/hidden from several places and each was a place to forget. ⚠ **Every
+  narrow override must REPEAT the whole `:has()` selector**: `:has()` takes its
+  argument's specificity, so a bare `.powers-layout` loses to the id inside it.
+  ⚠ This retires the grout rule and the "two columns ALWAYS" rule; the
+  2026-08-04 one-row arithmetic (7 powerset columns can't fit beside the wall)
+  is also superseded — with no side column they fit, verified on screen.
 - **🎨 THE WORDMARK IS TEXT, NOT FOUR IMAGES (Joel's art sheet, 2026-08-06 —
   `C:\Users\joelc\Downloads\Art\Hero Companion Wordmarks.html`).** The sheet is
   HTML/CSS in the **Anton** face, so the app sets it as text: crisp at every
