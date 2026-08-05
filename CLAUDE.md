@@ -391,6 +391,19 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   never a second copy of a choice. ⚠ `setAutostart` re-renders whichever
   surface was clicked; an unconditional `showAbout()` stacks the About modal on
   top of the Logging tab.
+- **🏷 THE LEVELING SURFACE IS "LEVELING GUIDE" EVERYWHERE IT IS LABELLED
+  (Joel, 2026-08-05 — the tab said Leveling Guide, the panel it opened said "The
+  Leveling Journey").** Renamed: panel heading, the greeting, the intro fold, the
+  wizard button, the tour mock + chapter title, help.md. Pinned by
+  test_desktop_app so it cannot drift back.
+  **⚠ RENAMES ARE FOR LABELS, NOT PROSE (his ruling when I asked): "leave
+  sentences alone, this is more for labeling areas of the tool, not sentence
+  usage."** So server.py's level-1 note "This is a JOURNEY, not a race to 50"
+  STAYS — the word is doing work there. Generalize it: a naming order means the
+  names of areas/controls/tabs, never a sweep of every occurrence of the word.
+  ⚠ Internal names stay `journey-*` / `.jny-*` / `/journey/...` — identifier, not
+  identity (three-namespaces rule); renaming them is churn that can break a route
+  or selector for no user-visible gain.
 - **⚠ ONE IMPORT DOOR, and it TEACHES (Joel, 2026-08-05: "two options that do
   the same thing, and neither do a good job explaining how to do it").**
   `import-btn` opened a bare OS file dialog with zero instructions; `entry-ingame`
