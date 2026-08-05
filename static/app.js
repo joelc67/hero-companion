@@ -1949,8 +1949,11 @@ function renderJourney() {
     // here that is not an alignment and the one that has to be unlocked. Shown
     // only when it is NOT the selection, because selecting it renders the full
     // explanation in the line above and two copies would be noise.
+    // ⚠ .keep-whole: collapseLongExplanations folds any muted block over 26 words
+    // behind "more". It fires on RE-renders, so this read fine until the View
+    // menu repainted the road (2026-08-05) and the sentence lost its second half.
     + (align === "praetorian" ? ""
-        : `<div class="jny-align-note muted small">🌀 <b>Flashback</b> is not a side —`
+        : `<div class="jny-align-note muted small keep-whole">🌀 <b>Flashback</b> is not a side —`
           + ` it is Ouroboros, where you replay older story arcs (Praetoria among them)`
           + ` at their original level. It has to be unlocked, and you need to be level 15`
           + ` to travel to a flashback contact. Click it for what that takes.</div>`)
@@ -2764,6 +2767,21 @@ function applyAlignment(al) {
   document.querySelectorAll(".align-card").forEach(c =>
     c.classList.toggle("on", c.dataset.align === al));
   try { localStorage.setItem("cohAlignment", al); } catch (e) {}
+  // ⚠⚠ THE REAL CHOICE OUTRANKS THE PREVIEW, ALWAYS (Joel, 2026-08-05: "if
+  // someone toggles themselves in the View menu as another alignment, that
+  // sticks even if they go preview other content"). _journeyAlign() reads
+  // `_JNY_ALIGN || cohAlignment`, so a preview left over from this visit would
+  // have kept WINNING over the alignment the user just chose — the theme would
+  // flip to Villain while the road still read Hero. Clearing it here, in the one
+  // funnel every real alignment change goes through (View menu, entry cards,
+  // startup), means the toggle is what sticks and the preview is what yields.
+  _JNY_ALIGN = null;
+  // Repaint the road if it is on screen, or it keeps the stale side until some
+  // unrelated render happens to come along.
+  if ($("tab-leveling") && !$("tab-leveling").hidden && $("journey-body")
+      && $("journey-body").querySelector(".jny")) {
+    try { renderJourney(); } catch (e) {}
+  }
   // ALIGNMENT IS A PERSPECTIVE, NOT AN EDIT (Joel, 2026-07-31: "ideally I just
   // want them to have access to information related to their changed
   // perspective"). This used to DELETE the other side's ticked accolades and

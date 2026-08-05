@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 99          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 100          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement;
 #                        82 -> 88, 2026-08-05: portable-vs-installed detection
@@ -602,6 +602,18 @@ def main():
           'if (key !== "leveling") _JNY_ALIGN = null;' in _act
           and "_JNY_ALIGN = null" not in _close,
           "activateTab owns it; closeJourneyView no longer keeps a second copy")
+    # ⚠ And the other direction (Joel): choosing a real alignment in the View
+    # menu must WIN over a preview already showing. _journeyAlign() reads
+    # `_JNY_ALIGN || cohAlignment`, so without this the stale preview outranked
+    # the choice the user just made — theme flips, road does not.
+    _apply = app_js[app_js.find("function applyAlignment("):]
+    _apply = _apply[:_apply.find("\n}\n")]
+    check("the real alignment toggle outranks an active preview",
+          'localStorage.setItem("cohAlignment", al)' in _apply
+          and "_JNY_ALIGN = null" in _apply
+          and _apply.find('setItem("cohAlignment"') < _apply.find("_JNY_ALIGN = null"),
+          "cleared in applyAlignment — the one funnel every real change uses")
+
     check("...and the preview never writes the character's real alignment",
           "_JNY_ALIGN" in app_js
           and 'localStorage.setItem("cohAlignment"' not in
