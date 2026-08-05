@@ -43,6 +43,18 @@ session-report.md. What survives as live state:
   ⚠ `setAutostart` must re-render the surface it was clicked from; an
   unconditional `showAbout()` opens the About modal on top of the Logging tab.
 
+## ✅ DONE: one import door + the Mids round trip — `e56b8f4c`
+
+- The menu's two import items were the same thing; one remains, and it opens a
+  panel that TEACHES both routes instead of throwing an OS file dialog.
+- The Mids round trip is now pinned at 9 checks and is sound: pieces, order,
+  engine totals and set bonuses all survive, and it converges at hop 2.
+- **Fixed: special origins (HO/Hydra/Titan/D-Sync) came back labelled with their
+  internal uid.** Root was `PIECE_BY_UID` being built from `ENH_SETS` only; all
+  62 now register there, which fixes the in-game .txt path at the same time.
+- ⚠ `server.py` changed ⇒ the HO fix needs a **frozen rebuild** to reach the
+  installed app. The static half (panel, menu, tour) is already copied in.
+
 ## What landed the session before (all pushed)
 
 - **Tabs are manila folders** in a filing cabinet: filed tabs sit lower in a darker

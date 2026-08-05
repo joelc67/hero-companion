@@ -391,6 +391,34 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   never a second copy of a choice. ⚠ `setAutostart` re-renders whichever
   surface was clicked; an unconditional `showAbout()` stacks the About modal on
   top of the Logging tab.
+- **⚠ ONE IMPORT DOOR, and it TEACHES (Joel, 2026-08-05: "two options that do
+  the same thing, and neither do a good job explaining how to do it").**
+  `import-btn` opened a bare OS file dialog with zero instructions; `entry-ingame`
+  opened the panel; both ended in the same `importBuildText()`. Now one menu item
+  → `showEntry("ingame")` → a panel with a labelled ROUTE per file kind
+  (`/build_save_file` for a played character, "Mids saves builds as a .mbd" for a
+  planned one), picker inside. The picker is never the front door: it answers
+  "where do I click" and never "how do I get a file". `entry-ingame`'s CSS and
+  tour step were DELETED, not left dressing nothing.
+- **✅ THE MIDS ROUND TRIP IS PINNED, AND IT IS SOUND (2026-08-05, Joel: "test
+  mids reborn export and import work flawlessly").** `test_mbd_alignment.py`
+  4→9 checks: every power returns, all 93 slots keep their exact piece in order,
+  engine totals do not move (def/res/45 set bonuses identical), and
+  export→import→export **converges at hop 2**. Hop 1 normalising is CORRECT, not
+  drift — an HO's "+3" becomes "a level-53 HO", the game's own convention
+  (`mids_import._SPECIAL_PREFIXES`; HOs have no ref level, so level carries what
+  boost would). Fixture boosts every slot across 0..5 so an off-by-one in the
+  0-based `IoLevel` conversion cannot hide.
+- **⚠ SPECIAL ORIGINS LIVE IN `common_ios.json`, NOT `ENH_SETS` — so they were
+  missing from `PIECE_BY_UID`** and both importers fell through to the generic
+  common-IO fallback, which labels a slot with its own uid: a re-imported .mbd
+  read "Hamidon_Damage_Accuracy" instead of "Nucleolus Exposure", set line blank.
+  All 62 are registered at the `PIECE_BY_UID` build (server.py, right after the
+  ENH_SETS loop) because that is where BOTH importers **and** the ⓘ image lookup
+  read — fixing the .mbd path fixed the in-game .txt path for free. ⚠ Their
+  `set_name` must never be None: `test_exemplar_view`/`test_stat_attribution`
+  call `.lower()` on it while sweeping the map. Math was never affected (engine
+  prices by `piece_uid`; identical totals are the proof).
 - **⚠ Companion Lite is NOT a watered-down Hero Companion (Joel, 2026-08-05).**
   It is a LOGGER whose whole job is feeding the Pulse Boards — it plans no
   builds and optimizes nothing. "Lite" describes what it carries, not what it
