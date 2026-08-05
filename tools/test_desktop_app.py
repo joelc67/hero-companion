@@ -22,9 +22,11 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 82          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 88          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
-#                        living inside the powers tab after the tab retirement)
+#                        living inside the powers tab after the tab retirement;
+#                        82 -> 88, 2026-08-05: portable-vs-installed detection
+#                        and the Play Log's on-surface off switch)
 
 
 def check(name, ok, detail=""):
@@ -497,6 +499,45 @@ def main():
     check("Escape and outside-click both close the menus",
           'e.key === "Escape"' in app_js
           and 'if (!e.target.closest(".menubar")) closeMenus();' in app_js)
+
+    # ── 8. PORTABLE IS NOT INSTALLED (BasiliskXVIII, forum topic 64761) ────
+    # The portable copy's "Check for updates" ran the Setup exe and silently
+    # converted him into an installed user. Exercised for real against the
+    # function, both arms, because the whole defect was a branch that did not
+    # exist. The uninstaller is the tell: Inno writes unins000.exe beside the
+    # exe, the zip never has one.
+    import server as srv
+    _frozen, _exe = getattr(sys, "frozen", None), sys.executable
+    try:
+        with tempfile.TemporaryDirectory() as d:
+            sys.frozen = True           # type: ignore[attr-defined]
+            sys.executable = os.path.join(d, "HeroCompanion.exe")
+            check("a copy with no uninstaller beside it reads as portable",
+                  srv._install_kind() == "portable")
+            open(os.path.join(d, "unins000.exe"), "w").close()
+            check("a copy with the Inno uninstaller beside it reads as installed",
+                  srv._install_kind() == "installed",
+                  "negative control for the line above — same dir, one file added")
+    finally:
+        sys.executable = _exe
+        if _frozen is None:
+            del sys.frozen              # type: ignore[attr-defined]
+        else:
+            sys.frozen = _frozen        # type: ignore[attr-defined]
+    check("a source run still reads as source", srv._install_kind() == "source")
+    srv_py = read("server", "server.py")
+    check("portable is refused BEFORE the installer is ever launched",
+          srv_py.index('kind == "portable"') < srv_py.index('"/SILENT"'),
+          "the refusal has to be upstream of the Popen, not a message after it")
+
+    # The Play Log's off switch and its when, on the surface that owns them.
+    check("the Logging tab states the off switch and the startup choice",
+          "function gamelogChoiceRow()" in app_js
+          and "gamelogChoiceRow();" in app_js
+          and 'playlogConsent(\'off\')' in app_js)
+    check("the autostart checkbox does not open About from the Logging tab",
+          '$("about-modal").classList.contains("hidden")' in app_js,
+          "negative control: showAbout() unconditionally would stack a modal")
 
     print(f"\n{len(CHECKS)} of {EXPECTED} expected checks ran")
     if len(CHECKS) != EXPECTED:

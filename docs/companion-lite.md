@@ -1,10 +1,18 @@
 # Companion Lite
 
-The little brother of Hero Companion. One job, done quietly.
+**Lite is not a cut-down Hero Companion.** It is a different tool with a different
+job: it is a **logger**. It plans no builds, optimizes nothing, and knows nothing
+about slotting. Its whole purpose is turning the chat log your game already writes
+into your **Pulse Boards**.
 
-| | **Hero Companion** (green P) | **Companion Lite** (blue P) |
+So "Lite" is about what it *carries*, not what it *lacks* — if you want to build
+characters you want the full app, and the full app can read your logs too. Lite
+exists for the case where you want the boards fed while you play and would rather
+not have the whole planner open.
+
+| | **Hero Companion** (green P) | **Companion Lite** (light blue P) |
 |---|---|---|
-| What it is | The full build planner: optimizer, 1–50 walkthrough, respec worksheets, drop appraisal, Play Log insights | A tiny tray app that captures your game logs into local intel |
+| What it is | The build planner: optimizer, 1–50 walkthrough, respec worksheets, drop appraisal, Play Log insights | A logger, and only that: your game logs into local intel |
 | Feeds | Your builds, plans, and insights | **The Pulse Boards only** |
 | Size | ~45 MB signed installer (or ~58 MB portable zip) | ~21 MB signed installer (per-user, Start Menu entry, clean uninstall) |
 | When you'd run it | When planning or reviewing | Whenever the game is on |
@@ -17,15 +25,28 @@ The little brother of Hero Companion. One job, done quietly.
 - Turns log lines into structured events: your rewards (XP, influence, drops, merits,
   badges, defeats) and **recruitment facts** from public channels (what's forming on
   the server — never raw chat).
-- Renders your **Pulse Boards (alpha)** page from those events — right-click the blue
-  P → Open Pulse Boards.
+- Renders your **Pulse Boards (alpha)** page from those events — right-click the light
+  blue P → Open Pulse Boards.
 - Installs an optional **in-game menu** (`/popmenu Companion`) so enabling logging is
   one click from inside the game. A consent dialog shows exactly what file goes where
   before anything is written; Remove reverses it completely.
-- Asks **once, on first run**, whether to start with Windows — never silently on, and
-  you can flip it any time from the tray. Uninstalling removes it cleanly.
 - Both the installer and the app are **code-signed** — Windows names the publisher
   instead of showing an "unknown publisher" warning.
+
+## When Lite runs — your choice, and it is one click
+
+Lite sits in the notification area (light blue P) **only because you left it there**.
+
+- **Start with Windows is opt-in.** Lite asks once, on first run, and never turns it
+  on by itself. The answer is a **checked/unchecked toggle** in the same right-click
+  menu as Quit — *Start automatically at login* — so flipping it later is one click,
+  not a reinstall.
+- **Say no and nothing runs at boot.** Lite then only exists while you have started it
+  yourself, from the Start Menu.
+- **Quit means quit.** Right-click the light blue P → Quit and it is gone, no
+  background remnant. Starting it again from the Start Menu brings the icon back.
+- Uninstalling removes the startup entry with it — a remembered "yes" leaves nothing
+  behind.
 
 ## What Lite shares
 

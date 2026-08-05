@@ -11,6 +11,7 @@ h1{font-family:'Bahnschrift SemiCondensed','Arial Narrow',sans-serif;text-transf
 font-size:2.4rem;margin:0}
 h1 b{color:var(--pulse)}
 .tag{color:var(--dim);margin:4px 0 30px}
+.note{color:var(--dim);font-size:.9rem;border-left:2px solid var(--line);padding-left:12px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;
 padding:20px 22px;margin:14px 0}
 .card h2{font-family:'Bahnschrift SemiCondensed','Arial Narrow',sans-serif;
@@ -35,19 +36,30 @@ leveling, and play intel from the game's own data</p>
 <p>Design and optimize builds from a first-principles model of the game's combat math,
 level 1–50 with a per-step walkthrough, plan respecs with a working checklist, and turn
 your play sessions into insight. A guided tour walks every part of the app on a drawn
-example screen. Green P in your tray. Both downloads are code-signed.</p>
+example screen. Both downloads are code-signed.</p>
+<p class="note"><b>What it does on your machine, before you download it:</b> the current
+release (0.12.30) puts a green P in your notification area and <b>keeps running there
+after you close the window</b> — quit it from that icon's menu. It never reads your game
+files until you turn the Play Log on yourself, and it never uploads anything. Sharing to
+the Pulse Boards is a separate opt-in you are asked for once.</p>
 <a target="_blank" rel="noopener" class="btn" href="https://github.com/joelc67/hero-companion/releases/latest">Download the latest release</a>
 <a target="_blank" rel="noopener" class="btn alt" href="https://github.com/joelc67/hero-companion#readme">What it does</a>
 </div>
 
 <div class="card">
 <h2>Companion Lite<span class="alpha">alpha</span></h2>
-<p>The little brother: a small signed installer (per-user, Start Menu entry, clean
-uninstall) whose only job is capturing your game logs into local intel for your Pulse
-Boards. Captures every account with logging on, adds an optional in-game menu for
-one-click logging, and runs safely alongside the full app. Blue P in your tray.
-<b>Everything stays on your machine</b> — feeding the community board is a separate,
-reversible opt-in.</p>
+<p><b>Lite is not a cut-down Hero Companion.</b> It plans no builds and optimizes
+nothing — it is a logger, and its whole job is turning your game's chat log into your
+Pulse Boards. Run it if you want the boards; run the full app if you want to build
+characters. Most people who want both just run the full app.</p>
+<p>A small signed installer (per-user, Start Menu entry, clean uninstall). Captures
+every account with logging on, adds an optional in-game menu for one-click logging, and
+runs safely alongside the full app. <b>Light blue P</b> in your notification area.</p>
+<p class="note"><b>You choose when it runs.</b> It asks once, on first run, whether to
+start with Windows — never silently on, and the answer flips any time from the same
+menu as Quit. Say no and it only runs when you start it yourself; quit it and it is
+gone until you do. <b>Everything stays on your machine</b> — feeding the community
+board is a separate, reversible opt-in.</p>
 <a target="_blank" rel="noopener" class="btn" href="https://github.com/joelc67/hero-companion/releases">Download Companion Lite</a>
 <a target="_blank" rel="noopener" class="btn alt" href="https://github.com/joelc67/hero-companion/blob/master/docs/companion-lite.md">Read the explainer</a>
 </div>

@@ -2917,7 +2917,11 @@ function showAbout() {
 window.setAutostart = async function (on) {
   const r = await api("/app/autostart", postJson({ enabled: on })).catch(() => null);
   if (r && r.ok) META.autostart = { supported: true, enabled: r.enabled };
-  showAbout();
+  // The same checkbox now exists in two places (About settings, Logging tab).
+  // Re-render the one the click came from — showAbout() unconditionally would
+  // OPEN the About modal on top of the Logging tab.
+  if (!$("about-modal").classList.contains("hidden")) showAbout();
+  if (GAMELOG_WATCHING.length || GAMELOG_ACCOUNTS.length) renderGamelogControls();
 };
 
 // ── Startup update flow ─────────────────────────────────────────────────────
@@ -3534,7 +3538,8 @@ function renderGamelogControls() {
     + `<b>Watch account${GAMELOG_ACCOUNTS.length > 1 ? "s" : ""}:</b> ${chips} `
     + `<span class="muted small">— ${watching ? "click to add/remove. " : "pick the one(s) you play. "}`
     + `Dual-boxing? Watch both to see each character side by side.</span>`
-    + (watching ? "" : gamelogSetupHelp());
+    + (watching ? "" : gamelogSetupHelp())
+    + gamelogChoiceRow();
   $("gl-refresh").style.display = watching ? "" : "none";
   if (!watching) { $("gl-cards").innerHTML = ""; $("gl-coverage").innerHTML = ""; gamelogStopLive(); }
 }
@@ -3610,6 +3615,30 @@ function gamelogStartLive() {
 }
 function gamelogStopLive() {
   if (GAMELOG_TIMER) { clearInterval(GAMELOG_TIMER); GAMELOG_TIMER = null; }
+}
+
+// THE OFF SWITCH AND THE WHEN, ON THE SURFACE THAT OWNS THEM (Joel, 2026-08-05).
+// The Play Log's "on" was a one-way door in the UI: the off state offered "Turn it
+// on", the on state offered nothing back. And the only place that answered "does
+// this run when I'm not using the app?" was a checkbox inside the About dialog —
+// the question belongs where the logging lives, not two clicks away under a
+// version number. Both controls are the SAME ones already wired (playlogConsent,
+// setAutostart); this states them, it does not add a second copy of the choice.
+function gamelogChoiceRow() {
+  const auto = (META && META.autostart) || {};
+  const when = auto.supported
+    ? `<label class="incarnate-toggle"
+         title="Adds a per-user Windows startup entry. No admin rights, and uninstalling removes it."
+         ><input type="checkbox" ${auto.enabled ? "checked" : ""}
+         onchange="setAutostart(this.checked)"> Start Hero Companion when I sign in to Windows</label>
+       <span class="muted small">— ${auto.enabled
+        ? "the Play Log runs from sign-in on."
+        : "off, so the Play Log only reads your logs while this app is open."}</span>`
+    : `<span class="muted small">The Play Log only reads your logs while this app is open.</span>`;
+  return `<div class="gl-choice"><b>Play Log is on.</b>
+    <button class="linkbtn" onclick="playlogConsent('off')">Turn it off</button>
+    <span class="muted small">— off means the app reads no game files at all.</span>
+    <br>${when}</div>`;
 }
 
 window.playlogConsent = function (v) {

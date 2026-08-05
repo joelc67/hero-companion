@@ -1041,16 +1041,46 @@ def _graceful_self_exit_for_update():
     threading.Thread(target=_later, daemon=True).start()
 
 
+def _install_kind():
+    """"installed" / "portable" / "source" — WHICH COPY OF THE APP IS THIS.
+
+    Field report (BasiliskXVIII, forum topic 64761, 2026-08-05): a PORTABLE copy's
+    "Check for updates" ran the Setup exe and silently converted him into an
+    installed user. `sys.frozen` alone cannot tell the two apart — the portable zip
+    and the installed folder hold the same frozen build. The uninstaller can:
+    Inno Setup writes `unins000.exe` beside HeroCompanion.exe on every install, and
+    the zip has never carried one. Never guess "installed" — an unreadable directory
+    reads as portable, which refuses rather than converts."""
+    if not getattr(sys, "frozen", False):
+        return "source"
+    try:
+        return ("installed"
+                if os.path.exists(os.path.join(os.path.dirname(sys.executable), "unins000.exe"))
+                else "portable")
+    except Exception:  # noqa: BLE001
+        diag.swallowed("install kind")
+        return "portable"
+
+
 @app.route("/update/install", methods=["POST"])
 def update_install():
-    """One-click self-update, packaged builds only: download the latest release's
+    """One-click self-update, INSTALLED builds only: download the latest release's
     Setup exe from the project's GitHub (the only source this will touch), verify
     its size against the API's answer, and launch it silently with /RELAUNCH=1 —
-    the installer ends this process itself, installs, and restarts the app."""
+    the installer ends this process itself, installs, and restarts the app.
+
+    A portable copy is REFUSED here, with the remedy: running the installer would
+    convert it into an installed copy, which is not what anyone asked for."""
     import re as _re
-    if not getattr(sys, "frozen", False):
+    kind = _install_kind()
+    if kind == "source":
         return jsonify({"ok": False, "response": "Self-update only applies to the installed app — "
                         "you're running from source (use git pull)."}), 400
+    if kind == "portable":
+        return jsonify({"ok": False, "response": "This is the portable copy, and the one-click "
+                        "update would install the app instead of updating this folder. Grab the "
+                        "portable zip from the download page and unzip it over this folder — your "
+                        "saves are kept separately and are not touched."}), 400
     api_url = (CLIENT_CONFIG.get("urls") or {}).get("releases_api") or ""
     if not api_url or "REPLACE-ME" in api_url:
         return jsonify({"ok": False, "response": "No update source configured."}), 400
