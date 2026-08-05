@@ -130,7 +130,7 @@ function showEntry(section) {
   const which = section || "saves";
   $("entry-overlay").classList.remove("hidden");
   $("entry-title").textContent = which === "ingame"
-    ? "Import a character you play" : "Continue a saved character";
+    ? "Import a build" : "Continue a saved character";
   $("saves-panel").classList.toggle("hidden", which !== "saves");
   $("ingame-panel").classList.toggle("hidden", which !== "ingame");
   // the folder browser exists only in the desktop window (pywebview injects
@@ -3268,19 +3268,23 @@ async function init() {
       if (e.target.open) { renderConverterTool(); renderConverterGuide(); }
     });
   }
-  $("import-btn").addEventListener("click", () => $("import-file").click());
+  // ⚠ ONE IMPORT DOOR. This used to open the OS file dialog directly, which
+  // answered "where do I click" and never "how do I get a file" — and the menu
+  // carried a SECOND item (entry-ingame) that opened the panel and ended in the
+  // same importBuildText(). The panel is the door now; the picker lives inside it.
+  $("import-btn").addEventListener("click", () => showEntry("ingame"));
   $("import-file").addEventListener("change", importMids);
   // Entry router — the front door: how do you want to start?
   // entry stays visible until a file is actually CHOSEN (importMids hides it) —
   // a cancelled/failed OS dialog must never strand the user on the bare planner
-  // in-game card: scan-first (the app finds the saves), file picker as fallback
+  // in-game route: scan-first (the app finds the saves), file picker as fallback
   $("ingame-scan-go").addEventListener("click", () => ingameScan());
   if ($("ingame-browse-go")) $("ingame-browse-go").addEventListener("click", browseGameFolder);
   $("ingame-pick-go").addEventListener("click", () => $("import-file").click());
+  $("ingame-mbd-go").addEventListener("click", () => $("import-file").click());
   $("entry-scratch").addEventListener("click", () => { hideEntry(); startFromScratch(); });
   $("entry-respec").addEventListener("click", () => { hideEntry(); startNew50(); });
   $("entry-continue").addEventListener("click", () => showEntry("saves"));
-  $("entry-ingame").addEventListener("click", () => showEntry("ingame"));
   $("entry-close").addEventListener("click", hideEntry);
   initTabs();
   initMenus();
@@ -4759,9 +4763,9 @@ function startHereHtml() {
     + card("startNew50()", "♻️", "Build a new level 50",
            "Know your archetype and powersets? Get a finished end-game build: picks, slotting, caps, epic pool and incarnates.",
            "Build a 50 →")
-    + card("$('import-file').click()", "📋", "Import a build",
-           "Load a Mids Reborn .mbd or an in-game /build_save_file export, get it critiqued, then optimised.",
-           "Choose a file →")
+    + card("showEntry('ingame')", "📋", "Import a build",
+           "From Mids Reborn, or straight off a character you already play. I will show you how to get the file either way, then critique the build and optimise it.",
+           "Show me how →")
     + `</div>`
     + `<h3 class="start-h">…or fill in the build yourself</h3>`
     + `<p class="muted">Pick an <b>archetype</b> and your two powersets in the bar above.`

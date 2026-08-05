@@ -99,8 +99,7 @@ const TOUR_MOCK_HTML = `
       <button type="button" data-for="entry-continue"><b>⏯️ Continue where you left off</b><i>Resume one of your saved characters</i></button>
       <button type="button" data-for="entry-scratch"><b>✨ Start a new character</b><i>Tell me how you want to play and I will pick the build</i></button>
       <button type="button" data-for="entry-respec"><b>♻️ Build a new level 50</b><i>An end-game kit from scratch, no file needed</i></button>
-      <button type="button" data-for="import-btn"><b>📋 Import a build</b><i>A Mids .mbd or an in-game .txt, critiqued then optimised</i></button>
-      <button type="button" data-for="entry-ingame"><b>🎮 Import a character you play</b><i>From an in-game /build_save_file export</i></button>
+      <button type="button" data-for="import-btn"><b>📋 Import a build</b><i>From Mids Reborn, or a character you play — I will show you how</i></button>
       <button type="button" data-for="save-btn"><b>💾 Save this character</b><i>Plan and progress, so you can resume later</i></button>
       <button type="button" data-for="start-over-btn"><b>↺ Switch character</b><i>Load another one, or start over</i></button>
     </div>
@@ -605,22 +604,21 @@ const TOUR_STEPS = [
         + "aimed at your Content and Role — both explained later in this tour. "
         + "Anything it produces, you can still adjust by hand." },
   { chapter: "start", target: "#import-btn",
-    title: "Import a build file",
-    body: "Already have a build in Mids Reborn, or an in-game .txt export? Load "
-        + "it and the app reads it and tells you what it thinks of it first — "
-        + "what is strong, what is loose — before changing anything.\n\n"
+    title: "Import a build",
+    body: "One door, two kinds of file, and it shows you how to get either.\n\n"
+        + "From Mids Reborn: Mids saves builds as a .mbd, and you pick yours.\n\n"
+        + "From a character you actually play: type /build_save_file in the "
+        + "game's chat box and Homecoming writes a small text file. The app "
+        + "finds those saves by itself, so you just pick the character from a "
+        + "list; there is a Browse button too, if your game lives somewhere "
+        + "unusual. That is the most honest starting point there is, because "
+        + "the plan is built around exactly the powers and enhancements you "
+        + "really have.\n\n"
+        + "Either way it reads the build and tells you what it thinks of it "
+        + "first — what is strong, what is loose — before changing anything. "
         + "From there it can improve the slotting while keeping the sets you "
-        + "have already paid for, and export the result back out as a .mbd that "
+        + "have already paid for, and write the result back out as a .mbd that "
         + "Mids can open. Your file is never touched." },
-  { chapter: "start", target: "#entry-ingame",
-    title: "Import a character you actually play",
-    body: "The character straight from the game. Type /build_save_file in the "
-        + "game's chat box; Homecoming writes a small text file, and the app "
-        + "finds those saves by itself — you just pick the character from a "
-        + "list. There is a Browse button too, if your game lives somewhere "
-        + "unusual.\n\n"
-        + "This is the most honest starting point there is: the plan is built "
-        + "around exactly the powers and enhancements you really have." },
   { chapter: "start", target: "#save-btn",
     title: "Saving and switching",
     body: "The same menu holds Save this character and Switch character. Saving "

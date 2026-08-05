@@ -882,7 +882,6 @@ hr.sep { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
 .entry-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45;
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .entry-card code { background: var(--panel2); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
-.entry-steps { margin: 2px 0 0; padding-left: 18px; color: var(--muted); font-size: 12px; line-height: 1.7; }
 .entry-go { margin-top: auto; padding-top: 6px; color: var(--accent); font-size: 13px; font-weight: 600; }
 /* In-game character discovery (entry banner) */
 .entry-card-static { cursor: default; text-align: left; font: inherit; color: inherit; }
@@ -1460,26 +1459,14 @@ body { overflow: hidden; }
 
 /* In-game import card: full-width horizontal banner below the four main cards —
    identity block on the left, the 3 steps flowing as numbered columns, CTA at the end */
-#entry-ingame { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap;
-  align-items: center; column-gap: 18px; row-gap: 6px; }
-#entry-ingame .entry-ico { font-size: 24px; }
-#entry-ingame h3 { flex: 0 0 auto; }
-#entry-ingame > p { flex: 0 0 auto; }
-#entry-ingame .entry-steps {
-  flex: 1 1 420px; display: flex; gap: 16px; margin: 0; padding: 0;
-  list-style: none; counter-reset: igstep;
-}
-#entry-ingame .entry-steps li { flex: 1; position: relative; padding-left: 22px; }
-#entry-ingame .entry-steps li::before {
-  counter-increment: igstep; content: counter(igstep);
-  position: absolute; left: 0; top: 1px; width: 16px; height: 16px;
-  border-radius: 50%; background: var(--accent); color: var(--bg);
-  font-size: 11px; font-weight: 700; text-align: center; line-height: 16px;
-}
-#entry-ingame .entry-go { margin: 0 0 0 auto; flex: 0 0 auto; }
-@media (max-width: 900px) {
-  #entry-ingame .entry-steps { flex-direction: column; gap: 6px; }
-}
+/* The import panel: two labelled ROUTES to the one importer (2026-08-05). The
+   #entry-ingame card and its numbered .entry-steps went with the second menu
+   item that opened them — this block is their replacement, not an addition. */
+.imp-route { border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; margin: 10px 0; background: var(--panel); }
+.imp-route h4 { margin: 0 0 6px; font-size: 14px; }
+.imp-route p { margin: 0 0 8px; }
+.imp-route .entry-go { display: block; margin-top: 4px; cursor: pointer; }
 .app-credits { text-align: center; padding: 14px 24px 18px; border-top: 1px solid var(--border);
   margin-top: 18px; line-height: 1.8; }
 .app-credits a { color: var(--accent); text-decoration: none; }

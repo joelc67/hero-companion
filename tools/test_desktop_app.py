@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 88          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 93          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement;
 #                        82 -> 88, 2026-08-05: portable-vs-installed detection
@@ -490,8 +490,10 @@ def main():
           all(f'id="{i}"' in index for i in
               # entry-mids retired: #import-btn does the same job and was
               # already bound, so the menu carries the one that existed.
+              # entry-ingame retired 2026-08-05 (Joel: "two options that do the
+              # same thing") — #import-btn opens the panel it used to open.
               ("entry-continue", "entry-scratch", "entry-respec", "import-btn",
-               "export-btn", "entry-ingame", "save-btn", "start-over-btn",
+               "export-btn", "save-btn", "start-over-btn",
                "tour-btn", "help-btn", "bug-btn", "champ-btn", "update-btn")),
           "these are the ids app.js already binds — re-homed, not rewired")
     check("menu items keep their descriptions", index.count("<i>") >= 10,
@@ -538,6 +540,30 @@ def main():
     check("the autostart checkbox does not open About from the Logging tab",
           '$("about-modal").classList.contains("hidden")' in app_js,
           "negative control: showAbout() unconditionally would stack a modal")
+
+    # ── 9. ONE IMPORT DOOR (Joel, 2026-08-05) ──────────────────────────────
+    # "There are two options that do the same thing, and neither do a good job
+    # explaining how to do it." Both ended in importBuildText(); the menu now
+    # carries one item, and it opens the panel that TEACHES both routes.
+    check("the menu carries exactly one import item",
+          'id="entry-ingame"' not in index and index.count('id="import-btn"') == 1)
+    check("it opens the panel, not a bare OS file dialog",
+          '$("import-btn").addEventListener("click", () => showEntry("ingame"));' in app_js,
+          "negative control: the old wiring was () => $(\"import-file\").click()")
+    check("the panel teaches BOTH ways of getting a file",
+          "/build_save_file" in index and ".mbd" in index
+          and index.count('class="imp-route"') == 2)
+    check("both routes reach the same picker",
+          'id="ingame-pick-go"' in index and 'id="ingame-mbd-go"' in index
+          and app_js.count('$("import-file").click()') == 2)
+    # ⚠ Comments STRIPPED first. A comment naming what was deleted is the record
+    # of why; only a live RULE is a dead reference. This battery already learned
+    # that lesson once ("matches the old EXPRESSION, not the comment").
+    css_rules = re.sub(r"/\*.*?\*/", "", read("static", "style.css"), flags=re.S)
+    check("no dead reference to the retired menu item survives",
+          "entry-ingame" not in read("static", "tour.js")
+          and "#entry-ingame" not in css_rules and ".entry-steps" not in css_rules,
+          "the tour targeted it and the stylesheet dressed it")
 
     print(f"\n{len(CHECKS)} of {EXPECTED} expected checks ran")
     if len(CHECKS) != EXPECTED:

@@ -297,6 +297,32 @@ for s in ENH_SETS:
         PIECE_BY_UID[pc["uid"]] = slot
         ENH_NAME_TO_PIECE[f"{s['name']}: {pc['name']}".lower()] = slot
 
+# ⚠ SPECIAL ORIGINS ARE SLOTTABLE PIECES AND MUST RESOLVE BY NAME (2026-08-05).
+# They live in common_ios.json, not ENH_SETS, so the loop above never saw them —
+# and both importers' uid rung missed, fell through to the generic common-IO
+# fallback, and labelled the slot with its own uid: a re-imported .mbd showed
+# "Hamidon_Damage_Accuracy" where the app had written "Nucleolus Exposure", with
+# the set line blank. Math was never affected (the engine prices by piece_uid,
+# proven by identical totals across a round trip) — this is the naming rule:
+# never label a piece from its internal name. Registered HERE because that is
+# where both importers AND the ⓘ image lookup already read; the labels match the
+# ones proc_pass/solver already emit, so a hand-placed HO and an imported one are
+# the same object. No PIECE_REF_LEVEL — see the loop above for why.
+_SPECIAL_ORIGIN_SETS = {"Hamidon": ("Hamidon_Origin", "Hamidon Origin"),
+                        "Hydra": ("Hydra_Origin", "Hydra Origin"),
+                        "Titan": ("Titan_Origin", "Titan Origin"),
+                        "Dsync": ("DSync_Origin", "D-Sync Origin"),
+                        "DSync": ("DSync_Origin", "D-Sync Origin")}
+for c in COMMON_IOS.get("special_ios", []):
+    if not c.get("uid"):
+        continue
+    _suid, _sname = _SPECIAL_ORIGIN_SETS.get(c["uid"].split("_")[0], (None, None))
+    if not _suid:
+        continue
+    PIECE_BY_UID[c["uid"]] = {"set_uid": _suid, "set_name": _sname,
+                              "piece_uid": c["uid"], "piece_name": c.get("name") or c["uid"],
+                              "category_id": None, "image": c.get("image") or ""}
+
 # Exemplar-exempt sets: bonuses live at EVERY level (wiki-pinned 2026-08-03) —
 # purples, PvP, Winter-O and Archetype sets. The purple/Winter/PvP rosters are
 # converter.py's (verified vs the data — one copy, per the travel-powers

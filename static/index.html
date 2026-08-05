@@ -30,14 +30,38 @@
         </div>
         <div id="saves-list" class="saves-list"></div>
       </div>
+      <!-- ONE IMPORT ROUTE (Joel, 2026-08-05: "two options that do the same thing,
+           and neither do a good job explaining how to do it"). The menu used to
+           carry both "Import a build" (a bare OS file dialog, no instructions at
+           all) and "Import a character you play" (this panel) — and they ended in
+           the same importBuildText(). Now one door, and it teaches BOTH ways of
+           getting a file, because the hard part was never the picker. -->
       <div id="ingame-panel" class="hidden">
-        <p>In game, type <code>/build_save_file</code> in chat — then come back here:</p>
-        <span class="entry-go" id="ingame-scan-go">🔍 Find my characters for me →</span>
-        <span class="entry-go" id="ingame-browse-go" hidden>📂 Browse to your game folder →</span>
-        <div id="ingame-found" class="ingame-found hidden"></div>
-        <span class="entry-go entry-go-quiet" id="ingame-pick-go">…or choose the .txt file yourself →</span>
-        <p class="muted small">Heads-up: in-game build saves don't include boost
-        levels — import a Mids export (.mbd) to carry +1..+5 and HO levels.</p>
+        <p class="muted">Both kinds of build file land in the same place: read, critiqued,
+        then optimised if you want. Pick whichever you have.</p>
+
+        <div class="imp-route">
+          <h4>🎮 A character you already play</h4>
+          <p>In game, type <code>/build_save_file</code> in the chat box and press Enter.
+          The game writes a <code>.txt</code> into your City of Heroes folder. Then come
+          back here and let me find it:</p>
+          <span class="entry-go" id="ingame-scan-go">🔍 Find my characters for me →</span>
+          <span class="entry-go" id="ingame-browse-go" hidden>📂 Browse to your game folder →</span>
+          <div id="ingame-found" class="ingame-found hidden"></div>
+          <span class="entry-go entry-go-quiet" id="ingame-pick-go">…or choose the .txt file yourself →</span>
+        </div>
+
+        <div class="imp-route">
+          <h4>📋 A build you planned in Mids Reborn</h4>
+          <p>Mids saves builds as a <code>.mbd</code> file. Choose yours and it comes
+          straight in, enhancement levels and all:</p>
+          <span class="entry-go" id="ingame-mbd-go">📂 Choose a .mbd file →</span>
+        </div>
+
+        <!-- ⚠ .keep-whole or collapseLongExplanations folds it behind "more" (>26 words) -->
+        <p class="muted small keep-whole">Which is better? The Mids file, slightly: an
+        in-game build save doesn't record boost levels, so +1..+5 and Hamidon levels
+        arrive as plain enhancements. Everything else is identical.</p>
       </div>
     </div>
   </div>
@@ -170,9 +194,8 @@
             <button id="entry-scratch" role="menuitem" type="button"><b>✨ Start a new character</b><i>Tell me how you want to play and I will pick the build</i></button>
             <button id="entry-respec" role="menuitem" type="button"><b>♻️ Build a new level 50</b><i>An end-game kit from scratch, no file needed</i></button>
             <div class="menu-sep" role="separator"></div>
-            <button id="import-btn" role="menuitem" type="button"><b>📋 Import a build</b><i>A Mids .mbd or an in-game .txt, critiqued then optimised</i></button>
+            <button id="import-btn" role="menuitem" type="button"><b>📋 Import a build</b><i>From Mids Reborn, or a character you play — I will show you how</i></button>
             <button id="export-btn" role="menuitem" type="button"><b>⬇ Export to Mids Reborn</b><i>Write a .mbd you can open in Mids</i></button>
-            <button id="entry-ingame" role="menuitem" type="button"><b>🎮 Import a character you play</b><i>From an in-game /build_save_file export</i></button>
             <div class="menu-sep" role="separator"></div>
             <button id="save-btn" role="menuitem" type="button"><b>💾 Save this character</b><i>Plan and progress, so you can resume later</i></button>
             <button id="start-over-btn" role="menuitem" type="button"><b>↺ Switch character</b><i>Load another one, or start over</i></button>
