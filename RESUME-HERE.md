@@ -1,7 +1,11 @@
-# Resume point — 2026-08-05 09:02 ET (new session starts here)
+# Resume point — 2026-08-05 (new session starts here)
 
-Tracked tree clean, master pushed, **HEAD = `5309e1a7`**. Nothing running; no
-scheduled tasks armed. Dev server and scratch browser windows closed.
+Tracked tree clean, master pushed, **HEAD = `03c09ea2`** (work commit
+`d026c05f`). Nothing running; no scheduled tasks armed.
+
+⚠ **Stage commits BY NAME here, never `git add -A`** — the tree carries hundreds
+of untracked benchmark artifacts (swap sweeps, pyspy SVG, stray .bat launchers).
+`-A` staged all of them on 2026-08-05; caught by the `--stat` size check.
 
 **Installed app: `%LOCALAPPDATA%\Programs\HeroCompanion`, UNSIGNED dev build,
 frozen stamp `297ddcf` + statics copied through HEAD.** Release still HELD at
@@ -12,41 +16,35 @@ frozen stamp `297ddcf` + statics copied through HEAD.** Release still HELD at
 `WScript.Shell.AppActivate($pid)` fronts the window when `open_application` grabs
 an Edge tab of the same name.
 
-## ▶ NEXT SESSION STARTS HERE: the forum report (BasiliskXVIII, topic 64761)
+## ✅ DONE: the forum report (BasiliskXVIII, topic 64761) — `d026c05f`
 
-Joel's instruction: "see if we can accommodate actual bugs in this latest post."
-Two claims. I checked both against the code; here is what is true.
+Both claims closed, plus the disclosure pages and the Lite framing. Detail in
+session-report.md. What survives as live state:
 
-### 1. "Closing the window leaves the server running in the tray" — ALREADY FIXED, NOT RELEASED
-The tray is **deleted in the current tree** (`grep -c pystray run_app.py` = 0;
-window close = quit, 2026-08-02 desktop-app work). He is describing **0.12.30**,
-released 2026-07-31, which still has it. So the code answer is "fixed, shipping in
-the next release" — but two things are still owed:
-- **His disclosure point stands for the shipped build.** Nothing on the landing or
-  download page said the app keeps running. `docs/index.html` and
-  `docs/companion-lite.md` still mention the tray — Lite legitimately keeps its
-  tray (do not touch `run_lite.py`), the main app no longer does, so the pages need
-  to say which is which.
-- **The forum reply Joel already posted says "the update check only runs when you
-  click it", which is FALSE in the current code** (it runs on launch). That was
-  flagged in CLAUDE.md and is still uncorrected in public.
+- **⏰ RELEASE STEP for 0.12.31:** `docs/index.html` currently discloses **0.12.30's**
+  behaviour ("keeps running in your notification area after you close the window",
+  Joel's ruling: today's truth, flip on release). That paragraph is wrong the
+  moment 0.12.31 publishes — replace it with the window truth (close = quit) as
+  part of the release.
+- **▶ STILL JOEL'S RULING: what a PORTABLE copy gets.** Shipped the floor —
+  `server._install_kind()` (installed / portable / source, told apart by Inno's
+  `unins000.exe` beside the exe; unreadable dir reads *portable*, so the failure
+  mode is a refusal) and `/update/install` refuses portable upstream of the Popen
+  with the remedy. Open: whether portable earns a REAL self-update (download the
+  zip, helper waits for exit, extracts over the folder, relaunches — a new
+  self-replacing-files path, not built), or the refusal also offers "install the
+  app version instead" as a named button.
+  ⚠ **Server-side ⇒ needs a frozen rebuild; reaches users only in 0.12.31.**
+- **The forum reply's "the update check only runs when you click it" is still
+  uncorrected in public.** Accurate replacement drafted in session-report.md.
+- Full app's logging choice now lives on the Logging tab (`gamelogChoiceRow()`):
+  a visible "Turn it off" (the "on" state used to be a one-way door) and the
+  start-with-Windows checkbox with a live clause saying what each state means.
+  Same `playlogConsent`/`setAutostart` as before — no second copy of the choice.
+  ⚠ `setAutostart` must re-render the surface it was clicked from; an
+  unconditional `showAbout()` opens the About modal on top of the Logging tab.
 
-### 2. "Portable's Check for updates installs the installer" — REAL, UNFIXED
-`server.py` `/update/install` gates on `sys.frozen` ONLY. It then always picks the
-release asset whose name ends `.exe` and contains `setup`, and runs it
-`/SILENT /RELAUNCH=1`. A portable user gets silently converted into an installed
-one. He is right, and his framing (the tool clearly can tell the difference) is the
-fix: detect portable vs installed — the exe's directory versus
-`%LOCALAPPDATA%\Programs\HeroCompanion`, or the presence of the uninstaller — and
-then either hand the portable **.zip** asset (the release carries one) or refuse
-with a plain sentence and a link. **Minimum honest fix: never silently convert.**
-Joel's call on which.
-
-⚠ Both of these are RELEASE-gated: the fix for #1 only reaches users when 0.12.31
-ships, and #2 needs a server.py change, so it needs a **frozen rebuild**, not a
-static copy.
-
-## What landed this session (all pushed)
+## What landed the session before (all pushed)
 
 - **Tabs are manila folders** in a filing cabinet: filed tabs sit lower in a darker
   color-mix of the active accent, the pulled one stands proud, labels typed on.
@@ -68,7 +66,8 @@ static copy.
 
 ## ▶ Open queue
 
-1. **The two forum items above** — Joel's next order.
+1. **Joel's ruling on the portable update behaviour** (above) — the floor is
+   shipped, the upgrade is his call.
 2. The catalogue's last empty cell (leave / one row of seven / epic spans it).
 3. His layout draft whenever he wants: drag corners, ✕ hide, 📋 Copy, paste to me.
 4. Set-bonuses-in-force + rule-of-five meter; "Gear this build" card; origin

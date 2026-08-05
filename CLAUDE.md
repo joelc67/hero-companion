@@ -367,6 +367,33 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
 - **⚠ The forum reply's "the update check only runs when you click it" is now
   FALSE in the code** and the post is uncorrected. See RESUME-HERE for the
   accurate replacement sentence.
+- **⚠ PORTABLE IS NOT INSTALLED, and `sys.frozen` cannot tell them apart** (field
+  report BasiliskXVIII, topic 64761, 2026-08-05): the portable zip and the
+  installed folder hold the SAME frozen build, so `/update/install` gated on
+  `sys.frozen` alone downloaded the Setup exe and ran it `/SILENT` — silently
+  converting a portable user into an installed one. The tell is Inno's
+  **`unins000.exe` beside the exe**, which the zip has never carried;
+  `server._install_kind()` → installed / portable / source, and an unreadable
+  directory reads **portable** so the failure mode is a refusal, never a
+  conversion. The refusal sits UPSTREAM of the Popen. ⚠ Anything richer for
+  portable users (a real zip self-update) is **still Joel's ruling** — the
+  floor shipped, the upgrade did not.
+- **⚠ "ON" MUST BE A DOOR THAT SWINGS BOTH WAYS, on the surface that owns it.**
+  The Play Log's off state offered "Turn it on"; the on state offered nothing
+  back, and the answer to "does this run when I'm not using the app?" lived in
+  the About dialog under a version number. Both now sit on the Logging tab
+  (`gamelogChoiceRow()`), wired to the SAME `playlogConsent`/`setAutostart` —
+  never a second copy of a choice. ⚠ `setAutostart` re-renders whichever
+  surface was clicked; an unconditional `showAbout()` stacks the About modal on
+  top of the Logging tab.
+- **⚠ Companion Lite is NOT a watered-down Hero Companion (Joel, 2026-08-05).**
+  It is a LOGGER whose whole job is feeding the Pulse Boards — it plans no
+  builds and optimizes nothing. "Lite" describes what it carries, not what it
+  lacks; never write "little brother" or imply a lesser version of the same
+  tool. Icons: **Lite = light blue P, the full app = green P.** Its
+  start-with-Windows is opt-in, asked once, and flips from the same right-click
+  menu as Quit (all already true in `run_lite.py`; the pages just never said
+  so).
 - **⚠ THE SHARE PROMPT IS NOT A MODAL, and that took three tries.** Hooked to
   `hideEntry()` it ambushed the first meaningful action on every entry path;
   moved to once-per-launch it was still a wall with a backdrop between the user
