@@ -517,6 +517,32 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   doctrine:** the whole buff/debuff panel is unenhanced, so a debuffer slotting
   accurate defence-debuff or −regen sets sees zero movement anywhere in the app.
   Engine work, unstarted, needs Joel's ruling.
+- **🧪 THE BUFF/DEBUFF PANEL READS ENHANCEMENT (Joel's ruling, 2026-08-06,
+  `be8641db`) — and the RULE needs no table.** Effect names and enhancement-aspect
+  names come from the SAME client vocabulary, so an effect is enhanced by the host
+  power's own post-ED enhancement in the aspect of that name; whether the power may
+  hold that enhancement at all is already answered by its own slots (the game only
+  lets it accept what it accepts). **Four exclusions, and the client's
+  accepted-category vocabulary is the evidence:** across 3,650 powersets there is
+  no resistance-debuff, no −regeneration and no −damage category, because those
+  enhancements do not exist. **RechargeTime is excluded for a different reason** —
+  that aspect is recharge REDUCTION on the power itself. ⚠ **OPEN:** in game a
+  −recharge debuff rides Slow enhancements; we do NOT claim that without pinning
+  it, so −recharge is UNDER-credited (errs against our own claim, house
+  convention). ⚠⚠ **The re-cert question was TRACED, not assumed:**
+  `first_principles._deb()` reads `role_output.enhanced_debuff_totals` whenever a
+  role_output module is supplied and EVERY serving call site supplies one — this
+  summary is only its fallback, role_output was untouched, and encounter_value is
+  identical to 9 dp. ⚠ `payoff_metrics["support"]` DOES read it, but its only
+  consumer is `joint_refine(scorer="payoff")`, **which has no callers** — wire
+  that up again and it starts moving with slotting.
+- **⚠ A HALF-UPDATED FROZEN COPY IS A LIE, SO DON'T HALF-UPDATE IT.** This fix is
+  server-side; the wording that goes with it is static. Pushing statics to the
+  installed copy while its PYZ is a build behind would have put "with your
+  slotting" above unenhanced numbers. Statics were deliberately withheld from the
+  installed copy — it stays wholly on the old text until an install. **Generalize:
+  when a change spans the PYZ and the statics, both halves reach a copy together
+  or neither does.**
 - **⚠ A JS-ONLY function CAN have a real battery: lift it out and run it under
   node.** `tools/test_improve_diff.js` brace-matches `renderImproveDiff` out of
   app.js, evals it with `escHtml`/`$` stubs, and asserts the HTML. It takes an
