@@ -1,20 +1,38 @@
-# Resume point — 2026-08-05 (new session starts here)
+# Resume point — 2026-08-05 evening (new session starts here)
 
-Tracked tree clean, master pushed, **HEAD = `03c09ea2`** (work commit
-`d026c05f`). Nothing running; no scheduled tasks armed.
+Tracked tree clean, master pushed, **HEAD = `0966af1d`**. Nothing running; no
+scheduled tasks armed. A 25-point sweep at close confirmed every deliverable of
+the day is present in the tree; full audit suite green (see below).
 
 ⚠ **Stage commits BY NAME here, never `git add -A`** — the tree carries hundreds
 of untracked benchmark artifacts (swap sweeps, pyspy SVG, stray .bat launchers).
 `-A` staged all of them on 2026-08-05; caught by the `--stat` size check.
 
 **Installed app: `%LOCALAPPDATA%\Programs\HeroCompanion`, UNSIGNED dev build,
-frozen stamp `297ddcf` + statics copied through HEAD.** Release still HELD at
+frozen stamp `297ddcf` + statics current with HEAD.** Release still HELD at
 0.12.30.
 
-⚠ **Statics load at LAUNCH only** (F5/Ctrl+R do nothing in WebView2): copy into
-`_internal\static`, then relaunch. server.py changes need a full rebuild.
-`WScript.Shell.AppActivate($pid)` fronts the window when `open_application` grabs
-an Edge tab of the same name.
+⚠⚠ **TWO frozen copies exist** — the installer's (Joel's shortcut targets this
+one) and `dist\HeroCompanion`. **Use `py tools\push_statics.py`**, which writes
+both and prints a coverage denominator; a hand copy reaches one and makes
+"verified" a lie. Then RELAUNCH — statics load at LAUNCH only (F5/Ctrl+R do
+nothing in WebView2). **server.py / run_app.py changes need a full rebuild.**
+`WScript.Shell.AppActivate($pid)` fronts the window.
+
+## 🔨 A FROZEN REBUILD IS OWED BEFORE ANY OF TODAY'S SERVER WORK REACHES JOEL
+
+`server.py` changed twice on 2026-08-05 and the frozen build predates both:
+1. `_install_kind()` + the portable refusal in `/update/install`
+2. `_SPECIAL_ORIGIN_SETS` → Hamidon/Hydra/Titan/D-Sync in `PIECE_BY_UID`
+   (imported HOs showing their internal name)
+Everything else from the day is static and is already live in both copies.
+
+## Verification at close (2026-08-05)
+
+`demo_single_build_fixes` 24/24 · `test_desktop_app` 121/121 ·
+`test_mbd_alignment` 9/9 · `test_exemplar_view` 18/18 · `audit_tour` (12, incl.
+2 new content checks) · `audit_tabs` 10/10 · `audit_links` 178 refs with 5
+planted defects caught.
 
 ## ✅ DONE: the forum report (BasiliskXVIII, topic 64761) — `d026c05f`
 
@@ -54,6 +72,35 @@ session-report.md. What survives as live state:
   62 now register there, which fixes the in-game .txt path at the same time.
 - ⚠ `server.py` changed ⇒ the HO fix needs a **frozen rebuild** to reach the
   installed app. The static half (panel, menu, tour) is already copied in.
+
+## ✅ DONE: the 2026-08-05 UI pass (all pushed; detail in session-report.md)
+
+- **Build menu**: Refine with AI removed (dead in an AI-free client); every gated
+  item now says WHY it is greyed. ⚠ The reported "cancel greys the menu" was NOT
+  a state bug — reproduced identical before and after cancelling; the silence was
+  the defect.
+- **View menu**: End Game and Layout mode removed; **Exemplared view opens a
+  dialog** that explains exemplaring before asking for a level.
+- **Help menu**: Settings / Credits / About as three doors; Settings gained the
+  Play Log switch. No tray toggle — the app has no icon and says so.
+- **Pop-ups wear the alignment** (one `--accent` rule, all three shapes).
+- **Leveling Guide**: side-preview menu moved under the title, Flashback
+  explained; preview resets on leaving the tab AND yields to the real toggle.
+- **Inherent → Archetype bonus stat** above Defence.
+- **Small displays**: both two-column regions collapse below 1400px.
+- **Level warning carries its own input**, and the crash it hit is fixed.
+- **Tour**: 4 stale bodies + a misplaced mock element corrected; audit_tour now
+  checks CONTENT, not just structure.
+
+**▶ OPEN, needing Joel:**
+1. **"Build this for me"** is dead in the shipped client for the same reason the
+   AI item was (`gen-btn` hides whenever `AI_ON` is false). Point it at the
+   wizard, or remove it. His call.
+2. **Applying a meter to DISPLAYED damage** (Vigilance +30% solo). It is in the
+   SCORE, not the shown DPS. Team-size dependent, so it needs a ruling —
+   recommended: ride alongside, never replace (suppression precedent).
+3. **"What changed?" / per-change history** — his idea of a change log per
+   character with individually revertible entries. Not built; needs scoping.
 
 ## What landed the session before (all pushed)
 

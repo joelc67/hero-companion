@@ -416,6 +416,47 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   fires on RE-renders, so it read fine until the View menu repainted the road.
   ⚠ The menu now sits directly under the title (Joel moved it there for
   visibility), so this is easier to trip than it was.
+- **📐 SMALL DISPLAYS: BOTH TWO-COLUMN REGIONS COLLAPSE BELOW 1400px (Joel,
+  2026-08-05).** "Two columns ALWAYS" was tuned at 1920, where the columns are
+  close in height; narrow the window and the main column keeps every tall thing
+  while the side column's tiles do not grow, so the difference balloons into a
+  structural void a packer could never move. `@media (max-width: 1400px)` sets
+  BOTH `.powers-layout` and `.stats-provlayout` to one column (fixing only the
+  first just moves the complaint to Stats — universal rules, no hacks), and the
+  grout rule retires with the second column. Measured at his 1250: the wall goes
+  2 cards across → 4, the catalogue 2 powerset columns → 4. ⚠ Trade, stated: the
+  page is taller and the WINDOW scrolls — allowed; the banned thing is a
+  scrollbar INSIDE a panel.
+- **🧬 THE INHERENT IS A STAT, NOT A PANEL (Joel, 2026-08-05).** The Powers-tab
+  card is DELETED; `inherent_mechanics` renders as the **Archetype bonus** group
+  at the top of Stats, above Defence, in the ordinary stat-row shape. The value
+  column is the honest word — **COUNTED / SHOWN ONLY / NOT MODELED** — so the row
+  answers "is this in my numbers?" without a card explaining itself. ⚠ "Counted"
+  means counted in the SCORE (`first_principles`), not in the displayed DPS;
+  **applying a meter to displayed damage is still Joel's ruling** because
+  Vigilance is team-size dependent and a headline stat has no scenario.
+- **⚠⚠ A WARNING MUST CARRY ITS OWN FIX, AND THE FIX MUST NOT CRASH.** Joel's
+  level-50 character showed "not available at level 1 yet" because
+  `startFromScratch` stamps `level_reached: 1` and nothing ever moves it; the
+  only level input lived on the Leveling Guide, a tab away from the banner on
+  Stats. The banner carries the input now (same `setCurrentLevel`, one writer).
+  ⚠⚠ **And the fix crashed**: `renderLevelStep()` paints into `#wiz-plan-out`,
+  which lives in the respec wizard — closed on every other tab, so the write was
+  `null.innerHTML`. `setCurrentLevel` runs
+  `level → renderEndgameWarnings → renderLevelStep → autoSaveTick`, so the throw
+  killed it BEFORE the save: the warning cleared on screen while the typed value
+  was discarded. **A crash between a UI update and its persistence is the worst
+  shape — it looks done and isn't.** Guard the ELEMENT, not just the data.
+- **🔍 audit_tour NOW CHECKS CONTENT, NOT JUST STRUCTURE (2026-08-05).** It was
+  ALL GREEN while the tour taught a deleted "Refine with AI" item, an exemplar
+  control that "takes you to the dial", and a Help menu with no Settings. Every
+  check asked "does this step POINT at something real?" and none asked "does it
+  DESCRIBE something real?". Two rules now: retired UI must not be named in any
+  step body (`_RETIRED` list — **add a line the day you delete a feature**), and
+  every menu item the tour quotes must still exist in index.html. ⚠ The mock must
+  also MOVE when a surface moves (the side preview went to the top of the
+  Leveling Guide and the mock still drew it at the bottom) — the tour's own rule
+  is that things are explained at their action location.
 - **🏷 THE LEVELING SURFACE IS "LEVELING GUIDE" EVERYWHERE IT IS LABELLED
   (Joel, 2026-08-05 — the tab said Leveling Guide, the panel it opened said "The
   Leveling Journey").** Renamed: panel heading, the greeting, the intro fold, the
