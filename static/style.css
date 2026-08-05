@@ -144,6 +144,9 @@ body:not(.tab-powers) .build-tile { display: none !important; }
 .tabbar {
   display: flex; gap: var(--s1); padding: 0 var(--s4);
   background: var(--panel); border-bottom: 1px solid var(--border);
+  /* ⚠ ONE ROW, NEVER WRAPPED. flex-wrap here stacked the four tabs vertically —
+     wonky, and instantly rejected (2026-08-04). The strip is chrome, not a
+     drop-down: leave it exactly as it was. */
   overflow-x: auto; scrollbar-width: none;
   /* Directly under the masthead now — Joel, 2026-08-03: tabs at the TOP, above
      the build tile. Offsets are MEASURED (fitZoom sets the vars): guessed
@@ -151,22 +154,68 @@ body:not(.tab-powers) .build-tile { display: none !important; }
   position: sticky; top: var(--masthead-h, 40px); z-index: 41;
 }
 .tabbar::-webkit-scrollbar { display: none; }
+/* ── MANILA FOLDERS IN A FILING CABINET (Joel, 2026-08-04: "Think of the tabs like
+   manila folders in a filing cabinet. Like this is some 1950s top secret file for a
+   superhero, villain, rogue, or vigilantee.")
+   The paper is CONSTANT — a folder is a folder in every drawer — and the ALIGNMENT
+   colours the file you have pulled: the active tab keeps its accent block (his
+   2026-08-03 ruling: unmistakable, not a subtle underline), and the accent line it
+   sits on is the open folder's edge. Labels are typed on: uppercase, letterspaced,
+   the way a 1950s tab is captioned. */
 .tab {
-  appearance: none; border: 0; background: none; color: var(--muted);
-  font: inherit; font-weight: 600; white-space: nowrap; cursor: pointer;
-  padding: var(--s3) var(--s4); border-radius: var(--r2) var(--r2) 0 0;
-  border-top: 2px solid transparent; margin-bottom: -1px;
+  appearance: none; border: 0; font: inherit; font-weight: 600;
+  font-size: 12.5px; letter-spacing: .09em; text-transform: uppercase;
+  white-space: nowrap; cursor: pointer;
+  padding: var(--s2) var(--s4) calc(var(--s3) - 1px);
+  border-radius: var(--r2) var(--r2) 0 0;
+  /* THE FOLDERS BEHIND ARE THE SAME FILE, IN SHADOW (Joel, 2026-08-04) — a darker
+     mix of the very colour the pulled tab is wearing, so one drawer holds one
+     colour and the alignment themes carry every tab with them, not just the active
+     one. color-mix keeps it derived: no second palette to update, ever. */
+  background: linear-gradient(color-mix(in srgb, var(--accent) 34%, #05080d),
+                              color-mix(in srgb, var(--accent) 24%, #05080d));
+  color: color-mix(in srgb, var(--accent) 35%, #ffffff);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--accent) 45%, transparent);
+  margin-bottom: -2px;                  /* sits ON the line, never above it */
+  align-self: flex-end;                 /* filed tabs bottom-align in the drawer */
+  margin-top: 6px;                      /* …and the unpulled ones sit lower */
 }
-.tab:hover { color: var(--ink); background: var(--panel2); }
+.tab:hover {
+  color: #fff; box-shadow: inset 0 1px 0 color-mix(in srgb, var(--accent) 70%, transparent);
+  background: linear-gradient(color-mix(in srgb, var(--accent) 48%, #05080d),
+                              color-mix(in srgb, var(--accent) 36%, #05080d));
+}
 /* UNMISTAKABLE (Joel, 2026-08-03: "Not so similar in color and only a tiny bump
-   at the top"): the active tab is a solid accent block, not a subtle underline. */
+   at the top"): the active tab is a solid accent block, not a subtle underline —
+   here it is also the folder PULLED FORWARD: taller, brighter, standing proud of
+   the ones still filed behind it. */
 .tab[aria-selected="true"] {
-  color: var(--bg); background: var(--accent);
-  border-top-color: var(--accent); font-weight: 700;
+  color: var(--bg); background: var(--accent); font-weight: 700;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35);
+  margin-top: 0; padding-bottom: var(--s3);
 }
 .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-#tabpanels { padding: var(--s3) var(--s4); }
+#tabpanels { padding: 0 0 var(--s3); }
+/* THE ACTIVE TAB OWNS ITS CONTENT (Joel, 2026-08-04: "an exact color of the tab
+   showing a line around the content it belongs to… for every tab"). The line is
+   var(--accent) — the SAME variable the active tab is painted with, not a copy of
+   its value — so the four alignment themes move the tab and its outline together by
+   construction, and a fifth theme would need no work here.
+   Only the VISIBLE panel is outlined; [hidden] wins over this (display: none). */
+.tabpanel:not([hidden]) {
+  border: 2px solid var(--accent); border-top: 0;
+  border-radius: 0 0 var(--r2) var(--r2);
+  padding: var(--s3);
+}
+/* ...and it CONNECTS TO THE BOTTOM OF THE TABS, with nothing drawn above or around
+   them (Joel, 2026-08-04 — I boxed the whole strip first, which was wrong). The
+   strip's bottom edge IS the top of the box; the sides run down from it through the
+   build tile and the panel closes the bottom. Three siblings, one continuous line,
+   no gap anywhere. The tile is hidden on every tab but Powers & Slots, and then the
+   strip's edge meets the panel directly. */
+.tabbar { border-bottom: 2px solid var(--accent); }
+.build-tile { border-left: 2px solid var(--accent); border-right: 2px solid var(--accent); }
 /* ⚠ [hidden] must WIN. A panel is hidden, never unmounted (spec §5): app.js
    writes into all five on every recompute. Without !important a panel's own
    display rule would out-specify the attribute and show two tabs at once. */
@@ -258,8 +307,17 @@ button:hover { filter: brightness(1.08); }
 button:disabled { opacity: .5; cursor: not-allowed; }
 details { margin: 8px 0; }
 summary { cursor: pointer; color: var(--muted); font-size: 12px; }
-.incarnates { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; }
-.incarnates label { margin: 4px 0; }
+/* ⚠ NO SIDEWAYS SCROLLING IN A DROP-DOWN (Joel, 2026-08-04: "the end user will
+   never need to scroll left or right for any drop down window ever"). Fixed 1fr 1fr
+   made these 137px wide while their option text runs to 275px — "Cryonic Core Final
+   Judgement" does not fit, so the popup scrolled horizontally. auto-fit means ONE
+   column in the side column (~300px, wider than the longest option) and two only
+   where there is room for two. */
+.incarnates { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 4px 8px; }
+.incarnates label { margin: 4px 0; min-width: 0; }
+/* a select never renders narrower than its own longest option can be read at */
+.incarnates select { width: 100%; }
 
 /* Powers list */
 /* THE BRICK WALL: uniform bricks flowing in rows — snug by construction.
@@ -1301,7 +1359,12 @@ body.align-mid {
    shipped themes, which is Joel's call, not a side effect of this change. */
 body.align-mid #masthead {
   background: linear-gradient(90deg, #2a2210 0%, #3a2f14 55%, #4a3c18 100%);
-  border-bottom: 2px solid var(--mid);
+  /* ⚠ NOT the bright --mid (Joel, 2026-08-04: "make the vigilante and rogue bright
+     yellow line above the tabs darker, similar to how the hero and villain look").
+     Hero and villain draw this edge in their own --border, so the middles do too —
+     a lit yellow rule right above an amber tab strip was the loudest thing on the
+     screen and it was only chrome. */
+  border-bottom: 2px solid var(--border);
 }
 body.align-mid #app-title { color: #fff6e0; }
 /* ⚠ background-IMAGE, not the `background` shorthand: the shorthand resets
@@ -1319,24 +1382,8 @@ body.theme-hero #alignment-btn { border-color: #27395c; color: #7ec8ff; }
 body.theme-villain #alignment-btn { border-color: #4a2430; color: #ff8a8a; }
 body.align-mid #alignment-btn { border-color: #6b5320; color: var(--mid-lit); }
 
-/* ── The alignment picker (header) ── */
-.align-menu {
-  position: fixed; z-index: 60; min-width: 250px; padding: 6px;
-  background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
-  box-shadow: 0 10px 28px #0009; display: flex; flex-direction: column; gap: 2px;
-}
-.align-menu-item {
-  width: 100%; text-align: left; padding: 8px 10px; border-radius: 7px; cursor: pointer;
-  /* ⚠ background AND color together — the base button rule pairs near-black text
-     with the light accent background, so overriding one alone gives 1.27:1. */
-  background: transparent; color: var(--ink); border: 1px solid transparent;
-  font: inherit;
-}
-.align-menu-item b { display: block; font-size: 13px; font-weight: 600; }
-.align-menu-item span { font-size: 11px; color: var(--muted); }
-.align-menu-item:hover { background: var(--panel2); color: var(--ink); border-color: var(--border); }
-.align-menu-item.on { border-color: var(--accent); }
-.align-menu-item.al-vig.on, .align-menu-item.al-rogue.on { border-color: var(--mid); }
+/* (the floating alignment picker's CSS went with it, 2026-08-04 — the four
+   alignments are ordinary items in the View menu now) */
 
 /* Full-bleed scroll container (the frame matte went with the corner graphics). */
 html, body { height: 100%; }
@@ -2574,9 +2621,15 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
 .menu-top:focus-visible, .menu-drop [role=menuitem]:focus-visible {
   outline: 2px solid var(--accent); outline-offset: -2px;
 }
+/* ⚠ RIGHT-ANCHORED, and that is what stops the clipping (Joel, 2026-08-04: the
+   sideways-scroll problem "also exists in the help drop down"). Every menu button
+   lives in the masthead's right-hand cluster, so anchoring the menu's LEFT edge to
+   its button pushed a 330px panel past the window edge — Help lost its right-hand
+   text entirely. Anchored right, a menu grows back towards the middle of the window,
+   where there is always room. */
 .menu-drop {
-  position: absolute; top: calc(100% + var(--s1)); left: 0; z-index: 120;
-  min-width: 330px; padding: var(--s2);
+  position: absolute; top: calc(100% + var(--s1)); right: 0; left: auto; z-index: 120;
+  min-width: 330px; max-width: min(420px, calc(100vw - var(--s4) * 2)); padding: var(--s2);
   background: var(--panel); border: 1px solid var(--border);
   border-radius: var(--r2); box-shadow: var(--e2);
 }
@@ -2592,6 +2645,12 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
   display: block; font-style: normal; font-size: 11.5px; color: var(--muted);
 }
 .menu-sep { height: 1px; margin: var(--s2) var(--s3); background: var(--border); }
+/* a heading inside a menu — names a group of items without being clickable */
+.menu-head {
+  font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); padding: var(--s2) var(--s3) 2px; margin-top: var(--s1);
+  border-top: 1px solid var(--border);
+}
 .entry-box-narrow { max-width: 620px; }
 
 /* ── Empty-state ladder ──────────────────────────────────────────────────────

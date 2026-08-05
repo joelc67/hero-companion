@@ -2740,15 +2740,11 @@ function applyAlignment(al) {
   if ($("app-name")) $("app-name").textContent = d.name;
   if ($("app-glyph")) $("app-glyph").textContent = d.glyph;
   const tagEl = document.querySelector(".app-tag"); if (tagEl) tagEl.textContent = d.tag;
-  // The View menu's item names the CURRENT alignment (the header button that
-  // used to carry this state moved into the menu, Joel 2026-08-04 — the
-  // "label names the current alignment, not the destination" ruling rides
-  // along with it).
-  const mi = $("align-menu-item");
-  if (mi) {
-    const b = mi.querySelector("b");
-    if (b) b.textContent = `${d.glyph} Alignment — ${d.short}`;
-  }
+  // All four alignments are ordinary items in the View menu (Joel, 2026-08-04) —
+  // the one you are on carries the menu's own tick, the same mark the checkbox
+  // items use, so there is nothing to read a label for.
+  document.querySelectorAll("#m-view [data-align]").forEach(b =>
+    b.classList.toggle("mi-on", b.dataset.align === al));
   document.title = d.name + " — City of Heroes";
   document.querySelectorAll(".align-card").forEach(c =>
     c.classList.toggle("on", c.dataset.align === al));
@@ -2780,48 +2776,16 @@ function applyAlignment(al) {
     try { recompute(); } catch (e) {}
   }
 }
-// The header control opens a PICKER rather than cycling: four states behind a
-// cycle button means three clicks to get back and no way to see what the other
-// choices are without clicking through them. Legibility beats cleverness.
-window.toggleAlignment = function (anchor) {
-  const open = $("align-menu");
-  if (open) { open.remove(); return; }        // click the trigger again = close
-  // Anchor to whatever OPENED the picker — the View menu item since
-  // 2026-08-04 (Joel moved it off the header).
-  const btn = anchor || $("menu-view-top");
-  if (!btn) return;
-  const cur = rawAlignment();
-  const menu = document.createElement("div");
-  menu.id = "align-menu";
-  menu.className = "align-menu";
-  menu.setAttribute("role", "menu");
-  menu.innerHTML = _APP_ALIGNMENTS.map(k => {
-    const a = _ALIGNMENTS.find(x => x.key === k);
-    return `<button class="align-menu-item ${a.css}${k === cur ? " on" : ""}" role="menuitem"
-        data-al="${k}"><b>${a.label}</b><span>${escHtml(a.tip)}</span></button>`;
-  }).join("");
-  document.body.appendChild(menu);
-  const r = btn.getBoundingClientRect();
-  menu.style.top = (r.bottom + 6) + "px";
-  menu.style.right = Math.max(8, window.innerWidth - r.right) + "px";
-  menu.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
-    applyAlignment(b.dataset.al);
-    menu.remove();
-  }));
-  // Dismiss on outside click or Esc. Deferred a tick so the click that OPENED
-  // the menu doesn't immediately close it.
-  setTimeout(() => {
-    const off = (e) => {
-      if (menu.contains(e.target) || btn.contains(e.target)) return;
-      menu.remove(); document.removeEventListener("mousedown", off);
-    };
-    const esc = (e) => {
-      if (e.key !== "Escape") return;
-      menu.remove(); document.removeEventListener("keydown", esc);
-    };
-    document.addEventListener("mousedown", off);
-    document.addEventListener("keydown", esc);
-  }, 0);
+// ⛔ THE FLOATING PICKER IS DELETED (Joel, 2026-08-04: "not some floating menu
+// outside"). A second menu that opened beside the first, positioned by hand and
+// dismissed by its own listeners, was a whole mechanism for four choices that the
+// View menu can simply list. Picking one applies it and closes the menu like every
+// other item there.
+window.setAlignment = function (al) {
+  applyAlignment(al);
+  document.querySelectorAll(".menu-drop").forEach(m => { m.hidden = true; });
+  document.querySelectorAll(".menu-top[aria-expanded=true]").forEach(b =>
+    b.setAttribute("aria-expanded", "false"));
 };
 
 
@@ -3234,7 +3198,7 @@ async function init() {
   document.querySelectorAll(".align-card").forEach(c =>
     c.addEventListener("click", () => applyAlignment(c.dataset.align)));
   applyAlignment(localStorage.getItem("cohAlignment") || "hero");
-  // (alignment-btn is gone — the View menu item carries onclick="toggleAlignment(this)")
+  // (alignment-btn is gone — the View menu lists all four, each calling setAlignment)
 
   // pool selectors (4)
   $("pool-selectors").innerHTML = [0,1,2,3].map(i =>

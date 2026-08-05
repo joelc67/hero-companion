@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 68          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 72          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement)
 
@@ -330,6 +330,32 @@ def main():
           ".cat-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(205px, 1fr))" in css
           and "column-width: 210px" not in css,
           "205px = four tracks in HIS ~870px column, so the 7 boxes tile as two rows")
+    # Joel, 2026-08-04: "an exact color of the tab showing a line around the content
+    # it belongs to… for every tab. Note this theme will follow the same alignment
+    # color changes." The line must be the VARIABLE, not a copy of its value, or a
+    # theme change splits the tab from its own outline.
+    check("the tab's line is drawn in the same variable the active tab is",
+          "background: var(--accent)" in css.split(".tab[aria-selected=\"true\"]")[1][:120]
+          and ".tabpanel:not([hidden])" in css
+          and "border: 2px solid var(--accent); border-top: 0;" in css,
+          "one variable, so the four alignment themes move tab and outline together")
+    check("...and it CONNECTS to the bottom of the tabs, with no gap and nothing above them",
+          ".tabbar { border-bottom: 2px solid var(--accent); }" in css
+          and ".build-tile { border-left: 2px solid var(--accent); border-right: 2px solid var(--accent); }" in css
+          and "#tabpanels { padding: 0 0 var(--s3); }" in css,
+          "the strip's bottom edge IS the top of the box; nothing is drawn around the tabs")
+    # ⚠ NO SIDEWAYS SCROLLING (Joel, 2026-08-04, twice: the incarnate selects and
+    # then "It also exists in the help drop down"). The journey road is the one
+    # deliberate horizontal surface and stays.
+    # The two allowed horizontal surfaces: the leveling road (deliberate) and the
+    # tab strip (chrome — and wrapping it stacked the tabs, which was rejected).
+    _oxlines = [ln.strip() for ln in css.splitlines() if "overflow-x: auto" in ln]
+    check("nothing scrolls sideways except the leveling road and the tab strip",
+          len(_oxlines) == 2 and any(".jny-strip" in ln for ln in _oxlines),
+          f"{len(_oxlines)} overflow-x rules in the sheet")
+    check("menus open INWARD from the right edge, so they cannot clip",
+          "position: absolute; top: calc(100% + var(--s1)); right: 0; left: auto;" in css,
+          "left-anchored, a 330px menu on a right-hand button ran off the window")
     check("...and the inherent card no longer stretches to the column's bottom",
           ".powers-side > #inherent-card:last-child { flex: 0 0 auto; }" in css,
           "Joel: it could be half its height with no text below it")

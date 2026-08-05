@@ -204,7 +204,16 @@
             <!-- The display TOGGLES left this menu (Joel, 2026-08-04: "they
                  are already on the page they belong to… redundant and
                  meaningless") — the Stats control row is their one home. -->
-            <button role="menuitem" type="button" id="align-menu-item" onclick="toggleAlignment(this)"><b>🦸 Alignment — Hero</b><i>Hero, Vigilante, Rogue or Villain — themes the whole app</i></button>
+            <!-- ALL FOUR, IN THE MENU (Joel, 2026-08-04: "make it so all the
+                 alignments are shown in the View Dropdown, under an alignment
+                 heading, not some floating menu outside"). The floating picker is
+                 deleted; these are ordinary menu items and the current one carries
+                 the tick. -->
+            <div class="menu-head" role="presentation">Alignment</div>
+            <button role="menuitem" type="button" data-align="hero" onclick="setAlignment('hero')"><b>🦸 Hero</b><i>Plays the hero side and its content</i></button>
+            <button role="menuitem" type="button" data-align="vigilante" onclick="setAlignment('vigilante')"><b>🛡️ Vigilante</b><i>A hero who bends the rules — sees both sides</i></button>
+            <button role="menuitem" type="button" data-align="rogue" onclick="setAlignment('rogue')"><b>😈 Rogue</b><i>A villain with second thoughts — sees both sides</i></button>
+            <button role="menuitem" type="button" data-align="villain" onclick="setAlignment('villain')"><b>🦹 Villain</b><i>Plays the villain side and its content</i></button>
             <button role="menuitem" type="button" id="view-exemplar-go"><b>⏬ Exemplared view…</b><i>See this build at a lower level — takes you to the dial</i></button>
             <!-- DESIGN TOOL (Joel, 2026-08-04): drag areas around and resize them
                  by their corner, then hand the numbers to Claude to bake into the
