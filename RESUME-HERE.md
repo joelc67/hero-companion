@@ -1,4 +1,35 @@
-# Resume point — 2026-08-05 evening (new session starts here)
+# Resume point — 2026-08-05 late (new session starts here)
+
+## ▶▶ START HERE: the ROLE / OUTPUT arc, and the one thing left in it
+
+Joel's live thread of work. Everything below is committed and pushed.
+
+**Shipped today, in order:** role descriptions verified already-done · Split role
+(renamed from "Mixed / Generalist", N-way not 2-way, every role offered grouped,
+shares forced to total 100, new rows pick nothing) · the **"What this build
+delivers today"** panel (real numbers per named job) · the **invitation** when a
+build has no role · the **Enhancement Unslotter** footer (client-verified) · tour
+cards for split-role, the output panel and the unslotter (63 steps) · and the
+**improvement report generalised** to diff every measured axis.
+
+**▶ THE BIG ASK — where it stands (Joel's own framing: "tell them how their
+choices actually came out at the end", in real numbers, per power).**
+
+| Piece | State |
+|---|---|
+| Before/after on every solve | ✅ EXISTS (`solveBefore` → `renderImproveDiff`) |
+| Diff covers ANY measured axis | ✅ DONE today (`653d94f0`) — typed def/res, scalars, v30 families, ST/AoE DPS, **pet DPS**, every buff/debuff row |
+| "Nothing moved" explains itself | ✅ DONE today (names locked-power count) |
+| **Per-power deltas** ("Empty Clips +18 DPS") | ❌ **THE REAL WORK LEFT.** Raw material exists: `offense.attacks[]` carries per-attack `dpa`, and `_debuff_buff_summary` records per-power provenance (`dsrc`/`bsrc`). Nothing diffs them power by power yet. |
+| Preview a split WITHOUT committing | ❌ Not built. Today a solve commits; Ctrl+Z undoes and names the edit. **Design decision, not coding** — Joel's steer was to see whether (1)+(2) make it unnecessary. |
+
+⚠ Cost of a comparison: one solve, ~1-2s, doubled by serve-time physics
+arbitration. Fine behind a button; **never on slider drag.**
+⚠ Joel's constraint on all of it: only what the game really offers, never an
+invented scenario. The generalised diff satisfies that by construction — a row
+can only appear if the engine measured it from game data.
+
+# Resume point — 2026-08-05 evening
 
 Tracked tree clean, master pushed, **HEAD = `0966af1d`**. Nothing running; no
 scheduled tasks armed. A 25-point sweep at close confirmed every deliverable of
