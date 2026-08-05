@@ -230,6 +230,43 @@ body:not(.tab-powers) .build-tile { display: none !important; }
    type, THIS scrolls — one panel, not the page, not the whole app. */
 /* ⚠ NO per-panel scroll. Removed 2026-08-03 — see fitZoom. */
 
+/* ── THE CLASS YOU ARE BUILDING, in the wall's dead space (Joel, 2026-08-06:
+   "filler graphics representing each class being worked on while picking
+   powers", then "I saw one image for one build but it was small. Try again").
+   The game's own 512x512 archetype shot from the character-creation screen,
+   extracted by tools/extract_gui_emblems.py.
+   ⚠ ANCHORED TO .powers-wall, NOT #powers-list. #powers-list holds the wall
+   AND the catalogue, so bottom-right of it is the bottom of the CATALOGUE —
+   which is the small one he saw, in the wrong place entirely.
+   ⚠ MEASURED, not guessed: the wall's last row leaves a 978x152 hole at his
+   window. A 512x310 picture fitted to 152px tall is 251px wide, which is the
+   'small' complaint again — so it is sized 330px TALL and sits BEHIND the
+   cards (z-index -1 inside the wall's own stacking context). The cards are
+   opaque, so the art shows only where there is nothing, and it grows into
+   whatever hole the build's card count leaves.
+   ⚠ .powers-wall needs z-index:0 to MAKE that stacking context — without it,
+   z-index:-1 falls behind the panel background and vanishes.
+   ⚠ The texture is a picture padded to a power of two with a flat block under
+   it; the box is sized to the PICTURE and anchored top, so the pad falls
+   outside. Guardian has no shot in the client and simply paints nothing. */
+.powers-wall { position: relative; z-index: 0; }
+.powers-wall::after {
+  content: ""; position: absolute; right: 0; bottom: 0; z-index: -1;
+  /* ⚠ THE WHOLE PICTURE, not a crop — and the trade is real, so it is stated.
+     The hole the wall's last row leaves is about 978x152 at his window: a 6:1
+     strip. The art is 512x310 (1.65:1). Cover-cropping it to the strip fills
+     the space but the crop lands differently per class — the Defender floats
+     in the upper third and lost its legs, the Brute fills its frame and loses
+     its heads. Both seen on screen. So it fits by HEIGHT and shows whole:
+     correct for all 15, at the cost of being ~250px rather than filling the
+     strip. The alternative (a cropped band) is one line away if he prefers it.
+     ⚠ z-index -1 inside .powers-wall's own stacking context: the cards are
+     opaque and paint above, so a fuller last row simply covers more of it. */
+  height: 152px; aspect-ratio: 512 / 314;
+  background: var(--at-art, none) center / contain no-repeat;
+  opacity: 0.55; pointer-events: none; border-radius: 10px;
+}
+
 /* Powers & Slots: the builder gets the WHOLE width, and there is no side column
    at all unless you asked to see an enhancement (Joel, 2026-08-06: "the output
    of a build assistant is terrible on the far right… let it take up the entire

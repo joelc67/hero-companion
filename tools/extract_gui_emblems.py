@@ -115,13 +115,42 @@ def index():
     return ats, origins, art, archives
 
 
-def save(entry, dest, size):
+def _crop_pad(img):
+    """The archetype shots are a ~512x310 picture padded to a power of two with
+    a flat block underneath (seen on screen: `contain` fitted the PAD too and put
+    a blue slab under the art). Crop to the picture: the pad is the run of rows
+    at the bottom that all match the bottom-left pixel."""
+    w, h = img.size
+    px = img.convert("RGBA").load()
+    pad = px[w // 2, h - 2]
+    def is_pad(y):
+        hit = 0
+        for x in range(0, w, 4):
+            c = px[x, y]
+            if c[3] < 8 or max(abs(c[i] - pad[i]) for i in range(3)) <= 12:
+                hit += 1
+        return hit >= (w // 4) * 0.97
+    bot = h
+    while bot > 1 and is_pad(bot - 1):
+        bot -= 1
+    # ⚠ The detector gets 11 of 15; three shots have a pad the sampler cannot
+    # separate from the picture's own dark sky. Every 512-tall shot measured is a
+    # 314-row picture, so that is the fallback — a padded texture NEVER survives
+    # uncropped, which is the failure that put a blue slab on screen.
+    if not (0 < bot < h):
+        bot = 314 if h >= 400 else h
+    return img.crop((0, 0, w, bot)) if bot < h else img
+
+
+def save(entry, dest, size, crop=False):
     """texture -> DDS -> RGBA -> PNG, alpha preserved. Same path as the power
     icons: archive.extract -> texture_to_dds -> decode_dds_to_rgba."""
     archive, path = entry
     dds = T.texture_to_dds(archive.extract(path))
     rgba, w, h, _ = T.decode_dds_to_rgba(dds)
     img = Image.frombytes("RGBA", (w, h), rgba)
+    if crop:
+        img = _crop_pad(img)
     if size and img.size != (size, size):
         img = img.resize((size, size), Image.LANCZOS)
     img.save(dest, "PNG")
@@ -171,7 +200,7 @@ def main():
             print(f"  [dry] at_art/{key}.png  <- {entry[1]}")
             continue
         try:
-            save(entry, dest, None)   # keep the game's own 512x512
+            save(entry, dest, None, crop=True)   # picture only, pad cropped off
             wrote["at_art"] += 1
         except Exception as e:  # noqa: BLE001
             failed.append(f"at_art/{key}: {e}")

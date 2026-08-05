@@ -7152,6 +7152,15 @@ function collapseLongExplanations(root) {
 }
 
 async function recompute() {
+  // The class artwork behind the powers wall (Joel, 2026-08-06). Set HERE:
+  // updateAtEmblem only fires on the archetype select's own change, and the
+  // tile's emblem is painted by _emblemImg from a template, so the variable
+  // was never set on a plain load.
+  {
+    const _s = atEmblemSrc(build.archetype);
+    document.body.style.setProperty("--at-art",
+      _s ? `url("${_s.replace("/icons/at/", "/icons/at_art/")}")` : "none");
+  }
   renderEndgameWarnings();   // warn if a leveling character previews epic/incarnate content
   syncNameField();           // build-tile Name rides every state change
   renderExemplarBanners();   // the exemplared-view statement rides every recompute
