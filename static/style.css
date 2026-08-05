@@ -26,6 +26,10 @@
      chrome uses these and only these. ⚠ Existing literals are deliberately NOT
      rewritten — that would be a whole-sheet refactor with no visual payoff and
      every chance of moving a shipped panel by a pixel. */
+  /* the edge an OPEN menu draws around itself and its panel: the theme accent,
+     dimmed, because the tabs are the loud thing on this screen and a menu is not
+     (Joel, 2026-08-04: "not as bright"). Derived, so every alignment carries it. */
+  --menu-edge: color-mix(in srgb, var(--accent) 55%, #05080d);
   --s1: 4px;  --s2: 6px;  --s3: 10px;  --s4: 14px;  --s5: 20px;
   --r1: 5px;  --r2: 8px;  --r3: 10px;
   --e1: 0 4px 18px #000a;
@@ -2616,7 +2620,22 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
   font-weight: 600; cursor: pointer; padding: var(--s2) var(--s3);
   border-radius: var(--r1);
 }
-.menu-top:hover, .menu-top[aria-expanded="true"] { background: var(--panel2); }
+/* ── AN OPEN MENU OWNS ITS PANEL, the same way a tab owns its content — but
+   quieter, and ONLY once you have opened one (Joel, 2026-08-04: "not as bright…
+   no highlight will appear at all, until a drop down is chosen"). So: no hover
+   box, nothing drawn on a closed menu, and the edge is a dimmed mix of the theme
+   accent rather than the accent itself. The border is reserved as transparent so
+   opening a menu cannot shift the row. */
+.menu-top {
+  border: 2px solid transparent; border-bottom: 0;
+  border-radius: var(--r1) var(--r1) 0 0;
+}
+.menu-top:hover { color: var(--ink); }
+.menu-top[aria-expanded="true"] {
+  border-color: var(--menu-edge); background: var(--panel);
+  position: relative; z-index: 121;      /* covers the panel's top edge below it */
+  margin-bottom: -2px; padding-bottom: calc(var(--s2) + 2px);
+}
 .menu-top::after { content: " ▾"; color: var(--muted); }
 .menu-top:focus-visible, .menu-drop [role=menuitem]:focus-visible {
   outline: 2px solid var(--accent); outline-offset: -2px;
@@ -2628,10 +2647,12 @@ button:active:not(:disabled):not([aria-disabled="true"]) { transform: scale(0.97
    text entirely. Anchored right, a menu grows back towards the middle of the window,
    where there is always room. */
 .menu-drop {
-  position: absolute; top: calc(100% + var(--s1)); right: 0; left: auto; z-index: 120;
+  /* top: 100% — the panel MEETS the button it belongs to; the old s1 gap is what
+     made them read as two unrelated things */
+  position: absolute; top: 100%; right: 0; left: auto; z-index: 120;
   min-width: 330px; max-width: min(420px, calc(100vw - var(--s4) * 2)); padding: var(--s2);
-  background: var(--panel); border: 1px solid var(--border);
-  border-radius: var(--r2); box-shadow: var(--e2);
+  background: var(--panel); border: 2px solid var(--menu-edge);
+  border-radius: var(--r2) 0 var(--r2) var(--r2); box-shadow: var(--e2);
 }
 .menu-drop[hidden] { display: none; }
 .menu-drop [role=menuitem] {

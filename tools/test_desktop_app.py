@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 72          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 74          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement)
 
@@ -353,8 +353,23 @@ def main():
     check("nothing scrolls sideways except the leveling road and the tab strip",
           len(_oxlines) == 2 and any(".jny-strip" in ln for ln in _oxlines),
           f"{len(_oxlines)} overflow-x rules in the sheet")
+    # Joel, 2026-08-04: the same tab-owns-its-content edge on the four menus, "but
+    # not as bright" and "no highlight will appear at all, until a drop down is
+    # chosen". So: nothing on a closed or hovered button, a DIMMED derived edge on
+    # the open one, and the panel meets it with no gap.
+    check("a menu draws its edge only while OPEN, in a dimmed derived colour",
+          "--menu-edge: color-mix(in srgb, var(--accent) 55%, #05080d);" in css
+          and '.menu-top[aria-expanded="true"] {\n  border-color: var(--menu-edge);' in css
+          and "border: 2px solid var(--menu-edge);" in css
+          and ".menu-top:hover { color: var(--ink); }" in css,
+          "derived, so every alignment carries it; no hover box anywhere")
+    check("...and the panel MEETS its button (no gap, no shift when it opens)",
+          "position: absolute; top: 100%; right: 0; left: auto;" in css
+          and ".menu-top {\n  border: 2px solid transparent; border-bottom: 0;" in css,
+          "the transparent border is reserved so opening cannot move the row")
     check("menus open INWARD from the right edge, so they cannot clip",
-          "position: absolute; top: calc(100% + var(--s1)); right: 0; left: auto;" in css,
+          "right: 0; left: auto;" in css
+          and "max-width: min(420px, calc(100vw - var(--s4) * 2));" in css,
           "left-anchored, a 330px menu on a right-hand button ran off the window")
     check("...and the inherent card no longer stretches to the column's bottom",
           ".powers-side > #inherent-card:last-child { flex: 0 0 auto; }" in css,
