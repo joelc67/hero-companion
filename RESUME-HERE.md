@@ -104,14 +104,26 @@ exemping at all", plus two promises now delivered). **Use v5** (session-report,
 8/2, and every fix landed after. Nothing he can download today has any of it.**
 The reply must say "next release" and never imply otherwise.
 
-**❌ THE ONE UNKEPT PUBLIC PROMISE: role descriptions.** Joel posted "I will write
-plain descriptions of what each role actually chases so it is not guesswork."
-`#preset-role` is still seven bare labels with no description anywhere, and the
-Mixed Role nag still fires. His Sonic Resonance question (a set that buffs AND
-debuffs) is unanswered too. **This is the top of the list.**
-Also unactioned: Troo's "manually selecting enhancements is harder than it needs
-to be". Unverified: his "low-contrast greys on light blues" — no contrast audit
-exists, so do NOT claim it fixed.
+**✅ RETRACTED — THE ROLE PROMISE WAS KEPT, AND I SAID OTHERWISE.** I reported it
+as the one unkept promise on the strength of a grep that searched lowercase for a
+constant named `ROLE_HELP`. It was all done on 2026-08-02, and better than
+promised — **screenshot-verified live**: `ROLE_HELP` gives every role a plain
+sentence with the solver's REAL floors ("Mixed role: no specialisation on
+purpose. Just a safety floor, recharge 70%, recovery 40%…"), rendered under the
+picker with the numbers beside it; `renderRoleOptions` GROUPS the list per
+archetype ("Natural for a Defender" / "Off-role — allowed, but it will fight
+you" / "No single focus"); **the Mixed nag is exempted** (`if (role === "mixed")
+return;`) so a Generalist no longer earns a warning it could never clear; and
+`renderRoleFocusSplit` answers his Corruptor split-attention question with an
+actual percentage slider. Sonic Resonance is answered too: Debuffer and Buffer
+carry IDENTICAL weights in `ROLE_WEIGHTS` (0.15 / 1.00 / 1.00), so a set that
+does both does not force a wrong choice.
+⚠ **Lesson, twice today: a grep is a hypothesis.** Run the app before reporting
+something missing.
+
+**❌ Still genuinely open:** Troo's "manually selecting enhancements is harder
+than it needs to be". ⚠ Unverified: his "low-contrast greys on light blues" — no
+contrast audit exists, so do NOT claim it fixed.
 
 ✅ Everything else he raised is fixed and waiting on the release: tray, portable
 update, tabs, assistant placement, type scale, verbose text, export button,
