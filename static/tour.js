@@ -196,6 +196,23 @@ const TOUR_MOCK_HTML = `
         <label>Add from Willpower <select disabled><option>+ add power…</option></select></label>
         <label>Add from Fighting <select disabled><option>+ add power…</option></select></label>
       </div>
+      <!-- the card strip under the powerset rows (2026-08-04): ⌨ commands and the
+           set-bonus rules, side by side and full width -->
+      <div class="pw-cardband tm-strip">
+        <div class="panel" data-for="cmd-card" data-tm="cmd-box">
+          <h2>⌨ In-game commands</h2>
+          <p class="muted small">Click a command to copy it — then Ctrl+V into the game's chat box.</p>
+          <div class="cmd-list">
+            <div class="cmd-row"><code>/build_save_file mybuild.txt</code><span>Save your live character to a file</span></div>
+            <div class="cmd-row"><code>/respec</code><span>Start a respec in game — follow the plan's order</span></div>
+          </div>
+        </div>
+        <div class="panel" data-for="setbonus-blurb">
+          <h2>💠 How set bonuses stack</h2>
+          <p class="muted small">Two or more pieces of one set unlock bonuses tier by tier; the
+            game counts each identical bonus at most five times.</p>
+        </div>
+      </div>
       <div class="order-out subpanel" data-for="tray-out">
         <div class="ovc-head">IN-GAME TRAYS</div>
         <p class="muted small">Tray 1 — the chain: Punch · Haymaker · Knockout Blow · Foot Stomp ·
@@ -241,6 +258,15 @@ const TOUR_MOCK_HTML = `
         the gap: Weave (about +5%).
       </div>
       <div class="validation" data-for="validation">✓ Legal build — nothing here breaks the game's rules.</div>
+    </section>
+    <!-- the inherent card, last tile of the side column (2026-08-04) -->
+    <section class="panel" data-for="inherent-card" data-tm="inh-box">
+      <h2>🧬 Your inherent — what a Brute gets for free</h2>
+      <p class="muted small">The game gives every archetype a built-in mechanic that no power
+        pick grants. Yours, and how this planner treats it:</p>
+      <div class="ih-row"><div><b>Fury</b> <span class="im-tag im-dormant">shown, not counted</span></div>
+        <div class="muted small">builds as you fight and get hit; the planner shows it but does
+          not fold an assumed Fury bar into your damage</div></div>
     </section>
     </div>
   </div>
@@ -312,7 +338,9 @@ const TOUR_MOCK_HTML = `
        under the wall mock — exactly like the real layout. -->
   <div class="tm-tab" data-tm-tab="powers" style="display:none">
     <section class="panel">
-      <h2>End Game</h2>
+      <!-- ⚠ heading is NOT "End Game": that tab no longer exists, and a mock that
+           names a retired tab teaches a layout the user cannot find -->
+      <h2>Accolades</h2>
       <div class="accolades-card" data-for="accolades-card" data-tm="acc-box">
         <div class="ovc-head">ACCOLADES <span class="acc-count">2/28</span></div>
         <div class="muted small">☑ Freedom Phalanx Reserve <b>+10% HP</b></div>
@@ -527,7 +555,7 @@ const TOUR_CHAPTERS = {
 // TOUR_CHAPTERS: the audit parses that block to know which chapters exist, and
 // turning it into objects would break the thing that keeps this honest.
 const TOUR_CHAPTER_BLURB = {
-  start:    "The Character menu — every way to start — and the five tabs.",
+  start:    "The Character menu — every way to start — and the four tabs.",
   build:    "Name, archetype, powersets and pools on the build bar; goal and role in the Assistant.",
   powers:   "Taking powers, spending your 67 slots, and locking what you have already decided.",
   solve:    "Letting it work out the slotting, and how to read what it gives you back.",
@@ -602,12 +630,13 @@ const TOUR_STEPS = [
         + "been saved in the background as you worked, and closing the app "
         + "offers to save anything unsaved." },
   { chapter: "start", target: "#tabbar", spine: true,
-    title: "Five tabs, one character",
-    body: "The whole app is five tabs across the top. Powers & Slots is the "
-        + "build itself. Stats shows every number and where it comes from. End "
-        + "Game holds accolades, your epic pool and incarnates. The Leveling "
-        + "Guide is your 1-to-50 as a road, and Logging reads what your real "
-        + "game sessions earned.\n\n"
+    title: "Four tabs, one character",
+    body: "The whole app is four tabs across the top. Powers & Slots is the "
+        + "build itself — and everything that belongs to it, including your "
+        + "accolades, your epic pool at 35 and the incarnates at 50. Stats "
+        + "shows every number and where it comes from. The Leveling Guide is "
+        + "your 1-to-50 as a road, and Logging reads what your real game "
+        + "sessions earned.\n\n"
         + "Everything on every tab describes the same character — change "
         + "something on one and the others update." },
 
@@ -825,13 +854,38 @@ const TOUR_STEPS = [
         + "suggested layout for the game's power trays — the attack chain "
         + "together where your fingers live, toggles and autos parked out of "
         + "the click path.\n\n"
-        + "Copy it into the game once and muscle memory does the rest." },
+        + "This is one of three reference sections at the foot of the tab, and "
+        + "they start folded shut: click the heading to open one, and it stays "
+        + "open next time. Copy the trays into the game once and muscle memory "
+        + "does the rest." },
   { chapter: "solve", target: "#order-out", side: "right",
     title: "The respec order",
     body: "The respec screen in game asks you to re-place every pick, in "
         + "order, from level 1 up. This is that order, one line per pick, so "
         + "at the trainer you just read down the list instead of "
-        + "reconstructing it from memory." },
+        + "reconstructing it from memory.\n\n"
+        + "Folded shut like its neighbours — the third one, Get expensive IOs "
+        + "cheap, prices the enhancements you still need." },
+  // ── The three fixed cards on Powers & Slots (2026-08-04 layout) ────────────
+  { chapter: "powers", target: "#cmd-card", anchor: "[data-tm=cmd-box]", side: "top",
+    title: "Getting a build in and out of the game",
+    body: "The game's own chat commands do the carrying, and this card holds the "
+        + "ones worth knowing. Click any of them to copy it, then Ctrl+V into "
+        + "the game's chat box.\n\n"
+        + "/build_save_file writes your live character to a file this app can "
+        + "import; /respec starts the respec you follow with the level plan; "
+        + "/ah opens the auction house for the shopping list; /logchat turns on "
+        + "the log the Logging tab reads." },
+  { chapter: "powers", target: "#inherent-card", anchor: "[data-tm=inh-box]", side: "left",
+    title: "What your archetype gets for free",
+    body: "Every archetype has a built-in mechanic no power pick grants — Fury "
+        + "on a Brute, Vigilance on a Defender, Domination on a Dominator. This "
+        + "card names yours and, more importantly, says how this planner treats "
+        + "it.\n\n"
+        + "Counted in your numbers means it is already in the totals. Shown, "
+        + "not counted means it is real in game but deliberately left out, "
+        + "because assuming it would flatter your build. The card never pretends "
+        + "either way." },
   { chapter: "solve", target: "#validation", side: "left",
     title: "The rules check",
     body: "Anything the game would not allow shows up here: too many pools, an "
