@@ -10374,30 +10374,77 @@ function renderImproveDiff(before, res) {
     const v = path.reduce((a, k) => (a ? a[k] : undefined), o);
     return typeof v === "number" ? v : (v && v.value);
   };
-  const stat = (label, b, a) => {
+  // ⚠⚠ EVERY MEASURED AXIS, NOT A SHORTLIST I CHOSE (Joel, 2026-08-05: "it could
+  // mean literally anything the player wanted to focus on, a specific damage
+  // type, a unique henchman IO choices to make their pets have more DPS, but it
+  // is all fall under the same limitations that game offers, not some imagined
+  // scenarios that don't exist").
+  //
+  // This used to diff a hardcoded six defence types, three resistances, recharge,
+  // max HP and DPS. A player chasing Toxic defence, or pet damage, or a −regen
+  // debuff saw NOTHING move and concluded the solve did nothing. The list was my
+  // guess at what mattered.
+  //
+  // Now it walks what the ENGINE actually measured for THIS build and prints
+  // whatever moved. That is game-bounded by construction: the rows can only be
+  // things the engine computed from real game data, so a scenario the game does
+  // not have cannot appear. It also means nothing needs adding here when the
+  // engine learns a new family — the row shows up on its own.
+  const stat = (label, b, a, unit, group) => {
     if (b == null && a == null) return;
     const d = (a || 0) - (b || 0);
-    if (Math.abs(d) < 0.1) return;
+    const eps = unit === "%" ? 0.1 : 0.05;
+    if (Math.abs(d) < eps) return;
     const arrow = d > 0 ? "▲" : "▼";
     const cls = d > 0 ? "up" : "down";
-    rows.push(`<tr><td>${label}</td><td>${(b || 0).toFixed(1)}</td><td>${(a || 0).toFixed(1)}</td>`
-      + `<td class="diff-${cls}">${arrow} ${Math.abs(d).toFixed(1)}</td></tr>`);
+    const f = n => (Math.abs(n) >= 100 ? Math.round(n) : +n.toFixed(1));
+    rows.push(`<tr><td>${group ? `<span class="muted small">${group}</span> ` : ""}${escHtml(label)}</td>`
+      + `<td>${f(b || 0)}${unit}</td><td>${f(a || 0)}${unit}</td>`
+      + `<td class="diff-${cls}">${arrow} ${f(Math.abs(d))}${unit}</td></tr>`);
   };
-  ["Smashing", "Fire", "Energy", "Melee", "Ranged", "AoE"].forEach(t => {
-    stat(`Def ${t}`, pct(bt, ["defense", t, "value"]), pct(after, ["defense", t, "value"]));
-  });
-  ["Smashing", "Fire", "Energy"].forEach(t => {
-    stat(`Res ${t}`, pct(bt, ["resistance", t, "value"]), pct(after, ["resistance", t, "value"]));
-  });
-  stat("Recharge", pct(bt, ["recharge", "value"]), pct(after, ["recharge", "value"]));
-  stat("Max HP", pct(bt, ["max_hp", "value"]), pct(after, ["max_hp", "value"]));
-  if (bt.offense || after.offense) {
-    if ((bt.offense && bt.offense.aoe_count) || (after.offense && after.offense.aoe_count)) {
-      stat("AoE DPS", bt.offense && bt.offense.aoe_dps, after.offense && after.offense.aoe_dps);
-    }
-    stat("ST DPS", bt.offense && bt.offense.st_dps, after.offense && after.offense.st_dps);
+  const val = (o) => (o && typeof o === "object") ? (o.value ?? null) : (o ?? null);
+  // Typed tables — every type the build actually carries, not six of them.
+  for (const [key, lab] of [["defense", "Def"], ["resistance", "Res"]]) {
+    const types = new Set([...Object.keys(bt[key] || {}), ...Object.keys(after[key] || {})]);
+    [...types].sort().forEach(t =>
+      stat(`${lab} ${t}`, val((bt[key] || {})[t]), val((after[key] || {})[t]), "%"));
   }
-  stat("Set bonuses", bt.applied_bonus_count, after.applied_bonus_count);
+  // Scalars the engine reports for every build.
+  for (const [k, lab] of [["recharge", "Recharge"], ["recovery", "Recovery"],
+                          ["regeneration", "Regeneration"], ["max_hp", "Max HP"],
+                          ["tohit", "ToHit"], ["accuracy", "Accuracy"],
+                          ["heal_strength", "Heal strength"]]) {
+    stat(lab, val(bt[k]), val(after[k]), "%");
+  }
+  // v30 back-filled families (KB protection, slow resist, mez durations…) — real
+  // game bonuses that used to be invisible here.
+  {
+    const bx = bt.bonus_extras || {}, ax = after.bonus_extras || {};
+    [...new Set([...Object.keys(bx), ...Object.keys(ax)])].sort().forEach(k =>
+      stat(k.replace(/_/g, " "), val(bx[k]), val(ax[k]), "", "bonus"));
+  }
+  // Output: damage, pets, and every buff/debuff row the build actually produces.
+  {
+    const bo = bt.offense || {}, ao = after.offense || {};
+    if (bo.aoe_count || ao.aoe_count) stat("AoE DPS", bo.aoe_dps, ao.aoe_dps, "");
+    stat("Single-target DPS", bo.st_dps, ao.st_dps, "");
+    // ⚠ Joel's henchman case: pet damage is measured and was never diffed.
+    stat("Pet DPS (each)", bo.pet_dps_each, ao.pet_dps_each, "", "pets");
+    stat("Pet DPS (squad)", bo.pet_dps_squad, ao.pet_dps_squad, "", "pets");
+    const mag = d => d && (d.pct ?? d.hp ?? d.end ?? null);
+    const index = list => Object.fromEntries((list || []).map(d =>
+      [`${d.effect || ""}${d.type ? " " + d.type : ""}`, d]));
+    for (const [side, lab] of [["buffs", "buff"], ["debuffs", "debuff"]]) {
+      const bi = index(bo[side]), ai = index(ao[side]);
+      [...new Set([...Object.keys(bi), ...Object.keys(ai)])].sort().forEach(k => {
+        const b = bi[k], a = ai[k];
+        const unit = (b && b.hp != null) || (a && a.hp != null) ? " HP"
+          : (b && b.end != null) || (a && a.end != null) ? " end" : "%";
+        stat(k, mag(b), mag(a), unit, lab);
+      });
+    }
+  }
+  stat("Set bonuses", bt.applied_bonus_count, after.applied_bonus_count, "");
 
   // slot changes: which powers got different sets
   const afterSlots = {};
@@ -10416,9 +10463,17 @@ function renderImproveDiff(before, res) {
       changes.push(`<li><strong>${info.display}</strong>: ${fmt(info.sets)} → ${fmt(a)}</li>`);
     }
   }
+  // ⚠ NOTHING MOVED IS AN ANSWER, AND IT HAS TO SAY WHY. With Preserve ticked the
+  // solver may legitimately have almost nothing to re-slot, and a blank report
+  // reads as a broken button rather than as "your build already does this".
+  const locked = (res.powers || []).filter(p => p.locked).length;
   const tbl = rows.length
     ? `<table class="diff-tbl"><tr><th>Stat</th><th>Before</th><th>After</th><th>Δ</th></tr>${rows.join("")}</table>`
-    : `<p class="muted small">No net stat change (the import was already on-target for this goal).</p>`;
+    : `<p class="muted small keep-whole">Nothing measurable moved. That is a real answer, not
+       a failure: this build already delivers what the goal asks for.${locked
+        ? ` ⚠ ${locked} of your powers are locked by <b>Preserve my IO sets</b>, so the solver
+            had little it was allowed to change — untick it, or unlock a power on its card, to
+            give it room.` : ""}</p>`;
   report.classList.remove("hidden");
   report.innerHTML = `
     <div class="import-head"><strong>Improvement — ${before.name}</strong>
