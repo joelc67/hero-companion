@@ -375,9 +375,14 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   **`unins000.exe` beside the exe**, which the zip has never carried;
   `server._install_kind()` → installed / portable / source, and an unreadable
   directory reads **portable** so the failure mode is a refusal, never a
-  conversion. The refusal sits UPSTREAM of the Popen. ⚠ Anything richer for
-  portable users (a real zip self-update) is **still Joel's ruling** — the
-  floor shipped, the upgrade did not.
+  conversion. The refusal sits UPSTREAM of the Popen. **✅ SETTLED 2026-08-05
+  (Joel: "I am following your lead"): the refusal + the download page is the
+  WHOLE behaviour.** No "install the app version instead" button — a control
+  that changes how the app lives on your machine does not belong one click from
+  a routine update prompt, and the download page already offers the installer to
+  anyone who wants it. No zip self-update either: portable users chose portable,
+  and unzipping over the folder is the honest instruction. Do not re-open either
+  without a field report asking for it.
 - **⚠ "ON" MUST BE A DOOR THAT SWINGS BOTH WAYS, on the surface that owns it.**
   The Play Log's off state offered "Turn it on"; the on state offered nothing
   back, and the answer to "does this run when I'm not using the app?" lived in

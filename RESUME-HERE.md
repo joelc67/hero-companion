@@ -26,15 +26,14 @@ session-report.md. What survives as live state:
   Joel's ruling: today's truth, flip on release). That paragraph is wrong the
   moment 0.12.31 publishes — replace it with the window truth (close = quit) as
   part of the release.
-- **▶ STILL JOEL'S RULING: what a PORTABLE copy gets.** Shipped the floor —
-  `server._install_kind()` (installed / portable / source, told apart by Inno's
-  `unins000.exe` beside the exe; unreadable dir reads *portable*, so the failure
-  mode is a refusal) and `/update/install` refuses portable upstream of the Popen
-  with the remedy. Open: whether portable earns a REAL self-update (download the
-  zip, helper waits for exit, extracts over the folder, relaunches — a new
-  self-replacing-files path, not built), or the refusal also offers "install the
-  app version instead" as a named button.
-  ⚠ **Server-side ⇒ needs a frozen rebuild; reaches users only in 0.12.31.**
+- **✅ SETTLED: what a PORTABLE copy gets = the refusal + the download page, and
+  nothing more** (Joel, 2026-08-05: "I am following your lead").
+  `server._install_kind()` tells them apart by Inno's `unins000.exe` beside the
+  exe (unreadable dir reads *portable*, so the failure mode is a refusal);
+  `/update/install` refuses upstream of the Popen with the unzip-over-the-folder
+  remedy. No installer button beside a routine update prompt, no zip
+  self-update. ⚠ **Server-side ⇒ needs a frozen rebuild; reaches users only in
+  0.12.31.**
 - **The forum reply's "the update check only runs when you click it" is still
   uncorrected in public.** Accurate replacement drafted in session-report.md.
 - Full app's logging choice now lives on the Logging tab (`gamelogChoiceRow()`):
@@ -66,14 +65,13 @@ session-report.md. What survives as live state:
 
 ## ▶ Open queue
 
-1. **Joel's ruling on the portable update behaviour** (above) — the floor is
-   shipped, the upgrade is his call.
-2. The catalogue's last empty cell (leave / one row of seven / epic spans it).
-3. His layout draft whenever he wants: drag corners, ✕ hide, 📋 Copy, paste to me.
-4. Set-bonuses-in-force + rule-of-five meter; "Gear this build" card; origin
+1. The catalogue's last empty cell (leave / one row of seven / epic spans it).
+2. His layout draft whenever he wants: drag corners, ✕ hide, 📋 Copy, paste to me.
+3. Set-bonuses-in-force + rule-of-five meter; "Gear this build" card; origin
    plates; `extract_power_icons.py` i24 glob bug.
-5. Release when he says: rebuild the frozen exe first (statics + server drift).
-6. Standing: verdict-gate legality hole, Iron Man accolade check, gaming box silent
+4. Release when he says: rebuild the frozen exe first (statics + server drift),
+   and flip the 0.12.30 disclosure paragraph in `docs/index.html` in the same pass.
+5. Standing: verdict-gate legality hole, Iron Man accolade check, gaming box silent
    since 07-29, exploration-log parse.
 
 ## Session-local facts worth keeping
