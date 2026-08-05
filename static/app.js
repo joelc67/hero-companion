@@ -2788,6 +2788,118 @@ function renderRoleFocusSplit() {
   upd();
 }
 
+// ── WHAT THIS BUILD ACTUALLY DELIVERS, PER JOB (Joel, 2026-08-05) ────────────
+// "with X powers and my desire to fight in a fire farm, that my percentage
+// choices mean X number more DPS, or Healing, or Buffing, or Debuffing…
+// Percent + IO sets + special = SOME NUMBER."
+//
+// ⚠⚠ THE HONEST PART, and Joel's own instruction ("you need to be transparent
+// what you can do"): the percentages do NOT move these numbers. They weight what
+// a re-solve CHASES. A finished build's output changes when the slots change,
+// not when the slider does — so this panel reports what the build does TODAY and
+// says so, and the "X more DPS" claim only ever appears after a solve has
+// actually produced it. Everything here already comes from /build/calculate,
+// which folds in the IOs and the accolade/incarnate toggles.
+//
+// ⚠ Control is deliberately absent: role_output.py runs SERVER-side for the
+// solver and is not returned by /build/calculate, so there is no honest number
+// to print. It says that rather than inventing one.
+function _roleNumbers(job) {
+  const off = (LAST_CALC && LAST_CALC.offense) || {};
+  const T = LAST_TOTALS || {};
+  const num = (d) => (d && typeof d === "object") ? (d.value ?? 0) : (d ?? 0);
+  const rows = (list, kind) => (list || []).slice(0, 3).map(d =>
+    `${escHtml(d.effect || d.name || kind)} ${d.pct != null ? d.pct + "%"
+      : d.hp != null ? Math.round(d.hp) + " HP" : d.end != null ? d.end + " end" : ""}`);
+  switch (job) {
+    case "damage": {
+      const st = off.st_dps, aoe = off.aoe_dps;
+      if (st == null && aoe == null) return null;
+      return [st != null ? `<b>${st}</b> single-target DPS` : "",
+              aoe ? `<b>${aoe}</b> AoE DPS per target` : ""].filter(Boolean);
+    }
+    case "healer": {
+      const heals = (off.buffs || []).filter(d => /heal|absorb/i.test(d.effect || ""));
+      if (!heals.length) return null;
+      return heals.slice(0, 2).map(d => `<b>${Math.round(d.hp ?? d.pct ?? 0)}${d.hp != null ? " HP" : "%"}</b> ${escHtml(d.effect)}`);
+    }
+    case "buffer": {
+      const b = rows(off.buffs, "buff");
+      return b.length ? b.map(t => `<b>${t}</b>`) : null;
+    }
+    case "debuffer": {
+      const d = rows(off.debuffs, "debuff");
+      return d.length ? d.map(t => `<b>${t}</b>`) : null;
+    }
+    case "tank": {
+      const mel = num((T.defense || {}).Melee), sl = num((T.resistance || {}).Smashing);
+      if (!mel && !sl) return null;
+      return [`<b>${mel}%</b> melee defence`, `<b>${sl}%</b> smashing resistance`];
+    }
+    case "controller":
+      return "unmeasured";     // honest gap — see the note above
+    default: return null;
+  }
+}
+
+function renderRoleOutput() {
+  const box = $("role-output");
+  if (!box) return;
+  const roleSel = $("preset-role");
+  const r = roleSel && (({ control: "controller", support: "buffer" })[roleSel.value] || roleSel.value);
+  // ⚠ THE INVITATION, NOT A WALL (Joel, 2026-08-05: "after a 1st lvl character is
+  // made or a new lvl50, knowing they can influence an update on a multi-role
+  // needs to be obvious to bring up, but they can choose to not change it then,
+  // and just know they can revisit it later"). A finished build with no role
+  // stated is exactly that moment, so the offer lives HERE, in the flow, and
+  // costs nothing to ignore. No modal, no remembered "no" — the choice doctrine's
+  // reversible-and-revisitable shape, and the share-prompt lesson about walls.
+  if (!r) {
+    box.innerHTML = (build.powers || []).length
+      ? `<div class="ro-box ro-invite"><b>Want this build aimed at something?</b>
+           <span class="muted small keep-whole">It is finished and it works as it stands.
+           But if this character does more than one job — damage and healing on a farm, or
+           all three Kheldian forms — say so in <b>Role</b> above and the assistant will
+           weigh them the way you actually play. You can skip it now and come back to it
+           whenever you like; nothing here expires.</span></div>`
+      : "";
+    return;
+  }
+  const jobs = r === "mixed"
+    ? (roleFocus.jobs || []).filter(j => j.role && j.pct > 0)
+    : [{ role: r, pct: 100 }];
+  if (!jobs.length) { box.innerHTML = ""; return; }
+  if (!(build.powers || []).length) {
+    box.innerHTML = `<div class="ro-box muted small">Nothing to measure yet — pick your
+      powers, or let the assistant build them, and this fills in with what the build
+      actually delivers.</div>`;
+    return;
+  }
+  const L = k => ROLE_LABELS[k] || k;
+  const lines = jobs.map(j => {
+    const v = _roleNumbers(j.role);
+    const body = v === "unmeasured"
+      ? `<span class="muted small">control output is scored inside the optimizer, but it is not
+         reported here yet — an honest gap rather than a made-up number</span>`
+      : v ? v.join(" · ")
+      : `<span class="muted small">nothing in this build contributes to it yet</span>`;
+    return `<div class="ro-row"><span class="ro-job">${escHtml(L(j.role))}
+      ${jobs.length > 1 ? `<span class="muted small">${j.pct}%</span>` : ""}</span>
+      <span class="ro-val">${body}</span></div>`;
+  }).join("");
+  box.innerHTML =
+    `<div class="ro-box"><div class="ro-head"><b>What this build delivers today</b>
+       <span class="muted small keep-whole">Your powers, your IOs and whatever you have ticked
+       under accolades and incarnates. ⚠ The percentages above do not change these numbers —
+       they change what the next solve aims for. Hit Solve and the report tells you what
+       actually moved.</span></div>${lines}
+       <div class="ro-foot muted small keep-whole">None of this has to be right first time.
+       To change one enhancement, the game sells <b>Enhancement Unslotter</b> salvage: one is
+       consumed per enhancement, and you use it by dragging the slotted enhancement into an
+       empty slot in your enhancement tray. To change everything at once, a
+       <code>/respec</code> rebuilds every pick and slot.</div></div>`;
+}
+
 function rolesFromSets() {
   // Roles legitimized by the CHOSEN powersets — a Controller with Poison plays Debuffer,
   // an MM with Empathy heals (his own henchmen are a team). Control primaries ⇒ controller.
@@ -2922,7 +3034,7 @@ function renderRoleOptions(sel, at) {
 
 function refreshRoleUI() {
   renderRoleOptions($("preset-role"), build.archetype);
-  renderRoleHelp(); updateOffRoleWarning(); renderRoleFocusSplit();
+  renderRoleHelp(); updateOffRoleWarning(); renderRoleFocusSplit(); renderRoleOutput();
 }
 
 
@@ -7065,6 +7177,7 @@ async function recompute() {
   renderExemplarBanners();   // the advice card needs the fresh numbers
   LAST_CALC = totals || null;   // v36: carries inherent_mechanics for the offense block
   renderArchetypeBonus();         // the Powers-tab inherent tile reads the same data
+  renderRoleOutput();             // per-job output — needs the FRESH totals above
   build._accoladeHp = (LAST_TOTALS && LAST_TOTALS.accolade_hp) || 0;  // v34: live accolade HP for the panel line
   loadAccolades().then(renderAccolades);   // (summary band deleted — its accolade sync stays)
   // Server-corrected pick levels (older saves carry naive assignments — e.g. both

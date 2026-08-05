@@ -835,6 +835,22 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent); }
 .rf-job input[type="number"]:disabled { opacity: .45; }
 #rf-add { margin-top: 2px; }
+/* What the build delivers, per job — reads as a small scorecard, not a panel. */
+#role-output:empty { display: none; }
+.ro-box { margin: 8px 0; padding: 8px 10px; border: 1px solid var(--border);
+  border-radius: var(--r1); background: var(--panel2, var(--panel)); }
+.ro-head { margin-bottom: 6px; }
+.ro-head .muted { display: block; margin-top: 2px; }
+.ro-row { display: flex; gap: 10px; align-items: baseline; padding: 3px 0;
+  border-top: 1px solid color-mix(in srgb, var(--border) 60%, transparent); }
+.ro-row:first-of-type { border-top: 0; }
+.ro-job { flex: 0 0 170px; font-weight: 600; font-size: 13px; }
+.ro-val { flex: 1 1 auto; min-width: 0; font-size: 13px; }
+.ro-foot { margin-top: 8px; padding-top: 6px;
+  border-top: 1px solid color-mix(in srgb, var(--border) 60%, transparent); }
+/* ⚠ FIRST CHILD ONLY — a bare `.ro-invite b` also caught the inline <b>Role</b>
+   inside the sentence and broke it onto its own line mid-clause. */
+.ro-invite > b:first-child { display: block; margin-bottom: 2px; }
 .preset-field { display: flex; flex-direction: column; gap: 3px; font-size: 12px;
   font-weight: 600; flex: 1 1 150px; }
 .preset-field select { width: 100%; padding: 5px 6px; font-size: 13px; font-weight: 400;
