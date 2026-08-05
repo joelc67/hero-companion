@@ -446,7 +446,7 @@ ROLE_PRESETS = {
     # through to raw physics (first_principles.role_contribution's no-weight
     # fallback = the whole-team-in-one-character generalist objective). Rides the
     # existing v23 focus-split machinery — no champion or model dependency.
-    "mixed": {"label": "Mixed role / Generalist", "roles": ["survival"],
+    "mixed": {"label": "Split role", "roles": ["survival"],
               "perk_focus": None, "floors": {"recharge": 70, "recovery": 40}},
 }
 

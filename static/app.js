@@ -512,7 +512,7 @@ function resetBuildScopedState() {
   build._custom_targets = null;
   build._exposure = null;
   build._travel = null;
-  roleFocus = { secondary: "", pct: 100 };
+  roleFocus = { secondary: "", pct: 100, jobs: [] };
   Object.keys(PREVIEW_BOOSTS).forEach(k => delete PREVIEW_BOOSTS[k]);
   // Accolade ticks are PER-CHARACTER, and this Set is module-level — so before
   // this line it leaked across characters: tick/untick on one, start another,
@@ -2561,17 +2561,39 @@ let AT_DISPLAY = {};
 const ROLE_LABELS = { controller: "Controller / Lockdown", debuffer: "Debuffer",
                      buffer: "Buffer / Support", healer: "Healer",
                      damage: "Damage dealer", tank: "Tank / Survivor",
-                     mixed: "Mixed role / Generalist" };
+                     // ⚠ "Generalist" was the actual complaint (Joel, 2026-08-05:
+                     // "the complaint was calling one role a generalist. It
+                     // should be more like 'split role' then choices on what it
+                     // means by that"). Generalist read as a role of its own,
+                     // which it never was. The VALUE stays "mixed" so existing
+                     // saves keep opening; only the words changed.
+                     mixed: "Split role — more than one job" };
 
 let SET_ROLE_EXTENSIONS = {};
 // The user's answer to "if we split your focus, what percentage on each role?" —
 // {primaryRole, secondaryRole, pct} (pct = % on the primary). Null until they answer.
-let roleFocus = { secondary: "", pct: 100 };
+let roleFocus = { secondary: "", pct: 100, jobs: [] };   // jobs[] = the Split-role N-way share
 
 function roleMixPayload() {
   const roleSel = $("preset-role");
   const r = roleSel && roleSel.value;
-  if (!r || !roleFocus.secondary || roleFocus.secondary === r || roleFocus.pct >= 100)
+  if (!r) return null;
+  // SPLIT ROLE: the two jobs are BOTH named by the user. Never blend "mixed"
+  // itself — "50% no-specialisation" is not a thing anyone means, and it was
+  // what the old Generalist wording produced.
+  if (r === "mixed") {
+    // N jobs, not two. This exists for triform Kheldians (Joel, 2026-08-05):
+    // a Peacebringer or Warshade who wants human, Nova AND Dwarf all worth
+    // playing is asking for THREE weights, and fp.role_contribution already
+    // blends an arbitrary {role: fraction} dict. Shares are sent raw; the
+    // server normalises by their sum, so they never have to total exactly 100.
+    const jobs = (roleFocus.jobs || []).filter(j => j.role && j.pct > 0);
+    if (jobs.length < 2) return null;          // not answered yet: plain mixed floors
+    const out = {};
+    for (const j of jobs) out[j.role] = (out[j.role] || 0) + j.pct;
+    return Object.keys(out).length > 1 ? out : null;
+  }
+  if (!roleFocus.secondary || roleFocus.secondary === r || roleFocus.pct >= 100)
     return null;
   return { [r]: roleFocus.pct, [roleFocus.secondary]: 100 - roleFocus.pct };
 }
@@ -2594,15 +2616,103 @@ function renderRoleFocusSplit() {
   const r = ({ control: "controller", support: "buffer" })[roleSel.value] || roleSel.value;
   const legit = [...new Set([...(NATURAL_ROLES[at] || []), ...rolesFromSets()])];
   const others = legit.filter(x => x !== r);
-  if (!(at && r && others.length)) { box.innerHTML = ""; roleFocus = { secondary: "", pct: 100 }; return; }
-  const opts = others.map(o =>
-    `<option value="${escHtml(o)}" ${roleFocus.secondary === o ? "selected" : ""}>${escHtml(ROLE_LABELS[o] || o)}</option>`).join("");
+  const split = r === "mixed";
+  if (!(at && r && (split ? true : others.length))) {
+    box.innerHTML = ""; roleFocus = { primary: "", secondary: "", pct: 100, jobs: [] }; return;
+  }
+  // SPLIT ROLE names BOTH jobs; a specific role is the lead and names one more.
+  const optList = (list, sel) => list.map(o =>
+    `<option value="${escHtml(o)}" ${sel === o ? "selected" : ""}>${escHtml(ROLE_LABELS[o] || o)}</option>`).join("");
+  if (split) {
+    // ⚠ AS MANY JOBS AS THE CHARACTER HAS, NOT TWO. This control was added for
+    // triform Kheldians (Joel, 2026-08-05): a Peacebringer or Warshade who wants
+    // human, Nova AND Dwarf all worth playing needs three weights, and a
+    // two-way split fails the very case it exists for. Shares are plain numbers
+    // and do not have to total 100 — the note shows what they normalise to,
+    // which is also what the solver receives.
+    if (!roleFocus.jobs || !roleFocus.jobs.length) {
+      roleFocus.jobs = legit.slice(0, 2).map(role => ({ role, pct: 50 }));
+    }
+    // ⚠ EVERY role is offered here, not just the "legit" ones (Joel, 2026-08-05:
+    // "I have also seen defenders who focus on Damage and Healing, plus a little
+    // support in a fire farm"). Damage is off-role for a Defender, so a legit-only
+    // list could not express his own example. Grouped exactly like the main
+    // picker — warn by grouping, never hide. Same doctrine, same words.
+    const ext = rolesFromSets().filter(x => !(NATURAL_ROLES[at] || []).includes(x));
+    const off = _ROLE_ORDER.filter(x => !legit.includes(x));
+    const grp = (label, list, sel) => list.length
+      ? `<optgroup label="${escHtml(label)}">${optList(
+          _ROLE_ORDER.filter(x => list.includes(x)), sel)}</optgroup>` : "";
+    const jobOpts = (sel) =>
+      grp(`Natural for a ${AT_DISPLAY[at] || "this archetype"}`, NATURAL_ROLES[at] || [], sel)
+      + grp("Your powersets also support", ext, sel)
+      + grp("Off-role — allowed, but it will fight you", off, sel);
+    const rows = roleFocus.jobs.map((j, i) =>
+      `<div class="rf-job">
+         <select data-rfjob="${i}">${jobOpts(j.role)}</select>
+         <input type="number" min="0" max="100" step="5" value="${j.pct}" data-rfpct="${i}">
+         <span class="muted small">%</span>
+         ${roleFocus.jobs.length > 2
+            ? `<button type="button" class="linkbtn quiet" data-rfdel="${i}" title="Remove this job">✕</button>` : ""}
+       </div>`).join("");
+    box.innerHTML =
+      `<div class="rf-head"><b>Split role: which jobs, and how much of each?</b>
+         <span class="muted small">This is not a role of its own. It is you telling the
+         solver this character does more than one job, so it stops optimising as if only
+         one mattered. A triform Kheldian is the reason it exists: human, Nova and Dwarf
+         are three jobs, and all three can be worth playing. Every job is offered, grouped
+         by how well it suits you, because a Defender farming fire really does want damage
+         and healing at once.</span></div>
+       <div class="rf-jobs">${rows}</div>
+       ${roleFocus.jobs.length < _ROLE_ORDER.length
+          ? `<button type="button" class="linkbtn" id="rf-add">+ add another job</button>` : ""}
+       <div id="rf-note" class="muted small"></div>`;
+    const updS = () => {
+      const L = k => ROLE_LABELS[k] || k;
+      const use = roleFocus.jobs.filter(j => j.role && j.pct > 0);
+      const tot = use.reduce((a, j) => a + j.pct, 0);
+      $("rf-note").textContent = use.length > 1 && tot > 0
+        ? "→ " + use.map(j => `${Math.round(j.pct / tot * 100)}% ${L(j.role)}`).join(" / ")
+        : "Give at least two jobs a share, or pick that one role directly above.";
+    };
+    box.querySelectorAll("[data-rfjob]").forEach(sel => sel.addEventListener("change", () => {
+      roleFocus.jobs[+sel.dataset.rfjob].role = sel.value; renderRoleFocusSplit();
+    }));
+    box.querySelectorAll("[data-rfpct]").forEach(inp => inp.addEventListener("input", () => {
+      roleFocus.jobs[+inp.dataset.rfpct].pct = Math.max(0, +inp.value || 0); updS();
+    }));
+    box.querySelectorAll("[data-rfdel]").forEach(b => b.addEventListener("click", () => {
+      roleFocus.jobs.splice(+b.dataset.rfdel, 1); renderRoleFocusSplit();
+    }));
+    if ($("rf-add")) $("rf-add").addEventListener("click", () => {
+      const free = _ROLE_ORDER.find(x => !roleFocus.jobs.some(j => j.role === x)) || _ROLE_ORDER[0];
+      roleFocus.jobs.push({ role: free, pct: 25 }); renderRoleFocusSplit();
+    });
+    updS();
+    return;
+  }
+  const opts = optList(others, roleFocus.secondary);
+  // ⚠ SAY WHAT THE SLIDER DOES (Joel, 2026-08-05: "nothing really explains what
+  // one is doing with this information or how to manage the slider"). It was a
+  // bare percentage with no statement of what the percentage BUYS. It weights
+  // the objective the solver maximises, so the honest sentence is the one that
+  // says a slot spent on one job is a slot not spent on the other.
   box.innerHTML =
-    `<div class="muted small">Your picks support more than one role — <b>how do you want to split your focus?</b></div>
-     <label class="small">${escHtml(ROLE_LABELS[r] || r)} <b><span id="rf-pct">${roleFocus.pct}</span>%</b>
-       <input type="range" id="rf-slider" min="50" max="100" step="5" value="${roleFocus.pct}">
-       <select id="rf-secondary"><option value="">— all-in (100%) —</option>${opts}</select>
-       <span id="rf-note" class="muted small"></span></label>`;
+    `<div class="rf-head"><b>Your picks support more than one role.</b>
+       <span class="muted small">You do not have to choose one. Pick a second job below and
+       the slider decides how hard the solver chases each: at 70/30 it buys seven slots'
+       worth of the first for every three of the second. Leave it on all-in if this
+       character has one job.</span></div>
+     <div class="rf-controls">
+       <label class="small rf-lead">${escHtml(ROLE_LABELS[r] || r)}
+         <b><span id="rf-pct">${roleFocus.pct}</span>%</b></label>
+       <input type="range" id="rf-slider" min="50" max="100" step="5" value="${roleFocus.pct}"
+              aria-label="How much of your focus goes to ${escHtml(ROLE_LABELS[r] || r)}">
+       <label class="small rf-second">and
+         <select id="rf-secondary"><option value="">— all-in (100%) —</option>${opts}</select>
+       </label>
+     </div>
+     <div id="rf-note" class="muted small"></div>`;
   const upd = () => {
     roleFocus.pct = +$("rf-slider").value;
     roleFocus.secondary = $("rf-secondary").value;
@@ -2642,7 +2752,7 @@ const ROLE_HELP = {
   healer:     "Keep people standing. Chases regeneration (floor 150%) and recovery first, recharge second.",
   damage:     "Kill things. Chases recharge (floor 100%) so the attack chain has no gaps, with enough survival to stay upright.",
   tank:       "Stay alive and hold aggro. Pushes resistance toward your archetype's cap and adds max HP; nothing else competes.",
-  mixed:      "No specialisation on purpose. Just a safety floor (recharge 70%, recovery 40%) and survival, leaving the solver free to balance instead of chasing one number. Never treated as off-role on any archetype.",
+  mixed:      "Not a role of its own: it is you naming the jobs this character really does, and how much of each. Until you name them it is just a safety floor (recharge 70%, recovery 40%) and survival. Never treated as off-role on any archetype.",
 };
 // A set that does two jobs (Sonic Resonance buffs AND debuffs) is not a problem:
 // pick the job you want to lead with, and the focus split below lets you say how

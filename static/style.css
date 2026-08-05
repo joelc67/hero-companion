@@ -801,6 +801,36 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .preset-pick > span { display: block; margin-bottom: 7px; }
 .preset-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .preset-row .preset-field { flex: 1 1 140px; min-width: 140px; }  /* Content + Role side by side */
+/* ⚠ The three explainer rows live BELOW the row, full width (Joel, 2026-08-05:
+   "a little lop sided"). They used to be injected as flex children of
+   .preset-row, so the focus-split panel took the entire right half while
+   Content and Role stayed at 140px. These carry the styles the renderers used
+   to set inline, so a node declared in index.html looks the same as one the JS
+   used to build. */
+#role-help:empty, #off-role-warning:empty, #role-focus-split:empty { display: none; }
+#role-help { margin: 4px 0 2px; }
+#off-role-warning { font-weight: bold; margin: 4px 0; }
+#role-focus-split { margin: 6px 0; padding: 8px 10px; border: 1px solid var(--border);
+  border-radius: var(--r1); background: var(--panel2, var(--panel)); }
+.rf-head { margin-bottom: 6px; }
+.rf-head .muted { display: block; margin-top: 2px; }
+/* The slider is the wide one: the two labels take what they need, it takes the rest. */
+.rf-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.rf-controls .rf-lead { flex: 0 0 auto; white-space: nowrap; }
+.rf-controls #rf-slider { flex: 1 1 160px; min-width: 120px; margin: 0; }
+.rf-controls .rf-second { flex: 0 0 auto; display: flex; align-items: center; gap: 6px; }
+.rf-controls .rf-second select { width: auto; }
+#rf-note { margin-top: 4px; }
+/* Split role: one line per job — the role picker takes the room, the share is a
+   small box beside it. Without this the number input inherited the full-width
+   form styling and each job ate three stacked rows. */
+.rf-jobs { display: flex; flex-direction: column; gap: 6px; margin: 6px 0; }
+.rf-job { display: flex; align-items: center; gap: 8px; }
+.rf-job select { flex: 1 1 auto; min-width: 0; }
+.rf-job input[type="number"] { flex: 0 0 72px; width: 72px; margin: 0;
+  padding: 4px 6px; text-align: right; }
+.rf-job .linkbtn { flex: 0 0 auto; }
+#rf-add { margin-top: 2px; }
 .preset-field { display: flex; flex-direction: column; gap: 3px; font-size: 12px;
   font-weight: 600; flex: 1 1 150px; }
 .preset-field select { width: 100%; padding: 5px 6px; font-size: 13px; font-weight: 400;

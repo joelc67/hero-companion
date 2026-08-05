@@ -428,6 +428,18 @@
               </select>
             </label>
           </div>
+          <!-- ⚠ THESE THREE ARE FULL-WIDTH ROWS, NOT FLEX CHILDREN (Joel,
+               2026-08-05: "the interface seemed a little lop sided"). The help,
+               the off-role warning and the focus split used to be injected AFTER
+               THE ROLE LABEL, which made them siblings of the two 140px selects
+               inside .preset-row — so the split panel ate the whole right half
+               and the row read as two narrow boxes against one wide one. They
+               are declared here, in reading order, and the renderers fill them.
+               ⚠ Keep them in the DOM even when empty: the renderers look them up
+               by id and a missing node sends them back to insert-after-the-label. -->
+          <div id="role-help" class="muted small"></div>
+          <div id="off-role-warning"></div>
+          <div id="role-focus-split"></div>
           <div id="preset-targets" class="preset-targets muted small"></div>
           <div class="custom-targets-row">
             <button id="custom-targets-btn" class="mini" type="button"
