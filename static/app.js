@@ -8668,9 +8668,9 @@ function renderStatBreakdown() {
     html = `<h2><span>${escHtml(sel.label)}</span>
       <button class="iconbtn pi-close" onclick="clearSelectedStat()" title="close">✕</button></h2>
       <p class="sb-sub keep-whole">The powers that apply this — one application each,
-      enhanced by what you slotted in that power. A few families cannot be enhanced at
-      all in game (resistance debuffs, regeneration debuffs, damage and recharge buffs),
-      so those read the same however you slot them.</p>`;
+      enhanced by what you slotted in that power. Three families cannot be enhanced at
+      all in game — resistance debuffs, regeneration debuffs and damage buffs — because
+      the game does not let those powers hold an enhancement that would touch them.</p>`;
     (rowD && rowD.sources || []).forEach(s => {
       const pi = build.powers.findIndex(p => (p.display_name || "") === s.name
         || (p.full_name || "") === s.name);

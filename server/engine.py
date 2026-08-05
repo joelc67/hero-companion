@@ -1435,26 +1435,42 @@ def _pet_offense(build, totals, ctx):
 
 
 # ── WHAT A SLOTTED ENHANCEMENT ACTUALLY DOES TO A BUFF/DEBUFF ────────────────
-# Effect names and enhancement-aspect names come from the SAME client vocabulary,
-# so the match is by name — an effect is enhanced by the host power's own post-ED
-# enhancement in the aspect of that name. The power can only ever hold pieces it
-# ACCEPTS, so "does this power allow that enhancement" is answered by its slots,
-# not by a table we would have to maintain.
+# The game's model, read out of the client: a boost grants STRENGTH to an
+# ATTRIBUTE, and that strength scales every effect of that attribute the power
+# has - the target of the effect does not enter into it. Our engine already
+# works this way for damage, and the Envenom fix verified it for -Defence.
+# Effect names and aspect names are the same client vocabulary, so the match is
+# by name, and whether a power may hold a given enhancement at all is answered
+# by its own slots (it can only accept what the game lets it accept).
 #
-# The exclusions are the game's, and the client's own accepted-category vocabulary
-# is the evidence: there is no res-debuff category, no -regen category and no
-# -damage category anywhere in the 3,650 powersets, because those enhancements do
-# not exist. RechargeTime is excluded for a different reason — the aspect of that
-# name is recharge REDUCTION on the power itself, not the magnitude of a recharge
-# buff or debuff. (In game a -recharge debuff rides Slow enhancements; we do not
-# claim that here without pinning it, so this UNDER-credits a -recharge debuff
-# rather than inventing a number. Open, and stated in the panel's own wording.)
+# ⚠ RECHARGE IS CREDITED, and the client is why (Joel, 2026-08-06: "lets give
+# recharge its accreditation"). I had excluded it on a guess that -recharge
+# rides Slow enhancements. The client disproves that guess AND answers the
+# question properly:
+#   Crafted_Curtail_Speed_A (a Slow IO) enhances ['RunningSpeed','FlyingSpeed',
+#     'JumpingSpeed'] + Accuracy - NO RechargeTime. So Slow is not the route.
+#   Neurotoxic Breath's -recharge is attribs ['RechargeTime'], aspect Strength,
+#     target AnyAffected, and its boosts_allowed includes 'Recharge'.
+#   Speed Boost and Accelerate Metabolism carry the same RechargeTime/Strength
+#     template pointed at allies, and both allow 'Recharge' too.
+# So a Recharge enhancement scales a power's recharge effects in BOTH
+# directions, exactly as a Damage enhancement scales its damage.
+#
 _ENH_BY_NAME = {"Defense", "ToHit", "Heal", "Absorb", "Slow", "Endurance",
-                "Recovery", "Regeneration", "HitPoints", "Resistance"}
-_ENH_NEVER = {("Resistance", "debuff"),      # no -res enhancement exists
-              ("Regeneration", "debuff"),    # no -regen enhancement exists
-              ("DamageBuff", "debuff"), ("DamageBuff", "buff"),
-              ("RechargeTime", "debuff"), ("RechargeTime", "buff")}
+                "Recovery", "Regeneration", "HitPoints", "Resistance",
+                "RechargeTime"}
+# The three exclusions are enforced by the GAME's own allow-lists first — a
+# power cannot hold the piece that would enhance them, so the multiplier is
+# already 1.0 by construction. They are named anyway as a direction guard, the
+# mirror of the HO solver's "DeBuff pieces' Defense aspect never credits armor".
+# Evidence, straight from the client's boosts_allowed:
+#   Envenom (−res, −regen): EnduranceDiscount, Range, Recharge, Debuff_Defense,
+#     Accuracy — nothing that grants Resistance or Regeneration strength.
+#   Weaken (−damage): EnduranceDiscount, Range, Recharge, Debuff_ToHit, Accuracy.
+#   Assault (+damage): Incarnate_Lore, EnduranceDiscount, Recharge.
+_ENH_NEVER = {("Resistance", "debuff"),      # no boost there grants Resistance
+              ("Regeneration", "debuff"),    # no boost there grants Regeneration
+              ("DamageBuff", "debuff"), ("DamageBuff", "buff")}
 
 
 def _row_enh(power, ctx):

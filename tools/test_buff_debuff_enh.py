@@ -8,8 +8,10 @@ invisible-role doctrine's own case.
 What is checked, and every claim has its negative control:
   * an enhanceable row MOVES with the host power's slotting, and by the post-ED
     amount, not the linear sum
-  * the four unenhanceable families do NOT move (-res, -regen, +/-damage,
-    +/-recharge) - the game ships no enhancement that touches them
+  * the three unenhanceable families do NOT move (-res, -regen, +/-damage):
+    the client's own boosts_allowed shows those powers cannot hold a piece that
+    would enhance them. RECHARGE IS ENHANCED, in both directions, because the
+    client says so - see the note above _ENH_BY_NAME in engine.py
   * an UNSLOTTED copy of the same build reads exactly the base numbers
   * per-power provenance still sums to its row
   * SCORING IS UNCHANGED. Two consumers were traced, not assumed:
@@ -42,7 +44,7 @@ import role_output                 # noqa: E402
 import server as srv               # noqa: E402
 
 CHECKS = []
-EXPECTED = 9
+EXPECTED = 11
 
 
 def check(name, ok, detail=""):
@@ -104,14 +106,38 @@ def main():
 
     # 3-4. NEGATIVE CONTROLS: the four families the game cannot enhance.
     frozen = [k for k in db_a
-              if k.split("|")[0] in ("Resistance", "Regeneration", "Damage", "RechargeTime")]
-    check("NEGATIVE CONTROL: -res / -regen / -damage / -recharge do NOT move",
+              if k.split("|")[0] in ("Resistance", "Regeneration", "Damage")]
+    check("NEGATIVE CONTROL: -res / -regen / -damage do NOT move",
           all(abs(db_a[k] - db_b.get(k, 0)) < 1e-9 for k in frozen),
           f"checked {len(frozen)}: {', '.join(sorted(frozen))}")
-    bfroz = [k for k in bf_a if k.split("|")[0] in ("Damage", "RechargeTime")]
-    check("NEGATIVE CONTROL: +damage / +recharge buffs do NOT move",
+    bfroz = [k for k in bf_a if k.split("|")[0] == "Damage"]
+    check("NEGATIVE CONTROL: +damage buffs do NOT move",
           all(abs(bf_a[k] - bf_b.get(k, 0)) < 1e-9 for k in bfroz),
           f"checked {len(bfroz)}: {', '.join(sorted(bfroz))}")
+
+    # 4b. RECHARGE IS CREDITED (Joel, 2026-08-06). Client-proven: a -recharge
+    # debuff is a RechargeTime/Strength template and its power allows the
+    # Recharge boost, so recharge slotting deepens it exactly as damage slotting
+    # deepens damage. Speed Boost / Accelerate Metabolism are the buff mirror.
+    # POSITIVE CONTROL: the saved build slots Neurotoxic Breath with Slow pieces
+    # and no recharge at all, so its -recharge row CANNOT move on its own - drop
+    # a plain recharge IO in and it must.
+    rk = next((k for k in db_a if k.startswith("RechargeTime|")), None)
+    check("without recharge slotting, the -recharge row does not move",
+          rk is not None and abs(db_a[rk] - db_b[rk]) < 1e-9,
+          f"{rk}: {db_b.get(rk)} (Neurotoxic Breath holds only Slow pieces here)")
+    rech = copy.deepcopy(build)
+    for pw in rech["powers"]:
+        if pw["full_name"].endswith(".Neurotoxic_Breath"):
+            slots = pw.get("slots") or []
+            slots.append({"piece_uid": "Crafted_Doctored_Wounds_F",
+                          "piece_name": "Recharge", "set_name": "Doctored Wounds",
+                          "level": 50})
+            pw["slots"] = slots
+    rech_rows = rows(calc(rech), "debuffs")
+    check("...and slotting recharge in that power DEEPENS its -recharge debuff",
+          rk is not None and abs(rech_rows.get(rk, 0)) > abs(db_a[rk]) + 0.05,
+          f"{rk}: {db_a.get(rk)} -> {rech_rows.get(rk)} after one recharge IO")
 
     # 5. NEGATIVE CONTROL: strip every slot and the panel must read the base values.
     bare = copy.deepcopy(build)
