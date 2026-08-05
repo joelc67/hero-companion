@@ -391,6 +391,20 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   never a second copy of a choice. ⚠ `setAutostart` re-renders whichever
   surface was clicked; an unconditional `showAbout()` stacks the About modal on
   top of the Logging tab.
+- **⚠⚠ THE LEVELING GUIDE'S SIDE PICKER IS A PREVIEW, AND THAT PROMISE HAD A
+  HOLE (Joel, 2026-08-05: "this is a preview of other content, not a
+  semi-permanent change to that alignment once we leave this tab").** `_JNY_ALIGN`
+  was cleared only in `closeJourneyView()` — which **the tab strip never calls**
+  (it is the wizard's list-view path and calls `activateTab` itself), so leaving
+  by tab kept the previewed side on return. The reset now lives in
+  **`activateTab`** (`if (key !== "leveling") _JNY_ALIGN = null`), the one route
+  every exit takes; `closeJourneyView` keeps NO second copy and the battery
+  negative-controls that. The preview never writes `cohAlignment` /
+  `applyAlignment` / `build` — also pinned, since that is the half that matters.
+  ⚠ Generalize: when a promise is "X resets when you leave", find EVERY way out
+  before believing the one function named "close".
+  ⚠ The menu now sits directly under the title (Joel moved it there for
+  visibility), so this is easier to trip than it was.
 - **🏷 THE LEVELING SURFACE IS "LEVELING GUIDE" EVERYWHERE IT IS LABELLED
   (Joel, 2026-08-05 — the tab said Leveling Guide, the panel it opened said "The
   Leveling Journey").** Renamed: panel heading, the greeting, the intro fold, the
