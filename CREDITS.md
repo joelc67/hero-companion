@@ -71,5 +71,11 @@ tool understands was learned from, or verified against, these sources:
   changes size. We wrote our own version of this first and it was worse; the honest
   thing is to say so and credit the person who did it properly. No network is involved
   — the copy in this app is local and the tour works fully offline.
+- **Anton**, designed by **Vernon Adams** and maintained by the Anton Project
+  Authors (https://github.com/googlefonts/AntonFont) — licensed under the SIL
+  Open Font License 1.1, vendored as `static/vendor/anton-latin.woff2` with its
+  licence alongside it in `anton-OFL.txt`. It is the face of the app's own wordmark, the one that changes
+  with your alignment. Vendored rather than linked so the app never has to
+  reach the internet to look like itself.
 
 This tool is free and noncommercial, forever. See LICENSE.

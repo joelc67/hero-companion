@@ -39,7 +39,14 @@ def main():
     if not os.path.isdir(SRC):
         print(f"no static/ at {SRC}")
         sys.exit(1)
-    names = [n for n in os.listdir(SRC) if os.path.isfile(os.path.join(SRC, n))]
+    # ⚠ THE WHOLE TREE, NOT JUST THE TOP LEVEL (found 2026-08-05). This listed
+    # `os.listdir(SRC)` files only, so static/vendor/ and static/icons/ were
+    # never synced — a new vendored font landed in the repo, the CSS that used
+    # it landed in both frozen copies, and the font itself reached neither. The
+    # tool printed "2 of 2 known copies updated" over the miss, which is exactly
+    # the assumed-not-visible failure it was written to end.
+    names = sorted(os.path.relpath(os.path.join(dp, n), SRC)
+                   for dp, _, fs in os.walk(SRC) for n in fs)
     found = 0
     for base in TARGETS:
         dest = os.path.join(base, "_internal", "static")
@@ -47,9 +54,18 @@ def main():
             print(f"  skip   {base}  (not installed here)")
             continue
         found += 1
+        wrote = 0
         for n in names:
-            shutil.copy2(os.path.join(SRC, n), os.path.join(dest, n))
-        print(f"  ✓ {len(names):>3} files -> {dest}")
+            s, d = os.path.join(SRC, n), os.path.join(dest, n)
+            st = os.stat(s)
+            if os.path.exists(d):
+                dt = os.stat(d)
+                if dt.st_size == st.st_size and dt.st_mtime >= st.st_mtime:
+                    continue          # already current (icons are ~6k files)
+            os.makedirs(os.path.dirname(d), exist_ok=True)
+            shutil.copy2(s, d)
+            wrote += 1
+        print(f"  ✓ {wrote:>4} of {len(names)} files written -> {dest}")
     # Coverage denominator, same rule as every other checker here: say the number
     # and fail loudly rather than report success over an empty sweep.
     print(f"\n{found} of {len(TARGETS)} known copies updated")

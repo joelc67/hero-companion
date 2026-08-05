@@ -1392,16 +1392,6 @@ body.theme-hero header {
   border-bottom: 2px solid var(--gold);
 }
 body.theme-hero #app-title { color: #eaf3ff; }
-/* ⚠ THE WORDMARK IS SOLID, NOT A GRADIENT (Joel, 2026-08-02: it "looks like it
-   came out of a children's coloring book"). It was blue-to-gold clipped through
-   the letters at weight 800 with positive tracking - a rainbow-text effect that
-   reads as trying hard rather than as an identity. A wordmark looks confident
-   when it is ONE colour, set slightly tighter than body text. Gold because that
-   is already the app's identity: the masthead rule and the slot rings use it. */
-body.theme-hero #app-name {
-  color: #ffd166;
-  font-weight: 700; letter-spacing: -0.01em;
-}
 body.theme-villain {
   --bg: #150d10;
   --panel: #1f1418;
@@ -1417,11 +1407,54 @@ body.theme-villain header {
   border-bottom: 2px solid #ff5252;
 }
 body.theme-villain #app-title { color: #ffe9ea; }
-body.theme-villain #app-name {
-  color: #ff8f8f;
-  font-weight: 700; letter-spacing: -0.01em;
-}
 .app-tag { font-size: 11px; font-weight: 400; margin-left: 6px; font-style: italic; }
+
+/* ── THE WORDMARK (Joel's art doc, "Hero Companion Wordmarks", 2026-08-05) ─────
+   Four alignments, four treatments, straight off his sheet's own header-size
+   (30px) row. It is TEXT in the Anton face, not four images: it stays crisp at
+   any zoom the app picks, the ⚠ two-tone follows the name the app already
+   swaps, and there is no fifth file to keep in sync when a name changes.
+   ⚠ Anton is VENDORED (SIL OFL 1.1, credited) — the app never reaches the
+   network, so a Google Fonts link would simply render nothing.
+   ⚠ The superseded rule here was "the wordmark is SOLID, not a gradient"
+   (Joel, 2026-08-02, on a blue-to-gold clip that read like a coloring book).
+   These still hold to it: one colour per word, the depth comes from shadow. */
+@font-face {
+  font-family: "Anton";
+  font-style: normal; font-weight: 400; font-display: swap;
+  src: url("vendor/anton-latin.woff2") format("woff2");
+}
+#app-name {
+  font-family: "Anton", Impact, system-ui, sans-serif;
+  /* ⚠ SIZED TO THE SPACE THAT WAS ALREADY THERE (Joel: "obviously trim the size
+     down to fit into the existing space"). His sheet sets the header variant at
+     30px; measured in the app that is 171px wide against the old title's 136px.
+     At 20px Anton measures 132px — the same footprint, and the masthead height
+     (47.5px) does not move, so the sticky chrome vars stay put. Anton is a tall
+     condensed face, so it still reads BIGGER than the 17px text it replaced. */
+  font-weight: 400; font-size: 20px; line-height: 1;
+  text-transform: uppercase; display: inline-block; vertical-align: -2px;
+}
+body.align-hero #app-name {
+  color: #8FCBFF; transform: skewX(-7deg);
+  text-shadow: 0 2px 0 #1d4c85, 0 0 18px rgba(111, 180, 255, 0.5);
+}
+body.align-hero #app-name .wm-2 { color: #EAF5FF; }
+body.align-vigilante #app-name {
+  color: #FCD36B; transform: skewX(-11deg);
+  text-shadow: 2px 3px 0 rgba(0, 0, 0, 0.9);
+}
+body.align-vigilante #app-name .wm-2 { color: #FFF0C4; }
+body.align-rogue #app-name {
+  color: #FCD36B; letter-spacing: 0.04em;
+  text-shadow: 6px 4px 10px rgba(0, 0, 0, 0.95);
+}
+body.align-rogue #app-name .wm-2 { color: #B99B4E; }
+body.align-villain #app-name {
+  color: #FF5F5F; transform: skewX(-7deg) scaleY(1.06);
+  text-shadow: 0 2px 0 #8d1a1e, 0 0 20px rgba(255, 60, 60, 0.55);
+}
+body.align-villain #app-name .wm-2 { color: #FFD6D6; }
 /* Source-run copies wear a DEV badge so they can't be confused with the installed app */
 #dev-badge {
   font-size: 10px; font-weight: 700; letter-spacing: 1px; vertical-align: 2px;
@@ -1498,14 +1531,8 @@ body.align-mid #masthead {
   border-bottom: 2px solid var(--border);
 }
 body.align-mid #app-title { color: #fff6e0; }
-/* ⚠ background-IMAGE, not the `background` shorthand: the shorthand resets
-   background-clip to border-box, which unclips the text-clipped wordmark and
-   paints a solid yellow BAR over an invisible name. Seen on screen, not in the
-   source — the same class as the button background/color trap below. */
-body.align-mid #app-name {
-  color: #e8b354;
-  font-weight: 700; letter-spacing: -0.01em;
-}
+/* (The middles' #app-name colour moved into the wordmark block above — Vigilante
+   and Rogue are different treatments and could not share one align-mid rule.) */
 /* The header control names the CURRENT alignment now (it opens a picker), so it
    is coloured for where you ARE — these two used to be swapped, back when the
    label named the destination. */

@@ -3075,8 +3075,17 @@ function applyAlignment(al) {
   document.body.classList.remove("theme-hero", "theme-villain");
   document.body.classList.add(side === "villain" ? "theme-villain" : "theme-hero");
   document.body.classList.toggle("align-mid", mid);
+  // Each alignment gets its OWN body class as well as its theme: the four
+  // wordmarks are four distinct treatments (Vigilante is raked and hard-shadowed,
+  // Rogue is upright in smoke) and theme-hero/theme-villain/align-mid only make
+  // three states between them, so the two middles could not differ without this.
+  _APP_ALIGNMENTS.forEach(k => document.body.classList.toggle("align-" + k, k === al));
   const d = _ALIGN_APP[al];
-  if ($("app-name")) $("app-name").textContent = d.name;
+  // The wordmark is two-tone — the alignment word in its colour, "Companion" in
+  // the lighter tint. Every name is "<short> Companion", so the split is the data.
+  if ($("app-name")) {
+    $("app-name").innerHTML = `${escHtml(d.short)} <span class="wm-2">Companion</span>`;
+  }
   if ($("app-glyph")) $("app-glyph").textContent = d.glyph;
   const tagEl = document.querySelector(".app-tag"); if (tagEl) tagEl.textContent = d.tag;
   // All four alignments are ordinary items in the View menu (Joel, 2026-08-04) —
