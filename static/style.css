@@ -1570,11 +1570,13 @@ body { overflow: hidden; }
   border-top: 1px solid color-mix(in srgb, var(--warn) 40%, transparent);
   font-size: 14px;
 }
-/* the View-menu entry points here — make the tile dial impossible to miss */
-.exemp-pulse { animation: exempulse 0.85s ease-in-out 3; border-radius: var(--r1); }
-@keyframes exempulse {
-  50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--warn) 55%, transparent); }
-}
+/* .exemp-pulse and its keyframes went with the walk-you-to-the-dial behaviour
+   (2026-08-05) — the View menu opens a dialog that explains exemplaring and
+   sets the level, so there is nothing left to point at. */
+.exemp-pick { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin: 12px 0 8px; padding: 10px 12px; border: 1px solid var(--border);
+  border-radius: var(--r1); background: var(--panel); }
+.exemp-pick select { margin-left: 8px; }
 
 /* ── STATS PROVENANCE (Joel's spec 2026-08-03) ──────────────────────────────
    Mini powers wall: floats above, NEVER scrolls off (sticky under the

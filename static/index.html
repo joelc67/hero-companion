@@ -220,7 +220,9 @@
           <div class="menu-drop" id="m-view" role="menu" hidden>
             <button role="menuitem" type="button" data-tab="powers"><b>Powers & Slots</b><i>The build itself, and the power catalogue</i></button>
             <button role="menuitem" type="button" data-tab="stats"><b>Stats</b><i>Defence, resistance, offense and set bonuses</i></button>
-            <button role="menuitem" type="button" data-tab="powers" data-jump="endgame-panel"><b>End Game</b><i>Epic pool, incarnates and accolades — on Powers &amp; Slots</i></button>
+            <!-- End Game removed (Joel, 2026-08-05). It pointed at panels that
+                 live on Powers & Slots, which this menu already lists — a second
+                 door to the same tab. openEndgame() stays for the ladder gates. -->
             <button role="menuitem" type="button" data-tab="leveling"><b>Leveling Guide</b><i>Your 1-50 as a road</i></button>
             <button role="menuitem" type="button" data-tab="logging"><b>Logging</b><i>What your game sessions earned you</i></button>
             <div class="menu-sep" role="separator"></div>
@@ -237,11 +239,11 @@
             <button role="menuitem" type="button" data-align="vigilante" onclick="setAlignment('vigilante')"><b>🛡️ Vigilante</b><i>A hero who bends the rules — sees both sides</i></button>
             <button role="menuitem" type="button" data-align="rogue" onclick="setAlignment('rogue')"><b>😈 Rogue</b><i>A villain with second thoughts — sees both sides</i></button>
             <button role="menuitem" type="button" data-align="villain" onclick="setAlignment('villain')"><b>🦹 Villain</b><i>Plays the villain side and its content</i></button>
-            <button role="menuitem" type="button" id="view-exemplar-go"><b>⏬ Exemplared view…</b><i>See this build at a lower level — takes you to the dial</i></button>
-            <!-- DESIGN TOOL (Joel, 2026-08-04): drag areas around and resize them
-                 by their corner, then hand the numbers to Claude to bake into the
-                 stylesheet. Nothing here changes a build. Ctrl+Shift+L too. -->
-            <button role="menuitem" type="button" id="layout-mode-item" onclick="toggleLayoutMode()"><b>🧩 Layout mode — off</b><i>Design tool: move and resize the areas, then send the sizes to Claude</i></button>
+            <button role="menuitem" type="button" id="view-exemplar-go"><b>⏬ Exemplared view…</b><i>See this build as it performs at a lower level</i></button>
+            <!-- Layout mode left this menu (Joel, 2026-08-05). It is MY design
+                 tool, not a player feature, and it sat under Alignment as if it
+                 were one. Still there on Ctrl+Shift+L — the tool is unchanged,
+                 only its menu entry is gone. -->
           </div>
         </div>
         <div class="menu">
@@ -706,6 +708,45 @@
 
   <!-- About dialog (header version click) — display-only: every value comes
        from /meta; nothing here is hand-maintained except the intro copy. -->
+  <!-- EXEMPLARED VIEW (Joel, 2026-08-05: "needs a pop-up that describes what it
+       means, and what you want to set the view at what specific LEVEL"). The
+       menu item used to just walk you to a bare dropdown, which told you nothing
+       about what exemplaring is. The two dials (build tile, Stats row) still
+       work and stay synced — this explains the idea and sets the level. -->
+  <div id="exemplar-modal" class="modal hidden">
+    <div class="modal-box">
+      <div class="modal-head">
+        <strong>⏬ Exemplared view</strong>
+        <button id="exemplar-close">✕</button>
+      </div>
+      <div class="about-body">
+        <p><b>Exemplaring is the game dropping you to a lower level</b> — teaming with
+        a lower-level friend, or running a task force with a level cap. Your build is
+        not changed. This shows you how it actually performs down there, so you can
+        find out before the team does.</p>
+        <p class="muted small keep-whole">What changes when you exemplar: powers you
+        earned more than 5 levels above the cap switch off (inherents, accolades and
+        temps keep working). Set bonuses keep paying per piece while you are within 3
+        levels of that piece — and they survive even when the power holding them is
+        one of the ones switched off. Attuned pieces, and purple, PvP, Winter and
+        archetype sets, follow you all the way down. <b>Procs keep firing at any
+        level</b>, which is why proc-heavy builds exemplar well. Incarnate powers stop
+        below level 45.</p>
+        <div class="exemp-pick">
+          <label><b>Show this build at</b>
+            <select id="exemplar-sel-modal"></select>
+          </label>
+          <span class="muted small">A view only — nothing is saved, exported or solved
+          at this level.</span>
+        </div>
+        <!-- ⚠ .keep-whole: collapseLongExplanations folds muted blocks over 26
+             words behind "more", and it re-runs on every recompute — which is
+             exactly when this line changes. -->
+        <div id="exemplar-modal-now" class="muted small keep-whole"></div>
+      </div>
+    </div>
+  </div>
+
   <div id="about-modal" class="modal hidden">
     <div class="modal-box">
       <div class="modal-head">

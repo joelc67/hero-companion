@@ -5377,10 +5377,11 @@ let EXEMPLAR_VIEW = null;
 // View-menu entry that walks you to the tile one. One state, one setter.
 window.setExemplarView = function (level) {
   EXEMPLAR_VIEW = level || null;
-  for (const id of ["exemplar-sel", "exemplar-sel-stats"]) {
+  for (const id of ["exemplar-sel", "exemplar-sel-stats", "exemplar-sel-modal"]) {
     const s = $(id);
     if (s) s.value = EXEMPLAR_VIEW ? String(EXEMPLAR_VIEW) : "";
   }
+  _exemplarModalState();   // the dialog states what is in force, live
   renderPowers();     // cards gain/lose the bold not-usable badge
   recompute();        // every number re-states at the exemplared level
 };
@@ -5389,31 +5390,49 @@ function initExemplarControl() {
   const opts = `<option value="">Off — full level</option>`
     + Array.from({ length: 49 }, (_, i) => 49 - i)
         .map(l => `<option value="${l}">Level ${l}</option>`).join("");
-  for (const id of ["exemplar-sel", "exemplar-sel-stats"]) {
+  // THREE synced dials now — the modal's is the one the View menu opens.
+  for (const id of ["exemplar-sel", "exemplar-sel-stats", "exemplar-sel-modal"]) {
     const sel = $(id);
     if (!sel) continue;
     sel.innerHTML = opts;
     sel.addEventListener("change", () => setExemplarView(sel.value ? +sel.value : null));
   }
-  // View menu → point at a dial the user can SEE and make it impossible to
-  // miss. ⚠ The tile dial is hidden off the Powers tab (2026-08-04), so
-  // pulsing it there was an invisible no-op — off Powers this routes to the
-  // Stats tab and pulses ITS dial, where the numbers react anyway. (Found by
-  // the design once-over, the day the tile went Powers-only.)
-  if ($("view-exemplar-go")) $("view-exemplar-go").addEventListener("click", () => {
-    const onPowers = document.body.classList.contains("tab-powers");
-    if (!onPowers) showTab("stats");
-    const sel = $(onPowers ? "exemplar-sel" : "exemplar-sel-stats");
-    if (!sel) return;
-    sel.focus();
-    const lab = sel.closest("label");
-    if (lab) {
-      lab.classList.remove("exemp-pulse");
-      void lab.offsetWidth;
-      lab.classList.add("exemp-pulse");
-      setTimeout(() => lab.classList.remove("exemp-pulse"), 2600);
-    }
+  // ⚠ The View menu used to WALK you to a bare dropdown (focus + a pulse) —
+  // which answered "where is the control" and never "what is exemplaring".
+  // Joel, 2026-08-05: it needs a pop-up that says what it means and sets the
+  // level. The dialog does both; the two in-page dials still work and stay
+  // synced through the one setter.
+  if ($("view-exemplar-go")) $("view-exemplar-go").addEventListener("click", openExemplarDialog);
+  // Closes like every other modal here: the ✕ or a click on the backdrop.
+  // (Escape does not reach the page in the frozen shell — never advertise it.)
+  if ($("exemplar-close")) $("exemplar-close").addEventListener("click",
+    () => $("exemplar-modal").classList.add("hidden"));
+  if ($("exemplar-modal")) $("exemplar-modal").addEventListener("click", (e) => {
+    if (e.target === $("exemplar-modal")) $("exemplar-modal").classList.add("hidden");
   });
+}
+
+window.openExemplarDialog = function () {
+  const m = $("exemplar-modal");
+  if (!m) return;
+  const sel = $("exemplar-sel-modal");
+  if (sel) sel.value = EXEMPLAR_VIEW ? String(EXEMPLAR_VIEW) : "";
+  _exemplarModalState();
+  m.classList.remove("hidden");
+  if (sel) sel.focus();
+};
+
+// The dialog says what is currently in force, so closing it is never a guess
+// about whether the choice took. Updated by the setter as well as on open —
+// picking a level while it is open must move this line.
+function _exemplarModalState() {
+  const el = $("exemplar-modal-now");
+  if (!el) return;
+  el.innerHTML = EXEMPLAR_VIEW
+    ? `Showing this build <b>at level ${EXEMPLAR_VIEW}</b>. Every number on Stats and`
+      + ` every card on Powers &amp; Slots is re-stated for that level, and a banner`
+      + ` says so while it is on.`
+    : `Currently <b>off</b> — everything reads at your build's full level.`;
 }
 
 // The unmistakable statement (his words: "bold letters at the top saying this
@@ -10245,11 +10264,12 @@ function _layStrip() {
     if (bar) bar.remove();
   }
 }
+// Ctrl+Shift+L is the only way in since the View menu entry went (2026-08-05):
+// this is my design tool, not a player feature. The on/off label it used to
+// keep in sync went with the item — the HUD is the state, and its ✕ is the exit.
 window.toggleLayoutMode = function () {
   LAY_ON = !LAY_ON;
   document.body.classList.toggle("layout-mode", LAY_ON);
-  const item = $("layout-mode-item");
-  if (item) item.querySelector("b").textContent = `🧩 Layout mode — ${LAY_ON ? "ON" : "off"}`;
   if (LAY_ON) { showTab("powers"); _layDecorate(); _layHud(); }
   else { _layStrip(); const h = $("lay-hud"); if (h) h.remove(); }
 };

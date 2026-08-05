@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 100          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 107          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement;
 #                        82 -> 88, 2026-08-05: portable-vs-installed detection
@@ -281,8 +281,12 @@ def main():
     # under Secondary. The catalogue's premise is one powerset per column.
     # 🧩 LAYOUT MODE — the design tool Joel asked for (2026-08-04). It must be a
     # VIEW-only tool: if it can ever touch build state it is a bug, not a feature.
-    check("layout mode exists and is reachable from the View menu",
-          'id="layout-mode-item"' in index and "window.toggleLayoutMode" in app_js
+    # ⚠ Reachable by KEYBOARD now, not the View menu (Joel, 2026-08-05 — it is my
+    # design tool, and it sat under Alignment as if it were a player feature).
+    # The tool itself is untouched; only its menu entry went.
+    check("layout mode exists and is reachable (Ctrl+Shift+L)",
+          "window.toggleLayoutMode" in app_js
+          and 'e.ctrlKey && e.shiftKey && (e.key === "L" || e.key === "l")' in app_js
           and "body.layout-mode .lay-target" in css)
     # Scoping is the whole safety story: a layout-mode rule that touches an APP
     # selector without body.layout-mode in front of it would leak into the shipped
@@ -608,6 +612,41 @@ def main():
     # the choice the user just made — theme flips, road does not.
     _apply = app_js[app_js.find("function applyAlignment("):]
     _apply = _apply[:_apply.find("\n}\n")]
+    # ── 10. THE VIEW MENU, TRIMMED (Joel's marked-up screenshot, 2026-08-05) ──
+    css_all = read("static", "style.css")
+    _view = index[index.find('id="m-view"'):]
+    _view = _view[:_view.find("</div>", _view.find("data-align=\"villain\""))]
+    check("End Game is gone from the View menu",
+          'data-jump="endgame-panel"' not in _view and ">End Game<" not in _view,
+          "it pointed at panels on Powers & Slots, which this menu already lists")
+    check("...but the ladder gates can still reach those panels",
+          "window.openEndgame = function" in app_js
+          and "openEndgame('endgame-plan-panel')" in app_js,
+          "negative control: removing the menu item must not remove the route")
+    check("Layout mode is gone from the View menu, with no dangling reference",
+          'id="layout-mode-item"' not in index and "layout-mode-item" not in app_js,
+          "my design tool, not a player feature — it sat under Alignment as if it were")
+    check("...and Ctrl+Shift+L still opens it",
+          'e.ctrlKey && e.shiftKey && (e.key === "L" || e.key === "l")' in app_js
+          and "window.toggleLayoutMode" in app_js,
+          "the tool is untouched; only its menu entry went")
+    check("Exemplared view opens a dialog that EXPLAINS it, not a bare dial",
+          'id="exemplar-modal"' in index
+          and 'exemplarDialog' in app_js.replace("openExemplarDialog", "exemplarDialog")
+          and "Exemplaring is the game dropping you to a lower level" in index
+          and 'id="exemplar-sel-modal"' in index,
+          "what it means AND what level, in the same place")
+    check("...and all three dials stay one state",
+          app_js.count('"exemplar-sel", "exemplar-sel-stats", "exemplar-sel-modal"') == 2,
+          "the setter and the initialiser both know about the modal's dial")
+    # Comments stripped: the note recording that the pulse went is the record of
+    # why, not a live rule. (Second time today this exact shape bit me.)
+    _css_rules = re.sub(r"/\*.*?\*/", "", css_all, flags=re.S)
+    check("the walk-you-to-the-dial pulse went with the behaviour it served",
+          "exemp-pulse" not in app_js and "exemp-pulse" not in _css_rules
+          and "exempulse" not in _css_rules,
+          "negative control: dead CSS left dressing nothing is how sheets rot")
+
     check("the real alignment toggle outranks an active preview",
           'localStorage.setItem("cohAlignment", al)' in _apply
           and "_JNY_ALIGN = null" in _apply
