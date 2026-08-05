@@ -403,6 +403,17 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   `applyAlignment` / `build` — also pinned, since that is the half that matters.
   ⚠ Generalize: when a promise is "X resets when you leave", find EVERY way out
   before believing the one function named "close".
+  **⚠⚠ AND THE OTHER DIRECTION (Joel, same day): "if someone toggles themselves
+  in the View menu as another alignment, that STICKS even if they go preview
+  other content."** That was backwards too — `_journeyAlign()` reads
+  `_JNY_ALIGN || cohAlignment`, and `applyAlignment` wrote cohAlignment without
+  clearing the preview, so choosing Villain mid-preview flipped the theme and
+  left the road on Rogue. `applyAlignment` now clears `_JNY_ALIGN` and repaints
+  the road if it is on screen; the battery pins the ORDER so the clear cannot
+  drift above the write. **Precedence rule: the real choice always outranks a
+  preview, and a preview never survives a real choice.**
+  ⚠ The Flashback context line needs `.keep-whole` — `collapseLongExplanations`
+  fires on RE-renders, so it read fine until the View menu repainted the road.
   ⚠ The menu now sits directly under the title (Joel moved it there for
   visibility), so this is easier to trip than it was.
 - **🏷 THE LEVELING SURFACE IS "LEVELING GUIDE" EVERYWHERE IT IS LABELLED
