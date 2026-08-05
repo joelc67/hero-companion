@@ -5347,9 +5347,24 @@ function catalogueHtml(sets) {
   // (the level-50 "accolades and incarnates are open" banner is GONE —
   // Joel, 2026-08-04: "This is pointless… It is two spaces below." Both
   // surfaces are on this very tab now; a signpost to the visible is noise.)
-  const head = full
+  // ⚠ "Now slot them" IS A CLAIM ABOUT THE BUILD, not a decoration on a full
+  // pick list (Joel, 2026-08-06: "This appears no matter if slots are all filled
+  // or not"). There is work to do only when the shared pool still has free slots
+  // or a real power holds an empty one. ⚠ The seven granted inherents are
+  // EXCLUDED: Brawl/Sprint/Rest and friends carry a base slot the solver is
+  // capped out of by design (_is_no_enhance_inherent), so counting them would
+  // make the invitation permanent — the same bug wearing a different hat.
+  const _freeSlots = Math.max(0, SLOT_BUDGET - _addedSlots());
+  const _emptyHere = build.powers.some(p => !(p.full_name || "").startsWith("Inherent.")
+    && (p.slots || []).some(s => !s));
+  const head = full && (_freeSlots || _emptyHere)
     ? `<div class="cat-hint cat-done"><b>All 24 powers picked.</b> Now slot them:`
-      + ` <button class="linkbtn" onclick="$('solve-btn').click()">🧮 Slot everything up</button></div>`
+      + ` <button class="linkbtn" onclick="$('solve-btn').click()">🧮 Slot everything up</button>`
+      + ` <span class="muted small">${_freeSlots ? `${_freeSlots} slot${_freeSlots === 1 ? "" : "s"} still free`
+          : "some slots are empty"}</span></div>`
+    : full
+    ? `<div class="cat-hint cat-done"><b>All 24 powers picked, every slot filled.</b>`
+      + ` <span class="muted small keep-whole">Change a goal in the Build Assistant and re-solve if you want a different fit.</span></div>`
     : `<div class="cat-hint"><b>Pick ${taken.length + 1} of ${LADDER.length}</b>`
       + ` — level ${atLevel}. Only what the game offers at this level is available;`
       + ` 🔒 shows what it is waiting for.`
@@ -7152,15 +7167,6 @@ function collapseLongExplanations(root) {
 }
 
 async function recompute() {
-  // The class artwork behind the powers wall (Joel, 2026-08-06). Set HERE:
-  // updateAtEmblem only fires on the archetype select's own change, and the
-  // tile's emblem is painted by _emblemImg from a template, so the variable
-  // was never set on a plain load.
-  {
-    const _s = atEmblemSrc(build.archetype);
-    document.body.style.setProperty("--at-art",
-      _s ? `url("${_s.replace("/icons/at/", "/icons/at_art/")}")` : "none");
-  }
   renderEndgameWarnings();   // warn if a leveling character previews epic/incarnate content
   syncNameField();           // build-tile Name rides every state change
   renderExemplarBanners();   // the exemplared-view statement rides every recompute

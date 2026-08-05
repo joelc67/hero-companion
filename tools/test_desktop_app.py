@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 126          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 128          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement;
 #                        82 -> 88, 2026-08-05: portable-vs-installed detection
@@ -30,7 +30,9 @@ EXPECTED = 126          # coverage denominator — hard-fail if a check silently
 #                        88 -> 94, same day: one import door + the leveling
 #                        surface calling itself one thing;
 #                        121 -> 126, 2026-08-06: no side bar unless the ⓘ
-#                        card is open, and the two panels that left it)
+#                        card is open, and the two panels that left it;
+#                        126 -> 128, same day: the slot invitation is a
+#                        claim about the build, not a decoration)
 
 
 def check(name, ok, detail=""):
@@ -721,6 +723,18 @@ def main():
     check("...and the narrow override repeats the :has() selector",
           "#power-info:not(.hidden)" in _narrow[:_narrow.find("}\n.powers-main")],
           "specificity: an id inside :has() outranks a bare class")
+
+    # ── 13a. "NOW SLOT THEM" IS A CLAIM, NOT A DECORATION (Joel, 2026-08-06:
+    # "This appears no matter if slots are all filled or not"). It may only show
+    # when the shared pool has free slots or a REAL power holds an empty one —
+    # the seven granted inherents are excluded, or the nag is permanent.
+    check("the slot invitation is gated on there being slots to fill",
+          "const head = full && (_freeSlots || _emptyHere)" in app_js
+          and "All 24 powers picked, every slot filled." in app_js,
+          "a full pick list is not the same claim as an unfinished slotting")
+    check("...and the granted inherents cannot make it permanent",
+          '_emptyHere = build.powers.some(p => !(p.full_name || "").startsWith("Inherent.")' in app_js,
+          "Brawl/Sprint/Rest carry a base slot the solver is capped out of by design")
 
     # ── 13b. NO SIDE BAR UNLESS AN ENHANCEMENT IS ASKED FOR (Joel, 2026-08-06:
     # "the output of a build assistant is terrible on the far right ... let it

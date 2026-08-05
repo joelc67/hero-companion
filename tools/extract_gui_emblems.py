@@ -194,7 +194,12 @@ def main():
         except Exception as e:  # noqa: BLE001
             failed.append(f"origin/{key}: {e}")
 
-    for key, entry in sorted(art.items()):
+    # ⚠ OPT-IN (2026-08-06). The 512x314 archetype shots are 3.8 MB and Joel
+    # pulled the filler that used them ("I will try and find something"), so a
+    # routine emblem run must not drop unused art back into static/. The
+    # capability stays because FINDING it was the work: it lives in
+    # charectercreationui/archetypescreenshotsassets, 3 shots per archetype.
+    for key, entry in (sorted(art.items()) if "--art" in sys.argv else []):
         dest = os.path.join(OUT_AT_ART, f"{key}.png")
         if dry:
             print(f"  [dry] at_art/{key}.png  <- {entry[1]}")
@@ -205,7 +210,7 @@ def main():
         except Exception as e:  # noqa: BLE001
             failed.append(f"at_art/{key}: {e}")
 
-    missing_art = sorted(EXPECT_AT - set(art))
+    missing_art = sorted(EXPECT_AT - set(art)) if "--art" in sys.argv else []
     if dry:
         # ⚠ Never print a success line after writing nothing - a dry run that
         # says "ALL EXTRACTED" is the same defect class as a fake progress bar.
@@ -215,7 +220,8 @@ def main():
 
     print(f"\nwrote {wrote['at']} of {len(EXPECT_AT)} expected archetype emblems")
     print(f"wrote {wrote['origin']} of {len(EXPECT_ORIGIN)} expected origin plates")
-    print(f"wrote {wrote['at_art']} of {len(EXPECT_AT)} expected archetype artworks")
+    if "--art" in sys.argv:
+        print(f"wrote {wrote['at_art']} of {len(EXPECT_AT)} expected archetype artworks")
     if missing_art:
         print(f"note: no artwork for {missing_art}")
     if extra_at:
