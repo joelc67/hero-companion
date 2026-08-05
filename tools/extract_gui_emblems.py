@@ -37,6 +37,7 @@ WRANGLER = os.path.join(HERE, "gamedata", "pigg-wrangler")
 
 OUT_AT = os.path.join(REPO, "static", "icons", "at")
 OUT_ORIGIN = os.path.join(REPO, "static", "icons", "origin")
+OUT_AT_ART = os.path.join(REPO, "static", "icons", "at_art")
 
 # BOTH naming conventions, because the two asset sets disagree (see the header).
 PIGG_GLOBS = [
@@ -45,6 +46,10 @@ PIGG_GLOBS = [
 ]
 
 AT_DIR = "gui/icons/archetype/"
+# ⚠ The 32x32 icons are ICONS. The character-creation screen carries the real
+# 512x512 ARTWORK for every archetype, three shots each (2026-08-06). Shot 0 is
+# the one extracted: 16 files instead of 48, and the app only needs one.
+AT_ART_DIR = "charectercreationui/archetypescreenshotsassets"
 ORIGIN_DIR = "gui/creation/origin/"
 
 # The full roster we EXPECT, so the run can state its own denominator and fail
@@ -80,7 +85,7 @@ def _origin_key(base):
 
 def index():
     """key -> (archive, path) for archetype and origin emblems, first win."""
-    ats, origins = {}, {}
+    ats, origins, art = {}, {}, {}
     archives = 0
     for pattern in PIGG_GLOBS:
         for pigg in sorted(glob.glob(pattern)):
@@ -103,7 +108,11 @@ def index():
                     k = _origin_key(base)
                     if k:
                         origins.setdefault(k, (a, p))
-    return ats, origins, archives
+                elif AT_ART_DIR in pl and base.endswith("_0"):
+                    k = base[len("archetypeshots_"):-2]                         if base.startswith("archetypeshots_") else None
+                    if k:
+                        art.setdefault(k, (a, p))
+    return ats, origins, art, archives
 
 
 def save(entry, dest, size):
@@ -121,7 +130,7 @@ def save(entry, dest, size):
 
 def main():
     dry = "--dry-run" in sys.argv
-    ats, origins, archives = index()
+    ats, origins, art, archives = index()
     print(f"searched {archives} pigg archives")
     print(f"found {len(ats)} archetype emblems, {len(origins)} origin plates\n")
 
@@ -129,7 +138,7 @@ def main():
     missing_or = sorted(EXPECT_ORIGIN - set(origins))
     extra_at = sorted(set(ats) - EXPECT_AT)
 
-    for d in (OUT_AT, OUT_ORIGIN):
+    for d in (OUT_AT, OUT_ORIGIN, OUT_AT_ART):
         if not dry:
             os.makedirs(d, exist_ok=True)
 
@@ -156,6 +165,18 @@ def main():
         except Exception as e:  # noqa: BLE001
             failed.append(f"origin/{key}: {e}")
 
+    for key, entry in sorted(art.items()):
+        dest = os.path.join(OUT_AT_ART, f"{key}.png")
+        if dry:
+            print(f"  [dry] at_art/{key}.png  <- {entry[1]}")
+            continue
+        try:
+            save(entry, dest, None)   # keep the game's own 512x512
+            wrote["at_art"] += 1
+        except Exception as e:  # noqa: BLE001
+            failed.append(f"at_art/{key}: {e}")
+
+    missing_art = sorted(EXPECT_AT - set(art))
     if dry:
         # ⚠ Never print a success line after writing nothing - a dry run that
         # says "ALL EXTRACTED" is the same defect class as a fake progress bar.
@@ -165,6 +186,9 @@ def main():
 
     print(f"\nwrote {wrote['at']} of {len(EXPECT_AT)} expected archetype emblems")
     print(f"wrote {wrote['origin']} of {len(EXPECT_ORIGIN)} expected origin plates")
+    print(f"wrote {wrote['at_art']} of {len(EXPECT_AT)} expected archetype artworks")
+    if missing_art:
+        print(f"note: no artwork for {missing_art}")
     if extra_at:
         print(f"note: {len(extra_at)} archetype emblems beyond the expected roster: {extra_at}")
     if failed:

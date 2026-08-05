@@ -284,6 +284,12 @@ function updateAtEmblem() {
   const label = (sel.selectedOptions[0] || {}).textContent || "";
   img.alt = label ? `${label} emblem` : "";
   img.title = label;
+  // ...and the same art fills the dead space while you pick powers (Joel,
+  // 2026-08-06: "filler graphics representing each class being worked on while
+  // picking powers"). It is a PANEL BACKGROUND, not an element in the flow: it
+  // cannot wrap, cannot add height, and cannot push a card to a new row — the
+  // three ways every previous space-filling idea here went wrong.
+
 }
 
 async function openSavesList() {

@@ -3124,10 +3124,11 @@ summary:hover { color: var(--ink); }
 /* The breakdown panel's resting state — an invitation, not a void. */
 .sb-empty h2 { font-size: 16px; margin: 0 0 10px; }
 .sb-empty .sb-sub { margin: 8px 0; }
-/* The archetype emblem as a watermark in the catalogue's leftover space. */
+/* ⚠ DEAD RULE REMOVED (2026-08-06): .cat-art dressed an archetype watermark
+   in the catalogue that NOTHING has ever rendered — an earlier attempt at
+   the same filler idea, left behind. .catalogue keeps its positioning.
+   See RESUME-HERE for where the second attempt got to. */
 .catalogue { position: relative; }
-.cat-art { position: absolute; right: 28px; bottom: 12px; width: 200px;
-  opacity: .07; pointer-events: none; user-select: none; }
 
 /* ── Journey: art beside the road (Joel, 2026-08-04 evening) ─────────────────
    Image left, the level line starts to its right; the art fills the band's
