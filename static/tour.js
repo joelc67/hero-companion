@@ -371,6 +371,11 @@ const TOUR_MOCK_HTML = `
   <div class="tm-tab" data-tm-tab="leveling" style="display:none">
     <section class="panel" data-for="journey-body">
       <h2>🗺️ Leveling Guide</h2>
+      <!-- the side preview sits DIRECTLY under the title in the real app
+           (2026-08-05) — the mock explains things at their action location -->
+      <p class="muted small" data-tm="align-preview">Preview another side:
+        Hero · Vigilante · Rogue · Villain · 🌀 Flashback
+        <i>(your character is unchanged)</i></p>
       <div class="tm-road" data-tm="road">
         <span class="tm-stop">1</span><span class="tm-stop">8</span><span class="tm-stop">15</span>
         <span class="tm-stop here">★22</span><span class="tm-stop">30</span><span class="tm-stop">38</span>
@@ -384,8 +389,6 @@ const TOUR_MOCK_HTML = `
           <p class="muted small">Pick: Knockout Blow · a new enhancement slot arrives at 23 ·
             zones that fit: Talos Island (20–27), Independence Port (20–30) — enemies there run even
             with you · Citadel's Task Force opens at 25.</p>
-          <p class="muted small" data-tm="align-preview">Hero · Vigilante · Rogue · Villain · 🌀 Flashback —
-            a preview of other routes; changes nothing.</p>
         </div>
       </div>
     </section>
@@ -1021,12 +1024,15 @@ const TOUR_STEPS = [
         + "showing a picture of the wrong place." },
   { chapter: "leveling", target: "#journey-body", anchor: "[data-tm=align-preview]", side: "right",
     title: "Previewing other routes",
-    body: "This alignment row previews where somebody on another side would "
-        + "level — Hero, Vigilante, Rogue, Villain, and the 🌀 Flashback view "
-        + "of content that can no longer be started fresh.\n\n"
-        + "It is a preview and nothing more: your character, your build and "
-        + "your numbers are unchanged. Your real alignment is set from the "
-        + "View menu's Alignment entry." },
+    body: "This row previews where somebody on another side would level — Hero, "
+        + "Vigilante, Rogue, Villain, and 🌀 Flashback, which is not a side at "
+        + "all but Ouroboros: replaying older arcs at their original level, "
+        + "which has to be unlocked.\n\n"
+        + "It is a preview and nothing more. Your character, your build and "
+        + "your numbers are unchanged, and it lasts only while you are on this "
+        + "tab — leave and come back and you are looking at your own side "
+        + "again. Your real alignment is set from the View menu, and choosing "
+        + "one there always wins over a preview showing here." },
 
   // ── Your play log ──────────────────────────────────────────────────────────
   { chapter: "logging", target: "#gamelog", spine: true, anchor: "[data-tm=gl-body]", side: "right",
@@ -1062,13 +1068,18 @@ const TOUR_STEPS = [
         + "memorising." },
   { chapter: "header", target: "#m-build", anchor: "[data-tm=menu-build]", side: "bottom",
     title: "The Build menu",
-    body: "Solve, Generate, and Refine with AI live here, along with Customize "
-        + "build targets, the What changed? report, Undo and Reset — the same "
-        + "actions the Assistant panel offers, reachable from any tab." },
+    body: "Solve the slotting lives here, along with Customise build targets, "
+        + "the What changed? report, Undo and Reset to imported — the same "
+        + "actions the Assistant panel offers, reachable from any tab.\n\n"
+        + "Some of them will be greyed out, and each says why in its own line: "
+        + "What changed? only compares an imported build against a solve, and "
+        + "Reset to imported needs a file to go back to. Greyed here means not "
+        + "applicable yet, never broken." },
   { chapter: "header", target: "#m-view", anchor: "[data-tm=menu-view]", side: "bottom",
     title: "The View menu",
-    body: "Every tab, one click away — plus your alignment and the exemplared "
-        + "view, which takes you to the dial.\n\n"
+    body: "Every tab, one click away — plus your alignment, and Exemplared "
+        + "view, which opens a dialog explaining what exemplaring does to a "
+        + "build before it asks you for a level.\n\n"
         + "The display toggles (incarnates at peak, PvP mode, the in-combat "
         + "view…) live on the Stats control row, right where their numbers "
         + "move." },
@@ -1078,7 +1089,11 @@ const TOUR_STEPS = [
         + "with the app, the bug report, champion submission, and Check for "
         + "updates — which compares version numbers with the project's release "
         + "page and sends nothing else. Nothing is ever downloaded or "
-        + "installed without you saying so." },
+        + "installed without you saying so.\n\n"
+        + "Settings is here too: start with Windows, whether to check for a new "
+        + "version at launch, and whether the Play Log may read your game logs. "
+        + "Credits names everyone this is built on, and About says which build "
+        + "you are running." },
   { chapter: "header", target: "#m-view", anchor: "[data-tm=menu-view]", side: "bottom",
     title: "Your alignment",
     body: "The View menu's Alignment entry opens the four choices: Hero, "

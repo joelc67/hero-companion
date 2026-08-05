@@ -217,5 +217,37 @@ else:
     check('no diagram label is drawn under a control (' + str(len(_diagrams)) + ' diagrams)',
           not geom_fails, '; '.join(geom_fails) if geom_fails else '')
 
+# ── STALE CONTENT: the half every structural check above is blind to ─────────
+# Every check so far asks "does this step point at something real?". None asks
+# "does this step DESCRIBE something real?" — so on 2026-08-05 the audit passed
+# ALL GREEN while the tour still taught a Refine-with-AI menu item that had been
+# deleted, an exemplar control that "takes you to the dial" when it now opens a
+# dialog, and a Help menu with no Settings or Credits in it. A tour that
+# confidently describes a button the user cannot find is worse than no tour.
+#
+# Two rules, both mechanical:
+#   (a) RETIRED UI must not be named in any step body. Add a line here the same
+#       day you delete a feature — that is the whole maintenance cost.
+#   (b) Anything the tour quotes as a MENU ITEM must still exist in index.html.
+_RETIRED = [
+    ("Refine with AI", "the AI menu item (client ships ai_enabled:false)"),
+    ("takes you to the dial", "the exemplar control opens a dialog now"),
+    ("Layout mode", "left the View menu; Ctrl+Shift+L only"),
+    ("About & Settings", "split into Settings / Credits / About"),
+    ("Import a character you play", "the two import doors became one"),
+    ("Leveling Journey", "the surface is called the Leveling Guide"),
+]
+_stale = [f"{s!r} — {why}" for s, why in _RETIRED if s in tour]
+check(f"no step describes a retired feature ({len(_RETIRED)} pinned)",
+      not _stale, "; ".join(_stale) if _stale else
+      "add a line to _RETIRED the day you delete a feature")
+
+# (b) menu labels the tour quotes, checked against the real markup.
+_QUOTED_ITEMS = ["Solve the slotting", "Customise build targets", "What changed?",
+                 "Reset to imported", "Check for updates", "Settings", "Credits"]
+_missing = [q for q in _QUOTED_ITEMS if q not in html]
+check(f"every menu item the tour names still exists ({len(_QUOTED_ITEMS)} quoted)",
+      not _missing, "missing from index.html: " + ", ".join(_missing) if _missing else "")
+
 print(f"\n{'ALL TOUR CHECKS PASS' if not fails else 'TOUR AUDIT FAILURES: ' + ', '.join(fails)}\n")
 sys.exit(1 if fails else 0)
