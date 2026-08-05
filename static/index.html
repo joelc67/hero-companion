@@ -204,15 +204,26 @@
         <div class="menu">
           <button class="menu-top" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="m-build">Build</button>
           <div class="menu-drop" id="m-build" role="menu" hidden>
-            <button role="menuitem" type="button" data-act="solve-btn"><b>🧮 Solve the slotting</b><i>Re-optimise enhancements around the powers you chose</i></button>
-            <button role="menuitem" type="button" data-act="gen-btn"><b>🛠️ Build this for me</b><i>Pick the powers AND the slotting for your goal</i></button>
-            <button role="menuitem" type="button" data-act="opt-btn"><b>✨ Refine with AI</b><i>Ask for a targeted improvement in words</i></button>
+            <!-- ⚠ data-why = why this is greyed, when it is. A disabled item with
+                 no reason on it reads as a bug: Joel opened this menu after
+                 cancelling the targets editor, saw four greyed items and
+                 reasonably blamed the cancel (2026-08-05). It was the build's
+                 real state all along, and nothing said so. Same doctrine as the
+                 power picker: grey out, never hide, and put the reason on it. -->
+            <button role="menuitem" type="button" data-act="solve-btn" data-why="Pick some powers first — there is nothing to slot yet."><b>🧮 Solve the slotting</b><i>Re-optimise enhancements around the powers you chose</i></button>
+            <button role="menuitem" type="button" data-act="gen-btn" data-why="Not in this copy. Use Character → Start a new character, or Build a new level 50."><b>🛠️ Build this for me</b><i>Pick the powers AND the slotting for your goal</i></button>
+            <!-- ✨ Refine with AI REMOVED (Joel, 2026-08-05): "we started
+                 development with an API connected to claude.ai, but that function
+                 was removed a long time ago." The shipped client reports
+                 ai_enabled:false, so #opt-btn is display:none forever and this
+                 item was permanently greyed — a menu entry for something no user
+                 can ever reach. The AI seam itself stays for the hub (HC_AI=1). -->
             <div class="menu-sep" role="separator"></div>
-            <button role="menuitem" type="button" data-act="custom-targets-btn"><b>🎯 Customise build targets…</b><i>Say what this build must reach, and see what it costs</i></button>
-            <button role="menuitem" type="button" data-act="changes-btn"><b>📋 What changed?</b><i>Compare the solve against the build you imported</i></button>
+            <button role="menuitem" type="button" data-act="custom-targets-btn" data-why="You already have custom targets — edit them from the 🎯 chip on the Build Assistant."><b>🎯 Customise build targets…</b><i>Say what this build must reach, and see what it costs</i></button>
+            <button role="menuitem" type="button" data-act="changes-btn" data-why="Only after you import a build and then solve it — this compares the two."><b>📋 What changed?</b><i>Compare the solve against the build you imported</i></button>
             <div class="menu-sep" role="separator"></div>
-            <button role="menuitem" type="button" data-act="undo-btn"><b>↶ Undo</b><i>Revert the last edit (Ctrl+Z)</i></button>
-            <button role="menuitem" type="button" data-act="reset-btn"><b>↺ Reset to imported</b><i>Throw away the changes and go back to the file you loaded</i></button>
+            <button role="menuitem" type="button" data-act="undo-btn" data-why="Nothing to undo yet."><b>↶ Undo</b><i>Revert the last edit (Ctrl+Z)</i></button>
+            <button role="menuitem" type="button" data-act="reset-btn" data-why="This character was not imported from a file, so there is nothing to reset to."><b>↺ Reset to imported</b><i>Throw away the changes and go back to the file you loaded</i></button>
           </div>
         </div>
         <div class="menu">

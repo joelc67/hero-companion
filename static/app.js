@@ -6904,6 +6904,21 @@ function syncMenu(drop) {
       || (!crossTab && el.offsetParent === null && el.type !== "checkbox");
     mi.disabled = !!gone;
     mi.classList.toggle("mi-off", !!gone);
+    // ⚠ A GREYED ITEM MUST SAY WHY (Joel, 2026-08-05). Four items greyed for
+    // perfectly good reasons — no import, no AI seam, nothing to undo — and the
+    // menu said none of them, so a cancelled dialog got the blame. The item's
+    // own description line becomes the reason while it is unavailable, and is
+    // restored verbatim when it comes back.
+    const sub = mi.querySelector("i");
+    if (sub && mi.dataset.why) {
+      if (gone) {
+        if (sub.dataset.orig == null) sub.dataset.orig = sub.textContent;
+        sub.textContent = mi.dataset.why;
+      } else if (sub.dataset.orig != null) {
+        sub.textContent = sub.dataset.orig;
+        delete sub.dataset.orig;
+      }
+    }
     if (mi.dataset.kind === "check") mi.classList.toggle("mi-on", !!(el && el.checked));
   });
 }

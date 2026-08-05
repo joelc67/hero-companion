@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 107          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 112          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement;
 #                        82 -> 88, 2026-08-05: portable-vs-installed detection
@@ -646,6 +646,34 @@ def main():
           "exemp-pulse" not in app_js and "exemp-pulse" not in _css_rules
           and "exempulse" not in _css_rules,
           "negative control: dead CSS left dressing nothing is how sheets rot")
+
+    # ── 11. THE BUILD MENU (Joel's second marked-up screenshot, 2026-08-05) ──
+    check("Refine with AI is gone from the Build menu",
+          'data-act="opt-btn"' not in index,
+          "the shipped client reports ai_enabled:false, so it could never be used")
+    check("...and the AI seam itself is untouched (the hub still opts in)",
+          "AI_ON = !!h.ai_enabled" in app_js and 'id="opt-btn"' in index,
+          "negative control: removing the menu entry must not rip out HC_AI=1")
+    # ⚠ The reported "cancel greys the menu" was NOT a state bug — the items were
+    # greyed for real reasons the menu never stated, so a cancelled dialog got
+    # the blame. Every gated item now carries its reason.
+    _mb = index[index.find('id="m-build"'):]
+    _mb = _mb[:_mb.find("</div>", _mb.find('data-act="reset-btn"'))]
+    check("every gated Build item can say WHY it is unavailable",
+          all(f'data-act="{a}"' in _mb and _mb.count("data-why=") >= 6
+              for a in ("solve-btn", "gen-btn", "changes-btn", "undo-btn", "reset-btn")),
+          "grey out, never hide — and put the reason on it")
+    check("...and syncMenu swaps the reason in, restoring the real text after",
+          "sub.dataset.orig" in app_js and 'mi.dataset.why' in app_js,
+          "negative control: the original description must come back, not stay overwritten")
+
+    # Pop-ups wear the alignment (Joel): --accent is the per-theme token, so ONE
+    # rule follows all four rather than a colour per theme.
+    check("all three pop-up shapes carry the alignment edge",
+          all(f"{sel} {{" in css_all.replace("\n", " ") or sel in css_all
+              for sel in (".modal-box", ".ask-card", ".ct-card"))
+          and css_all.count("0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent)") == 3,
+          "modal-box, ask-card and ct-card — the same edge on each")
 
     check("the real alignment toggle outranks an active preview",
           'localStorage.setItem("cohAlignment", al)' in _apply

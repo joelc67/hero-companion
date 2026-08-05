@@ -1198,7 +1198,16 @@ a.linkchip { text-decoration: none; display: inline-flex; align-items: center; }
 .endgame-body { display: flex; flex-direction: column; gap: 14px; padding-top: 4px; }
 .endgame-label { font-weight: 600; margin-bottom: 6px; }
 .endgame-block select { width: 100%; }
-.modal-box { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; width: min(560px, 92vw); max-height: 80vh; display: flex; flex-direction: column; padding: 14px; }
+/* ⚠ POP-UPS WEAR THE ALIGNMENT (Joel, 2026-08-05: "the pop-up also needs a
+   colour line around them representative of the alignment colours"). --accent is
+   already the per-theme token the four alignments set, so ONE rule follows all
+   of them — hero blue, villain red, and the two middles' amber — instead of a
+   colour per theme that would need a fifth edit on the next alignment. The tint
+   under it keeps the edge from reading as a hard frame on a dark panel. */
+.modal-box { background: var(--panel); border: 1px solid var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent),
+              0 18px 40px #0009;
+  border-radius: 8px; width: min(560px, 92vw); max-height: 80vh; display: flex; flex-direction: column; padding: 14px; }
 .bug-field { display: block; margin: 8px 0 2px; }
 .bug-inc { display: flex; align-items: center; gap: 7px; margin: 8px 0; font-size: 13px; color: var(--muted); }
 .bug-inc input { width: auto; flex: 0 0 auto; margin: 0; }
@@ -1723,7 +1732,10 @@ body { overflow: hidden; }
 #targets-modal { position: fixed; inset: 0; z-index: 60; display: flex;
   align-items: center; justify-content: center; background: rgba(8, 12, 18, 0.72); }
 #targets-modal.hidden { display: none; }
-.ct-card { background: var(--panel, #10161f); border: 1px solid var(--border);
+/* Same alignment edge as .modal-box / .ask-card — three popup shapes, one look. */
+.ct-card { background: var(--panel, #10161f); border: 1px solid var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent),
+              0 18px 40px #0009;
   border-radius: 10px; padding: 14px 16px; max-width: 720px; width: 94vw;
   max-height: 88vh; overflow-y: auto; }
 .ct-card h3 { display: flex; align-items: center; justify-content: space-between; margin: 0 0 6px; }
@@ -2950,9 +2962,12 @@ summary:hover { color: var(--ink); }
 }
 .ask-card {
   max-width: 480px; margin: 16px; padding: var(--s5);
-  background: var(--panel); border: 1px solid var(--border);
-  border-radius: var(--r3); box-shadow: var(--e2);
-  border-top: 3px solid var(--accent);
+  background: var(--panel); border: 1px solid var(--accent);
+  border-radius: var(--r3);
+  /* was border-top only — the edge goes all the way round now, like the other
+     two popup shapes (Joel, 2026-08-05). */
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent),
+              0 18px 40px #0009;
 }
 .ask-card h3 { margin: 0 0 var(--s3); font-size: 16px; }
 .ask-body { font-size: 13px; line-height: 1.55; color: var(--ink); margin: 0 0 var(--s4); }
