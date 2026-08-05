@@ -1,75 +1,93 @@
-# Resume point — 2026-08-04 20:32 ET (stop for the night, continue tomorrow)
+# Resume point — 2026-08-05 09:02 ET (new session starts here)
 
-Tracked tree clean, master pushed, **HEAD = `c4d9274c`** (last real commit
-`8996df3a`, the tour update). Nothing running; no scheduled tasks armed. The dev
-server and my scratch browser windows are closed.
+Tracked tree clean, master pushed, **HEAD = `5309e1a7`**. Nothing running; no
+scheduled tasks armed. Dev server and scratch browser windows closed.
 
 **Installed app: `%LOCALAPPDATA%\Programs\HeroCompanion`, UNSIGNED dev build,
-frozen stamp `297ddcf` + statics copied through HEAD.** It is RUNNING with today's
-statics, layout mode off, shipped layout. Release still HELD at 0.12.30.
+frozen stamp `297ddcf` + statics copied through HEAD.** Release still HELD at
+0.12.30.
 
-⚠ **Statics load at LAUNCH only.** F5/Ctrl+R do nothing in this shell. After any
-static edit: copy into `_internal\static`, then relaunch. server.py changes need a
-full rebuild. `WScript.Shell.AppActivate($pid)` fronts the window when
-`open_application` grabs an Edge tab of the same name instead.
+⚠ **Statics load at LAUNCH only** (F5/Ctrl+R do nothing in WebView2): copy into
+`_internal\static`, then relaunch. server.py changes need a full rebuild.
+`WScript.Shell.AppActivate($pid)` fronts the window when `open_application` grabs
+an Edge tab of the same name.
 
-## ▶ THE ONE THING WAITING ON JOEL
+## ▶ NEXT SESSION STARTS HERE: the forum report (BasiliskXVIII, topic 64761)
 
-**The catalogue's last empty cell.** Powerset boxes tile 4 + 3 at his window, so row
-2 has one empty ~205px cell after Ice Mastery. Three ways to close it, his pick:
-1. leave it (one cell, ~205×190);
-2. one row of seven narrower columns — zero void, pool names clip again;
-3. let the epic box span the spare cell — clean at his width, breaks at others.
+Joel's instruction: "see if we can accommodate actual bugs in this latest post."
+Two claims. I checked both against the code; here is what is true.
 
-## What landed today, after the 16:13 handoff
+### 1. "Closing the window leaves the server running in the tray" — ALREADY FIXED, NOT RELEASED
+The tray is **deleted in the current tree** (`grep -c pystray run_app.py` = 0;
+window close = quit, 2026-08-02 desktop-app work). He is describing **0.12.30**,
+released 2026-07-31, which still has it. So the code answer is "fixed, shipping in
+the next release" — but two things are still owed:
+- **His disclosure point stands for the shipped build.** Nothing on the landing or
+  download page said the app keeps running. `docs/index.html` and
+  `docs/companion-lite.md` still mention the tray — Lite legitimately keeps its
+  tray (do not touch `run_lite.py`), the main app no longer does, so the pages need
+  to say which is which.
+- **The forum reply Joel already posted says "the update check only runs when you
+  click it", which is FALSE in the current code** (it runs on launch). That was
+  flagged in CLAUDE.md and is still uncorrected in public.
 
-- **His third markup (`c409a243`)**: ⌨ commands + 💠 set bonuses moved OUT of the
-  catalogue into the full-width strip (their sidebar was taking exactly the width
-  the pool boxes needed); pools + epic now tile **two rows, 4 across**; the 🧬
-  inherent card no longer stretches (199px, was ~550px of empty panel). Order below
-  the wall: powerset rows → card strip → full-width Accolades → the three slabs.
-  `.cat-body`/`.cat-side` and the JS that re-parented those cards are deleted.
-- **Slabs (`47f1855b`)**: all three default CLOSED (supersedes default-open, which
-  existed only so the wall could be judged expanded), and all three share one
-  disclosure language — the native arrow, same title font. An explicit open is
-  remembered.
-- **Layout mode is RESIZE + HIDE only (`c11c6c28`)**: moving areas is deleted and
-  pinned out of both files after three failed shapes. He sizes areas, hits
-  📋 Copy sizes for Claude, and **I bake the numbers into style.css** — that is the
-  workflow now, and no layout draft has been sent yet.
-- **Tour refreshed (`8996df3a`)**: 61 steps. Fixed prose the audit cannot see (it
-  still said five tabs and headed a mock block "End Game"), told users the three
-  slabs start folded, and added steps for the ⌨ commands card and the 🧬 inherent
-  card with matching mock stand-ins.
-- **karpathy-guidelines skill installed** at Joel's request:
-  `.claude/skills/karpathy-guidelines/SKILL.md` (MIT, pinned to upstream
-  `2c60614`), provenance in `.claude/skills/SOURCES.karpathy.md`, documented in
-  `.claude/CLAUDE.md`. Its always-on CLAUDE.md variant was deliberately NOT
-  installed — ponytail and coh-builder/CLAUDE.md already carry the same ground.
+### 2. "Portable's Check for updates installs the installer" — REAL, UNFIXED
+`server.py` `/update/install` gates on `sys.frozen` ONLY. It then always picks the
+release asset whose name ends `.exe` and contains `setup`, and runs it
+`/SILENT /RELAUNCH=1`. A portable user gets silently converted into an installed
+one. He is right, and his framing (the tool clearly can tell the difference) is the
+fix: detect portable vs installed — the exe's directory versus
+`%LOCALAPPDATA%\Programs\HeroCompanion`, or the presence of the uninstaller — and
+then either hand the portable **.zip** asset (the release carries one) or refuse
+with a plain sentence and a link. **Minimum honest fix: never silently convert.**
+Joel's call on which.
 
-## ▶ Open / next
+⚠ Both of these are RELEASE-gated: the fix for #1 only reaches users when 0.12.31
+ships, and #2 needs a server.py change, so it needs a **frozen rebuild**, not a
+static copy.
 
-1. **His ruling on the empty cell** (above) — everything else on the catalogue is
-   done and measured.
-2. **His layout draft**, whenever he wants: drag corners, ✕ hide, 📋 Copy, paste to
-   me, I bake it. Layout mode should probably be hidden from the View menu before a
-   release — design tool, not a feature. His call.
-3. Set-bonuses-in-force + rule-of-five meter view (approved concept, not built).
-4. "Gear this build" shopping list card (pitched, not ordered).
-5. Origin plates unplaced; `extract_power_icons.py` i24 glob bug still open.
-6. Release when he says: rebuild the frozen exe first (statics + server drift).
-7. Standing queue unchanged: verdict-gate legality hole, Iron Man accolade in-game
-   check, gaming box silent since 07-29, exploration-log parse.
+## What landed this session (all pushed)
 
-## Session-local facts worth one more session
+- **Tabs are manila folders** in a filing cabinet: filed tabs sit lower in a darker
+  color-mix of the active accent, the pulled one stands proud, labels typed on.
+- **The tab's line owns its content**: `var(--accent)`, along the BOTTOM of the
+  strip, down the sides through the build tile, closing under the panel — nothing
+  drawn above the tabs, no gap. All four alignments carry it.
+- **Menus**: right-anchored so they cannot clip; an open menu draws a dimmed
+  per-theme edge that meets its panel; nothing at all until one is opened.
+- **No sideways scrolling**: incarnate selects were 137px boxes holding 275px of
+  option text. The road and the tab strip stay the only horizontal surfaces.
+- **Alignment**: all four listed in the View menu under a heading, floating picker
+  deleted; the middles' bright masthead line darkened to their own `--border`.
+- **Stats**: every row is name · one-line meaning · number (49 rows, none blank),
+  one type scale (was 6 sizes, now 4), and the offense board matches.
+- **Stats ⓘ** now opens where the user is (it was rendering onto a hidden tab),
+  breakdown slots say they are live, and **Ctrl+Z asks and names the edit** it will
+  take back, skipping no-op snapshots.
+- Tour caught up to 61 steps; layout mode is resize + hide only.
 
-- `saves/poison-defender.json` in the repo is a COPY of his Joinny Healer save, so
-  the dev copy on 5081 has a real 9-box build to measure. Gitignored. (⚠ its stored
-  sets are Poison/Sonic; the app window shows Empathy/Dual Pistols.)
-- Measuring loop: dev server on 5081 + the Claude Browser pane for JS geometry (it
-  lays out and runs JS **only while the pane is displayed**, and never screenshots),
-  then the frozen app + computer-use for eyes.
-- ⚠ **Measure the width the USER has.** I set a track minimum from a 1920-wide pane;
-  his window is ~1250 and the rule did the opposite of what he asked.
-- ⚠ **Test input with a real mouse, never `dispatchEvent`.** Escape never reaches
-  the page in this shell, even from the capture phase.
+## ▶ Open queue
+
+1. **The two forum items above** — Joel's next order.
+2. The catalogue's last empty cell (leave / one row of seven / epic spans it).
+3. His layout draft whenever he wants: drag corners, ✕ hide, 📋 Copy, paste to me.
+4. Set-bonuses-in-force + rule-of-five meter; "Gear this build" card; origin
+   plates; `extract_power_icons.py` i24 glob bug.
+5. Release when he says: rebuild the frozen exe first (statics + server drift).
+6. Standing: verdict-gate legality hole, Iron Man accolade check, gaming box silent
+   since 07-29, exploration-log parse.
+
+## Session-local facts worth keeping
+
+- `saves/poison-defender.json` in the repo is a COPY of his Joinny Healer save so
+  the dev copy on 5081 has a real 9-box build to measure. Gitignored.
+- Loop: dev server on 5081 + the Claude Browser pane for JS geometry (it lays out
+  and runs JS **only while the pane is displayed**, never screenshots, and **never
+  runs transitions or ResizeObservers**), then the frozen app + computer-use for
+  eyes.
+- ⚠ **Measure the width the USER has** (a rule set from a 1920 pane did the
+  opposite of what he asked at his 1250 window).
+- ⚠ **A var() inside a custom property resolves where it is DECLARED** — a `:root`
+  token built on `var(--accent)` cannot follow a body-level theme.
+- ⚠ **Test input with a real mouse**, never `dispatchEvent`; Escape never reaches
+  the page in this shell.
