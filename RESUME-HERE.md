@@ -3,6 +3,41 @@
 **HEAD = `c78f552b`, pushed, tracked tree clean. Nothing running.** Release still
 HELD at 0.12.30.
 
+## ✅ DONE: the buff/debuff panel reads enhancement — `be8641db`
+
+Joel's ruling, acted on. `_debuff_buff_summary` priced every row at base scale ×
+modifier table with no slot boosts; it now multiplies by the host power's own
+post-ED enhancement in the aspect of the effect's name.
+
+- **The rule needs no table:** effect names and enhancement-aspect names are the
+  same client vocabulary, and whether a power may hold an enhancement is already
+  answered by its own slots.
+- **Four exclusions, the game's own:** across 3,650 powersets the client ships no
+  resistance-debuff, no −regeneration and no −damage category, because those
+  enhancements do not exist. RechargeTime is excluded separately — that aspect is
+  recharge REDUCTION on the power itself. ⚠ **OPEN:** in game a −recharge debuff
+  rides Slow enhancements; that is NOT claimed here without pinning it, so a
+  −recharge debuff is currently UNDER-credited. Pin it game-first when convenient.
+- Measured (Poison/Sonic): Envenom −Def **68.8 → 106.3**, Neurotoxic Breath Slow
+  **768.8 → 1099.3**; −res / −regen / −damage / −recharge do not move at all.
+- **NO MODEL BUMP, NO RE-CERT — traced, not assumed.** `first_principles._deb()`
+  reads `role_output.enhanced_debuff_totals` whenever a role_output module is
+  supplied and every serving call site supplies one, so this summary is only its
+  fallback; role_output was untouched and `encounter_value` is identical to nine
+  decimals (contribution 1672.0 → 1672.0). ⚠ The other consumer,
+  `payoff_metrics["support"]`, is reachable ONLY from `joint_refine(scorer=
+  "payoff")` — **which has no callers anywhere**; wire it up again and that path
+  starts moving with slotting.
+- Copy follows the numbers: both headers now say "with your slotting", and the
+  stat breakdown no longer claims "not from IOs".
+- Battery `tools/test_buff_debuff_enh.py` (9, negative-controlled both ways).
+
+⚠⚠ **STATICS WERE DELIBERATELY NOT PUSHED TO THE INSTALLED COPY.** Its server is
+still `297ddcf`, so pushing the new wording there would put "with your slotting"
+above numbers that are still unenhanced — a lie on his machine. The installed
+copy stays wholly on the old text until he chooses to install. **`dist` has
+both halves and is the copy to open** (`be8641d`, smoke PASS, gold 24/24).
+
 ## 🔨 THE FROZEN REBUILD IS DONE — but only `dist` has it
 
 `dist\HeroCompanion` is rebuilt and stamped **`c78f552`** (was `297ddcf`), so the
