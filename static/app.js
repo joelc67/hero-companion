@@ -1071,7 +1071,22 @@ async function openLevelStepper() {
   renderLevelStep();
 }
 function renderLevelStep() {
-  const steps = LEVELING_STEPS, i = LEVEL_STEP_I, s = steps[i];
+  const steps = LEVELING_STEPS, i = LEVEL_STEP_I, s = steps && steps[i];
+  // ⚠ THE STEPS ARE NOT ALWAYS LOADED (Joel, 2026-08-05: typing 50 into the
+  // Stats banner's level box threw "Something broke on this page"). The walk's
+  // steps load with the Leveling Guide, so from any other tab LEVELING_STEPS is
+  // empty and `steps[i]` is undefined — `s.picks` then dies. setCurrentLevel
+  // already guarded its own index write and called this anyway; the guard
+  // belongs HERE, where every caller routes through, not at each call site.
+  // Nothing is lost by returning: the step view repaints when it is opened.
+  // ⚠ AND ITS HOST HAS TO EXIST. This paints into #wiz-plan-out, which lives in
+  // the respec wizard — closed on every other tab, so the write was
+  // `null.innerHTML`. That was the REAL crash behind Joel's report: my first
+  // guard only covered unloaded steps, his steps were loaded, and setCurrentLevel
+  // still died here BEFORE autoSaveTick — so the 50 he typed was thrown away
+  // twice. Check the element, not just the data.
+  const out = $("wiz-plan-out");
+  if (!s || !out) return;
   const hasPicks = (s.picks || []).length > 0;
   const deltas = _LVL_STATS.map(([k, lab, u]) => {
     const dv = (s.delta || {})[k]; if (!dv || Math.abs(dv) < 1) return "";
@@ -1127,7 +1142,7 @@ function renderLevelStep() {
     ? `<div class="lvl-eat">🌌 <strong>Kheldian</strong> — you level from your two big sets (Nova & Dwarf <strong>forms</strong> included) with inherent flight, and take <strong>no epic pool</strong>. The walk reflects that.</div>`
     : "";
 
-  $("wiz-plan-out").innerHTML =
+  out.innerHTML =
     `<div class="lvl-step">`
     + `<div class="lvl-reassure">🧭 A companion, not a script — take each suggestion or make it yours. Nothing's permanent (a <strong>/respec</strong> at 50 rewrites it all), and I'll keep evaluating as you go.</div>`
     + levelSyncBanner(s.level)

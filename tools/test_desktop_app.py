@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 120          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 121          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement;
 #                        82 -> 88, 2026-08-05: portable-vs-installed detection
@@ -722,6 +722,18 @@ def main():
           "warn-fix" in app_js and "setCurrentLevel(this.value)" in app_js
           and app_js.count("window.setCurrentLevel") == 1,
           "same setter as the Leveling Guide input — one writer, and it autosaves")
+    # ⚠ setCurrentLevel runs from the STATS banner now, where the walk's steps are
+    # not loaded. renderLevelStep did steps[i].picks and threw, which killed the
+    # function BEFORE autoSaveTick — so the level the user typed was lost as well
+    # as erroring. The guard belongs in renderLevelStep, where every caller routes.
+    _rls = app_js[app_js.find("function renderLevelStep()"):]
+    _rls = _rls[:_rls.find("\n}\n")]
+    # ⚠ Scoped to renderLevelStep: the wizard's own render writes #wiz-plan-out
+    # on the line after it CREATES it, which is safe and must not fail this.
+    check("renderLevelStep survives being called off the tab that hosts it",
+          "steps && steps[i]" in _rls and "if (!s || !out) return;" in _rls
+          and '$("wiz-plan-out").innerHTML' not in _rls and "out.innerHTML" in _rls,
+          "BOTH guards: unloaded steps AND a missing #wiz-plan-out (the real crash)")
 
     check("the real alignment toggle outranks an active preview",
           'localStorage.setItem("cohAlignment", al)' in _apply
