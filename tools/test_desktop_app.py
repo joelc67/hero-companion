@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 94          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 97          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement;
 #                        82 -> 88, 2026-08-05: portable-vs-installed detection
@@ -571,6 +571,28 @@ def main():
           and "Leveling Journey" not in read("static", "tour.js")
           and "<h2>🗺️ Leveling Guide</h2>" in index,
           "tab label, panel heading, greeting and tour all read Leveling Guide")
+
+    # ⚠ The side preview sits DIRECTLY under the Leveling Guide title (Joel,
+    # 2026-08-05) — it used to render below the level-detail panel, most of a
+    # page down, where nobody found Flashback at all. Pinned by ORDER, since
+    # "it exists somewhere in the body" is exactly what was already true.
+    _jny = app_js[app_js.find('$("journey-body").innerHTML ='):]
+    _jny = _jny[:_jny.find("_wireJourneyDrag();")]
+    check("the side preview renders above the road, not under it",
+          -1 < _jny.find("jny-alignbar") < _jny.find("jny-roadrow")
+          and _jny.find("jny-alignbar") < _jny.find('jny-panel" id="jny-panel"'),
+          "order inside the one template that builds the guide")
+    # ⚠ MOVED, NOT RESTRUCTURED (Joel: "I did not ask you to separate it, I asked
+    # you to move it"). One row, one map over all five buttons — a filtered pair
+    # of runs is the thing that was rejected.
+    check("the menu moved WHOLE — one row, all five buttons",
+          "jny-align-or" not in app_js and 'a.key !== "praetorian"' not in app_js
+          and app_js.count("_ALIGNMENTS.map(a =>") == 1,
+          "negative control: the split version filtered _ALIGNMENTS into two runs")
+    check("Flashback carries its context without needing a click",
+          "Needs the Ouroboros unlock and level 15+" in app_js
+          and "is not a side" in app_js,
+          "the tip plus a standing line; the full requirement is in _alignNote")
 
     check("no dead reference to the retired menu item survives",
           "entry-ingame" not in read("static", "tour.js")

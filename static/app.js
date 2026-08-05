@@ -1230,7 +1230,11 @@ const _ALIGNMENTS = [
   { key: "vigilante", label: "🛡️ Vigilante", css: "al-vig", tip: "Hero-side, can visit villain content" },
   { key: "rogue", label: "😈 Rogue", css: "al-rogue", tip: "Villain-side, can visit hero content" },
   { key: "villain", label: "🦹 Villain", css: "al-villain", tip: "The Rogue Isles, 1–50" },
-  { key: "praetorian", label: "🌀 Flashback", css: "al-prae", tip: "Ouroboros: replay legacy Praetoria content" },
+  // Not a fifth alignment — a way to replay old content, and one you have to
+  // unlock. The tip says so, because the requirement should not need a click.
+  { key: "praetorian", label: "🌀 Flashback", css: "al-prae",
+    tip: "Ouroboros: replay legacy Praetoria and other old arcs at their original level. "
+       + "Needs the Ouroboros unlock and level 15+ — click for the details." },
 ];
 window.setJourneyAlign = function (al) {
   _JNY_ALIGN = al;
@@ -1924,18 +1928,11 @@ function renderJourney() {
   // the full band height instead of being cropped to a strip.
   $("journey-body").innerHTML =
     `<div class="jny">`
-    + (journeyIntroDone() ? "" : `<details class="jny-fit jny-introwrap"><summary>👋 <b>New to the Leveling Guide?</b> <span class="muted small">what this road is and how to read it</span><span class="jny-expand-cue">click to expand ▾</span></summary>${_journeyIntroHtml()}</details>`)
-    + lvBanner
-    + `<div class="jny-head"><span class="muted small">Scroll or drag the road — click a card for what that level buys you.</span></div>`
-    + `<div class="jny-roadrow">`
-    +   `<div class="jny-roadart" id="jny-roadart"></div>`
-    +   `<div class="jny-viewport"><div class="jny-strip"><div class="jny-lane">${stops}</div></div></div>`
-    + `</div>`
-    + `<div class="jny-panel" id="jny-panel"></div>`
-    // The alignment switcher previews another side's leveling path. A leading
-    // "Preview another side:" label makes the trailing reassurance read as one
-    // thought — Joel: the bare "preview only — your build is unchanged" floating
-    // after the buttons made no sense. Nothing about the character is touched.
+    // ⚠ THIS BLOCK SITS DIRECTLY UNDER THE TITLE (Joel, 2026-08-05). It used to
+    // render below the level-detail panel, most of a page down: "not many people
+    // will even see we show content for Flashback participation, nor what it
+    // takes to participate in it." One row, all five buttons, exactly as it was —
+    // it MOVED, it was not restructured.
     + `<div class="jny-alignbar"><span class="muted small">Preview another side:</span>`
     + ` <span class="jny-align">`
     + _ALIGNMENTS.map(a => `<button class="${a.css}${align === a.key ? " on" : ""}"`
@@ -1947,6 +1944,24 @@ function renderJourney() {
     // means nothing to a new player (Joel), and Vigilante/Rogue need their
     // cross-over spelled out.
     + `<div class="jny-align-note muted small">${_alignNote(align)}</div>`
+    // A little more context, standing (Joel's second half): the four sides are
+    // self-explanatory from their names, Flashback is not — it is the one button
+    // here that is not an alignment and the one that has to be unlocked. Shown
+    // only when it is NOT the selection, because selecting it renders the full
+    // explanation in the line above and two copies would be noise.
+    + (align === "praetorian" ? ""
+        : `<div class="jny-align-note muted small">🌀 <b>Flashback</b> is not a side —`
+          + ` it is Ouroboros, where you replay older story arcs (Praetoria among them)`
+          + ` at their original level. It has to be unlocked, and you need to be level 15`
+          + ` to travel to a flashback contact. Click it for what that takes.</div>`)
+    + (journeyIntroDone() ? "" : `<details class="jny-fit jny-introwrap"><summary>👋 <b>New to the Leveling Guide?</b> <span class="muted small">what this road is and how to read it</span><span class="jny-expand-cue">click to expand ▾</span></summary>${_journeyIntroHtml()}</details>`)
+    + lvBanner
+    + `<div class="jny-head"><span class="muted small">Scroll or drag the road — click a card for what that level buys you.</span></div>`
+    + `<div class="jny-roadrow">`
+    +   `<div class="jny-roadart" id="jny-roadart"></div>`
+    +   `<div class="jny-viewport"><div class="jny-strip"><div class="jny-lane">${stops}</div></div></div>`
+    + `</div>`
+    + `<div class="jny-panel" id="jny-panel"></div>`
     // Controls get their OWN row (Joel's report): the auto-open label used to
     // sit in the flex header with margin-left:auto + nowrap, so a wrapped row
     // pushed it off the right edge — only the checkbox and a stray letter showed.
