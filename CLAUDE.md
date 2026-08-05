@@ -582,7 +582,25 @@ in RESUME-HERE.md.
   `#masthead` at 30 under sticky bars at 40/39 clipped its own dropdown.
 - **⚠ `collapseLongExplanations` eats any muted block over 26 words.** It folded a
   rules line behind "more" the moment it was written. Rules lines carry
-  `.keep-whole`.
+  `.keep-whole`. ⚠⚠ **It fires on RE-renders too, so a line can read fine when
+  written and lose its second half later** — three separate blocks lost their
+  tails on 2026-08-05 alone (the import panel's closing note, the Leveling
+  Guide's Flashback line when the View menu repainted the road, and the exemplar
+  dialog's state line on every recompute). **Any muted block you author over ~26
+  words gets `.keep-whole` at birth, not after someone spots the "more".**
+- **🧹 VIEW MENU, TRIMMED (Joel's marked-up screenshot, 2026-08-05).** **End Game
+  REMOVED** — it jumped to panels living on Powers & Slots, which the menu
+  already lists (`openEndgame()` stays for the ladder gates; battery pins that
+  the route survived the item). **Layout mode REMOVED from the menu** — it is
+  MY design tool, not a player feature, and it sat under Alignment as if it
+  were one; unchanged and still on **Ctrl+Shift+L** (its on/off label went with
+  the item — `audit_tabs` caught the dangling `$("layout-mode-item")`).
+  **Exemplared view now opens a DIALOG** (`#exemplar-modal`) that explains what
+  exemplaring is in plain English and sets the level, replacing a focus-and-pulse
+  that only ever answered "where is the control". THREE dials now (build tile,
+  Stats row, dialog), one state, one setter — add any new one to BOTH the list in
+  `setExemplarView` and the one in `initExemplarControl`. `.exemp-pulse` deleted
+  with the behaviour it served.
 - **Build Assistant placement RULED (Joel, 2026-08-03): it stays on Powers &
   Slots.** Do not re-litigate spec §10.2.
 - **🎚 EXEMPLAR ARC (Joel's rulings, built 2026-08-03 — Layers 1-3 complete).**
