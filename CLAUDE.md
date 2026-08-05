@@ -506,6 +506,23 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   start-with-Windows is opt-in, asked once, and flips from the same right-click
   menu as Quit (all already true in `run_lite.py`; the pages just never said
   so).
+- **📉 THE IMPROVEMENT REPORT NOW ANSWERS PER POWER (2026-08-06, `10a7ed0b`) —
+  and the exclusion is the durable half.** Attacks diff by **Cycled DPS** (the
+  same number the ⓘ card prints, so the two can never disagree) plus a per-hit
+  row; **pets are credited to their summoning power** (`offense.pets[].from_power`),
+  which is Joel's henchman case. ⚠ **Buffs/debuffs are NOT diffed per power even
+  though `_debuff_buff_summary` records the provenance** — its magnitudes come
+  from `_resolve_mag` (base scale × modifier table, **no slot boosts**), so no
+  re-solve can ever move them. ⚠ **OPEN, and it bites the invisible-role
+  doctrine:** the whole buff/debuff panel is unenhanced, so a debuffer slotting
+  accurate defence-debuff or −regen sets sees zero movement anywhere in the app.
+  Engine work, unstarted, needs Joel's ruling.
+- **⚠ A JS-ONLY function CAN have a real battery: lift it out and run it under
+  node.** `tools/test_improve_diff.js` brace-matches `renderImproveDiff` out of
+  app.js, evals it with `escHtml`/`$` stubs, and asserts the HTML. It takes an
+  alternative app.js as `argv[2]` **so the battery itself is proven against
+  sabotaged copies** rather than trusted for going green — six sabotages, each
+  caught by the right check. Beats another regex pin in test_desktop_app.
 - **⚠ THE SHARE PROMPT IS NOT A MODAL, and that took three tries.** Hooked to
   `hideEntry()` it ambushed the first meaningful action on every entry path;
   moved to once-per-launch it was still a wall with a backdrop between the user
@@ -584,6 +601,28 @@ in RESUME-HERE.md.
   measurement and obvious in a screenshot. The Claude pane fires NO layout
   callbacks, has a 0×0 viewport where every hit-test falsely passes, and times
   out at 30s: fine for logic, useless for appearance.
+- **🎨 THE WORDMARK IS TEXT, NOT FOUR IMAGES (Joel's art sheet, 2026-08-06 —
+  `C:\Users\joelc\Downloads\Art\Hero Companion Wordmarks.html`).** The sheet is
+  HTML/CSS in the **Anton** face, so the app sets it as text: crisp at every
+  zoom the shell picks, two-tone driven by the name `applyAlignment` already
+  swaps, no fifth asset to keep in sync. Anton is **vendored** with its SIL OFL
+  (`static/vendor/anton-latin.woff2` + `anton-OFL.txt`, CREDITS.md) — ⚠ never
+  linked to Google Fonts; the app has no network and an href renders nothing.
+  ⚠ **Each alignment carries its own `body.align-<key>` class**: theme-hero /
+  theme-villain / align-mid are only THREE states and Vigilante vs Rogue are
+  different marks. ⚠ **Sized to the space that was already there** (his order:
+  "obviously trim the size down to fit into the existing space") — the sheet's
+  30px header row measures 171px against the old title's 136px; shipped at 20px
+  = 132px with the masthead unchanged at 47.5px, so the measured sticky-chrome
+  vars never move. Anton is tall and condensed, so it still reads bigger.
+- **⚠⚠ A STATIC SUBDIRECTORY NEVER REACHED THE FROZEN COPIES (found 2026-08-06).**
+  `push_statics.py` copied `os.listdir(static)` — TOP-LEVEL FILES ONLY — so
+  `static/vendor/` and `static/icons/` were never synced. A vendored font landed
+  in the repo, the CSS using it reached both frozen copies, the font reached
+  neither, and the tool printed "2 of 2 known copies updated" over the miss:
+  the exact assumed-not-visible failure it was written to end. It walks the
+  whole tree now and prints "N of 3100 files written". ⚠ Generalize: a coverage
+  denominator counted over the wrong SET is not a denominator.
 - **⚠⚠ THERE ARE TWO FROZEN COPIES, AND A HAND COPY REACHES ONLY ONE.**
   `%LOCALAPPDATA%\Programs\HeroCompanion` (installer) **and**
   `<repo>\dist\HeroCompanion` (PyInstaller output). On 2026-08-05 I copied

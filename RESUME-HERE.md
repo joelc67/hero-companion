@@ -1,4 +1,59 @@
-# Resume point — 2026-08-05 late (new session starts here)
+# Resume point — 2026-08-06 (new session starts here)
+
+**HEAD = `3a01bcf3`, pushed. Nothing running.** Release still HELD at 0.12.30.
+🔨 **THE FROZEN REBUILD IS STILL OWED** — the two `server.py` changes from
+2026-08-05 (portable-update refusal, `_SPECIAL_ORIGIN_SETS` in `PIECE_BY_UID`)
+live in the PYZ. Everything from THIS session is static and is already pushed
+into both frozen copies.
+
+## ✅ DONE: per-power deltas in the improvement report — `10a7ed0b`
+
+The last ❌ in the big-ask table below is closed. Every attack the engine priced
+is diffed by its **Cycled DPS** (the same number the ⓘ card shows) plus a
+per-hit row, and **pets are credited to the power that summons them** ("Jack
+Frost → Ice Elemental, 72.4 → 78.3 DPS"). Own `<details>` table under the
+totals; it stands alone when a per-power move is too small to shift any total.
+
+- ⚠ **Buffs/debuffs are deliberately NOT diffed per power.** The rows carry
+  provenance (`_debuff_buff_summary`'s dsrc/bsrc → `row.sources`) but the
+  magnitudes come from `_resolve_mag` — base scale × table, **no slot boosts** —
+  so a re-solve can never move them and every row would read 0.
+- ⚠ **That is also a real gap worth ruling on:** the whole buff/debuff panel is
+  unenhanced, so a debuffer who slots accurate defence-debuff or −regen sets
+  sees nothing move anywhere. It hits the invisible-role doctrine hardest.
+  Engine work, not display work — not started.
+- Battery `tools/test_improve_diff.js` (**node**, 9 checks) lifts the REAL
+  function out of app.js and drives it; takes an alternative app.js as `argv[2]`
+  and was **proven against six sabotaged copies**, each caught by the right
+  check. Verified end-to-end in the running app on a real Poison/Sonic solve.
+
+## ✅ DONE: the four alignment wordmarks — `3a01bcf3`
+
+Joel's `C:\Users\joelc\Downloads\Art\Hero Companion Wordmarks.html` is **not
+four images** — it is text in **Anton** with a treatment per alignment, and it
+ships its own header-size row. The app wears it as TEXT.
+
+- Anton vendored (`static/vendor/anton-latin.woff2` + `anton-OFL.txt`, credited).
+  ⚠ Vendored, never linked: the app has no network, a Google Fonts href renders
+  nothing.
+- **Each alignment needs its own `body.align-<key>` class** — theme-hero /
+  theme-villain / align-mid make only three states and the two middles are
+  different marks.
+- **Sized to the space that was there** (his instruction). Sheet = 30px = 171px
+  wide; old title = 136px; shipped at **20px = 132px**, masthead unchanged at
+  47.5px. Widest name within 3px of before.
+- Verified with EYES on the installed window, all four cycled via the View menu.
+- ⚠⚠ **`push_statics.py` was copying static/'s TOP LEVEL ONLY** — `vendor/` and
+  `icons/` never synced. The CSS reached both frozen copies, the font reached
+  neither, and it printed "2 of 2 known copies updated" over the miss. Fixed to
+  walk the tree ("N of 3100 files written"). Anything that ever lands in a
+  static SUBDIRECTORY was previously invisible to both frozen copies.
+
+Verification at close: `demo_single_build_fixes` 24/24 · `test_desktop_app`
+121/121 · `audit_tour` all · `audit_tabs` 10/10 · `audit_links` 177 refs with 5
+planted defects caught · `test_improve_diff` 9/9 + 6 sabotages.
+
+# Resume point — 2026-08-05 late
 
 ## ▶▶ START HERE: the ROLE / OUTPUT arc, and the one thing left in it
 
@@ -20,7 +75,7 @@ choices actually came out at the end", in real numbers, per power).**
 | Before/after on every solve | ✅ EXISTS (`solveBefore` → `renderImproveDiff`) |
 | Diff covers ANY measured axis | ✅ DONE today (`653d94f0`) — typed def/res, scalars, v30 families, ST/AoE DPS, **pet DPS**, every buff/debuff row |
 | "Nothing moved" explains itself | ✅ DONE today (names locked-power count) |
-| **Per-power deltas** ("Empty Clips +18 DPS") | ❌ **THE REAL WORK LEFT.** Raw material exists: `offense.attacks[]` carries per-attack `dpa`, and `_debuff_buff_summary` records per-power provenance (`dsrc`/`bsrc`). Nothing diffs them power by power yet. |
+| **Per-power deltas** ("Empty Clips +18 DPS") | ✅ DONE 2026-08-06 (`10a7ed0b`) — attacks by Cycled DPS + per hit, pets by their summoning power. Buffs/debuffs excluded on purpose (unenhanced magnitudes); see the 08-06 block at the top. |
 | Preview a split WITHOUT committing | ❌ Not built. Today a solve commits; Ctrl+Z undoes and names the edit. **Design decision, not coding** — Joel's steer was to see whether (1)+(2) make it unnecessary. |
 
 ⚠ Cost of a comparison: one solve, ~1-2s, doubled by serve-time physics
