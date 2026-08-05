@@ -5845,7 +5845,6 @@ window.closePowerInfo = function () {
   SELECTED_ENH = null;
   const panel = $("power-info");
   if (panel) panel.classList.add("hidden");
-  document.querySelector(".powers-layout").classList.remove("has-info");
 };
 // The panel closes on Esc and outside-click, not only via its ✕ (the steady-
 // mouse tax, UX note 5). Undo (Ctrl+Z) stays edits-only and ignores the panel.
@@ -6041,7 +6040,6 @@ async function renderEnhInfo() {
       + enhSetSectionHtml(st) : "");
   panel.classList.remove("hidden");
   // the powers rail's layout flag only applies when the card IS in that rail
-  if (!onStats) document.querySelector(".powers-layout").classList.add("has-info");
 }
 
 // One dispatcher for whichever rail view is open — recompute() calls this so
@@ -6138,7 +6136,6 @@ async function renderPowerInfo() {
        global recharge — they update with every change.</p>` : "")
     + cardProvenanceFooterHtml();
   panel.classList.remove("hidden");
-  document.querySelector(".powers-layout").classList.add("has-info");
 }
 
 // A power's slots show as icons (set name only in the hover tooltip), which makes a
@@ -10649,7 +10646,7 @@ function renderMarkdown(md) {
 // bake them into the stylesheet. Moving panels is MY job, in CSS, from his numbers.
 const LAY_AREAS = [
   ["powers-main", ".powers-main", "left column (wall + catalogue)"],
-  ["powers-side", ".powers-side", "right column (assistant + plan)"],
+  ["powers-side", ".powers-side", "the ⓘ enhancement card column"],
   ["builder", "#builder", "the powers wall + catalogue panel"],
   ["cat-cols", ".cat-cols", "powerset columns"],
   ["cmd-card", "#cmd-card", "⌨ in-game commands"],

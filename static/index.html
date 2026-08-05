@@ -365,12 +365,41 @@
 
     </section>
       </div>
-      <!-- SIDE COLUMN. The Assistant lives beside the powers wall, not under
-           it: stacked, its 630px was pure addition to the tab's height; here
-           the tab costs max(wall, side). It stays above the fold either way,
-           which is the placement a field report earned on 2026-08-01. -->
+      <!-- SIDE COLUMN — the ⓘ enhancement card and NOTHING ELSE (Joel,
+           2026-08-06). It exists only while that card is open; the rest of the
+           time the builder has the whole width. Everything that used to live
+           here is now full width below. -->
       <div class="powers-side">
         <aside id="power-info" class="panel pinfo hidden"></aside>
+      </div>
+    </div>
+    <!-- ── FULL WIDTH, UNDER THE BUILDER (Joel, 2026-08-06: "the output of a
+         build assistant is terrible on the far right… put it and the whole epic
+         and incarnate right below the All 24 powers picked section. Epic and
+         incarnate first, then Build Assistant. Let it take up the entire
+         horizontal width so no side bar appears at all, unless IO details are
+         asked to be displayed."). The side column is the ⓘ enhancement card and
+         nothing else now, and the layout only opens a second column while that
+         card is up — see .powers-layout:has() in style.css. -->
+      <section class="panel" id="endgame-plan-panel">
+<details open class="endgame">
+        <summary>🎯 Epic (lvl 35) &amp; Ancillary Pool</summary>
+        <div class="endgame-body">
+          <div class="endgame-block">
+            <div class="endgame-label">Epic / Ancillary Pool <span class="muted small">— survival / utility; unlocks at level 35</span></div>
+            <select id="sel-epic" disabled></select>
+            <div id="patron-note" class="patron-note hidden">⚔️ <strong>Patron pool</strong> — unlike Ancillary pools, this must be unlocked in-game by completing a <strong>Patron arc</strong> (the patron missions, available from level&nbsp;35). <a href="https://homecoming.wiki/wiki/Patron_Power_Pools" target="_blank" rel="noopener">How to unlock ↗</a></div>
+          </div>
+          <div class="endgame-block">
+            <div class="endgame-label">Incarnates <span class="muted small">— unlock at level 50; <strong>Solve</strong> recommends a set for your role + content</span></div>
+            <div id="incarnate-selectors" class="incarnates"></div>
+          </div>
+          <p class="muted small">Incarnate buffs are situational/timed, so they're left out of the passive
+            totals by default — tick <strong>"Include incarnates (peak)"</strong> on the <strong>Stats</strong> tab to fold
+            them in (Destiny, Hybrid &amp; Judgement) and match Mids' fully-buffed display.</p>
+        </div>
+      </details>
+      </section>
 <section id="assistant" class="panel" data-tile>
       <!-- The Need help? button sits OUTSIDE this h2 on purpose: app.js rewrites
            assistant-title's innerHTML when the Build Assistant renders, which
@@ -511,33 +540,6 @@
            visibility must never depend on the AI seam. -->
       <div id="ai-response" class="ai-response muted"></div>
     </section>
-      <!-- THE END-GAME PLAN, back beside the build controls (Joel's
-           2026-08-04 screenshot of the pre-tab layout: this fold lived in
-           the rail near Build, and that is the placement he wants back). -->
-      <section class="panel" id="endgame-plan-panel">
-<details open class="endgame">
-        <summary>🎯 Epic (lvl 35) &amp; Ancillary Pool</summary>
-        <div class="endgame-body">
-          <div class="endgame-block">
-            <div class="endgame-label">Epic / Ancillary Pool <span class="muted small">— survival / utility; unlocks at level 35</span></div>
-            <select id="sel-epic" disabled></select>
-            <div id="patron-note" class="patron-note hidden">⚔️ <strong>Patron pool</strong> — unlike Ancillary pools, this must be unlocked in-game by completing a <strong>Patron arc</strong> (the patron missions, available from level&nbsp;35). <a href="https://homecoming.wiki/wiki/Patron_Power_Pools" target="_blank" rel="noopener">How to unlock ↗</a></div>
-          </div>
-          <div class="endgame-block">
-            <div class="endgame-label">Incarnates <span class="muted small">— unlock at level 50; <strong>Solve</strong> recommends a set for your role + content</span></div>
-            <div id="incarnate-selectors" class="incarnates"></div>
-          </div>
-          <p class="muted small">Incarnate buffs are situational/timed, so they're left out of the passive
-            totals by default — tick <strong>"Include incarnates (peak)"</strong> on the <strong>Stats</strong> tab to fold
-            them in (Destiny, Hybrid &amp; Judgement) and match Mids' fully-buffed display.</p>
-        </div>
-      </details>
-      </section>
-      <!-- The inherent card left Powers & Slots (Joel, 2026-08-05): it is a
-           STAT, so it reads as one — the Archetype bonus group at the top of
-           Stats, above Defence. -->
-      </div>
-    </div>
     <!-- ── ACCOLADES: ITS OWN FULL-WIDTH ROW (Joel, 2026-08-04 marked-up
          screenshot: "Accolades needs to take up the entire horizontal line it
          is on"). The other three cards moved UP into the voids he circled —

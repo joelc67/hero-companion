@@ -22,13 +22,15 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 121          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 126          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement;
 #                        82 -> 88, 2026-08-05: portable-vs-installed detection
 #                        and the Play Log's on-surface off switch;
 #                        88 -> 94, same day: one import door + the leveling
-#                        surface calling itself one thing)
+#                        surface calling itself one thing;
+#                        121 -> 126, 2026-08-06: no side bar unless the ⓘ
+#                        card is open, and the two panels that left it)
 
 
 def check(name, ok, detail=""):
@@ -710,12 +712,40 @@ def main():
     _narrow = css_all[css_all.find("@media (max-width: 1400px)"):]
     check("both two-column regions collapse on a small display",
           css_all.count("@media (max-width: 1400px)") == 2
-          and ".powers-layout { grid-template-columns: minmax(0, 1fr); }" in css_all
+          and ".powers-layout:has(#power-info:not(.hidden)) { grid-template-columns: minmax(0, 1fr); }" in _narrow
           and ".stats-provlayout { grid-template-columns: minmax(0, 1fr); }" in css_all,
           "powers-layout AND stats-provlayout; one without the other just moves the gap")
-    check("...and the grout rule retires with the second column",
-          ".powers-main > :last-child, .powers-side > :last-child { flex: 0 0 auto; }" in _narrow,
-          "stretching a last tile only makes sense between two competing columns")
+    # ⚠ :has() takes its ARGUMENT's specificity, so the narrow override must
+    # repeat the whole selector — a bare `.powers-layout` there loses to the id
+    # inside it, and a small display would still get a column when ⓘ opened.
+    check("...and the narrow override repeats the :has() selector",
+          "#power-info:not(.hidden)" in _narrow[:_narrow.find("}\n.powers-main")],
+          "specificity: an id inside :has() outranks a bare class")
+
+    # ── 13b. NO SIDE BAR UNLESS AN ENHANCEMENT IS ASKED FOR (Joel, 2026-08-06:
+    # "the output of a build assistant is terrible on the far right ... let it
+    # take up the entire horizontal width so no side bar appears at all, unless
+    # IO details are asked to be displayed").
+    _side = index[index.find('<div class="powers-side">'):]
+    _side = _side[:_side.find("</div>")]
+    check("the side column holds ONLY the ⓘ enhancement card",
+          'id="power-info"' in _side
+          and 'id="assistant"' not in _side and 'id="endgame-plan-panel"' not in _side,
+          "the Assistant's output is tabular; 340px turned its tables into fragments")
+    check("epic/incarnates come BEFORE the Assistant, both full width",
+          0 < index.find('id="endgame-plan-panel"') < index.find('id="assistant"')
+          and index.find('id="assistant"') < index.find('class="pw-cardband"'),
+          "his order: epic and incarnate first, then Build Assistant, under the builder")
+    check("one column by default, two only while the card is up",
+          ".powers-layout {\n  display: grid; grid-template-columns: minmax(0, 1fr);" in css_all
+          and ".powers-layout:has(#power-info:not(.hidden)) {" in css_all,
+          "the CARD opens the column, in CSS — no class for JS to forget to clear")
+    check("the dead has-info class is gone with the layout it never styled",
+          "has-info" not in app_js and "powers-layout.has-info" not in css_all,
+          "negative control: three JS toggles drove a class no app rule read")
+    check("nothing stretches a column's last tile any more",
+          ".powers-main > :last-child" not in css_all,
+          "the grout rule would have stretched the ⓘ card to the builder's height")
     # The warning must carry its own remedy — his level-50 character was recorded
     # as level 1 and the only level input lived on another tab.
     check("the endgame warning carries the level control that fixes it",

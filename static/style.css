@@ -230,12 +230,26 @@ body:not(.tab-powers) .build-tile { display: none !important; }
    type, THIS scrolls — one panel, not the page, not the whole app. */
 /* ⚠ NO per-panel scroll. Removed 2026-08-03 — see fitZoom. */
 
-/* Powers & Slots: the wall, with a side column holding the Assistant and the
-   power detail card. Two columns ALWAYS — the tab's height is then
-   max(wall, side) instead of their sum, which is what got this tab to fit. */
+/* Powers & Slots: the builder gets the WHOLE width, and there is no side column
+   at all unless you asked to see an enhancement (Joel, 2026-08-06: "the output
+   of a build assistant is terrible on the far right… let it take up the entire
+   horizontal width so no side bar appears at all, unless IO details are asked
+   to be displayed"). He was right about the cause: the Assistant's own output —
+   the improvement table, the achieved-vs-target list — is TABULAR, and a 340px
+   column turns a four-column table into a stack of wrapped fragments.
+   ⚠ The second column is opened by the CARD ITSELF, in CSS, not by a class some
+   JS has to remember to toggle: #power-info is shown/hidden in several places
+   (open, close, tab change, re-render) and each of them would have been a place
+   to forget. :has() reads the truth instead of tracking it.
+   ⚠ Supersedes the "two columns ALWAYS" rule below it (2026-08-03), which
+   existed to keep the tab's height at max(wall, side); with the side column
+   empty there is nothing left to trade height against. */
 .powers-layout {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  display: grid; grid-template-columns: minmax(0, 1fr);
   gap: var(--s3); align-items: stretch;
+}
+.powers-layout:has(#power-info:not(.hidden)) {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
 }
 /* (the first-panel stretch rule is GONE, 2026-08-04 night: packPowersTab
    equalizes the columns by MOVING tiles — stretching the builder just painted
@@ -252,9 +266,11 @@ body:not(.tab-powers) .build-tile { display: none !important; }
    bar at the edge; the banned thing is a scrollbar INSIDE a panel). At 1400+
    the shipped two-column layout is byte-for-byte what it was. */
 @media (max-width: 1400px) {
-  .powers-layout { grid-template-columns: minmax(0, 1fr); }
-  /* the grout rule only makes sense between two competing columns */
-  .powers-main > :last-child, .powers-side > :last-child { flex: 0 0 auto; }
+  /* ⚠ must repeat the :has() selector — :has() takes its argument's specificity,
+     so a bare `.powers-layout` here would LOSE to the id inside it and a narrow
+     window would still get a second column the moment the ⓘ card opened. */
+  .powers-layout,
+  .powers-layout:has(#power-info:not(.hidden)) { grid-template-columns: minmax(0, 1fr); }
 }
 .powers-main, .powers-side { min-width: 0; display: flex; flex-direction: column; gap: var(--s3); }
 #power-info.hidden { display: none; }
@@ -285,7 +301,8 @@ body:not(.tab-powers) .build-tile { display: none !important; }
 .stats-ctlrow .incarnate-toggle select { padding: 1px 4px; font-size: 12px; }
 
 @media (max-width: 980px) {
-  .powers-layout, .powers-layout.has-info { grid-template-columns: 1fr; }
+  .powers-layout,
+  .powers-layout:has(#power-info:not(.hidden)) { grid-template-columns: 1fr; }
   .build-tile { gap: var(--s3); }
 }
 
@@ -3184,14 +3201,12 @@ summary:hover { color: var(--ink); }
 /* the base slab sits below the two columns, full width */
 #tab-powers > .conv-guide { margin-top: var(--s3); }
 #tab-powers > .order-out { margin-top: var(--s3); }
-/* The wall's grout: each column's LAST tile stretches to the shared bottom
-   edge, so whatever residual the discrete tiles leave is panel surface, not
-   raw page background. Discrete tiles can't split; this absorbs the rest.
-   ⚠ EXCEPT the inherent card (Joel's third markup, 2026-08-04: "Your inherit
-   banner… could be half its height with no text below it"). Stretching it painted
-   550px of empty panel under four lines of text, which reads as a void whether or
-   not it is panel-coloured. It ends at its content; the column just ends. */
-.powers-main > :last-child, .powers-side > :last-child { flex: 1 0 auto; }
+/* ⛔ THE GROUT RULE IS RETIRED (2026-08-06). It stretched each column's last
+   tile to the shared bottom edge so the residual between two competing columns
+   was panel surface rather than raw page. There are no competing columns now:
+   the side column holds only the ⓘ card, and stretching THAT to the builder's
+   full height is the 550px-of-empty-panel shape the inherent card was already
+   exempted from. Nothing to grout, so nothing stretches. */
 
 /* ── In-game commands card + inherent tile (2026-08-04 night) ────────────────
    A command row is a full-width button: code line, then what it does. */
