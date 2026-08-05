@@ -7473,7 +7473,7 @@ function renderStats(t) {
     const selCls = (SELECTED_STAT && SELECTED_STAT.key === statkey) ? " stat-selected" : "";
     return `<div class="o-row stat-clickable${selCls}" data-statkey="${statkey}"
       data-statlabel="${escHtml(k)}"
-      title="Where does this number come from? Click to see every IO feeding it."><span>${k}${badge}</span><span class="statval">+${d.value}%${over}${abs}</span></div>`
+      title="Where does this number come from? Click to see every IO feeding it."><span class="o-name">${k}${badge}</span>${_statDesc(k)}<span class="statval">+${d.value}%${over}${abs}</span></div>`
       + attributionRowsHtml(k, t);
   }).join("");
   // v30 bonus extras (the back-filled families) — only nonzero rows, so builds
@@ -7488,10 +7488,10 @@ function renderStats(t) {
     const selCls = (SELECTED_STAT && SELECTED_STAT.key === key) ? " stat-selected" : "";
     return `<div class="o-row stat-clickable${selCls}" data-statkey="${key}"
       data-statlabel="${escHtml(lab)}"
-      title="Where does this number come from? Click to see every IO feeding it."><span>${lab}</span><span class="statval">${valHtml}</span></div>`;
+      title="Where does this number come from? Click to see every IO feeding it."><span class="o-name">${lab}</span>${_statDesc(lab)}<span class="statval">${valHtml}</span></div>`;
   };
   if (bx.kb_protection && bx.kb_protection.value) {
-    extraRows.push(`<div class="o-row" title="Knockback protection magnitude — from the named KB-protection uniques and set bonuses on your pieces (each ⓘ card lists its own)."><span>KB protection</span><span>mag ${bx.kb_protection.value}</span></div>`);
+    extraRows.push(`<div class="o-row" title="Knockback protection magnitude — from the named KB-protection uniques and set bonuses on your pieces (each ⓘ card lists its own)."><span class="o-name">KB protection</span>${_statDesc("KB protection")}<span class="statval">mag ${bx.kb_protection.value}</span></div>`);
   }
   if (bx.slow_resist && bx.slow_resist.value) {
     extraRows.push(exRow("slow_resist", "Slow resistance", `+${bx.slow_resist.value}%`));
@@ -7694,6 +7694,57 @@ function renderOffense(off, t) {
 
 // PERCENTAGES, NOT BARS (Joel, 2026-08-04: "change all stats to percentages
 // and remove the ridiculous bars") — every stat is a clickable percent row.
+// ── WHAT EACH STAT MEANS, in one line (Joel, 2026-08-04: "I would like a short
+// description of what each stat means on a single line that takes up some of the
+// gap"). The gap between a stat's name and its number was dead space; this is the
+// sentence a new player needs and a veteran can ignore. Plain English before
+// jargon, per the copy rules — and nothing here claims more than the game does.
+const _STAT_DESC = {
+  // positional defense — what the game rolls against
+  "def:Melee": "chance to avoid attacks made from right next to you",
+  "def:Ranged": "chance to avoid attacks fired from a distance",
+  "def:AoE": "chance to avoid attacks that cover an area",
+  // typed defense
+  "def:Smashing": "chance to avoid fists, clubs and blunt hits",
+  "def:Lethal": "chance to avoid blades, bullets and claws",
+  "def:Fire": "chance to avoid burning attacks",
+  "def:Cold": "chance to avoid freezing attacks",
+  "def:Energy": "chance to avoid energy blasts and beams",
+  "def:Negative": "chance to avoid dark and life-draining attacks",
+  "def:Toxic": "chance to avoid poison and acid",
+  "def:Psionic": "chance to avoid attacks on your mind",
+  // resistance — damage that lands anyway
+  "res:Smashing": "cuts the damage blunt hits do once they land",
+  "res:Lethal": "cuts the damage blades and bullets do once they land",
+  "res:Fire": "cuts burning damage once it lands",
+  "res:Cold": "cuts cold damage once it lands",
+  "res:Energy": "cuts energy damage once it lands",
+  "res:Negative": "cuts dark damage once it lands",
+  "res:Toxic": "cuts poison damage once it lands",
+  "res:Psionic": "cuts psychic damage once it lands",
+  // the rest of the board
+  "Recharge (global)": "how much sooner every power is ready again",
+  "Recovery": "how fast your endurance refills",
+  "Regeneration": "how fast your health comes back",
+  "Max HP": "the size of your health bar",
+  "ToHit": "adds to the roll your attacks make to land",
+  "Accuracy": "multiplies that roll — the usual way to stop missing",
+  "Slow resistance": "shrugs off attacks that slow your speed and recharge",
+  "Movement speed": "how fast you run, jump and fly",
+  "Range": "how far your ranged powers reach",
+  "Endurance discount": "cuts what each power costs to use",
+  "Slow strength": "how hard your own slows bite",
+  "Knockback strength": "how far your hits throw enemies",
+  "KB protection": "how hard you are to knock down",
+};
+const _statDesc = (key) => {
+  const d = _STAT_DESC[key];
+  if (d) return `<span class="o-desc">${escHtml(d)}</span>`;
+  // mez rows are generated per control type — one sentence covers them all
+  const m = /^(.+) duration$/.exec(key);
+  if (m) return `<span class="o-desc">${escHtml(`how much longer your ${m[1].toLowerCase()}s hold an enemy`)}</span>`;
+  return `<span class="o-desc"></span>`;
+};
 function barRow(label, d, kind) {
   const capBadge = d.at_cap ? ' <span class="aoe-tag">CAP</span>' : "";
   // Defense can exceed its soft cap; show the overage. Resistance can't.
@@ -7710,7 +7761,8 @@ function barRow(label, d, kind) {
   return `<div class="o-row stat-clickable${selCls}" data-statkey="${key}"
     data-statlabel="${escHtml(lbl)}"
     title="Where does this number come from? Click to see every IO feeding it.">
-    <span>${label}${capBadge}</span>
+    <span class="o-name">${label}${capBadge}</span>
+    ${_statDesc(`${kind}:${label}`)}
     <span class="statval ${d.at_cap ? "capped" : ""}">${d.value}%${over}${fight}</span>
   </div>`;
 }

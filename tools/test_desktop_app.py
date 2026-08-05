@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 74          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 76          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement)
 
@@ -357,12 +357,31 @@ def main():
     # not as bright" and "no highlight will appear at all, until a drop down is
     # chosen". So: nothing on a closed or hovered button, a DIMMED derived edge on
     # the open one, and the panel meets it with no gap.
-    check("a menu draws its edge only while OPEN, in a dimmed derived colour",
-          "--menu-edge: color-mix(in srgb, var(--accent) 55%, #05080d);" in css
-          and '.menu-top[aria-expanded="true"] {\n  border-color: var(--menu-edge);' in css
-          and "border: 2px solid var(--menu-edge);" in css
-          and ".menu-top:hover { color: var(--ink); }" in css,
-          "derived, so every alignment carries it; no hover box anywhere")
+    # ⚠ The mix is INLINE at each use site, never a :root custom property: a var()
+    # inside a custom property resolves where it is DECLARED, so a --menu-edge on
+    # :root baked in the root blue and Villain drew a blue menu edge (measured).
+    # ⚠ Comments stripped first: the comment that RECORDS the deleted token names
+    # it, and asserting against the raw sheet made this check fail on its own
+    # explanation — the "match the definition, not the comment" rule, inverted.
+    _css_nc = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+    check("a menu draws its edge only while OPEN, in a dimmed per-theme colour",
+          _css_nc.count("color-mix(in srgb, var(--accent) 55%, #05080d)") == 2
+          and "--menu-edge:" not in _css_nc
+          and ".menu-top:hover { color: var(--ink); }" in _css_nc,
+          "two use sites, no token — a :root token could not follow the theme")
+    # Joel, 2026-08-04: "All the fonts on the Stats page are not uniform. There is
+    # also this gap between the name of the stat and the percentage. I would like a
+    # short description of what each stat means on a single line."
+    check("every stat row carries a one-line meaning between its name and number",
+          "const _STAT_DESC = {" in app_js and "_statDesc(" in app_js
+          and "grid-template-columns: minmax(88px, max-content) 1fr auto;" in css
+          and ".o-desc" in css,
+          "a three-column grid: the sentence fills what used to be dead space")
+    check("...and the Stats board keeps ONE type scale",
+          "#stats .small, #stats .muted.small { font-size: 12px; }" in css
+          and "#stats .aoe-tag, #stats .im-tag { font-size: 11px; }" in css
+          and ".offense .o-row { display: flex; justify-content: space-between; font-size: 13px;" in css,
+          "measured 6 sizes before (two 'small' spans rendered 14px), 4 after")
     check("...and the panel MEETS its button (no gap, no shift when it opens)",
           "position: absolute; top: 100%; right: 0; left: auto;" in css
           and ".menu-top {\n  border: 2px solid transparent; border-bottom: 0;" in css,

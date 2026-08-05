@@ -490,10 +490,40 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .other, .bars { display: flex; flex-direction: column; gap: 2px; }
 /* .bars joined the percent-row club when the bar tracks were removed
    (2026-08-04) — defense/resistance rows share the Other rows' look. */
-.other .o-row, .bars .o-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; color: var(--muted); padding: 6px 0; border-bottom: 1px solid var(--border); }
+/* ── THE STATS ROW: name · what it means · the number (Joel, 2026-08-04: "there
+   is also this gap between the name of the stat and the percentage. I would like
+   a short description of what each stat means on a single line that takes up some
+   of the gap"). A THREE-COLUMN GRID, not space-between: the names line up, the
+   sentence fills what used to be a void, and the numbers stay in one column where
+   they can be compared down the list. The sentence takes whatever is left and
+   ellipsizes rather than wrapping — one line, as asked. */
+.other .o-row, .bars .o-row {
+  display: grid; grid-template-columns: minmax(88px, max-content) 1fr auto;
+  align-items: baseline; column-gap: var(--s3);
+  color: var(--muted); padding: 6px 0; border-bottom: 1px solid var(--border);
+}
+/* ONE TYPE SCALE for the whole board (his first sentence: "All the fonts on the
+   Stats page are not uniform"). It was 10, 11, 12, 14 and 15px in one panel.
+   Now: 13 name · 12 meaning · 15 number, and nothing else invents a size. */
+.other .o-row .o-name, .bars .o-row .o-name { font-size: 13px; color: var(--ink); }
+.other .o-row .o-desc, .bars .o-row .o-desc {
+  font-size: 12px; color: var(--muted); min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
 /* The number is the payoff — make it the loud part of the row. */
-.other .o-row > span:last-child, .bars .o-row > span:last-child { font-size: 15px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
-.other .o-row .over, .bars .o-row .over { font-size: 10px; font-weight: 400; color: var(--muted); }
+.other .o-row > .statval, .bars .o-row > .statval { font-size: 15px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.other .o-row .over, .bars .o-row .over { font-size: 12px; font-weight: 400; color: var(--muted); }
+.other .o-row .statval .muted.small, .bars .o-row .statval .muted.small { font-size: 12px; }
+/* the row is quiet until it is worth reading: the sentence fades up on hover so a
+   scan down the numbers is not fighting a wall of grey text */
+.other .o-row:hover .o-desc, .bars .o-row:hover .o-desc { color: var(--ink); }
+/* ⚠ AND THE REST OF THE PANEL OBEYS THE SAME SCALE. Measured before this: the
+   Stats panel rendered 10, 11, 12, 13, 14 and 15px, and two spans carrying class
+   "small" computed to FOURTEEN — larger than the rows they annotate, because a
+   relative size elsewhere out-specified `.small`. Scoped here rather than chased
+   through the sheet, which would move panels nobody asked me to touch. */
+#stats .small, #stats .muted.small { font-size: 12px; }
+#stats .aoe-tag, #stats .im-tag { font-size: 11px; }
 
 /* Edit bar — Undo + live slot budget + "your edits stay, Solve to re-optimize" note */
 .edit-bar {
@@ -633,13 +663,15 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .conv-total { margin: 10px 0 6px; padding: 8px 10px; background: rgba(90, 169, 230, .08); border: 1px solid var(--accent); border-radius: 7px; font-size: 12px; line-height: 1.5; }
 .conv-sect { margin-top: 10px; }
 .conv-sect-h { font-size: 12px; font-weight: 700; padding: 4px 0; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+/* Offense keeps the SAME scale as the rest of the board — it used 11, 12 and 14px
+   of its own, which is most of what read as "the fonts are not uniform". */
 .offense { display: flex; flex-direction: column; gap: 3px; }
-.offense .o-row { display: flex; justify-content: space-between; font-size: 12px; padding: 2px 0; border-bottom: 1px solid var(--border); }
+.offense .o-row { display: flex; justify-content: space-between; font-size: 13px; padding: 2px 0; border-bottom: 1px solid var(--border); }
 .offense .o-head { font-weight: 600; }
-.offense .o-head .dps { color: var(--accent); font-weight: 700; font-size: 14px; }
-.offense .o-sub { margin-top: 7px; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; opacity: .8; }
+.offense .o-head .dps { color: var(--accent); font-weight: 700; font-size: 15px; }
+.offense .o-sub { margin-top: 7px; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; opacity: .8; }
 .offense .o-atks { display: flex; flex-direction: column; gap: 2px; margin: 3px 0 2px; padding-left: 6px; border-left: 2px solid var(--border); }
-.offense .o-atk { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; }
+.offense .o-atk { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; }
 .offense .o-atk > span:first-child { white-space: nowrap; }
 .offense .deb { color: var(--bad); }
 .offense .buf { color: var(--good, #5fbf6f); }
