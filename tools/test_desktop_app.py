@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 77          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 82          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement)
 
@@ -377,6 +377,31 @@ def main():
           and "grid-template-columns: minmax(88px, max-content) 1fr auto;" in css
           and ".o-desc" in css,
           "a three-column grid: the sentence fills what used to be dead space")
+    # ⚠ The ⓘ on an IO promised full details and, from the Stats tab, rendered them
+    # into #power-info — a panel on the HIDDEN powers tab (Joel, 2026-08-04: "it
+    # does not show details"). It renders into the visible tab's panel now.
+    check("the enhancement ⓘ opens where the user is, with a way back",
+          "const _infoHost = () =>" in app_js
+          and 'document.body.classList.contains("tab-stats")' in app_js
+          and "window.closeEnhInfoToStat" in app_js
+          and ".sb-back" in css,
+          "on Stats it takes the breakdown's place; the powers rail is unchanged")
+    check("...and the breakdown says its slots are live, not a picture",
+          ".sbp-how" in css and "These are the real slots" in app_js,
+          "same slotHtml as the wall — click, ⓘ and right-click all work here")
+    # Joel's standing rule, 2026-08-04: "every change made somewhere... must refresh
+    # the update everywhere", and Ctrl+Z must name what it will take back.
+    check("Ctrl+Z ASKS, and names the specific edit",
+          "_undoDescription()" in app_js and "_UNDO_ASKING" in app_js
+          and 'title: "Undo?"' in app_js
+          and "EDIT_HISTORY[_undoIndex()]" in app_js,
+          "derived by diffing the snapshot — a hand-written label goes stale")
+    check("...and neither undo nor its prompt can land on a no-op snapshot",
+          "function _undoIndex()" in app_js and "const _sameBuild =" in app_js,
+          "a snapshot equal to the live build made Ctrl+Z look broken")
+    check("one edit refreshes every surface",
+          "renderMiniWall();\n  renderStatBreakdown();" in app_js,
+          "stats render ends by re-deriving the mini wall and any open breakdown")
     # COVERAGE DENOMINATOR for the copy (Joel: "we need similar descriptions for
     # all the empty stats - like enemy debuffs"). The denominator is the effect
     # vocabulary the DATA carries, listed in _OFF_EFFECTS — my first pass invented

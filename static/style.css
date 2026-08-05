@@ -1671,6 +1671,14 @@ body { overflow: hidden; }
   text-overflow: ellipsis; white-space: nowrap; flex: 1; }
 .sbp-val { color: #22c55e; font-weight: 700; white-space: nowrap; }
 .sbp-src { margin-top: 3px; line-height: 1.5; }
+/* ⚠ SAY THAT THESE SLOTS ARE LIVE (Joel, 2026-08-04: "It is also not obvious the
+   icons that do appear have the same functionality as if there were on the power").
+   They are literally the same slotHtml as the wall — click, ⓘ, right-click all work
+   — but a row of icons in a read-only-looking report reads as a picture of a build,
+   not the build. One line under each card says otherwise. */
+.sbp-how { font-size: 11px; margin-top: 4px; line-height: 1.45; }
+.sbp-how b { color: var(--ink); font-weight: 600; }
+.sb-back { display: inline-block; margin: 2px 0 6px; font-size: 12px; }
 .sb-slotwrap { display: inline-block; border-radius: 50%;
   border: 3px solid transparent; line-height: 0; }
 .sb-slotwrap.stat-hot-slot { border-color: #22c55e; box-shadow: 0 0 8px #22c55ecc; }

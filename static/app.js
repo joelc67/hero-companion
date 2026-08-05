@@ -5516,6 +5516,14 @@ function _enhDetailPayload(pw, s, slotIdx) {
   };
 }
 
+// ⚠ THE ⓘ HAS TO OPEN WHERE THE USER IS (Joel, 2026-08-04: "a small (i) appears
+// and says I can click on it and get full details. But it does not show details").
+// It always rendered into #power-info, which lives in the Powers & Slots side
+// column — so every ⓘ clicked from the Stats breakdown wrote its card onto a
+// HIDDEN tab and looked like a dead promise. The detail now renders into whichever
+// panel belongs to the visible tab.
+const _infoHost = () => (document.body.classList.contains("tab-stats")
+  ? $("stat-breakdown") : $("power-info"));
 window.openEnhInfo = async function (powerIdx, slotIdx) {
   const pw = build.powers[powerIdx];
   const s = pw && (pw.slots || [])[slotIdx];
@@ -5523,7 +5531,12 @@ window.openEnhInfo = async function (powerIdx, slotIdx) {
   SELECTED_POWER = null;
   SELECTED_ENH = { powerFull: pw.full_name, slotIdx };
   await renderEnhInfo();
-  _revealInfoCard();
+  if (!document.body.classList.contains("tab-stats")) _revealInfoCard();
+};
+// back out of the enhancement card to the breakdown that opened it
+window.closeEnhInfoToStat = function () {
+  SELECTED_ENH = null;
+  renderStatBreakdown();
 };
 
 async function renderEnhInfo() {
@@ -5536,7 +5549,11 @@ async function renderEnhInfo() {
                       postJson(_enhDetailPayload(pw, s, SELECTED_ENH.slotIdx))).catch(() => null);
   if (token !== RAIL_TOKEN || !SELECTED_ENH) return;      // superseded render
   if (!r || !r.ok) return;
-  const panel = $("power-info");
+  // ⚠ the VISIBLE tab's panel. On Stats this card takes the breakdown's place and
+  // offers a way back; rendering it into the powers rail from here is exactly what
+  // made the ⓘ look like a dead promise.
+  const onStats = document.body.classList.contains("tab-stats");
+  const panel = _infoHost();
   if (!panel) return;
   const lvl = s.attuned ? "attuned"
     : s.io_level ? `level ${s.io_level}${s.boost ? "+" + s.boost : ""}` : "";
@@ -5574,7 +5591,8 @@ async function renderEnhInfo() {
 
   panel.innerHTML =
     `<h2><span>${escHtml(p.title)}</span>
-       <button class="iconbtn pi-close" onclick="closePowerInfo()" title="close">✕</button></h2>`
+       <button class="iconbtn pi-close" onclick="${onStats ? "closeEnhInfoToStat()" : "closePowerInfo()"}" title="close">✕</button></h2>`
+    + (onStats ? `<button type="button" class="linkbtn sb-back" onclick="closeEnhInfoToStat()">← back to the breakdown</button>` : "")
     + (lvl ? `<div class="muted small">${escHtml(lvl)}${pv ? ` · <span class="eh-preview-tag">previewing +${pv}</span>` : ""}${st ? ` · set levels ${st.min_level}–${st.max_level}` : ""}</div>` : "")
     + `<p class="eh-desc">${escHtml(p.description)}</p>`
     + (p.unique_line ? `<p class="eh-note">${escHtml(p.unique_line)}</p>` : "")
@@ -5583,7 +5601,8 @@ async function renderEnhInfo() {
     + (st ? `<h3 class="eh-set-h">${escHtml(st.display)} <span class="muted small">${escHtml(st.category_label || "")} · ${st.slotted_here} of ${st.roster.length} in this power</span></h3>`
       + enhSetSectionHtml(st) : "");
   panel.classList.remove("hidden");
-  document.querySelector(".powers-layout").classList.add("has-info");
+  // the powers rail's layout flag only applies when the card IS in that rail
+  if (!onStats) document.querySelector(".powers-layout").classList.add("has-info");
 }
 
 // One dispatcher for whichever rail view is open — recompute() calls this so
@@ -5994,8 +6013,56 @@ function updateEditBar() {
     tally.classList.toggle("over", used > SLOT_BUDGET);
   }
 }
+// ⚠ WHAT WILL UNDO ACTUALLY TAKE BACK? Derived by DIFFING the snapshot against the
+// live build, never a label passed in at the ~40 call sites: a label written by hand
+// goes stale the first time someone edits the code around it, and this cannot — it
+// describes what actually changed. Used by the Ctrl+Z prompt below.
+// ⚠ SKIP NO-OP SNAPSHOTS. A snapshot identical to the live build can sit on top of
+// the stack (a render-time recordEdit), and popping it undoes NOTHING — the user
+// presses Ctrl+Z, the build does not move, and the app looks broken. Both the
+// description and the undo itself walk back to the first snapshot that differs.
+const _sameBuild = (snap) => JSON.stringify(snap) === JSON.stringify(_snapshotBuild());
+function _undoIndex() {
+  for (let i = EDIT_HISTORY.length - 1; i >= 0; i--) if (!_sameBuild(EDIT_HISTORY[i])) return i;
+  return -1;
+}
+function _undoDescription() {
+  const prev = EDIT_HISTORY[_undoIndex()];
+  if (!prev) return "";
+  const nameOf = p => p && (p.display_name || (p.full_name || "").split(".").pop().replace(/_/g, " "));
+  const now = build.powers || [], was = prev.powers || [];
+  if (now.length > was.length) {
+    const added = now.find(p => !was.some(q => q.full_name === p.full_name));
+    return added ? `taking ${nameOf(added)}` : "adding a power";
+  }
+  if (now.length < was.length) {
+    const gone = was.find(p => !now.some(q => q.full_name === p.full_name));
+    return gone ? `dropping ${nameOf(gone)}` : "dropping a power";
+  }
+  for (const p of now) {
+    const q = was.find(x => x.full_name === p.full_name);
+    if (!q) continue;
+    if ((p.slotCount || 1) !== (q.slotCount || 1)) {
+      return `${(p.slotCount || 1) > (q.slotCount || 1) ? "adding" : "removing"} a slot on ${nameOf(p)}`;
+    }
+    const ps = p.slots || [], qs = q.slots || [];
+    for (let i = 0; i < Math.max(ps.length, qs.length); i++) {
+      const a = ps[i] || {}, b = qs[i] || {};
+      if (a.piece_uid === b.piece_uid && a.io_level === b.io_level && a.boost === b.boost) continue;
+      if (!a.piece_uid && b.piece_uid) return `clearing ${b.piece_name} from ${nameOf(p)}`;
+      if (a.piece_uid && !b.piece_uid) return `slotting ${a.piece_name} in ${nameOf(p)}`;
+      return `changing an enhancement in ${nameOf(p)}`;
+    }
+  }
+  if ((prev.pools || []).join() !== (build.pools || []).join()) return "a power pool change";
+  if (prev.epic !== build.epic) return "an epic pool change";
+  if (JSON.stringify(prev.incarnates) !== JSON.stringify(build.incarnates)) return "an incarnate change";
+  return "your last change";
+}
 window.undoEdit = function () {
-  if (!EDIT_HISTORY.length) return;
+  const i = _undoIndex();
+  if (i < 0) { EDIT_HISTORY.length = 0; updateEditBar(); return; }
+  EDIT_HISTORY.length = i + 1;              // drop the no-ops stacked above it
   Object.assign(build, EDIT_HISTORY.pop());
   document.querySelectorAll(".pool-sel").forEach((s, i) => { s.value = build.pools[i] || ""; });
   if ($("sel-epic")) $("sel-epic").value = build.epic || "";
@@ -6004,7 +6071,7 @@ window.undoEdit = function () {
 // Ctrl+Z anywhere on the page = the Undo button (field ask: a mis-click on a slot
 // icon should be one keystroke to take back). Skipped while typing in a field so
 // text editing keeps its native undo; the set-picker dialog closes first if open.
-document.addEventListener("keydown", (e) => {
+document.addEventListener("keydown", async (e) => {
   if (!(e.ctrlKey || e.metaKey) || e.key.toLowerCase() !== "z" || e.shiftKey || e.altKey) return;
   const t = e.target;
   if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
@@ -6012,8 +6079,28 @@ document.addEventListener("keydown", (e) => {
   e.preventDefault();
   const modal = $("modal");
   if (modal && !modal.classList.contains("hidden")) modal.classList.add("hidden");
-  undoEdit();
+  // ⚠ CTRL+Z ASKS, AND IT NAMES THE THING (Joel, 2026-08-04: "when someone CTR-Z's
+  // there should be a pop-up asking if they want to undo something specific").
+  // A keystroke that silently rewrites a build is the one edit a user cannot see
+  // happen — especially from the Stats tab, where the change lands on a surface
+  // they may not be looking at. The BUTTON stays immediate: clicking Undo is
+  // already a deliberate act, and asking twice for one intention is noise.
+  if (_UNDO_ASKING) return;
+  _UNDO_ASKING = true;
+  const what = _undoDescription();
+  const ok = await askDialog({
+    title: "Undo?",
+    body: `<p>This takes back <b>${escHtml(what)}</b>.</p>
+           <p class="muted small">${EDIT_HISTORY.length} step${EDIT_HISTORY.length === 1 ? "" : "s"}
+             of history left. Nothing else in the build is touched.</p>`,
+    actions: [{ key: "undo", label: `Undo ${what}` },
+              { key: "keep", label: "Keep it", kind: "ghost" }],
+    safe: "keep",
+  });
+  _UNDO_ASKING = false;
+  if (ok === "undo") undoEdit();
 });
+let _UNDO_ASKING = false;      // one prompt at a time, however fast the key repeats
 
 // Patron Power Pools (Mace/Mu/Soul/Leviathan Mastery) must be unlocked by completing a Patron
 // arc in-game, unlike Ancillary pools — flag the epic selector when one is chosen.
@@ -7967,6 +8054,8 @@ function _sbpCardHtml(pi, hot, valueHtml, srcHtml, headHot) {
       <span class="sbp-val">${valueHtml}</span></div>
     <div class="slot-row">${(p.slots || []).map((s, si) =>
       `<span class="sb-slotwrap${hotCls(si)}">${slotHtml(pi, si, s)}</span>`).join("")}</div>
+    <div class="sbp-how muted">These are the real slots — <b>click</b> an IO to change it,
+      <b>ⓘ</b> for its full details, <b>right-click</b> to clear it.</div>
     ${srcHtml ? `<div class="sbp-src muted small">${srcHtml}</div>` : ""}
   </div>`;
 }
@@ -7974,6 +8063,12 @@ function _sbpCardHtml(pi, hot, valueHtml, srcHtml, headHot) {
 function renderStatBreakdown() {
   const host = $("stat-breakdown");
   if (!host) return;
+  // An enhancement card opened from this panel OWNS it until the user goes back.
+  // A recompute must refresh that card (its numbers just moved), never replace it.
+  if (SELECTED_ENH && document.body.classList.contains("tab-stats")) {
+    renderEnhInfo();
+    return;
+  }
   document.querySelectorAll(".stat-hot").forEach(el => el.classList.remove("stat-hot"));
   document.querySelectorAll(".stat-hot-power").forEach(el => el.classList.remove("stat-hot-power"));
   document.querySelectorAll(".stat-selected").forEach(el => el.classList.remove("stat-selected"));
