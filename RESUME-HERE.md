@@ -30,7 +30,7 @@ context."* Fair — the dist/installed split is my plumbing, not his problem.
 after any server-side change rather than explaining a distinction to him.
 ⚠ Statics and PYZ must move TOGETHER — see the CLAUDE.md rule.
 
-## ⛔ THE CLASS-ART FILLER: art extracted, placement PARKED — `116d1ce7`
+## ✅ THE CLASS-ART FILLER IS IN — `c9265561` (was parked at `116d1ce7`)
 
 His idea: *"some filler graphics representing each class being worked on while
 picking powers might be nice."* Half done, and the half that failed is stated.
@@ -50,8 +50,21 @@ picking powers might be nice."* Half done, and the half that failed is stated.
   watermark in the catalogue, rendered by nothing) was found and removed.
 - **Nothing references the art**, so nothing changed on screen. It is committed
   because extracting it was the hard part.
-- ▶ **Needs Joel's eye, not another guess** — he can see in one second what the
-  pane cannot show me.
+- ✅ **FIXED after his "I saw one image for one build but it was small":** it was
+  painting all along, anchored to `#powers-list` — which holds the wall **and the
+  catalogue**, so bottom-right of it is the bottom of the CATALOGUE. Now anchored
+  to **`.powers-wall`**, sized to the measured 978×152 hole its last row leaves,
+  at `z-index: -1` inside the wall's own stacking context so the opaque cards
+  mask it (a fuller last row just covers more — no card count in the CSS).
+- ⚠ **The textures are a ~512×314 picture padded to a power of two with a flat
+  blue block under it.** `contain` fitted the pad too and put a blue slab on
+  screen. The extractor crops now (detector + a 314-row fallback for three shots
+  whose pad the sampler can't separate from their dark sky); all 15 verified.
+- ⚠ **A cropped BAND filled the strip but decapitated half the roster** — the
+  Defender floats in the upper third and lost its legs, the Brute fills its frame
+  and lost its heads. So it fits by HEIGHT and shows whole: correct for all 15,
+  **at ~245px rather than filling the strip. Joel's call if he wants it bigger**
+  — that needs either a per-class crop focal point or more vertical room.
 
 ## ✅ DONE: the buff/debuff panel reads enhancement — `be8641db`
 

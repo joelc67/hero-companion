@@ -543,15 +543,26 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   unins000.exe unins000.dat` — the uninstaller and ARP entry survive and
   `_install_kind()` still reads *installed*. Then relaunch. Never hand him a
   choice between two copies of his own app.
-- **⛔ THE CLASS-ART FILLER IS PARKED AFTER THREE MECHANISMS (2026-08-06).** The
+- **🖼 THE CLASS-ART FILLER (2026-08-06, `c9265561`).** The
   art is REAL and now extracted (`charectercreationui/archetypescreenshotsassets`,
   512×512 × 3 shots × 16 ATs; `extract_gui_emblems.py` pulls shot 0 to
   `static/icons/at_art/`, 15 of 16 — Guardian has none). The PLACEMENT never
   painted in the frozen shell: panel background + blend, absolute `::after` at
-  0.16, then 0.55 with no mask. Every dev-copy measurement said it was there;
-  the window said otherwise. ⚠ A dead `.cat-art` rule proves an EARLIER session
-  tried the same idea and abandoned it too. **Do not start a fourth mechanism
-  without Joel's eyes on the third** — this is the layout-mode arc repeating.
+  0.16, then 0.55 with no mask — because all three were anchored to
+  **`#powers-list`, which holds the wall AND the catalogue**, so bottom-right of
+  it is the bottom of the CATALOGUE, nowhere near the hole. Joel spotted it
+  ("I saw one image for one build but it was small") and that one sentence
+  located the bug three measurement rounds could not. **Anchor to
+  `.powers-wall`**, size to the hole its last row leaves (measured 978×152),
+  `z-index:-1` inside the wall's own stacking context so the opaque cards mask
+  it. ⚠ The textures are a ~512×314 picture **padded to a power of two with a
+  flat block** — `contain` fitted the pad and put a blue slab on screen; the
+  extractor crops it now. ⚠ A cropped BAND fills the strip but the crop lands
+  differently per class (Defender lost its legs, Brute lost its heads), so it
+  fits by HEIGHT and shows whole at ~245px. ⚠ A dead `.cat-art` rule proved an
+  EARLIER session tried this and abandoned it. **Generalize: when three
+  measurement rounds disagree with the screen, the thing being measured is the
+  wrong element.**
 - **⚠ A HALF-UPDATED FROZEN COPY IS A LIE, SO DON'T HALF-UPDATE IT.** This fix is
   server-side; the wording that goes with it is static. Pushing statics to the
   installed copy while its PYZ is a build behind would have put "with your
