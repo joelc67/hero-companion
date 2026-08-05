@@ -1434,10 +1434,58 @@ def _pet_offense(build, totals, ctx):
     return out
 
 
+# ── WHAT A SLOTTED ENHANCEMENT ACTUALLY DOES TO A BUFF/DEBUFF ────────────────
+# Effect names and enhancement-aspect names come from the SAME client vocabulary,
+# so the match is by name — an effect is enhanced by the host power's own post-ED
+# enhancement in the aspect of that name. The power can only ever hold pieces it
+# ACCEPTS, so "does this power allow that enhancement" is answered by its slots,
+# not by a table we would have to maintain.
+#
+# The exclusions are the game's, and the client's own accepted-category vocabulary
+# is the evidence: there is no res-debuff category, no -regen category and no
+# -damage category anywhere in the 3,650 powersets, because those enhancements do
+# not exist. RechargeTime is excluded for a different reason — the aspect of that
+# name is recharge REDUCTION on the power itself, not the magnitude of a recharge
+# buff or debuff. (In game a -recharge debuff rides Slow enhancements; we do not
+# claim that here without pinning it, so this UNDER-credits a -recharge debuff
+# rather than inventing a number. Open, and stated in the panel's own wording.)
+_ENH_BY_NAME = {"Defense", "ToHit", "Heal", "Absorb", "Slow", "Endurance",
+                "Recovery", "Regeneration", "HitPoints", "Resistance"}
+_ENH_NEVER = {("Resistance", "debuff"),      # no -res enhancement exists
+              ("Regeneration", "debuff"),    # no -regen enhancement exists
+              ("DamageBuff", "debuff"), ("DamageBuff", "buff"),
+              ("RechargeTime", "debuff"), ("RechargeTime", "buff")}
+
+
+def _row_enh(power, ctx):
+    """{aspect: post-ED fraction} from this power's OWN slotting — the same
+    primitives _offense prices damage with, so there is one ED implementation."""
+    tot = defaultdict(float)
+    for slot in power.get("slots") or []:
+        if not slot or not slot.get("piece_uid"):
+            continue
+        for asp, val in _scaled_boosts(slot, ctx):
+            tot[asp] += val
+    mult_ed = ctx.get("mult_ed")
+    return {a: apply_ed_sched(ED_SCHEDULE.get(a, 0), v, mult_ed) for a, v in tot.items()}
+
+
+def _enh_mult(effect, side, enh):
+    """How much this power's slotting multiplies one buff/debuff row."""
+    if effect not in _ENH_BY_NAME or (effect, side) in _ENH_NEVER:
+        return 1.0
+    return 1.0 + (enh.get(effect) or 0.0)
+
+
 def _debuff_buff_summary(build, ctx):
-    """Aggregate the build's enemy DEBUFFS and ally/self BUFFS as resolved base
-    magnitudes (single application, unenhanced). Lets the debuff/buff roles show
-    a measured number. Returns (debuffs, buffs) lists of {effect, type, pct}."""
+    """Aggregate the build's enemy DEBUFFS and ally/self BUFFS as resolved
+    magnitudes for ONE application, WITH the host power's own enhancement
+    (Joel, 2026-08-06: "fix the buff/debuff panel so it reads enhancement" — a
+    debuffer slotting accurate defence-debuff sets used to see nothing move
+    anywhere in the app). Uptime is deliberately NOT folded in: this panel says
+    what one application does, and the sustained/uptime-weighted view is the
+    scorer's (role_output.enhanced_debuff_totals), which is untouched.
+    Returns (debuffs, buffs) lists of {effect, type, pct}."""
     if not ctx:
         return [], []
     col = ctx.get("at_column")
@@ -1464,6 +1512,7 @@ def _debuff_buff_summary(build, ctx):
         p = power_by_full.get(power.get("full_name"))
         if not p:
             continue
+        enh = _row_enh(power, ctx)
         for d in p.get("debuff_effects", []):
             if not _pv_ok(d.get("pv_mode", 0), pvp):
                 continue
@@ -1476,7 +1525,7 @@ def _debuff_buff_summary(build, ctx):
                     hp_keys.add(key)
                 elif d["effect"] == "Endurance":
                     end_keys.add(key)
-                _mag = _resolve_mag(d, row, col)
+                _mag = _resolve_mag(d, row, col) * _enh_mult(d["effect"], "debuff", enh)
                 deb[key] += _mag
                 dsrc[key][p.get("display_name")
                           or power.get("full_name")] += _mag
@@ -1492,7 +1541,7 @@ def _debuff_buff_summary(build, ctx):
                     hp_keys.add(key)
                 elif d["effect"] == "Endurance":
                     end_keys.add(key)
-                _mag = _resolve_mag(d, row, col)
+                _mag = _resolve_mag(d, row, col) * _enh_mult(d["effect"], "buff", enh)
                 buf[key] += _mag
                 bsrc[key][p.get("display_name")
                           or power.get("full_name")] += _mag

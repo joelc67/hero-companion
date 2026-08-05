@@ -8248,11 +8248,11 @@ function renderOffense(off, t) {
   }
   // Point-valued rows arrive as {hp} or {end}, not {pct}: heals/absorbs are
   // HIT POINTS and endurance effects are POINTS of the 100-end bar (each
-  // contributing power cast once, unenhanced) — never percentages.
+  // contributing power cast once, with its own slotting) — never percentages.
   const buffVal = d => d.hp != null
-    ? `<span title="hit points — each contributing power cast once, unenhanced. Not a percentage.">≈ ${d.hp} HP</span>`
+    ? `<span title="hit points — each contributing power cast once, with your slotting. Not a percentage.">≈ ${d.hp} HP</span>`
     : d.end != null
-      ? `<span title="points of the 100-endurance bar, per application, unenhanced.">≈ ${d.end} end</span>`
+      ? `<span title="points of the 100-endurance bar, per application, with your slotting.">≈ ${d.end} end</span>`
       : `${sign(d.pct)}%`;
   // debuff/buff rows join the click system (Joel, 2026-08-04: "they too can be
   // organized with similar function as the top defense and resistance")
@@ -8267,12 +8267,12 @@ function renderOffense(off, t) {
       <span class="o-name">${escHtml(lab)}</span>${_offDesc(side, d.effect)}<span class="statval ${cls}">${buffVal(d)}</span></div>`;
   };
   if ((off.debuffs || []).length) {
-    html += `<div class="o-sub">Enemy debuffs <span class="muted small">(all your powers applied once, unenhanced)</span></div>`
+    html += `<div class="o-sub">Enemy debuffs <span class="muted small">(all your powers applied once, with your slotting)</span></div>`
       + off.debuffs.map(d => dbRow(d, "debuff", "deb")).join("");
   }
   if ((off.buffs || []).length) {
     const anyNeg = off.buffs.some(d => (d.pct ?? d.hp ?? d.end) < 0);
-    html += `<div class="o-sub">Ally buffs <span class="muted small">(all your powers applied once, unenhanced)</span></div>`
+    html += `<div class="o-sub">Ally buffs <span class="muted small">(all your powers applied once, with your slotting)</span></div>`
       + off.buffs.map(d => dbRow(d, "buff", "buf")).join("")
       + (anyNeg ? `<div class="o-note muted small">Negative rows are a power's built-in cost to you (for example Absorb Pain's regeneration penalty), not a debuff on allies.</div>` : "");
   }
@@ -8667,8 +8667,10 @@ function renderStatBreakdown() {
     const unit = rowD && rowD.hp != null ? " HP" : rowD && rowD.end != null ? " end" : "%";
     html = `<h2><span>${escHtml(sel.label)}</span>
       <button class="iconbtn pi-close" onclick="clearSelectedStat()" title="close">✕</button></h2>
-      <p class="sb-sub">The powers that apply this — one application each, unenhanced.
-      This comes from the powers themselves, not from IOs.</p>`;
+      <p class="sb-sub keep-whole">The powers that apply this — one application each,
+      enhanced by what you slotted in that power. A few families cannot be enhanced at
+      all in game (resistance debuffs, regeneration debuffs, damage and recharge buffs),
+      so those read the same however you slot them.</p>`;
     (rowD && rowD.sources || []).forEach(s => {
       const pi = build.powers.findIndex(p => (p.display_name || "") === s.name
         || (p.full_name || "") === s.name);
