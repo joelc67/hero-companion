@@ -543,7 +543,13 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   unins000.exe unins000.dat` — the uninstaller and ARP entry survive and
   `_install_kind()` still reads *installed*. Then relaunch. Never hand him a
   choice between two copies of his own app.
-- **🖼 THE CLASS-ART FILLER (2026-08-06, `c9265561`).** The
+- **⛔ THE CLASS-ART FILLER WAS REMOVED AT JOEL'S WORD (2026-08-06, `018b539d`:
+  "Remove the one image, from your attempts. I will try and find something").
+  He is sourcing his own art — do not re-add mine.** The extraction stays
+  behind `extract_gui_emblems.py --art` (opt-in, so a routine run cannot drop
+  3.8 MB of unused PNGs into static/). The history below is kept ONLY because
+  the debugging lesson is the durable part.
+- **🖼 (history) the filler's three failed rounds.** The
   art is REAL and now extracted (`charectercreationui/archetypescreenshotsassets`,
   512×512 × 3 shots × 16 ATs; `extract_gui_emblems.py` pulls shot 0 to
   `static/icons/at_art/`, 15 of 16 — Guardian has none). The PLACEMENT never
@@ -563,6 +569,15 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   EARLIER session tried this and abandoned it. **Generalize: when three
   measurement rounds disagree with the screen, the thing being measured is the
   wrong element.**
+- **⚠ "NOW SLOT THEM" IS A CLAIM ABOUT THE BUILD (Joel, 2026-08-06: "This
+  appears no matter if slots are all filled or not").** The catalogue's
+  finished-picks line invited slotting unconditionally. It is gated on free
+  pool slots or an empty slot in a REAL power, and it names which.
+  ⚠ **The seven granted inherents must be excluded** — Brawl/Sprint/Rest hold
+  a base slot `_is_no_enhance_inherent` caps the solver out of, so counting
+  them makes the invitation permanent: the same bug in a different hat.
+  **Generalize: any line that tells the user to do something is a claim, and
+  a claim needs a condition.**
 - **⚠ A HALF-UPDATED FROZEN COPY IS A LIE, SO DON'T HALF-UPDATE IT.** This fix is
   server-side; the wording that goes with it is static. Pushing statics to the
   installed copy while its PYZ is a build behind would have put "with your

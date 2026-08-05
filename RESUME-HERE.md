@@ -30,7 +30,29 @@ context."* Fair — the dist/installed split is my plumbing, not his problem.
 after any server-side change rather than explaining a distinction to him.
 ⚠ Statics and PYZ must move TOGETHER — see the CLAUDE.md rule.
 
-## ✅ THE CLASS-ART FILLER IS IN — `c9265561` (was parked at `116d1ce7`)
+## ✅ THE SLOT INVITATION IS A CLAIM NOW — `018b539d`
+
+Joel: *"This appears no matter if slots are all filled or not."* "All 24 powers
+picked. **Now slot them**" was decoration on a full pick list. It shows only when
+the pool has free slots or a **real** power holds an empty one, and it names the
+reason; otherwise "All 24 powers picked, every slot filled" with no CTA.
+⚠ **The seven granted inherents are excluded** — Brawl/Sprint/Rest carry a base
+slot the solver is capped out of by design, so counting them makes the nag
+permanent. Negative-controlled on screen (emptying Health does nothing; emptying
+a real power brings it back). His build genuinely has two empty slots (Alkaloid,
+Weave), so his line now says why.
+
+## ⛔ THE CLASS-ART FILLER IS REMOVED AT HIS WORD — `018b539d`
+
+*"Remove the one image, from your attempts. I will try and find something."*
+The CSS rule, the `--at-art` variable and all 15 PNGs (3.8 MB) are gone from the
+repo **and from both frozen copies**. ⚠ `extract_gui_emblems.py` keeps the
+capability behind an explicit **`--art`** flag — finding the art was the work
+(`charectercreationui/archetypescreenshotsassets`, 512×314 after crop, 3 shots
+per archetype, 15 of 16; Guardian has none) — but a routine emblem run must
+never drop unused megabytes back into `static/`. **He is sourcing his own art.**
+
+## (superseded) THE CLASS-ART FILLER — `c9265561`
 
 His idea: *"some filler graphics representing each class being worked on while
 picking powers might be nice."* Half done, and the half that failed is stated.
