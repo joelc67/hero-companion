@@ -255,6 +255,21 @@ const TOUR_MOCK_HTML = `
         </div>
         <div class="muted small">→ 60% Damage dealer / 25% Healer / 15% Buffer / Support  (100% total)</div>
       </div>
+      <div data-for="role-output" data-tm="role-output">
+        <div class="ro-box">
+          <div class="ro-head"><b>What this build delivers today</b>
+            <span class="muted small">Your powers, your IOs and whatever you have ticked under
+            accolades and incarnates.</span></div>
+          <div class="ro-row"><span class="ro-job">Damage dealer <span class="muted small">60%</span></span>
+            <span class="ro-val"><b>112.4</b> single-target DPS · <b>41</b> AoE DPS per target</span></div>
+          <div class="ro-row"><span class="ro-job">Healer <span class="muted small">25%</span></span>
+            <span class="ro-val"><b>933 HP</b> Heal</span></div>
+          <div class="ro-foot muted small" data-tm="unslotter">To change one enhancement, the game
+            sells <b>Enhancement Unslotter</b> salvage: one is consumed per enhancement, and you use
+            it by dragging the slotted enhancement into an empty slot in your enhancement tray. To
+            change everything at once, a <code>/respec</code> rebuilds every pick and slot.</div>
+        </div>
+      </div>
       <div class="custom-targets-row">
         <button class="mini" data-for="custom-targets-btn" type="button">Customize build targets…</button>
       </div>
@@ -730,6 +745,30 @@ const TOUR_STEPS = [
         + "The shares always total 100. Type 80 into one and the others give way "
         + "to make room, so the number you type is the number the optimizer "
         + "uses. There is no quiet rescaling behind your back." },
+  { chapter: "build", target: "#role-output", anchor: "[data-tm=role-output]", side: "left",
+    key: "role-output",
+    title: "What the build actually delivers",
+    body: "Percentages are a wish. This is the answer: real numbers for each job "
+        + "you named, from your powers, your IOs, and whatever you have ticked "
+        + "under accolades and incarnates.\n\n"
+        + "So a Defender who wants to farm can see the damage they really do "
+        + "sitting next to the healing they really do, and judge for themselves "
+        + "whether the character does the job.\n\n"
+        + "One thing it will not pretend: moving the percentages does not change "
+        + "these numbers. Your slots have not moved yet. The sliders change what "
+        + "the next solve AIMS for, and the numbers here change when you run it. "
+        + "Where a figure cannot be measured honestly, such as control output, it "
+        + "says so instead of showing you something invented." },
+  { chapter: "build", target: "#role-output", anchor: "[data-tm=unslotter]", side: "left",
+    key: "unslotter", slim: true,
+    title: "None of it has to be right first time",
+    body: "Nothing you decide here is expensive to undo, and that is worth knowing "
+        + "before you agonise over a slot.\n\n"
+        + "To change ONE enhancement, the game sells Enhancement Unslotter "
+        + "salvage. One is consumed per enhancement, and you use it by dragging "
+        + "the slotted enhancement into an empty slot in your enhancement tray.\n\n"
+        + "To change EVERYTHING, /respec rebuilds every pick and every slot from "
+        + "scratch. Plan boldly: the game lets you take it back." },
   { chapter: "build", target: "#custom-targets-btn", scene: "targets", anchor: "[data-tm=targets-box]", side: "right", slim: true,
     title: "Your own targets",
     body: "This is what Customize build targets opens. Each row is an ask — "
