@@ -543,10 +543,19 @@ in RESUME-HERE.md.
   measurement and obvious in a screenshot. The Claude pane fires NO layout
   callbacks, has a 0×0 viewport where every hit-test falsely passes, and times
   out at 30s: fine for logic, useless for appearance.
-- **⚠ Static-only changes need no rebuild** — copy app.js/style.css/index.html
-  into `%LOCALAPPDATA%\Programs\HeroCompanion\_internal\static\` and relaunch.
-  **server.py / run_app.py changes DO** — the frozen build carries them inside
-  the PYZ, so a file copy silently does nothing.
+- **⚠⚠ THERE ARE TWO FROZEN COPIES, AND A HAND COPY REACHES ONLY ONE.**
+  `%LOCALAPPDATA%\Programs\HeroCompanion` (installer) **and**
+  `<repo>\dist\HeroCompanion` (PyInstaller output). On 2026-08-05 I copied
+  statics into the installed one, screenshotted it, called the work verified —
+  and dist stayed on day-old files; Joel reported "it still shows the AI choice"
+  and he was right about the artifact even though his shortcut points at the
+  installed copy. **Use `py tools\push_statics.py`** — it writes every known copy
+  and prints a coverage denominator, so a missed copy is visible instead of
+  assumed. Then RELAUNCH (statics load at launch; F5 does nothing in WebView2).
+  **server.py / run_app.py changes need a REBUILD** — the frozen build carries
+  them inside the PYZ, so a file copy silently does nothing.
+  ⚠ Generalize: verifying against a copy the user might not open is verification
+  theater with extra steps — confirm WHICH artifact he launches.
 - **It ZOOMS, it does not rearrange** (his words: *"like a zooming in or out.
   Not a break a working screen layout"*). One zoom for the whole app from the
   TALLEST tab — per-tab was measurably correct and awful, because every tab click
