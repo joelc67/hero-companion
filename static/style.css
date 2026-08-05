@@ -240,6 +240,22 @@ body:not(.tab-powers) .build-tile { display: none !important; }
 /* (the first-panel stretch rule is GONE, 2026-08-04 night: packPowersTab
    equalizes the columns by MOVING tiles — stretching the builder just painted
    the leftover as an internal void) */
+/* ⚠ …EXCEPT WHEN THERE IS NOT ROOM FOR TWO (Joel, 2026-08-05: "when I am not
+   full screen the right side creates a huge vertical gap… fix that for people
+   with smaller displays"). The two-column form was tuned at 1920, where the
+   columns are close in height. Narrow the window and the main column keeps ALL
+   the tall content — wall, builder, catalogue — while the side column's tiles
+   stay the same size, so the difference balloons into exactly the structural
+   void the packer ruling hated. Below 1400px the side column stacks underneath
+   instead: nothing is relocated, the void simply has nowhere to form.
+   ⚠ TRADE, stated: the page gets taller and the WINDOW scrolls (allowed — one
+   bar at the edge; the banned thing is a scrollbar INSIDE a panel). At 1400+
+   the shipped two-column layout is byte-for-byte what it was. */
+@media (max-width: 1400px) {
+  .powers-layout { grid-template-columns: minmax(0, 1fr); }
+  /* the grout rule only makes sense between two competing columns */
+  .powers-main > :last-child, .powers-side > :last-child { flex: 0 0 auto; }
+}
 .powers-main, .powers-side { min-width: 0; display: flex; flex-direction: column; gap: var(--s3); }
 #power-info.hidden { display: none; }
 /* The detail card is NOT sticky (Joel, 2026-08-03: "Why is the power I clicked
@@ -423,6 +439,10 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
   border-radius: 5px; color: var(--warn, #b26a00);
   background: color-mix(in srgb, var(--warn, #b26a00) 12%, transparent);
   border: 1px solid color-mix(in srgb, var(--warn, #b26a00) 35%, transparent); }
+/* The fix rides inside the warning, so the nag and its remedy are one thing. */
+.endgame-warn .warn-fix { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.endgame-warn .warn-fix label { display: inline-flex; align-items: center; gap: 5px; }
+.endgame-warn .warn-fix input { width: 62px; padding: 2px 6px; margin: 0; }
 .mini { font-size: 11px; padding: 3px 7px; width: auto; }
 /* Press feedback: these are the most-clicked controls in the app, and a control
    that does not acknowledge the press reads as a control that did not hear it. */
@@ -1631,6 +1651,16 @@ body { overflow: hidden; }
 .stats-provlayout { display: grid; gap: var(--s3);
   grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
   align-items: start; position: relative; }
+/* ⚠ SAME FIX, SAME REASON as .powers-layout (Joel, 2026-08-05). Stats has its
+   own two-column grid: the rows on the left, the "where does this number come
+   from" breakdown on the right. Narrow the window and the stat list gets no
+   wider while the breakdown column holds a 380px strip of nothing — the same
+   structural void, on a second surface. Universal rule, not a patch on the one
+   tab he happened to screenshot: below 1400px the breakdown stacks under the
+   stats it explains, which is also where it reads better on a small display. */
+@media (max-width: 1400px) {
+  .stats-provlayout { grid-template-columns: minmax(0, 1fr); }
+}
 /* NOT A FRAME (Joel, 2026-08-04): the breakdown is loose content that floats
    beside the stat you clicked — the cards carry their own chrome. JS sets
    margin-top so it lines up with the clicked row. */

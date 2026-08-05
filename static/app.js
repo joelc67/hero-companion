@@ -2079,7 +2079,22 @@ function renderEndgameWarnings() {
   if (!el) return;
   const w = endgameWarnings();
   el.classList.toggle("hidden", !w.length);
-  el.innerHTML = w.map(m => `<div class="warn-row">${escHtml(m)}</div>`).join("");
+  // ⚠ THE WARNING MUST CARRY ITS OWN FIX (Joel, 2026-08-05: "if I have a lvl 50
+  // character loaded, why would I see this?"). His save really did read
+  // level_reached: 1 with all 24 picks placed — startFromScratch stamps level 1
+  // and nothing ever moves it, so the app nagged about a level the player had no
+  // way to correct FROM HERE. The only level input lived on the Leveling Guide,
+  // a tab away from the banner. setCurrentLevel is the same setter that input
+  // uses — one state, one writer, and it autosaves.
+  const lv = build.level_reached || 1;
+  const fix = w.length
+    ? `<div class="warn-row warn-fix">This build is recorded as a
+        <b>level ${lv}</b> character. If that is out of date, set your real level and
+        the preview notes go away:
+        <label>Level <input type="number" min="1" max="50" value="${lv}"
+          onchange="setCurrentLevel(this.value)"></label></div>`
+    : "";
+  el.innerHTML = w.map(m => `<div class="warn-row">${escHtml(m)}</div>`).join("") + fix;
 }
 
 // Nearest walk-step index for a given game level (first step at/after it, else the last).

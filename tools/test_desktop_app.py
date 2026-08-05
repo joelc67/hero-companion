@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 117          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 120          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement;
 #                        82 -> 88, 2026-08-05: portable-vs-installed detection
@@ -701,6 +701,27 @@ def main():
     check("showAbout only honours a STRING focus",
           'typeof focus === "string" ? focus : _ABOUT_FOCUS' in app_js,
           "negative control: a MouseEvent must not be read as a mode")
+
+    # ── 13. SMALL DISPLAYS (Joel, 2026-08-05: "when I am not full screen the
+    # right side creates a huge vertical gap ... fix that for people with
+    # smaller displays"). Both two-column regions collapse below 1400px, so the
+    # void has nowhere to form. Universal — not a patch on the one tab he
+    # screenshotted.
+    _narrow = css_all[css_all.find("@media (max-width: 1400px)"):]
+    check("both two-column regions collapse on a small display",
+          css_all.count("@media (max-width: 1400px)") == 2
+          and ".powers-layout { grid-template-columns: minmax(0, 1fr); }" in css_all
+          and ".stats-provlayout { grid-template-columns: minmax(0, 1fr); }" in css_all,
+          "powers-layout AND stats-provlayout; one without the other just moves the gap")
+    check("...and the grout rule retires with the second column",
+          ".powers-main > :last-child, .powers-side > :last-child { flex: 0 0 auto; }" in _narrow,
+          "stretching a last tile only makes sense between two competing columns")
+    # The warning must carry its own remedy — his level-50 character was recorded
+    # as level 1 and the only level input lived on another tab.
+    check("the endgame warning carries the level control that fixes it",
+          "warn-fix" in app_js and "setCurrentLevel(this.value)" in app_js
+          and app_js.count("window.setCurrentLevel") == 1,
+          "same setter as the Leveling Guide input — one writer, and it autosaves")
 
     check("the real alignment toggle outranks an active preview",
           'localStorage.setItem("cohAlignment", al)' in _apply
