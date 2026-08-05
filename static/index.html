@@ -267,7 +267,15 @@
             <button id="champ-btn" role="menuitem" type="button"><b>🏆 Submit a champion</b><i>Offer this build for verification</i></button>
             <div class="menu-sep" role="separator"></div>
             <button id="update-btn" role="menuitem" type="button"><b>⟳ Check for updates</b><i>Compares version numbers, sends nothing about you</i></button>
-            <button role="menuitem" type="button" onclick="showAbout()"><b>⚙ About &amp; Settings</b><i>Versions, startup and update options</i></button>
+            <div class="menu-sep" role="separator"></div>
+            <!-- ⚠ SETTINGS AND CREDITS ARE THEIR OWN DOORS (Joel, 2026-08-05).
+                 They were both inside "About & Settings" — the toggles sat under
+                 four rows of version tables, and Credits was a link in the
+                 footer, so neither read as a thing you could go to. Same dialog,
+                 two entrances: showAbout('settings') leads with the switches. -->
+            <button role="menuitem" type="button" onclick="showAbout('settings')"><b>⚙ Settings</b><i>Start with Windows, update checks, Play Log</i></button>
+            <a id="credits-btn" role="menuitem" href="/docs/credits" target="_blank" rel="noopener"><b>📜 Credits</b><i>The people and projects this is built on</i></a>
+            <button role="menuitem" type="button" onclick="showAbout('about')"><b>ℹ About Hero Companion</b><i>Versions, game data and which build this is</i></button>
           </div>
         </div>
       </nav>

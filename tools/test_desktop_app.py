@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 112          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 117          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement;
 #                        82 -> 88, 2026-08-05: portable-vs-installed detection
@@ -674,6 +674,30 @@ def main():
               for sel in (".modal-box", ".ask-card", ".ct-card"))
           and css_all.count("0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent)") == 3,
           "modal-box, ask-card and ct-card — the same edge on each")
+
+    # ── 12. HELP MENU: Settings and Credits are their own doors ─────────────
+    _mh = index[index.find('id="m-help"'):]
+    _mh = _mh[:_mh.find("</div>", _mh.find("showAbout('about')"))]
+    check("Settings, Credits and About are each reachable from Help",
+          "showAbout('settings')" in _mh and 'id="credits-btn"' in _mh
+          and "showAbout('about')" in _mh,
+          "they were all buried inside one 'About & Settings' entry")
+    check("Settings LEADS with the switches, About leads with the versions",
+          'focus === "settings"\n    ? settings + versions' in app_js.replace("\r\n", "\n")
+          or "? settings + versions" in app_js,
+          "same dialog and same state — only the order changes")
+    check("the Play Log switch is in Settings, wired to the SAME setter",
+          "playlogConsent(this.checked ? 'on' : 'off')" in app_js
+          and app_js.count("window.playlogConsent") == 1,
+          "one state, one setter — never a second copy of the choice")
+    check("Settings does not offer a tray toggle the app cannot honour",
+          "Hero Companion has no" in app_js and "notification-area icon" in app_js,
+          "the tray was deleted in 2026-08-02; a switch for it would be a lie")
+    # ⚠ The header version click is `hv.onclick = showAbout`, which passes a
+    # MouseEvent — the bare-handler trap already recorded against showEntry.
+    check("showAbout only honours a STRING focus",
+          'typeof focus === "string" ? focus : _ABOUT_FOCUS' in app_js,
+          "negative control: a MouseEvent must not be read as a mode")
 
     check("the real alignment toggle outranks an active preview",
           'localStorage.setItem("cohAlignment", al)' in _apply

@@ -2894,8 +2894,19 @@ async function loadMeta() {
 // Display-only. Explains the version vocabulary the header used to leave
 // unexplained; every number comes from /meta so it can never drift from the
 // running app.
-function showAbout() {
+// `focus` = "settings" when opened from Help → Settings: the switches lead and
+// the version tables follow. Same dialog, same state, two entrances — never a
+// second copy of a control (Joel, 2026-08-05).
+// ⚠ Remembered so a re-render (setAutostart writes through and re-renders) keeps
+// the door the user came through. ⚠ And `focus` is only ever honoured when it is
+// a STRING: the header version click is wired `hv.onclick = showAbout`, which
+// hands this function a MouseEvent — the same bare-handler trap already recorded
+// against showEntry.
+let _ABOUT_FOCUS = null;
+function showAbout(focus) {
   if (!META) return;
+  _ABOUT_FOCUS = typeof focus === "string" ? focus : _ABOUT_FOCUS;
+  focus = _ABOUT_FOCUS;
   const urls = META.urls || {};
   const link = (u, label) => _urlReady(u)
     ? `<a href="${escHtml(u)}" target="_blank" rel="noopener">${escHtml(label)}</a>` : "";
@@ -2920,14 +2931,19 @@ function showAbout() {
       <label class="incarnate-toggle"
         title="Compares version numbers against the project's releases page. Nothing about you or your builds is sent."
         ><input type="checkbox" ${localStorage.getItem("hc_update_check") === "off" ? "" : "checked"}
-        onchange="setUpdatePref(this.checked ? 'on' : 'off')"> Check for a new version when the app starts</label>
+        onchange="setUpdatePref(this.checked ? 'on' : 'off')"> Check for a new version when the app starts</label><br>
+      <label class="incarnate-toggle"
+        title="The Play Log reads the chat log your game writes, on this computer only. Off means the app opens no game files at all."
+        ><input type="checkbox" ${localStorage.getItem("hc_playlog") === "on" ? "checked" : ""}
+        onchange="playlogConsent(this.checked ? 'on' : 'off')"> Read my game logs for the Play Log</label>
+      <div class="muted small keep-whole" style="margin-top:6px">Hero Companion has no
+      notification-area icon: closing the window quits it. (Companion Lite is the one
+      with the light blue P, and its own start-with-Windows choice lives in its menu.)</div>
     </span></div>`;
   const roster = META.champion_count
     ? `<div class="about-row"><b>Champions</b><span>${META.champion_count} certified
        reference builds, each converged and re-verified whenever the model changes.</span></div>` : "";
-  $("about-body").innerHTML = `
-    <p>Hero Companion designs, optimizes, and levels City of Heroes characters
-    with you. It is free and noncommercial, forever.</p>
+  const versions = `
     <div class="about-row"><b>App version</b><span>${escHtml(META.app_version)}
       (the program itself; updates arrive through the releases page)</span></div>
     <div class="about-row"><b>Build model</b><span>v${escHtml(String(META.model_version))}
@@ -2940,9 +2956,17 @@ function showAbout() {
     <div class="about-row"><b>This build</b><span>server
       ${escHtml(META.build_commit || "(no build stamp)")}, browser loaded
       ${escHtml(jsAssetToken())}. If those two ever look out of step with a change you
-      were expecting, the page is running older code than the server.</span></div>
-    ${settings}
-    <p class="about-links">${links}</p>`;
+      were expecting, the page is running older code than the server.</span></div>`;
+  const intro = `<p>Hero Companion designs, optimizes, and levels City of Heroes
+    characters with you. It is free and noncommercial, forever.</p>`;
+  const head = $("about-modal").querySelector(".modal-head strong");
+  if (head) head.textContent = focus === "settings" ? "⚙ Settings" : "ℹ About Hero Companion";
+  // Whichever door you came through, you get the whole dialog — only the ORDER
+  // changes. Hiding half of it would make "Settings" and "About" two different
+  // truths about the same app.
+  $("about-body").innerHTML = focus === "settings"
+    ? settings + versions + `<p class="about-links">${links}</p>`
+    : intro + versions + settings + `<p class="about-links">${links}</p>`;
   $("about-modal").classList.remove("hidden");
 }
 // Writes through to the registry and re-renders from the ANSWER, not the click —
