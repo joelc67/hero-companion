@@ -7565,6 +7565,61 @@ function renderStats(t) {
 }
 
 // Damage/DPS + debuff/buff + pet summary. Hidden when there's no offense at all.
+// The same one-line meanings for the offense board (Joel, 2026-08-04: "we need
+// similar descriptions for all the empty stats - like enemy debuffs"). ⚠ Keyed by
+// SIDE as well as effect: the same word means opposite things depending on who it
+// lands on — a Defense debuff makes the enemy easier to hit, a Defense buff makes
+// your ally harder to hit — and printing one sentence for both would teach the
+// wrong thing to exactly the player who needs it.
+// ⚠ THE NAMES ARE THE DATA'S, NOT MINE. My first pass invented "Recharge",
+// "Speed", "Max HP" and "Accuracy"; the effect vocabulary powers.json actually
+// carries is these twelve, so three rows on Joel's own build rendered blank
+// (Slow, and RechargeTime on both sides). Counted from the shipped data — the
+// list is here so the battery can hold both sides of every one of them.
+const _OFF_EFFECTS = ["Damage", "DamageBuff", "Defense", "Resistance", "ToHit",
+  "Slow", "RechargeTime", "Endurance", "Recovery", "Regeneration", "Heal",
+  "HitPoints"];
+const _OFF_DESC = {
+  "debuff:Damage": "cuts how hard their attacks land",
+  "debuff:DamageBuff": "weakens the damage they deal",
+  "debuff:Defense": "makes them easier for everyone to hit",
+  "debuff:Resistance": "makes them take more damage from everyone",
+  "debuff:ToHit": "makes them miss more often",
+  "debuff:Slow": "slows their movement and their attack rate",
+  "debuff:RechargeTime": "their powers come back slower",
+  "debuff:Endurance": "burns the endurance they attack with",
+  "debuff:Recovery": "drains the endurance they attack with",
+  "debuff:Regeneration": "stops them healing the damage back",
+  "debuff:Heal": "hit points taken rather than given",
+  "debuff:HitPoints": "shrinks their health bar",
+  "buff:Damage": "raises the damage allies deal",
+  "buff:DamageBuff": "raises what allies hit for",
+  "buff:Defense": "makes allies harder to hit",
+  "buff:Resistance": "cuts the damage allies take",
+  "buff:ToHit": "helps allies land their attacks",
+  "buff:Slow": "speeds allies back up",
+  "buff:RechargeTime": "allies' powers come back sooner",
+  "buff:Endurance": "endurance handed straight to an ally",
+  "buff:Recovery": "allies get endurance back faster",
+  "buff:Regeneration": "allies heal back faster",
+  "buff:Heal": "hit points restored, per cast",
+  "buff:HitPoints": "raises allies' health bar",
+  "buff:Absorb": "a shield that soaks damage before health does",
+  // the attack summary rows carry their old parentheticals here instead
+  "row:offense:st": "your best attack chain, against a tough single enemy",
+  "row:offense:st:top": "the hardest hitter per second of animation",
+};
+const _offDesc = (side, effect) => {
+  const d = _OFF_DESC[`${side}:${effect}`];
+  return `<span class="o-desc">${d ? escHtml(d) : ""}</span>`;
+};
+// ⚠ NEVER PRINT THE DATA'S INTERNAL NAME (the same rule that stopped a powerset
+// reading "Radiation Manipulation"): these rows were showing "RechargeTime",
+// "HitPoints" and "DamageBuff" straight from the effect vocabulary. The KEY keeps
+// the internal name — the breakdown looks up by it — only the label changes.
+const _OFF_LABEL = { RechargeTime: "Recharge", HitPoints: "Max HP",
+                     DamageBuff: "Damage buff", ToHit: "To-hit" };
+const _offLabel = (effect) => _OFF_LABEL[effect] || effect;
 function renderOffense(off, t) {
   const sec = $("offense-section");
   const hasAny = off && (off.attack_count || (off.pets && off.pets.length)
@@ -7583,14 +7638,14 @@ function renderOffense(off, t) {
       // ⚠ every row gets its OWN key (Joel, 2026-08-04: "why are these stats
       // bound together?" — two rows sharing offense:aoe both lit up green).
       // The breakdown treats offense:aoe* alike; the highlight matches exactly.
-      html += `<div ${clk("offense:aoe", "AoE throughput")}><span>AoE throughput <span class="muted small">(farm DPS — ${off.aoe_count} AoE${off.aoe_count === 1 ? "" : "s"} cycled, per target)</span></span><span class="dps">${off.aoe_dps}</span></div>`;
-      html += `<div ${clk("offense:aoe:alpha", "AoE alpha")}><span>AoE alpha <span class="muted small">(one full AoE volley)</span></span><span>${off.aoe_burst}</span></div>`;
+      html += `<div ${clk("offense:aoe", "AoE throughput")}><span class="o-name">AoE throughput</span><span class="o-desc">farm damage per second — ${off.aoe_count} AoE${off.aoe_count === 1 ? "" : "s"} cycled, per target</span><span class="statval dps">${off.aoe_dps}</span></div>`;
+      html += `<div ${clk("offense:aoe:alpha", "AoE alpha")}><span class="o-name">AoE alpha</span><span class="o-desc">everything one full volley lands at once</span><span class="statval">${off.aoe_burst}</span></div>`;
     }
-    html += `<div ${clk("offense:st", "Single-target DPS")}><span>Single-target DPS <span class="muted small">(best-attack chain — EB/AV)</span></span><span class="dps">${off.st_dps}</span></div>`;
+    html += `<div ${clk("offense:st", "Single-target DPS")}><span class="o-name">Single-target DPS</span>${_offDesc("row", "offense:st")}<span class="statval dps">${off.st_dps}</span></div>`;
     // v34 #4: the Musculature case — a global +damage% that reaches every attack
     // but had no line of its own. It gets named right under the DPS it feeds.
     html += dpsAttributionHtml(t);
-    html += `<div ${clk("offense:st:top", "Top attack")}><span>Top attack (damage / animation)</span><span>${off.top_dpa}</span></div>`;
+    html += `<div ${clk("offense:st:top", "Top attack")}><span class="o-name">Top attack</span>${_offDesc("row", "offense:st:top")}<span class="statval">${off.top_dpa}</span></div>`;
     const top = (off.attacks || []).slice(0, 6).map(a =>
       `<div class="o-atk stat-clickable${(SELECTED_STAT && SELECTED_STAT.key === `offense:atk:${a.name}`) ? " stat-selected" : ""}"
          data-statkey="offense:atk:${escHtml(a.name)}" data-statlabel="${escHtml(a.name)}"
@@ -7657,12 +7712,13 @@ function renderOffense(off, t) {
   // organized with similar function as the top defense and resistance")
   const dbRow = (d, side, cls) => {
     const tail = d.type && d.type !== "all" ? " (" + d.type + ")" : d.type === "all" ? " (all)" : "";
-    const key = `${side}:${d.effect}:${d.type || ""}`;
+    const key = `${side}:${d.effect}:${d.type || ""}`;      // key keeps the data's name
+    const lab = _offLabel(d.effect) + tail;                 // the label is for people
     const selCls = (SELECTED_STAT && SELECTED_STAT.key === key) ? " stat-selected" : "";
     return `<div class="o-row stat-clickable${selCls}" data-statkey="${escHtml(key)}"
-      data-statlabel="${escHtml(d.effect + tail)}"
+      data-statlabel="${escHtml(lab)}"
       title="Which powers apply this? Click to see them.">
-      <span>${d.effect}${tail}</span><span class="${cls}">${buffVal(d)}</span></div>`;
+      <span class="o-name">${escHtml(lab)}</span>${_offDesc(side, d.effect)}<span class="statval ${cls}">${buffVal(d)}</span></div>`;
   };
   if ((off.debuffs || []).length) {
     html += `<div class="o-sub">Enemy debuffs <span class="muted small">(all your powers applied once, unenhanced)</span></div>`

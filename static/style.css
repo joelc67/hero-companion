@@ -666,7 +666,22 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 /* Offense keeps the SAME scale as the rest of the board — it used 11, 12 and 14px
    of its own, which is most of what read as "the fonts are not uniform". */
 .offense { display: flex; flex-direction: column; gap: 3px; }
-.offense .o-row { display: flex; justify-content: space-between; font-size: 13px; padding: 2px 0; border-bottom: 1px solid var(--border); }
+/* the same three-column row as defense/resistance, so the whole board reads as one
+   thing: name · what it means · number (Joel, 2026-08-04, on the debuff rows) */
+.offense .o-row {
+  display: grid; grid-template-columns: minmax(88px, max-content) 1fr auto;
+  align-items: baseline; column-gap: var(--s3);
+  font-size: 13px; padding: 2px 0; border-bottom: 1px solid var(--border);
+}
+.offense .o-row .o-name { font-size: 13px; color: var(--ink); }
+.offense .o-row .o-desc {
+  font-size: 12px; color: var(--muted); min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.offense .o-row:hover .o-desc { color: var(--ink); }
+.offense .o-row > .statval { font-variant-numeric: tabular-nums; }
+/* the inherent-mechanics fold keeps its single-column rows */
+.offense .o-row.im-row { display: block; }
 .offense .o-head { font-weight: 600; }
 .offense .o-head .dps { color: var(--accent); font-weight: 700; font-size: 15px; }
 .offense .o-sub { margin-top: 7px; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; opacity: .8; }

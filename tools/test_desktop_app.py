@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 76          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 77          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement)
 
@@ -377,10 +377,25 @@ def main():
           and "grid-template-columns: minmax(88px, max-content) 1fr auto;" in css
           and ".o-desc" in css,
           "a three-column grid: the sentence fills what used to be dead space")
-    check("...and the Stats board keeps ONE type scale",
+    # COVERAGE DENOMINATOR for the copy (Joel: "we need similar descriptions for
+    # all the empty stats - like enemy debuffs"). The denominator is the effect
+    # vocabulary the DATA carries, listed in _OFF_EFFECTS — my first pass invented
+    # names ("Recharge", "Speed", "Max HP") and three rows rendered blank on his
+    # own build. Both sides of every effect must have a sentence.
+    _effects = re.search(r"const _OFF_EFFECTS = \[(.*?)\];", app_js, re.S)
+    _names = re.findall(r'"([A-Za-z]+)"', _effects.group(1)) if _effects else []
+    _gaps = [f"{side}:{n}" for n in _names for side in ("debuff", "buff")
+             if f'"{side}:{n}":' not in app_js]
+    check(f"every debuff/buff effect has a one-line meaning, both sides "
+          f"({len(_names) * 2} of {len(_names) * 2})",
+          bool(_names) and not _gaps,
+          "missing: " + ", ".join(_gaps) if _gaps else "denominator is the data's own vocabulary")
+    check("...and the Stats board keeps ONE type scale and ONE row shape",
           "#stats .small, #stats .muted.small { font-size: 12px; }" in css
           and "#stats .aoe-tag, #stats .im-tag { font-size: 11px; }" in css
-          and ".offense .o-row { display: flex; justify-content: space-between; font-size: 13px;" in css,
+          # offense rows share the three-column grid, so the whole board matches
+          and css.count("grid-template-columns: minmax(88px, max-content) 1fr auto;") == 2
+          and ".offense .o-row.im-row { display: block; }" in css,
           "measured 6 sizes before (two 'small' spans rendered 14px), 4 after")
     check("...and the panel MEETS its button (no gap, no shift when it opens)",
           "position: absolute; top: 100%; right: 0; left: auto;" in css
