@@ -92,6 +92,33 @@ session-report.md. What survives as live state:
 - **Tour**: 4 stale bodies + a misplaced mock element corrected; audit_tour now
   checks CONTENT, not just structure.
 
+## ✉️ THE FORUM THREAD (topic 64761) — v5 REPLY DRAFTED, NOT SENT
+
+⚠⚠ **THE v4 DRAFT (session-report, 2026-08-02) IS NOW DANGEROUS TO POST** — the
+rebuild made four of its claims false ("The app lives in your system tray", "the
+update check only runs when you click it", "the planner does not understand
+exemping at all", plus two promises now delivered). **Use v5** (session-report,
+2026-08-05), written in the cheeky-Australian voice Joel asked for, no em dashes.
+
+⚠ **Governing fact for anything posted: 0.12.30 shipped 7/31, Basilisk posted
+8/2, and every fix landed after. Nothing he can download today has any of it.**
+The reply must say "next release" and never imply otherwise.
+
+**❌ THE ONE UNKEPT PUBLIC PROMISE: role descriptions.** Joel posted "I will write
+plain descriptions of what each role actually chases so it is not guesswork."
+`#preset-role` is still seven bare labels with no description anywhere, and the
+Mixed Role nag still fires. His Sonic Resonance question (a set that buffs AND
+debuffs) is unanswered too. **This is the top of the list.**
+Also unactioned: Troo's "manually selecting enhancements is harder than it needs
+to be". Unverified: his "low-contrast greys on light blues" — no contrast audit
+exists, so do NOT claim it fixed.
+
+✅ Everything else he raised is fixed and waiting on the release: tray, portable
+update, tabs, assistant placement, type scale, verbose text, export button,
+targeted level, Mighty Leap/Speed of Sound, Panacea. The separate Web3Forms
+report (D:\CoH\Homecoming accounts folder) was already fixed 2026-08-03 — the
+folder was found and the MESSAGE lied about it.
+
 **▶ OPEN, needing Joel:**
 1. **"Build this for me"** is dead in the shipped client for the same reason the
    AI item was (`gen-btn` hides whenever `AI_ON` is false). Point it at the
