@@ -3,6 +3,56 @@
 **HEAD = `c78f552b`, pushed, tracked tree clean. Nothing running.** Release still
 HELD at 0.12.30.
 
+## ✅ RECHARGE IS CREDITED, and the client settled it — `6b503c0c`
+
+Joel: "lets give recharge its accreditation." My exclusion was a GUESS (that
+−recharge rides Slow enhancements) and the client disproves it AND answers the
+question properly:
+- `Crafted_Curtail_Speed_A`, a Slow IO, enhances RunningSpeed / FlyingSpeed /
+  JumpingSpeed + Accuracy. **No RechargeTime — Slow is not the route.**
+- Neurotoxic Breath's −recharge is `attribs ['RechargeTime'], aspect Strength,
+  target AnyAffected`, and its `boosts_allowed` carries `Recharge`.
+- Speed Boost and Accelerate Metabolism hold the same template pointed at
+  allies and allow `Recharge` too — so it is credited in BOTH directions.
+
+Measured: the saved Poison build has no recharge in Neurotoxic Breath so its
+−recharge row correctly does not move; add one recharge IO and it goes
+**−83.2 → −117.4**. Both arms are pinned, so the positive case cannot pass by
+accident. The three remaining exclusions now cite the game's own per-power
+allow-lists rather than "no such category exists". `test_buff_debuff_enh` 9 → 11.
+
+## 🖥 HIS INSTALLED APP IS CURRENT (stamp `116d1ce`)
+
+Joel, 2026-08-06: *"The deliberately means nothing to me, its giberish without
+context."* Fair — the dist/installed split is my plumbing, not his problem.
+**The installed copy is now updated from the smoked dist build by robocopy /MIR
+(excluding `unins000.*`, so the uninstaller and ARP entry survive).** Do this
+after any server-side change rather than explaining a distinction to him.
+⚠ Statics and PYZ must move TOGETHER — see the CLAUDE.md rule.
+
+## ⛔ THE CLASS-ART FILLER: art extracted, placement PARKED — `116d1ce7`
+
+His idea: *"some filler graphics representing each class being worked on while
+picking powers might be nice."* Half done, and the half that failed is stated.
+
+- ✅ **The game has real art for this**: `charectercreationui/
+  archetypescreenshotsassets`, 512×512, three shots per archetype.
+  `extract_gui_emblems.py` now pulls shot 0 → `static/icons/at_art/` (15 of 16;
+  **Guardian has none in the client**, reported not faked). The 32px emblems in
+  `icons/at/` are ICONS — at panel size they are mush, which is why this needed
+  its own source.
+- ❌ **It would not paint in the frozen shell.** Three mechanisms tried (panel
+  background + blend mode; absolute `::after` at 0.16; same at 0.55, no mask).
+  In the dev copy every measurement says it is there — var resolves, box
+  computes 291×176, image loads — and the real window shows nothing. Stopped at
+  three rather than ship a fourth shape for one feature in one evening.
+- ⚠ **The idea has now been tried TWICE**: a dead `.cat-art` rule (archetype
+  watermark in the catalogue, rendered by nothing) was found and removed.
+- **Nothing references the art**, so nothing changed on screen. It is committed
+  because extracting it was the hard part.
+- ▶ **Needs Joel's eye, not another guess** — he can see in one second what the
+  pane cannot show me.
+
 ## ✅ DONE: the buff/debuff panel reads enhancement — `be8641db`
 
 Joel's ruling, acted on. `_debuff_buff_summary` priced every row at base scale ×

@@ -536,6 +536,22 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   identical to 9 dp. ⚠ `payoff_metrics["support"]` DOES read it, but its only
   consumer is `joint_refine(scorer="payoff")`, **which has no callers** — wire
   that up again and it starts moving with slotting.
+- **🖥 UPDATE THE COPY HE OPENS, DON'T EXPLAIN THE SPLIT (Joel, 2026-08-06: "The
+  deliberately means nothing to me, its giberish without context").** The
+  dist-vs-installed distinction is MY plumbing. After a server-side change:
+  rebuild, smoke, then `robocopy dist\HeroCompanion <installed> /MIR /XF
+  unins000.exe unins000.dat` — the uninstaller and ARP entry survive and
+  `_install_kind()` still reads *installed*. Then relaunch. Never hand him a
+  choice between two copies of his own app.
+- **⛔ THE CLASS-ART FILLER IS PARKED AFTER THREE MECHANISMS (2026-08-06).** The
+  art is REAL and now extracted (`charectercreationui/archetypescreenshotsassets`,
+  512×512 × 3 shots × 16 ATs; `extract_gui_emblems.py` pulls shot 0 to
+  `static/icons/at_art/`, 15 of 16 — Guardian has none). The PLACEMENT never
+  painted in the frozen shell: panel background + blend, absolute `::after` at
+  0.16, then 0.55 with no mask. Every dev-copy measurement said it was there;
+  the window said otherwise. ⚠ A dead `.cat-art` rule proves an EARLIER session
+  tried the same idea and abandoned it too. **Do not start a fourth mechanism
+  without Joel's eyes on the third** — this is the layout-mode arc repeating.
 - **⚠ A HALF-UPDATED FROZEN COPY IS A LIE, SO DON'T HALF-UPDATE IT.** This fix is
   server-side; the wording that goes with it is static. Pushing statics to the
   installed copy while its PYZ is a build behind would have put "with your
