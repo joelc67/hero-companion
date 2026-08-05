@@ -2627,9 +2627,14 @@ function renderRoleFocusSplit() {
     // ⚠ AS MANY JOBS AS THE CHARACTER HAS, NOT TWO. This control was added for
     // triform Kheldians (Joel, 2026-08-05): a Peacebringer or Warshade who wants
     // human, Nova AND Dwarf all worth playing needs three weights, and a
-    // two-way split fails the very case it exists for. Shares are plain numbers
-    // and do not have to total 100 — the note shows what they normalise to,
-    // which is also what the solver receives.
+    // two-way split fails the very case it exists for.
+    // ⚠⚠ THE SHARES ALWAYS TOTAL EXACTLY 100 (Joel: "the % must force math with
+    // additional roles to never exceed 100%"). They used to be free numbers that
+    // the note quietly renormalised — he typed 80/10/25 and the build actually
+    // used 70/9/22, so the figures on screen were not the figures being applied.
+    // Silent rescaling is the same defect class as a lying label: the fix is to
+    // make the entered number the real number, by taking the difference out of
+    // the OTHER jobs instead.
     if (!roleFocus.jobs || !roleFocus.jobs.length) {
       roleFocus.jobs = legit.slice(0, 2).map(role => ({ role, pct: 50 }));
     }
@@ -2647,10 +2652,17 @@ function renderRoleFocusSplit() {
       grp(`Natural for a ${AT_DISPLAY[at] || "this archetype"}`, NATURAL_ROLES[at] || [], sel)
       + grp("Your powersets also support", ext, sel)
       + grp("Off-role — allowed, but it will fight you", off, sel);
+    // ⚠ A NEW JOB PICKS NOTHING (Joel: "when I add another job it does not let me
+    // pick from a drop down, it just plants the first choice Tank/Survivor and it
+    // is not obvious I can change it"). It now opens on a placeholder, so the row
+    // visibly WANTS an answer instead of quietly asserting one.
     const rows = roleFocus.jobs.map((j, i) =>
-      `<div class="rf-job">
-         <select data-rfjob="${i}">${jobOpts(j.role)}</select>
-         <input type="number" min="0" max="100" step="5" value="${j.pct}" data-rfpct="${i}">
+      `<div class="rf-job${j.role ? "" : " rf-unset"}">
+         <select data-rfjob="${i}">
+           ${j.role ? "" : `<option value="" selected>— pick a job —</option>`}
+           ${jobOpts(j.role)}</select>
+         <input type="number" min="0" max="100" step="5" value="${j.pct}" data-rfpct="${i}"
+                ${j.role ? "" : "disabled"} aria-label="Share for this job">
          <span class="muted small">%</span>
          ${roleFocus.jobs.length > 2
             ? `<button type="button" class="linkbtn quiet" data-rfdel="${i}" title="Remove this job">✕</button>` : ""}
@@ -2667,26 +2679,76 @@ function renderRoleFocusSplit() {
        ${roleFocus.jobs.length < _ROLE_ORDER.length
           ? `<button type="button" class="linkbtn" id="rf-add">+ add another job</button>` : ""}
        <div id="rf-note" class="muted small"></div>`;
+    // Keep the NAMED jobs summing to exactly 100. `lock` is the row the user just
+    // typed into: it keeps the number they entered, and the balance is taken from
+    // the others in proportion. Integers only, and the last row absorbs the
+    // rounding so the total is 100 and not 99.
+    const balance = (lock) => {
+      const named = roleFocus.jobs.filter(j => j.role);
+      if (!named.length) return;
+      if (named.length === 1) { named[0].pct = 100; return; }
+      const keep = (lock && lock.role) ? lock : null;
+      if (keep) keep.pct = Math.min(100, Math.max(0, Math.round(keep.pct)));
+      const rest = named.filter(j => j !== keep);
+      const budget = 100 - (keep ? keep.pct : 0);
+      const restTot = rest.reduce((a, j) => a + j.pct, 0);
+      let acc = 0;
+      rest.forEach((j, i) => {
+        j.pct = (i === rest.length - 1) ? budget - acc
+          : Math.max(0, Math.round(restTot > 0 ? j.pct / restTot * budget : budget / rest.length));
+        acc += j.pct;
+      });
+    };
     const updS = () => {
       const L = k => ROLE_LABELS[k] || k;
       const use = roleFocus.jobs.filter(j => j.role && j.pct > 0);
-      const tot = use.reduce((a, j) => a + j.pct, 0);
-      $("rf-note").textContent = use.length > 1 && tot > 0
-        ? "→ " + use.map(j => `${Math.round(j.pct / tot * 100)}% ${L(j.role)}`).join(" / ")
-        : "Give at least two jobs a share, or pick that one role directly above.";
+      // No renormalising in the message: the numbers on screen ARE the numbers
+      // the solver gets, which is the whole point of forcing the total to 100.
+      $("rf-note").textContent = use.length > 1
+        ? "→ " + use.map(j => `${j.pct}% ${L(j.role)}`).join(" / ") + "  (100% total)"
+        : roleFocus.jobs.some(j => !j.role)
+          ? "Pick a job for the empty row, or remove it."
+          : "Give at least two jobs a share, or pick that one role directly above.";
+    };
+    // Write the balanced numbers back into the inputs WITHOUT re-rendering, so
+    // typing in a box does not steal its own focus mid-keystroke.
+    const paint = () => {
+      box.querySelectorAll("[data-rfpct]").forEach(inp => {
+        const j = roleFocus.jobs[+inp.dataset.rfpct];
+        if (j && document.activeElement !== inp) inp.value = j.pct;
+      });
+      updS();
     };
     box.querySelectorAll("[data-rfjob]").forEach(sel => sel.addEventListener("change", () => {
-      roleFocus.jobs[+sel.dataset.rfjob].role = sel.value; renderRoleFocusSplit();
+      const j = roleFocus.jobs[+sel.dataset.rfjob];
+      const wasUnset = !j.role;
+      j.role = sel.value;
+      // ⚠ A newly named job must be GIVEN a share, not left on 0. balance() is
+      // proportional, and a job sitting at 0 keeps 0 forever under a proportional
+      // rule — so hand it an equal slice first and let the others shrink to fit.
+      if (wasUnset && j.role) {
+        const n = roleFocus.jobs.filter(x => x.role).length;
+        j.pct = Math.max(1, Math.round(100 / n));
+        balance(j);
+      }
+      renderRoleFocusSplit();
     }));
-    box.querySelectorAll("[data-rfpct]").forEach(inp => inp.addEventListener("input", () => {
-      roleFocus.jobs[+inp.dataset.rfpct].pct = Math.max(0, +inp.value || 0); updS();
-    }));
+    box.querySelectorAll("[data-rfpct]").forEach(inp => {
+      const commit = () => {
+        const j = roleFocus.jobs[+inp.dataset.rfpct];
+        j.pct = Math.min(100, Math.max(0, +inp.value || 0));
+        balance(j);
+        paint();
+      };
+      inp.addEventListener("input", commit);
+      inp.addEventListener("blur", () => { commit(); renderRoleFocusSplit(); });
+    });
     box.querySelectorAll("[data-rfdel]").forEach(b => b.addEventListener("click", () => {
-      roleFocus.jobs.splice(+b.dataset.rfdel, 1); renderRoleFocusSplit();
+      roleFocus.jobs.splice(+b.dataset.rfdel, 1); balance(null); renderRoleFocusSplit();
     }));
     if ($("rf-add")) $("rf-add").addEventListener("click", () => {
-      const free = _ROLE_ORDER.find(x => !roleFocus.jobs.some(j => j.role === x)) || _ROLE_ORDER[0];
-      roleFocus.jobs.push({ role: free, pct: 25 }); renderRoleFocusSplit();
+      roleFocus.jobs.push({ role: "", pct: 0 });   // ⚠ nothing planted — see above
+      renderRoleFocusSplit();
     });
     updS();
     return;

@@ -830,6 +830,10 @@ summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .rf-job input[type="number"] { flex: 0 0 72px; width: 72px; margin: 0;
   padding: 4px 6px; text-align: right; }
 .rf-job .linkbtn { flex: 0 0 auto; }
+/* A job with no role yet asks for one, visibly, instead of looking decided. */
+.rf-job.rf-unset select { border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent); }
+.rf-job input[type="number"]:disabled { opacity: .45; }
 #rf-add { margin-top: 2px; }
 .preset-field { display: flex; flex-direction: column; gap: 3px; font-size: 12px;
   font-weight: 600; flex: 1 1 150px; }

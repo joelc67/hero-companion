@@ -240,7 +240,21 @@ const TOUR_MOCK_HTML = `
     <section class="panel" data-for="assistant">
       <h2>Build Assistant</h2>
       <label>Content <select data-for="preset-content" disabled><option>Task forces &amp; trials</option></select></label>
-      <label>Role <select data-for="preset-role" disabled><option>Damage dealer</option></select></label>
+      <label>Role <select data-for="preset-role" disabled><option>Split role — more than one job</option></select></label>
+      <div data-for="role-focus-split" data-tm="split-role">
+        <b>Split role: which jobs, and how much of each?</b>
+        <div class="muted small">Not a role of its own — you naming the jobs this character
+          really does.</div>
+        <div class="rf-jobs">
+          <div class="rf-job"><select disabled><option>Damage dealer</option></select>
+            <input type="number" value="60" disabled><span class="muted small">%</span></div>
+          <div class="rf-job"><select disabled><option>Healer</option></select>
+            <input type="number" value="25" disabled><span class="muted small">%</span></div>
+          <div class="rf-job"><select disabled><option>Buffer / Support</option></select>
+            <input type="number" value="15" disabled><span class="muted small">%</span></div>
+        </div>
+        <div class="muted small">→ 60% Damage dealer / 25% Healer / 15% Buffer / Support  (100% total)</div>
+      </div>
       <div class="custom-targets-row">
         <button class="mini" data-for="custom-targets-btn" type="button">Customize build targets…</button>
       </div>
@@ -698,7 +712,24 @@ const TOUR_STEPS = [
         + "your role's output rather than a generic score.\n\n"
         + "That matters most for support and control: a Defender is judged on "
         + "how much its buffs and debuffs actually change a fight — their size "
-        + "times how often they are up — not on how well it survives alone." },
+        + "times how often they are up — not on how well it survives alone.\n\n"
+        + "The list is grouped for your archetype: what is natural, what your "
+        + "powersets also support, and what is off-role. Nothing is removed. "
+        + "Off-role is allowed and always was, it just says so first." },
+  { chapter: "build", target: "#role-focus-split", anchor: "[data-tm=split-role]", side: "left",
+    key: "split-role",
+    title: "Split role: when one job is not the truth",
+    body: "Some characters genuinely do two or three things. A triform Kheldian "
+        + "is the clearest case — human, Nova and Dwarf are three jobs and all "
+        + "three can be worth playing — and it is just as true of a Defender who "
+        + "farms fire while still healing.\n\n"
+        + "Pick Split role and you name the jobs yourself, one row each, adding "
+        + "as many as you actually play. Every job is offered, grouped the same "
+        + "way, so an off-role one is a choice you can make rather than an "
+        + "option that was hidden from you.\n\n"
+        + "The shares always total 100. Type 80 into one and the others give way "
+        + "to make room, so the number you type is the number the optimizer "
+        + "uses. There is no quiet rescaling behind your back." },
   { chapter: "build", target: "#custom-targets-btn", scene: "targets", anchor: "[data-tm=targets-box]", side: "right", slim: true,
     title: "Your own targets",
     body: "This is what Customize build targets opens. Each row is an ask — "
