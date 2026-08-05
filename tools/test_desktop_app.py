@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 97          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 99          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement;
 #                        82 -> 88, 2026-08-05: portable-vs-installed detection
@@ -589,6 +589,25 @@ def main():
           "jny-align-or" not in app_js and 'a.key !== "praetorian"' not in app_js
           and app_js.count("_ALIGNMENTS.map(a =>") == 1,
           "negative control: the split version filtered _ALIGNMENTS into two runs")
+    # ⚠ PREVIEW MEANS PREVIEW (Joel, 2026-08-05). The reset lived only in
+    # closeJourneyView(), which the tab strip never calls — so leaving via the
+    # tabs kept the previewed side. It belongs in activateTab, the one route
+    # every exit takes. Negative control: the old home must NOT still hold it,
+    # or "one place owns it" is a comment rather than a fact.
+    _act = app_js[app_js.find("function activateTab("):]
+    _act = _act[:_act.find("\n}\n")]
+    _close = app_js[app_js.find("function closeJourneyView("):]
+    _close = _close[:_close.find("\n}\n")]
+    check("the side preview resets on leaving the tab, by ANY route",
+          'if (key !== "leveling") _JNY_ALIGN = null;' in _act
+          and "_JNY_ALIGN = null" not in _close,
+          "activateTab owns it; closeJourneyView no longer keeps a second copy")
+    check("...and the preview never writes the character's real alignment",
+          "_JNY_ALIGN" in app_js
+          and 'localStorage.setItem("cohAlignment"' not in
+              app_js[app_js.find("function _alignNote"):app_js.find("window.selectJourneyStop")],
+          "it sets a view flag; cohAlignment/applyAlignment belong to the app toggle")
+
     check("Flashback carries its context without needing a click",
           "Needs the Ouroboros unlock and level 15+" in app_js
           and "is not a side" in app_js,

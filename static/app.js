@@ -1762,11 +1762,11 @@ function closeJourneyView() {
   // instant and every renderer that writes into #journey-body keeps working.
   if (!$("tab-leveling").hidden) activateTab("powers");
   _journeyAutoOpened = false;   // closing is just closing — no decision recorded
-  // The alignment preview is per-viewing: drop it on close so reopening always
-  // shows the character's REAL side, and nothing about the preview outlives the
-  // road. (It never touched the build to begin with — it only sets a local
-  // view flag and never writes cohAlignment / applyAlignment / build.)
-  _JNY_ALIGN = null;
+  // The alignment preview resets in activateTab, which every exit from this tab
+  // goes through — including the one above. One place owns it, so the promise
+  // cannot be true on some routes out and false on others. (It never touched the
+  // build either way: it sets a local view flag and never writes cohAlignment /
+  // applyAlignment / build.)
 }
 
 // The road claims exactly the height its cards need, no more. Cards sit above
@@ -6947,6 +6947,13 @@ let _openingJourney = false;
 
 function activateTab(key, moveFocus) {
   if (!_TABS.includes(key)) key = _TABS[0];
+  // ⚠ THE SIDE PREVIEW IS PER-VISIT, AND THIS IS THE ONLY PLACE THAT CAN PROMISE
+  // IT (Joel, 2026-08-05: "this is a preview of other content, not a
+  // semi-permanent change to that alignment once we leave this tab"). The reset
+  // used to live in closeJourneyView(), which the TAB STRIP never calls — so
+  // clicking Powers & Slots left the preview set and coming back still showed
+  // somebody else's side. Leaving the tab by ANY route lands here.
+  if (key !== "leveling") _JNY_ALIGN = null;
   for (const k of _TABS) {
     const btn = $(`tab-btn-${k}`), panel = $(`tab-${k}`);
     if (!btn || !panel) continue;
