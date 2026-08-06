@@ -108,5 +108,20 @@ const check = (label, cond) => { assert.ok(cond, "FAIL: " + label); n++; };
     && /With it/.test(worth) && !/<th>Before<\/th>/.test(worth));
 }
 
-console.log(`test_improve_diff: ${n} of 13 checks passed`);
-assert.strictEqual(n, 13, "expected 13 checks");
+// 14-15: the column labels follow WHO IS ASKING. The per-IO panel compares a
+// build with and without a piece; the edit receipt compares before and after a
+// change. Calling the receipt's columns "Without it / With it" would
+// misdescribe the numbers in it.
+{
+  const b = { defense: { melee: 40 } }, a = { defense: { melee: 45 } };
+  const worth = run(b, a, { bare: true });
+  const receipt = run(b, a, { bare: true, labels: ["Before", "After"] });
+  check("per-IO panel says Without it / With it",
+    /Without it/.test(worth) && /With it/.test(worth));
+  check("the receipt says Before / After instead",
+    /<th>Before<\/th>/.test(receipt) && /<th>After<\/th>/.test(receipt)
+    && !/Without it/.test(receipt));
+}
+
+console.log(`test_improve_diff: ${n} of 15 checks passed`);
+assert.strictEqual(n, 15, "expected 15 checks");

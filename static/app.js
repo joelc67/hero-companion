@@ -6575,9 +6575,18 @@ function _snapshotBuild() {
     epic: build.epic, epic_display: build.epic_display, incarnates: build.incarnates,
   }));
 }
+// ⚠ SEE WHAT YOU JUST DID (Joel, 2026-08-06: "We need to see the results of a
+// change immediately, so the end user can see what they did. Perhaps even
+// adding an undo button in case they are dissatisfied with their change").
+// recordEdit is called BEFORE every build-mutating edit, everywhere — so
+// capturing the numbers here is what makes the receipt UNIVERSAL rather than a
+// special case bolted onto the two buttons in the popover. Any edit, from any
+// surface, gets the same honest before/after.
+let _PRE_EDIT_TOTALS = null;
 function recordEdit() {                 // call BEFORE any build-mutating edit
   EDIT_HISTORY.push(_snapshotBuild());
   if (EDIT_HISTORY.length > 60) EDIT_HISTORY.shift();
+  _PRE_EDIT_TOTALS = LAST_TOTALS;       // recompute REPLACES it, so the old object survives
   updateEditBar();
 }
 function _addedSlots() {
@@ -7327,6 +7336,9 @@ async function recompute() {
   // reads the fresh attribution ledger, not the previous recompute's.
   LAST_TOTALS = (totals && (totals.totals || totals)) || null;  // feed the tray rotation + notes
   renderStats(totals);
+  // ⚠ AFTER renderStats: the receipt anchors to a chit in the wall renderStats
+  // has just rebuilt, and it measures its own height to place itself.
+  _showEditReceipt();
   renderValidation(validation);
   renderExemplarBanners();   // the advice card needs the fresh numbers
   LAST_CALC = totals || null;   // v36: carries inherent_mechanics for the offense block
@@ -8652,10 +8664,17 @@ function _ioPop() {
 // Anchored in FIXED coordinates and re-placed on scroll: the mini wall is
 // sticky, so the chit keeps moving relative to the document but not the screen.
 function _placeIoPop() {
-  if (!_IOPOP || _IOPOP.classList.contains("hidden") || !_IOPOP_ANCHOR) return;
-  if (!_IOPOP_ANCHOR.isConnected) { closeIoWorth(); return; }
-  const a = _IOPOP_ANCHOR.getBoundingClientRect();
+  if (!_IOPOP || _IOPOP.classList.contains("hidden")) return;
   const w = _IOPOP.offsetWidth, h = _IOPOP.offsetHeight;
+  // ⚠ The chit can VANISH under it: removing a piece re-renders the wall, and
+  // the receipt for that removal has to survive the thing it was pinned to.
+  // It re-centres instead of closing — closing would take the Undo with it.
+  if (!_IOPOP_ANCHOR || !_IOPOP_ANCHOR.isConnected) {
+    _IOPOP.style.left = Math.max(8, (window.innerWidth - w) / 2) + "px";
+    _IOPOP.style.top = Math.max(8, Math.min(88, window.innerHeight - h - 8)) + "px";
+    return;
+  }
+  const a = _IOPOP_ANCHOR.getBoundingClientRect();
   let left = a.left;
   if (left + w > window.innerWidth - 8) left = window.innerWidth - w - 8;   // clamp, never off-screen
   let top = a.bottom + 6;
@@ -8681,6 +8700,40 @@ document.addEventListener("click", (e) => {
 // ⚠ The popover closes FIRST. openSlot raises the swap modal, and a popover
 // still sitting on top of it is the two-stacked-overlays shape this app has
 // been bitten by before.
+// THE RECEIPT: what that edit actually did, in the same numbers and the same
+// arithmetic the "what is it worth" panel used, plus the way back.
+// ⚠ Fires from the recompute, not from the buttons — so an edit made anywhere
+// (the picker, a right-click clear, the breakdown's own chits) reports itself.
+function _showEditReceipt() {
+  const was = _PRE_EDIT_TOTALS;
+  _PRE_EDIT_TOTALS = null;
+  if (!was || !LAST_TOTALS) return;
+  if (!document.body.classList.contains("tab-stats")) return;   // only where he asked for it
+  const host = _ioPop();
+  host.classList.remove("hidden");
+  document.addEventListener("scroll", _placeIoPop, true);
+  window.addEventListener("resize", _placeIoPop);
+  host.innerHTML = `<h2><span>What changed</span>
+      <button class="iconbtn pi-close" onclick="closeIoWorth()" title="close">✕</button></h2>
+    <div id="sb-worth"></div>
+    <div class="io-worth-acts">
+      <button type="button" class="mini" onclick="undoFromReceipt()">↶ Undo this change</button>
+    </div>`;
+  renderImproveDiff({ totals: was, name: "before" },
+                    { totals: LAST_TOTALS, powers: build.powers },
+                    "sb-worth", { bare: true, labels: ["Before", "After"] });
+  const out = $("sb-worth");
+  if (out && !out.textContent.trim()) {
+    out.innerHTML = `<p class="muted small keep-whole">That did not move any number the app
+      measures. It can still be the right call — a piece can be there for a set bonus the rule of
+      five was already capping, or its enhancement can be past the point where more helps.</p>`;
+  }
+  const perPower = host.querySelector("#sb-worth details");
+  if (perPower) perPower.open = false;
+  _placeIoPop();
+}
+window.undoFromReceipt = function () { closeIoWorth(); _PRE_EDIT_TOTALS = null; undoEdit(); };
+
 window.swapFromWorth = function (pi, si) { closeIoWorth(); openSlot(pi, si); };
 // After a clear the wall re-renders, which replaces the chit this popover was
 // anchored to — and a popover about a piece that is gone should go with it.
@@ -10863,8 +10916,11 @@ function renderImproveDiff(before, res, hostId, opts) {
   // the columns — "Before/After" would be a lie when the two columns are the
   // same build with and without one piece.
   const bare = !!(opts && opts.bare);
-  const head = `<tr><th>Stat</th><th>${bare ? "Without it" : "Before"}</th>`
-    + `<th>${bare ? "With it" : "After"}</th><th>Δ</th></tr>`;
+  // The two columns hold different things depending on who is asking: the per-IO
+  // panel compares with/without a piece, the receipt compares before/after an
+  // edit. Naming them wrong would misdescribe the numbers.
+  const lab = (opts && opts.labels) || (bare ? ["Without it", "With it"] : ["Before", "After"]);
+  const head = `<tr><th>Stat</th><th>${lab[0]}</th><th>${lab[1]}</th><th>Δ</th></tr>`;
   const perPower = powerRows.length
     ? `<details open><summary>Power by power (${powerRows.length} moved)</summary>
        <table class="diff-tbl">${head.replace("<th>Stat", "<th>Power")}${powerRows.join("")}</table></details>`
