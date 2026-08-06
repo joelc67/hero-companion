@@ -1,5 +1,34 @@
 # Resume point — 2026-08-06 (new session starts here)
 
+## ▶▶ AGENDA SWEEP (2026-08-06 night) — two solved, two closed, two re-scoped
+
+**SOLVED**
+- **Exploration-log parse** (`9360ae81`): `marginals()` streamed instead of
+  loading 2.2 GB into dicts. Measured on the real log: **89.3 s → 29.3 s, 6,174
+  MB → 393 MB peak (15.7×)**, result byte-identical (SHA-256 compared). Cost
+  fix only, moves no number, no re-cert. Battery `test_learn_stream.py` (11),
+  3 sabotages. ⚠ The pre-filter's danger is a FALSE NEGATIVE — `ctx_key` still
+  decides membership, the substring test only pre-rejects.
+- **Reduced motion** (`55d40c67`): the CSS block existed, but
+  `scroll-behavior: auto !important` cannot override a `behavior:"smooth"`
+  passed in JS — 11 sites did. One `scrollBehavior()` helper, read at call time.
+  test_desktop_app 129 → 132, sabotage-proven.
+
+**CLOSED — nothing to fix, do not re-open**
+- **18 inherent icons.** All seven player-visible granted inherents already have
+  icons. The 40 unmapped ones are internal machinery (`AutoLevel20`,
+  `COMBO_LEVEL_1`, `SR_HP_Slider`, `FAST_MODE`) that the CLIENT gives no icon
+  name — inventing art there breaks the game-first rule.
+- **Origin plates.** Extracted and unreferenced because **the app has no
+  character-origin concept at all**. "Placing" them means inventing an origin
+  field + picker + persistence — a product decision, not art placement. Joel's.
+
+**RE-SCOPED**
+- **Power Boost + the Fury meter class are ONE piece of work** — see the
+  CLAUDE.md entry. Power Boost is a `Set_Mode`, not a flat bonus. Display half
+  is already Joel's ruling. Zero champion exposure either way.
+- **Zone display names** stay blocked game-first until the i24 pass.
+
 ## ✅ THE PAGES RACE IS FIXED (`0c06b9df`) — and the inbox is still Joel's
 
 **Fixed:** two deployers had been racing since 07-27 (GitHub's per-push legacy

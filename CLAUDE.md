@@ -796,6 +796,19 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   the solve report are the same arithmetic; `bare` drops the solve heading and
   export nag and relabels the columns "Without it / With it", because
   Before/After would misdescribe what the two columns hold.
+- **🔗 POWER BOOST AND THE FURY METER ARE THE SAME MISSING CAPABILITY (found
+  game-first 2026-08-06).** Power Boost was queued as a parser-allowlist data
+  gap ("+66% amplifier effects invisible"). The client says otherwise: all 10
+  Power_Boost/Boost_Range records carry **zero effects** in our data, and the
+  client's own record is a **`Set_Mode` template (mode_name `BoostPower`, 15
+  seconds)** followed by effect groups tagged `PowerBoostA`. It is a temporary
+  MODE that amplifies what you cast while it is up — not a flat bonus a patcher
+  can add. That is the same shape as Fury / Rage / Domination / Defiance /
+  Gauntlet: **the engine has no model for a temporary mode or meter.** Build
+  them as ONE piece of work, and note the display half is already Joel's
+  standing ruling (a meter has no headline number without a scenario).
+  ✓ **Champion exposure is ZERO** — no certified build holds Power Boost — so
+  whenever this lands it cannot move a certified score, and needs no re-cert.
 - **⚠ AN EMPTY STATE IS A CLAIM TOO (Joel, 2026-08-06 — the Flashback art).**
   The art slot had ONE message, "zone art pending", for two different empties:
   a zone we hold no texture for (true) and a level the current view maps no zone
