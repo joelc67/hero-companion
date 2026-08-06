@@ -1,5 +1,37 @@
 # Resume point — 2026-08-06 (new session starts here)
 
+## ⏸ SAVED PLACE — 2026-08-06 evening (Joel headed home)
+
+**HEAD = `de80a2b0`, pushed, tracked tree clean.** Installed app is frozen stamp
+`bdc7f48` and holds ALL the code (the two commits after it are docs only). The
+app is not currently running. Release still HELD at 0.12.31; everything below is
+staged under CHANGELOG "Unreleased".
+
+**▶ FIRST THING NEXT SESSION — one unresolved check:**
+`gh run view 31127012557 --repo joelc67/hero-companion-inbox` — the proving run
+for the two inbox workflows I re-enabled today. **It was still QUEUED with zero
+steps when the session ended, so it proved nothing yet.** The recorded tell is
+that *failing in seconds with zero steps* = allowance not reset; queued is NOT
+that signal, but it is not success either. Do not record this as fixed until a
+run completes with real steps.
+
+**What today's inbox finding was:** Joel's Companion Lite 0.1.18 on his gaming PC
+is uploading fine (captures every ~5 min). But `Collect mailbox` and `Inbox
+maintenance` were STILL `disabled_manually` — five days past the recorded
+2026-08-01 re-enable date — and the inbox had accumulated **2,633 commits since
+07-27**, which is what the weekly squash exists to prevent (8.4 MB, ~288
+commits/day). Both are `active` again. The boards were never affected: the
+render lives in the PUBLIC repo and reads the inbox directly.
+
+**Still owed, none blocking:**
+1. **Paste a `/thumbtack` in game and watch the X land** — the one claim in the
+   badge work nobody has confirmed. Joel's eyes only.
+2. The diff says "Set bonuses 41 → 42" without naming WHICH bonus. Offered to
+   him, not built, he has not asked.
+3. The forum reply (v5 draft) is still unsent, and the 0.12.31 announcement post
+   was handed to him in chat but not posted to topic 64761.
+4. FP/whitelist submissions for the 0.12.31 signed artifacts.
+
 ## ▶▶ LATEST: the picker refuses what the game refuses (`bdc7f488`)
 
 **⚠ SERVER CHANGE → REBUILT.** dist rebuilt (stamp `bdc7f48`), frozen smoke PASS
