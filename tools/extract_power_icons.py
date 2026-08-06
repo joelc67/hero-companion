@@ -26,9 +26,17 @@ ICO = os.path.join(REPO, "static", "icons", "powers")
 MAP = os.path.join(REPO, "data", "power_icon_map.json")
 POWERS = os.path.join(REPO, "data", "powers.json")
 
-# Icons the game ships live here; other texture piggs are searched as a fallback.
+# Icons the game ships live here; every pigg in both dirs is searched.
+# ⚠ The two asset sets NAME their archives differently (live = texture_*.pigg,
+# issue24 = tex*/stage*.pigg) — a texture_* glob matches ZERO i24 files, which
+# silently cut the whole original-game art set out of the search (found
+# 2026-07-31, fixed 2026-08-06). Glob *.pigg; the ICON_PREFIX filter does the
+# real selection and non-texture archives simply contribute nothing.
 PIGG_DIRS = [r"C:\Games\HC2\assets\live", r"C:\Games\HC2\assets\issue24"]
-ICON_PREFIX = "texture_library/gui/icons/powers/"
+# Some powers' icon fields name generic enhancement art (e_icon_gen_*), which
+# the game stores under Icons/Enhancements — i24 stage2.pigg, not the powers dir.
+ICON_PREFIXES = ("texture_library/gui/icons/powers/",
+                 "texture_library/gui/icons/enhancements/")
 
 sys.path.insert(0, WRANGLER)
 from pigg_wrangler.pigg import PiggArchive          # noqa: E402
@@ -71,14 +79,14 @@ def build_texture_index():
     """lowercase icon basename -> (archive, path) for every power-icon texture."""
     idx = {}
     for d in PIGG_DIRS:
-        for pigg in sorted(glob.glob(os.path.join(d, "texture_*.pigg"))):
+        for pigg in sorted(glob.glob(os.path.join(d, "*.pigg"))):
             try:
                 a = PiggArchive(pigg)
             except Exception:  # noqa: BLE001
                 continue
             for p in a.list_paths():
                 pl = p.lower()
-                if ICON_PREFIX in pl and pl.endswith(".texture"):
+                if any(pref in pl for pref in ICON_PREFIXES) and pl.endswith(".texture"):
                     base = os.path.basename(pl)[: -len(".texture")]
                     idx.setdefault(base, (a, p))   # first pigg wins (live before issue24)
     return idx
