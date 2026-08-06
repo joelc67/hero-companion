@@ -2,11 +2,19 @@
 
 ## ▶▶ STAGED, NOT SHIPPED: badge macros + the Flashback art empty state (`12bc2b63`)
 
-Post-0.12.31 work from Joel's two observations. **Committed and pushed, staged
-under CHANGELOG "Unreleased", and DELIBERATELY NOT pushed to either frozen
-copy** — 0.12.31 published minutes earlier and his installed app should match
-what he released until he says otherwise. Statics-only, no server change, so a
-`push_statics.py` + relaunch is all it needs whenever he wants it.
+Post-0.12.31 work from Joel's two observations. Committed and pushed, staged
+under CHANGELOG "Unreleased".
+
+**⚠ NOW IN BOTH FROZEN COPIES (pushed 2026-08-05 late, after Joel went looking
+for it).** I first withheld the statics so his app would match the release, said
+so at the end of a long reply, and offered a choice — he went to the desktop
+shortcut to look instead and reported "nothing was updated." He was right, and
+the friction was mine. **Generalize: when someone has just asked about a fix,
+the default is to put it where they can see it, not to hand them a choice about
+plumbing.** `push_statics.py` (2 of 3123 files → both copies) + relaunch;
+statics-only, no server dependency (the coordinate and zone data were already
+being served), so no half-update lie. Installed copy still reads *installed*
+and its frozen stamp is still the release `b2161e1` — only the statics moved.
 
 - **`/thumbtack <x> <y> <z>` is the game's own map-marker command**, pinned from
   `cityofheroes.exe`'s command table — see the CLAUDE.md game-facts entry for
