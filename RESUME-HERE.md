@@ -1,5 +1,40 @@
 # Resume point — 2026-08-06 (new session starts here)
 
+## ⏸ PLACE SAVED — 2026-08-06 night, after v0.12.32
+
+**HEAD `e164fd13`, pushed, tracked tree clean. Published `v0.12.32`. Installed
+copy = `e164fd1` and reports 0.12.32. App not running. Nothing scheduled.**
+Two releases landed today: 0.12.31 (the desktop app) and 0.12.32 (everything
+from Joel's review after it). Data 2026.1.1242 and model v38 both unchanged in
+0.12.32, so no certified score moved and no re-cert is owed.
+
+**▶ FIRST THINGS NEXT SESSION**
+1. **The 0.12.32 announcement post is written and NOT posted** — it is in the
+   chat transcript, ready for topic 64761. ⚠ Its badge sentence is deliberately
+   weak: it says `/thumbtack` is the command the client registers for placing a
+   minimap marker, and does NOT claim the marker lands correctly. Nobody has
+   confirmed that in game (Joel said skip it). Strengthen only after someone has.
+2. **FP / whitelist submissions** for the new signed 0.12.32 artifacts, per
+   docs/signing-runbook.md. ⚠ Bitdefender often kills the app on release nights.
+3. **The render watch was armed and never fired** (monitor `bev2z5b0h`, baseline
+   run 31128638583). The Pages deploy-job removal (`0c06b9df`) is proven by ONE
+   good build; confirm the next few scheduled renders still publish cleanly.
+
+**▶ MINE AND UNBLOCKED, in the order I would take them**
+- **Pin the −recharge-debuff question game-first** (it rides Slow enhancements in
+  game; until pinned we under-credit on purpose). Pure investigation, no ruling.
+- **Fury meter + Power Boost as ONE piece** — the client shows Power Boost is a
+  `Set_Mode`, not the flat bonus it was queued as. Zero champion exposure. Only
+  the displayed-damage half needs Joel.
+- Leveling Companion batch · pricing #31 · alias-map roster reconciliation · the
+  8 irreducible Chrono_Shift rows · strict-dominance experiment (optional).
+
+**▶ JOEL'S, UNCHANGED** — github.com/settings/billing (inbox runner block, both
+workflows stay `disabled_manually`) · the Iron Man badge look · the gaming box,
+silent since 2026-07-29 · the i24 torrent · and five open design calls (name
+which set bonus, pair the wide diff tables, meters on displayed damage,
+budget/balanced/premium, whether the app tracks character origin at all).
+
 ## ▶▶ AGENDA SWEEP (2026-08-06 night) — two solved, two closed, two re-scoped
 
 **SOLVED**
