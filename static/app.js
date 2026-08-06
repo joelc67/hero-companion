@@ -8590,7 +8590,7 @@ function renderMiniWall() {
             + (s.level ? ` · level ${s.level}` : "")
             + `\nClick to see everything this one enhancement is worth`;
           return `<span class="mw-slot mw-slot-ask" id="mw-${pi}-${si}" title="${escHtml(t)}"`
-            + ` onclick="explainSlotWorth(${pi},${si})">`
+            + ` onclick="explainSlotWorth(${pi},${si},this)">`
             + (url ? `<img class="mw-ico" src="${url}" alt="" loading="lazy">`
                    : `<span class="mw-slot-empty"></span>`) + `</span>`;
         }).join("")
@@ -8630,19 +8630,70 @@ function renderMiniWall() {
 //
 // It reuses renderImproveDiff, so "what this IO is worth" and "what that solve
 // bought you" are the same arithmetic on the same axes and cannot disagree.
-window.explainSlotWorth = async function (pi, si) {
+// ⚠⚠ IT OPENS WHERE YOU ARE (Joel, 2026-08-06: "I have to scroll all the way to
+// the top to see it… or some other way to display it perhaps as a pop-up next to
+// where the end user is"). It used to render into #stat-breakdown, which lives
+// below the wall — so clicking a chit answered a question off screen.
+// His stated purpose settles the shape: "what they might want to sacrifice on
+// their IO choices to attain a better percentage with the LEAST amount of impact
+// on their build." That is a COMPARISON — click one chit, then the next, then
+// the next — so the page must not move under you and the stat breakdown must
+// stay where it is. A popover anchored to the chit does both; scrolling to the
+// top would have answered the question and lost the place you were working in.
+let _IOPOP = null, _IOPOP_ANCHOR = null;
+function _ioPop() {
+  if (_IOPOP && _IOPOP.isConnected) return _IOPOP;
+  _IOPOP = document.createElement("div");
+  _IOPOP.className = "io-worth-pop hidden";
+  _IOPOP.id = "io-worth-pop";
+  document.body.appendChild(_IOPOP);
+  return _IOPOP;
+}
+// Anchored in FIXED coordinates and re-placed on scroll: the mini wall is
+// sticky, so the chit keeps moving relative to the document but not the screen.
+function _placeIoPop() {
+  if (!_IOPOP || _IOPOP.classList.contains("hidden") || !_IOPOP_ANCHOR) return;
+  if (!_IOPOP_ANCHOR.isConnected) { closeIoWorth(); return; }
+  const a = _IOPOP_ANCHOR.getBoundingClientRect();
+  const w = _IOPOP.offsetWidth, h = _IOPOP.offsetHeight;
+  let left = a.left;
+  if (left + w > window.innerWidth - 8) left = window.innerWidth - w - 8;   // clamp, never off-screen
+  let top = a.bottom + 6;
+  if (top + h > window.innerHeight - 8) top = Math.max(8, a.top - h - 6);   // flip above
+  _IOPOP.style.left = Math.max(8, left) + "px";
+  _IOPOP.style.top = top + "px";
+}
+window.closeIoWorth = function () {
+  if (_IOPOP) _IOPOP.classList.add("hidden");
+  _IOPOP_ANCHOR = null;
+  document.removeEventListener("scroll", _placeIoPop, true);
+  window.removeEventListener("resize", _placeIoPop);
+};
+// clicking anywhere that is not the popover or another chit closes it.
+// ⚠ NOT Escape: it never reaches the page in the frozen shell, so the ✕ and
+// this outside-click are the only ways out that actually work.
+document.addEventListener("click", (e) => {
+  if (!_IOPOP || _IOPOP.classList.contains("hidden")) return;
+  if (e.target.closest("#io-worth-pop") || e.target.closest(".mw-slot-ask")) return;
+  closeIoWorth();
+});
+
+window.explainSlotWorth = async function (pi, si, anchorEl) {
   const p = (build.powers || [])[pi];
   const s = p && (p.slots || [])[si];
-  const host = $("stat-breakdown");
-  if (!host) return;
   if (!s || !s.piece_uid) return;          // an empty slot is worth nothing
+  const host = _ioPop();
+  _IOPOP_ANCHOR = anchorEl || _IOPOP_ANCHOR;
   const name = `${s.set_name || "Common IO"}: ${s.piece_name || ""}`;
   host.classList.remove("hidden");
+  document.addEventListener("scroll", _placeIoPop, true);
+  window.addEventListener("resize", _placeIoPop);
   host.innerHTML = `<h2><span>${escHtml(s.piece_name || name)}</span>
-      <button class="iconbtn pi-close" onclick="clearSelectedStat()" title="close">✕</button></h2>
+      <button class="iconbtn pi-close" onclick="closeIoWorth()" title="close">✕</button></h2>
     <p class="sb-sub">${escHtml(name)}${s.level ? ` · level ${s.level}` : ""}
       — in <b>${escHtml(p.display_name || p.full_name)}</b></p>
     <p class="muted small">Working out what it is worth…</p>`;
+  _placeIoPop();
   // ⚠ Build the probe from buildPayload(), NEVER from `build` directly — the
   // payload is what carries accolades, incarnate inclusion, alignment, PvP mode
   // and the exemplar view. Diffing against a payload missing those would price
@@ -8657,13 +8708,11 @@ window.explainSlotWorth = async function (pi, si) {
     return;
   }
   host.innerHTML = `<h2><span>${escHtml(s.piece_name || name)}</span>
-      <button class="iconbtn pi-close" onclick="clearSelectedStat()" title="close">✕</button></h2>
+      <button class="iconbtn pi-close" onclick="closeIoWorth()" title="close">✕</button></h2>
     <p class="sb-sub">${escHtml(name)}${s.level ? ` · level ${s.level}` : ""}
       — in <b>${escHtml(p.display_name || p.full_name)}</b></p>
-    <p class="sb-editnote">Everything below is what this ONE enhancement is worth right now,
-      measured by rebuilding your character without it. <b>Remove or replace it and this is
-      exactly what changes</b> — set bonuses included, since dropping a piece can cost you a
-      whole tier.</p>
+    <p class="sb-editnote keep-whole">What this ONE enhancement is worth, measured by rebuilding
+      your character without it. <b>Remove or replace it and this is exactly what changes.</b></p>
     <div id="sb-worth"></div>`;
   // before = the build WITHOUT it, after = the build as it stands, so the
   // numbers read as what the piece ADDS rather than as damage it did
@@ -8672,10 +8721,16 @@ window.explainSlotWorth = async function (pi, si) {
                     "sb-worth", { bare: true });
   const out = $("sb-worth");
   if (out && !out.textContent.trim()) {
-    out.innerHTML = `<p class="muted small">Nothing measurable moves without it. That can be real:
-      a piece can be held for a set bonus that the rule of five was already capping, or its
-      enhancement can be past the point where more stops helping.</p>`;
+    out.innerHTML = `<p class="muted small keep-whole">Nothing measurable moves without it. That
+      can be real: a piece can be held for a set bonus that the rule of five was already capping,
+      or its enhancement can be past the point where more stops helping.</p>`;
   }
+  // the per-power table is folded here: the question a popover is answering is
+  // "which percentages move", and an open table would make it tall enough to
+  // need its own scrollbar — the one thing this app does not do.
+  const perPower = host.querySelector("#sb-worth details");
+  if (perPower) perPower.open = false;
+  _placeIoPop();                    // size is known only now that it is filled
 };
 
 window.selectStat = function (key, label) {

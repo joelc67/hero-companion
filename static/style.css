@@ -1737,6 +1737,18 @@ body { overflow: hidden; }
 /* every filled chit answers "what is this one worth" on click */
 .mw-slot-ask { cursor: pointer; }
 .mw-slot-ask:hover { border-color: var(--accent); }
+/* …and it answers WHERE YOU ARE. Anchored to the chit in fixed coordinates so
+   clicking down the wall compares piece against piece without the page moving.
+   Width is fixed so the popover never reflows as you step across chits. */
+.io-worth-pop { position: fixed; z-index: 60; width: 370px;
+  max-width: calc(100vw - 16px); background: var(--panel);
+  border: 1px solid var(--accent); border-radius: var(--r2);
+  box-shadow: 0 10px 30px #0009; padding: 10px 12px; }
+.io-worth-pop h2 { font-size: 14px; margin: 0 0 2px;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.io-worth-pop .sb-sub { margin: 0 0 6px; font-size: 11.5px; }
+.io-worth-pop .diff-tbl { width: 100%; }
+.io-worth-pop.hidden { display: none; }
 .mw-slot-empty { width: 12px; height: 12px; border-radius: 50%;
   border: 1px solid var(--border); }
 /* Unslotted utility inherents fold into one thin full-width strip. */
