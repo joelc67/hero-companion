@@ -598,6 +598,24 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   installed copy — it stays wholly on the old text until an install. **Generalize:
   when a change spans the PYZ and the statics, both halves reach a copy together
   or neither does.**
+- **🏅 THE BADGE CATALOGUE PUTS EVERY BADGE ON THE SURFACE, AND THE NAME IS THE
+  BUTTON (Joel, 2026-08-06).** *"List every badge in each zone underneath the
+  names… with the ability to click on any badge name and get the location
+  copied. Then make it clear that the zones have full explanations."* It was 57
+  closed drawers whose name and count told you nothing about the contents, so
+  one location cost an expand and a read-down. All 390 badges render as chips
+  under their zone, visible with the drawer shut; the chip carries
+  `/thumbtack`; the drawer keeps the prose and NAMES what it holds
+  ("Directions and what each badge commemorates"); the how-to is stated ONCE at
+  the catalogue head, not on all 57 zones. ⚠ **The copy handler keys on
+  `[data-cmd]`, not `.cmd-row`** — one mechanism for every presentation, so a
+  new shape can never drift from the shipped one; a chip keeps its label and
+  takes a CSS tick (swapping its text reflows the grid under the cursor), the
+  wide row keeps its words. ⚠ **The 8 badges with no coordinates are PLAIN
+  TEXT, never buttons** — a control that copies nothing is worse than none.
+  ⚠ Still pending and visible here: zone keys are RAW internal prefixes
+  (`AbSewerNetwork`, and both `CapAuDiable`/`CapauDiable`) — display names ride
+  the i24 server-data pass, and the header says so. Do not invent them.
 - **⚠ AN EMPTY STATE IS A CLAIM TOO (Joel, 2026-08-06 — the Flashback art).**
   The art slot had ONE message, "zone art pending", for two different empties:
   a zone we hold no texture for (true) and a level the current view maps no zone

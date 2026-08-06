@@ -1,6 +1,26 @@
 # Resume point — 2026-08-06 (new session starts here)
 
-## ▶▶ STAGED, NOT SHIPPED: badge macros + the Flashback art empty state (`12bc2b63`)
+## ▶▶ THE BADGE CATALOGUE REBUILD + FLASHBACK LANDING (`04219ff3`)
+
+Joel's two follow-up orders, built, verified live, pushed, and **in both frozen
+copies** (statics only; the frozen stamp stays the release `b2161e1`).
+
+- **Every badge is on the surface and its name is the button.** 390 chips under
+  57 zones, 382 clickable, 8 inert-by-design (no coordinates → plain text, never
+  a fake control). The drawer keeps the prose and names what it holds; the
+  how-to is stated once at the catalogue head. Copy handler now keys on
+  `[data-cmd]` so chip and wide row are ONE mechanism — see the CLAUDE.md entry.
+- **Flashback lands on Praetoria** when you arrive from a stop outside its 1–20
+  range, and hands your stop back when you leave (`_praeSnapIndex`, pure and
+  battery-driven). Verified: hero L50 → Flashback (Nova Praetoria) → hero L50.
+- Battery `tools/test_journey_macro.js` **35 checks, 9 sabotages proven**.
+- ⚠ **STILL UNCONFIRMED IN GAME: nobody has pasted a `/thumbtack` and watched
+  the X land.** That is the one open question on all of this work.
+- ⚠ Visible in his screenshot and NOT fixed (it is a standing ruling): zone keys
+  are raw internal prefixes, so the grid shows `AbSewerNetwork` and both
+  `CapAuDiable` and `CapauDiable`. Display names ride the i24 server-data pass.
+
+## (earlier the same evening) badge macros + the Flashback art empty state (`12bc2b63`)
 
 Post-0.12.31 work from Joel's two observations. Committed and pushed, staged
 under CHANGELOG "Unreleased".
