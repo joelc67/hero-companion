@@ -2,22 +2,36 @@
 
 ## Unreleased
 
-- **Every exploration badge's coordinates are now a click-to-copy game command.**
-  The Leveling Guide showed a badge's location as bare numbers you had to retype.
-  Each one is now the game's own `/thumbtack` command, ready to paste into the
-  chat box while you are standing in that zone — it drops the marker on your map
-  so you can walk to it. Click the row, paste in game, go.
+- **Every exploration badge in the game is now listed on the page, and its name
+  is the button.** The Zones & Badges catalogue used to be 57 closed drawers: to
+  get one badge's location you opened a zone and read down a list. All 390
+  badges are on the surface under their zone now, and clicking a badge's name
+  copies the game's own `/thumbtack` command for it — paste that into the chat
+  box while you are in that zone and it drops the marker on your map. Each zone
+  still opens for written directions to every badge in it and what each one
+  commemorates.
+
+- **The 8 badges we have no coordinates for are not pretend buttons.** They are
+  listed as plain text and say why, rather than looking clickable and copying
+  nothing.
 
 - **25 badges were hiding their location.** Their coordinates were only drawn
   alongside the written directions, so any badge without a write-up showed no
   location at all, even though we had its exact position. Every badge with
   coordinates now shows them.
 
-- **The Leveling Guide's Flashback view stops claiming its artwork is missing.**
-  Praetoria's zones run level 1 to 20, so a stop above level 20 has no
-  Praetorian place to show — but the art panel said "zone art pending", which
-  read as a missing picture. It now says what is actually true, and names the
-  range, while levels 1 to 20 show their zone art as before.
+- **The Leveling Guide's Flashback view opens on Praetoria, so you see it.**
+  Praetoria's zones run level 1 to 20, so previewing Flashback from a level-50
+  character left the art panel with nothing to show. It now lands on the first
+  stop that has a Praetorian zone, and puts you back where you were standing
+  when you switch away again — the preview never moves your place on your own
+  road.
+
+- **And when there is genuinely nothing to show, it says so honestly.** The art
+  panel used to read "zone art pending" for a level with no zone at all, which
+  read as a missing picture. Those are two different things now: art we do not
+  have yet still says pending, and a level outside the content says that
+  instead, naming the range it covers.
 
 ## 0.12.31 — 2026-08-05 — The desktop app
 

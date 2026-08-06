@@ -980,17 +980,25 @@ function copyToClipboard(text) {
     return true;
   } catch (e) { return false; }
 }
+// Keyed on data-cmd rather than .cmd-row, so ANY presentation can carry a
+// copyable command — the wide command card and the Leveling Guide's compact
+// badge chips are the same one mechanism, not two that can drift apart.
 document.addEventListener("click", (e) => {
-  const row = e.target.closest(".cmd-row");
+  const row = e.target.closest("[data-cmd]");
   if (!row) return;
   const ok = copyToClipboard(row.dataset.cmd);
+  if (!ok) return;
+  row.classList.add("cmd-copied");
+  // A row with a <code> says so in words (the shipped behaviour). A chip is
+  // only as wide as its label, so swapping its text would reflow the grid
+  // under the cursor — it gets a CSS tick instead and keeps its name.
   const code = row.querySelector("code");
-  if (code && ok) {
-    const orig = code.textContent;
-    code.textContent = "✓ copied — Ctrl+V in game";
-    row.classList.add("cmd-copied");
-    setTimeout(() => { code.textContent = orig; row.classList.remove("cmd-copied"); }, 1400);
-  }
+  const orig = code ? code.textContent : null;
+  if (code) code.textContent = "✓ copied — Ctrl+V in game";
+  setTimeout(() => {
+    if (code) code.textContent = orig;
+    row.classList.remove("cmd-copied");
+  }, 1400);
 });
 
 // The archetype's inherent, explained in place (Joel: "#3 sounds cool too.
@@ -1234,6 +1242,9 @@ function _storyHtml(zones) {
 // here, in one fixed-height window that scrolls itself.
 let _JNY_SEL = null;   // selected stop index
 let _JNY_CTX = null;   // {steps, route, storyAt, ...} — set by renderJourney
+// Where the user was standing on their OWN road before a Flashback peek moved
+// them. The side picker is a preview, so the peek has to give the stop back.
+let _JNY_SEL_RETURN = null;
 
 // Journey-local alignment: lets a player see EITHER side's content without
 // changing the whole app's theme (Joel). Defaults to the app alignment; the
@@ -1264,8 +1275,31 @@ const _ALIGNMENTS = [
     tip: "Ouroboros: replay legacy Praetoria and other old arcs at their original level. "
        + "Needs the Ouroboros unlock and level 15+ — click for the details." },
 ];
+// WHICH STOP THE FLASHBACK VIEW SHOULD LAND ON (Joel's ruling, 2026-08-06:
+// "default Flashback to lvl 1, so art is seen"). Pure, so the battery can drive
+// it without a road on screen. Returns null for "stay where you are".
+// ⚠ Only moves when the current stop is OUTSIDE Praetoria's range: the ruling's
+// own reason is that the art should be visible, and on an in-range stop it
+// already is — snapping a deliberate pick back to 1 would be fighting the user.
+function _praeSnapIndex(steps, curIdx, range) {
+  if (!range || !Array.isArray(steps) || !steps.length) return null;
+  const cur = steps[curIdx];
+  if (cur && cur.level >= range[0] && cur.level <= range[1]) return null;
+  const i = steps.findIndex(s => s && s.level >= range[0] && s.level <= range[1]);
+  return i >= 0 ? i : null;
+}
+
 window.setJourneyAlign = function (al) {
+  const leavingPrae = _JNY_ALIGN === "praetorian" && al !== "praetorian";
   _JNY_ALIGN = al;
+  if (al === "praetorian") {
+    const i = _praeSnapIndex((_JNY_CTX || {}).steps, _JNY_SEL, _praeRange());
+    // remember the stop we took them off, so leaving hands it straight back
+    if (i != null) { if (_JNY_SEL_RETURN == null) _JNY_SEL_RETURN = _JNY_SEL; _JNY_SEL = i; }
+  } else if (leavingPrae && _JNY_SEL_RETURN != null) {
+    _JNY_SEL = _JNY_SEL_RETURN;
+    _JNY_SEL_RETURN = null;
+  }
   renderJourney();
 };
 // One plain sentence about the alignment being shown — no jargon.
@@ -1306,14 +1340,36 @@ function _alignNote(al) {
 // so they paste straight through with no rearranging.
 // Reuses the .cmd-row click-to-copy the in-game commands card already ships:
 // one copy mechanism, one behaviour, nothing new to keep in step.
-function _tackRow(coords) {
+function _tackCmd(coords) {
   if (!Array.isArray(coords) || coords.length !== 3
-      || !coords.every(n => typeof n === "number" && isFinite(n))) return "";
-  const cmd = `/thumbtack ${coords.join(" ")}`;
+      || !coords.every(n => typeof n === "number" && isFinite(n))) return null;
+  return `/thumbtack ${coords.join(" ")}`;
+}
+
+function _tackRow(coords) {
+  const cmd = _tackCmd(coords);
+  if (!cmd) return "";
   return `<button type="button" class="cmd-row jny-tack" data-cmd="${escHtml(cmd)}">`
     + `<code>${escHtml(cmd)}</code>`
     + `<span>Click to copy, then paste it into the game's chat while you are in this `
     + `zone — it drops the marker on your map.</span></button>`;
+}
+
+// The badge NAME as the control (Joel, 2026-08-06: "the ability to click on any
+// badge name and get the location copied") — so nobody has to open a zone and
+// read down a list to reach the one thing they came for.
+// ⚠ A badge we hold no coordinates for renders as PLAIN TEXT, never a button:
+// a control that copies nothing is worse than no control, and 8 of the 390 are
+// in that state. It says why on hover instead of failing silently.
+function _tackChip(name, coords) {
+  const cmd = _tackCmd(coords);
+  if (!cmd) {
+    return `<span class="jny-badge-chip no-loc"`
+      + ` title="No coordinates for this badge yet — open the zone for what directions we have">`
+      + `${escHtml(name)}</span>`;
+  }
+  return `<button type="button" class="jny-badge-chip" data-cmd="${escHtml(cmd)}"`
+    + ` title="${escHtml(cmd)} — click to copy, then paste it in game">${escHtml(name)}</button>`;
 }
 
 window.selectJourneyStop = function (i) {
@@ -1966,10 +2022,22 @@ function renderJourney() {
     _JNY_SEL = Math.min(hereIdx >= 0 ? hereIdx : 0, steps.length - 1);
 
   const badgeLocCredit = jb.location_credit || "";
+  // EVERY BADGE IS ON THE PAGE (Joel, 2026-08-06). The zone used to be a closed
+  // drawer whose name and count told you nothing about what was inside, so
+  // reaching one location meant opening a zone and reading down a list. The
+  // names are the surface now and each one IS the copy button; the drawer keeps
+  // the reading material and says on its face that it holds it.
+  const _bname = b => b.display_hero || b.display_villain || b.name || "";
   const zones = (jb.zones || []).map(z =>
-    `<details class="jny-zone"><summary><b>${escHtml(z.zone_key)}</b>
-       <span class="muted small">${z.badges.length} exploration badge${z.badges.length > 1 ? "s" : ""}</span></summary>`
-    + z.badges.map(b => `<div class="jny-zbadge"><b>${escHtml(b.display_hero || b.display_villain)}</b>`
+    `<div class="jny-zone-block">`
+    + `<div class="jny-zone-head"><b>${escHtml(z.zone_key)}</b> `
+    + `<span class="muted small">${z.badges.length} exploration badge${z.badges.length > 1 ? "s" : ""}</span></div>`
+    + `<div class="jny-chips">`
+    + z.badges.map(b => _tackChip(_bname(b), b.coords)).join("")
+    + `</div>`
+    + `<details class="jny-zone"><summary class="jny-zone-more">Directions and what each badge `
+    + `commemorates</summary>`
+    + z.badges.map(b => `<div class="jny-zbadge"><b>${escHtml(_bname(b))}</b>`
         // WHERE it is (n15g's directions) leads; the flavour text follows.
         + (b.where ? `<div class="jny-where">📍 ${escHtml(b.where)}</div>` : "")
         + (b.find_hint ? `<div class="muted small">${escHtml(b.find_hint)}</div>` : "")
@@ -1979,7 +2047,7 @@ function renderJourney() {
         // never depend on whether someone wrote prose about it.
         + _tackRow(b.coords)
         + `</div>`).join("")
-    + `</details>`).join("");
+    + `</details></div>`).join("");
 
   // Accolades drawer — the build-affecting (passive) tier from the game-first
   // roster the Accolades panel already ships; attainment text rides where the
@@ -2075,6 +2143,10 @@ function renderJourney() {
     + (zones
         ? `<details class="jny-zones"><summary>🧭 <b>Zones & badges</b> <span class="muted small">— the grounded
            catalog from the game's own files. ${escHtml(jb.pending || "")}</span></summary>
+           <div class="jny-chip-how keep-whole"><b>Click any badge name to copy its map command.</b>
+             Paste it into the game's chat while you are in that zone and it drops the marker on your
+             map. Open a zone's "Directions and what each badge commemorates" for written directions
+             to every badge in it and what each one is for.</div>
            <div class="jny-zonegrid">${zones}</div>
            <div class="jny-prov">badge identity: ${escHtml(jb.provenance || "badges.bin")}`
            + (badgeLocCredit ? ` · 📍 ${escHtml(badgeLocCredit)}` : "")

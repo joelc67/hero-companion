@@ -43,8 +43,9 @@ const make = new Function("escHtml", "JOURNEY_PLACES_GET", "ALIGN_GET", "ART_GET
   "const _journeyAlign = () => ALIGN_GET();"
   + "const _artFileFor = n => ART_GET()[String(n || '').toLowerCase()] || null;"
   + "Object.defineProperty(globalThis, 'JOURNEY_PLACES', { get: JOURNEY_PLACES_GET, configurable: true });"
-  + lift("_praeRange") + lift("_noZoneNote") + lift("_zoneArtHtml") + lift("_tackRow")
-  + "; return { _praeRange, _noZoneNote, _zoneArtHtml, _tackRow };");
+  + lift("_praeRange") + lift("_noZoneNote") + lift("_zoneArtHtml") + lift("_tackCmd")
+  + lift("_tackRow") + lift("_tackChip") + lift("_praeSnapIndex")
+  + "; return { _praeRange, _noZoneNote, _zoneArtHtml, _tackRow, _tackChip, _praeSnapIndex };");
 const F = make(esc, () => PLACES, () => ALIGN, () => ART);
 
 let n = 0;
@@ -132,5 +133,49 @@ ART = { "nova praetoria": "nova-praetoria.jpg", "atlas park": "atlas-park.jpg" }
   check("named zone without a texture still reads as pending",
     /zone art pending/.test(h) && /Boomtown/.test(h));
 }
+
+// ── the Flashback landing stop (Joel: "default Flashback to lvl 1") ────────
+{
+  const steps = [{ level: 1 }, { level: 2 }, { level: 10 }, { level: 25 }, { level: 50 }];
+  const R = [1, 20];
+  // 19-20: arriving from a stop past the range lands on the FIRST in-range one,
+  // which is what makes the art appear.
+  check("out-of-range stop snaps into the range", F._praeSnapIndex(steps, 4, R) === 0);
+  check("snaps to the first in-range stop, not just index 0 by luck",
+    F._praeSnapIndex([{ level: 30 }, { level: 5 }, { level: 8 }], 0, [1, 20]) === 1);
+  // 21-22: NEGATIVE CONTROLS — an in-range stop is a deliberate pick and must be
+  // left alone, or the view fights someone who clicked level 10 on purpose.
+  check("in-range stop is left alone", F._praeSnapIndex(steps, 2, R) === null);
+  check("boundary stop (exactly the top of the range) is left alone",
+    F._praeSnapIndex([{ level: 20 }, { level: 1 }], 0, R) === null);
+  // 23-25: nothing to snap to, or nothing to snap with, means stay put.
+  check("no range → stay put", F._praeSnapIndex(steps, 4, null) === null);
+  check("no steps → stay put", F._praeSnapIndex([], 0, R) === null);
+  check("no in-range stop anywhere → stay put",
+    F._praeSnapIndex([{ level: 30 }, { level: 40 }], 0, R) === null);
+}
+
+// ── the badge NAME is the control (Joel: "click on any badge name") ───────
+{
+  const c = F._tackChip("Boomtown Refugee", [1792, -59, -2944]);
+  // 26-29: it is a real button, it shows the NAME (not the numbers), and it
+  // carries the command for the same one copy handler.
+  check("chip is a button", /^<button type="button"/.test(c));
+  check("chip shows the badge name", c.includes(">Boomtown Refugee</button>"));
+  check("chip carries the command", /data-cmd="\/thumbtack 1792 -59 -2944"/.test(c));
+  check("chip does not print the raw numbers as its label",
+    !/>\s*1792/.test(c.replace(/title="[^"]*"/, "")));
+}
+{
+  // 30-32: NEGATIVE CONTROL — no coordinates means it is NOT a control at all.
+  // A button that copies nothing is worse than plain text.
+  const c = F._tackChip("Somewhere Unknown", null);
+  check("no coords → not a button", !/<button/.test(c));
+  check("no coords → no data-cmd for the handler to fire on", !/data-cmd/.test(c));
+  check("no coords → still names the badge", c.includes("Somewhere Unknown"));
+}
+// 33: a badge name carrying markup cannot break out of the attribute or the DOM
+check("badge names are escaped",
+  F._tackChip('Bad" onclick="x', [1, 2, 3]).includes("&quot;"));
 
 console.log(`journey macro + zone-art battery: ${n} of ${n} checks PASS`);

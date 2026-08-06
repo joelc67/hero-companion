@@ -2256,6 +2256,27 @@ body { overflow: hidden; }
 .jny-art-none { font-size: 12px; color: var(--muted); line-height: 1.45; }
 /* the /thumbtack row inside a badge — the .cmd-row card styling does the rest */
 .jny-tack { margin-top: 6px; }
+/* how the catalogue works, said once at the top rather than on all 57 zones */
+.jny-chip-how { font-size: 12px; color: var(--muted); line-height: 1.5;
+  margin: 2px 0 10px; padding: 8px 10px; border-radius: var(--r2);
+  border: 1px solid var(--border); background: var(--bg); }
+.jny-chip-how b { color: var(--text); }
+/* EVERY badge on the surface: the name is the copy button */
+.jny-zone-block { break-inside: avoid; margin-bottom: 12px; }
+.jny-zone-head { margin-bottom: 5px; }
+.jny-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.jny-badge-chip { font: inherit; font-size: 11.5px; line-height: 1.25;
+  padding: 3px 7px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--panel); color: var(--text); cursor: pointer; text-align: left; }
+.jny-badge-chip:hover { border-color: var(--accent); color: var(--accent); }
+.jny-badge-chip.cmd-copied { border-color: var(--def); color: var(--def); }
+.jny-badge-chip.cmd-copied::before { content: "✓ "; }
+/* no coordinates = not a control. It reads as text and cannot be clicked. */
+.jny-badge-chip.no-loc { cursor: default; color: var(--muted);
+  border-style: dashed; opacity: .75; }
+.jny-badge-chip.no-loc:hover { border-color: var(--border); color: var(--muted); }
+.jny-zone-more { font-size: 11.5px; color: var(--muted); margin-top: 5px; cursor: pointer; }
+.jny-zone-more:hover { color: var(--accent); }
 @media (max-width: 900px) { .jny-panel { flex-direction: column; height: auto; max-height: 72vh; }
   .jny-art { width: 100%; height: 200px; } }
 /* the selected stop, so the road shows which level the panel is describing */
