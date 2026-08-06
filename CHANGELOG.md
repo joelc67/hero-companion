@@ -1,43 +1,109 @@
 # Hero Companion — What's New
 
-## Unreleased
+## 0.12.31 — 2026-08-05 — The desktop app
 
-- **Hero Companion is becoming a real desktop window.** Instead of opening a
-  browser tab and leaving an icon down by your clock, it opens in its own
-  window, and closing that window closes the app. Nothing extra installs: it
-  uses the web view that already ships with Windows 10 and 11. This build has
-  it behind a switch (`HC_WINDOW=1`) so it can be looked at before it becomes
-  the normal way the app starts.
+Game data is unchanged (Homecoming 2026.1.1242), the model stays at v38, and
+the bundled champions are the 24 certified in 0.12.30. Everything in this
+release is the app itself: it stops being a browser page and becomes a real
+desktop application, rebuilt around your review notes and field reports.
 
-- **The update check now runs when the app starts.** It compares version
-  numbers against the releases page and tells you only when there is something
-  newer. Nothing about you or your builds is sent, and you can turn it off
-  under About & Settings.
+- **Hero Companion is a real desktop window now.** It opens in its own window,
+  and closing that window closes the app — no icon down by your clock, no tray
+  to hunt through. Nothing extra installs: it uses the web view that already
+  ships with Windows 10 and 11. Every file the app produces goes through a
+  real Save As dialog, your settings and theme survive every launch, and the
+  About dialog names the exact build you are running.
 
-- **Startup and update settings live in the app.** "Start Hero Companion when
-  I sign in to Windows" used to be reachable only from the tray icon's menu.
-  It is now in About & Settings, next to the update-check switch, where it can
-  still be found once the tray icon is gone.
+- **The update check runs when the app starts.** It compares version numbers
+  against the releases page and tells you only when there is something newer.
+  Nothing about you or your builds is sent, and you can turn it off in
+  Settings. "Start Hero Companion when I sign in to Windows" lives there too.
+
+- **A portable copy is never silently converted to an installed one.** If you
+  run the app from the unzipped folder, the update button now explains that
+  updating means unzipping the new folder over the old one, and points at the
+  download page — instead of quietly running the installer, which is what it
+  used to do (thank you, BasiliskXVIII).
+
+- **The app is organized into four tabs**: Powers & Slots, Stats, Leveling
+  Guide, and Logging, under a build tile that names your character (there is a
+  Name field now). Menus explain themselves: anything greyed out says why. The
+  app zooms to fit your window instead of rearranging itself, no panel has its
+  own scrollbar, and on smaller displays the two-column regions fold to one.
+
+- **Powers & Slots works like the in-game respec**: picks in level order along
+  the game's own ladder, offering only what the game offers at each level.
+  What the rules forbid is greyed with the reason on it, never hidden.
+  Prerequisite counts and pool rules come from the game's files. The Build
+  Assistant and the epic/incarnate plan run full width under the builder, so
+  its tables read as tables — the side column opens only when you ask for an
+  enhancement's details.
 
 - **You are asked, once, whether to share your play data with the Pulse
-  Boards.** The question sits on the opening menu, where it cannot get between
-  you and the character you came to open. It spells out exactly what is captured,
-  what leaves your machine, what is never read, and what the public board shows,
-  with a link to the boards themselves. Sharing stays off unless you say yes,
-  either answer is remembered, and both are reversible from the Play Log tab.
-  Ignoring it answers nothing.
+  Boards.** The question sits in the opening menu, where it cannot get between
+  you and your character. It spells out exactly what is captured, what leaves
+  your machine, and what the public board shows. Sharing stays off unless you
+  say yes, either answer is remembered, and both are reversible from the
+  Logging tab — where the Play Log's on state now offers "Turn it off" just as
+  plainly as the off state offers "Turn it on".
 
-- **The panels rearrange themselves so the page is not half empty.** On a big
-  build the left-hand cards used to run more than a screen and a half past the
-  powers grid, leaving a tall empty strip to scroll through. The cards now move
-  to whichever side keeps the two columns even, and the Build Assistant ends up
-  at the top of the wide column where it is hard to miss. Nothing gets its own
-  scrollbar.
+- **Stats explains every number.** Every row is a name, a one-line plain-English
+  meaning, and the number. Your archetype's inherent appears at the top as an
+  honest stat: each mechanic marked counted, shown only, or not modeled, so
+  you know what is in your numbers. The level warning carries its own level
+  input, and Ctrl+Z asks before it acts and names the edit it will take back.
 
-- **The window remembers your settings again, and knows which build it is.** The
-  app's own window was starting like a private browsing session, so the theme,
-  the update switch and your saved place in the tour were forgotten every launch.
-  The About dialog also now names the exact build you are running.
+- **Exemplared view.** Set the level you will exemplar to and the whole app
+  shows that truth: powers you would lose are badged, dead set bonuses zero
+  out, surviving ones stay, and a banner totals the cost — including what
+  fully attuned enhancements would save you. An opt-in solve can even build
+  FOR that level. The View menu explains exemplaring in plain English first.
+
+- **Four alignments, properly.** Hero, Vigilante, Rogue, and Villain each
+  carry their own theme and their own wordmark, drawn as crisp text from the
+  game-styled art sheet. Archetype emblems — the game's own art — mark your
+  build and your saved characters. Every dialog is the app's own, in your
+  alignment's colors; nothing says "127.0.0.1 says" anymore.
+
+- **Roles grew up.** The role list groups what is natural for your archetype
+  versus off-role (allowed, but it will fight you), every role states the real
+  floors the optimizer holds for it, and the old "Mixed / Generalist" is now
+  Split role: name the jobs you actually want, as many as you want, with
+  shares that always total 100. A "What this build delivers today" panel puts
+  real numbers on each named job, and the Enhancement Unslotter is right
+  there when you want slots back.
+
+- **The improvement report answers "what did that buy me?"** Every solve diffs
+  before and after across every measured axis — typed defense and resistance,
+  recharge, recovery, single-target and area damage, pet damage, every buff
+  and debuff row — and now per power too: "Empty Clips +18 DPS", with pets
+  credited to the power that summons them. When nothing moved, it says why.
+
+- **Buff and debuff numbers read your slotting.** The panel used to price every
+  effect unenhanced; now each effect is enhanced by its power's own
+  enhancement in that aspect, both directions — a debuffer who slots for the
+  role finally sees the role move. Recharge buffs and debuffs are credited
+  too, settled from the game's own per-power enhancement lists. The few
+  effects the game ships no enhancement for are named instead of guessed.
+
+- **One import door, and it teaches.** The menu's two import entries became
+  one panel that explains both routes: the in-game /build_save_file for a
+  character you play, and the .mbd file for a build planned in Mids Reborn.
+  The Mids round trip is verified piece-for-piece both ways, and special
+  origins (Hamidon, Hydra, Titan, D-Sync) come back with their real names
+  instead of internal codes. Swapping a powerset now rebuilds the build
+  cleanly instead of leaving ghost picks behind.
+
+- **The Leveling Guide is called that everywhere**, its side-content preview
+  is truly per-visit (leaving the tab resets it, and choosing a real alignment
+  always outranks a preview), and the Flashback tab explains itself.
+
+- **The guided tour was rebuilt for all of it**: 63 steps over the real tabbed
+  shell, still on a drawn example screen so it never touches your build, and
+  its audit now checks that every step describes something that still exists.
+
+- **94 Incarnate Alpha boosts got their icons** — the game's own art, pulled
+  from a corner of the client files our extractor had been missing.
 
 ## 0.12.30 — 2026-07-31 — Accuracy pass
 
