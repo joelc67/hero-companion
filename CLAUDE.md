@@ -72,6 +72,22 @@ Joel's session context is a limited resource. Do not spend it on prose.
 - Release procedure: **data-currency check first** → bump VERSION → **smoke pins** (⚠ smoke_release has TWO version pins — port-race guard AND assertion; smoke_gold same + model pin) → CHANGELOG date → `python tools\build_help_pdf.py` → stop HeroCompanion processes → PyInstaller `HeroCompanion.spec --noconfirm` → copy "Add Shortcuts.bat" into `dist\HeroCompanion\` → frozen-exe smoke + gold → sign exe → ISCC (`%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe` — per-user, NOT Program Files; reads VERSION dynamically) → sign installer → Compress-Archive zip → commit/push → `gh release create vX.Y.Z` with BOTH assets → verify via `gh api .../releases/latest`.
 - The repo is public on GitHub (github.com/joelc67/hero-companion; Joel's GitHub = joelc67, gh CLI authed in keyring). Keep raw brainstorms and personal notes out of commits. Ideation notes live in `C:\Users\joelc\code\ideas.md` (outside this repo); when Joel says "read ideas.md", that's the file.
 - **Push discipline:** the Pulse pipeline pushes to this repo's master ~30×/day. After every commit: push; on rejection `git pull --no-rebase` (merge, NEVER rebase — session reports quote hashes) then push.
+- **⚠ BUT BATCH THEM — EVERY PUSH TO master IS A CI EVENT, AND JOEL GETS THE
+  EMAIL (2026-08-06).** He reported "notifications many times today" about
+  failed `pages build and deployment`. Diagnosed: **28 commits to master that
+  day, 24 of them MINE** across one long session. Each push fires Pages
+  build+deploy and can supersede an in-flight `Render Pulse Boards` run;
+  **a superseded run is CANCELLED, and GitHub mails "Some jobs were not
+  successful" for a cancelled job exactly as for a failed one.** Tally that day:
+  Pages 11 success / 9 cancelled / 9 failure, Render Pulse Boards 3/5 (the
+  "failures" were cancelled jobs). **The repo was healthy throughout** — site
+  200, pulse board showing that day's date, `build_type` still `legacy`.
+  ⚠ One deploy DID fail for a real reason, and it was GitHub's, not ours:
+  `Invalid actions OIDC token — No keys from key endpoint match the id token`
+  (GitHub's own token service failing to validate its own token; nothing in the
+  repo or Pages config causes it). **The lesson is mine: commit freely, push in
+  batches at natural stopping points**, not after every single commit during a
+  long session. Quieting the mail is Joel's account setting, never mine to change.
 - License CC BY-NC-SA 4.0 ("free and noncommercial, forever"); truthful credits always, including the Claude co-author line on commits ("Leave it, its true").
 
 ## Credits
