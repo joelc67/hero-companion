@@ -646,6 +646,23 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   would vanish for good.** `_breakdownHost()` holds the element in JS and
   re-attaches it when detached; `_SB_HOME`/`_SB_HOME_NEXT` remember where it
   belongs. Proven by driving a real recompute.
+- **🚫 THE PICKER REFUSES WHAT THE GAME REFUSES (Joel, 2026-08-06: "make sure
+  the end user cannot break rules… a unique IO a second time the entire build,
+  or the same IO in the same power more than once").** Both were ALREADY errors
+  in `engine.validate_build`, and the same-power repeat was already prevented;
+  the gap was a unique held in a DIFFERENT power — takeable, then told off.
+  `_uniqueBlockedElsewhere` greys it with the reason, **naming the power that
+  holds it**, and `pickPiece` enforces it too (a rule that exists only by not
+  drawing a click target is one stray call from being broken). Blocked rows drop
+  their `data-cand`, so the swap comparison never advertises a piece you cannot
+  take. ⚠⚠ **OVER-BLOCKING IS THE WORSE MISTAKE and the guard is the hard part:**
+  LotG's Def/Increased Global Recharge Speed is flagged unique yet legitimately
+  slotted many times, so `/meta` now ships `engine.NON_UNIQUE_OVERRIDES` (same
+  reasoning as `pool_rules` — never a second copy in JS), and with no meta the
+  check **fails OPEN**, because the server validator is the backstop and a blind
+  block would refuse legal builds. Verified live: three uniques held in Agile
+  correctly greyed elsewhere, LotG slotted in FIVE powers still offered.
+  Battery `tools/test_slot_rules.js` (9, four sabotages).
 - **🔀 THE SWAP PICKER PRICES EVERY REPLACEMENT (Joel, 2026-08-06: "can there be
   a % increase or deficit shown in the list of replacement IOs?").** Measured,
   not derived — same rule as the per-IO panel. **Cost was measured BEFORE

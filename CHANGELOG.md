@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **The enhancement picker will not let you break the game's rules.** It already
+  stopped you putting the same set piece twice in one power. Now a unique
+  enhancement you already have somewhere else in the build is greyed out too,
+  and it tells you which power is holding it, so the rule is visible rather than
+  discovered afterwards as an error. Luck of the Gambler's global recharge is
+  deliberately still offered — the game does allow that one repeatedly.
+
 - **The swap list tells you what each replacement would do.** Open the picker to
   change an enhancement and every option on the list shows what it would do to
   the stat you are working on and to your set bonuses — a gain or a shortfall,

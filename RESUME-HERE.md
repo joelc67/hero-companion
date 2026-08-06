@@ -1,6 +1,19 @@
 # Resume point — 2026-08-06 (new session starts here)
 
-## ▶▶ LATEST: the swap picker prices every replacement (`47c52dfb`)
+## ▶▶ LATEST: the picker refuses what the game refuses (`bdc7f488`)
+
+**⚠ SERVER CHANGE → REBUILT.** dist rebuilt (stamp `bdc7f48`), frozen smoke PASS
++ gold 24/24, mirrored to the installed copy (uninstaller preserved), relaunched,
+and `/meta` verified shipping the override in the LIVE app. VERSION still the
+released 0.12.31, ISCC NOT run, `dist\HeroCompanion-Setup-0.12.31.exe` intact.
+
+A unique held in ANOTHER power is now greyed with the reason naming that power,
+and `pickPiece` enforces it as well as the greying. ⚠⚠ The over-blocking guard
+is the important half: `/meta` ships `engine.NON_UNIQUE_OVERRIDES` (LotG global
+recharge) and the check FAILS OPEN with no meta. Verified live on a solved
+Claws/SR. Battery `test_slot_rules.js` (9, four sabotages).
+
+## the swap picker prices every replacement (`47c52dfb`)
 
 **⚠ THIS ONE CHANGED `server.py`, so it needed a REBUILD, not a statics push.**
 dist rebuilt + frozen smoke PASS + gold 24/24, mirrored to the installed copy
