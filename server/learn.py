@@ -52,28 +52,56 @@ def ctx_key(archetype, primary, secondary, content, form=None):
     return "|".join(parts)
 
 
-def _load_log():
-    rows = []
+def _iter_log(needles=()):
+    """Stream the exploration log a row at a time, yielding parsed rows.
+
+    ⚠⚠ NEVER MATERIALISE THIS FILE. It is the append-only record of every build
+    the search has ever scored — 2.2 GB and millions of rows as of 2026-08-06,
+    and it grows with every wave. The old `_load_log()` parsed EVERY row into a
+    dict, returned the lot, and its only caller then kept one context's worth
+    and threw the rest away. Measured on a real context before this change:
+    **89.3 s and 6.17 GB of peak Python memory** for a result of 79 numbers.
+    That is what set the RAM ceiling for parallel certification — the recorded
+    "fix the parse before buying 256GB" item.
+
+    `needles` are the identity strings of the context being asked about. They
+    are a CHEAP REJECT applied to the raw line before json.loads, which is where
+    nearly all the CPU went: every identity field is a plain ASCII JSON string,
+    so a row that matches must contain each one literally. A false positive
+    costs one wasted parse and is then dropped by the caller's real key test; a
+    false NEGATIVE would be a correctness bug, which is why the test that
+    decides membership is still `ctx_key`, never this.
+    """
     try:
         with open(LOG_PATH, encoding="utf-8") as f:
             for line in f:
+                if needles and not all(n in line for n in needles):
+                    continue
                 line = line.strip()
-                if line:
-                    try:
-                        rows.append(json.loads(line))
-                    except Exception:  # noqa: BLE001
-                        diag.swallowed("learn: exploration-log line",
-                                       "skipping one unparseable row")
+                if not line:
+                    continue
+                try:
+                    yield json.loads(line)
+                except Exception:  # noqa: BLE001
+                    diag.swallowed("learn: exploration-log line",
+                                   "skipping one unparseable row")
     except FileNotFoundError:
-        pass
-    return rows
+        return
 
 
 def marginals(archetype, primary, secondary, content):
     """{power_last_name: marginal percentile} for this context, from the whole exploration log.
     Positive = builds containing the power historically score higher. None-safe: {} if no data."""
     key = ctx_key(archetype, primary, secondary, content)
-    rows = [r for r in _load_log()
+    # Only THIS context's rows are ever held in memory — see _iter_log. The
+    # ctx_key test is unchanged and is still what decides membership.
+    # ⚠ ORDER IS THE POINT: `all()` short-circuits, so the MOST selective string
+    # goes first. Archetype is the least selective — thousands of rows share
+    # Class_Defender — so leading with it costs a second scan of nearly every
+    # line in a 2.2 GB file. The powerset names reject almost everything on the
+    # first test.
+    needles = tuple(p for p in (primary, secondary, archetype, content) if p)
+    rows = [r for r in _iter_log(needles)
             if ctx_key(r.get("archetype"), r.get("primary"), r.get("secondary"),
                        r.get("content")) == key]
     if len(rows) < 20:
