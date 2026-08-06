@@ -1748,14 +1748,19 @@ body { overflow: hidden; }
 .stats-provlayout { display: grid; gap: var(--s3);
   grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
   align-items: start; position: relative; }
-/* ⚠ SAME FIX, SAME REASON as .powers-layout (Joel, 2026-08-05). Stats has its
-   own two-column grid: the rows on the left, the "where does this number come
-   from" breakdown on the right. Narrow the window and the stat list gets no
-   wider while the breakdown column holds a 380px strip of nothing — the same
-   structural void, on a second surface. Universal rule, not a patch on the one
-   tab he happened to screenshot: below 1400px the breakdown stacks under the
-   stats it explains, which is also where it reads better on a small display. */
-@media (max-width: 1400px) {
+/* ⚠ SAME FIX, SAME REASON as .powers-layout (Joel, 2026-08-05): a side column
+   that cannot grow becomes a structural void on a narrow window.
+   ⚠⚠ BUT 1400px WAS TOO EARLY HERE, and it cost him the feature (Joel,
+   2026-08-06: "you put all the powers associated to a percentage and not where
+   it used to be with an arrow pointing to them all in a right hand column").
+   His window is wide; the shell's 1.6x zoom put the EFFECTIVE width just under
+   1400, so the column collapsed and the breakdown stacked under the whole list.
+   Unlike the powers rail, THIS side column is 300-380px of real content that
+   only exists while a stat is selected — not a void. So the honest floor is
+   where it stops fitting beside a readable stat list: at 1000px there is still
+   ~690px for the rows. Below that it stacks, and the JS re-homes it under the
+   clicked row so it is never a screen away. */
+@media (max-width: 1000px) {
   .stats-provlayout { grid-template-columns: minmax(0, 1fr); }
 }
 /* NOT A FRAME (Joel, 2026-08-04): the breakdown is loose content that floats

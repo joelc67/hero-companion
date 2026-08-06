@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 128          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 129          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement;
 #                        82 -> 88, 2026-08-05: portable-vs-installed detection
@@ -32,7 +32,11 @@ EXPECTED = 128          # coverage denominator — hard-fail if a check silently
 #                        121 -> 126, 2026-08-06: no side bar unless the ⓘ
 #                        card is open, and the two panels that left it;
 #                        126 -> 128, same day: the slot invitation is a
-#                        claim about the build, not a decoration)
+#                        claim about the build, not a decoration;
+#                        128 -> 129, same day: the stats side column holds to
+#                        1000px, with a negative control that it has not gone
+#                        back to collapsing at 1400 — the regression Joel read
+#                        as the contributions column disappearing)
 
 
 def check(name, ok, detail=""):
@@ -708,15 +712,32 @@ def main():
 
     # ── 13. SMALL DISPLAYS (Joel, 2026-08-05: "when I am not full screen the
     # right side creates a huge vertical gap ... fix that for people with
-    # smaller displays"). Both two-column regions collapse below 1400px, so the
-    # void has nowhere to form. Universal — not a patch on the one tab he
-    # screenshotted.
+    # smaller displays"). Both two-column regions still collapse — the void has
+    # nowhere to form — but they do it at DIFFERENT widths on purpose.
+    # ⚠ CHANGED 2026-08-06 on Joel's ruling ("not where it used to be with an
+    # arrow pointing to them all in a right hand column"): the stats side column
+    # is 300-380px of REAL content that only exists while a stat is selected,
+    # not a strip of nothing, and 1400px was collapsing it at his own effective
+    # width. It now holds to 1000px. The powers rail keeps 1400. What this check
+    # protects is unchanged: neither region may lose its collapse entirely.
     _narrow = css_all[css_all.find("@media (max-width: 1400px)"):]
-    check("both two-column regions collapse on a small display",
-          css_all.count("@media (max-width: 1400px)") == 2
+    check("both two-column regions still collapse, at their own widths",
+          "@media (max-width: 1400px)" in css_all
           and ".powers-layout:has(#power-info:not(.hidden)) { grid-template-columns: minmax(0, 1fr); }" in _narrow
+          and "@media (max-width: 1000px)" in css_all
           and ".stats-provlayout { grid-template-columns: minmax(0, 1fr); }" in css_all,
-          "powers-layout AND stats-provlayout; one without the other just moves the gap")
+          "powers-layout at 1400, stats-provlayout at 1000; neither may lose it")
+    # The stats column must NOT go back to collapsing at 1400 — that is the
+    # regression Joel reported, and it read to him as the column disappearing.
+    # ⚠ Match the exact COLLAPSE declaration, not the bare selector — the base
+    # `.stats-provlayout { display: grid; … }` rule sits between the two media
+    # blocks and made a looser check fail on innocent CSS.
+    _collapse = ".stats-provlayout { grid-template-columns: minmax(0, 1fr); }"
+    _wide_narrow = css_all[css_all.find("@media (max-width: 1400px)"):
+                           css_all.find("@media (max-width: 1000px)")]
+    check("...and the stats column is not collapsed at 1400 any more",
+          _collapse not in _wide_narrow and _collapse in css_all,
+          "negative control: collapsing stats at 1400 is the bug he reported")
     # ⚠ :has() takes its ARGUMENT's specificity, so the narrow override must
     # repeat the whole selector — a bare `.powers-layout` there loses to the id
     # inside it, and a small display would still get a column when ⓘ opened.
