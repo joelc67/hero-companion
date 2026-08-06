@@ -1,6 +1,16 @@
 # Resume point — 2026-08-06 (new session starts here)
 
-## ▶▶ LATEST: the per-IO answer is a popover at the chit (`2548a27f`)
+## ▶▶ LATEST: Stats is the MANUAL surface (`ec1f09d6`)
+
+Joel's framing: Powers & Slots owns the Assistant's global "more X, Y, Z"
+re-solve; **Stats is where a player changes one piece at a time**. So the
+popover now carries **Swap this enhancement… / Remove it**, on the same
+`openSlot`/`clearSlot` every other surface uses — no second editing path.
+Verified the prediction IS the outcome: predicted Without-it Lethal 23.8 /
+Smashing 23.8 / Melee 45.1 / bonuses 41 → Remove delivered 23.76 / 23.76 /
+45.08 / 41. Swap opens the picker on the right slot with the popover closed.
+
+## the per-IO answer is a popover at the chit (`2548a27f`)
 
 Clicking an enhancement used to answer into `#stat-breakdown`, below the wall —
 so the answer was off screen. His stated purpose ("what to sacrifice for the

@@ -646,6 +646,22 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   would vanish for good.** `_breakdownHost()` holds the element in JS and
   re-attaches it when detached; `_SB_HOME`/`_SB_HOME_NEXT` remember where it
   belongs. Proven by driving a real recompute.
+- **🛠 STATS IS THE MANUAL SURFACE — THAT IS WHAT IT IS FOR (Joel, 2026-08-06:
+  "the whole point of the stats page is to provide the end user with a manual
+  option to change their stats manually, instead of relying on a global I want
+  more percentage on X, Y and Z using the build assistant").** Powers & Slots
+  holds the Assistant's target-driven global re-solve; **Stats is where a player
+  changes one piece at a time and watches the numbers move.** Consequence: any
+  surface here that shows a cost must also let you act on it — the per-IO
+  popover carries **Swap this enhancement… / Remove it**, wired to the SAME
+  `openSlot`/`clearSlot` the wall and breakdown use, so an edit made there
+  records history, recomputes and undoes like any other. ⚠ Swap closes the
+  popover BEFORE raising the picker (stacked overlays), Remove closes it too
+  (the wall re-renders and replaces its anchor chit). ⚠ **Verified the
+  prediction IS the outcome:** predicted Without-it Lethal 23.8 / Smashing 23.8
+  / Melee 45.1 / bonuses 41; pressing Remove delivered 23.76 / 23.76 / 45.08 /
+  41. Do not add a second editing path — route everything through the two
+  existing functions.
 - **🎯 THE PER-IO ANSWER IS A POPOVER AT THE CHIT, AND THE *PURPOSE* PICKED THE
   SHAPE (Joel, 2026-08-06).** He offered two options — scroll to the top, or "a
   pop-up next to where the end user is" — and then gave the reason that decides

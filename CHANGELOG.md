@@ -8,7 +8,9 @@
   piece is currently buying you, set bonuses included. Click the next
   enhancement and the panel follows, so you can compare several in a row and see
   which one you can most afford to give up. The stat breakdown you had open
-  stays open underneath. It is worked out by rebuilding your character
+  stays open underneath. **And you can act on it there**: the panel offers
+  "Swap this enhancement" and "Remove it", so deciding and changing happen in
+  one place. It is an ordinary edit, so Ctrl+Z takes it back. It is worked out by rebuilding your character
   without that one enhancement and comparing, so it is what you would actually
   lose by removing or replacing it, not an estimate. That matters more than it
   sounds: pulling a single defence piece can drop a whole set tier and cost you
