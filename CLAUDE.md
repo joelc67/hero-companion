@@ -616,6 +616,24 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   ⚠ Still pending and visible here: zone keys are RAW internal prefixes
   (`AbSewerNetwork`, and both `CapAuDiable`/`CapauDiable`) — display names ride
   the i24 server-data pass, and the header says so. Do not invent them.
+- **💎 WHAT ONE ENHANCEMENT IS WORTH IS MEASURED, NEVER DERIVED (Joel,
+  2026-08-06: "click on one and see all the individual %'s that it affects…
+  what would happen if they remove or replace an IO").** `explainSlotWorth(pi,
+  si)` recomputes the build with that ONE slot empty and diffs. **The analytic
+  version — read the piece's aspects, add its set's bonus table — is wrong
+  wherever the game is interesting:** ED makes the last point worth less than
+  the first, pulling a piece can drop a whole set TIER, and the rule of five can
+  mean a bonus was never applying. Proof, measured: removing a Reactive Defenses
+  **Defense/Endurance** costs **Max HP** (tier loss) — an analytic build would
+  have shown defence only. ⚠ **The probe is built from `buildPayload()`, never
+  from `build`** — the payload carries accolades, incarnate inclusion,
+  alignment, PvP and the exemplar view, and diffing without them prices the
+  piece against a different character. ⚠ **`/build/calculate` returns the totals
+  object ITSELF, not `{totals: …}`** — checking `.totals` silently fails every
+  call. Reuses `renderImproveDiff` (now takes a host id + `{bare}`) so this and
+  the solve report are the same arithmetic; `bare` drops the solve heading and
+  export nag and relabels the columns "Without it / With it", because
+  Before/After would misdescribe what the two columns hold.
 - **⚠ AN EMPTY STATE IS A CLAIM TOO (Joel, 2026-08-06 — the Flashback art).**
   The art slot had ONE message, "zone art pending", for two different empties:
   a zone we hold no texture for (true) and a level the current view maps no zone

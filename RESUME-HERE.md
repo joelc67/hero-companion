@@ -1,5 +1,22 @@
 # Resume point — 2026-08-06 (new session starts here)
 
+## ▶▶ LATEST: per-IO worth + the green-marks legend (`fa8d9506`, `b867df72`)
+
+Both in **both frozen copies** and the app relaunched (statics only; frozen
+stamp stays the release `b2161e1`). Staged under CHANGELOG "Unreleased".
+
+- **Click any enhancement in the Stats miniature wall → what it is worth**,
+  measured by rebuilding the character without it. See the CLAUDE.md entry for
+  why the analytic shortcut is wrong and for the two traps (`buildPayload()`,
+  and `/build/calculate` returning totals directly).
+- **The two green marks have a legend** — a ring on an enhancement vs a box on a
+  power's NAME. It was only ever explained in a footnote that appeared solely on
+  powers that had the built-in contribution.
+- Batteries: `test_improve_diff` 9 → 13 (2 sabotages), `test_journey_macro` 35.
+- ⚠ **Open, worth offering him:** the diff says "Set bonuses 41 → 42" without
+  naming WHICH bonus. Naming it needs the applied-bonus list diffed by name, not
+  just counted. Small, not built, and he has not asked.
+
 ## ▶▶ THE BADGE CATALOGUE REBUILD + FLASHBACK LANDING (`04219ff3`)
 
 Joel's two follow-up orders, built, verified live, pushed, and **in both frozen
