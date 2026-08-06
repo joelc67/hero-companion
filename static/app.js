@@ -7143,7 +7143,12 @@ function renderModalSets() {
             // stack-freely rule covers commons/HOs/D-Syncs only). Pieces this
             // power already holds are shown but not pickable — honest, not
             // hidden (field report: the picker let the same LotG in twice).
-            const dup = _pieceSlottedHere(p.uid, pi === undefined ? null : pi, s.uid);
+            const dupHere = _pieceSlottedHere(p.uid, pi === undefined ? null : pi, s.uid);
+            const uniqAt = dupHere ? null : _uniqueBlockedElsewhere(p, s.name);
+            const dup = dupHere || !!uniqAt;
+            const why = dupHere
+              ? "Already slotted in this power — the game won't let a set piece repeat within one power."
+              : `Unique — the game allows one per build, and you already have it in ${uniqAt}.`;
             // data-cand carries the EXACT slot pickPiece would write, so the
             // "what would this do" compare prices the thing the click installs.
             const cand = {
@@ -7154,8 +7159,8 @@ function renderModalSets() {
             };
             return `
             <div class="piece ${p.unique?'unique':''}${dup?' piece-dup':''}"
-              data-cand='${escHtml(JSON.stringify(cand))}'
-              ${dup ? `title="Already slotted in this power — the game won't let a set piece repeat within one power."`
+              ${dup ? "" : `data-cand='${escHtml(JSON.stringify(cand))}'`}
+              ${dup ? `title="${escHtml(why)}"`
                     : `onclick='pickPiece(${JSON.stringify(s.uid)}, ${JSON.stringify(s.name)}, ${pi})'`}>
               ${pIcon ? `<img class="piece-icon" src="${pIcon}" alt="" loading="lazy">` : ""}
               <span>${p.name}</span>
@@ -7232,6 +7237,33 @@ function _pieceSlottedHere(pieceUid, _pi, _setUid) {
     sl && i !== slotIdx && sl.piece_uid === pieceUid);
 }
 
+// ── THE PICKER REFUSES WHAT THE GAME REFUSES (Joel, 2026-08-06: "make sure the
+// end user cannot break rules, like applying a unique IO a second time the
+// entire build, or the same IO in the same power more than once") ────────────
+// Both rules were already ERRORS in engine.validate_build — but only the
+// same-power repeat was PREVENTED. A unique already slotted in another power
+// could be taken and then told off, which is the wrong order: the picker should
+// teach the rule at the moment of the choice.
+// ⚠ GREY OUT, NEVER HIDE (his standing ruling) — the row stays, carrying the
+// reason, so the rule is learned rather than merely obeyed.
+// ⚠ THE OVERRIDE COMES FROM THE SERVER (`/meta.non_unique_overrides`). LotG's
+// Def/Global-Recharge is flagged unique and is legitimately slotted up to five
+// times; blocking it would refuse a legal build, which is the more expensive
+// mistake of the two. With no meta loaded we do NOT block on uniqueness at all.
+function _uniqueBlockedElsewhere(piece, setName) {
+  if (!piece || !piece.unique || !activeSlot) return null;
+  const label = `${setName || ""}: ${piece.name || ""}`.toLowerCase();
+  const overrides = (META && META.non_unique_overrides) || null;
+  if (!overrides || overrides.includes(label)) return null;
+  const { powerIdx, slotIdx } = activeSlot;
+  let where = null;
+  (build.powers || []).forEach((p, pi) => (p.slots || []).forEach((sl, si) => {
+    if (!where && sl && sl.piece_uid === piece.uid && !(pi === powerIdx && si === slotIdx))
+      where = p.display_name || (p.full_name || "").split(".").pop().replace(/_/g, " ");
+  }));
+  return where;
+}
+
 // ── WHAT WOULD EACH REPLACEMENT DO? (Joel, 2026-08-06: "if I go to swap a
 // single IO for the one I have in place, can there be a % increase or deficit
 // shown in the list of replacement IOs?") ────────────────────────────────────
@@ -7296,6 +7328,9 @@ window.pickPiece = function (setUid, setName, pieceIdx) {
   // Defense in depth behind the disabled picker row: the game won't allow a
   // set piece twice in one power, so neither do we.
   if (_pieceSlottedHere(piece.uid)) return;
+  // ⚠ The greyed row is the teaching surface; THIS is the lock. A rule enforced
+  // only by not drawing a click target is one stray call away from being broken.
+  if (_uniqueBlockedElsewhere(piece, s.name)) return;
   const { powerIdx, slotIdx } = activeSlot;
   recordEdit();
   build.powers[powerIdx].slots[slotIdx] = {

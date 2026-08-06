@@ -951,6 +951,12 @@ def meta():
                     # origin-themed pools are one-per-build.
                     "pool_rules": {"max": 4, "epic_counts": False,
                                    "exclusive": sorted(_EXCLUSIVE_POOLS)},
+                    # ⚠ SAME REASONING AS pool_rules: the picker must refuse
+                    # exactly what validate_build refuses, so the one enhancement
+                    # the game lets you slot repeatedly despite its unique flag
+                    # (LotG's global recharge) travels FROM the engine instead of
+                    # being retyped in JavaScript, where it would drift.
+                    "non_unique_overrides": sorted(engine.NON_UNIQUE_OVERRIDES),
                     "autostart": autostart,
                     "bug_report_key": CLIENT_CONFIG.get("bug_report_key", ""),
                     "urls": CLIENT_CONFIG.get("urls", {})})
