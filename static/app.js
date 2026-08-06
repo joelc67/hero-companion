@@ -1298,6 +1298,24 @@ function _alignNote(al) {
   }
 }
 
+// THE GAME'S OWN COMMAND FOR THE MAP MARKER (verified game-first, 2026-08-06).
+// cityofheroes.exe's command table registers `thumbtack` with the help string
+// "Set the thumbtack location on the minimap. <x> <y> <z>" — the help names the
+// command itself, so the pairing proves itself rather than resting on the order
+// strings happen to sit in. n15g's coordinates are [x, y, z] in that same order,
+// so they paste straight through with no rearranging.
+// Reuses the .cmd-row click-to-copy the in-game commands card already ships:
+// one copy mechanism, one behaviour, nothing new to keep in step.
+function _tackRow(coords) {
+  if (!Array.isArray(coords) || coords.length !== 3
+      || !coords.every(n => typeof n === "number" && isFinite(n))) return "";
+  const cmd = `/thumbtack ${coords.join(" ")}`;
+  return `<button type="button" class="cmd-row jny-tack" data-cmd="${escHtml(cmd)}">`
+    + `<code>${escHtml(cmd)}</code>`
+    + `<span>Click to copy, then paste it into the game's chat while you are in this `
+    + `zone — it drops the marker on your map.</span></button>`;
+}
+
 window.selectJourneyStop = function (i) {
   _JNY_SEL = i;
   document.querySelectorAll("#journey-body .jny-card").forEach((c, k) =>
@@ -1481,20 +1499,53 @@ function _artFileFor(name) {
   return k ? art[k] : null;
 }
 
-function _zoneArtHtml(names) {
+// The level range the Flashback view actually covers, DERIVED from the zone
+// data rather than typed in, so it follows the data if Praetoria's ranges ever
+// move. Returns [from, to] or null when no alt_start zone is declared.
+function _praeRange() {
+  const zs = (((JOURNEY_PLACES || {}).modern || {}).zones || [])
+    .filter(z => z.alt_start && z.from != null && z.to != null);
+  if (!zs.length) return null;
+  return [Math.min(...zs.map(z => z.from)), Math.max(...zs.map(z => z.to))];
+}
+
+// What is TRUE when a level has no zone at all in the current view. Flashback is
+// the case that actually happens: Praetoria's zones stop at 20, so every stop
+// above that is outside the content — nothing is pending there.
+function _noZoneNote(level) {
+  if (_journeyAlign() === "praetorian") {
+    const r = _praeRange();
+    if (r && level > r[1])
+      return `Praetoria's zones run level ${r[0]} to ${r[1]}. This stop is past them, `
+           + `so there is no Praetorian place to show — pick a stop in that range to see one.`;
+    return "No Praetorian zone is mapped to this level.";
+  }
+  return "No zone is mapped to this level in this view.";
+}
+
+function _zoneArtHtml(names, noZoneNote) {
   // Show the first zone at this level that HAS art, not just the first zone —
   // level 1 lists "Tutorial" before "Atlas Park", and only one of them is a
   // place with a map.
   const zoneName = names.find(n => _artFileFor(n)) || names[0] || "";
   const file = _artFileFor(zoneName);
+  // ⚠ TWO DIFFERENT EMPTIES, and they must not share a sentence (Joel,
+  // 2026-08-06: the Flashback view "had no graphic for the zone art"). A zone we
+  // hold no texture for really is art PENDING. A level this view sends you
+  // nowhere at is not waiting on anything, and saying "pending" there promises a
+  // picture that is never coming — on Flashback above level 20 it was doing
+  // exactly that, while the art for Praetoria's own zones sits on disk.
   return `<div class="jny-art${file ? " has-art" : ""}">`
     + (file
         ? `<img src="/static/zone_art/${encodeURIComponent(file)}" alt="${escHtml(zoneName)}"`
           + ` title="${escHtml(zoneName)}">`
           // The zone name ON the image (Joel: "none of the zone images have names").
           + `<div class="jny-art-caption">${escHtml(zoneName)}</div>`
-        : (zoneName ? `<div class="jny-art-name">${escHtml(zoneName)}</div>` : "")
-          + `<div class="jny-art-pending">zone art pending</div>`)
+        : zoneName
+            ? `<div class="jny-art-name">${escHtml(zoneName)}</div>`
+              + `<div class="jny-art-pending">zone art pending</div>`
+            : `<div class="jny-art-none keep-whole">${escHtml(noZoneNote
+                || "No zone is mapped to this level in this view.")}</div>`)
     + `</div>`;
 }
 
@@ -1526,7 +1577,7 @@ function renderJourneyLevelPanel() {
   // SELECTED stop, so the image always means something: it is the place the
   // level you're looking at sends you. The panel below is pure text.
   const artHost = document.getElementById("jny-roadart");
-  if (artHost) artHost.innerHTML = _zoneArtHtml(zoneNames);
+  if (artHost) artHost.innerHTML = _zoneArtHtml(zoneNames, _noZoneNote(s.level));
   host.innerHTML = `<div class="jny-panel-info">`
     + `<h4 class="jny-panel-h">Level ${s.level}`
     + (i === hereIdx ? ` <span class="jny-panel-here">★ you are here</span>`
@@ -1920,9 +1971,13 @@ function renderJourney() {
        <span class="muted small">${z.badges.length} exploration badge${z.badges.length > 1 ? "s" : ""}</span></summary>`
     + z.badges.map(b => `<div class="jny-zbadge"><b>${escHtml(b.display_hero || b.display_villain)}</b>`
         // WHERE it is (n15g's directions) leads; the flavour text follows.
-        + (b.where ? `<div class="jny-where">📍 ${escHtml(b.where)}`
-            + (b.coords ? ` <span class="muted small">(${b.coords.join(", ")})</span>` : "") + `</div>` : "")
+        + (b.where ? `<div class="jny-where">📍 ${escHtml(b.where)}</div>` : "")
         + (b.find_hint ? `<div class="muted small">${escHtml(b.find_hint)}</div>` : "")
+        // ⚠ The coordinates used to live INSIDE the directions block, so the 25
+        // badges n15g has coordinates but no written directions for showed no
+        // location at all. They are their own row now — a badge's coordinates
+        // never depend on whether someone wrote prose about it.
+        + _tackRow(b.coords)
         + `</div>`).join("")
     + `</details>`).join("");
 

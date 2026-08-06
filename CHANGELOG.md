@@ -1,5 +1,24 @@
 # Hero Companion — What's New
 
+## Unreleased
+
+- **Every exploration badge's coordinates are now a click-to-copy game command.**
+  The Leveling Guide showed a badge's location as bare numbers you had to retype.
+  Each one is now the game's own `/thumbtack` command, ready to paste into the
+  chat box while you are standing in that zone — it drops the marker on your map
+  so you can walk to it. Click the row, paste in game, go.
+
+- **25 badges were hiding their location.** Their coordinates were only drawn
+  alongside the written directions, so any badge without a write-up showed no
+  location at all, even though we had its exact position. Every badge with
+  coordinates now shows them.
+
+- **The Leveling Guide's Flashback view stops claiming its artwork is missing.**
+  Praetoria's zones run level 1 to 20, so a stop above level 20 has no
+  Praetorian place to show — but the art panel said "zone art pending", which
+  read as a missing picture. It now says what is actually true, and names the
+  range, while levels 1 to 20 show their zone art as before.
+
 ## 0.12.31 — 2026-08-05 — The desktop app
 
 Game data is unchanged (Homecoming 2026.1.1242), the model stays at v38, and
