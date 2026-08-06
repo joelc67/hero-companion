@@ -115,6 +115,21 @@ const escHtml = (s) => String(s == null ? "" : s)
   .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
   .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
+// ⚠ CSS CANNOT SILENCE A JS SCROLL. The reduced-motion block in style.css sets
+// `scroll-behavior: auto !important`, which governs CSS-initiated scrolling —
+// but an explicit `behavior: scrollBehavior()` handed to scrollIntoView/scrollBy WINS
+// over it. Eleven call sites were doing exactly that, so someone who has asked
+// their system for less motion still got the page gliding under them.
+// Read at CALL TIME, never cached: the setting can change while the app is open.
+function scrollBehavior() {
+  try {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? "auto" : "smooth";
+  } catch (e) {
+    return "smooth";            // no matchMedia — assume motion is welcome
+  }
+}
+
 // Collapse + EMPTY the transient build-specific panels (tray layout, respec order) so
 // they never carry a previous character's content into a new/restarted/loaded build.
 function resetTrayPanels() {
@@ -502,7 +517,7 @@ async function autoPickPowers() {
 
 function revealBuilder() {
   const b = $("builder");
-  if (b) b.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (b) b.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
   const at = $("sel-archetype");
   if (at) setTimeout(() => at.focus(), 350);
 }
@@ -615,7 +630,7 @@ function flagMissing(els, msg, statusEl) {
   // scroll the STATUS into view too when it sits below the fold (walk failure #2:
   // the solve gate's answer rendered off-screen = "zero visible response")
   const first = els.find(Boolean) || st;
-  if (first) first.scrollIntoView({ behavior: "smooth", block: "center" });
+  if (first) first.scrollIntoView({ behavior: scrollBehavior(), block: "center" });
 }
 const wizFlagMissing = (els, msg) => flagMissing(els, msg, $("wiz-status"));
 
@@ -2444,7 +2459,7 @@ window.pickDiscovery = async function (at) {
   wizUpdateHint();
   wizExplain(null);
   $("disc-results").innerHTML = "";
-  $("wiz-at").scrollIntoView({ behavior: "smooth", block: "center" });
+  $("wiz-at").scrollIntoView({ behavior: scrollBehavior(), block: "center" });
 };
 
 // Show the tool's read of role × content × exposure, so the user sees how it's
@@ -2651,7 +2666,7 @@ async function buildRespec() {
     $("wiz-plan-out").innerHTML = levelingPlanHtml();   // show the full in-game respec order up front
     const _reveal = () => {
       closeRespecWizard();      // any-exit seam stays as the backstop
-      $("builder").scrollIntoView({ behavior: "smooth", block: "start" });
+      $("builder").scrollIntoView({ behavior: scrollBehavior(), block: "start" });
     };
     // THE TRIGGER IS THE BUILD FINISHING, not the wizard exit (Joel's fourth
     // report finally isolated it: he builds, then WAITS for the promised road
@@ -5865,7 +5880,7 @@ let SELECTED_POWER = null;
 function _revealInfoCard() {
   const panel = $("power-info");
   if (!panel || panel.classList.contains("hidden")) return;
-  panel.scrollIntoView({ block: "start", behavior: "smooth" });
+  panel.scrollIntoView({ block: "start", behavior: scrollBehavior() });
 }
 
 // ── EXEMPLAR VIEW (Joel's ruling 2026-08-03: "very similar to Mids Reborn,
@@ -7548,7 +7563,7 @@ function syncMenu(drop) {
 window.openEndgame = function (which) {
   if (typeof showTab === "function") showTab("powers");
   const el = $(which || "endgame-panel");
-  if (el) setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+  if (el) setTimeout(() => el.scrollIntoView({ behavior: scrollBehavior(), block: "start" }), 60);
 };
 
 function initMenus() {
@@ -7575,7 +7590,7 @@ function initMenus() {
       // data-jump: land ON the named section (the End Game menu item keeps
       // working now that its tools live inside Powers & Slots).
       const j = tab.dataset.jump && $(tab.dataset.jump);
-      if (j) setTimeout(() => j.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+      if (j) setTimeout(() => j.scrollIntoView({ behavior: scrollBehavior(), block: "start" }), 60);
     }
     const top = e.target.closest(".menu-top");
     if (top) {
@@ -8938,7 +8953,7 @@ window.selectStat = function (key, label) {
       // ⚠ the page scrolls inside #page-scroll (body is overflow:hidden) —
       // window.scrollBy silently no-ops here.
       const sc = $("page-scroll") || document.scrollingElement;
-      sc.scrollBy({ top: row.getBoundingClientRect().top - target, behavior: "smooth" });
+      sc.scrollBy({ top: row.getBoundingClientRect().top - target, behavior: scrollBehavior() });
     }
   }
 };
@@ -9794,7 +9809,7 @@ function renderRespecPreview() {
       <button class="rp-apply" onclick="applyProposedRespec()">✓ Apply this respec</button>
       <button class="rp-keep" onclick="document.getElementById('respec-preview').classList.add('hidden')">Keep my current build</button>
     </div>`;
-  host.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  host.scrollIntoView({ behavior: scrollBehavior(), block: "nearest" });
 }
 
 async function applyProposedRespec() {
@@ -10321,7 +10336,7 @@ function confirmIntent(req) {
     // structural fix moved ai-response out of #ai-qa; belt-and-suspenders here:
     // make the question SEEN (scroll to it) and ANNOUNCED (status pointer with
     // the flash), so a pending confirm can never read as dead air.
-    out.scrollIntoView({ behavior: "smooth", block: "center" });
+    out.scrollIntoView({ behavior: scrollBehavior(), block: "center" });
     const _st = $("gen-status");
     if (_st) {
       _st.textContent = "⚠ One question before I build — answer above: "
@@ -10823,7 +10838,7 @@ async function solveSlotting(perkFocus, opts) {
       // Derived-build labeling (Joel's constraint): a custom-target solve is
       // YOURS — it never reads as a certified champion result.
       + (res.custom_targets ? " Built to YOUR custom targets — not a certified champion build." : "");
-    status.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    status.scrollIntoView({ behavior: scrollBehavior(), block: "nearest" });
   } catch (e) {
     status.textContent = "Solve error: " + e;
   } finally {

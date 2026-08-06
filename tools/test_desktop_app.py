@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 129          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 132          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement;
 #                        82 -> 88, 2026-08-05: portable-vs-installed detection
@@ -33,6 +33,8 @@ EXPECTED = 129          # coverage denominator — hard-fail if a check silently
 #                        card is open, and the two panels that left it;
 #                        126 -> 128, same day: the slot invitation is a
 #                        claim about the build, not a decoration;
+#                        129 -> 132, same day: JS scrolling obeys
+#                        prefers-reduced-motion (CSS cannot override it);
 #                        128 -> 129, same day: the stats side column holds to
 #                        1000px, with a negative control that it has not gone
 #                        back to collapsing at 1400 — the regression Joel read
@@ -709,6 +711,27 @@ def main():
     check("showAbout only honours a STRING focus",
           'typeof focus === "string" ? focus : _ABOUT_FOCUS' in app_js,
           "negative control: a MouseEvent must not be read as a mode")
+
+    # ── 12b. REDUCED MOTION REACHES THE JS SCROLLS (2026-08-06). The stylesheet
+    # has had a prefers-reduced-motion block for a while, and it sets
+    # `scroll-behavior: auto !important` — but that governs CSS-initiated
+    # scrolling only. An explicit behavior:"smooth" passed to scrollIntoView or
+    # scrollBy WINS over it, and eleven call sites were doing exactly that. So
+    # someone who asked their system for less motion still got a gliding page.
+    check("JS scrolls ask about reduced motion",
+          "function scrollBehavior()" in app_js
+          and "prefers-reduced-motion: reduce" in app_js,
+          "the stylesheet cannot silence a behavior passed in JS")
+    check("...and no call site still hard-codes smooth",
+          'behavior: "smooth"' not in app_js,
+          "one raw literal is one scroll that ignores the preference")
+    # The preference can be changed while the app is open, so the query must
+    # happen per call — a module-level constant would freeze whatever was true
+    # at load.
+    check("...read at call time, not cached at load",
+          "const _REDUCED_MOTION" not in app_js
+          and "matchMedia" in app_js.split("function scrollBehavior()")[1][:400],
+          "negative control: caching it would miss a mid-session change")
 
     # ── 13. SMALL DISPLAYS (Joel, 2026-08-05: "when I am not full screen the
     # right side creates a huge vertical gap ... fix that for people with
