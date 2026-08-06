@@ -1,5 +1,21 @@
 # Resume point — 2026-08-06 (new session starts here)
 
+## 🚀 v0.12.31 "The desktop app" IS PUBLISHED (2026-08-05 8:35 PM ET)
+
+Joel reviewed the installed app, gave the thumbs-up, and the full release
+procedure ran clean: VERSION + both smoke pins bumped, CHANGELOG's stale
+Unreleased block rewritten as the real 0.12.31 entry, docs/index.html
+disclosure flipped to the window truth (the recorded release step), help PDF
+rebuilt, clean-stamp frozen build `b2161e1` (release-prep committed FIRST so
+the stamp is not "-dirty"), frozen smoke PASS, gold 24/24 SERVED, exe +
+installer signed and verified (CN=Joel Andrew Chambers), portable zip built,
+`gh release create v0.12.31` with both assets, API-verified. Installed copy
+mirrored from dist (robocopy /MIR, unins000.* preserved) and relaunched —
+Joel's shortcut now opens the released build. Release announcement post
+handed to Joel in chat + session-report (no em dashes). Remaining his-hand
+items: post it to topic 64761, FP/whitelist submissions per signing runbook,
+watch for the Bitdefender release-night kill (verify the app relaunches once).
+
 ## ✅ POWER-ICON PASS: the i24 glob bug is fixed — `7a67c48c`
 
 The two-line fix and the finding that made it pay: `extract_power_icons.py`
