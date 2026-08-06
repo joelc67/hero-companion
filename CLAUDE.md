@@ -55,6 +55,22 @@ Joel's session context is a limited resource. Do not spend it on prose.
 ## Standing watch items
 
 - **PATCH-WATCH (public promise, posted round-5 correction 7(a); wired 2026-07-17).** Trigger: any Homecoming patch announcement, or Joel's word. Steps, in order: (1) full Bin Crawler re-export from `C:\Games\HC2\assets\live`; (2) structural diff vs current data — `tools/reality_check_effect_structure.py` (effect existence/enhanceability, the gap class scalar checks can't see) plus the scalar reality checks; (3) delta report to session-report.md; (4) **movers ruling BEFORE any certification run starts** — harden-before-certify applies in full. Release procedure addition: release notes state **data currency** — the date of the last client re-export vs the game's latest patch. **After any client re-export, also re-run the power-icon pipeline** (extract_power_icons → patch_power_icons).
+- **⚠⚠ ONE DEPLOYER, AND THE TWO HALVES MOVE TOGETHER (found 2026-08-06,
+  `0c06b9df`).** From 07-27 to 08-06 the repo had TWO things deploying the site:
+  GitHub's own per-push build (the legacy source) **and** a `deploy` job inside
+  `render-pulse.yml`. The job arrived 2026-07-20 (`564814ca`) *together with* a
+  flip of the Pages source to "GitHub Actions"; on 07-27 the SOURCE was flipped
+  back to legacy after the 8-day freeze **but the job was left behind** — half a
+  revert. Both then raced into the same `github-pages` environment. Measured
+  that day: render deploy 5 success / 3 failure / 2 cancelled, legacy workflow
+  11 / 9 / 9, losers carrying `Invalid actions OIDC token` — the signature of
+  contention, on top of one genuine GitHub-side token failure. **The deploy job
+  is REMOVED; the render's own commit publishes, as it did before 07-20.**
+  Evidence it worked: Pages status went `errored` → `built` and the first build
+  after the change succeeded (commit `2c1c7040`). ⚠ **RULE: the Pages source and
+  this workflow's deploy job are ONE decision. Moving the source back to "GitHub
+  Actions" means restoring a deploy job in the same change** — one without the
+  other caused both outages. `docs/.nojekyll` stays either way.
 - **⚠ PAGES BUILD TYPE MUST STAY `legacy` (branch-based).** Found 2026-07-27 night: build_type had been flipped to "workflow" ~2026-07-20 15:36Z, which silently STOPS automatic branch builds — the site (INCLUDING the pulse board at /pulse) served frozen 7/20 content for 8 days while render-pulse kept committing fresh boards nobody deployed. Restored via `gh api -X PUT .../pages -f build_type=legacy` + POST a build. If the boards ever look stale despite green render runs, check `gh api .../pages/builds/latest` FIRST — a stale build date with green workflows = this failure mode. **Detector: `.github/workflows/site-freshness.yml`** (daily 12:17 UTC, checks the LIVE board for today/yesterday's date; red run emails Joel; cause-agnostic; proving run green 2026-07-28). What flipped the setting on 7/20 is UNKNOWABLE (personal accounts have no repo-settings audit log; likeliest = the Pages settings UI source dropdown).
 - **🌐 hero-companion.com (registered at Network Solutions 2026-07-27, Joel's account).** Points at GitHub Pages (master:/docs — landing page + pulse boards): 4×A @→185.199.108-111.153, CNAME www→joelc67.github.io, docs/CNAME committed, Pages cname set, HTTPS ENFORCED (cert approved, http→301→https, www→apex verified), domain VERIFIED to Joel's GitHub account (TXT `_github-pages-challenge-joelc67` — keep forever, checked continuously), parking record deleted+verified gone. ⚠ WATCH: the NetSol RENEWAL date — a lapse breaks the site + every published link. github.io URLs auto-redirect.
 - **⛔ THE 08-01 RE-ENABLE WAS TRIED ON 2026-08-06 AND FAILED — THE ALLOWANCE HAS

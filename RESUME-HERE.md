@@ -1,5 +1,23 @@
 # Resume point — 2026-08-06 (new session starts here)
 
+## ✅ THE PAGES RACE IS FIXED (`0c06b9df`) — and the inbox is still Joel's
+
+**Fixed:** two deployers had been racing since 07-27 (GitHub's per-push legacy
+build + a `deploy` job in `render-pulse.yml` left behind by a half-revert of the
+07-20 change). The job is removed; the render's commit publishes. **Proven:** a
+dispatched render succeeded (one job, 11 steps), its board commit produced the
+first SUCCESSFUL Pages build in hours, and Pages status went `errored` → `built`.
+Board live, current date. See the CLAUDE.md entry for the standing rule that the
+source setting and the deploy job are one decision.
+⚠ Watch the next few scheduled renders — one good build is encouraging, not
+proof. The daily freshness canary is the backstop.
+
+**NOT fixed, and not mine:** the inbox workflows still cannot get a runner
+(proving run 31127012557: queued 55.9 min, cancelled, zero steps, `runner: ""`).
+Both remain `disabled_manually` so the daily failure mail stays off.
+**github.com/settings/billing is Joel's** — billing needs a gh scope
+deliberately not granted; do not re-auth to chase it.
+
 ## ⏸ SAVED PLACE — 2026-08-06 evening (Joel headed home)
 
 **HEAD = `de80a2b0`, pushed, tracked tree clean.** Installed app is frozen stamp
