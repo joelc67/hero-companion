@@ -616,6 +616,22 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   ⚠ Still pending and visible here: zone keys are RAW internal prefixes
   (`AbSewerNetwork`, and both `CapAuDiable`/`CapauDiable`) — display names ride
   the i24 server-data pass, and the header says so. Do not invent them.
+- **📍 THE STAT BREAKDOWN FOLLOWS THE ROW YOU CLICKED (Joel, 2026-08-06: "it
+  need to display along side what is clicked, not at the bottom of the entire
+  list").** `#stat-breakdown` is the LAST child of `.stats-provlayout`, so the
+  moment the 1400px rule collapses that grid to one column it lands after
+  everything — measured at 1240px: row at y=570, panel at y=**2320**. It was
+  never missing, it was 1750px down the page. ⚠ **His window is wide but the
+  shell zooms up to 1.6×, so the EFFECTIVE width is what crosses the
+  threshold** — always reproduce a layout report at the effective width, not
+  the window's pixel width. Fix: one column ⇒ `insertAdjacentElement("afterend")`
+  on the selected row; two columns ⇒ restored to its own column with the
+  existing centre-on-the-row maths. ⚠⚠ **Re-homing it puts the panel INSIDE the
+  rows container, whose innerHTML is rewritten on every recompute — which
+  deletes it, and a bare `getElementById` would then return null and the panel
+  would vanish for good.** `_breakdownHost()` holds the element in JS and
+  re-attaches it when detached; `_SB_HOME`/`_SB_HOME_NEXT` remember where it
+  belongs. Proven by driving a real recompute.
 - **💎 WHAT ONE ENHANCEMENT IS WORTH IS MEASURED, NEVER DERIVED (Joel,
   2026-08-06: "click on one and see all the individual %'s that it affects…
   what would happen if they remove or replace an IO").** `explainSlotWorth(pi,
@@ -823,6 +839,9 @@ in RESUME-HERE.md.
   Guide's Flashback line when the View menu repainted the road, and the exemplar
   dialog's state line on every recompute). **Any muted block you author over ~26
   words gets `.keep-whole` at birth, not after someone spots the "more".**
+  ⚠ Broken AGAIN 2026-08-06, hours after the rule was restated: a LENGTHENED
+  mini-wall header showed both copies at once, the folded one and the expanded
+  one. **Making an existing muted line longer counts as authoring it.**
 - **🧹 VIEW MENU, TRIMMED (Joel's marked-up screenshot, 2026-08-05).** **End Game
   REMOVED** — it jumped to panels living on Powers & Slots, which the menu
   already lists (`openEndgame()` stays for the ladder gates; battery pins that

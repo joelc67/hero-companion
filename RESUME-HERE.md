@@ -1,6 +1,19 @@
 # Resume point — 2026-08-06 (new session starts here)
 
-## ▶▶ LATEST: per-IO worth + the green-marks legend (`fa8d9506`, `b867df72`)
+## ▶▶ LATEST: the breakdown follows the clicked row (`e4248462`)
+
+Joel's screenshot: the right-hand contributions column was "missing". It was
+1750px below the row — `#stat-breakdown` is the last child of the stats grid,
+and the 1400px rule had collapsed that grid to ONE column. **His window is wide;
+the 1.6× shell zoom is what pushes the EFFECTIVE width under the threshold.**
+One column now re-homes the panel directly after the selected row (2px gap,
+follows the selection); two columns is unchanged. ⚠ Re-homing puts it inside the
+rows container that gets innerHTML-rewritten every recompute — `_breakdownHost()`
+holds the element and re-attaches it, proven by driving a real recompute.
+Also fixed: the mini-wall header rendered twice (lengthened past 26 words →
+`collapseLongExplanations`; it has `.keep-whole` now).
+
+## per-IO worth + the green-marks legend (`fa8d9506`, `b867df72`)
 
 Both in **both frozen copies** and the app relaunched (statics only; frozen
 stamp stays the release `b2161e1`). Staged under CHANGELOG "Unreleased".
