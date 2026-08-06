@@ -646,6 +646,24 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   would vanish for good.** `_breakdownHost()` holds the element in JS and
   re-attaches it when detached; `_SB_HOME`/`_SB_HOME_NEXT` remember where it
   belongs. Proven by driving a real recompute.
+- **🔀 THE SWAP PICKER PRICES EVERY REPLACEMENT (Joel, 2026-08-06: "can there be
+  a % increase or deficit shown in the list of replacement IOs?").** Measured,
+  not derived — same rule as the per-IO panel. **Cost was measured BEFORE
+  designing around it: one `/build/calculate` is 4.9 ms server-side**, so 165
+  candidates fit in ONE batched request under a second; no lazy loading needed.
+  `POST /build/slot_compare` takes the payload + slot + candidate slot-dicts +
+  dotted `keys`. ⚠ **It drives the REAL `build_calculate` through a nested
+  `test_request_context`** rather than re-implementing it, so the picker and the
+  Stats page can never disagree. ⚠ Candidates ride on the rows as `data-cand`,
+  built byte-identical to what `pickPiece`/`pickSpecial` installs — the compare
+  prices the thing the click actually does. ⚠ **The axis is `SELECTED_STAT`**: a
+  swap moves many numbers and a bare "+x%" is meaningless without naming one, so
+  with no stat selected the picker SAYS to pick one rather than inventing an
+  axis; set-bonus count always rides along (a lost tier is the cost people
+  miss). ⚠ **On a solver-optimised build every single-piece swap on the
+  optimised stat reads as a deficit — that is the truth, not a bug**; the gain
+  direction is proven by emptying the slot and re-pricing what was in it
+  (+1.87% Melee, +1 bonus). Battery `tools/test_slot_compare.py` (9).
 - **🧾 EVERY EDIT REPORTS ITSELF, AND HANDS BACK THE UNDO (Joel, 2026-08-06:
   "we need to see the results of a change immediately… perhaps even adding an
   undo button").** ⚠⚠ **The hook is `recordEdit`, NOT the popover's buttons** —

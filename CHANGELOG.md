@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **The swap list tells you what each replacement would do.** Open the picker to
+  change an enhancement and every option on the list shows what it would do to
+  the stat you are working on and to your set bonuses — a gain or a shortfall,
+  worked out by rebuilding your character with that piece in the slot rather
+  than estimated. Pick a stat on the Stats tab first and the list compares
+  against it; set-bonus changes show either way, because losing a set tier is
+  the cost that is easiest to miss.
+
 - **Change something on the Stats tab and it tells you what you just did.** A
   "What changed" panel appears with the real before and after on every number
   that moved, and an **Undo this change** button right there if you do not like

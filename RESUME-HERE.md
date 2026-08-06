@@ -1,6 +1,21 @@
 # Resume point — 2026-08-06 (new session starts here)
 
-## ▶▶ LATEST: every edit reports itself + Undo (`3871f25c`)
+## ▶▶ LATEST: the swap picker prices every replacement (`47c52dfb`)
+
+**⚠ THIS ONE CHANGED `server.py`, so it needed a REBUILD, not a statics push.**
+dist rebuilt + frozen smoke PASS + gold 24/24, mirrored to the installed copy
+(stamp `47c52df`, `unins000.exe` preserved), relaunched, and the route verified
+live in the running app. VERSION is still the released 0.12.31 and ISCC was NOT
+run, so `dist\HeroCompanion-Setup-0.12.31.exe` is untouched.
+
+New `POST /build/slot_compare`: every candidate priced by rebuilding the
+character with it in the slot, in one batched request (4.9 ms each, measured
+first — 165 candidates < 1s). Axis = the selected stat, set-bonus count always
+alongside. See the CLAUDE.md entry for the four traps.
+⚠ On an optimised build every swap on the optimised stat is a deficit — the
+truth; the gain direction is separately proven. Battery `test_slot_compare.py`.
+
+## every edit reports itself + Undo (`3871f25c`)
 
 "What changed" appears on Stats after ANY build-mutating edit — the hook is
 `recordEdit` (called by every surface), not the popover's buttons, so it is
