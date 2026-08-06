@@ -1,6 +1,19 @@
 # Resume point — 2026-08-06 (new session starts here)
 
-## ▶▶ LATEST: the breakdown follows the clicked row (`e4248462`)
+## ▶▶ LATEST: the contributions column is back at his width (`23fbe8e6`)
+
+⚠ **I got his previous message wrong first.** "Display along side what is
+clicked" meant *the right-hand column, where it used to be, with the arrow* —
+not a new inline position. The fault was the BREAKPOINT: `.stats-provlayout`
+collapsed below 1400px and the 1.6× shell zoom put his effective width under it,
+so the column was switched off. It holds to **1000px** now (that side column is
+real content, not a void, unlike the powers rail which keeps 1400). Measured at
+1240: two columns 811+380, panel beside the row, green ➜ intact, 8 power cards.
+Below 1000 it still stacks and the JS keeps it under the clicked row (2px).
+`test_desktop_app` 128 → 129; the "both collapse at 1400" pin now pins each at
+its own width + a sabotage-proven negative control.
+
+## the breakdown follows the clicked row below 1000px (`e4248462`)
 
 Joel's screenshot: the right-hand contributions column was "missing". It was
 1750px below the row — `#stat-breakdown` is the last child of the stats grid,

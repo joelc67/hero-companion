@@ -616,9 +616,23 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   ⚠ Still pending and visible here: zone keys are RAW internal prefixes
   (`AbSewerNetwork`, and both `CapAuDiable`/`CapauDiable`) — display names ride
   the i24 server-data pass, and the header says so. Do not invent them.
-- **📍 THE STAT BREAKDOWN FOLLOWS THE ROW YOU CLICKED (Joel, 2026-08-06: "it
-  need to display along side what is clicked, not at the bottom of the entire
-  list").** `#stat-breakdown` is the LAST child of `.stats-provlayout`, so the
+- **📊 THE STATS SIDE COLUMN HOLDS TO 1000px, NOT 1400 (Joel, 2026-08-06: "not
+  where it used to be with an arrow pointing to them all in a right hand
+  column").** ⚠⚠ **"Alongside what is clicked" meant HIS COLUMN BACK, not a new
+  position for the panel** — I read it as inline-under-the-row and shipped the
+  wrong shape first. The fault was the BREAKPOINT: the 2026-08-05 rule
+  collapsed `.stats-provlayout` below 1400px, and the 1.6× shell zoom put his
+  effective width under it, so the column was simply switched off. **Unlike the
+  powers rail, this side column is 300-380px of real content that only exists
+  while a stat is selected — not a void** — so 1400 was far too early; 1000 is
+  where a 380px column stops fitting beside a readable list. Measured at 1240:
+  two columns (811+380), panel beside the row, green ➜ intact. `.powers-layout`
+  KEEPS 1400. ⚠ `test_desktop_app` pinned "both collapse at 1400" and correctly
+  failed — it now pins each at its own width plus a negative control that stats
+  has not crept back to 1400; **that control must match the exact collapse
+  declaration**, since the base `.stats-provlayout { display: grid; … }` rule
+  sits between the two media blocks.
+- **📍 THE BREAKDOWN FOLLOWS THE ROW BELOW 1000px (the same day).** `#stat-breakdown` is the LAST child of `.stats-provlayout`, so the
   moment the 1400px rule collapses that grid to one column it lands after
   everything — measured at 1240px: row at y=570, panel at y=**2320**. It was
   never missing, it was 1750px down the page. ⚠ **His window is wide but the
