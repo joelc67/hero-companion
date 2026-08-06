@@ -8678,6 +8678,14 @@ document.addEventListener("click", (e) => {
   closeIoWorth();
 });
 
+// ⚠ The popover closes FIRST. openSlot raises the swap modal, and a popover
+// still sitting on top of it is the two-stacked-overlays shape this app has
+// been bitten by before.
+window.swapFromWorth = function (pi, si) { closeIoWorth(); openSlot(pi, si); };
+// After a clear the wall re-renders, which replaces the chit this popover was
+// anchored to — and a popover about a piece that is gone should go with it.
+window.clearFromWorth = function (ev, pi, si) { clearSlot(ev, pi, si); closeIoWorth(); };
+
 window.explainSlotWorth = async function (pi, si, anchorEl) {
   const p = (build.powers || [])[pi];
   const s = p && (p.slots || [])[si];
@@ -8713,7 +8721,20 @@ window.explainSlotWorth = async function (pi, si, anchorEl) {
       — in <b>${escHtml(p.display_name || p.full_name)}</b></p>
     <p class="sb-editnote keep-whole">What this ONE enhancement is worth, measured by rebuilding
       your character without it. <b>Remove or replace it and this is exactly what changes.</b></p>
-    <div id="sb-worth"></div>`;
+    <div id="sb-worth"></div>
+    <!-- ⚠ THE POINT OF THE STATS PAGE IS MANUAL CONTROL (Joel, 2026-08-06:
+         "a manual option to change their stats manually, instead of relying on
+         a global I want more percentage on X, Y and Z using the build
+         assistant"). Seeing the cost and then having to go elsewhere to act on
+         it is half a feature — the decision and the change belong in one place.
+         Reuses the SAME openSlot/clearSlot the wall and the breakdown use, so a
+         swap made here is an ordinary edit: undoable, saved, recomputed. -->
+    <div class="io-worth-acts">
+      <button type="button" class="mini" onclick="swapFromWorth(${pi},${si})">Swap this enhancement…</button>
+      <button type="button" class="mini" onclick="clearFromWorth(event,${pi},${si})">Remove it</button>
+    </div>
+    <p class="muted small keep-whole">Changing it here changes your build — the same as editing it
+      on Powers &amp; Slots, and Ctrl+Z takes it back.</p>`;
   // before = the build WITHOUT it, after = the build as it stands, so the
   // numbers read as what the piece ADDS rather than as damage it did
   renderImproveDiff({ totals: without, name: "without this enhancement" },
