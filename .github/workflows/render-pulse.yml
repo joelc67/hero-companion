@@ -30,24 +30,35 @@ on:
     - cron: "4,19,34,49 * * * *"
   workflow_dispatch:
 
-# PAGES SOURCE = GITHUB ACTIONS (2026-07-20, the daily failure-email fix): the
-# site used to build in LEGACY mode (Deploy from branch master/docs), which ran
-# Jekyll on every master push. jekyll-github-metadata called the Pages API and
-# intermittently 503'd (confirmed in the annotations) — failing the build and
-# emailing Joel, worst in rapid-push windows. Now this workflow OWNS the deploy:
-# code pushes to master trigger NOTHING (no per-push build), the deploy runs only
-# when the board is rendered (the schedule), and docs/.nojekyll skips Jekyll on
-# the already-static site so the whole metadata/Liquid failure class is gone.
-# cancel-in-progress: false — an in-flight Pages DEPLOY must never be cancelled
-# (GitHub's own guidance); renders are idempotent so not cancelling them is safe.
+# ⚠⚠ THIS WORKFLOW DOES NOT DEPLOY. It renders and commits the board; the commit
+# is what publishes it, because the Pages source is LEGACY (Deploy from branch
+# master/docs) and GitHub builds+deploys on every master push.
+#
+# THE HISTORY, because it reversed twice and the second half was left behind
+# (found 2026-08-06): on 2026-07-20 the source was flipped to "GitHub Actions"
+# and a deploy job was added here, to end daily Jekyll-503 emails. On 07-27 the
+# source was flipped BACK to legacy after the board sat frozen for 8 days — but
+# the deploy job stayed. So for ten days BOTH deployers were live: GitHub's own
+# per-push legacy build AND this job, racing into the same `github-pages`
+# environment. Measured that day: this deploy job 5 success / 3 failure / 2
+# cancelled, the legacy workflow 11 / 9 / 9, with "Invalid actions OIDC token"
+# on the losers — the signature of two deployments contending, on top of one
+# genuine GitHub-side token failure.
+#
+# The deploy job is REMOVED so exactly one thing publishes the site. If the
+# source is ever moved back to "GitHub Actions", this workflow must regain a
+# deploy job in the same change — one without the other is what caused both
+# outages. docs/.nojekyll stays: it is what keeps the legacy build from running
+# Jekyll over an already-static site.
+# cancel-in-progress: false — renders are idempotent, so not cancelling is safe.
 concurrency:
   group: pages
   cancel-in-progress: false
 
+# pages/id-token dropped with the deploy job — committing the board is all this
+# workflow does, and a token should not carry rights the job cannot use.
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 jobs:
   render:
@@ -92,27 +103,6 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/pulse/index.html
           git commit -m "Publish Pulse Boards (pipeline)" || exit 0
+          # ⚠ This push IS the publish: under the legacy Pages source it starts
+          # GitHub's own build+deploy of docs/. Nothing else here deploys.
           git push || { git pull --rebase --autostash && git push; }
-
-  # Deploy the site to GitHub Pages (Actions source). Runs after render in the
-  # SAME run, so the render's freshly-committed board deploys without needing a
-  # cross-workflow trigger (a GITHUB_TOKEN bot commit does not fire other
-  # workflows). if: always() — deploy the last-known-good docs/ even when the
-  # render published nothing or failed, so the board is never left un-deployed.
-  deploy:
-    needs: render
-    if: always()
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: master
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs
-      - id: deployment
-        uses: actions/deploy-pages@v4
