@@ -1,5 +1,30 @@
 # Resume point — 2026-08-06 (new session starts here)
 
+## ▶▶ STAGED, NOT SHIPPED: badge macros + the Flashback art empty state (`12bc2b63`)
+
+Post-0.12.31 work from Joel's two observations. **Committed and pushed, staged
+under CHANGELOG "Unreleased", and DELIBERATELY NOT pushed to either frozen
+copy** — 0.12.31 published minutes earlier and his installed app should match
+what he released until he says otherwise. Statics-only, no server change, so a
+`push_statics.py` + relaunch is all it needs whenever he wants it.
+
+- **`/thumbtack <x> <y> <z>` is the game's own map-marker command**, pinned from
+  `cityofheroes.exe`'s command table — see the CLAUDE.md game-facts entry for
+  why the pairing is self-proving and why `/loc` must NOT be claimed from the
+  same dump. Every badge with coordinates (382 of 390) carries a click-to-copy
+  row reusing the shipped `.cmd-row` handler.
+- **⚠ UNCONFIRMED IN GAME:** nobody has pasted one and watched the X land.
+  Joel's eyes settle it — that is the one open question on this work.
+- **The Flashback art slot stopped claiming "zone art pending"** above level 20,
+  where Praetoria simply ends; the range is derived from the zone data.
+- **25 badges were hiding their coordinates** because the numbers were nested in
+  the directions block. Fixed at the root.
+- Battery `tools/test_journey_macro.js` — 20 checks, proven against 6 sabotages.
+  Regressions green: tour, tabs 10/10, links, desktop app, improve-diff 9/9,
+  `demo_single_build_fixes` 24/24.
+- ⚠ Known, NOT changed: `/journey/badges` serves only `locations[0]`, so the 39
+  badges with more than one spot show one. Say so before "fixing" it.
+
 ## 🚀 v0.12.31 "The desktop app" IS PUBLISHED (2026-08-05 8:35 PM ET)
 
 Joel reviewed the installed app, gave the thumbs-up, and the full release

@@ -247,6 +247,19 @@ them from a parse without the same standard of proof.
   villain display `Iron{Hero.gender=male man|woman}`. A substring search for
   'iron man' returns ZERO and I wrongly reported 'no such badge exists in
   2,396 records' on the strength of it.
+- **🧭 THE MAP MARKER IS `/thumbtack <x> <y> <z>` — pinned from the CLIENT'S OWN
+  COMMAND TABLE (2026-08-06).** `cityofheroes.exe` registers `thumbtack` with the
+  help string *"Set the thumbtack location on the minimap. <x> <y> <z>"*. ⚠ The
+  const pool interleaves names and help strings, so ADJACENCY ALONE PROVES
+  NOTHING — this pairing stands because **the help text names the command
+  itself**, and its two neighbours (`batch_create_map_images`,
+  `show_all_minimaps`) match their own help the same way. The map's right-click
+  `CMSetWayPoint` / "Set as Waypoint" is the same idea via the UI. ⚠ Do NOT
+  claim what `/loc` does from that dump: the strings around it (`whereami`,
+  `loc`, `getpos`) pair ambiguously and none of them names itself. n15g's badge
+  coordinates are `[x, y, z]` in the game's own order, so they paste through
+  unchanged. **STILL UNCONFIRMED IN GAME:** nobody has pasted one and watched the
+  X land — Joel's eyes settle it.
 - **✅ RESOLVED GAME-FIRST (2026-08-03): a FIFTH power pool is impossible, and
   pools can NEVER disable the Epic — they are separate counters with separate
   schedules.** Settled from Homecoming's own shipped `schedules.bin` (bin.pigg,
@@ -585,6 +598,19 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   installed copy — it stays wholly on the old text until an install. **Generalize:
   when a change spans the PYZ and the statics, both halves reach a copy together
   or neither does.**
+- **⚠ AN EMPTY STATE IS A CLAIM TOO (Joel, 2026-08-06 — the Flashback art).**
+  The art slot had ONE message, "zone art pending", for two different empties:
+  a zone we hold no texture for (true) and a level the current view maps no zone
+  to at all (false — nothing is pending, and on Flashback above level 20 nothing
+  ever will be, while `nova-praetoria.jpg` sits on disk). Joel read it as missing
+  artwork, which is exactly what it said. **When one message serves two states,
+  it is wrong in one of them.** The out-of-range note now names the range and
+  DERIVES it from the zone data (`_praeRange`) instead of hardcoding 20.
+  ⚠ Related, same fix: badge coordinates were nested INSIDE the directions
+  block, so the **25 badges with coordinates but no written directions showed no
+  location at all** — a fact must never be gated on whether prose exists beside
+  it. Battery `tools/test_journey_macro.js` (20 checks, node, alternative-app.js
+  argv[2], proven against 6 sabotages).
 - **⚠ A JS-ONLY function CAN have a real battery: lift it out and run it under
   node.** `tools/test_improve_diff.js` brace-matches `renderImproveDiff` out of
   app.js, evals it with `escHtml`/`$` stubs, and asserts the HTML. It takes an
