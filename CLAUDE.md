@@ -646,6 +646,22 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   would vanish for good.** `_breakdownHost()` holds the element in JS and
   re-attaches it when detached; `_SB_HOME`/`_SB_HOME_NEXT` remember where it
   belongs. Proven by driving a real recompute.
+- **🧾 EVERY EDIT REPORTS ITSELF, AND HANDS BACK THE UNDO (Joel, 2026-08-06:
+  "we need to see the results of a change immediately… perhaps even adding an
+  undo button").** ⚠⚠ **The hook is `recordEdit`, NOT the popover's buttons** —
+  it runs before every build-mutating edit from every surface, so capturing
+  `LAST_TOTALS` there is what makes the receipt universal instead of a special
+  case; `_showEditReceipt()` then fires from the recompute, after `renderStats`
+  (it anchors into the wall that render just rebuilt, and measures its own
+  height). Proven with an edit made through the plain `clearSlot` path, nothing
+  to do with the popover. ⚠ **The undo produces no receipt of its own** —
+  `undoEdit` never calls `recordEdit`, so nothing is captured, and a receipt for
+  putting something back is noise. ⚠ **The popover must survive losing its
+  anchor**: removing a piece re-renders the wall and destroys the chit, so
+  `_placeIoPop` re-centres rather than closing — closing would take the Undo
+  button with it. ⚠ **Column labels are per-caller** (`opts.labels`): "Without
+  it / With it" is right for the per-IO panel and WRONG for the receipt, whose
+  columns are before/after an edit. Pinned both ways, sabotage-proven.
 - **🛠 STATS IS THE MANUAL SURFACE — THAT IS WHAT IT IS FOR (Joel, 2026-08-06:
   "the whole point of the stats page is to provide the end user with a manual
   option to change their stats manually, instead of relying on a global I want

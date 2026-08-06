@@ -1,6 +1,17 @@
 # Resume point — 2026-08-06 (new session starts here)
 
-## ▶▶ LATEST: Stats is the MANUAL surface (`ec1f09d6`)
+## ▶▶ LATEST: every edit reports itself + Undo (`3871f25c`)
+
+"What changed" appears on Stats after ANY build-mutating edit — the hook is
+`recordEdit` (called by every surface), not the popover's buttons, so it is
+universal by construction; proven with a plain `clearSlot`. Carries **↶ Undo
+this change**. Measured: Remove → Lethal 27.5→23.8, bonuses 42→41 marked as
+losses; Undo → piece back, 42, Lethal 27.51, no second receipt.
+⚠ `_placeIoPop` re-centres when its anchor chit is destroyed (closing would take
+the Undo with it). ⚠ `renderImproveDiff` labels are per-caller now
+(`opts.labels`); test_improve_diff 13 → 15, sabotage-proven.
+
+## Stats is the MANUAL surface (`ec1f09d6`)
 
 Joel's framing: Powers & Slots owns the Assistant's global "more X, Y, Z"
 re-solve; **Stats is where a player changes one piece at a time**. So the

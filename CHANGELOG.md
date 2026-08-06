@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Change something on the Stats tab and it tells you what you just did.** A
+  "What changed" panel appears with the real before and after on every number
+  that moved, and an **Undo this change** button right there if you do not like
+  it. It covers any change you make, not just the ones made from the
+  enhancement panel.
+
 - **Click any enhancement and see exactly what it is worth, right where you
   clicked.** On the Stats tab, hovering an enhancement in the miniature wall
   names it; clicking one opens a small panel beside it listing every number that
