@@ -1,6 +1,10 @@
 # Hero Companion — What's New
 
-## Unreleased
+## 0.12.32 — 2026-08-06 — The Stats page becomes a workbench
+
+Game data is unchanged (Homecoming 2026.1.1242) and the optimizer's model stays
+at v38, so no build's score moves. Everything here is what the app lets you see
+and do.
 
 - **The enhancement picker will not let you break the game's rules.** It already
   stopped you putting the same set piece twice in one power. Now a unique
@@ -48,10 +52,10 @@
   is the button.** The Zones & Badges catalogue used to be 57 closed drawers: to
   get one badge's location you opened a zone and read down a list. All 390
   badges are on the surface under their zone now, and clicking a badge's name
-  copies the game's own `/thumbtack` command for it — paste that into the chat
-  box while you are in that zone and it drops the marker on your map. Each zone
-  still opens for written directions to every badge in it and what each one
-  commemorates.
+  copies the game's own `/thumbtack` command for it, the command the client
+  registers for placing a marker on your minimap. Paste it into the chat box
+  while you are in that zone. Each zone still opens for written directions to
+  every badge in it and what each one commemorates.
 
 - **The 8 badges we have no coordinates for are not pretend buttons.** They are
   listed as plain text and say why, rather than looking clickable and copying
