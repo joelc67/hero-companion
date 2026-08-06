@@ -7066,7 +7066,11 @@ function singlesHtml(q) {
       head: fam, meta: `${list.length} kinds · multi-aspect · identical copies stack freely`,
       icon: list[0].image,
       pieces: list.map(s => ({ fn: `pickSpecial(${JSON.stringify(s.uid)})`,
-        image: s.image, name: s.name, sub: (s.enhances || []).join("/") })),
+        image: s.image, name: s.name, sub: (s.enhances || []).join("/"),
+        // the slot pickSpecial would write — same contract as the set pieces
+        cand: { set_uid: null, set_name: s.family, piece_uid: s.uid, piece_name: s.name,
+                category_id: null, enhances: s.enhances, unique: false,
+                image: s.image || "", _ho: true } })),
     });
   }
   if (!rows.length) return "";
@@ -7085,7 +7089,8 @@ function singlesHtml(q) {
         ${r.pieces.map(p => {
           const pIcon = enhIconUrl(p.image);
           return `
-          <div class="piece" onclick='${p.fn}'>
+          <div class="piece" onclick='${p.fn}'
+            ${p.cand ? `data-cand='${escHtml(JSON.stringify(p.cand))}'` : ""}>
             ${pIcon ? `<img class="piece-icon" src="${pIcon}" alt="" loading="lazy">` : ""}
             <span>${p.name}</span>
             <span class="muted">${p.sub}</span>
@@ -7100,6 +7105,8 @@ function singlesHtml(q) {
 function renderModalSets() {
   const q = ($("modal-search").value || "").toLowerCase();
   const host = $("modal-sets");
+  // the comparison is re-fetched whenever the list is rebuilt (search, reopen)
+  setTimeout(annotateSlotOptions, 0);
   const singles = singlesHtml(q);
   if (!MODAL_SETS.length && !singles) {
     host.innerHTML = `<p class="muted">No enhancement sets fit this power's
@@ -7137,8 +7144,17 @@ function renderModalSets() {
             // power already holds are shown but not pickable — honest, not
             // hidden (field report: the picker let the same LotG in twice).
             const dup = _pieceSlottedHere(p.uid, pi === undefined ? null : pi, s.uid);
+            // data-cand carries the EXACT slot pickPiece would write, so the
+            // "what would this do" compare prices the thing the click installs.
+            const cand = {
+              set_uid: s.uid, set_name: s.name, piece_uid: p.uid, piece_name: p.name,
+              category_id: s.category_id, enhances: p.enhances, unique: p.unique,
+              image: p.image || s.image || "",
+              io_level: s.level_max != null ? Math.min(50, s.level_max + 1) : null,
+            };
             return `
             <div class="piece ${p.unique?'unique':''}${dup?' piece-dup':''}"
+              data-cand='${escHtml(JSON.stringify(cand))}'
               ${dup ? `title="Already slotted in this power — the game won't let a set piece repeat within one power."`
                     : `onclick='pickPiece(${JSON.stringify(s.uid)}, ${JSON.stringify(s.name)}, ${pi})'`}>
               ${pIcon ? `<img class="piece-icon" src="${pIcon}" alt="" loading="lazy">` : ""}
@@ -7214,6 +7230,64 @@ function _pieceSlottedHere(pieceUid, _pi, _setUid) {
   const { powerIdx, slotIdx } = activeSlot;
   return (build.powers[powerIdx].slots || []).some((sl, i) =>
     sl && i !== slotIdx && sl.piece_uid === pieceUid);
+}
+
+// ── WHAT WOULD EACH REPLACEMENT DO? (Joel, 2026-08-06: "if I go to swap a
+// single IO for the one I have in place, can there be a % increase or deficit
+// shown in the list of replacement IOs?") ────────────────────────────────────
+// ⚠ MEASURED, same rule as the per-IO panel: every candidate is priced by
+// rebuilding the character with it in that slot, server-side, in ONE request.
+// An analytic guess cannot see a set TIER won or lost, ED, or the rule of five —
+// and those are exactly what decide whether a swap is worth it.
+// Cost is real but small: ~5ms per candidate, measured, so a full picker is
+// under a second and it is fetched once per open.
+// ⚠ THE AXIS IS THE STAT HE IS WORKING ON. A swap moves many numbers; a single
+// "+x%" is meaningless without saying of what. So the comparison follows the
+// selected stat, and set-bonus COUNT rides along because losing a tier is the
+// cost people miss. With no stat selected there is no honest percentage to
+// show, and the picker says so instead of inventing one.
+let _CMP_SEQ = 0;
+async function annotateSlotOptions() {
+  const host = $("modal-sets");
+  if (!host || !activeSlot) return;
+  const rows = [...host.querySelectorAll(".piece[data-cand]")];
+  const note = $("modal-cmp-note");
+  if (!rows.length) return;
+  const sel = SELECTED_STAT;
+  const axis = sel ? sel.key.replace(":", ".") : null;
+  if (note) {
+    note.textContent = axis
+      ? `Each option shows what it would do to ${sel.label} and to your set bonuses, `
+        + `measured by rebuilding the character with it in this slot.`
+      : `Select a stat on the Stats tab first and each option here will show what it would do `
+        + `to that number. Set-bonus changes are shown either way.`;
+    note.classList.remove("hidden");
+  }
+  if (rows.length > 400) return;                       // the server refuses past this too
+  const keys = ["applied_bonus_count"].concat(axis ? [axis] : []);
+  const seq = ++_CMP_SEQ;
+  const payload = buildPayload();
+  payload.power_index = activeSlot.powerIdx;
+  payload.slot_index = activeSlot.slotIdx;
+  payload.keys = keys;
+  payload.candidates = rows.map(r => { try { return JSON.parse(r.dataset.cand); } catch (e) { return null; } });
+  const res = await api("/build/slot_compare", postJson(payload));
+  if (!res || !res.ok || seq !== _CMP_SEQ) return;     // a newer open supersedes this one
+  const base = res.base || {};
+  rows.forEach((r, i) => {
+    const got = (res.results || [])[i];
+    if (!got) return;
+    const bits = [];
+    if (axis && typeof got[axis] === "number" && typeof base[axis] === "number") {
+      const d = got[axis] - base[axis];
+      if (Math.abs(d) >= 0.05)
+        bits.push(`<span class="cmp ${d > 0 ? "up" : "down"}">${d > 0 ? "+" : "−"}${Math.abs(d).toFixed(1)}%</span>`);
+    }
+    const db = (got.applied_bonus_count || 0) - (base.applied_bonus_count || 0);
+    if (db) bits.push(`<span class="cmp ${db > 0 ? "up" : "down"}">${db > 0 ? "+" : "−"}${Math.abs(db)} bonus${Math.abs(db) > 1 ? "es" : ""}</span>`);
+    if (!bits.length && axis) bits.push(`<span class="cmp flat">no change</span>`);
+    if (bits.length) r.insertAdjacentHTML("beforeend", `<span class="cmp-wrap">${bits.join(" ")}</span>`);
+  });
 }
 
 window.pickPiece = function (setUid, setName, pieceIdx) {

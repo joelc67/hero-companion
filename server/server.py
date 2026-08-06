@@ -4451,6 +4451,82 @@ def _headline_deltas(cur, alt):
     return out[:5]
 
 
+@app.route("/build/slot_compare", methods=["POST"])
+def build_slot_compare():
+    """What each replacement enhancement would do to ONE slot (Joel, 2026-08-06:
+    "if I go to swap a single IO for the one I have in place, can there be a %
+    increase or deficit shown in the list of replacement IOs?").
+
+    ⚠ MEASURED, not derived — the same rule as the per-IO worth panel. Reading a
+    candidate's own aspects and its set's bonus table cannot see enhancement
+    diminishing returns, a set TIER gained or lost, or the rule of five, and
+    those are exactly what decide whether a swap is worth it.
+
+    ⚠ It drives the REAL /build/calculate through a nested request context
+    rather than re-implementing it. The picker's numbers therefore come from the
+    identical computation the Stats page displays; a second code path here would
+    be free to drift from what the user is looking at.
+
+    Body: the ordinary calculate payload, plus
+      power_index, slot_index  - the slot being swapped
+      candidates: [slot-dict | null, ...]  - null asks "what if it were empty"
+      keys: ["defense.AoE", "applied_bonus_count", ...] - dotted paths to return
+    Returns {ok, base: {key: value}, results: [{key: value} | null, ...]} in the
+    order the candidates were sent. Cost is ~5ms per candidate, measured.
+    """
+    body = request.get_json(force=True) or {}
+    cands = body.get("candidates") or []
+    keys = body.get("keys") or []
+    pi, si = body.get("power_index"), body.get("slot_index")
+    if not isinstance(cands, list) or pi is None or si is None:
+        return jsonify({"ok": False, "error": "power_index, slot_index and candidates are required"})
+    if len(cands) > 400:            # a picker never offers this many; refuse rather than hang
+        return jsonify({"ok": False, "error": "too many candidates"})
+    base_payload = {k: v for k, v in body.items()
+                    if k not in ("candidates", "keys", "power_index", "slot_index")}
+    powers = base_payload.get("powers") or []
+    if not (0 <= pi < len(powers)):
+        return jsonify({"ok": False, "error": "power_index out of range"})
+
+    def _pluck(totals):
+        out = {}
+        for k in keys:
+            cur = totals
+            for part in str(k).split("."):
+                cur = cur.get(part) if isinstance(cur, dict) else None
+                if cur is None:
+                    break
+            if isinstance(cur, dict):          # a stat row carries {value, raw, cap…}
+                cur = cur.get("raw", cur.get("value"))
+            out[k] = cur
+        return out
+
+    def _totals_for(slot_value):
+        import copy as _copy
+        p = _copy.deepcopy(base_payload)
+        pw = p["powers"][pi]
+        slots = list(pw.get("slots") or [])
+        while len(slots) <= si:
+            slots.append(None)
+        slots[si] = slot_value
+        pw["slots"] = slots
+        with app.test_request_context(json=p):
+            resp = build_calculate()
+        data = resp.get_json() if hasattr(resp, "get_json") else resp
+        return (data.get("totals") or data) if isinstance(data, dict) else {}
+
+    cur_slot = ((powers[pi].get("slots") or [None] * (si + 1))[si]
+                if si < len(powers[pi].get("slots") or []) else None)
+    results = []
+    for c in cands:
+        try:
+            results.append(_pluck(_totals_for(c)))
+        except Exception:  # noqa: BLE001 — one bad candidate must not sink the list
+            diag.swallowed("slot_compare candidate", "one candidate could not be priced")
+            results.append(None)
+    return jsonify({"ok": True, "base": _pluck(_totals_for(cur_slot)), "results": results})
+
+
 @app.route("/build/assess", methods=["POST"])
 def build_assess():
     """Post-solve assessment: what the build optimized + where it landed, plus 2-4

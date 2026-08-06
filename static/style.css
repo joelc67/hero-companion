@@ -1749,6 +1749,13 @@ body { overflow: hidden; }
 .io-worth-pop .sb-sub { margin: 0 0 6px; font-size: 11.5px; }
 .io-worth-pop .diff-tbl { width: 100%; }
 .io-worth-pop.hidden { display: none; }
+/* what each replacement would do, on its own row in the picker */
+.cmp-wrap { margin-left: auto; display: flex; gap: 5px; flex: none; }
+.cmp { font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 999px;
+  border: 1px solid var(--border); white-space: nowrap; }
+.cmp.up { color: var(--def); border-color: var(--def); }
+.cmp.down { color: var(--bad, #ef4444); border-color: var(--bad, #ef4444); }
+.cmp.flat { color: var(--muted); }
 /* the decision and the change in one place — Stats is the MANUAL surface */
 .io-worth-acts { display: flex; gap: 6px; margin: 8px 0 4px; }
 .io-worth-acts .mini { flex: 1 1 auto; width: auto; }
