@@ -8597,9 +8597,15 @@ function renderMiniWall() {
       + `</div></div>`;
   }).join("");
   host.innerHTML =
+    // ⚠ .keep-whole: this line is over 26 words, and collapseLongExplanations
+    // eats any muted block that long — it folded this one behind a "less" link
+    // and showed both copies at once (Joel's screenshot, 2026-08-06). My own
+    // recorded rule: any muted block authored over ~26 words gets keep-whole at
+    // birth, not after someone spots it.
     `<div class="mw-frame-label">🗂 Powers &amp; Slots, in miniature
-       <span class="muted small">— click a stat below and everything feeding it turns green here:
-       a ring on an enhancement, a box on a power's name when the power grants it by itself</span></div>`
+       <span class="muted small keep-whole">— click a stat below and everything feeding it turns
+       green here: a ring on an enhancement, a box on a power's name when the power grants it
+       by itself</span></div>`
     + `<div class="mw-grid">` + cards
     + (stripped.length
         ? `<div class="mw-inh-strip muted small">Inherents, nothing slotted: ${stripped.join(" · ")}</div>`
@@ -8736,8 +8742,31 @@ function _sbpCardHtml(pi, hot, valueHtml, srcHtml, headHot) {
   </div>`;
 }
 
+// WHERE THE BREAKDOWN LIVES. In the two-column layout it is the right-hand
+// column and never moves. Below 1400px the stats layout collapses to ONE column
+// (Joel's small-display rule), and the panel — being the last child — then fell
+// to the bottom of the entire stats list: measured 1750px below the row that
+// opened it, which is what "the row on the end is missing" looked like.
+// So in one column it is re-homed directly after the row you clicked.
+// ⚠ That puts it inside the rows container, whose innerHTML is rewritten on
+// every recompute — which would DELETE it. So the element is held in JS and
+// re-attached whenever it has been detached, rather than looked up by id and
+// silently lost.
+let _SB_EL = null, _SB_HOME = null, _SB_HOME_NEXT = null;
+function _breakdownHost() {
+  const found = $("stat-breakdown");
+  if (found) {
+    _SB_EL = found;
+    if (!_SB_HOME) { _SB_HOME = found.parentElement; _SB_HOME_NEXT = found.nextSibling; }
+    return found;
+  }
+  // detached by a rows re-render — put it back before anyone writes to it
+  if (_SB_EL && _SB_HOME) { _SB_HOME.insertBefore(_SB_EL, _SB_HOME_NEXT); return _SB_EL; }
+  return null;
+}
+
 function renderStatBreakdown() {
-  const host = $("stat-breakdown");
+  const host = _breakdownHost();
   if (!host) return;
   // An enhancement card opened from this panel OWNS it until the user goes back.
   // A recompute must refresh that card (its numbers just moved), never replace it.
@@ -8991,8 +9020,26 @@ function renderStatBreakdown() {
 // hanging its top from it — a tall breakdown takes up the empty space ABOVE
 // the row too (never past the column top), so you scroll less to reach the
 // other contributing powers. The ➜ arrow on the row points into its middle.
+// One track = the narrow, single-column stats layout.
+function _statsSingleColumn() {
+  if (!_SB_HOME) return false;
+  const cols = getComputedStyle(_SB_HOME).gridTemplateColumns || "";
+  return cols.split(/\s+/).filter(Boolean).length <= 1;
+}
+
 function _alignBreakdown(host) {
   const selRow = document.querySelector(".stat-selected");
+  // ⚠ ALONGSIDE WHAT WAS CLICKED (Joel, 2026-08-06: "It need to display along
+  // side what is clicked, not at the bottom of the entire list"). With one
+  // column there is no side, so the honest reading of "alongside" is directly
+  // under the row that opened it — never a screenful away.
+  if (_statsSingleColumn() && selRow) {
+    host.style.marginTop = "";
+    if (selRow.nextElementSibling !== host) selRow.insertAdjacentElement("afterend", host);
+    return;
+  }
+  // back to its own column when there is one
+  if (_SB_HOME && host.parentElement !== _SB_HOME) _SB_HOME.insertBefore(host, _SB_HOME_NEXT);
   const grid = host.parentElement;
   if (!selRow || !grid) { host.style.marginTop = ""; return; }
   let y = 0, el = selRow;
