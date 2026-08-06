@@ -8595,7 +8595,8 @@ function renderMiniWall() {
   }).join("");
   host.innerHTML =
     `<div class="mw-frame-label">🗂 Powers &amp; Slots, in miniature
-       <span class="muted small">— click a stat below and the IOs feeding it ring green here</span></div>`
+       <span class="muted small">— click a stat below and everything feeding it turns green here:
+       a ring on an enhancement, a box on a power's name when the power grants it by itself</span></div>`
     + `<div class="mw-grid">` + cards
     + (stripped.length
         ? `<div class="mw-inh-strip muted small">Inherents, nothing slotted: ${stripped.join(" · ")}</div>`
@@ -8877,7 +8878,21 @@ function renderStatBreakdown() {
   html = `<h2><span>${escHtml(sel.label)}</span>
     <button class="iconbtn pi-close" onclick="clearSelectedStat()" title="close">✕</button></h2>
     <p class="sb-sub">Where the <b class="sb-shown">${shown != null ? `+${shown}%` : "number"}</b> comes
-    from. The contributing IOs ring <b class="sb-green">green</b> — here and in the wall above.</p>
+    from. Everything feeding it turns <b class="sb-green">green</b> — here and in the wall above.</p>
+    <!-- THE TWO GREEN MARKS MEAN DIFFERENT THINGS, and the app has to say so
+         where the user is looking (Joel, 2026-08-06: "some powers have a green
+         box around them, while other powers just show green circles… there is no
+         explanation I could easily find"). It WAS explained — in a parenthetical
+         inside one card's source line, and only on powers that happen to have a
+         built-in contribution, so it was invisible exactly when it was needed.
+         A legend costs two rows and answers it before the question is asked. -->
+    <div class="sb-legend">
+      <span class="sb-leg"><span class="mw-slot stat-hot sb-leg-ring"></span>
+        <span>a <b>ring on an enhancement</b> — that IO feeds this number</span></span>
+      <span class="sb-leg"><span class="sb-leg-box">power name</span>
+        <span>a <b>box on a power's name</b> — the power grants it by itself,
+        with no enhancement involved</span></span>
+    </div>
     <p class="sb-editnote">✏️ <b>Editable:</b> click any IO chit below to change it —
     the change is REAL and updates your build and every number, everywhere.</p>`;
   if (!byPower.size && !aggregates.length) {

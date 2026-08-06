@@ -293,7 +293,7 @@ const TOUR_MOCK_HTML = `
 
   <div class="tm-tab" data-tm-tab="stats" style="display:none">
     <div class="tm-miniwall" data-for="stats-miniwall" data-tm="mini-wall">
-      <div class="mw-frame-label">🗂 Powers &amp; Slots, in miniature <span class="muted small">— click a stat below and the IOs feeding it ring green here</span></div>
+      <div class="mw-frame-label">🗂 Powers &amp; Slots, in miniature <span class="muted small">— click a stat below and everything feeding it turns green here: a ring on an enhancement, a box on a power's name when the power grants it by itself</span></div>
       <div class="mw-grid">
         <div class="mw-card"><div class="mw-head"><span class="mw-name">Knockout Blow</span><span class="mw-lv">L6</span></div>
           <div class="mw-slots"><span class="mw-slot"><img class="mw-ico" src="/static/icons/enh/SAO_Brute2.png" alt=""></span><span class="mw-slot"><img class="mw-ico" src="/static/icons/enh/SAO_Brute2.png" alt=""></span></div></div>
@@ -981,8 +981,12 @@ const TOUR_STEPS = [
     title: "Your build, in miniature",
     body: "The wall above the stats is your Powers & Slots in miniature — same "
         + "cards, same enhancement icons, just small. It exists for one "
-        + "reason: when you click a stat below, the IOs feeding that stat ring "
-        + "green up here, so the number and its sources are visible together.\n\n"
+        + "reason: when you click a stat below, everything feeding that stat "
+        + "turns green up here, so the number and its sources are visible "
+        + "together. Two marks, and the breakdown lists both in a legend: a "
+        + "ring around an enhancement means that IO feeds the number, and a box "
+        + "around a power's NAME means the power grants it by itself, with no "
+        + "enhancement involved.\n\n"
         + "Inherents with nothing slotted fold into the one-line strip at the "
         + "bottom." },
   { chapter: "stats", target: "#stat-breakdown", anchor: "[data-tm=breakdown-box]", side: "left",
