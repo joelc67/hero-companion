@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+- **Click any enhancement and see exactly what it is worth.** On the Stats tab,
+  hovering an enhancement in the miniature wall names it; clicking one now
+  answers the question behind it — every number that piece is currently buying
+  you, set bonuses included. It is worked out by rebuilding your character
+  without that one enhancement and comparing, so it is what you would actually
+  lose by removing or replacing it, not an estimate. That matters more than it
+  sounds: pulling a single defence piece can drop a whole set tier and cost you
+  max hit points, and only a real comparison catches that.
+
+- **The two green marks in the stat breakdown now explain themselves.** Clicking
+  a stat rings the enhancements feeding it, and boxes the NAME of any power that
+  grants it by itself with no enhancement involved. Those are two different
+  things and only one of them was ever explained, in a footnote you would see
+  only if you had already worked it out. There is a legend at the top of the
+  breakdown now, showing both marks.
+
 - **Every exploration badge in the game is now listed on the page, and its name
   is the button.** The Zones & Badges catalogue used to be 57 closed drawers: to
   get one badge's location you opened a zone and read down a list. All 390

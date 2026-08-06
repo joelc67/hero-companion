@@ -8586,8 +8586,11 @@ function renderMiniWall() {
       + (p.slots || []).map((s, si) => {
           if (!s || !s.piece_uid) return `<span class="mw-slot"><span class="mw-slot-empty"></span></span>`;
           const url = enhIconUrl(s.image);
-          const t = `${s.set_name || "Common IO"}: ${s.piece_name || ""}`;
-          return `<span class="mw-slot" id="mw-${pi}-${si}" title="${escHtml(t)}">`
+          const t = `${s.set_name || "Common IO"}: ${s.piece_name || ""}`
+            + (s.level ? ` · level ${s.level}` : "")
+            + `\nClick to see everything this one enhancement is worth`;
+          return `<span class="mw-slot mw-slot-ask" id="mw-${pi}-${si}" title="${escHtml(t)}"`
+            + ` onclick="explainSlotWorth(${pi},${si})">`
             + (url ? `<img class="mw-ico" src="${url}" alt="" loading="lazy">`
                    : `<span class="mw-slot-empty"></span>`) + `</span>`;
         }).join("")
@@ -8603,6 +8606,71 @@ function renderMiniWall() {
         : "")
     + `</div>`;
 }
+
+// ── WHAT IS THIS ONE ENHANCEMENT WORTH? (Joel, 2026-08-06) ──────────────────
+// "click on one and see all the individual %'s that it affects. That include a
+// set bonus, this would give the end user an idea of what would happen if they
+// remove or replace an IO."
+//
+// ⚠ MEASURED, NOT DERIVED. The tempting version reads the piece's own aspects
+// and its set's bonus table and adds them up — and it is wrong wherever the
+// game is interesting: enhancement diminishing returns means the LAST point of
+// slotting is worth less than the first, pulling one piece can drop a whole set
+// TIER (so a defence IO can cost you max HP), and the rule of five can mean a
+// bonus you paid for was never applying at all. So this asks the engine the
+// only question that answers all three at once: recompute the build with this
+// one slot empty, and diff. Whatever the difference is, that is what the piece
+// is worth — which is also exactly what removing it would cost.
+//
+// It reuses renderImproveDiff, so "what this IO is worth" and "what that solve
+// bought you" are the same arithmetic on the same axes and cannot disagree.
+window.explainSlotWorth = async function (pi, si) {
+  const p = (build.powers || [])[pi];
+  const s = p && (p.slots || [])[si];
+  const host = $("stat-breakdown");
+  if (!host) return;
+  if (!s || !s.piece_uid) return;          // an empty slot is worth nothing
+  const name = `${s.set_name || "Common IO"}: ${s.piece_name || ""}`;
+  host.classList.remove("hidden");
+  host.innerHTML = `<h2><span>${escHtml(s.piece_name || name)}</span>
+      <button class="iconbtn pi-close" onclick="clearSelectedStat()" title="close">✕</button></h2>
+    <p class="sb-sub">${escHtml(name)}${s.level ? ` · level ${s.level}` : ""}
+      — in <b>${escHtml(p.display_name || p.full_name)}</b></p>
+    <p class="muted small">Working out what it is worth…</p>`;
+  // ⚠ Build the probe from buildPayload(), NEVER from `build` directly — the
+  // payload is what carries accolades, incarnate inclusion, alignment, PvP mode
+  // and the exemplar view. Diffing against a payload missing those would price
+  // the piece against a DIFFERENT character than the one on screen.
+  const probe = buildPayload();
+  probe.powers = JSON.parse(JSON.stringify(probe.powers));
+  probe.powers[pi].slots[si] = null;
+  // ⚠ /build/calculate answers with the totals object ITSELF, not {totals: …}
+  const without = await api("/build/calculate", postJson(probe));
+  if (!without || typeof without !== "object") {
+    host.innerHTML += `<p class="muted small">That did not come back — nothing was changed.</p>`;
+    return;
+  }
+  host.innerHTML = `<h2><span>${escHtml(s.piece_name || name)}</span>
+      <button class="iconbtn pi-close" onclick="clearSelectedStat()" title="close">✕</button></h2>
+    <p class="sb-sub">${escHtml(name)}${s.level ? ` · level ${s.level}` : ""}
+      — in <b>${escHtml(p.display_name || p.full_name)}</b></p>
+    <p class="sb-editnote">Everything below is what this ONE enhancement is worth right now,
+      measured by rebuilding your character without it. <b>Remove or replace it and this is
+      exactly what changes</b> — set bonuses included, since dropping a piece can cost you a
+      whole tier.</p>
+    <div id="sb-worth"></div>`;
+  // before = the build WITHOUT it, after = the build as it stands, so the
+  // numbers read as what the piece ADDS rather than as damage it did
+  renderImproveDiff({ totals: without, name: "without this enhancement" },
+                    { totals: LAST_TOTALS || {}, powers: build.powers },
+                    "sb-worth", { bare: true });
+  const out = $("sb-worth");
+  if (out && !out.textContent.trim()) {
+    out.innerHTML = `<p class="muted small">Nothing measurable moves without it. That can be real:
+      a piece can be held for a set bonus that the rule of five was already capping, or its
+      enhancement can be past the point where more stops helping.</p>`;
+  }
+};
 
 window.selectStat = function (key, label) {
   SELECTED_STAT = (SELECTED_STAT && SELECTED_STAT.key === key)
@@ -10535,8 +10603,11 @@ function showChangeModal() {
 }
 window.showChangeModal = showChangeModal;
 
-function renderImproveDiff(before, res) {
-  const report = $("import-report");
+// hostId lets a second surface reuse this — the per-IO "what is it worth" panel
+// diffs the same way the improvement report does, so the two can never disagree
+// about what a change is worth.
+function renderImproveDiff(before, res, hostId, opts) {
+  const report = $(hostId || "import-report");
   if (!report) return;
   const after = res.totals || {};
   const bt = before.totals || {};
@@ -10664,7 +10735,13 @@ function renderImproveDiff(before, res) {
   // solver may legitimately have almost nothing to re-slot, and a blank report
   // reads as a broken button rather than as "your build already does this".
   const locked = (res.powers || []).filter(p => p.locked).length;
-  const head = `<tr><th>Stat</th><th>Before</th><th>After</th><th>Δ</th></tr>`;
+  // The per-IO panel reuses this diff but is NOT a solve: nothing was changed
+  // and there is nothing to export, so it drops the solve chrome and relabels
+  // the columns — "Before/After" would be a lie when the two columns are the
+  // same build with and without one piece.
+  const bare = !!(opts && opts.bare);
+  const head = `<tr><th>Stat</th><th>${bare ? "Without it" : "Before"}</th>`
+    + `<th>${bare ? "With it" : "After"}</th><th>Δ</th></tr>`;
   const perPower = powerRows.length
     ? `<details open><summary>Power by power (${powerRows.length} moved)</summary>
        <table class="diff-tbl">${head.replace("<th>Stat", "<th>Power")}${powerRows.join("")}</table></details>`
@@ -10677,13 +10754,14 @@ function renderImproveDiff(before, res) {
             had little it was allowed to change — untick it, or unlock a power on its card, to
             give it room.` : ""}</p>`;
   report.classList.remove("hidden");
-  report.innerHTML = `
+  report.innerHTML = (bare ? "" : `
     <div class="import-head"><strong>Improvement — ${before.name}</strong>
-      <span class="muted small">solved for your goal · review before exporting</span></div>
-    ${tbl}
+      <span class="muted small">solved for your goal · review before exporting</span></div>`)
+    + `${tbl}
     ${perPower}
-    ${changes.length ? `<details open><summary>${changes.length} power(s) re-slotted</summary><ul class="crit-list">${changes.join("")}</ul></details>` : ""}
-    <p class="muted small">Happy with it? Use <strong>⬇ Export to Mids Reborn</strong> above to save the improved build.</p>`;
+    ${changes.length ? `<details open><summary>${changes.length} power(s) re-slotted</summary><ul class="crit-list">${changes.join("")}</ul></details>` : ""}`
+    + (bare ? "" : `
+    <p class="muted small">Happy with it? Use <strong>⬇ Export to Mids Reborn</strong> above to save the improved build.</p>`);
 }
 
 async function applyGeneratedBuild(res) {

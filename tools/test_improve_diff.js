@@ -30,10 +30,10 @@ const make = new Function("escHtml", "$",
   src.slice(start, end) + "; return renderImproveDiff;");
 const renderImproveDiff = make(s => String(s), () => el);
 
-const run = (before, after) => {
+const run = (before, after, opts) => {
   html = "";
   renderImproveDiff({ totals: before, name: "test" },
-                    { totals: after, powers: [] });
+                    { totals: after, powers: [] }, null, opts);
   return html;
 };
 const powerTable = h => {
@@ -94,5 +94,19 @@ const check = (label, cond) => { assert.ok(cond, "FAIL: " + label); n++; };
     && !h.includes("Nothing measurable moved"));
 }
 
-console.log(`test_improve_diff: ${n} of 9 checks passed`);
-assert.strictEqual(n, 9, "expected 9 checks");
+// 10-13: BARE mode — the per-IO "what is this worth" panel reuses this diff but
+// is not a solve. Nothing was changed and there is nothing to export, so the
+// solve chrome goes and the columns say what they really hold.
+{
+  const b = { defense: { melee: 40 } }, a = { defense: { melee: 45 } };
+  const solve = run(b, a), worth = run(b, a, { bare: true });
+  check("solve mode keeps its heading", /Improvement — test/.test(solve));
+  check("bare mode drops the solve heading", !/Improvement — test/.test(worth));
+  check("bare mode drops the export nag", !/Export to Mids/.test(worth)
+    && /Export to Mids/.test(solve));
+  check("bare mode relabels the columns", /Without it/.test(worth)
+    && /With it/.test(worth) && !/<th>Before<\/th>/.test(worth));
+}
+
+console.log(`test_improve_diff: ${n} of 13 checks passed`);
+assert.strictEqual(n, 13, "expected 13 checks");

@@ -1734,6 +1734,9 @@ body { overflow: hidden; }
 /* PROMINENT rings (Joel, 2026-08-04: "just as prominent" as the selection) */
 .mw-slot { flex: none; border-radius: 50%; border: 3px solid transparent; line-height: 0; }
 .mw-slot.stat-hot { border-color: #22c55e; box-shadow: 0 0 8px #22c55ecc; }
+/* every filled chit answers "what is this one worth" on click */
+.mw-slot-ask { cursor: pointer; }
+.mw-slot-ask:hover { border-color: var(--accent); }
 .mw-slot-empty { width: 12px; height: 12px; border-radius: 50%;
   border: 1px solid var(--border); }
 /* Unslotted utility inherents fold into one thin full-width strip. */
