@@ -7,13 +7,14 @@
 app is not currently running. Release still HELD at 0.12.31; everything below is
 staged under CHANGELOG "Unreleased".
 
-**▶ FIRST THING NEXT SESSION — one unresolved check:**
-`gh run view 31127012557 --repo joelc67/hero-companion-inbox` — the proving run
-for the two inbox workflows I re-enabled today. **It was still QUEUED with zero
-steps when the session ended, so it proved nothing yet.** The recorded tell is
-that *failing in seconds with zero steps* = allowance not reset; queued is NOT
-that signal, but it is not success either. Do not record this as fixed until a
-run completes with real steps.
+**✅ RESOLVED, and the answer was no.** Proving run 31127012557 sat **QUEUED for
+55.9 minutes and was cancelled with ZERO steps** — it never got a runner. The
+allowance has NOT reset, so both workflows are `disabled_manually` again (done
+the same evening, so tomorrow's failure mail does not resume). **The next move
+is Joel's: github.com/settings/billing** — a declined payment method would not
+self-heal on a monthly reset, and nothing was consumed in August because the
+workflows were off all month, so "ran out of minutes" does not fit. Do not
+re-auth gh to chase this. Boards verified unaffected (200, current date).
 
 **What today's inbox finding was:** Joel's Companion Lite 0.1.18 on his gaming PC
 is uploading fine (captures every ~5 min). But `Collect mailbox` and `Inbox
