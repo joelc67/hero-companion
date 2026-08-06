@@ -1,5 +1,21 @@
 # Resume point — 2026-08-06 (new session starts here)
 
+## ✅ POWER-ICON PASS: the i24 glob bug is fixed — `7a67c48c`
+
+The two-line fix and the finding that made it pay: `extract_power_icons.py`
+globbed `texture_*.pigg` (zero matches in the i24 set — its archives are
+`tex*`/`stage*`), and the still-missing `e_icon_gen_*` names live under
+`GUI/Icons/Enhancements` (i24 stage2.pigg), a prefix the tool never searched.
+23 textures extracted, **94 Incarnate Alpha boost sub-powers** now carry the
+game's own generic enhancement art (coverage 6033→6122). 7 textures are absent
+from BOTH asset sets and stay reported, not faked. Gate 24/24. Data + statics
+change — rides the next rebuild; nothing pushed to the frozen copies (a
+missing icon renders the fallback, so no half-update lie is possible).
+
+⚠ Stale-queue note: the **verdict-gate legality hole is ALREADY CLOSED**
+(`07ce596e` + `tools/test_verdict_legality.py`) — older open-queue lines
+naming it are superseded.
+
 **HEAD = `c78f552b`, pushed, tracked tree clean. Nothing running.** Release still
 HELD at 0.12.30.
 

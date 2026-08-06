@@ -295,7 +295,7 @@ them from a parse without the same standard of proof.
 - **powers.json additive-patcher family** (never re-parse — it erases client-synced layers): patch_suppression_flags, patch_accuracy_bonuses, patch_heal_strength, patch_effect_durations, patch_interrupt_times, patch_power_icons. Pattern: signature-sequence matching, coverage denominator, hard-fail, verify byte-identical after stripping added keys.
 - **Power icons**: tools/extract_power_icons.py (pigg texture→PNG) + tools/patch_power_icons.py (additive map from the game's own icon field). Run order: extract → patch. Residual 38 gaps = 18 inherents (different convention), 3 incarnates (`_incarnate_icon`), 17 the game gives no icon.
 - **⚠⚠ CLIENT ART IS SPLIT ACROSS TWO ASSET SETS WITH DIFFERENT FILE NAMING (2026-07-31, nearly cost a false "the game doesn't have it").** `C:\Games\HC2\assets\live` names its texture archives **`texture_*.pigg`**; `C:\Games\HC2\assets\issue24` names them **`tex*.pigg` / `stage*.pigg`**. **A glob for `texture_*.pigg` matches ZERO files in the i24 set.** Consequence: the live piggs hold only what Homecoming ADDED (e.g. archetype icons for Sentinel + Guardian only), while all the ORIGINAL-game art lives in i24 (the 14 classic archetype emblems are in `stage1b.pigg`). A live-only sweep finds 2 icons and looks like proof the classic emblems don't exist. **Always glob `*.pigg` across BOTH dirs.** Same class as the badge search that returned zero: the search was wrong, not the game.
-- **⚠ OPEN BUG from that finding: `extract_power_icons.py` has this exact glob defect** — it lists the i24 dir in `PIGG_DIRS` but globs `texture_*.pigg`, so its documented "other texture piggs are searched as a fallback" has **never once reached the i24 set**. Re-running it correctly may close some of the residual 38 power-icon gaps. Not yet fixed.
+- **✅ FIXED (7a67c48c, 2026-08-06): the `extract_power_icons.py` i24 glob defect** — it globbed `texture_*.pigg`, so the documented i24 fallback never once ran. Now globs `*.pigg` (the ICON_PREFIX filter does the real selection). The glob alone closed NOTHING — the payoff needed a second finding: **`e_icon_gen_*` icon names live under `GUI/Icons/Enhancements`** (i24 stage2.pigg), a second prefix the tool never searched. Result: 23 textures extracted, **94 Incarnate Alpha boost sub-powers** mapped to the game's own generic enhancement art, coverage 6033→6122. Residual TRUE gaps = 7 textures absent from BOTH asset sets (e3brawling, illusions_decoy, oilslick ×2, entangledaura ×2, preemptive interface) — reported, not faked.
 - **GUI emblems**: `tools/extract_gui_emblems.py` (2026-07-31) pulls the 16 archetype emblems (complete roster) → `static/icons/at/` and the 5 origin title plates (512×128) → `static/icons/origin/`, same texture→DDS→RGBA→PNG path as the power icons. **Archetype↔file mapping is MECHANICAL** — strip `Class_`, lowercase; the game's villain-side `v_` prefix is normalised away at extraction. 15 of 15 app archetypes resolve. Origin plates are extracted but **not yet placed in the UI**.
 - **parse_mids Enhancement-relabel allowlist** (`RechargeTime, Recovery, Regeneration, ToHit, Accuracy` + heal-strength fix) silently DROPS other Enhancement(X) self-effects — caused the accuracy (v28) and heal-strength (v29) bugs; Power Boost's +66% amplifier effects invisible today (queued).
 - solver/champions: `/build/solve` preserve defaults TRUE for imported builds (proc pass skipped unless `_generated`); champions.json read per-request; the ILP's slot budget counts pieces (67 + one base per power). The app's real solve payload includes `slots`, `earned_slot_count`, `exposure`, `tier` — test through that path, not a bare minimal POST.
@@ -980,12 +980,13 @@ header gradients + 2px underlines have NEVER rendered on hero or villain.** The
 middle rule is scoped to `body.align-mid #masthead` to win; the other two are left
 DEAD on purpose — reviving them changes both shipped themes, which is Joel's call.
 
-**▶ OPEN, in Joel's order:** (1) **verdict-gate legality hole** — run the
-pool-prereq check over BOTH sides and refuse to supersede with an illegal build
-· (2) Iron Man accolade grant (Joel's in-game look) · (3) origin plates extracted
-but unplaced; `extract_power_icons.py` i24 glob bug (see pitfalls) · gaming box
-silent since 2026-07-29 11:51 · drafted forum/Discord posts unsent · reduced-motion,
-exploration-log parse, strict-dominance experiment.
+**▶ OPEN, in Joel's order:** (1) ~~verdict-gate legality hole~~ **CLOSED
+(07ce596e + tools/test_verdict_legality.py — legality outranks score, all four
+branches, fail-safe on unmeasurable)** · (2) Iron Man accolade grant (Joel's
+in-game look) · (3) origin plates extracted but unplaced (~~i24 glob bug~~ fixed
+7a67c48c, see pitfalls) · gaming box silent since 2026-07-29 11:51 · drafted
+forum/Discord posts unsent · reduced-motion, exploration-log parse,
+strict-dominance experiment.
 
 - **🔧 ENGINE-ACCURACY WORK ORDER: ITEMS 1-4 DONE (2026-07-30 morning; commits
   4c9243cc · 9de25d30 · 9025dee8 · e4d63760 — details in session-report).**
