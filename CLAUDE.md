@@ -646,6 +646,21 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   would vanish for good.** `_breakdownHost()` holds the element in JS and
   re-attaches it when detached; `_SB_HOME`/`_SB_HOME_NEXT` remember where it
   belongs. Proven by driving a real recompute.
+- **🎯 THE PER-IO ANSWER IS A POPOVER AT THE CHIT, AND THE *PURPOSE* PICKED THE
+  SHAPE (Joel, 2026-08-06).** He offered two options — scroll to the top, or "a
+  pop-up next to where the end user is" — and then gave the reason that decides
+  it: *"see what they might want to sacrifice on their IO choices to attain a
+  better percentage with the LEAST amount of impact on their build."* **That is
+  a comparison, so the page must not move**: scrolling answers one question and
+  loses your place for the next click. `#io-worth-pop` anchors to the chit in
+  FIXED coordinates (the mini wall is sticky, so the chit moves against the
+  document but not the screen), re-places on scroll, clamps to the viewport and
+  flips above when there is no room. ⚠ Closes on ✕ or an outside click — **never
+  advertise Escape, it does not reach the page in the frozen shell**. ⚠ The
+  better half: **the stat breakdown underneath is left alone**, so a stat can
+  stay selected with its contributors ringed while each contributor is probed in
+  turn. ⚠ The per-power table opens FOLDED — an open one made the popover want
+  its own scrollbar, which this app does not do.
 - **💎 WHAT ONE ENHANCEMENT IS WORTH IS MEASURED, NEVER DERIVED (Joel,
   2026-08-06: "click on one and see all the individual %'s that it affects…
   what would happen if they remove or replace an IO").** `explainSlotWorth(pi,

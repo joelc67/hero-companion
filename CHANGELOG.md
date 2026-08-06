@@ -2,10 +2,13 @@
 
 ## Unreleased
 
-- **Click any enhancement and see exactly what it is worth.** On the Stats tab,
-  hovering an enhancement in the miniature wall names it; clicking one now
-  answers the question behind it — every number that piece is currently buying
-  you, set bonuses included. It is worked out by rebuilding your character
+- **Click any enhancement and see exactly what it is worth, right where you
+  clicked.** On the Stats tab, hovering an enhancement in the miniature wall
+  names it; clicking one opens a small panel beside it listing every number that
+  piece is currently buying you, set bonuses included. Click the next
+  enhancement and the panel follows, so you can compare several in a row and see
+  which one you can most afford to give up. The stat breakdown you had open
+  stays open underneath. It is worked out by rebuilding your character
   without that one enhancement and comparing, so it is what you would actually
   lose by removing or replacing it, not an estimate. That matters more than it
   sounds: pulling a single defence piece can drop a whole set tier and cost you

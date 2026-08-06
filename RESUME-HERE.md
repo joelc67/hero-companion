@@ -1,6 +1,19 @@
 # Resume point — 2026-08-06 (new session starts here)
 
-## ▶▶ LATEST: the contributions column is back at his width (`23fbe8e6`)
+## ▶▶ LATEST: the per-IO answer is a popover at the chit (`2548a27f`)
+
+Clicking an enhancement used to answer into `#stat-breakdown`, below the wall —
+so the answer was off screen. His stated purpose ("what to sacrifice for the
+LEAST impact") is a comparison, so the page must not move: `#io-worth-pop`
+anchors to the chit, follows chit-to-chit clicks with zero page scroll, clamps
+to the viewport, closes on ✕ or an outside click (never Escape — it does not
+reach the page in this shell). **The stat breakdown underneath is untouched**,
+so a stat can stay selected with its contributors ringed while each is probed.
+Measured at 1240: 6px under the chit, 287px tall, right-edge clamp holds
+(chit x=1153 → popover right 1232 of 1240), 6px again after a scroll settles.
+⚠ Per-power table opens FOLDED, or the popover wants its own scrollbar.
+
+## the contributions column is back at his width (`23fbe8e6`)
 
 ⚠ **I got his previous message wrong first.** "Display along side what is
 clicked" meant *the right-hand column, where it used to be, with the arrow* —
