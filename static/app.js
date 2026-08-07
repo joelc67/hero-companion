@@ -1148,6 +1148,17 @@ async function openLevelStepper() {
     ? _stepIndexForLevel(build.level_reached) : 0;
   renderLevelStep();
 }
+// An open seat, drawn the same way everywhere it appears (the stepper writes its
+// own richer line; the road and the panel share this one). ONE copy so the road
+// and the panel can never disagree about what "open" looks like.
+function _openPickHtml(n) {
+  let out = "";
+  for (let k = 0; k < (n || 0); k++) {
+    out += `<div class="jny-pick jny-open"><b>Open power pick</b> `
+      + `<span class="muted small">not chosen yet</span></div>`;
+  }
+  return out;
+}
 function renderLevelStep() {
   const steps = LEVELING_STEPS, i = LEVEL_STEP_I, s = steps && steps[i];
   // ⚠ THE STEPS ARE NOT ALWAYS LOADED (Joel, 2026-08-05: typing 50 into the
@@ -1165,7 +1176,7 @@ function renderLevelStep() {
   // twice. Check the element, not just the data.
   const out = $("wiz-plan-out");
   if (!s || !out) return;
-  const hasPicks = (s.picks || []).length > 0;
+  const hasPicks = (s.picks || []).length > 0 || (s.open_picks || 0) > 0;
   const deltas = _LVL_STATS.map(([k, lab, u]) => {
     const dv = (s.delta || {})[k]; if (!dv || Math.abs(dv) < 1) return "";
     return `<span class="rt-delta ${dv > 0 ? "up" : "down"}">${dv > 0 ? "+" : ""}${dv}${u} ${lab}</span>`;
@@ -1175,6 +1186,15 @@ function renderLevelStep() {
 
   // POWER PICK(S) at this level — each with a "your call" alternative picker.
   let pickHtml = "";
+  // ⚠ An OPEN seat is stated, never left blank (Joel, 2026-08-08): a build short
+  // of 24 used to render nothing here, so the levels with picks still waiting
+  // looked exactly like levels where nothing happens.
+  for (let k = 0; k < (s.open_picks || 0); k++) {
+    pickHtml += `<div class="lvl-pick"><span class="lvl-pick-lead">🎬 Pick a power:</span> `
+      + `<b>Open — nothing chosen yet</b> <span class="muted small">the game gives you a `
+      + `power pick at this level and this build has not used it. Take one on `
+      + `Powers &amp; Slots, or press ✨ Auto-pick the rest toward my goal.</span></div>`;
+  }
   for (const pk of (s.picks || [])) {
     if (pk.temp) {
       // VEAT phase-1 filler: the end-game build doesn't need a power in this slot,
@@ -1706,6 +1726,7 @@ function renderJourneyLevelPanel() {
     + (s.picks || []).map(pk => pk.temp
         ? `<div class="jny-pick"><b>Your choice</b> <span class="muted small">temporary — the level-24 respec re-places it</span></div>`
         : `<div class="jny-pick"><b>${escHtml(pk.name)}</b> <span class="muted small">${escHtml(pk.powerset)}</span></div>`).join("")
+    + _openPickHtml(s.open_picks)
     + (s.slots ? `<div class="muted small">${s.slots} new slot${s.slots > 1 ? "s" : ""} — ${s.slots_running} / ${LEVELING_TOTAL} placed</div>` : "")
     + (s.milestone ? `<div class="jny-ms">⭐ ${escHtml(s.milestone)}</div>` : "")
     + _zonesForLevelHtml(s.level)
@@ -2046,7 +2067,7 @@ function renderJourney() {
     const picks = (s.picks || []).map(pk => pk.temp
       ? `<div class="jny-pick"><b>Your choice</b> <span class="muted small">temporary — the level-24 respec re-places it</span></div>`
       : `<div class="jny-pick"><b>${escHtml(pk.name)}</b> <span class="muted small">${escHtml(pk.powerset)}</span></div>`
-    ).join("");
+    ).join("") + _openPickHtml(s.open_picks);
     const slotDots = s.slots
       ? `<div class="jny-slots">${'<span class="new"></span>'.repeat(s.slots)}
          <span class="muted small">${s.slots_running} / ${LEVELING_TOTAL} placed</span></div>`
@@ -4892,6 +4913,31 @@ async function addPowersetPowers(sel, slot) {
   // lines up. Refilling before it would pick from the pool being replaced.
   if (refillEpic) {
     await autopickRemaining();
+    // ⚠⚠ VERIFY THE REFILL, NEVER ASSUME IT (Joel, 2026-08-08: his Blaster came
+    // out of this swap at 21 of 24 picks with all 67 slots packed into the 21).
+    // autopickRemaining() can return having added NOTHING and say so only in
+    // #gen-status, which lives on the Assistant panel — nowhere near the
+    // dropdown just used. Solving a short build then LOOKS finished: the tally
+    // reads 67/67, the wall is dense, and the three lost picks are invisible
+    // until you count them. A button that promises to refill either refills or
+    // says it did not.
+    let open = LADDER.length - _pickCount();
+    if (open > 0) {                       // one retry: a single failed call is not a verdict
+      await autopickRemaining();
+      open = LADDER.length - _pickCount();
+    }
+    if (open > 0) {
+      await askDialog({
+        title: `${open} power ${open === 1 ? "pick is" : "picks are"} still open`,
+        body: `The new pool went in, but the tool could not fill `
+          + `${open === 1 ? "the last seat" : `the last ${open} seats`} for you. `
+          + `Your build is at ${_pickCount()} of ${LADDER.length} picks.`
+          + `<span class="muted keep-whole">Pick ${open === 1 ? "it" : "them"} from `
+          + `the catalogue below, or press ✨ Auto-pick the rest toward my goal, `
+          + `then Solve. Slotting is left alone until you do.</span>`,
+        actions: [{ key: "ok", label: "Got it" }], safe: "ok" });
+      return;                             // never solve a short build behind their back
+    }
     _solveAlreadyApproved();
   }
 }
@@ -5676,6 +5722,12 @@ window.spineGo = function (where) {
 };
 
 // pool choices — advise-don't-override). Seats it can't fill stay open.
+// The build's REAL picks — the 24-rung ladder, never the granted inherents.
+// One copy: the refill, its verification and the swap all have to agree on what
+// "21 of 24" means, and three hand-written filters would not stay agreed.
+function _pickCount() {
+  return build.powers.filter(p => !(p.full_name || "").startsWith("Inherent.")).length;
+}
 window.autopickRemaining = async function () {
   const picked = new Set(build.powers.filter(p => !(p.full_name || "").startsWith("Inherent."))
     .map(p => p.full_name));
@@ -5696,6 +5748,12 @@ window.autopickRemaining = async function () {
     // Honouring the user's pool is the advise-don't-override rule; the server
     // still decides WHICH powers inside it are worth taking.
     epic: build.epic || null,
+    // ⚠⚠ AND THE POOLS, for the identical reason (2026-08-08). Sending only the
+    // epic fixed the epic seats and left the pool seats empty: the proposal
+    // still offered Combat Jumping to a build with no Leaping pool, the filter
+    // below discarded it, and the seat stayed open. Joel's Blaster came out of
+    // an epic swap at 21 of 24 picks with all 67 slots packed into 21 powers.
+    pools: build.pools || [],
     custom_targets: build._custom_targets || null })).catch(() => null);
   if (!(res && res.ok && (res.powers || []).length)) {
     if (s) s.textContent = "Couldn't auto-pick just now — the ladder below still works by hand.";

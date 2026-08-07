@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+- **Fixed: changing your epic pool could leave your build short of power picks,
+  and nothing said so.** Switching epic pools and choosing "Switch and refill"
+  is supposed to take the new pool's powers into the seats the old pool left
+  behind. It could come back having filled none of them, and the build was then
+  slotted anyway — so all 67 enhancement slots went into the powers that were
+  left, the tally read 67 of 67, and the missing picks were invisible unless you
+  counted them. Three things changed: the refill now draws its suggestions from
+  the power pools your build actually holds (it was proposing powers from pools
+  you had not taken and then discarding them, which is how the seats stayed
+  empty); it checks afterwards that the seats really are filled; and if it still
+  cannot fill them it says so and leaves your slotting alone instead of quietly
+  solving an incomplete build.
+- **The level-by-level guide now shows power picks you have not made.** A build
+  short of the game's 24 picks used to render nothing at all at those levels, so
+  the one page whose job is to say what happens at each level was silent about
+  the picks still waiting for you. Open seats are now listed where they belong.
+
 ## 0.12.33 — 2026-08-07 — Knowing what to do next
 
 Game data is unchanged (Homecoming 2026.1.1242) and the optimizer's model stays

@@ -6823,7 +6823,7 @@ def _champion_picks(archetype, primary, secondary, content, form=None):
 
 def _auto_pick_powers(archetype, primary, secondary, role="damage",
                       exposure="flex", content="general", travel="super_speed",
-                      form=None, custom_targets=None, epic=None):
+                      form=None, custom_targets=None, epic=None, pools=None):
     # Default to the ARCHETYPE's role (same map the tray uses), not a blanket "damage" — a
     # Defender/Corruptor/MM picked with no explicit role must build support, not a blaster.
     role = role or _AT_DEFAULT_ROLE.get(archetype, "damage")
@@ -6835,7 +6835,14 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
     # SKIPPED — a champion is certified for its preset, not your numbers, and a
     # custom solve is DERIVED by doctrine. The heuristic runs with the ask lift
     # so the picks serve what you actually asked for (the Tough Hide case).
-    if not custom_targets:
+    # ⚠⚠ A CHAMPION IS A WHOLE BUILD, SO IT CANNOT ANSWER "FILL MY REMAINING
+    # SEATS" (2026-08-08). `epic`/`pools` are only ever supplied by a build that
+    # ALREADY EXISTS and is asking for its empty seats back. The champion
+    # shortcut returns 24 fixed picks from its own pools and epic and returns
+    # BEFORE _pick_epic(force=) below ever runs — so the caller's filter then
+    # discards most of them and the seats stay empty. The wizard and the
+    # champion paths pass neither and are byte-identical.
+    if not custom_targets and not epic and not pools:
         champ = _champion_picks(archetype, primary, secondary, content, form)
         if champ:
             return champ
@@ -6878,6 +6885,19 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
     # (e.g. Hasten/recharge when travelling by Super Speed = both Speed pool) costs nothing.
     def _pool_of(fn):
         return fn.split(".")[1] if fn and fn.startswith("Pool.") else None
+    # ⚠⚠ HONOUR THE POOLS THE BUILD ALREADY HOLDS — the same bug as `epic` above
+    # wearing a different hat (Joel, 2026-08-08: an epic swap left his Blaster at
+    # 21 of 24 picks). The caller asking to fill empty seats DISCARDS any proposed
+    # power whose set the build does not hold, so a proposal drawn from OUR
+    # favourite pools under-delivers BY CONSTRUCTION — every Combat Jumping
+    # offered to a build with no Leaping pool is a seat that stays empty. Drawing
+    # only from the build's own pools makes every proposed power takeable, so the
+    # seats fill. pools=None (wizard, champion paths) is byte-identical.
+    have_pools = {_pool_of(p) for p in (pools or []) if isinstance(p, str)} - {None}
+    if have_pools:
+        pkgs = [pk for pk in pkgs if _pool_of(_POOL_PACKAGES[pk][0]) in have_pools]
+        if travel_fn and _pool_of(travel_fn) not in have_pools:
+            travel_fn = None            # never spend a seat on a pool it cannot take
     pools_used = set()
     if travel_fn:
         pools_used.add(_pool_of(travel_fn))
@@ -7635,7 +7655,8 @@ def build_autopick():
     picks = _auto_pick_powers(at, primary, secondary, role=body.get("role"),
                               exposure=body.get("exposure"), content=body.get("content"),
                               travel=body.get("travel"), form=body.get("form"),
-                              custom_targets=custom, epic=body.get("epic"))
+                              custom_targets=custom, epic=body.get("epic"),
+                              pools=body.get("pools"))
     # v35 (#15, the tradeoff line — Joel: honor the request AND state what it
     # costs): with custom targets, diff the picks against the no-targets
     # proposal so the note reports REAL adds/drops, never a guess.
@@ -8065,6 +8086,17 @@ def leveling_steps():
         _secs = {e["full_name"] for e in ((POWERSETS["by_archetype"].get(_at_canon(archetype)) or {})
                                           .get("secondary") or [])}
         picks_by_level[1].sort(key=lambda p: 0 if p.get("powerset_full_name") in _secs else 1)
+    # ⚠⚠ AN EMPTY SEAT IS AN EVENT (Joel, 2026-08-08). A build short of the 24
+    # picks rendered as NOTHING at the levels it had not filled — his Blaster sat
+    # at 21 of 24 and the chart was silent at 44, 47 and 49, so the one surface
+    # whose whole job is "what happens at each level" never said three picks were
+    # waiting. The ladder is fixed, so an open seat is exactly a pick level
+    # holding fewer powers than the game grants there (level 1 grants two).
+    open_by_level = {}
+    for lv in set(_PICK_LEVELS):
+        gap = _PICK_LEVELS.count(lv) - len(picks_by_level.get(lv, []))
+        if gap > 0:
+            open_by_level[lv] = gap
     ctx = _stat_ctx(archetype)
     at = ARCH_BY_NAME.get(archetype)
     res_cap = round(at["res_cap"] * 100, 1) if at else engine.RESISTANCE_HARD_CAP
@@ -8133,7 +8165,8 @@ def leveling_steps():
             picks = picks_by_level.get(lvl, [])
             cum.extend(_cum_entry(p) for p in picks)
         slots_running += ev["slots"]
-        if not (picks or ev["slots"] or milestone):
+        open_here = 0 if respec_here else open_by_level.get(lvl, 0)
+        if not (picks or open_here or ev["slots"] or milestone):
             continue                                   # nothing happens this level — skip it
         # recompute stats only when a power was added (slot-only levels don't change the totals here)
         if picks or respec_here or prev is None:
@@ -8184,6 +8217,7 @@ def leveling_steps():
                        "name": p.get("display_name") or p["full_name"].split(".")[-1],
                        "powerset": (p.get("powerset_full_name") or "").split(".")[-1],
                        "temp": bool(p.get("temp"))} for p in picks],
+            "open_picks": open_here,                   # seats the build has not filled
             "respec_order": respec_here,
             "slots": ev["slots"],                      # enhancement slots granted AT this level
             "slots_running": slots_running,            # X / 67 placed through here
