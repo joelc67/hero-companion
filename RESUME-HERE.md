@@ -1,56 +1,56 @@
 # Resume point — 2026-08-07 (new session starts here)
 
-## 🚀 RELEASED v0.12.33 — 2026-08-07 22:35Z, "Knowing what to do next"
+## ✅ CLEAN START. Nothing is running, nothing is owed to a half-finished task.
 
-**Build stamp `898653a`. Signed CN=Joel Andrew Chambers, API-verified, both
-assets. Installed copy mirrored + relaunched; its header reads 0.12.33.**
-Data **2026.1.1242** and model **v38** BOTH unchanged, so no certified score
-moved and no re-cert is owed — the single data edit (Tactical Arrow's
-`Gymnastics`) has zero champion exposure, counted not assumed.
-Release procedure followed in order; both frozen smokes PASS, gold 24/24 SERVED.
-⚠ **The build was rebuilt AFTER committing the version bump** — the first build
-stamped `4d4bae2-dirty`, and a dirty stamp defeats tracing a bug report to a
-build. Commit the bump, then build.
+**v0.12.33 "Knowing what to do next" is RELEASED and ANNOUNCED.**
+Build stamp `898653a`, signed, API-verified, both assets. Installed copy mirrored
+and relaunched (its header reads 0.12.33). Joel posted the announcement to topic
+64761 himself on 2026-08-07. Tree clean and pushed. No scheduled tasks, no
+monitors, no dev server, no wave.
 
-**▶ JOEL'S HAND, POST-RELEASE**
-1. **FP / whitelist submissions** for the new signed artifacts, per
-   `docs/signing-runbook.md`. ⚠ Bitdefender often kills the app on release
-   nights — expect it, verify, relaunch once.
-2. **No announcement post has been written for 0.12.33** (the 0.12.32 one is
-   still unposted too).
+Data **2026.1.1242** and model **v38** unchanged, so no certified score has moved
+and **no re-cert is owed**.
 
-## ✅ Tour walk finished (same session, pre-release)
+### ⚠ Three things the post created, all recorded in CLAUDE.md
+1. **Nothing public has ever announced that the app stopped being a browser
+   tab.** The 0.12.31 and 0.12.32 drafts were never posted, and Joel cut the
+   catch-up paragraph ("I never posted about 0.12.31"). If a field report reads
+   as "why does this not open in my browser", that is why. Not a bug.
+2. **A public correction was made** (the update check runs on launch, not only
+   when clicked). That stale-reply watch item is CLOSED.
+3. **The post says `/thumbtack` is untested in game.** If anyone confirms the
+   marker lands, that is the trigger to strengthen the claim.
 
-**HEAD: see git. Tracked tree clean, pushed. Dev server stopped. Installed app
-rebuilt at `36926ce` + current statics. Nothing running, nothing scheduled.**
-
-### The tour walk is DONE — all 64 steps, two defects, both fixed
-- **"Four tabs, one character" (`#tabbar`)** — shipped code, predated this
-  session's work. Same defect as the new workflow step: its stand-in lives on the
-  BUILD screen while the `start` chapter defaults to `menus`, so a step about the
-  four tabs pointed at a tab strip that was not on screen. Measured 0×0.
-- **"The order to work in" (`#change-spine`)** — the new step, same cause.
-- Both fixed with `scene: "build"`. **Both confirmed by eye AND by measurement**
-  (now 1353×39 and 1353×129). All 64 steps measure a real visible target; no card
-  lands outside the viewport.
-
-### ✅ It is now a standing check — `audit_tour` check (c)
-Compares each step's computed scene/tab against where its stand-in actually lives
-in `TOUR_MOCK_HTML`, parsed with `html.parser` (a real element stack, NOT a
-backwards text scan — that version reported `#power-info` as a `logging`-tab
-element and missed the real defect, and was reverted twice before I got it
-right). 64 checked, sabotage-proven against both real defects.
-
-### ▶ OPEN, mine and unblocked
-- Fury meter + Power Boost as ONE piece (blocked on a third clean single-target
-  attack from a Brute farm log — see CLAUDE.md).
-- Leveling Companion batch · pricing #31 · strict-dominance experiment.
+### ▶ MINE, unblocked, in the order I would take them
+- **Fury meter + Power Boost as ONE piece.** Blocked on data, not on design: it
+  needs a THIRD clean single-target attack from a Brute farm log. Only two
+  isolate today, and two points cannot separate a multiplier from a flat term.
+  ⚠ AoEs can never be reconstructed from this log format.
+- **Leveling Companion batch** (shares the Journey surface).
+- **pricing #31** (single-claim pairing).
+- **strict-dominance solver experiment** (optional).
+- Cheap and worthwhile: the **budget/balanced/premium dial** is vestigial and
+  Joel wants it to be a real player choice again (his R3 answer, its own item).
 
 ### ▶ JOEL'S
-The 0.12.32 announcement post (written, unposted) · FP/whitelist submissions ·
-github.com/settings/billing (inbox runners) · the Iron Man badge look · the
-gaming box, silent since 2026-07-29 · the i24 torrent · and the design calls
-listed in `session-report.md`.
+- **FP / whitelist submissions** for the 0.12.33 signed artifacts, per
+  `docs/signing-runbook.md`. ⚠ Bitdefender often kills the app on release nights.
+- **github.com/settings/billing** — the inbox workflows still cannot get a
+  runner; both stay `disabled_manually`. Billing needs a gh scope deliberately
+  not granted, so this cannot be chased from here.
+- **The Iron Man / Adamant badge**: does it actually grant its accolade power?
+  A character holding it either shows the HP/End bump or does not.
+- **The gaming box** has not woken since 2026-07-29.
+- **The i24 torrent** (zone display names ride on it).
+- **Design calls still open**: naming which set bonus changed, pairing the wide
+  diff tables, whether meters move displayed damage, and whether the app should
+  track a character's origin at all.
+
+### Where the detail lives
+`session-report.md` (outbound, newest first) has the full account of the last
+session. `CLAUDE.md` holds every standing rule; the newest entries are the
+per-character state sweep, the tour scene trap, the epic-swap refill, the
+PvP-variant disposition and the scripted-write CRLF warning.
 
 # Resume point — 2026-08-06
 

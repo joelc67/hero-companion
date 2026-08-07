@@ -1699,13 +1699,28 @@ strict-dominance experiment.
   "Switch and refill" (`_pick_epic(force=)`, byte-identical at 272 combos) ·
   the Gymnastics repair · the phantom edit receipt + the undo-stack leak + the
   ten-global per-character sweep · the three unboxed panels · the `↳` glyph ·
-  the PvP-variant disposition. ⚠ **Announcement post NOT written or posted.**
+  the PvP-variant disposition.
+  ✅ **ANNOUNCED on topic 64761, 2026-08-07** (Joel posted it himself).
+  ⚠⚠ **THE 0.12.31 AND 0.12.32 ANNOUNCEMENT DRAFTS WERE NEVER POSTED AND NEVER
+  WILL BE — do not resurrect them.** Both sat written-and-unsent for days; the
+  0.12.33 post supersedes them. ⚠ **Joel's ruling: the catch-up paragraph was
+  CUT** ("Cut the catch-up section, I never posted about 0.12.31"), so **nothing
+  public has ever announced that the app stopped being a browser tab** — if a
+  field report ever reads as "why is this not opening in my browser", or someone
+  is surprised by the four-tab window, that is why, and it is not a bug.
+  ⚠ The post carries a **public correction**: an earlier forum reply of Joel's
+  said the update check only runs when you click it, which stopped being true in
+  0.12.31. That correction is now made; the stale-reply watch item is CLOSED.
+  ⚠ The post states plainly that **`/thumbtack` is untested in game**. If anyone
+  ever confirms the marker lands, that is the trigger to strengthen the claim
+  (see the map-marker entry in the pinned game facts).
   ⚠ FP/whitelist submissions per docs/signing-runbook.md are Joel's hand.
   Superseded entry kept for the ledger: **v0.12.32 "The Stats page becomes a workbench"** (published
   2026-08-06 23:02Z on Joel's "Cut 0.12.32"; signed, API-verified, both assets;
   installed copy mirrored to `e164fd1` and relaunched; the 0.12.31 signed
-  installer was NOT overwritten). ⚠ Announcement post drafted and handed to him
-  in chat, **not yet posted to topic 64761**. ⚠ Its badge sentence was corrected
+  installer was NOT overwritten). ⚠ Its announcement was drafted and **NEVER
+  POSTED — superseded by the 0.12.33 post (2026-08-07); do not resurrect it**.
+  ⚠ Its badge sentence was corrected
   before publishing: it claims only that `/thumbtack` is the command the client
   registers for placing a minimap marker, never that the marker lands as
   expected — nobody has confirmed that in game, and Joel said to skip the check.
