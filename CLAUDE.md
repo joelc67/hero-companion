@@ -867,6 +867,29 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   standing ruling (a meter has no headline number without a scenario).
   ✓ **Champion exposure is ZERO** — no certified build holds Power Boost — so
   whenever this lands it cannot move a certified score, and needs no re-cert.
+- **🧭 THE ORDER TO WORK IN IS STATED ONCE, AT THE TOP (Joel, 2026-08-07: "I
+  really do not see a well defined decision tree, just lots of choices").**
+  The evaluation, measured on a 900px window with a level-50 loaded: Powers &
+  Slots runs **~4.6 screens**, the Build Assistant heading sits **2.7 screens**
+  down and the **SOLVE BUTTON 3.6** — so a returning player meets 24 power cards
+  first and the engine last. The loop WAS written down, as four fragments at
+  four depths (0.3, 1.5, 3.8 screens, plus a line on Stats), and the Character
+  menu offers four ways IN with **nothing for "I have a build and want to change
+  it"** — the commonest case after week one.
+  **His ruling: a band at the top of Powers & Slots**, four numbered steps
+  (goal → Solve → tune on Stats → change powers last), each LINKING to the
+  surface that does it. ⚠ Shown only when a build EXISTS (`renderChangeSpine`,
+  called from `renderPowers` BEFORE its empty-build early return, or it could
+  never hide itself). ⚠ **Not a fold** — folds default CLOSED here, which would
+  hide the one thing it exists to say; it is sized to stay a signpost instead.
+  ⚠ **Step 2 points AT Solve, it does not press it** — a signpost that runs the
+  optimizer is a decision the user did not make.
+  ⚠ **The tour carries the other half** (his follow-up: it should reinforce the
+  workflow "so people know what they are likely to do with results"). The band
+  says the ORDER; the tour step says what each step HANDS BACK — Solve returns
+  the before/after that answers "did this help?", Stats answers "why?". Mock
+  stand-in `data-for="change-spine"` added, or audit_tour fails its coverage
+  check.
 - **🧯 WHEN I BREAK SOMETHING, I FIX IT — I DO NOT HAND HIM THE MENU (Joel,
   2026-08-07: "not sure why this was a suggestion. If it is broken fix it").**
   I damaged a sample save by testing on it instead of a copy, could not restore

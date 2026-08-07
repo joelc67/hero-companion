@@ -5632,6 +5632,49 @@ function catalogueHtml(sets) {
 // clicking 14 powers by hand — the assistant re-slots but never picks.
 // Only powers from the build's OWN sets are taken from the proposal (autopick
 // chooses its own pools; forcing those in would silently change the user's
+// ── THE ORDER TO WORK IN ────────────────────────────────────────────────────
+// Joel, 2026-08-07: "I really do not see a well defined decision tree, just lots
+// of choices." He is right, and the measurement is the argument: Powers & Slots
+// runs ~4.6 screens, the Build Assistant's heading sits 2.7 screens down and the
+// SOLVE BUTTON 3.6 — so a returning player meets 24 power cards first and the
+// engine last. The loop was already written down, but as four fragments at four
+// depths (0.3, 1.5 and 3.8 screens, plus a line on Stats). This says it ONCE, in
+// order, before anything else on the tab.
+// ⚠ Every step LINKS to the surface that does it — a numbered list that leaves
+// you to find the thing is the same problem in a smaller font.
+// ⚠ Step 2 points AT Solve, it does not press it. A signpost that runs the
+// optimizer for you is a decision the user did not make.
+const _SPINE = [
+  ["Say what you want more of", "set the goal in the Build Assistant", "assistant"],
+  ["Press Solve", "one press re-slots every slot toward that goal, and says what moved", "solve"],
+  ["Tune one piece at a time", "on Stats, click any number to see what each enhancement is worth", "stats"],
+  ["Change powers last", "only if the goal can't be reached by slotting alone", "picks"],
+];
+function renderChangeSpine() {
+  const host = $("change-spine");
+  if (!host) return;
+  // A build that does not exist yet has no "change" to plan — the start-here
+  // card is the right first thing there. Inherents alone are not a build.
+  const real = (build.powers || []).filter(p => !(p.full_name || "").startsWith("Inherent."));
+  host.hidden = real.length === 0;
+  if (host.hidden) { host.innerHTML = ""; return; }
+  host.innerHTML = `<b class="cs-lead">Changing this build? Work in this order.</b>`
+    + _SPINE.map(([label, why, go], i) =>
+        `<button type="button" class="cs-step" onclick="spineGo('${go}')">`
+        + `<span class="cs-n">${i + 1}</span>`
+        + `<span class="cs-t"><b>${escHtml(label)}</b>`
+        + `<span class="cs-why">${escHtml(why)}</span></span></button>`).join("");
+}
+// Take them to the surface that does the step. Tab first where it differs, then
+// scroll — an element on a hidden tab has no geometry to scroll to (spec 5.3).
+window.spineGo = function (where) {
+  if (where === "stats") { activateTab("stats"); return; }
+  activateTab("powers");
+  const id = { assistant: "assistant", solve: "solve-btn", picks: "builder" }[where];
+  const el = $(id);
+  if (el) setTimeout(() => el.scrollIntoView({ behavior: scrollBehavior(), block: "center" }), 40);
+};
+
 // pool choices — advise-don't-override). Seats it can't fill stay open.
 window.autopickRemaining = async function () {
   const picked = new Set(build.powers.filter(p => !(p.full_name || "").startsWith("Inherent."))
@@ -5726,6 +5769,9 @@ window.showPowerDetail = function (psFull, fullName) {
 
 function renderPowers() {
   applyIdentityLock();          // keep archetype/powerset lock in sync (onArchetypeChange re-enables them)
+  // ⚠ BEFORE the early return below: the spine has to be able to HIDE itself on
+  // an empty build, and that path returns without touching anything else.
+  renderChangeSpine();
   const host = $("powers-list");
   const sets = chosenPowersets();
   if (!sets.length) { host.innerHTML = startHereHtml(); return; }

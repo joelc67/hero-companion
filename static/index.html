@@ -345,6 +345,20 @@
     <section id="tab-powers" class="tabpanel" role="tabpanel"
       aria-labelledby="tab-btn-powers">
     <div id="exemp-banner-powers" class="exemp-banner" hidden></div>
+    <!-- ⚠ THE ORDER TO WORK IN (Joel, 2026-08-07: "I really do not see a well
+         defined decision tree, just lots of choices"). Measured before writing
+         it: Powers & Slots is ~4.6 screens tall and the Solve button — the one
+         control that redoes the build — sits 3.6 screens down, so the first
+         thing a returning user meets is 24 power cards and the last thing is
+         the engine. The loop WAS explained, in four fragments at four different
+         depths; this states it once, in order, at the top.
+         ⚠ Shown only when a build already EXISTS: on an empty tab the
+         start-here card is the right first thing, and a numbered plan for a
+         character you have not made yet is noise. renderChangeSpine() owns it.
+         ⚠ Not a fold: folds default CLOSED here, which would hide the one thing
+         this exists to say. It is sized to stay a signpost, like the pool-rules
+         line further down, so it never needs dismissing. -->
+    <div id="change-spine" class="change-spine" hidden></div>
     <div class="powers-layout">
       <div class="powers-main">
 <section id="builder" class="panel">

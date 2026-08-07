@@ -143,6 +143,20 @@ const TOUR_MOCK_HTML = `
   <div class="tm-main">
 
   <div class="tm-tab" data-tm-tab="powers">
+    <!-- the order-to-work-in band, stood in for so the tour can teach the loop
+         at its action location (Joel, 2026-08-07: the tour should reinforce the
+         workflow "so people know what they are likely to do with results") -->
+    <div class="change-spine" data-for="change-spine">
+      <b class="cs-lead">Changing this build? Work in this order.</b>
+      <span class="cs-step"><span class="cs-n">1</span><span class="cs-t"><b>Say what you want more of</b>
+        <span class="cs-why">set the goal in the Build Assistant</span></span></span>
+      <span class="cs-step"><span class="cs-n">2</span><span class="cs-t"><b>Press Solve</b>
+        <span class="cs-why">one press re-slots every slot toward that goal, and says what moved</span></span></span>
+      <span class="cs-step"><span class="cs-n">3</span><span class="cs-t"><b>Tune one piece at a time</b>
+        <span class="cs-why">on Stats, click any number to see what each enhancement is worth</span></span></span>
+      <span class="cs-step"><span class="cs-n">4</span><span class="cs-t"><b>Change powers last</b>
+        <span class="cs-why">only if the goal can't be reached by slotting alone</span></span></span>
+    </div>
     <div class="tm-cols">
     <section class="panel" data-for="builder">
       <h2 data-tm="builder-head">Powers &amp; Slots</h2>
@@ -669,6 +683,25 @@ const TOUR_STEPS = [
         + "sessions earned.\n\n"
         + "Everything on every tab describes the same character — change "
         + "something on one and the others update." },
+
+  // ⚠ THE WORKFLOW STEP (Joel, 2026-08-07: "the Tour might help reinforce the
+  // workflow, so people know what they are likely to do with results, and what
+  // sections of the tool accommodate those well"). The band on the tab says the
+  // ORDER; this says what each step gives you back and which surface holds it,
+  // which is the half a signpost has no room for.
+  { chapter: "start", target: "#change-spine", spine: true, key: "workflow",
+    title: "The order to work in",
+    body: "Once a character exists, changing it has a shape, and the band at "
+        + "the top of Powers & Slots states it: say what you want, press "
+        + "Solve, then tune.\n\n"
+        + "It matters because each step hands you something different. Solve "
+        + "returns a before-and-after naming every number that moved — that is "
+        + "the answer to \"did this help?\". Stats answers \"why?\": click any "
+        + "number and it breaks down to the exact powers and enhancements "
+        + "making it, and you can pull one out to see what it was worth.\n\n"
+        + "So the assistant does the whole build in one move and Stats is where "
+        + "you change one piece at a time. Changing which POWERS you took comes "
+        + "last, because slotting usually gets there first." },
 
   // ── Your character's identity ──────────────────────────────────────────────
   { chapter: "build", target: "#build-tile", spine: true, anchor: "[data-tm=tile]", side: "bottom",

@@ -19,6 +19,14 @@
   defence set. It now reads correctly. No other power was affected and no
   build's score changes.
 
+- **The app now says what order to work in.** Once a character exists, Powers &
+  Slots opens with the four steps: say what you want more of, press Solve, tune
+  one piece at a time on Stats, and change powers last. Each step takes you to
+  the surface that does it. Before this the loop was written down in four
+  separate places at four different depths, and the Solve button — the one
+  control that redoes your build — sat nearly four screens below where you land.
+  The guided tour teaches the same order, and what each step hands back.
+
 - **Changing your epic pool can finish the job for you.** Swapping the epic used
   to remove the old pool's powers and stop, leaving you to find the new pool's
   powers in the catalogue, seat them, and run Solve yourself — while changing a
