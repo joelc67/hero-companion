@@ -867,6 +867,26 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   standing ruling (a meter has no headline number without a scenario).
   ✓ **Champion exposure is ZERO** — no certified build holds Power Boost — so
   whenever this lands it cannot move a certified score, and needs no re-cert.
+- **🔲 THE BORDER WAS NEVER THE DIFFERENCE — CENSUS THE TREATMENTS BEFORE
+  "FIXING" ONE (Joel, 2026-08-07: "Build assistance, in-game commands, and how
+  set bonuses stack, are the only items on this entire powers and slots tab that
+  do not have a small blue line around them").** He was right about the symptom
+  and I was about to fix the wrong thing: **every `.panel` on that tab already
+  carries the identical 1px `rgb(39,57,92)`** — I measured all six and they were
+  byte-identical, which flatly contradicted the screen. A census of EVERY
+  bordered box on the tab found three treatments:
+  **32** dim border on the LIGHTER fill `rgb(27,39,64)` (`.cat-col`,
+  `.generate`) — *the fill change draws the edge, not the border*; **6** the
+  accent outline `rgb(77,163,255)` (`.accolades-card`, `.order-out`); **17** dim
+  border on the panel's OWN fill `rgb(20,29,48)` — a slate line between two
+  near-identical darks. The 17 read as boxes only when they CONTAIN one of the
+  first two, which is why the Epic panel and Accolades look fine. Joel's three
+  contain neither at their own edge, so they alone float. Fix:
+  `.pw-cardband > .panel, #assistant { border-color: var(--accent); }` —
+  ⚠ deliberately NOT applied to panels that already hold an accent-outlined box,
+  which would double the line. **Generalize: when a visual complaint and the
+  computed styles disagree, the property you are looking at is not the one
+  doing the work — tally every treatment on the surface before changing any.**
 - **📣 A TOOL THAT CANNOT EXPLAIN ITSELF IS HALF-BUILT — AND THE APP CANNOT
   ZOOM ITS WAY OUT OF SMALL TYPE (Joel, 2026-08-07: "the Build Assistant and
   Stats really leave the end user wondering what either actually do… tiny text

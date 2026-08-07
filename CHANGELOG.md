@@ -19,6 +19,11 @@
   defence set. It now reads correctly. No other power was affected and no
   build's score changes.
 
+- **Three panels on Powers & Slots were missing their outline.** The Build
+  Assistant, In-game commands and How set bonuses stack were the only blocks on
+  that tab without the blue line around them, so they read as loose text rather
+  than as panels. They match everything else now.
+
 - **A few small arrows were showing as a broken box.** The "↳" character used in
   eleven places had no glyph in the app's font. They are plain arrows now.
 

@@ -3359,6 +3359,23 @@ summary:hover { color: var(--ink); }
 .pw-cardband { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--s3); margin-top: var(--s3); align-items: stretch; }
 .pw-cardband > .panel { margin: 0; }
+/* ⚠ THE THREE BLOCKS THAT READ AS UNBOXED (Joel, 2026-08-07: "Build assistance,
+   in-game commands, and how set bonuses stack, are the only items on this entire
+   powers and slots tab that do not have a small blue line around them").
+   MEASURED, because the border was not the difference — every .panel on the tab
+   already carries the same 1px rgb(39,57,92). A census of every bordered box on
+   the tab found THREE treatments:
+     32  rgb(39,57,92) on the LIGHTER fill rgb(27,39,64)  — cat-col, .generate:
+         the fill change is what draws the edge, not the border
+      6  rgb(77,163,255) — the accent outline, on .accolades-card and .order-out
+     17  rgb(39,57,92) on the panel's OWN fill rgb(20,29,48) — the top-level
+         panels, whose edge is a slate line between two near-identical darks
+   The 17 read as boxes anyway WHEN they contain one of the first two — the Epic
+   panel's fold and Accolades' card supply the line Joel sees. These three
+   contain neither at their own edge, so they alone float. They take the accent
+   outline the tab already uses for a top-level block. ⚠ NOT applied to the
+   panels that already hold an accent-outlined box: that would double the line. */
+.pw-cardband > .panel, #assistant { border-color: var(--accent); }
 .pw-cardband > .panel.hidden { display: none; }
 /* the cards' HOME is empty once they are seated in the catalogue — an empty
    grid still eats its margin, so it takes no room at all */
