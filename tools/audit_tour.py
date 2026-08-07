@@ -18,6 +18,7 @@ Run after ANY change to tour.js, index.html ids, or panel structure.
 import re
 import subprocess
 import sys
+from html.parser import HTMLParser
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -248,6 +249,99 @@ _QUOTED_ITEMS = ["Solve the slotting", "Customise build targets", "What changed?
 _missing = [q for q in _QUOTED_ITEMS if q not in html]
 check(f"every menu item the tour names still exists ({len(_QUOTED_ITEMS)} quoted)",
       not _missing, "missing from index.html: " + ", ".join(_missing) if _missing else "")
+
+# (c) ⚠⚠ IS THE STEP'S SUBJECT ON SCREEN WHEN ITS CARD OPENS?
+# Added 2026-08-07 after Joel said "run the tour and check the new step reads
+# right", then "check nothing else is broken". TWO steps were highlighting a
+# COLLAPSED, ZERO-SIZE STUB — "Four tabs, one character" (#tabbar) and the new
+# workflow step (#change-spine). Both cards read fine, both targets were real
+# ids, both had mock stand-ins, both anchors resolved: EVERY check above passed.
+# The mock was simply showing a different SCREEN, so the subject was display:none.
+# Nothing saw it because it is a relationship between three facts and no check
+# compared them. Measured live at the time: 0x0 and invisible; after the fix,
+# 1353x39 and 1353x129.
+#
+# The rule mirrors _tourToDriverStep + _mockShowScene exactly:
+#   scene = s.scene or ("menus" if chapter == "start" else "build")
+#   tab   = s.tab   or TM_TAB[chapter] or "powers"
+#   the mock shows screen "menus" when scene == "menus", else "build", and
+#   inside it exactly the one .tm-tab whose data-tm-tab == tab.
+#
+# ⚠ ANCESTRY IS PARSED, NOT SCANNED. My first attempt walked backwards for the
+# nearest preceding data-tm-tab= and called that the home. That is not ancestry
+# (it ignores closing tags): it reported #power-info as living on the "logging"
+# tab and MISSED the real defect. I reverted it rather than ship a check I did
+# not trust. A nesting question needs a parser.
+class _MockTree(HTMLParser):
+    """For every data-for stand-in, the screen / tab / overlay it sits INSIDE."""
+
+    VOID = {"br", "img", "input", "hr", "meta", "link", "source"}
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.stack, self.home = [], {}
+
+    def handle_starttag(self, tag, attrs):
+        a = dict(attrs)
+        up = lambda k: next((f[k] for f in reversed(self.stack) if f[k]), None)  # noqa: E731
+        if a.get("data-for"):
+            self.home[a["data-for"]] = (
+                a.get("data-tm-screen") or up("screen"),
+                a.get("data-tm-tab") or up("tab"),
+                a.get("data-tm-overlay") or up("ov"))
+        if tag not in self.VOID:
+            self.stack.append({"tag": tag, "screen": a.get("data-tm-screen"),
+                               "tab": a.get("data-tm-tab"), "ov": a.get("data-tm-overlay")})
+
+    def handle_startendtag(self, tag, attrs):
+        self.handle_starttag(tag, attrs)
+        if tag not in self.VOID and self.stack:
+            self.stack.pop()
+
+    def handle_endtag(self, tag):
+        for i in range(len(self.stack) - 1, -1, -1):
+            if self.stack[i]["tag"] == tag:
+                del self.stack[i:]
+                return
+
+
+_mock_src = re.search(r"const TOUR_MOCK_HTML\s*=\s*`(.*?)`;", tour, re.S)
+_tm_blk = re.search(r"const TM_TAB\s*=\s*\{(.*?)\};", tour, re.S)
+_TM_TAB = dict(re.findall(r'(\w+):\s*"(\w+)"', _tm_blk.group(1))) if _tm_blk else {}
+_tree = _MockTree()
+if _mock_src:
+    _tree.feed(_mock_src.group(1))
+
+# One record per step. Split on the step-opening brace so a step's own scene/tab
+# can never be read off its neighbour.
+_offscreen, _seen = [], 0
+for _blk in re.split(r"\n\s*\{\s*chapter:", tour)[1:]:
+    _m = re.match(r'\s*"([a-z]+)",\s*target:\s*"#([^"]+)"', _blk)
+    if not _m:
+        continue
+    _ch, _tgt = _m.group(1), _m.group(2)
+    _head = _blk.split("body:")[0]          # only this step's own keys
+    _sc = re.search(r'\bscene:\s*"([\w-]+)"', _head)
+    _tb = re.search(r'\btab:\s*"(\w+)"', _head)
+    scene = _sc.group(1) if _sc else ("menus" if _ch == "start" else "build")
+    tab = _tb.group(1) if _tb else _TM_TAB.get(_ch, "powers")
+    if _tgt not in _tree.home:
+        continue                            # the mock-coverage check owns this
+    _seen += 1
+    screen, stand_tab, ov = _tree.home[_tgt]
+    want = "menus" if scene == "menus" else "build"
+    if screen and screen != want:
+        _offscreen.append(f"#{_tgt} ({_ch}) sits on the {screen!r} screen but its "
+                          f"card opens {want!r} (scene={scene})")
+    elif stand_tab and stand_tab != tab:
+        _offscreen.append(f"#{_tgt} ({_ch}) sits on the {stand_tab!r} tab but its "
+                          f"card opens the {tab!r} tab")
+    elif ov and ov != scene:
+        _offscreen.append(f"#{_tgt} ({_ch}) is inside the {ov!r} overlay but its "
+                          f"card's scene is {scene!r}")
+check(f"every step's subject is on the screen its card opens ({_seen} checked)",
+      not _offscreen, "; ".join(_offscreen) if _offscreen
+      else "step scene/tab vs each stand-in's real ancestry in the mock")
 
 print(f"\n{'ALL TOUR CHECKS PASS' if not fails else 'TOUR AUDIT FAILURES: ' + ', '.join(fails)}\n")
 sys.exit(1 if fails else 0)

@@ -203,7 +203,14 @@ Joel's session context is a limited resource. Do not spend it on prose.
 - **EVERY NEW PRICING TERM SHIPS WITH A NEGATIVE CONTROL (2026-07-16)** — a real build that must read 0.0, alongside its positive test. The negative control is what proves a term reads ACTUAL slotting rather than firing on a lookalike.
 - **"READY FOR YOUR WALK" IS A CLAIM WITH A DEFINITION — AND IT NAMES THE COMMIT HASH (2026-07-16).** ALL of: (a) server restarted from current HEAD after the last server-side edit, (b) a FRESH page load with zero injected state, (c) the exact URL Joel opens, driven through a REAL entry path he would use, (d) the claim states the commit hash. Anything less is "probably ready" and must be said that way. Verification theater = the same defect class as a fake progress bar; the tell: the check never touched the thing the user touches. **Drive the real path** (the Journey-greeting and escHtml lessons).
 - **THE MACHINE CLOCK IS LOCAL EASTERN — `Get-Date` IS THE TIME AUTHORITY, NEVER A TZ CONVERSION (2026-07-16; re-bitten 07-27 with a same-evening "7/28" erratum; re-bitten TWICE 07-30 by deriving elapsed time from monitor-tick COUNTS — told Joel "35 min to the pause" when it was 75, then "~20 min" at what was already 4:02).** For anything a deadline, ritual, or timestamp depends on, run `Get-Date` and use it verbatim — and **never STATE a clock time, countdown, or "N minutes until X" without a same-turn `Get-Date`**. Event cadence (monitor ticks, notification arrival) is not a clock; ticks queue, lag, and batch. `date -u` only for UTC-labelled facts; never convert to derive local time.
-- **SCRIPTED-WRITE GUARD (2026-07-16) — the catch is mechanical, not vigilant.** (a) Every scripted edit of a repo file writes binary/newline-preserving (`open(p,'rb')`→transform→`'wb'`) and matches the file's existing serialisation (powers.json is COMPACT single-line — never `indent=`). (b) Before committing, compare `git diff --stat` to INTENDED size (cross-check `--ignore-all-space`); >2× intent or whitespace-blind much smaller → STOP and diagnose. (c) Prefer the dedicated edit tooling; **NEVER PowerShell string rewrites on source files** (PS5.1 reads BOM-less UTF-8 as ANSI and mangles unicode).
+- **SCRIPTED-WRITE GUARD (2026-07-16) — the catch is mechanical, not vigilant.**
+  ⚠⚠ **BROKEN TWICE IN TWO DAYS, both times the SAME way: `io.open(p,'w',newline='')`
+  after reading in TEXT mode, which silently rewrites every CRLF as LF.**
+  `server.py` (8,356 lines, 2026-08-07) and `RESUME-HERE.md` (869 lines, same
+  day) — a 4-line and a 29-line change reported as 16,729 and 1,724. The
+  whitespace-blind diff is the tell, and on server.py I ran it only AFTER
+  committing. **This repo is CRLF: read `'rb'`, transform bytes, write `'wb'`,
+  and never pass `newline=''` to a text-mode write.** (a) Every scripted edit of a repo file writes binary/newline-preserving (`open(p,'rb')`→transform→`'wb'`) and matches the file's existing serialisation (powers.json is COMPACT single-line — never `indent=`). (b) Before committing, compare `git diff --stat` to INTENDED size (cross-check `--ignore-all-space`); >2× intent or whitespace-blind much smaller → STOP and diagnose. (c) Prefer the dedicated edit tooling; **NEVER PowerShell string rewrites on source files** (PS5.1 reads BOM-less UTF-8 as ANSI and mangles unicode).
 
 ## Naming: three namespaces, and the trap (settled game-first 2026-07-30)
 
@@ -900,6 +907,29 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   ⚠ **Generalize: a tour step is only verified by RUNNING it and looking.**
   Joel's "run the tour and check the new step reads right" found in one pass what
   eight green checks could not.
+  ✅ **FULL 64-STEP WALK DONE (2026-08-07, on his "check nothing else is
+  broken") — and it found a SECOND one, in shipped code: "Four tabs, one
+  character" (`#tabbar`) had the identical defect and predated the band
+  entirely.** Both fixed with `scene: "build"`; both confirmed by eye and by
+  measurement (0×0 → 1353×39 and 1353×129). Every one of the 64 now measures a
+  real, visible target and no card lands outside the viewport.
+  ⚠ **THE WALK METHOD, because it is not obvious:** `driver-active-element`
+  **accumulates** on every element the tour has visited, so
+  `querySelector('.driver-active-element')` returns the FIRST in the DOM, not the
+  current one — my first pass silently measured step 1's element 22 times.
+  **Clear the class off everything, click Next, wait ~200ms, read the single
+  survivor.** Walk ONE CHAPTER at a time (`startTour('stats')`): a 64-step loop
+  times out and the pane throttles hard once hidden.
+  ✅ **NOW A STANDING CHECK — `audit_tour` check (c)**, which compares each
+  step's computed scene/tab against where its stand-in actually lives in
+  `TOUR_MOCK_HTML`. 64 checked; sabotage-proven against both real defects.
+  ⚠⚠ **ANCESTRY IS PARSED, NOT SCANNED, and this cost two reverts.** My first
+  two attempts walked backwards for the nearest preceding `data-tm-tab=` and
+  called that the home. That is not ancestry — it ignores closing tags — and it
+  confidently reported `#power-info` as living on the `logging` tab while
+  MISSING the real defect. I reverted rather than ship a check I did not trust;
+  the shipped version uses `html.parser` with a real element stack. **A nesting
+  question needs a parser, and a check that cries wolf is worse than none.**
 - **🧯 WHEN I BREAK SOMETHING, I FIX IT — I DO NOT HAND HIM THE MENU (Joel,
   2026-08-07: "not sure why this was a suggestion. If it is broken fix it").**
   I damaged a sample save by testing on it instead of a copy, could not restore

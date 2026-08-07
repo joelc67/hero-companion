@@ -1,51 +1,37 @@
 # Resume point — 2026-08-07 (new session starts here)
 
-## ⏸ PAUSED MID-TASK — 2026-08-07, Joel headed home. READ THIS FIRST.
+## ✅ SESSION COMPLETE — 2026-08-07. Tour walk finished.
 
-**HEAD `34a20ddc`, pushed, tracked tree clean. Dev server stopped. Installed app
+**HEAD: see git. Tracked tree clean, pushed. Dev server stopped. Installed app
 rebuilt at `36926ce` + current statics. Nothing running, nothing scheduled.**
 
-### ▶▶ THE ONE THING OWED: finish the full-tour walk
+### The tour walk is DONE — all 64 steps, two defects, both fixed
+- **"Four tabs, one character" (`#tabbar`)** — shipped code, predated this
+  session's work. Same defect as the new workflow step: its stand-in lives on the
+  BUILD screen while the `start` chapter defaults to `menus`, so a step about the
+  four tabs pointed at a tab strip that was not on screen. Measured 0×0.
+- **"The order to work in" (`#change-spine`)** — the new step, same cause.
+- Both fixed with `scene: "build"`. **Both confirmed by eye AND by measurement**
+  (now 1353×39 and 1353×129). All 64 steps measure a real visible target; no card
+  lands outside the viewport.
 
-Joel asked me to **run the full tour (64 steps) and check nothing else is
-broken**. I got through **40 of 64** before the hidden Browser pane throttled to
-a crawl. **Two defects found and both FIXED; 24 steps are UNWALKED.**
+### ✅ It is now a standing check — `audit_tour` check (c)
+Compares each step's computed scene/tab against where its stand-in actually lives
+in `TOUR_MOCK_HTML`, parsed with `html.parser` (a real element stack, NOT a
+backwards text scan — that version reported `#power-info` as a `logging`-tab
+element and missed the real defect, and was reverted twice before I got it
+right). 64 checked, sabotage-proven against both real defects.
 
-**Unwalked:** the tail of `solve`, then **`stats` (9) · `endgame` (3) ·
-`leveling` (3) · `logging` (3) · `header` (6)**.
+### ▶ OPEN, mine and unblocked
+- Fury meter + Power Boost as ONE piece (blocked on a third clean single-target
+  attack from a Brute farm log — see CLAUDE.md).
+- Leveling Companion batch · pricing #31 · strict-dominance experiment.
 
-**How to walk them — this method works, use it, do not reinvent it:**
-`driver-active-element` **accumulates** on every element the tour has visited, so
-`querySelector('.driver-active-element')` returns the FIRST one in the DOM, not
-the current one. **Clear the class off everything, click Next, wait ~200ms, then
-read the single survivor** — that is the live element. Measure its rect; flag
-`w<8 || h<8 || !visible`. Run it **one chapter at a time** (`startTour('stats')`
-etc.) — a 64-step loop times out, and the pane throttles hard when hidden.
-
-### ⚠ VISUAL CONFIRMATION OWED on tour step 7
-`scene: "build"` was added to **"Four tabs, one character"** (`#tabbar`) on the
-strength of the measurement plus the mock's markup, but **I never looked at that
-card**. Step 8 with the identical fix WAS confirmed by eye. Look at step 7 first:
-Help → Guided tour → Getting started → Next ×6.
-
-### ⚠ The defect class, and why no audit catches it
-`__tmScene` defaults to **"menus"** for the whole `start` chapter and a step that
-omits `scene:` never flips it back — so a start-chapter step whose subject lives
-on a TAB highlights a **collapsed, zero-size stub**. audit_tour passes: the id is
-real, the stand-in exists, the anchor resolves. They are simply never on screen
-together.
-⚠ **I tried TWICE to make this a static audit check and reverted both.** A flat
-text scan cannot answer a nesting question — it reported `#power-info` as living
-on the `logging` tab while missing the real defect. It needs a **real HTML parse
-of `TOUR_MOCK_HTML`** (stdlib `html.parser`, track ancestry properly). Worth
-doing; not done.
-
-### Everything else from today is finished and pushed
-Chrono_Shift PvP rows · alias map + the Tactical Arrow repair · the Assistant and
-Stats ledes (columns tried and REVERTED on his word) · the three unboxed panels ·
-the phantom edit receipt + the undo-stack leak + the 10-global per-character
-sweep · the epic-swap refill (server change — the installed app IS rebuilt for
-it) · the workflow band + its tour step. Full detail in `session-report.md`.
+### ▶ JOEL'S
+The 0.12.32 announcement post (written, unposted) · FP/whitelist submissions ·
+github.com/settings/billing (inbox runners) · the Iron Man badge look · the
+gaming box, silent since 2026-07-29 · the i24 torrent · and the design calls
+listed in `session-report.md`.
 
 # Resume point — 2026-08-06
 
