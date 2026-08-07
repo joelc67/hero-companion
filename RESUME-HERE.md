@@ -1,5 +1,52 @@
 # Resume point — 2026-08-06 (new session starts here)
 
+## ⏸⏸ SESSION CLOSED — 2026-08-06, read THIS block first
+
+**HEAD `226b6db0`, pushed, tracked tree clean. Published `v0.12.32`. Installed
+copy frozen stamp `e164fd1`. App not running. Nothing scheduled, no monitors.**
+
+⚠ **The installed copy's STATICS are ahead of its stamp** (the button-cap CSS
+went in via `push_statics.py` after the 0.12.32 build). Do not read the stamp as
+"what the app contains". A rebuild resolves it whenever one happens next.
+
+### The ONE staged item
+CHANGELOG "Unreleased" holds a single entry: **action buttons share one width**
+(`button { max-width: 420px }` + a row-control opt-out). It is in Joel's app but
+not in any release. Everything else shipped in 0.12.32.
+
+### ⚠⚠ TWO RETRACTIONS FROM THIS SESSION — do not act on the old versions
+1. **−recharge debuff pinning: ALREADY DONE** (`6b503c0c`, 2026-08-05). The
+   "Slow enhancements / under-credited" line was stale; I chased finished work
+   because of it. Recharge is credited both directions, verified live
+   (Neurotoxic Breath −81.2% unslotted → −102.6% slotted).
+2. **"Radiation Melee per-attack damage is wrong": FALSE, retracted same day.**
+   I compared ENHANCED engine damage to BASE client scales on differently
+   slotted attacks. Our base is exact (74.1 / 154.2 = client 1.48 / 3.08 ×
+   50.07/50.06; base ratio 0.481 = client 0.481). No data bug.
+
+**The lesson both share, and it is the expensive one: check what a number
+MEASURED before repeating it, and close an item in the records the same commit
+that closes it in the code.**
+
+### Where Fury actually stands
+`tools/measure_fury_residual.py` v2 is built (component-summed swing
+reconstruction, the v36 memo's named instrument). Spread **228% → 25.2%**.
+Blocked, precisely: **only two attacks isolate cleanly, and two points cannot
+separate a multiplier from a flat term** (`expected×F + C = observed` gives
+F≈0.995 / C≈48.9 with nothing left to validate). **Needs a THIRD clean
+single-target attack** — farm logs from a Brute whose rotation has 3+ of them.
+AoEs can NEVER be reconstructed from this log format: farm mobs share display
+names, so grouping merges hits on different enemies (Atom Smasher logs up to 18
+components for a 2-component attack).
+⚠ **New trap recorded:** 86 of 108 Brute melee attacks carry a `Fire_Dmg`
+template with an EMPTY gate in the export. That is **Fiery Embrace**; our data
+correctly omits it. Never "fix" it by trusting `requires_expression == ""`.
+
+### Power Boost — untouched, and it is the same work as Fury
+The client shows it is a `Set_Mode` (BoostPower, 15s), not a flat bonus, so it
+belongs with the meter/mode capability. Zero champion exposure, so it can never
+move a certified score. The displayed-damage half is Joel's ruling.
+
 ## ⏸ PLACE SAVED — 2026-08-06 late, after the button fix
 
 **HEAD `d54415f0`, pushed, tracked tree clean. Published `v0.12.32`. App not
