@@ -10,7 +10,9 @@
   size: what the tool does to a build you already have, what it will never
   change, and what you get back. Stats says that every number is a button, that
   you can price a single enhancement by pulling it out, compare every legal
-  replacement before committing, and undo anything.
+  replacement before committing, and undo anything. On a wide window the two
+  introductions run in two columns so they fill the panel instead of leaving a
+  band of empty space beside them.
 
 - **Gymnastics is back in Tactical Arrow.** Blaster Tactical Arrow was listing
   "Oil Slick Arrow" twice and never listing Gymnastics. The defence passive had
