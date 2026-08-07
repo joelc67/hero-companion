@@ -4766,26 +4766,35 @@ function _scheduleIdentityRebuild() {
     renderPowers();
     recompute();
     if (s) s.textContent = "🔨 New powers picked — slotting them now…";
-    const btn = $("solve-btn");
-    if (btn) btn.click();   // the real Solve path, exactly as the user would
-    // The solve path pauses on confirmIntent's question (#intent-go, rendered
-    // into ai-response). The user already approved this rebuild in the swap
-    // popup — one approval carries through; parking them at a second question
-    // would be a second wall. (Scoped HERE: a hand-clicked Solve still asks.)
-    let tries = 0;
-    const autoYes = setInterval(() => {
-      const go = $("intent-go");
-      const gc = $("gen-confirm");
-      if (go) {
-        clearInterval(autoYes);
-        go.click();
-      } else if (gc && !gc.classList.contains("hidden")) {
-        clearInterval(autoYes);
-        const yes = $("gen-confirm-yes");
-        if (yes) yes.click();
-      } else if (++tries > 25) clearInterval(autoYes);   // ~5s: no question came
-    }, 200);
+    _solveAlreadyApproved();
   }, 60);
+}
+
+// Run the REAL Solve, carrying an approval the user has already given.
+// ⚠ ONE COPY. This was inline in _scheduleIdentityRebuild; the epic swap needs
+// exactly the same behaviour (2026-08-07), and a second hand-written copy of an
+// auto-clicking loop is the kind of thing that drifts apart silently.
+// The solve path pauses on confirmIntent's question (#intent-go, rendered into
+// ai-response). Whoever calls this already asked the user, in a dialog they
+// answered — one approval carries through; parking them at a second question
+// would be a second wall. ⚠ SCOPED TO THESE CALLERS: a hand-clicked Solve still
+// asks, and must keep asking.
+function _solveAlreadyApproved() {
+  const btn = $("solve-btn");
+  if (btn) btn.click();   // the real Solve path, exactly as the user would
+  let tries = 0;
+  const autoYes = setInterval(() => {
+    const go = $("intent-go");
+    const gc = $("gen-confirm");
+    if (go) {
+      clearInterval(autoYes);
+      go.click();
+    } else if (gc && !gc.classList.contains("hidden")) {
+      clearInterval(autoYes);
+      const yes = $("gen-confirm-yes");
+      if (yes) yes.click();
+    } else if (++tries > 25) clearInterval(autoYes);   // ~5s: no question came
+  }, 200);
 }
 async function addPowersetPowers(sel, slot) {
   const psFull = sel.value;
@@ -4798,6 +4807,7 @@ async function addPowersetPowers(sel, slot) {
   // REBUILDS EVERYTHING from the new choices — pick + slot, no empty seats
   // left for the user to discover. Epic keeps the lighter prune-only confirm.
   const prev = { primary: build.primary, secondary: build.secondary, epic: build.epic }[slot];
+  let refillEpic = false;   // set by the epic dialog below; acted on after the swap lands
   if ((slot === "primary" || slot === "secondary") && prev && psFull !== prev) {
     const picks = (build.powers || []).filter(p => !(p.full_name || "").startsWith("Inherent."));
     if (picks.length) {
@@ -4832,18 +4842,39 @@ async function addPowersetPowers(sel, slot) {
   } else if (slot === "epic" && prev && psFull !== prev) {
     const victims = (build.powers || []).filter(p => (p.full_name || "").startsWith(prev + "."));
     if (victims.length) {
+      // ⚠ THE EPIC SWAP NOW OFFERS TO FINISH THE JOB (Joel, 2026-08-07: "I had a
+      // character I wanted to change the Epic from Electricity to attain access
+      // to Mace Mastery. It took more effort than I thought"). It was an
+      // asymmetry, and the old comment above states it outright — primary and
+      // secondary got "switch and rebuild", "epic keeps the lighter prune-only
+      // confirm". MEASURED on a real save (Scrapper, Dark → Energy Mastery):
+      // picks 24 → 22, added slots 67 → 65, powers taken from the pool you just
+      // chose ZERO. You were left to find them in the catalogue, seat them, and
+      // run Solve yourself.
+      // ⚠ Both halves already existed and were simply never wired here:
+      // autopickRemaining fills the empty seats (its own docstring says it was
+      // born from the set-swap flow) and the Solve path slots them.
+      // ⚠ THE LIGHT PATH STAYS, as a second button (Joel's ruling, and the
+      // choice doctrine): the refill is an OFFER, not the only way through.
+      const n = victims.length;
       const ans = await askDialog({
         title: "Change your epic pool?",
         body: `<b>${escHtml(build.epic_display || "The current pool")}</b> has `
-          + `${victims.length} picked power${victims.length === 1 ? "" : "s"} in this build — `
-          + `switching pools removes ${victims.length === 1 ? "it" : "them"} and `
-          + `${victims.length === 1 ? "its" : "their"} enhancements. `
-          + `The rest of the build is not touched.`,
+          + `${n} picked power${n === 1 ? "" : "s"} in this build — `
+          + `switching pools removes ${n === 1 ? "it" : "them"} and `
+          + `${n === 1 ? "its" : "their"} enhancements, freeing `
+          + `${n === 1 ? "that seat" : `those ${n} seats`} and `
+          + `${n === 1 ? "its slots" : "their slots"}. `
+          + `<span class="muted">Refilling takes the new pool's powers into those `
+          + `seats and re-slots toward your goal — the rest of your build is kept `
+          + `either way.</span>`,
         actions: [
-          { key: "swap", label: "Switch pools" },
+          { key: "refill", label: "Switch and refill" },
+          { key: "swap", label: "Switch, I'll pick them", kind: "ghost" },
           { key: "keep", label: `Keep ${build.epic_display || "this pool"}`, kind: "ghost" }],
         safe: "keep" });
-      if (ans !== "swap") { sel.value = prev; return; }
+      if (ans !== "swap" && ans !== "refill") { sel.value = prev; return; }
+      refillEpic = ans === "refill";
       recordEdit();
       build.powers = (build.powers || []).filter(p => !(p.full_name || "").startsWith(prev + "."));
     }
@@ -4856,6 +4887,13 @@ async function addPowersetPowers(sel, slot) {
   if (VEAT_BASE_SET[psFull]) await loadPowers(VEAT_BASE_SET[psFull]);
   renderPowers();
   recompute();
+  // ⚠ AFTER the swap has landed, never before: autopickRemaining reads
+  // build.epic to decide which powers it may take, and that is assigned a few
+  // lines up. Refilling before it would pick from the pool being replaced.
+  if (refillEpic) {
+    await autopickRemaining();
+    _solveAlreadyApproved();
+  }
 }
 
 // Each pool select offers every pool EXCEPT the ones its siblings already hold.
@@ -5607,6 +5645,14 @@ window.autopickRemaining = async function () {
     content: ($("preset-content") && $("preset-content").value) || "general",
     role: ($("preset-role") && $("preset-role").value) || null,
     exposure: build._exposure || null,
+    // ⚠ TELL IT WHICH EPIC POOL THIS BUILD HOLDS (2026-08-07). Without this the
+    // picker proposed its OWN favourite pool, and the mySets filter below then
+    // discarded every one of those powers as belonging to a set the build does
+    // not have — so an epic swap refilled ZERO epic seats. Measured: Scrapper
+    // Dark → Energy Mastery came back with 0 powers from the chosen pool.
+    // Honouring the user's pool is the advise-don't-override rule; the server
+    // still decides WHICH powers inside it are worth taking.
+    epic: build.epic || null,
     custom_targets: build._custom_targets || null })).catch(() => null);
   if (!(res && res.ok && (res.powers || []).length)) {
     if (s) s.textContent = "Couldn't auto-pick just now — the ladder below still works by hand.";

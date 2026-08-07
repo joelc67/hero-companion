@@ -19,6 +19,15 @@
   defence set. It now reads correctly. No other power was affected and no
   build's score changes.
 
+- **Changing your epic pool can finish the job for you.** Swapping the epic used
+  to remove the old pool's powers and stop, leaving you to find the new pool's
+  powers in the catalogue, seat them, and run Solve yourself — while changing a
+  primary or secondary set had offered to rebuild for you all along. The confirm
+  now leads with **Switch and refill**: it takes the new pool's powers into the
+  seats that just came free and re-slots toward your goal, in one action. The
+  rest of your build is kept either way, and **Switch, I'll pick them** is still
+  there if you want to choose them yourself.
+
 - **Opening a character no longer carries the last one's state with it.** A
   sweep after the fix below found more of the same: the Stats breakdown stayed
   open on the previous character's power (click an attack on one character, open

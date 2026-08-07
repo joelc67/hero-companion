@@ -6685,7 +6685,21 @@ def _epic_has_def_toggle(ps):
     return False
 
 
-def _pick_epic(archetype, content, role="damage", exposure="flex"):
+def _pick_epic(archetype, content, role="damage", exposure="flex", force=None):
+    """`force` = the pool the USER has already chosen (2026-08-07).
+
+    Everything below — the payload ranking, the take, the prerequisite ladder —
+    is exactly what should happen inside whichever pool is in play; the only
+    thing a user's choice replaces is WHICH pool, one line down. Joel's case:
+    swapping the epic used to leave the seats empty because the picker proposed
+    its own favourite pool and the client then discarded those powers as
+    belonging to a set the build does not hold.
+    ⚠ Guarded by `in epics`, so a pool this archetype cannot take is ignored and
+    the scored pick still runs — a bad value degrades to the old behaviour
+    rather than producing an unbuildable proposal.
+    ⚠ force=None is BYTE-IDENTICAL to before; the wizard and the champion paths
+    pass nothing and must not move.
+    """
     by_at = POWERSETS["by_archetype"].get(archetype) or {}
     epics = [e["full_name"] for e in by_at.get("epic", [])]
     if not epics:
@@ -6722,7 +6736,7 @@ def _pick_epic(archetype, content, role="damage", exposure="flex"):
             sc += 25 if armor else 0                            # a res/def epic armor = survivability
             sc += 40 if any(k in ps.lower() for k in pref) else 0   # content theme — strong nudge, not absolute
         return sc
-    ps = max(epics, key=pool_score)
+    ps = force if force in epics else max(epics, key=pool_score)
     armor, offs = parts(ps)
     # Offense builds: rank payloads by melee value (AoE + -Res > -Def > single-target; ranged-ST
     # near-worthless to a front-liner). Support builds: rank by the debuff/control LAYER added
@@ -6809,7 +6823,7 @@ def _champion_picks(archetype, primary, secondary, content, form=None):
 
 def _auto_pick_powers(archetype, primary, secondary, role="damage",
                       exposure="flex", content="general", travel="super_speed",
-                      form=None, custom_targets=None):
+                      form=None, custom_targets=None, epic=None):
     # Default to the ARCHETYPE's role (same map the tray uses), not a blanket "damage" — a
     # Defender/Corruptor/MM picked with no explicit role must build support, not a blaster.
     role = role or _AT_DEFAULT_ROLE.get(archetype, "damage")
@@ -6887,7 +6901,10 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
             prev = lv
     pool = list(pool_lvl.items())
 
-    epic = _pick_epic(archetype, content, role, exposure)
+    # `epic` in = the pool the user already chose; out = the powers taken from
+    # it. Same name deliberately: nothing downstream needs to know which of
+    # the two it was, and force=None keeps the old behaviour exactly.
+    epic = _pick_epic(archetype, content, role, exposure, force=epic)
     reserved = (1 if travel_fn else 0)
     budget = max(0, 24 - len(pool) - len(epic) - reserved)
     # THE PROPOSER LEARNS (retrospective feedback loop): lessons from every converged deep run —
@@ -7618,7 +7635,7 @@ def build_autopick():
     picks = _auto_pick_powers(at, primary, secondary, role=body.get("role"),
                               exposure=body.get("exposure"), content=body.get("content"),
                               travel=body.get("travel"), form=body.get("form"),
-                              custom_targets=custom)
+                              custom_targets=custom, epic=body.get("epic"))
     # v35 (#15, the tradeoff line — Joel: honor the request AND state what it
     # costs): with custom targets, diff the picks against the no-targets
     # proposal so the note reports REAL adds/drops, never a guess.

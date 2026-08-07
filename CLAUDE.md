@@ -867,6 +867,35 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   standing ruling (a meter has no headline number without a scenario).
   ✓ **Champion exposure is ZERO** — no certified build holds Power Boost — so
   whenever this lands it cannot move a certified score, and needs no re-cert.
+- **🔁 THE EPIC SWAP FINISHES THE JOB (Joel, 2026-08-07: "I wanted to change the
+  Epic from Electricity to attain access to Mace Mastery. It took more effort
+  than I thought").** It was an asymmetry the code stated outright — primary and
+  secondary offered "switch and rebuild", *"epic keeps the lighter prune-only
+  confirm"*. **MEASURED** on a real save (Scrapper, Dark → Energy Mastery):
+  picks **24 → 22**, added slots **67 → 65**, powers from the pool just chosen
+  **ZERO**. Now a three-action dialog: **Switch and refill** (default) ·
+  *Switch, I'll pick them* (the old path — **the light route stays, Joel's
+  ruling**) · Keep.
+  ⚠⚠ **The client half alone did NOT work, and the reason is the durable bit:**
+  `/build/autopick` chose its OWN favourite epic pool, and `autopickRemaining`'s
+  `mySets` filter then discarded every one of those powers as belonging to a set
+  the build does not hold — so the first version refilled **0 epic seats**.
+  Fixed at the source: `_pick_epic(force=)` (one line — `ps = force if force in
+  epics else max(epics, key=pool_score)`), threaded
+  `_auto_pick_powers(epic=)` → `/build/autopick` → the client sends
+  `epic: build.epic`. The server still decides WHICH powers inside the pool.
+  ⚠ **`force=None` is BYTE-IDENTICAL — proven on 272 archetype × content × role
+  combinations**, because `_auto_pick_powers` also feeds the wizard and the
+  champion paths and no certified score may move for a UI convenience. An epic
+  the archetype cannot take is IGNORED (fail-safe to the scored pick).
+  ⚠ `_solveAlreadyApproved()` was factored out of `_scheduleIdentityRebuild` —
+  ONE copy of "run the real Solve, carrying an approval already given"; a second
+  hand-written auto-clicking loop would drift.
+  Battery `tools/test_epic_swap_refill.py` (6, negative-controlled).
+  ⚠⚠ **THIS SPANS THE PYZ AND THE STATICS.** The client sends `epic:` and only a
+  REBUILT server reads it — statics alone give the half-working shape the
+  "half-updated frozen copy is a lie" rule forbids. Rebuild before the statics
+  reach any frozen copy.
 - **🧹 THE FULL SWEEP FOR PER-CHARACTER STATE (Joel, 2026-08-07: "do a full pass
   over the app for anything else like this").** Enumerated all 97 pieces of
   mutable module state in app.js, then **measured** which survive a real
