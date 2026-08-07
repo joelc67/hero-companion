@@ -4,6 +4,26 @@ Classifies every audited-family effect (Slow/Recovery/Regeneration/Endurance/
 HitPoints) that patch_effect_scales_targets.py could not confirm, against the
 client export — zero guessing, value proofs only:
 
+  PvP-only variant  our row carries pv_mode 2, so engine._pv_ok gates it OFF
+                    in every PvE calculation. Mids ships PvE and PvP variants
+                    side by side; the client export's own record for these
+                    powers has no PVP_ONLY effect group (the export DOES carry
+                    541 of those elsewhere, so this is a real absence, not a
+                    crawler gap). Nothing to reconcile: the row cannot move a
+                    number outside the arena. Tested first, because it is a
+                    property of OUR row and outranks any client match.
+                    ⚠ These were the "8 irreducible Chrono_Shift rows" queued
+                    since 2026-07-28 as "values match nothing client-side,
+                    suspected Mids pre-enhanced bakes". They are neither:
+                    each is exactly 5.33x the client's OWN timed Heal_Dmg
+                    scale (0.2 -> 1.066, 0.3 -> 1.599), the same constant on
+                    all four AT variants, with the Mastermind's 0.88 support
+                    factor riding through both sides (0.176 -> 0.93808). That
+                    is a deliberate heal-over-time -> regeneration conversion,
+                    not an enhanced bake. Nature Affinity's Regrowth is the
+                    same shape at x5.0. Whether the constant matches live PvP
+                    is UNVERIFIABLE from the client and deliberately not
+                    claimed. Proof of the gate: tools/test_pvp_variant_gate.py.
   pseudo-pet fold   client power carries Create_Entity: our effects are the
                     DELIBERATE fold of the pet's effects onto the summoner.
   grant/revoke      Grant_Power/Revoke_Power chains (Unrelenting Fury lane).
@@ -19,6 +39,12 @@ client export — zero guessing, value proofs only:
 2 ×100-normalized + 3 one-to-one synced; folds by design 761 pseudo-pet +
 230 redirect-proven; 26 grant/revoke; 167 stubs; residue 240 partial +
 53 multi-template drifts.
+
+2026-08-07, after the PvP class was added (same 1,424 rows, re-sorted — no
+data changed): 712 pseudo-pet · 200 redirect-proven · 189 PvP-only ·
+120 stub · 19 grant/revoke · TRUE RESIDUE 184 (was 240). The 56 that left
+the residue are PvP variants that were never reconcilable against a PvE
+export.
 
 Run:  py tools\\classify_unmatched_effects.py
 """
@@ -86,6 +112,9 @@ def main():
                     if allattribs & want:
                         continue      # matched family — handled by the patcher
                     total += 1
+                    if e.get("pv_mode") == 2:
+                        cls["PvP-only variant (gated off in PvE)"] += 1
+                        continue
                     if "Create_Entity" in allattribs:
                         cls["pseudo-pet fold (by design)"] += 1
                         continue

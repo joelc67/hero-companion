@@ -91,8 +91,12 @@ from Joel's review after it). Data 2026.1.1242 and model v38 both unchanged in
 - **Fury meter + Power Boost as ONE piece** — the client shows Power Boost is a
   `Set_Mode`, not the flat bonus it was queued as. Zero champion exposure. Only
   the displayed-damage half needs Joel.
-- Leveling Companion batch · pricing #31 · alias-map roster reconciliation · the
-  8 irreducible Chrono_Shift rows · strict-dominance experiment (optional).
+- ~~the 8 irreducible Chrono_Shift rows~~ **CLOSED 2026-08-07** — PvP variants
+  (`pv_mode 2`), exactly 5.33× the client's own timed heal scales on all four AT
+  variants. Gated off in PvE, proven live. The census instrument gained the
+  class it was missing: residue 240 → 184. See CLAUDE.md.
+- Leveling Companion batch · pricing #31 · alias-map roster reconciliation ·
+  strict-dominance experiment (optional).
 
 **▶ JOEL'S, UNCHANGED** — github.com/settings/billing (inbox runner block, both
 workflows stay `disabled_manually`) · the Iron Man badge look · the gaming box,
