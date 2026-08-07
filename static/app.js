@@ -542,6 +542,17 @@ function resetBuildScopedState() {
   // Blaster's editor) — found while root-causing walk-3. A generator re-ticks
   // the standard four straight after, so a NEW level-50 still starts correct.
   ACCOLADES_CHECKED.clear();
+  // ⚠ THE UNDO STACK IS PER-CHARACTER and was leaking across them — the same
+  // state-lifecycle family as the accolade ticks above, found 2026-08-07 while
+  // tracing the phantom "What changed" receipt. Measured before the fix: open
+  // one character, then a second, and Undo sits ENABLED having done nothing,
+  // with the top differing snapshot holding ZERO powers, so pressing it emptied
+  // the build. This is the right home for the clear — its only two callers are
+  // applyImportedBuild and startFromScratch, and both mean "different character
+  // now", which is exactly when a previous character's undo must not survive.
+  EDIT_HISTORY.length = 0;
+  _PRE_EDIT_TOTALS = null;
+  updateEditBar();
   updateCustomTargetsChip();
 }
 
@@ -6603,7 +6614,24 @@ function _snapshotBuild() {
 // special case bolted onto the two buttons in the popover. Any edit, from any
 // surface, gets the same honest before/after.
 let _PRE_EDIT_TOTALS = null;
+// ⚠⚠ OPENING A CHARACTER IS NOT AN EDIT (Joel, 2026-08-07: the "What changed"
+// receipt appeared by itself on launch — "it now looks terrible"). TRACED, not
+// guessed: hooking recordEdit in a live page gave the stack
+//   recordEdit <- onPoolChange <- onArchetypeChange <- applyImportedBuild <- loadSave
+// so every load drives the archetype/pool cascade, and the cascade records an
+// edit exactly as a user's dropdown change would. Two things fell out of it:
+//   * the phantom receipt — recordEdit captured the PREVIOUS build's totals, the
+//     load recomputed, and the receipt fired comparing one character to another;
+//   * far worse, the UNDO STACK filled from loading alone. Measured: open one
+//     character, then another, and Undo is ENABLED having done nothing, with the
+//     top differing snapshot holding ZERO powers — pressing it empties the build.
+// The guard sits on recordEdit rather than on the ~15 call sites: every one of
+// them is legitimately an edit when a person does it, and the only thing that
+// makes it not an edit is that the app is driving. Same reasoning as _atGuard
+// one function over ("swapping a build in is not the USER flipping archetypes").
+let _LOADING_BUILD = false;
 function recordEdit() {                 // call BEFORE any build-mutating edit
+  if (_LOADING_BUILD) return;           // the app is driving, not the user
   EDIT_HISTORY.push(_snapshotBuild());
   if (EDIT_HISTORY.length > 60) EDIT_HISTORY.shift();
   _PRE_EDIT_TOTALS = LAST_TOTALS;       // recompute REPLACES it, so the old object survives
@@ -9652,6 +9680,20 @@ async function syncPoolsEpicFromPowers(powers, fallbackPools, fallbackEpic) {
 }
 
 async function applyImportedBuild(b) {
+  // ⚠ THE WHOLE LOAD RUNS UNDER THE GUARD. This function drives the archetype
+  // and pool cascades, which record edits as if a person had used the dropdowns
+  // — see the note above recordEdit for the traced stack. try/finally, because
+  // an exception mid-load must not leave the app permanently unable to record a
+  // real edit (a load CAN throw: loadSave catches exactly that).
+  _LOADING_BUILD = true;
+  try {
+    return await _applyImportedBuild(b);
+  } finally {
+    _LOADING_BUILD = false;
+  }
+}
+
+async function _applyImportedBuild(b) {
   // FORWARD-COMPAT (2026-07-20, dead-air order #2.3): normalize an older/partial
   // save ONCE, up front, so EVERY downstream consumer (syncPoolsEpicFromPowers,
   // the powers map, renderPowers) sees clean data. A null or full_name-less power

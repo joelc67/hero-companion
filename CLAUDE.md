@@ -867,6 +867,35 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   standing ruling (a meter has no headline number without a scenario).
   ✓ **Champion exposure is ZERO** — no certified build holds Power Boost — so
   whenever this lands it cannot move a certified score, and needs no re-cert.
+- **⏪ OPENING A CHARACTER IS NOT AN EDIT — AND THE PHANTOM RECEIPT WAS THE
+  SMALL HALF (Joel, 2026-08-07: "it now looks terrible").** A "What changed"
+  receipt appeared by itself at launch. **TRACED, not guessed** — hooking
+  `recordEdit` in a live page gave the stack
+  `recordEdit ← onPoolChange ← onArchetypeChange ← applyImportedBuild ← loadSave`:
+  every load drives the archetype/pool cascade, and the cascade records an edit
+  exactly as a user's dropdown change would.
+  ⚠⚠ **The serious half was the UNDO STACK.** Measured before the fix: open one
+  character, then another, and Undo is **ENABLED having done nothing**, with the
+  top differing snapshot holding **ZERO powers** — pressing it emptied the build
+  you had just opened. `resetBuildScopedState` cleared custom targets, exposure,
+  travel, previews and accolade ticks and **never cleared `EDIT_HISTORY`**, which
+  is the same state-lifecycle family its own comment describes.
+  **Fix, both at the source:** `_LOADING_BUILD` guards `recordEdit` (the ~15 call
+  sites are all legitimately edits when a *person* does them — what makes it not
+  an edit is that the app is driving, the same reasoning as `_atGuard` one
+  function over), set across the WHOLE of `applyImportedBuild` in a **try/finally**
+  because a load can throw and a leaked flag would silently stop recording every
+  real edit afterwards; and `EDIT_HISTORY` is cleared in `resetBuildScopedState`,
+  whose only two callers — `applyImportedBuild` and `startFromScratch` — both mean
+  "different character now".
+  ⚠ Battery `tools/test_edit_history_scope.js` (10, lifted under node, **four
+  sabotages** each caught by its own check) — and it carries a POSITIVE CONTROL,
+  because a battery that only proves recordEdit does nothing would pass just as
+  happily if recordEdit were gutted.
+  ⚠ Method note worth keeping: the pane could not reproduce the receipt (fresh
+  page, `LAST_TOTALS` null, so `_showEditReceipt` returned early) but it DID
+  reproduce the root cause, and `EDIT_HISTORY.length === 1` on a page with **zero
+  powers** was the tell that broke it open. Probe the mechanism, not the symptom.
 - **🔲 THE BORDER WAS NEVER THE DIFFERENCE — CENSUS THE TREATMENTS BEFORE
   "FIXING" ONE (Joel, 2026-08-07: "Build assistance, in-game commands, and how
   set bonuses stack, are the only items on this entire powers and slots tab that

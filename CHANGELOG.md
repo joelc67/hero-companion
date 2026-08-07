@@ -21,6 +21,15 @@
   defence set. It now reads correctly. No other power was affected and no
   build's score changes.
 
+- **Opening a character no longer counts as an edit.** A "What changed" panel
+  was appearing on its own at launch, reporting a change nobody had made.
+  Underneath it was something more serious: simply opening a character was
+  filling the undo history, so the Undo button sat lit before you had touched
+  anything — and pressing it could empty the build you had just opened. Loading
+  a character now records nothing, and each character starts with a clean undo
+  history so Undo can never reach back into the one you just closed. Real edits
+  are unaffected: they still record, still report, and still undo.
+
 - **Three panels on Powers & Slots were missing their outline.** The Build
   Assistant, In-game commands and How set bonuses stack were the only blocks on
   that tab without the blue line around them, so they read as loose text rather
