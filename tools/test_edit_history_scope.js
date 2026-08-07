@@ -89,6 +89,28 @@ check("a swapped-in character starts with an empty undo stack",
       mod.state().hist === 0);
 check("...and with no pending receipt", mod.state().pre === null);
 
+// 7b. THE REST OF THE PER-CHARACTER STATE (the 2026-08-07 sweep). Each of these
+// was measured surviving a real character swap in a live page. The visible one
+// was SELECTED_STAT: click an attack row on a Warshade, open a Defender, and the
+// breakdown panel stood open headed with a power the loaded character lacks.
+// ⚠ `_convHaul` is deliberately absent — it is a list the USER typed, and
+// dropping typed input on a swap destroys work. If it should reset, that is a
+// ruling, not a sweep's call; this check pins the decision so it cannot drift.
+const swept = ["SELECTED_STAT", "SELECTED_POWER", "IMPORT_BEFORE", "IMPORTED_POWERS",
+  "CHANGES_AVAILABLE", "SOLVE_INTENT", "PROPOSED_RESPEC", "LAST_TIERS",
+  "PENDING_FOCUS", "INTERP_MATCHED", "INCARNATE_RECS", "INCARNATE_LOADOUTS",
+  "LAST_ASSESS_ROUTES"];
+const resetBody = (() => {
+  const s = src.indexOf("function resetBuildScopedState");
+  return src.slice(s, src.indexOf("\n}", s));
+})();
+swept.forEach(name => {
+  check(`a character swap clears ${name}`,
+        new RegExp("\\b" + name + "\\s*=").test(resetBody));
+});
+check("NEGATIVE CONTROL: _convHaul is left alone (user-typed, not derived)",
+      !/\b_convHaul\s*=/.test(resetBody));
+
 // 8. The edit bar is told, or the Undo button stays lit over an empty stack.
 const before = mod.state().bar;
 mod.resetBuildScopedState();

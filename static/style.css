@@ -1893,20 +1893,15 @@ body { overflow: hidden; }
    sheet, so it computes to nothing and the colour silently falls back — three
    existing rules already do that (.sb-leg b, .jny-chip-how b, and .ghost-btn,
    which is the only one carrying a fallback). Do not copy that pattern. */
+/* ⛔ TWO-COLUMN LEDES WERE TRIED AND REJECTED (Joel, 2026-08-07: "put the text
+   back the way it was, this just shows split text and no actual reason for
+   it"). I had filled the empty band beside these paragraphs by flowing them
+   into two columns — the app's own `.sb-cols` idiom. It reads as splitting for
+   its own sake: a reader has no reason to jump back up to the top of a second
+   column for five more lines. The single measure is the shipped answer, and the
+   band beside it is allowed to be empty. Do not re-add columns here. */
 .tool-lede { display: block; font-size: 14px; line-height: 1.55;
-  color: var(--ink); opacity: .88; margin: 0 0 10px; }
-/* ⚠ THE LONG LEDES FILL THEIR PANEL, IN COLUMNS (Joel, 2026-08-07: "there is
-   dead space between them, can they take up their respective space?"). They
-   were capped at 78ch for a readable measure, which on a maximised window left
-   a third of the Assistant and a quarter of the Stats column empty. Letting the
-   line simply run full width is worse, not better: the Assistant's panel is
-   ~1290px, which is a ~170-character line. Columns fill the space AND keep the
-   measure — and this is the app's OWN convention, `.sb-cols` on the set-bonus
-   card, not a new idea. `46ch 2` caps it at TWO columns however wide the panel
-   gets and collapses to one below ~2x46ch, so a narrow window is unaffected.
-   ⚠ Opt-in per element: the short one-line ledes must NOT get this, or multicol
-   balances a single sentence into two stubby columns. */
-.tool-lede.lede-cols { columns: 46ch 2; column-gap: var(--s5); }
+  color: var(--ink); opacity: .88; margin: 0 0 10px; max-width: 78ch; }
 .tool-lede em { opacity: .82; }
 /* the Assistant's ledes sit inside boxed sub-panels that already indent */
 .preset-pick .tool-lede, .role-pick .tool-lede { margin-bottom: 8px; }

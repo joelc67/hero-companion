@@ -553,6 +553,44 @@ function resetBuildScopedState() {
   EDIT_HISTORY.length = 0;
   _PRE_EDIT_TOTALS = null;
   updateEditBar();
+  // ⚠⚠ THE REST OF THE PER-CHARACTER STATE, swept 2026-08-07 on Joel's "do a
+  // full pass over the app for anything else like this". Every one below was
+  // MEASURED surviving a real character swap in a live page, not guessed:
+  //   * SELECTED_STAT — the visible one. Click an attack row on a Warshade, open
+  //     a Defender, and the breakdown panel still stands open headed "Boxing", a
+  //     power the loaded character does not have.
+  //   * IMPORT_BEFORE / IMPORTED_POWERS / CHANGES_AVAILABLE — the import diff.
+  //     The STATE survived, holding the old character's imported powers and
+  //     totals. ⚠ I first recorded that its button was still offered; that was a
+  //     bad probe (it tested for a `hidden` class while the button is hidden by
+  //     `display:none`, and it is genuinely off-screen). Stale state is still
+  //     worth clearing — a later render must not be able to reach it — but the
+  //     visible symptom proven here is SELECTED_STAT's, not this one's.
+  //     ⚠ Safe to clear here: importBuildText sets all three AFTER its
+  //     applyImportedBuild call, so an import re-establishes them immediately.
+  //   * SOLVE_INTENT — the signature of the last user-CONFIRMED solve. Carrying
+  //     one character's confirmation into another is exactly the class of
+  //     "the app treated its own state as the user's decision" that started
+  //     this sweep.
+  //   * the generated/derived results: LAST_TIERS, PENDING_FOCUS, INTERP_MATCHED,
+  //     INCARNATE_RECS, INCARNATE_LOADOUTS, LAST_ASSESS_ROUTES, PROPOSED_RESPEC.
+  // ⚠ DELIBERATELY NOT CLEARED: `_convHaul`. It is a list the USER typed (the
+  // drops they walked in with), not state the app derived — dropping someone's
+  // typed input on a character swap destroys work, which is worse than carrying
+  // it. If it should be per-character, that is Joel's call, not a sweep's.
+  SELECTED_STAT = null;
+  SELECTED_POWER = null;
+  IMPORT_BEFORE = null;
+  IMPORTED_POWERS = null;
+  CHANGES_AVAILABLE = false;
+  SOLVE_INTENT = null;
+  PROPOSED_RESPEC = null;
+  LAST_TIERS = {};
+  PENDING_FOCUS = null;
+  INTERP_MATCHED = [];
+  INCARNATE_RECS = [];
+  INCARNATE_LOADOUTS = [];
+  LAST_ASSESS_ROUTES = [];
   updateCustomTargetsChip();
 }
 

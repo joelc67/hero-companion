@@ -10,9 +10,7 @@
   size: what the tool does to a build you already have, what it will never
   change, and what you get back. Stats says that every number is a button, that
   you can price a single enhancement by pulling it out, compare every legal
-  replacement before committing, and undo anything. On a wide window the two
-  introductions run in two columns so they fill the panel instead of leaving a
-  band of empty space beside them.
+  replacement before committing, and undo anything.
 
 - **Gymnastics is back in Tactical Arrow.** Blaster Tactical Arrow was listing
   "Oil Slick Arrow" twice and never listing Gymnastics. The defence passive had
@@ -20,6 +18,16 @@
   endurance, where the real power is 10 seconds and 0.13 — and could not hold a
   defence set. It now reads correctly. No other power was affected and no
   build's score changes.
+
+- **Opening a character no longer carries the last one's state with it.** A
+  sweep after the fix below found more of the same: the Stats breakdown stayed
+  open on the previous character's power (click an attack on one character, open
+  another, and the panel still stood there headed with a power the new character
+  does not have), and the import comparison, the last confirmed solve, the
+  generated build results and the incarnate recommendations all survived the
+  swap as well. Every one of them now resets with the character. Your converter
+  haul is deliberately left alone — it is a list you typed, not something the app
+  worked out, and losing it on a character swap would be worse than keeping it.
 
 - **Opening a character no longer counts as an edit.** A "What changed" panel
   was appearing on its own at launch, reporting a change nobody had made.

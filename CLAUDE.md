@@ -867,6 +867,31 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   standing ruling (a meter has no headline number without a scenario).
   ✓ **Champion exposure is ZERO** — no certified build holds Power Boost — so
   whenever this lands it cannot move a certified score, and needs no re-cert.
+- **🧹 THE FULL SWEEP FOR PER-CHARACTER STATE (Joel, 2026-08-07: "do a full pass
+  over the app for anything else like this").** Enumerated all 97 pieces of
+  mutable module state in app.js, then **measured** which survive a real
+  character swap in a live page rather than reasoning about it. **Ten did**, and
+  they are now cleared in `resetBuildScopedState`: `SELECTED_STAT`,
+  `SELECTED_POWER`, `IMPORT_BEFORE`, `IMPORTED_POWERS`, `CHANGES_AVAILABLE`,
+  `SOLVE_INTENT`, `PROPOSED_RESPEC`, `LAST_TIERS`, `PENDING_FOCUS`,
+  `INTERP_MATCHED`, `INCARNATE_RECS`, `INCARNATE_LOADOUTS`, `LAST_ASSESS_ROUTES`.
+  **The visible one was `SELECTED_STAT`:** click an attack row on a Warshade,
+  open a Defender, and the Stats breakdown still stands open headed **"Boxing"**,
+  a power the loaded character does not have. Reproduced deliberately.
+  ⚠ **`_convHaul` is DELIBERATELY NOT SWEPT** — it is a list the USER typed (the
+  drops they walked in with), not state the app derived, and dropping typed input
+  on a swap destroys work. Whether it should be per-character is a ruling, not a
+  sweep's call; the battery pins the decision either way so it cannot drift.
+  ⚠ **My own bad probe, recorded because it nearly became a claim:** I reported
+  the import "what changed" button as still OFFERED after a swap. It was not —
+  my check tested for a `hidden` CLASS while the button is hidden by
+  `display:none`. The STATE leak was real and worth clearing; the visible symptom
+  was not. **A visibility check must ask the layout (`offsetParent` /
+  `getClientRects`), never a class name.**
+  ⚠ Also confirmed CLEAN and not worth re-checking: `RESPEC_LAST_HINT` and
+  `SELECTED_ENH` already reset, and `LEVELING_STEPS` is genuinely rebuilt per
+  character (verified by comparing the actual power ids, not the object).
+  Battery `tools/test_edit_history_scope.js` grew to **24 checks / 7 sabotages**.
 - **⏪ OPENING A CHARACTER IS NOT AN EDIT — AND THE PHANTOM RECEIPT WAS THE
   SMALL HALF (Joel, 2026-08-07: "it now looks terrible").** A "What changed"
   receipt appeared by itself at launch. **TRACED, not guessed** — hooking
