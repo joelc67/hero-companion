@@ -37,13 +37,11 @@ sys.path.insert(0, os.path.join(ROOT, "server"))
 
 import server as srv                # noqa: E402
 
-# Known and adjudicated. key -> why it is here.
-ALLOWED = {
-    ("Blaster_Support.Tactical_Arrow", "Oil Slick Arrow"):
-        "our Gymnastics record wears Oil Slick's name and header while holding "
-        "the Gymnastics passive's effects - open data ruling, zero champion "
-        "exposure",
-}
+# Known and adjudicated. key -> why it is here. Empty is the goal state: the
+# Tactical Arrow entry that lived here was REPAIRED on Joel's ruling the same
+# day it was found (patch_display_name_collisions.py), so it came straight back
+# out - which is what the stale-entry check below exists to force.
+ALLOWED = {}
 
 
 def player_sets():

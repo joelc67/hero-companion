@@ -879,22 +879,40 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   `ROSTER_DIFF_DISPOSITIONS`, with a **hard fail both ways** — an
   undispositioned diff fails, and a disposition left behind after a fix fails
   too (Joel's "knowing all, not just most").
-  ⚠⚠ **The collision rung found a defect nothing else could see, and it is
-  OPEN — Joel's ruling.** Blaster **Tactical Arrow shows "Oil Slick Arrow"
-  twice and never shows "Gymnastics"**: our `Gymnastics` record holds the
-  client **Quickness** record's effects (+25% defence on all 11 vectors,
-  `Melee_Buff_Def`, plus RechargeTime 0.2 — that is the Gymnastics passive)
-  while wearing client **Gymnastics'** display name AND header, so the passive
-  is priced at Oil Slick's **90s recharge and 15.6 endurance** instead of 10s
-  and 0.13. Our separate `Oil_Slick_Arrow` record is the genuine click and
-  pairs correctly. **A display check passes it** (both sides say "Oil Slick
-  Arrow") and **a scalar check passes it** (the header matches its name-pair
-  exactly) — only two-of-ours-wanting-one-of-theirs sees it. ✓ **Champion
-  exposure is ZERO**, so nothing is owed; but fixing it edits a shipped
-  power's endurance and recharge, which is a data ruling. Battery
-  `tools/test_display_name_collisions.py` (3,727 pickable powers, 1 allowed
-  collision, hard-fails on a new one AND on an allowlist entry left behind,
-  two sabotages).
+  ⚠⚠ **The collision rung found a defect nothing else could see — ✅ FIXED the
+  same day on Joel's "fix the Tactical Arrow power".** Blaster **Tactical Arrow
+  showed "Oil Slick Arrow" twice and never showed "Gymnastics"**: our
+  `Gymnastics` record holds the client **Quickness** record's effects (+25%
+  defence on all 11 vectors, `Melee_Buff_Def`, plus RechargeTime 0.2 — that is
+  the Gymnastics passive) while wearing client **Gymnastics'** display name AND
+  header, so the passive was priced at Oil Slick's **90s recharge and 15.6
+  endurance** instead of 10s and 0.13, **and could not hold a defence set**.
+  Our separate `Oil_Slick_Arrow` record is the genuine click and pairs
+  correctly. **A display check passes it** (both sides say "Oil Slick Arrow")
+  and **a scalar check passes it** (the header matches its name-pair exactly) —
+  only two-of-ours-wanting-one-of-theirs sees it.
+  **The repair is `tools/patch_display_name_collisions.py`, and it hardcodes
+  nothing.** Identity is proven by the EFFECT signature (the one thing the
+  overwrite did not touch) matching a unique client record in the same set;
+  the scalars then come from that twin. ⚠ **The categories had a second,
+  independent signal already in our own file: `accepted_set_category_shorts`
+  survived intact and still carried `Defense`** (6 shorts against 9 names and
+  5 ids — the length mismatch WAS the tell), so the name/id lists are rebuilt
+  from our shorts and then **cross-checked against the client**, with a hard
+  failure if the two disagree. Result: exactly **1 record, 7 fields**, verified
+  through the served `/powers` route. ✓ Champion exposure ZERO, counted not
+  assumed — no score moved, no re-cert owed.
+  ⚠ **Two follow-ons the fix REQUIRED, and forgetting either would have put
+  false drift into a standing check:** the pinned rename
+  `our Gymnastics -> client Quickness` must be applied even though a same-name
+  client record exists (the loop only walks powers missing from the snapshot),
+  and `reality_check_powers` must prefer an **adjudicated alias over a same-name
+  coincidence** — otherwise it compares our defence passive against Oil Slick
+  and reports four fields of drift that are not drift. Both done; the check
+  reads 5,832 powers with slotting drift 0 and value drift unchanged.
+  Battery `tools/test_display_name_collisions.py` (3,727 pickable powers; the
+  allowlist is now **empty**, which is the goal state — its stale-entry check is
+  what forced the entry back out the moment the fix landed).
   ⚠ **Retracted mid-investigation, recorded so the shape is visible:** I first
   read this as the exact-name rung mis-pairing our Gymnastics passive to the
   client's Oil Slick click, and swept for it. **The sweep found 0 of 5,659

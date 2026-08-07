@@ -98,9 +98,11 @@ from Joel's review after it). Data 2026.1.1242 and model v38 both unchanged in
 - ~~alias-map roster reconciliation~~ **CLOSED 2026-08-07** — a display-name
   rung took roster diffs 12 → 3 with zero existing aliases changed; the 3 left
   are real roster differences, each named with its evidence and hard-failed if
-  left undispositioned. ⚠ **It surfaced one OPEN defect that is Joel's ruling:
-  Blaster Tactical Arrow shows "Oil Slick Arrow" twice and never "Gymnastics"**
-  — see CLAUDE.md. Zero champion exposure, so nothing is owed.
+  left undispositioned. It surfaced a real defect — Blaster Tactical Arrow
+  showed "Oil Slick Arrow" twice and never "Gymnastics" — **✅ FIXED the same
+  day on Joel's word** (`patch_display_name_collisions.py`: 1 record, 7 fields,
+  verified through the served `/powers` route; zero champion exposure, no
+  re-cert owed). See CLAUDE.md for the two follow-ons the fix required.
 - Leveling Companion batch · pricing #31 · strict-dominance experiment
   (optional).
 

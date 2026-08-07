@@ -72,7 +72,16 @@ EXPORTS = os.path.join(os.path.dirname(__file__), "gamedata", "bin-crawler",
 #   display names (our Chum_Spray displays "Arctic Breath", our Kinetic_Transfer
 #   displays "Fulcrum Shift"). Includes Build_Up = the client's "Ice_Slick"
 #   record (still a To-Hit-Buff self click — internal name is misleading).
-RENAMES = {"Mastermind_Buff.Radiation_Emission.Radiation_Emission":
+# * Tactical Arrow (2026-08-07, Joel's "fix the Tactical Arrow power"): our
+#   `Gymnastics` record is the defence passive, which the client keeps under
+#   `Quickness` and shows as "Gymnastics"; the client's own `Gymnastics` record
+#   is Oil Slick Arrow and pairs with our `Oil_Slick_Arrow`. Proven by effect
+#   identity (Melee_Buff_Def 0.25 on all eleven vectors + RechargeTime 0.2),
+#   which is what patch_display_name_collisions.py repaired the header from.
+#   Pinned here because the same-name match is a coincidence and must lose.
+RENAMES = {"Blaster_Support.Tactical_Arrow.Gymnastics":
+           "Blaster_Support.Tactical_Arrow.Quickness",
+           "Mastermind_Buff.Radiation_Emission.Radiation_Emission":
            "Mastermind_Buff.Radiation_Emission.Radiant_Aura",
            "Pool.Flight.Evasive_Maneuvers": "Pool.Flight.Afterburner",
            "Controller_Control.Pyrotechnic_Control.Sparkling_Chain":
@@ -271,6 +280,19 @@ def main():
                 print(f"    CANDIDATE (needs adjudication): {b} -> {cand}")
             roster_diffs.append(ours_full)
 
+    # A pinned RENAME can also correct a power that DOES have a same-name client
+    # record, which the loop above never reaches (it only walks powers missing
+    # from the snapshot). Tactical Arrow needs exactly that: our `Gymnastics` is
+    # the defence passive and the client's `Gymnastics` is Oil Slick Arrow, so
+    # the name match is a coincidence and the adjudicated pair must win.
+    overrides = 0
+    for ours_full, client_full in RENAMES.items():
+        if ours_full in player and aliases.get(ours_full) != client_full:
+            aliases[ours_full] = client_full
+            overrides += 1
+            print(f"    rename (pinned, overrides a same-name match): "
+                  f"{ours_full} -> {client_full}")
+
     # NAME COLLISIONS. Every player power that reaches a client record does so
     # either by alias or by having the same full_name; two of ours reaching ONE
     # of theirs means one of our records is mislabelled. See the header note.
@@ -297,9 +319,17 @@ def main():
             print(f"    {p}\n       {ROSTER_DIFF_DISPOSITIONS.get(p, '*** UNDISPOSITIONED ***')}")
     stale_disp = [p for p in ROSTER_DIFF_DISPOSITIONS if p not in roster_diffs]
 
+    # The denominator is the powers MISSING from the snapshot. A pinned override
+    # corrects a power that was never missing, so it is counted apart rather than
+    # allowed to inflate the classified total past its own denominator.
     total = sum(len(v) for v in unverified.values())
+    classified = len(aliases) - overrides + len(inherents) + len(roster_diffs)
     print(f"\naliased: {len(aliases)}  inherents: {len(inherents)}  "
-          f"roster diffs: {len(roster_diffs)}  (classified {len(aliases) + len(inherents) + len(roster_diffs)} of {total})")
+          f"roster diffs: {len(roster_diffs)}  "
+          f"(classified {classified} of {total}"
+          f"{f'; +{overrides} pinned override(s) outside the denominator' if overrides else ''})")
+    if classified != total:
+        print(f"HARD FAIL: {total - classified} power(s) unclassified")
     json.dump({"aliases": aliases,
                "inherents_not_in_snapshot": sorted(inherents),
                "roster_diffs": sorted(roster_diffs),
@@ -313,7 +343,7 @@ def main():
     for p in stale_disp:
         print(f"HARD FAIL: {p} is dispositioned but is no longer a roster diff "
               "— drop its entry in the same change that resolved it")
-    return 1 if (undisposed or stale_disp) else 0
+    return 1 if (undisposed or stale_disp or classified != total) else 0
 
 
 if __name__ == "__main__":

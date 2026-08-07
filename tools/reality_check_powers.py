@@ -56,7 +56,13 @@ def main():
     snipe_cond = slot_add = slot_rem = matched = 0
     samples = []
     for fn, g in snap.items():
-        p = srv.POWER_BY_FULL.get(fn) or srv.POWER_BY_FULL.get(rev_aliases.get(fn, ""))
+        # An ADJUDICATED alias outranks a same-name coincidence. Blaster Tactical
+        # Arrow is why: the client's `Gymnastics` record is the power the game
+        # shows as Oil Slick Arrow, and OUR `Gymnastics` record is the defence
+        # passive — same name, different powers. Taking the name first compared
+        # the two and would report four fields of drift that are not drift.
+        p = (srv.POWER_BY_FULL.get(rev_aliases.get(fn, ""))
+             or srv.POWER_BY_FULL.get(fn))
         if not p:
             continue      # NPC/object/pet powers — the snapshot is a superset of ours
         matched += 1
