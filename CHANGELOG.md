@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.12.33 — 2026-08-07 — Knowing what to do next
+
+Game data is unchanged (Homecoming 2026.1.1242) and the optimizer's model stays
+at v38, so no build's score moves. One power record was corrected — Tactical
+Arrow's Gymnastics, below — and no certified build uses it, so nothing was
+re-certified. Everything else here is what the app tells you and how it behaves.
+
 - **The Build Assistant and the Stats page now say what they are for.** Both
   tools explained themselves in the smallest, dimmest text on the page, and the
   Assistant's explanation was being folded behind a "more" link and cut off
