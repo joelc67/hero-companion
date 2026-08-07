@@ -807,6 +807,26 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   the solve report are the same arithmetic; `bare` drops the solve heading and
   export nag and relabels the columns "Without it / With it", because
   Before/After would misdescribe what the two columns hold.
+- **🔥 FURY: THE NAMED INSTRUMENT IS BUILT, AND IT MOVED THE BLOCKER (2026-08-06).**
+  v36 left Fury dormant at a 228% residual spread with a named next step —
+  component-summed swing reconstruction. `tools/measure_fury_residual.py` v2
+  does it: group damage lines by (timestamp, target, attack), sum the
+  components, exclude DoT ticks. **Spread 228% → 25.2%.**
+  ⚠ **AoEs CANNOT be reconstructed from this log format and the tool now says
+  so per attack.** Farm mobs share a display name, so the grouping merges an
+  AoE's hits on DIFFERENT enemies — Atom Smasher logs 2x/4x/6x…18x components
+  for a two-component attack. Only single-target attacks isolate (100% shape
+  purity); the tool prints each attack's purity and anchors only on the pure.
+  ⚠⚠ **STILL UNCLEAN, AND THE REASON IS NOT THE METER.** Both clean attacks'
+  swing distributions are tight and unimodal with near-identical shape (p95/p05
+  1.38 and 1.45), so this is not Fury noise. The disagreement is on the EXPECTED
+  side, and a global multiplier CANCELS in an attack-to-attack ratio:
+  Radioactive Smash ÷ Devastating Blow reads **engine 0.325 · game 0.420 ·
+  client 0.481** (client = PvE `_Dmg` scales from the bin-crawler export;
+  the PvP-gated templates are correctly excluded). Three numbers that must agree
+  do not, and the engine is the outlier. **Fury cannot be measured until
+  Radiation Melee's per-attack damage is reconciled with the client — a DATA
+  question, not a measurement one.** Do not re-run the meter hunt first.
 - **🔗 POWER BOOST AND THE FURY METER ARE THE SAME MISSING CAPABILITY (found
   game-first 2026-08-06).** Power Boost was queued as a parser-allowlist data
   gap ("+66% amplifier effects invisible"). The client says otherwise: all 10
