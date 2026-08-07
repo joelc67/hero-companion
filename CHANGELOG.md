@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.12.34 — 2026-08-07 — Your picks stay yours
+
+Game data is unchanged (Homecoming 2026.1.1242) and the optimizer's model stays
+at v38, so no build's score moves and nothing was re-certified. This release
+exists for one bug, reported from the field the same evening 0.12.33 went out.
+
 - **Fixed: changing your epic pool could leave your build short of power picks,
   and nothing said so.** Switching epic pools and choosing "Switch and refill"
   is supposed to take the new pool's powers into the seats the old pool left
