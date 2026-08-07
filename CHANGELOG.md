@@ -1,5 +1,13 @@
 # Hero Companion — What's New
 
+## Unreleased
+
+- **The big action buttons are a sensible size again.** The Solve, Generate and
+  Reset buttons in the Build Assistant were stretching to the full width of the
+  window, which looked odd on a wide screen and made them harder to aim at. They
+  now share one comfortable width, whatever your window size. On a narrow window
+  nothing changes: they still fill the space they are in.
+
 ## 0.12.32 — 2026-08-06 — The Stats page becomes a workbench
 
 Game data is unchanged (Homecoming 2026.1.1242) and the optimizer's model stays

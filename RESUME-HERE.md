@@ -1,5 +1,21 @@
 # Resume point — 2026-08-06 (new session starts here)
 
+## ⏸ PLACE SAVED — 2026-08-06 late, after the button fix
+
+**HEAD `d54415f0`, pushed, tracked tree clean. Published `v0.12.32`. App not
+running. Nothing scheduled.**
+
+⚠ **The installed copy's STATICS are ahead of its stamp.** Frozen stamp is
+`e164fd1` (the 0.12.32 build); the button-cap CSS reached it via
+`push_statics.py` afterwards. That is fine — the change is CSS only with no
+server dependency — but do not read the stamp as "what the app contains".
+
+**▶ ONE ITEM STAGED FOR THE NEXT RELEASE** (CHANGELOG "Unreleased"): the action
+buttons now share one width. See the `button { max-width: 420px }` block in
+style.css for why it is a CAP and not `width: auto` — that choice is the entire
+no-layout-break guarantee, and the comment carries the measurement (246 buttons
+snapshotted with and without the cap; exactly one changed).
+
 ## ⏸ PLACE SAVED — 2026-08-06 night, after v0.12.32
 
 **HEAD `e164fd13`, pushed, tracked tree clean. Published `v0.12.32`. Installed
