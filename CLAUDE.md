@@ -867,6 +867,17 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   standing ruling (a meter has no headline number without a scenario).
   ✓ **Champion exposure is ZERO** — no certified build holds Power Boost — so
   whenever this lands it cannot move a certified score, and needs no re-cert.
+- **🧯 WHEN I BREAK SOMETHING, I FIX IT — I DO NOT HAND HIM THE MENU (Joel,
+  2026-08-07: "not sure why this was a suggestion. If it is broken fix it").**
+  I damaged a sample save by testing on it instead of a copy, could not restore
+  it exactly, and then offered him a choice of which power to sacrifice. Wrong
+  shape twice over: the damage was mine, and the choice was between three
+  options he had no reason to care about. **Repair it, state plainly what could
+  not be recovered and why, and stop** — a question is for a decision that is
+  genuinely his, not for me to share out the cost of my own mistake.
+  ⚠ The prevention is the real rule and it is already in this file: **never test
+  against a real save** (autoSaveTick persists). Use a scratch copy and delete
+  it. I read that rule, then broke it inside the same session.
 - **🔁 THE EPIC SWAP FINISHES THE JOB (Joel, 2026-08-07: "I wanted to change the
   Epic from Electricity to attain access to Mace Mastery. It took more effort
   than I thought").** It was an asymmetry the code stated outright — primary and
