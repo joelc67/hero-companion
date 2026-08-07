@@ -890,6 +890,16 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   the before/after that answers "did this help?", Stats answers "why?". Mock
   stand-in `data-for="change-spine"` added, or audit_tour fails its coverage
   check.
+  ⚠⚠ **`__tmScene` DEFAULTS TO "menus" FOR THE WHOLE `start` CHAPTER, and a step
+  that omits `scene:` never flips it back** (`s.scene || (s.chapter === "start"
+  ? "menus" : "build")`). A start-chapter step whose subject lives on a TAB must
+  say `scene: "build"` or it highlights a **collapsed, zero-size stub** while the
+  mock still shows the Character menu — which is exactly what shipped for one
+  round here. **No audit catches it**: the target id is real, the mock stand-in
+  exists, the anchor resolves — they simply are not on screen together.
+  ⚠ **Generalize: a tour step is only verified by RUNNING it and looking.**
+  Joel's "run the tour and check the new step reads right" found in one pass what
+  eight green checks could not.
 - **🧯 WHEN I BREAK SOMETHING, I FIX IT — I DO NOT HAND HIM THE MENU (Joel,
   2026-08-07: "not sure why this was a suggestion. If it is broken fix it").**
   I damaged a sample save by testing on it instead of a copy, could not restore

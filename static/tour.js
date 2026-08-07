@@ -689,7 +689,14 @@ const TOUR_STEPS = [
   // sections of the tool accommodate those well"). The band on the tab says the
   // ORDER; this says what each step gives you back and which surface holds it,
   // which is the half a signpost has no room for.
+  // ⚠ scene: "build" IS REQUIRED HERE, and leaving it off is a silent defect.
+  // __tmScene defaults to "menus" for the WHOLE start chapter, and a step that
+  // omits scene never flips it back — so this card highlighted a collapsed,
+  // zero-size stub while the mock still showed the Character menu. Caught by
+  // running the tour and looking; no audit sees it, because the target id is
+  // real and the mock stand-in exists — they just were not on screen together.
   { chapter: "start", target: "#change-spine", spine: true, key: "workflow",
+    scene: "build",
     title: "The order to work in",
     body: "Once a character exists, changing it has a shape, and the band at "
         + "the top of Powers & Slots states it: say what you want, press "
