@@ -1875,6 +1875,29 @@ body { overflow: hidden; }
   border: 3px solid transparent; line-height: 0; }
 .sb-slotwrap.stat-hot-slot { border-color: #22c55e; box-shadow: 0 0 8px #22c55ecc; }
 .sb-sub { font-size: 13px; margin: 2px 0 var(--s2); color: var(--muted); }
+
+/* ── THE TWO TOOLS EXPLAIN THEMSELVES, AT A SIZE YOU CAN READ ──────────────
+   Joel, 2026-08-07: "the Build Assistant and Stats really leave the end user
+   wondering what either actually do… tiny text and barely a breakdown of how
+   potent both can be on an existing build."
+   The explanation text was `.muted.small` = 12px against a 15px body, in the
+   dimmest colour the theme has, and then folded behind a "more" link on top of
+   that. ⚠ The app CANNOT zoom its way out of this: fitZoom takes one zoom from
+   the TALLEST tab with a floor of 1.00, and Powers & Slots never fits, so the
+   whole app is pinned at 1.00 and type size only ever changes here.
+   Deliberately scoped to these ledes rather than raising `.small` globally —
+   `.small` is load-bearing on cards, chips and slot labels across the app. */
+.tool-head { display: block; font-size: 17px; font-weight: 700;
+  letter-spacing: -.01em; margin: 0 0 6px; }
+/* ⚠ the ink token is --ink, NOT --text. `var(--text)` is undefined in this
+   sheet, so it computes to nothing and the colour silently falls back — three
+   existing rules already do that (.sb-leg b, .jny-chip-how b, and .ghost-btn,
+   which is the only one carrying a fallback). Do not copy that pattern. */
+.tool-lede { display: block; font-size: 14px; line-height: 1.55;
+  color: var(--ink); opacity: .88; margin: 0 0 10px; max-width: 78ch; }
+.tool-lede em { opacity: .82; }
+/* the Assistant's ledes sit inside boxed sub-panels that already indent */
+.preset-pick .tool-lede, .role-pick .tool-lede { margin-bottom: 8px; }
 .sb-shown, .sb-green { color: #22c55e; }
 .sb-row { display: flex; justify-content: space-between; gap: var(--s2);
   padding: 4px 2px; border-bottom: 1px solid var(--border); font-size: 13px;

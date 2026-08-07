@@ -867,6 +867,35 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   standing ruling (a meter has no headline number without a scenario).
   ✓ **Champion exposure is ZERO** — no certified build holds Power Boost — so
   whenever this lands it cannot move a certified score, and needs no re-cert.
+- **📣 A TOOL THAT CANNOT EXPLAIN ITSELF IS HALF-BUILT — AND THE APP CANNOT
+  ZOOM ITS WAY OUT OF SMALL TYPE (Joel, 2026-08-07: "the Build Assistant and
+  Stats really leave the end user wondering what either actually do… tiny text
+  and barely a breakdown of how potent both can be on an existing build").**
+  Three separate faults, and the first is the one with a corpse:
+  ⚠⚠ **`collapseLongExplanations` ate the Assistant's own description.** The
+  sentence saying what the tool does is over 26 words, so it was folded — and
+  its lead clause is over 96 characters, so the summary truncated **mid-word**:
+  *"never touches 🔒 l… more"*. The one paragraph explaining the feature was the
+  one paragraph nobody could read. **Every lede that explains a surface gets
+  `.keep-whole` at birth** — this is the same rule the file already carries,
+  broken again, now on the two most important panels in the app.
+  ⚠ **Type size is only ever fixable in CSS here.** `fitZoom` takes ONE zoom
+  from the TALLEST tab with a floor of **1.00**, and Powers & Slots never fits,
+  so the whole app is pinned at 1.00 permanently. "Make it bigger" can never
+  come from the zoom. New `.tool-lede` (14px against the 12px `.small`) and
+  `.tool-head`, deliberately scoped to these ledes — **`.small` is load-bearing
+  on cards, chips and slot labels and must not be raised globally.**
+  ⚠ **"Potent" means saying what it does to a build you ALREADY have**, which is
+  what the copy now leads with: the Assistant never touches the powers you
+  picked and re-solves every earned slot in about a second with a before/after;
+  Stats prices one enhancement by pulling it, prices every legal replacement
+  before you commit, and undoes anything.
+  ⚠ **`↳` (U+21B3) HAS NO GLYPH IN THE APP'S FONT** — it painted as a broken box
+  in **11 places**. Replaced with `→`, which the app already renders. Check any
+  new symbol on screen before shipping it; the batteries cannot see this.
+  ⚠ `var(--text)` IS UNDEFINED in style.css — the ink token is **`--ink`**.
+  Three existing rules already use the dead name (`.sb-leg b`, `.jny-chip-how b`,
+  and `.ghost-btn`, the only one with a fallback). Do not copy that pattern.
 - **🪪 THE ALIAS MAP LEARNED THE DISPLAY NAME, AND THE RUNG THAT MATTERS IS
   "TWO OF OURS WANT ONE OF THEIRS" (2026-08-07).** `build_power_aliases.py`
   matched on internal names, fuzzy names and scalar fingerprints — three rungs,

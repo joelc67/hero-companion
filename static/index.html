@@ -412,13 +412,21 @@
              whether you are CREATING or RETOOLING — header, intro, identity
              framing, and button labels all switch on that state (app.js
              updateAssistantMode). Copy here is the FRESH default. -->
-        <strong id="gen-head">🔧 Build this for me</strong>
-        <p id="gen-intro" class="muted small">Pick archetype + primary + secondary above, describe a
+        <!-- ⚠ THE LEDE AND EVERY EXPLANATION HERE CARRY .keep-whole (Joel,
+             2026-08-07: "the Build Assistant and Stats really leave the end
+             user wondering what either actually do"). The sentence that says
+             what this tool DOES was itself being folded by
+             collapseLongExplanations, and its lead clause is over 96
+             characters, so it truncated mid-word: "never touches 🔒 l… more".
+             The one paragraph explaining the feature was the one paragraph
+             nobody could read. -->
+        <strong id="gen-head" class="tool-head">🔧 Build this for me</strong>
+        <p id="gen-intro" class="tool-lede keep-whole">Pick archetype + primary + secondary above, describe a
           goal, choose which build tiers you want, and Claude designs them — pick
           more than one to compare cost vs. payoff.</p>
         <div class="preset-pick">
-          <span id="preset-intro" class="muted small"><strong>What are you building for?</strong> Pick a target and the solver optimizes for your archetype automatically — no description needed.</span>
-          <p id="retool-identity-note" class="muted small hidden">↳ These two are <strong>this build's existing identity</strong> — they're already set from when it was made. Leave them alone unless the goal itself changed.</p>
+          <span id="preset-intro" class="tool-lede keep-whole"><strong>What are you building for?</strong> Pick a target and the solver optimizes for your archetype automatically — no description needed.</span>
+          <p id="retool-identity-note" class="tool-lede keep-whole hidden">→ These two are <strong>this build's existing identity</strong> — they're already set from when it was made. Leave them alone unless the goal itself changed.</p>
           <div class="preset-row">
             <label class="preset-field">Content
               <select id="preset-content">
@@ -483,7 +491,7 @@
         <input id="gen-goal"
           placeholder="(optional) fine-tune in words, e.g. 'also soft-cap energy defense'">
         <div class="role-pick">
-          <span class="muted small">What should we base this build on? <em>(pick any that fit — each one <strong>biases</strong> which IO sets the solver leans toward; they are nudges, not commands. Your Content/Role targets above are the real asks.)</em></span>
+          <span class="tool-lede keep-whole">What should we base this build on? <em>(pick any that fit — each one <strong>biases</strong> which IO sets the solver leans toward; they are nudges, not commands. Your Content/Role targets above are the real asks.)</em></span>
           <div id="role-chips" class="role-chips"></div>
         </div>
         <div class="tier-pick">
@@ -613,6 +621,18 @@
 <div class="stats-provlayout">
 <section id="stats" class="panel" data-tile>
       <h2>Stats <span class="muted small">(toggles/autos + enhancements + set bonuses)</span><button class="tour-help" onclick="startTour('stats')" aria-label="Explain this section" title="Explain this section">?</button></h2>
+      <!-- ⚠ .keep-whole, and it is not optional: this is the paragraph that
+           tells someone what the page is FOR, and collapseLongExplanations
+           would fold the answer behind a "more" link. -->
+      <p class="tool-lede keep-whole">Every number below is a button. Click one and this page
+        shows exactly which powers and which enhancements produce it, and rings
+        them green on the wall above. From there you can price a single
+        enhancement by pulling it out and reading what it was worth, compare
+        every legal replacement with its gain or loss before you commit to one,
+        and undo anything you change. <strong>This is the hands-on half of the
+        app</strong>: the Build Assistant re-slots the whole build toward a goal
+        in one move, and Stats is where you change one piece at a time and watch
+        what it does.</p>
       <!-- ONE narrow control line (Joel, 2026-08-04: the stacked chips/toggles/
            exemplar block wasted a band of space and the exemplar dial looked
            orphaned). Caps, view toggles and the exemplar dial share a row. -->

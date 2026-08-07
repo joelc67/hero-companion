@@ -5245,9 +5245,14 @@ function updateAssistantMode() {
   const head = $("gen-head");
   if (head) head.textContent = retool ? "🔧 Improve this build" : "🔧 Build this for me";
   const intro = $("gen-intro");
+  // ⚠ These two sentences are the whole answer to "what does this tool do?", so
+  // they SAY it (Joel, 2026-08-07). The retool copy in particular has to answer
+  // the existing-build case: what it will change, what it will never change, how
+  // long it takes, and what you get back. It is set with .keep-whole in the
+  // markup — the old version was folded and truncated mid-word.
   if (intro) intro.textContent = retool
-    ? "This build already exists — the assistant RE-SLOTS it toward your goal and never touches 🔒 locked powers. The identity below is what the build already is; the goal box and steer chips adjust where the re-slot leans."
-    : "Pick archetype + primary + secondary above, describe a goal, choose which build tiers you want, and Claude designs them — pick more than one to compare cost vs. payoff.";
+    ? "You already have this build, so the assistant leaves every power you picked exactly as it is. What it changes is the SLOTTING: it re-solves every slot you have earned against the goal below, in about a second, and hands back a before-and-after naming each number that moved. Lock a power (🔒 on its card) and it works around your enhancements instead of replacing them. The identity below is what this build already is; the goal box and the steer chips adjust where the re-slot leans."
+    : "Pick archetype + primary + secondary above, say what the character is for, and the assistant designs whole builds for you — powers, slots and enhancements together. Choose more than one tier to compare what each costs against what it delivers.";
   const pIntro = $("preset-intro");
   if (pIntro) pIntro.innerHTML = retool
     ? "<strong>What is this build for?</strong> Its content and role — the targets any re-slot solves toward."
@@ -8078,7 +8083,7 @@ function attributionRowsHtml(statName, t) {
     const hp = Math.round(t.accolade_hp || 0);
     if (hp) {
       const names = led.map(x => x.display || x.name).filter(Boolean);
-      rows.push({label: "↳ Accolades", val: `+${hp} HP`,
+      rows.push({label: "→ Accolades", val: `+${hp} HP`,
                  title: names.length ? `From: ${names.join(", ")}` : ""});
     }
   }
@@ -8110,7 +8115,7 @@ function dpsAttributionHtml(t) {
   const label = damageSourceLabel(t);
   if (!label) return "";
   return `<div class="o-row attr-row" title="A global +damage% the engine applies to every attack (incarnate peak values). This is the line that used to be invisible.">
-      <span>↳ ${label}</span><span>+${(dmg * 100).toFixed(1)}% damage</span></div>`;
+      <span>→ ${label}</span><span>+${(dmg * 100).toFixed(1)}% damage</span></div>`;
 }
 
 // ── Per-power-card provenance — v34 item 5 (Joel's ruling 2026-07-17 + the
@@ -8138,8 +8143,8 @@ function cardAttributionHtml(atk, t) {
   const rP = (raw * 100).toFixed(1), eP = (eff * 100).toFixed(1);
   const capped = eff + 1e-6 < raw;       // the game's damage cap bit this power
   const body = capped
-    ? `↳ ${escHtml(src)} +${rP}% damage — the game's damage cap holds it to +${eP}% on this power`
-    : `↳ ${escHtml(src)} +${eP}% damage — included in these numbers`;
+    ? `→ ${escHtml(src)} +${rP}% damage — the game's damage cap holds it to +${eP}% on this power`
+    : `→ ${escHtml(src)} +${eP}% damage — included in these numbers`;
   return `<div class="pi-attr" title="Read from the engine's own per-attack ledger; the game's damage cap is applied where it bites. Untick the incarnate preview and this line (and the numbers) drop.">${body}</div>`;
 }
 
@@ -8515,7 +8520,7 @@ function renderOffense(off, t) {
     const srcRow = s => `<div ${petClk(`pet:src:${s.name}:${s.effect}`, `${s.name} → pets`)}><span>${s.name}`
       + `<span class="muted small"> · ${s.scope}${s.uptime != null && s.uptime < 1 ? ` · ${Math.round(s.uptime * 100)}% uptime` : ""}</span></span>`
       + `<span class="buf">+${s.pct}%</span></div>`
-      + (s.note ? `<div class="o-note muted small">↳ ${s.note}</div>` : "");
+      + (s.note ? `<div class="o-note muted small">→ ${s.note}</div>` : "");
     if (dmgSrc.length) {
       html += `<div class="o-sub">Pet damage buffs <span class="muted small">(applied to the pet DPS above)</span></div>`
         + dmgSrc.map(srcRow).join("");
@@ -9043,8 +9048,12 @@ function renderStatBreakdown() {
       breaks the number down to the exact powers and IOs feeding it, and the
       IOs ring <b class="sb-green">green</b> on the mini wall above. (Pet
       rows carry their sources inline — nothing hides beneath them.)</p>
-      <p class="sb-sub">The breakdown is <b>hands-on</b>: click any IO in it
-      to swap that enhancement and watch the number move immediately.</p></div>`;
+      <p class="sb-sub">The breakdown is <b>hands-on</b>, and this is where the
+      page earns its keep on a build you already have. Click any IO in it to see
+      <b>what that one enhancement is worth</b> — measured by rebuilding without
+      it, so a lost set bonus shows up too. Swap it and every legal replacement
+      is priced with its gain or loss before you pick one. Every change reports
+      what it did and hands back an <b>Undo</b>.</p></div>`;
     return;
   }
   // manual match — attack names carry spaces/apostrophes a selector can't
@@ -9117,13 +9126,13 @@ function renderStatBreakdown() {
       html += `<p class="sb-sub">Where <b>~${p.dps_each} DPS each</b> comes from:</p>`
         + `<div class="sb-row"><span class="sb-who">Its own ${p.attack_count} attack${p.attack_count === 1 ? "" : "s"}</span>
            <span class="sb-val">priced like yours</span></div>
-           <div class="o-note muted small">↳ same math as your powers: damage, cast time, recharge — and its REAL chance to hit at its own level.</div>`
+           <div class="o-note muted small">→ same math as your powers: damage, cast time, recharge — and its REAL chance to hit at its own level.</div>`
         + (p.level_shift ? `<div class="sb-row"><span class="sb-who">Fights at −${p.level_shift}</span>
            <span class="sb-val">hits less</span></div>
-           <div class="o-note muted small">↳ a lower-tier pet faces higher-level enemies, so the game reduces its chance to hit (the purple patch). That reduction is priced in.</div>` : "")
+           <div class="o-note muted small">→ a lower-tier pet faces higher-level enemies, so the game reduces its chance to hit (the purple patch). That reduction is priced in.</div>` : "")
         + (p.acc_mult != null && p.acc_mult !== 1 ? `<div class="sb-row"><span class="sb-who">Accuracy ×${p.acc_mult}</span>
            <span class="sb-val">from the summon power</span></div>
-           <div class="o-note muted small">↳ accuracy slotted in ${escHtml(p.from_power || "the summon power")} is credited back to the pet's hit chance.</div>` : "")
+           <div class="o-note muted small">→ accuracy slotted in ${escHtml(p.from_power || "the summon power")} is credited back to the pet's hit chance.</div>` : "")
         + (pi >= 0 ? `<div class="o-note muted small">Its summon power, ${escHtml(p.from_power)}, is ringed on the mini wall above — its slots ARE this pet's slots.</div>` : "")
         + (isMM
             ? `<div class="sb-kind">Because you are a Mastermind</div>
@@ -9147,8 +9156,8 @@ function renderStatBreakdown() {
         + (pi >= 0 ? _sbpCardHtml(pi, null, `<b>+${s.pct}%</b>`, escHtml(s.scope || ""), true)
                    : `<div class="sb-row"><span class="sb-who">${escHtml(s.name)}</span><span class="sb-val">+${s.pct}%</span></div>`)
         + (s.uptime != null && s.uptime < 1
-            ? `<div class="o-note muted small">↳ counted at ${Math.round(s.uptime * 100)}% uptime — the buff isn't permanent, so only the sustainable share is priced.</div>` : "")
-        + (s.note ? `<div class="o-note muted small">↳ ${escHtml(s.note)}</div>` : "")
+            ? `<div class="o-note muted small">→ counted at ${Math.round(s.uptime * 100)}% uptime — the buff isn't permanent, so only the sustainable share is priced.</div>` : "")
+        + (s.note ? `<div class="o-note muted small">→ ${escHtml(s.note)}</div>` : "")
         + (s.effect === "tohit"
             ? `<div class="o-note muted small">To-hit raises the pet's REAL chance to land its attacks — damage follows hit chance, which is why this shows up as more pet damage.</div>` : "");
     }

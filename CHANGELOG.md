@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+- **The Build Assistant and the Stats page now say what they are for.** Both
+  tools explained themselves in the smallest, dimmest text on the page, and the
+  Assistant's explanation was being folded behind a "more" link and cut off
+  mid-word, so the one paragraph describing the feature was the one paragraph
+  you could not read. Both now open with a proper introduction at a readable
+  size: what the tool does to a build you already have, what it will never
+  change, and what you get back. Stats says that every number is a button, that
+  you can price a single enhancement by pulling it out, compare every legal
+  replacement before committing, and undo anything.
+
+- **Gymnastics is back in Tactical Arrow.** Blaster Tactical Arrow was listing
+  "Oil Slick Arrow" twice and never listing Gymnastics. The defence passive had
+  picked up the wrong name and the wrong costs — a 90 second recharge and 15.6
+  endurance, where the real power is 10 seconds and 0.13 — and could not hold a
+  defence set. It now reads correctly. No other power was affected and no
+  build's score changes.
+
+- **A few small arrows were showing as a broken box.** The "↳" character used in
+  eleven places had no glyph in the app's font. They are plain arrows now.
+
 - **The big action buttons are a sensible size again.** The Solve, Generate and
   Reset buttons in the Build Assistant were stretching to the full width of the
   window, which looked odd on a wide screen and made them harder to aim at. They
