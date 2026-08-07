@@ -673,7 +673,13 @@ const TOUR_STEPS = [
         + "Nothing is lost on the way out: the character you are leaving has "
         + "been saved in the background as you worked, and closing the app "
         + "offers to save anything unsaved." },
-  { chapter: "start", target: "#tabbar", spine: true,
+  // ⚠ Same `scene: "build"` fix as the workflow step below, and the same cause:
+  // the tab strip's mock stand-in lives on the BUILD screen, while the start
+  // chapter defaults to the menus screen. Found 2026-08-07 by measuring the
+  // highlighted element on every step — this one was 0x0 and invisible, so a
+  // step titled "Four tabs, one character" was pointing at a tab strip that was
+  // not on screen. ⚠ VISUAL CONFIRMATION STILL OWED (see RESUME-HERE).
+  { chapter: "start", target: "#tabbar", spine: true, scene: "build",
     title: "Four tabs, one character",
     body: "The whole app is four tabs across the top. Powers & Slots is the "
         + "build itself — and everything that belongs to it, including your "
