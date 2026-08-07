@@ -807,6 +807,27 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   the solve report are the same arithmetic; `bare` drops the solve heading and
   export nag and relabels the columns "Without it / With it", because
   Before/After would misdescribe what the two columns hold.
+- **✅ THE "RADIATION MELEE DISCREPANCY" WAS MY BAD COMPARISON — THE DATA IS
+  CORRECT (2026-08-06, chased on Joel's word).** I reported the engine as the
+  outlier on a ratio of **enhanced** engine damage against **base** client
+  scales. It is not comparable: in that build Radioactive Smash holds ONE
+  Nucleolus (+33.2%) and Devastating Blow holds THREE Hecatomb damage pieces
+  (+96.7% post-ED), so the enhanced ratio must sit below the base ratio.
+  Done properly, our base damage is exact: RS 74.1 and DB 154.2 are the client's
+  PvE scales (1.48 and 3.08) × an implied table factor of **50.07 / 50.06** —
+  agreeing to 0.01 — and the base ratio is **0.481 = the client's 0.481**.
+  ⚠ **Retract the earlier claim if it is quoted anywhere: there is no per-attack
+  data bug in Radiation Melee.**
+- **⚠⚠ DO NOT "FIX" OUR DATA BY ADDING THE EXPORT'S `Fire_Dmg` TEMPLATES — THAT
+  IS FIERY EMBRACE (found 2026-08-06).** **86 of 108** Brute melee attacks carry
+  a `Fire_Dmg` template whose `requires_expression` is EMPTY in the bin-crawler
+  export, across Claws, Rad Melee, everything. It is not unconditional: 124
+  clean logged swings show ZERO Fire components, because in game it only applies
+  while Fiery Embrace is up. **The crawler is not capturing that gate.** Our
+  Mids-derived base correctly counts Smashing+Energy alone; counting the Fire
+  template would inflate those 86 attacks by ~45% (RS 74.1 → 107.4). A future
+  reconciliation pass that trusts `requires_expression == ""` will do exactly
+  that.
 - **🔥 FURY: THE NAMED INSTRUMENT IS BUILT, AND IT MOVED THE BLOCKER (2026-08-06).**
   v36 left Fury dormant at a 228% residual spread with a named next step —
   component-summed swing reconstruction. `tools/measure_fury_residual.py` v2
@@ -822,11 +843,17 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   1.38 and 1.45), so this is not Fury noise. The disagreement is on the EXPECTED
   side, and a global multiplier CANCELS in an attack-to-attack ratio:
   Radioactive Smash ÷ Devastating Blow reads **engine 0.325 · game 0.420 ·
-  client 0.481** (client = PvE `_Dmg` scales from the bin-crawler export;
-  the PvP-gated templates are correctly excluded). Three numbers that must agree
-  do not, and the engine is the outlier. **Fury cannot be measured until
-  Radiation Melee's per-attack damage is reconciled with the client — a DATA
-  question, not a measurement one.** Do not re-run the meter hunt first.
+  client 0.481**. ⚠ **The "engine is the outlier" reading of those three numbers
+  was WRONG and is retracted — see the entry above.** The engine number is
+  ENHANCED and the client number is BASE, and the two attacks are slotted very
+  differently, so they were never comparable. Our base data is exact.
+  **What actually blocks Fury: only TWO attacks isolate cleanly, and two data
+  points cannot separate a multiplier from a flat term** — solving
+  `expected×F + C = observed` on both gives F≈0.995 / C≈48.9 with zero degrees
+  of freedom left to validate it, which is fitting, not measuring. **The next
+  step is a THIRD clean single-target attack**: farm logs from a Brute whose
+  rotation carries three or more single-target attacks (this build's rotation is
+  almost all AoE, and AoEs cannot be reconstructed at all).
 - **🔗 POWER BOOST AND THE FURY METER ARE THE SAME MISSING CAPABILITY (found
   game-first 2026-08-06).** Power Boost was queued as a parser-allowlist data
   gap ("+66% amplifier effects invisible"). The client says otherwise: all 10

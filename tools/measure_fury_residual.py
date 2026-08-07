@@ -31,11 +31,19 @@ RESULT WHEN LAST RUN (Lime Juice, Brute Radiation_Melee/Fiery_Aura, 3 farm days)
           game     0.420   (observed medians, this tool)
           client   0.481   (PvE damage scales, bin-crawler export)
 
-  Three numbers that should agree do not, and the engine is the outlier. A
-  global multiplier like Fury CANCELS in that ratio, so this is a per-attack
-  baseline question, not a meter question. **Fury cannot be measured until the
-  Radiation Melee per-attack damage is reconciled with the client.** That is the
-  next concrete step, and it is a data question rather than a measurement one.
+  ⚠ Those three are NOT comparable and the first reading of them was retracted
+  the same day: the engine figure is ENHANCED while the client figure is BASE,
+  and in this build Radioactive Smash holds one Nucleolus (+33.2%) against
+  Devastating Blow's three Hecatomb damage pieces (+96.7% post-ED). Compared
+  properly, our base damage is exact — 74.1 and 154.2 are the client's 1.48 and
+  3.08 scales × a table factor of 50.07/50.06, and the base ratio IS 0.481.
+
+  ⚠ WHAT ACTUALLY BLOCKS FURY: only two attacks isolate cleanly, and two points
+  cannot separate a multiplier from a flat term. Solving expected×F + C =
+  observed across both yields F≈0.995, C≈48.9 with no degrees of freedom left to
+  check it — that is fitting, not measuring. **The next step is a THIRD clean
+  single-target attack**, i.e. farm logs from a Brute whose rotation carries
+  three or more of them. This character's rotation is nearly all AoE.
 
 Run: python tools/measure_fury_residual.py
 """
