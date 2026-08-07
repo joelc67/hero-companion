@@ -1,6 +1,25 @@
 # Resume point — 2026-08-07 (new session starts here)
 
-## ✅ SESSION COMPLETE — 2026-08-07. Tour walk finished.
+## 🚀 RELEASED v0.12.33 — 2026-08-07 22:35Z, "Knowing what to do next"
+
+**Build stamp `898653a`. Signed CN=Joel Andrew Chambers, API-verified, both
+assets. Installed copy mirrored + relaunched; its header reads 0.12.33.**
+Data **2026.1.1242** and model **v38** BOTH unchanged, so no certified score
+moved and no re-cert is owed — the single data edit (Tactical Arrow's
+`Gymnastics`) has zero champion exposure, counted not assumed.
+Release procedure followed in order; both frozen smokes PASS, gold 24/24 SERVED.
+⚠ **The build was rebuilt AFTER committing the version bump** — the first build
+stamped `4d4bae2-dirty`, and a dirty stamp defeats tracing a bug report to a
+build. Commit the bump, then build.
+
+**▶ JOEL'S HAND, POST-RELEASE**
+1. **FP / whitelist submissions** for the new signed artifacts, per
+   `docs/signing-runbook.md`. ⚠ Bitdefender often kills the app on release
+   nights — expect it, verify, relaunch once.
+2. **No announcement post has been written for 0.12.33** (the 0.12.32 one is
+   still unposted too).
+
+## ✅ Tour walk finished (same session, pre-release)
 
 **HEAD: see git. Tracked tree clean, pushed. Dev server stopped. Installed app
 rebuilt at `36926ce` + current statics. Nothing running, nothing scheduled.**
