@@ -588,11 +588,22 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   lets it accept what it accepts). **Four exclusions, and the client's
   accepted-category vocabulary is the evidence:** across 3,650 powersets there is
   no resistance-debuff, no −regeneration and no −damage category, because those
-  enhancements do not exist. **RechargeTime is excluded for a different reason** —
-  that aspect is recharge REDUCTION on the power itself. ⚠ **OPEN:** in game a
-  −recharge debuff rides Slow enhancements; we do NOT claim that without pinning
-  it, so −recharge is UNDER-credited (errs against our own claim, house
-  convention). ⚠⚠ **The re-cert question was TRACED, not assumed:**
+  enhancements do not exist. **RechargeTime was excluded at first** on my guess
+  that a −recharge debuff rides Slow enhancements. ✅ **THAT GUESS WAS WRONG AND
+  THE ITEM IS CLOSED** (`6b503c0c`, 2026-08-05, Joel: "lets give recharge its
+  accreditation"). The client settled it: `Crafted_Curtail_Speed_A`, a Slow IO,
+  enhances RunningSpeed/FlyingSpeed/JumpingSpeed + Accuracy and **no
+  RechargeTime**, so Slow is not the route; Neurotoxic Breath's −recharge is
+  `attribs ['RechargeTime'], aspect Strength` and its `boosts_allowed` includes
+  **Recharge**, as do Speed Boost and Accelerate Metabolism pointing the same
+  template at allies. A **Recharge** enhancement therefore scales a power's
+  recharge effects in BOTH directions, exactly as Damage scales damage.
+  `RechargeTime` is in `_ENH_BY_NAME`; verified live 2026-08-06 — Neurotoxic
+  Breath reads **−81.2% unslotted → −102.6% slotted**.
+  ⚠⚠ **This bullet still said "OPEN / under-credited" a day after the fix
+  shipped, and it cost a later session real time chasing finished work.** It is
+  the exact stale-entry trap the top of this file warns about: when you close
+  something, close it HERE in the same commit. ⚠⚠ **The re-cert question was TRACED, not assumed:**
   `first_principles._deb()` reads `role_output.enhanced_debuff_totals` whenever a
   role_output module is supplied and EVERY serving call site supplies one — this
   summary is only its fallback, role_output was untouched, and encounter_value is

@@ -37,8 +37,10 @@ from Joel's review after it). Data 2026.1.1242 and model v38 both unchanged in
    good build; confirm the next few scheduled renders still publish cleanly.
 
 **▶ MINE AND UNBLOCKED, in the order I would take them**
-- **Pin the −recharge-debuff question game-first** (it rides Slow enhancements in
-  game; until pinned we under-credit on purpose). Pure investigation, no ruling.
+- ~~Pin the −recharge-debuff question~~ **ALREADY DONE — `6b503c0c`, 2026-08-05.**
+  The Slow hypothesis was disproven by the client and Recharge is credited in
+  both directions; verified live (Neurotoxic Breath −81.2% unslotted → −102.6%
+  slotted). This line was stale and sent a session chasing finished work.
 - **Fury meter + Power Boost as ONE piece** — the client shows Power Boost is a
   `Set_Mode`, not the flat bonus it was queued as. Zero champion exposure. Only
   the displayed-damage half needs Joel.
@@ -420,12 +422,13 @@ post-ED enhancement in the aspect of the effect's name.
   answered by its own slots.
 - **Four exclusions, the game's own:** across 3,650 powersets the client ships no
   resistance-debuff, no −regeneration and no −damage category, because those
-  enhancements do not exist. RechargeTime is excluded separately — that aspect is
-  recharge REDUCTION on the power itself. ⚠ **OPEN:** in game a −recharge debuff
-  rides Slow enhancements; that is NOT claimed here without pinning it, so a
-  −recharge debuff is currently UNDER-credited. Pin it game-first when convenient.
+  enhancements do not exist. RechargeTime was excluded separately at first, then
+  ✅ **CREDITED the next day (`6b503c0c`)** — the Slow hypothesis was wrong and
+  the client settled it (a Slow IO carries no RechargeTime; the −recharge
+  template's own `boosts_allowed` includes Recharge).
 - Measured (Poison/Sonic): Envenom −Def **68.8 → 106.3**, Neurotoxic Breath Slow
-  **768.8 → 1099.3**; −res / −regen / −damage / −recharge do not move at all.
+  **768.8 → 1099.3**; −res / −regen / −damage do not move at all. −recharge DOES
+  move as of `6b503c0c`: Neurotoxic Breath **−81.2% → −102.6%**.
 - **NO MODEL BUMP, NO RE-CERT — traced, not assumed.** `first_principles._deb()`
   reads `role_output.enhanced_debuff_totals` whenever a role_output module is
   supplied and every serving call site supplies one, so this summary is only its
