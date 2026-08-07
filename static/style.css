@@ -344,6 +344,33 @@ select, input, textarea, button {
 button { cursor: pointer; background: var(--accent); color: #06121f; font-weight: 600; border: none; }
 button:hover { filter: brightness(1.08); }
 button:disabled { opacity: .5; cursor: not-allowed; }
+/* ⚠⚠ ONE SIZE FOR ACTION BUTTONS (Joel, 2026-08-06: "this button looks
+   ridiculous, taking up the entire width of the screen... make all similar
+   buttons a similar theme and more easily useable across the entire tool. I
+   don't want any changes that would break layout").
+   THE CAUSE is three lines above: `select, input, textarea, button` get
+   width:100%, which dates from when all of this lived in a 340px rail. It was
+   invisible until the Powers & Slots side bar was removed on 2026-08-06 and the
+   Build Assistant went full width. Measured at his window: the solve button was
+   1151px.
+   ⚠ A CAP, NOT width:auto — and that choice is the whole safety argument. In any
+   container NARROWER than the cap a button still fills it, so every narrow
+   surface renders exactly as before and only the absurd case changes. Flipping
+   to width:auto would resize buttons on every surface at once, which is the
+   layout break he asked me not to cause.
+   420px is measured, not chosen: the longest label this app can produce
+   ("Re-slot everything except your 24 locked powers (instant)") is 395px, so
+   nothing wraps. Every primary action lands on the same width, which is the
+   "similar theme" part.
+   ⚠ VERIFIED BEFORE SHIPPING: with every fold open across all four tabs, the
+   wizard, and all four entry modes, the ONLY buttons over 420px were the solve
+   button and the .assess-route rows below. */
+button { max-width: 420px; }
+/* ROW CONTROLS are the app's OTHER button family and stay full width by design:
+   they read ACROSS — a label, its consequences, and an action at the end — like
+   a table row rather than a button. Capping one would squash the very thing it
+   exists to show. */
+.cmd-row, .assess-route { max-width: none; }
 details { margin: 8px 0; }
 summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 /* ⚠ NO SIDEWAYS SCROLLING IN A DROP-DOWN (Joel, 2026-08-04: "the end user will

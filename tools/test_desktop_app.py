@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 132          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 134          # coverage denominator — hard-fail if a check silently skips
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement;
 #                        82 -> 88, 2026-08-05: portable-vs-installed detection
@@ -33,6 +33,8 @@ EXPECTED = 132          # coverage denominator — hard-fail if a check silently
 #                        card is open, and the two panels that left it;
 #                        126 -> 128, same day: the slot invitation is a
 #                        claim about the build, not a decoration;
+#                        132 -> 134, same day: action buttons are capped and
+#                        the row-control family is opted out of that cap;
 #                        129 -> 132, same day: JS scrolling obeys
 #                        prefers-reduced-motion (CSS cannot override it);
 #                        128 -> 129, same day: the stats side column holds to
@@ -711,6 +713,22 @@ def main():
     check("showAbout only honours a STRING focus",
           'typeof focus === "string" ? focus : _ABOUT_FOCUS' in app_js,
           "negative control: a MouseEvent must not be read as a mode")
+
+    # ── 12c. ACTION BUTTONS HAVE ONE SIZE (Joel, 2026-08-06: "this button looks
+    # ridiculous, taking up the entire width of the screen"). The global
+    # `select, input, textarea, button { width: 100% }` dates from the 340px-rail
+    # era; when the Assistant went full width the solve button became 1151px.
+    # A max-width caps it without touching any container narrower than the cap,
+    # which is why nothing else moved (measured: 1 of 246 buttons changed).
+    check("action buttons are capped, not stretched",
+          "button { max-width: 420px; }" in css_all,
+          "a cap leaves narrow containers untouched; width:auto would not")
+    # ⚠ The row controls are the OTHER button family — a label, its consequences
+    # and an action, read across like a table row. Capping one squashes the thing
+    # it exists to show, so they opt out explicitly.
+    check("...and the row controls opt out of it",
+          ".cmd-row, .assess-route { max-width: none; }" in css_all,
+          "negative control: without this the command rows and route rows squash")
 
     # ── 12b. REDUCED MOTION REACHES THE JS SCROLLS (2026-08-06). The stylesheet
     # has had a prefers-reduced-motion block for a while, and it sets
