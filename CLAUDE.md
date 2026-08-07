@@ -867,6 +867,40 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   standing ruling (a meter has no headline number without a scenario).
   ✓ **Champion exposure is ZERO** — no certified build holds Power Boost — so
   whenever this lands it cannot move a certified score, and needs no re-cert.
+- **🪪 THE ALIAS MAP LEARNED THE DISPLAY NAME, AND THE RUNG THAT MATTERS IS
+  "TWO OF OURS WANT ONE OF THEIRS" (2026-08-07).** `build_power_aliases.py`
+  matched on internal names, fuzzy names and scalar fingerprints — three rungs,
+  none of which is the namespace both sides actually share. Adding a
+  **unique display-name match inside the candidate sets** (the same rung
+  `patch_prereq_counts.resolve` already had) took roster diffs **12 → 3** and
+  changed **zero existing aliases** (proven by diffing the map with the rung
+  disabled: 164 → 173, none changed, none lost). The 3 that remain are real
+  roster differences and are now each **named with their evidence** in
+  `ROSTER_DIFF_DISPOSITIONS`, with a **hard fail both ways** — an
+  undispositioned diff fails, and a disposition left behind after a fix fails
+  too (Joel's "knowing all, not just most").
+  ⚠⚠ **The collision rung found a defect nothing else could see, and it is
+  OPEN — Joel's ruling.** Blaster **Tactical Arrow shows "Oil Slick Arrow"
+  twice and never shows "Gymnastics"**: our `Gymnastics` record holds the
+  client **Quickness** record's effects (+25% defence on all 11 vectors,
+  `Melee_Buff_Def`, plus RechargeTime 0.2 — that is the Gymnastics passive)
+  while wearing client **Gymnastics'** display name AND header, so the passive
+  is priced at Oil Slick's **90s recharge and 15.6 endurance** instead of 10s
+  and 0.13. Our separate `Oil_Slick_Arrow` record is the genuine click and
+  pairs correctly. **A display check passes it** (both sides say "Oil Slick
+  Arrow") and **a scalar check passes it** (the header matches its name-pair
+  exactly) — only two-of-ours-wanting-one-of-theirs sees it. ✓ **Champion
+  exposure is ZERO**, so nothing is owed; but fixing it edits a shipped
+  power's endurance and recharge, which is a data ruling. Battery
+  `tools/test_display_name_collisions.py` (3,727 pickable powers, 1 allowed
+  collision, hard-fails on a new one AND on an allowlist entry left behind,
+  two sabotages).
+  ⚠ **Retracted mid-investigation, recorded so the shape is visible:** I first
+  read this as the exact-name rung mis-pairing our Gymnastics passive to the
+  client's Oil Slick click, and swept for it. **The sweep found 0 of 5,659
+  exact-name pairs disagreeing on display name** — because our record's display
+  is itself wrong, the two agree by accident. A names-only detector cannot find
+  a names problem.
 - **🔒 A `pv_mode: 2` ROW IS A PvP VARIANT, NOT A DATA DEFECT — and 189 of them
   were sitting in the reconciliation residue (closed 2026-08-07).** The "8
   irreducible Chrono_Shift rows", queued since 2026-07-28 as *"values match

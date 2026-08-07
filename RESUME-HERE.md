@@ -95,8 +95,14 @@ from Joel's review after it). Data 2026.1.1242 and model v38 both unchanged in
   (`pv_mode 2`), exactly 5.33× the client's own timed heal scales on all four AT
   variants. Gated off in PvE, proven live. The census instrument gained the
   class it was missing: residue 240 → 184. See CLAUDE.md.
-- Leveling Companion batch · pricing #31 · alias-map roster reconciliation ·
-  strict-dominance experiment (optional).
+- ~~alias-map roster reconciliation~~ **CLOSED 2026-08-07** — a display-name
+  rung took roster diffs 12 → 3 with zero existing aliases changed; the 3 left
+  are real roster differences, each named with its evidence and hard-failed if
+  left undispositioned. ⚠ **It surfaced one OPEN defect that is Joel's ruling:
+  Blaster Tactical Arrow shows "Oil Slick Arrow" twice and never "Gymnastics"**
+  — see CLAUDE.md. Zero champion exposure, so nothing is owed.
+- Leveling Companion batch · pricing #31 · strict-dominance experiment
+  (optional).
 
 **▶ JOEL'S, UNCHANGED** — github.com/settings/billing (inbox runner block, both
 workflows stay `disabled_manually`) · the Iron Man badge look · the gaming box,

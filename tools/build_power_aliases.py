@@ -12,17 +12,35 @@ Matching, in order (universal — no per-set hand cases except the RENAMES table
      roster overlap + set-name similarity (tie-break keeps AT variants honest:
      Def_Flame_Mastery -> DEFENDER_Fire_Mastery, not Corruptor_).
   2. exact power basename within the aliased set.
+  2b. DISPLAY-NAME identity inside the candidate sets (added 2026-08-07). Our
+     internal names are Mids-derived, the client's are historical and REUSED, so
+     the player-facing name is the one thing both sides agree on. Same rung as
+     patch_prereq_counts.resolve. It only fires on a UNIQUE unclaimed hit.
   3. explicit RENAMES (documented one-offs the fuzzy pass can't safely reach).
   4. fuzzy basename (difflib >= 0.72) against client powers we don't already hold.
 Everything unmatched is classified: inherents (the snapshot omits them) or
 ROSTER DIFFS (ours-only powers = stale-roster candidates, the open data question).
 
-Output sections: aliases / inherents_not_in_snapshot / roster_diffs.
-reality_check_powers.py consumes all three.
+⚠ NAME COLLISIONS are the rung nobody had, and the first run found a real
+defect nothing else could see. Two of our powers reaching the SAME client
+record means one of them is mislabelled, and neither a name check nor a
+display check can catch it alone: our Tactical Arrow `Gymnastics` record holds
+the client Quickness record's effects (the +25%-to-every-vector defence passive
+the game calls Gymnastics) while wearing client Gymnastics' display name AND
+header — so the set shows "Oil Slick Arrow" twice, never "Gymnastics", and the
+passive carries Oil Slick's 15.6 endurance and 90s recharge instead of 0.13 and
+10s. A display-name check passes it (both sides say "Oil Slick Arrow"); a
+scalar check passes it (the header matches its name-pair exactly). Only "two of
+ours want one of theirs" sees it. Reported, never auto-resolved: which side is
+wrong is a data ruling.
+
+Output sections: aliases / inherents_not_in_snapshot / roster_diffs /
+name_collisions. reality_check_powers.py consumes the first three.
 
 Run:  python tools/build_power_aliases.py
 """
 import difflib
+import glob
 import json
 import os
 import re
@@ -36,6 +54,8 @@ import server as srv  # noqa: E402
 
 SNAP = os.path.join(os.path.dirname(__file__), "gamedata", "power_values.json")
 OUT = os.path.join(os.path.dirname(__file__), "gamedata", "power_aliases.json")
+EXPORTS = os.path.join(os.path.dirname(__file__), "gamedata", "bin-crawler",
+                       "out_full")
 
 # Documented one-off renames (same power, name too different for fuzzy):
 # * Mids named MM Radiation Emission's heal after the SET; the client calls it
@@ -75,12 +95,61 @@ RENAMES = {"Mastermind_Buff.Radiation_Emission.Radiation_Emission":
            "Peacebringer_Defensive.Luminous_Aura.Quantum_Acceleration"}
 
 
+# The residue, each named with the evidence (Joel's "knowing all, not just most"
+# rule — an undispositioned diff is a hard failure, never a shrug). These are
+# genuine ROSTER differences, not naming: the powers exist on both sides but are
+# attached to different records, so aliasing them would hide a real question.
+ROSTER_DIFF_DISPOSITIONS = {
+    "Mastermind_Pets.Alpha_Wolf_2.Growl":
+        "TIER SWAP: the client puts Growl on Alpha_Wolf_3 and Howl on _2; we "
+        "have them the other way round. Same power either way — scalars are "
+        "identical on both sides (45s / 1.6 cast / 13 end / 15 radius), so this "
+        "is placement across the two henchman upgrade tiers, not a value gap.",
+    "Mastermind_Pets.Alpha_Wolf_3.Howl":
+        "TIER SWAP, the other half of the pair above. Scalars agree except cast "
+        "3.67 vs the client's 1.67 — one digit, ordinary drift for sync.",
+    "Mastermind_Summon.Beast_Mastery.Pack_Mentality":
+        "DIFFERENT RECORD: the client carries Pack Mentality under "
+        "Temporary_Powers with radius 60 and two effect templates; ours sits in "
+        "Beast_Mastery with radius 30 and no effects at all. Not a rename — the "
+        "two records do not describe the same thing, so it stays a question.",
+}
+
+
 def squash(s):
     return re.sub(r"[^a-z0-9]", "", (s or "").lower())
 
 
+# The display name is the only namespace both sides share, so it is compared
+# squashed: "Assassin's Whisper" and "Assassins Whisper" are the same power.
+_norm_disp = squash
+
+
+def client_display_index():
+    """{client full_name -> squashed display name} from the bin-crawler export.
+
+    The value snapshot (power_values.json) carries scalars only, and the whole
+    point of this rung is the name the PLAYER sees, so it has to come from the
+    full export. Missing export = an empty index, which simply disables the
+    rung rather than crashing the map."""
+    out = {}
+    for fp in glob.iglob(os.path.join(EXPORTS, "**", "*.json"), recursive=True):
+        if os.path.basename(fp).startswith("_"):
+            continue
+        try:
+            rec = json.load(open(fp, encoding="utf-8"))
+        except Exception:                                        # noqa: BLE001
+            continue
+        for r in (rec if isinstance(rec, list) else [rec]):
+            if isinstance(r, dict) and r.get("full_name"):
+                out[r["full_name"]] = _norm_disp(r.get("display_name"))
+    return out
+
+
 def main():
     snap = json.load(open(SNAP, encoding="utf-8"))
+    client_disp = client_display_index()
+    print(f"client display-name index: {len(client_disp)} records")
     player = set()
     for groups in srv.POWERSETS["by_archetype"].values():
         for kind in ("primary", "secondary", "epic"):
@@ -137,6 +206,19 @@ def main():
             if hit:
                 aliases[ours_full] = f"{hit}.{b}"
                 continue
+            # DISPLAY-NAME identity: the one namespace both sides share.
+            ours_disp = _norm_disp((srv.POWER_BY_FULL.get(ours_full) or {})
+                                   .get("display_name"))
+            if ours_disp:
+                claimed = set(aliases.values())
+                dhits = [f"{c}.{cb}" for c in cand_names for cb in snap_sets[c]
+                         if f"{c}.{cb}" not in claimed
+                         and client_disp.get(f"{c}.{cb}") == ours_disp]
+                if len(dhits) == 1:
+                    aliases[ours_full] = dhits[0]
+                    print(f"    display: {b} -> {dhits[0].rsplit('.', 1)[1]}"
+                          f"  (both show {ours_disp!r})")
+                    continue
             best, best_r, best_set = None, 0.0, None
             for c in cand_names:
                 for cb in snap_sets[c] - ours_roster:
@@ -189,16 +271,50 @@ def main():
                 print(f"    CANDIDATE (needs adjudication): {b} -> {cand}")
             roster_diffs.append(ours_full)
 
+    # NAME COLLISIONS. Every player power that reaches a client record does so
+    # either by alias or by having the same full_name; two of ours reaching ONE
+    # of theirs means one of our records is mislabelled. See the header note.
+    reached = defaultdict(list)
+    for p in sorted(player):
+        target = aliases.get(p) or (p if p in snap else None)
+        if target:
+            reached[target].append(p)
+    collisions = {t: sorted(v) for t, v in reached.items() if len(v) > 1}
+    if collisions:
+        print(f"\n⚠ {len(collisions)} NAME COLLISION(S) — two of ours want one "
+              f"client record, so one of ours is mislabelled:")
+        for t, v in sorted(collisions.items()):
+            print(f"    client {t}")
+            for p in v:
+                d = (srv.POWER_BY_FULL.get(p) or {}).get("display_name")
+                print(f"       ours {p}  (shows {d!r})")
+
+    undisposed = [p for p in sorted(roster_diffs)
+                  if p not in ROSTER_DIFF_DISPOSITIONS]
+    if roster_diffs:
+        print(f"\nroster diffs ({len(roster_diffs)}), each with its disposition:")
+        for p in sorted(roster_diffs):
+            print(f"    {p}\n       {ROSTER_DIFF_DISPOSITIONS.get(p, '*** UNDISPOSITIONED ***')}")
+    stale_disp = [p for p in ROSTER_DIFF_DISPOSITIONS if p not in roster_diffs]
+
     total = sum(len(v) for v in unverified.values())
     print(f"\naliased: {len(aliases)}  inherents: {len(inherents)}  "
           f"roster diffs: {len(roster_diffs)}  (classified {len(aliases) + len(inherents) + len(roster_diffs)} of {total})")
     json.dump({"aliases": aliases,
                "inherents_not_in_snapshot": sorted(inherents),
                "roster_diffs": sorted(roster_diffs),
+               "name_collisions": collisions,
                "rename_candidates_awaiting_adjudication": rename_candidates},
               open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"wrote {OUT}")
+    for p in undisposed:
+        print(f"HARD FAIL: roster diff {p} has no disposition — name it in "
+              "ROSTER_DIFF_DISPOSITIONS with its evidence, or alias it")
+    for p in stale_disp:
+        print(f"HARD FAIL: {p} is dispositioned but is no longer a roster diff "
+              "— drop its entry in the same change that resolved it")
+    return 1 if (undisposed or stale_disp) else 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
