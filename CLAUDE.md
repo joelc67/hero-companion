@@ -1215,6 +1215,59 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   120s Spirit Drain can) is this same gap seen from the gameplay side — our
   picker scores both at 19.0 because with no magnitude and no uptime the only
   lever left is a name in a list.
+- **🛡 DEFENCE DEBUFF RESISTANCE — 178 POWERS, AND THE SCORER ASSUMED NOBODY HAS
+  ANY (v41, 2026-08-08, `39cd0872` + `7e9c1fdf`).** Every defence armour set
+  grants it and the game says so in its own words: Agile prints *"Auto: Self
+  +DEF(Ranged), Res(DeBuff DEF)"*, Tough Hide *"+RES (Debuff DEF)"*. We carried
+  the +DEF half and none of the other. `first_principles` has applied incoming
+  −def pressure since v10 under the comment *"a squishy has ZERO defense-debuff
+  resistance"* — **true of every build it could see, because DDR is
+  power-granted ONLY (the game ships no DDR set bonus)**, so Super Reflexes took
+  a Blaster's haircut. ⚠ **This one needed no ruling from Joel, and that is what
+  made it different from mez and slow: the incoming pressure term already
+  existed** — only the resistance was missing. Measured: Agile 6.92%, five SR
+  powers 48.44%, Tough Hide 25%, capped at the game's 95%. ⚠ **aspect is the
+  whole filter again** — aspect=Strength `Base_Defense` templates are the Alpha
+  boost DEFINITIONS. ⚠ **Clicks are duty-cycled**: Elude is 34.6% for 180s on a
+  1000s recharge = 6.23% sustained, via v39's `mode`/`host_recharge`.
+  ⚠⚠ **Reusing that flag exposed a latent bug worth remembering: the v39 mode
+  dedup keyed on `(scale, duration, stack)` with NO effect name.** One family
+  made it unambiguous; a second makes it a silent swallow. Fixed at the key.
+  Exposure counted: 9 of 24 contexts; **union with v39 (13) and v40 (8) = 17**.
+- **🗂 EVERY EFFECT FAMILY IS CLASSIFIED, AND A REAL GAP IS PINNED RATHER THAN
+  DISPOSITIONED (`37cbade5`, 2026-08-08).** `reality_check_effect_coverage.py`
+  hard-failed on 104 families; residue is now ZERO. Four outcomes, and the
+  third is the point: **SOURCE_EXCLUSIONS** (counted and printed — the
+  Alpha/Genesis/Hybrid boost tables are ENHANCEMENT definitions whose attribs
+  are aspects, not effects a power applies; pet records carry the pet's own
+  model), **DISPOSITIONS** (42, each citing its ruling), **OPEN_GAPS** (20 real
+  defects, each with its power count **pinned so it fails in BOTH directions** —
+  grown = a new defect wearing an old name, shrunk = an entry someone forgot to
+  remove; the prereq-baseline contract), and residue = hard fail.
+  **⚠ A real gap must never be dispositioned into silence, and must never
+  hard-fail forever either — that is how a check gets switched off.**
+  ⚠⚠ **RULE 5, the 121-phantom-debuffs lesson in a second coat: TRANSLATE THE
+  VOCABULARY, not just the case.** Ours says `AoE` and `Negative` where the
+  client says `Area` and `Negative_Energy`; Cloaking Device carries all eleven
+  defence vectors and still reported two missing.
+- **⚠⚠ 877 OF OUR POWERS HOLD ZERO EFFECT ROWS WHILE THE CLIENT POPULATES THEM
+  (found 2026-08-08, the next real piece of the audit).** Radiation Armor's
+  **Gamma Boost** prints *"Auto: Self +Regen, +Recovery, Special"* and our
+  record carries **nothing at all**; so do **Master Brawler** (SR's whole absorb
+  sustain), **Active Defense** and **Smoke Flash**, every **Taunt**, and the
+  Staff Fighting **Forms**. 339 Incarnate / 103 Inherent / 152 pet / the rest
+  real player powers. **This is a CLASS, not a family** — the coverage check
+  only sees the corner of it that shows as a missing family. ⚠ Related and
+  named: **Absorb is not modelled ANYWHERE** (the engine has no branch, only an
+  enhancement aspect of that name), so absorb shields are invisible.
+- **⚠ FOUR MORE RESISTANCE FAMILIES ARE REAL AND BLOCKED EXACTLY AS `mez_in` IS
+  (2026-08-08).** ToHit-debuff resistance (13 powers — Obscure Sustenance,
+  Fallout Shelter, Combat Training: Offensive), endurance-drain resistance (8 —
+  Inexhaustible, Murky Cloud), regeneration-debuff resistance (7), recovery-
+  debuff resistance (3). Each is the same shape as DDR **except that no scenario
+  carries that incoming pressure**, so there is nothing to resist and landing
+  the data would be inert. One scenario number each, or one ruling for the
+  class — Joel's, like `mez_in` and `kb_in`.
 - **⚠ TARGET-CAP / RADIUS DRIFT IS MOSTLY NOT DRIFT — NEVER BLANKET-SYNC IT
   (2026-08-07, `tools/patch_drain_target_caps.py`).** Sweeping our powers
   against the client finds **205 max_targets and 265 radius disagreements over

@@ -1,3 +1,68 @@
+# Resume point - 2026-08-08 (later), the families are classified
+
+## STATE
+HEAD pushed, tracked tree clean. Nothing running, nothing scheduled. Data
+**2026.1.1242**. Models now **v39 · v40 · v41**, none re-certified.
+
+## WHAT THIS PASS DID
+The coverage check hard-failed on 104 families. **Residue is now ZERO**, and the
+largest family in the client export was a real bug.
+
+- **v41: DEFENCE DEBUFF RESISTANCE, 178 powers** (`39cd0872`, `7e9c1fdf`). The
+  game says it in its own words - Agile prints "Res(DeBuff DEF)". The scorer has
+  applied incoming -def pressure since v10 under the comment "a squishy has ZERO
+  defense-debuff resistance", and that was true of every build it could see
+  because DDR is power-granted only. Super Reflexes took a Blaster's haircut.
+  **Needed nothing from you** - the pressure term already existed. Measured:
+  Agile 6.92%, five SR powers 48.44%, Tough Hide 25%, Elude 6.23% (duty-cycled,
+  180s on a 1000s recharge), negative control 0.0.
+- **Every other family classified** (`37cbade5`): 269 template instances
+  source-excluded (Alpha/Genesis boost DEFINITIONS are enhancement records, not
+  powers; pet records), 42 dispositioned with the ruling behind each, **20 real
+  gaps PINNED by power count** so they can neither go quiet nor hard-fail
+  forever. The pin fails BOTH ways - grown means a new defect, shrunk means a
+  stale entry.
+
+## RE-CERT SCOPE, counted from the artifact
+v39 **13** · v40 **8** · v41 **9** → **UNION 17 of 24**. (The 13 and 8 reproduce
+the earlier handoff exactly, which is what makes the 9 trustworthy.) One wave
+over the union, and only after the queue below is settled.
+
+## OPEN - JOEL'S
+1. **`mez_in`** - unchanged, and it now blocks FOUR more families: ToHit-debuff
+   resistance (13 powers), endurance-drain resistance (8), regen-debuff (7),
+   recovery-debuff (3). All real, all the same shape as DDR, all inert because
+   **nothing applies that pressure in any scenario**. One scenario number each,
+   or one ruling covering the class.
+2. **Fury** - a Brute farm log with 3+ single-target attacks.
+
+## OPEN - MINE, IN ORDER (the check now names all of these)
+3. **877 powers hold ZERO effect rows while the client populates them.** Gamma
+   Boost prints "Auto: Self +Regen, +Recovery, Special" and carries NOTHING; so
+   do Master Brawler, Active Defense, Smoke Flash, every Taunt, the Staff
+   Fighting Forms. This is the next real piece, and it is a class, not a family.
+4. **Absorb is not modelled anywhere** (no engine branch) - Particle Shielding
+   and Master Brawler are invisible. A term is owed.
+5. **Three data-only fixes on axes that already exist:** +Accuracy on Terra
+   Firma and Combat Training: Offensive, Field Medic's +Heal strength.
+6. **Power Boost `Set_Mode`** (143 powers; the v39 mode machinery exists).
+7. The 8 gated-only powers · ~460 unclassified cap/radius rows · knockback
+   protection (now visibly the same class as DDR and slow resist).
+
+## TRAPS ADDED THIS PASS
+- **Translate the VOCABULARY, not just the case.** Ours says `AoE` and
+  `Negative` where the client says `Area` and `Negative_Energy`; Cloaking Device
+  carries all eleven defence vectors and still reported two missing. The
+  121-phantom-debuffs lesson in a second coat.
+- **A champion's picks live at `champion["picks"]`,** not `["build"]["powers"]`.
+  My first exposure count read 0 of 24 for a 178-power family. Counting v39 and
+  v40 with the same probe and reproducing the known 13 and 8 is what proved it.
+- **`/build/calculate` wants `Class_Scrapper` and `slots: [None]`.** With the
+  wrong payload shape every number reads 0.0, including the ones that work.
+  Read a known-good axis in the same probe or you cannot tell whose bug it is.
+- **A second family carrying v39's `mode` flag exposed a latent dedup bug** -
+  the key was (scale, duration, stack) with no effect name. Fixed at the key.
+
 # Resume point - 2026-08-08 (Saturday), the game-knowledge audit
 
 ## STATE
