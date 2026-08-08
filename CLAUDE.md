@@ -1318,6 +1318,45 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   battery measured no movement** — the general lesson being that a fresh
   measurement across an old code path is how dead lookups surface.
   ⚠ It widened the re-cert union from 17 to **20 of 24**.
+- **📐 THE MAGNITUDE IS NOT ALWAYS IN THE SCALE — EVERY CLIENT TEMPLATE CARRIES
+  A `magnitude_expression` (found 2026-08-08, `a2451a1b`).** For 226 player
+  powers the real number lives in an RPN expression, not the table scale. Bio
+  Armor's Ablative Carapace is `Max.kHitPoints source> 0.3 * @Strength *` =
+  **30% of your max HP**, which is exactly why its scale is a bare `1.0` and why
+  it had been pinned as *"units unknown — a literal 1.0 cannot be one hit
+  point"*. It was never unknown; the field had not been read.
+  **The class splits in two and the split is the whole finding:**
+  **MAX-HP-PROPORTIONAL (10 powers) needs NO scenario input** and is modelled —
+  Ablative Carapace 30% ×5, Parasitic Aura 10% ×4, Parasitic Leech 14.3%
+  (Scrapper 401.7 HP of 1339, Tanker 562.2 of 1874). **HEALTH-DEPENDENT (13
+  powers) is decoded and PINNED** — SR's scaling resistance is 20% at zero HP
+  falling to nothing at 60%, and Gamma Boost's regen and recovery run in
+  OPPOSITE directions off the same bar. The only missing input is an operating
+  health, a scenario constant of the kb_in/mez_in class. ⚠ `@StdResult` resolves
+  to the template's own scale, safe ONLY because those rows sit on Melee_Ones
+  (1.0 for all 15 playable columns — checked, not assumed). ⚠ Magnitudes compute
+  against **BASE hp**, never the boosted pool: `totals["max_hp"]` is still
+  accumulating in that loop and reading it would make the answer depend on power
+  order — the v39 recharge rule again.
+- **⚠⚠ A ZERO-SCALE TEMPLATE *WITH* AN EXPRESSION IS NOT EMPTY — rule 4 was
+  hiding a real family.** "A zero scale carries no magnitude" was written for
+  Defiance's stubs; zero scale PLUS a `magnitude_expression` is exactly how
+  Super Reflexes' scaling resistance is stored. The check requires both now, and
+  the moment it did it surfaced **Defiance's own templates, which must stay OUT
+  of the data because v36 DERIVES them** from cast time and area — a
+  double-count caught within a minute of looking. Computed-magnitude classes are
+  dispositioned by EXPRESSION now: Defiance, the token/meter systems, distance
+  scaling, and the **Fighting-pool cross-boost** (Boxing/Kick/Cross Punch each
+  stronger for owning the others — real, unmodelled, and named rather than
+  invisible).
+- **⚠⚠ 459 CLIENT PLAYER POWERS ARE ABSENT FROM OUR DATA ENTIRELY (found
+  2026-08-08) — a DIFFERENT CLASS from every other gap in this audit.** Whole
+  shipping powersets our Mids-derived snapshot predates: **Wind Control**
+  (Controller + Dominator), **Shock Therapy** (Corruptor, Mastermind,
+  Controller), **Blaster Time Manipulation**, the **Gadgetry** pool. The tool
+  cannot plan them at all. ⚠ **Neither classification check can see this by
+  construction** — both compare only powers we already carry. Probably the
+  largest remaining data gap in the project; how to handle it is Joel's call.
 - **🤝 THE ALLY SIDE WAS NEVER SWEPT, AND `AnyAffected` IS NOT `ALLY`
   (2026-08-08, `4e3f68f9`).** `reality_check_effect_coverage.py` tested
   `target == "Self"` and stopped, so every buff a power places on someone ELSE

@@ -1,3 +1,61 @@
+# Resume point - 2026-08-08 (latest), health-scaling decoded
+
+## STATE
+HEAD pushed, tracked tree clean. Nothing running, nothing scheduled. Data
+**2026.1.1242**. Models **v39-v42**. **Re-cert union stays 20 of 24** - champion
+exposure on today's last two passes is zero.
+
+## WHAT THIS PASS DID (`a2451a1b`)
+**⚠⚠ THE MAGNITUDE IS NOT ALWAYS IN THE SCALE.** Every client template carries a
+`magnitude_expression` in RPN and for 226 player powers that is where the real
+number lives. Ablative Carapace's is `Max.kHitPoints source> 0.3 * @Strength *`
+= **30% of max HP** - which is why its scale is a bare 1.0 and why I pinned it
+as "units unknown" last pass. It was never unknown; nobody had read the field.
+
+- **MAX-HP-PROPORTIONAL (10 powers): landed, no ruling needed.** Ablative
+  Carapace 30% of max HP x5, Parasitic Aura 10% x4, Parasitic Leech 14.3%.
+  Measured: Scrapper **401.7 HP** of 1339, Tanker **562.2** of 1874. Bio Armor's
+  whole absorb sustain existed nowhere before today.
+- **HEALTH-DEPENDENT (13 powers): decoded, PINNED, one number away.** SR's
+  scaling resistance = 20% at zero HP falling to 0% at 60%; Gamma Boost's regen
+  and recovery run in OPPOSITE directions off the same bar. See the ask below.
+- **⚠ Computed against BASE hp**, never the boosted pool - `totals["max_hp"]` is
+  still accumulating in that loop and reading it would make the answer depend on
+  power order (the v39 recharge rule again).
+
+## TWO HOLES CLOSED IN THE CHECKER
+- **Rule 4 hid a real family.** "A zero-scale template carries no magnitude" was
+  written for Defiance - but zero scale PLUS an expression is exactly how SR's
+  scaling resistance is stored. It now requires both.
+- That surfaced **Defiance's own templates**, which must stay OUT of the data
+  (v36 derives them) - a double-count caught within a minute of looking.
+  Dispositioned by expression, with the token/meter, distance and
+  Fighting-pool-cross-boost classes (Boxing/Kick/Cross Punch boost each other -
+  real, unmodelled, now named).
+
+## ⚠⚠ NEW FINDING, DIFFERENT CLASS: 459 CLIENT POWERS WE DO NOT CARRY AT ALL
+Whole shipping powersets are absent from our Mids-derived snapshot: **Wind
+Control** (Controller + Dominator), **Shock Therapy** (Corruptor, Mastermind,
+Controller), **Blaster Time Manipulation**, the **Gadgetry** pool. The tool
+cannot plan them at all. **Neither classification check can see this by
+construction** - they only compare powers we already have. Joel's call on how to
+handle it; it is probably the largest remaining data gap in the project.
+
+## OPEN - JOEL'S, and both are now ONE NUMBER EACH
+1. **`mez_in`** - unblocks 289 powers (self mez 229, ally mez 29, the four
+   debuff-resistance families 31).
+2. **An operating health** for the 13 health-scaling powers. Recommendation:
+   **50%**, because these curves are linear in health and a linear curve's
+   average over the bar is its midpoint value - derived, not invented.
+3. **Fury** - still a Brute farm log with 3+ single-target attacks.
+
+## OPEN - MINE
+- The ally channel (build once for ally mez + ally absorb + ally slow resist).
+- Data-only once a branch exists: +Accuracy on Combat Training: Offensive x2,
+  EnduranceDiscount on Conserve Power x6, Field Medic's +Heal strength.
+- Power Boost `Set_Mode` (143) · gated-only powers (8) · ~460 cap/radius rows ·
+  knockback protection · the Fighting-pool cross-boost.
+
 # Resume point - 2026-08-08 (latest), the ally side is swept
 
 ## STATE
