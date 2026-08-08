@@ -114,8 +114,16 @@ def main():
             "Brute_Defense.Fiery_Aura.Fire_Shield"]
     a = st_dps(base)
     b = st_dps(base + ["Brute_Melee.Fiery_Melee.Build_Up"])
-    ok("INERT: adding Build Up still moves displayed DPS by nothing",
-       a == b, f"without {a}, with {b} - equal until the mode model lands")
+    # v39: this check was the INERTNESS pin and was written to fail the day the
+    # mode model landed. It has, so it now pins the LIVE behaviour instead:
+    # Build Up is +80% on a Brute, up 10s in every 90, so displayed DPS rises by
+    # its honest duty cycle - 8.89%, not 80%.
+    duty = 0.8 * 10.0 / 90.0
+    ok("Build Up raises displayed DPS by its DUTY CYCLE, not its full magnitude",
+       b > a and abs((b / a) - (1.0 + duty)) < 0.01,
+       f"without {a}, with {b} - ratio {b / a:.4f} vs expected {1.0 + duty:.4f}")
+    ok("...and that is far below the full +80% a naive model would have applied",
+       (b / a) < 1.2, f"ratio {b / a:.4f} is nowhere near 1.80")
 
     # 4. The mode facts are ON every row, so no consumer can read it as always-on
     allrows = [e for p in by_name.values() for e in (p.get("self_effects") or [])

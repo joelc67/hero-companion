@@ -299,6 +299,15 @@ def _empty_totals():
         "max_hp": 0.0,
         "tohit": 0.0,
         "accuracy": 0.0,
+        # v39: SELF +DAMAGE STRENGTH. Two shapes share this total and the
+        # difference is the whole point. A TOGGLE's penalty (Granite Armor -30%,
+        # Bio Armor's Defensive Adaptation -25%) is always on, so it lands at
+        # full magnitude. A CLICK's buff (Build Up, Aim, Rage, Soul Drain, Fiery
+        # Embrace) is up for its duration once per recharge, so it lands at
+        # magnitude x duty cycle - the honest reading, which UNDERSTATES what a
+        # player gets by firing it into an alpha, and says so on the label.
+        "damage_buff": 0.0,
+        "damage_buff_parts": [],   # display-only: what made it up, per power
         "heal_strength": 0.0,   # v29: global +Heal strength (set bonuses)
         # v30: the ten back-filled bonus families (patch_empty_bonus_tiers).
         # Multi-attrib game records were expanded per attrib with EQUAL values,
@@ -374,11 +383,19 @@ def _power_totals(build, totals, ctx):
         include = power.get("include_in_totals")
         if include is None:
             include = p.get("power_type") in ACTIVE_POWER_TYPES
-        if not include:
-            continue
         self_fx = p.get("self_effects") or []
         if not self_fx:
             continue
+        # v39 MODE BUFFS. A CLICK is not always-on, so its ordinary self effects
+        # rightly stay out of the totals - but a mode buff IS real for its
+        # duration (Build Up, Aim, Rage, Soul Drain, Fiery Embrace), so those
+        # rows alone are admitted, priced by duty cycle below. A toggle keeps
+        # everything and gets full magnitude, which is what makes Granite
+        # Armor's -30% and Defensive Adaptation's -25% land correctly.
+        if not include:
+            self_fx = [fx for fx in self_fx if fx.get(_MODE_KEY)]
+            if not self_fx:
+                continue
         # sum this power's slotted enhancement values per aspect
         enh_by_aspect = defaultdict(float)
         for slot in power.get("slots", []) or []:
@@ -390,8 +407,29 @@ def _power_totals(build, totals, ctx):
         ed_by_aspect = {}
         for asp, tot in enh_by_aspect.items():
             ed_by_aspect[asp] = apply_ed_sched(ED_SCHEDULE.get(asp, 0), tot, mult_ed)
+        # v39 ⚠ THE GAME'S TEMPLATE IS ONE BUFF ACROSS EIGHT DAMAGE TYPES, and
+        # the back-fill stores it as eight rows (one per type, faithful to the
+        # attribs list). Summing them octuples it - measured: Build Up read
+        # 0.7111 instead of 0.0889. A damage-strength buff is ONE number, so
+        # each distinct (scale, duration) group is counted ONCE per power.
+        # ⚠ And Rage's -999 crash is a 10-second zeroing, not a sustained -999
+        # buff; it is excluded from the scalar and left to the display.
+        _seen_mode = set()
         # apply each self effect: base x (1 + enhancement)
         for fx in self_fx:
+            if fx.get(_MODE_KEY):
+                # ⚠ A NEGATIVE IS NOT AUTOMATICALLY A CRASH. Granite Armor's
+                # -30% and Defensive Adaptation's -25% are sustained toggle
+                # penalties and MUST count; Rage's crash is the -999 sentinel
+                # fired on a `delay` as the buff expires, which is a transient
+                # zeroing and must not. Skipping every negative deleted
+                # Granite (measured: -0.30 -> nothing).
+                if fx.get("delay") or (fx.get("scale") or 0) <= -900:
+                    continue
+                _key = (fx.get("scale"), fx.get("duration"), fx.get("stack"))
+                if _key in _seen_mode:
+                    continue
+                _seen_mode.add(_key)
             if not _pv_ok(fx.get("pv_mode", 0), pvp):
                 continue
             if suppress_mask & (fx.get("suppression") or 0):
@@ -402,6 +440,13 @@ def _power_totals(build, totals, ctx):
             base = fx["scale"] * fx.get("nmag", 1.0) * row[col]
             boost = ed_by_aspect.get(fx["enhance_aspect"], 0.0)
             val = base * (1.0 + boost)
+            # ⚠ ONLY A CLICK GETS THE DUTY CYCLE. A toggle is always on, so its
+            # magnitude is the whole story - applying a cadence to Granite Armor
+            # shrank its -30% to -2.25% (measured) because the template carries a
+            # 0.75s tick against a 10s recharge. `include` is exactly the
+            # always-on test the totals loop already trusts.
+            if fx.get(_MODE_KEY) and not include:
+                val *= _mode_duty_cycle(fx, ed_by_aspect.get("Recharge", 0.0))
             # Active amplifier preview: multiply this effect's contribution
             # when its family is amplified, it is buffable (Mids' per-effect
             # gate), and it isn't the amplifier's own effect (Power Boost
@@ -419,6 +464,33 @@ def _power_totals(build, totals, ctx):
     return {"sources": sorted(power_by_full[f].get("display_name") or f
                               for f in amp_sources),
             "families": {k: round(v, 3) for k, v in amp.items()}}
+
+
+_MODE_KEY = "mode"
+
+
+def _mode_duty_cycle(fx, own_recharge_enh):
+    """v39: how much of the time a CLICK's mode buff is actually up.
+
+    duration / (base recharge / (1 + the power's OWN recharge enhancement)).
+
+    ⚠ HONEST, AND DELIBERATELY AN UNDERSTATEMENT - Joel's ruling. Nobody fires
+    Build Up at random: they fire it into an alpha or a nuke, so the value a
+    player really gets sits ABOVE this number. Pricing that premium would mean
+    inventing a model of how someone plays, which the client cannot settle, so
+    the conservative reading ships and the label says which it is.
+
+    ⚠ GLOBAL recharge is deliberately NOT folded in. totals["recharge"] is still
+    accumulating while this loop runs, so reading it here would make the answer
+    depend on power order - a correctness hazard for a few points of uptime.
+    Own-slotting only, which is order-independent and errs the same way.
+    """
+    dur = fx.get("duration") or 0.0
+    rech = fx.get("host_recharge") or 0.0
+    if dur <= 0 or rech <= 0:
+        return 1.0                      # no cadence stated -> treat as continuous
+    effective = rech / (1.0 + max(0.0, own_recharge_enh))
+    return min(1.0, dur / effective) if effective > 0 else 1.0
 
 
 def _add_power_effect(totals, et, dt, val, base_hp=None):
@@ -445,6 +517,13 @@ def _add_power_effect(totals, et, dt, val, base_hp=None):
         totals["max_hp"] += val
     elif et == "ToHit":
         totals["tohit"] += val
+    elif et == "DamageBuff":
+        # v39. The caller has already applied the duty cycle for a CLICK; a
+        # TOGGLE arrives at full magnitude because it is always on. The game's
+        # own templates list all eight damage types with one scale, so a single
+        # scalar is faithful; Fiery Embrace's extra fire row simply adds more,
+        # which is what the game does.
+        totals["damage_buff"] += val
 
 
 def _incarnate_totals(build, totals, ctx):
