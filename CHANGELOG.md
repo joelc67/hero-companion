@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Three Soul Drain records corrected against the game.** Brute Dark Melee and
+  Corruptor Soul Mastery had Soul Drain capped at 7 targets where the game hits
+  10, and the Dominator version had a 15 foot radius where the game uses 10. No
+  bundled build uses any of them, so no scores move.
+
 ## 0.12.35 — 2026-08-07 — Every set is clickable
 
 Game data is unchanged (Homecoming 2026.1.1242) and the optimizer's model stays
