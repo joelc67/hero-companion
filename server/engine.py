@@ -315,7 +315,13 @@ def _empty_totals():
         # (verified: every slow-resist record carries RechargeTime, every
         # movement record RunningSpeed, every KB record Knockback).
         "kb_protection": 0.0,       # protection POINTS (mag), not a percent
-        "slow_resist": 0.0,         # resists −recharge and −movement debuffs
+        "slow_resist": 0.0,
+        # v41: PROTECTION is a magnitude threshold, RESIST a duration cut -
+        # different axes, never merged. Per mez type; protection is read as a
+        # MINIMUM across types, not a sum (two powers giving 30 each do not
+        # give 60 against a mag-3 hold, they both simply exceed it).
+        "mez_protection": {},
+        "mez_resist": {},         # resists −recharge and −movement debuffs
         "mez_duration": {m: 0.0 for m in MEZ_DURATION_EFFECTS},
         "movement": 0.0,            # own run/fly/jump speed
         "range": 0.0,               # own power range
@@ -517,6 +523,13 @@ def _add_power_effect(totals, et, dt, val, base_hp=None, from_attack=False):
         totals["max_hp"] += val
     elif et == "ToHit":
         totals["tohit"] += val
+    elif et == "MezProtection":
+        # the client stores protection NEGATIVE (-30); magnitude is what the
+        # threshold test needs, so accumulate abs() here. The DATA keeps the
+        # game's sign untouched - only this reader takes the magnitude.
+        totals["mez_protection"][dt] = totals["mez_protection"].get(dt, 0.0) + abs(val)
+    elif et == "MezResist":
+        totals["mez_resist"][dt] = totals["mez_resist"].get(dt, 0.0) + val
     elif et == "SlowResist":
         # v40: POWER-GRANTED slow resistance (Wet Ice, Permafrost, Quickness,
         # Time Lord...). Until now this axis was fed ONLY by IO set bonuses, so
@@ -2221,6 +2234,9 @@ def _to_display(totals, res_cap=RESISTANCE_HARD_CAP, sec_caps=None, ctx=None):
         "bonus_extras": {
             "kb_protection": {"value": round(totals.get("kb_protection", 0.0), 1),
                               "label": "Knockback protection (mag)"},
+            "mez_protection": {"value": round(min(totals["mez_protection"].values())
+                                              if totals.get("mez_protection") else 0.0, 1),
+                               "label": "Mez protection (lowest type)"},
             "slow_resist": {"value": pct(totals.get("slow_resist", 0.0)),
                             "label": "Slow resistance (recharge + movement)"},
             "mez_duration": {m: pct(v) for m, v in
