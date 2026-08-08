@@ -678,6 +678,40 @@ def encounter_value(archetype, powers, ctx, totals, scenario="general", arch_row
     # protection (Acrobatics, armor status toggles) is not in totals yet — armor
     # ATs read as unprotected here; the term UNDERSTATES their builds equally.
     _bx = totals.get("bonus_extras") or {}
+    # ── v41 MEZ PROTECTION - protection-dominant, from a MEASURED distribution ──
+    # Extracted from the client: 931 critter powers / 1,232 templates that mez a
+    # player. Cumulative share of incoming mez at or below a given magnitude:
+    #     <=1 18.2%  <=2 36.1%  <=3 87.6%  <=4 94.1%  <=10 98.4%  <=20 98.9%
+    # Only 14 of 1,232 (1.14%) exceed 20, and those are event records (Goliath
+    # Event Generator, Paladin Event, Rikti Monkey Barrel, Stygian Return).
+    #
+    # ⚠ THE MAGNITUDE IS THE RESOLVED ONE, NOT THE RAW SCALE. The client stores
+    # -30; through Melee_Res_Boolean that is mag 10.4, which is Unyielding's real
+    # in-game protection. Writing this against 30 would have overstated coverage
+    # on every single-toggle build (98.4% is the true figure at 10.4, not 98.9%).
+    # Protection STACKS across powers: Unyielding + Wet Ice = 20.8, measured.
+    #
+    # PROTECTION-DOMINANT, and that is why this differs from kb_protection: KB
+    # protection sits AT threshold 4 where the incoming rate swings the answer,
+    # so kb_in had to be invented. Mez protection clears the mass of the
+    # distribution outright, so a protected build's score does not depend on the
+    # rate at all - the rate only governs the UNPROTECTED share.
+    _MEZ_CDF = ((0.0, 0.003), (1.0, 0.182), (2.0, 0.361), (3.0, 0.876),
+                (4.0, 0.941), (10.0, 0.984), (20.0, 0.989), (1000.0, 1.0))
+    mez_prot = (_bx.get("mez_protection") or {}).get("value") or 0.0
+    _stopped = _MEZ_CDF[0][1]
+    for _mag, _share in _MEZ_CDF:
+        if mez_prot >= _mag:
+            _stopped = _share
+    # ⚠ mez_in IS DELIBERATELY UNSET AND THE TERM IS INERT UNTIL IT IS RULED ON.
+    # How often content tries to mez you is server-side and situational: it is in
+    # no bin, and 43 MB of archived logs carry 14 mez-shaped lines, so it can be
+    # neither extracted nor measured. Absent a rate this multiplies by 1.0 and
+    # changes nothing - the machinery and the measured CDF are correct and in
+    # place, and the ONE missing input is a number only Joel can set, the way
+    # kb_in was set PROVISIONAL at v30.
+    availability *= 1.0 - sc.get("mez_in", 0.0) * (1.0 - _stopped)
+
     kb_prot = (_bx.get("kb_protection") or {}).get("value") or 0.0
     availability *= 1.0 - sc.get("kb_in", 0.0) * (1.0 - min(kb_prot / 4.0, 1.0))
 
