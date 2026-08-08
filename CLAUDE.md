@@ -347,6 +347,21 @@ them from a parse without the same standard of proof.
   badge 'is not defined at this time', the game badge table has no record, and
   our data carries `unobtainable: true` which the UI renders honestly. Do not
   'clean up' either record without reading data/accolade_attainment.json first.
+- **⚔ SPIRIT DRAIN IS DARK MASTERY; SOUL MASTERY KEEPS SOUL DRAIN (settled
+  game-first 2026-08-07, corroborated by Maelwys on topic 64761).** A field
+  report said Corruptor **Soul** Mastery should read Spirit Drain since i27p7.
+  It should not. The i27p7 note reads *"Dark Mastery > Spirit Drain (replaces
+  Soul Drain) … from the **Dark Mastery** epic pool (Defenders, Corruptors)"*.
+  **Our data is correct on both** and matches the client: `Epic.Dark_Mastery.
+  Soul_Drain` displays **"Spirit Drain"** (the internal name never changed —
+  the three-namespaces rule again), `Epic.Corruptor_Soul_Mastery.Soul_Drain`
+  displays **"Soul Drain"**. They are genuinely different powers: 120s/15s/
+  radius 15/5 targets vs 240s/30s/radius 10/10 targets. ⚠ **Both pools sit next
+  to each other in the same dropdown and BOTH contain Dark Embrace**, which is
+  why the confusion is easy and will recur. ⚠ **DATA CURRENCY, checked the same
+  day: the newest Homecoming patch is the July 7 update and our client bins ARE
+  that July 7 build** — the snapshot is live, not stale. I raised a
+  "we may be a month behind" worry first and it was unfounded; retracted.
 - **Duplicate-piece legality / rule-of-five:** the picker blocks duplicates, validation ERRORS on them, tiers count DISTINCT pieces, and `_piece_globals` caps at five — **6×LotG = 37.5%, not 45%**.
 - **Mids `IoLevel` is 0-BASED** → +1 on import; `RelativeLevel` → `slot.boost`; engine applies ×(1+0.05·boost); the 53 Hamidon Origins = ×1.15. Old imported saves carry the 0-based value (re-import heals them).
 - **Power Boost amplifiers are their own exclusivity group** — one amplifier plus one burst together is BLESSED, not a conflict. (Separate from the still-queued gap that Power Boost's +66% amplifier effects are invisible to the parser allowlist.)
@@ -1160,6 +1175,59 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   location at all** — a fact must never be gated on whether prose exists beside
   it. Battery `tools/test_journey_macro.js` (20 checks, node, alternative-app.js
   argv[2], proven against 6 sabotages).
+- **⚠⚠ `JSON.stringify` IS NOT ATTRIBUTE-SAFE, AND AN APOSTROPHE BROKE THE
+  PICKER FOR A YEAR (field report BasiliskXVIII, 2026-08-07, fixed `27630c71`,
+  shipped 0.12.35).** The enhancement picker wrote
+  `onclick='pickPiece("uid", "Gaussian's Synchronized Fire-Control", 3)'`.
+  JSON.stringify escapes the double quote and the newline but **not the
+  apostrophe**, so the `'` CLOSED the single-quoted attribute and the browser
+  kept a truncated handler that cannot parse. **40 of our set and piece names
+  carry an apostrophe** — Basilisk's Gaze, Achilles' Heel, Cupid's Crush, every
+  archetype set — so **none of them could be slotted by hand**. `git log -S`
+  puts the construction in the FIRST COMMIT: every release shipped it. It
+  survived because the SOLVER reaches those sets by another path, so only
+  someone slotting manually ever hit it. **Attribute payloads go through
+  escHtml, which neutralises BOTH quote characters.** Battery
+  `tools/test_picker_attrs.js` (10) builds the real attribute with the real
+  escHtml, reads it back the way an HTML parser does, and requires it to still
+  parse as JS. ⚠ Its source rule is deliberately narrow — JSON.stringify inside
+  an inline handler — because a wider regex flagged 19 sites that are safe by
+  inspection, and **a check that cries wolf is worse than none**.
+- **⚠⚠ THE SELF +DAMAGE BUFF IS MISSING FROM THE ENTIRE BUILD-UP CLASS — OPEN,
+  AND IT OWES A RE-CERT (found 2026-08-07).** The client ships, per power,
+  self-targeted `Strength` templates across all EIGHT damage types (scale 0.8
+  and 4.0, duration 15s/30s) beside the ToHit ones. **Our records carry only the
+  ToHit half.** Verified on Aim, Build Up, Rage, Follow Up, Power Build Up, Soul
+  Drain, Spirit Drain: 6 of 6 have no self +Damage. Root cause is the known
+  `parse_mids` Enhancement-relabel allowlist — ToHit is in it, **Damage is
+  not** — the same family as the v28 accuracy and v29 heal-strength bugs, but
+  far wider than the queue records. **THE CODE ALREADY KNOWS**: server.py's
+  `_DMG_ENABLER_NAMES` comment says *"the data files these outside buff_effects
+  … Build Up/Soul Drain in self ToHit, so detect by name"*, and it compensates
+  BY NAME at the picker (`_ps_priority` +9) and the slotter (`is_steroid`) — so
+  these powers get taken and slotted while the MAGNITUDE is never modelled.
+  **MEASURED through /build/calculate: adding Aim moves displayed ST DPS by
+  0.0.** Exposure, counted over 624 picks: Build Up in 6 champions, Aim in 2 =
+  **7 of 24 certified champions**, so crediting it is a MODEL BUMP owing a
+  re-cert — Joel's ruling. ⚠ **It is the same capability as Fury / Power Boost
+  and must be built with them**: a temporary MODE with an uptime, not a flat
+  add. Maelwys's point (a 240s Soul Drain cannot be cycled with a nuke while a
+  120s Spirit Drain can) is this same gap seen from the gameplay side — our
+  picker scores both at 19.0 because with no magnitude and no uptime the only
+  lever left is a name in a list.
+- **⚠ TARGET-CAP / RADIUS DRIFT IS MOSTLY NOT DRIFT — NEVER BLANKET-SYNC IT
+  (2026-08-07, `tools/patch_drain_target_caps.py`).** Sweeping our powers
+  against the client finds **205 max_targets and 265 radius disagreements over
+  5,660 covered records**, and copying the client across them would DAMAGE the
+  data: **pseudo-pet powers** (Burn, Blizzard, Meteor, Time Bomb, Rise of the
+  Phoenix) read 0/0 on the client parent because the damage lives on the patch
+  entity and our data deliberately folds the pet in — ours is right; and
+  **single-target convention** differs (Tesla Cage 0 for us, 1 for the client).
+  Only three were adjudicated and patched (Brute Dark Melee + Corr Soul Mastery
+  Soul Drain 7→10 targets, Dom Soul Mastery radius 15→10), each carrying a
+  SECOND signal — a sibling record of the same power where our value and the
+  client already agree. Champion exposure zero of 24, counted. **Classifying the
+  remaining ~460 is its own piece of work and was deliberately not attempted.**
 - **⚠ A JS-ONLY function CAN have a real battery: lift it out and run it under
   node.** `tools/test_improve_diff.js` brace-matches `renderImproveDiff` out of
   app.js, evals it with `escHtml`/`$` stubs, and asserts the HTML. It takes an
@@ -1687,7 +1755,21 @@ strict-dominance experiment.
 
 ### Carried forward (2026-07-27 night)
 
-- **Latest release: 🚀 v0.12.33 "Knowing what to do next"** (published
+- **Latest release: 🚀 v0.12.35 "Every set is clickable"** (2026-08-08T00:21Z,
+  stamp `d76c043`, signed, API-verified, both assets; installed copy mirrored
+  and relaunched). Carries the apostrophe/escHtml picker fix and the improvement
+  report's export pointer. **Preceded by v0.12.34 "Your picks stay yours"**
+  (2026-08-07T23:43Z, stamp `3431636`) — the epic-swap refill drawing on the
+  build's own pools, the champion shortcut barred from answering a seat-fill,
+  the refill verifying it reached 24 rather than solving a short build, and the
+  leveling chart reporting open seats. **Data 2026.1.1242 and model v38
+  unchanged in both, so no certified score moved.** ⚠ Neither is announced yet;
+  a 0.12.35 reply to BasiliskXVIII is drafted at
+  `C:\Users\joelc\Downloads\hero-companion-0.12.35-post.txt`.
+  ⚠ **The 0.12.34 refill failure was never root-caused** — every server path
+  reproduced clean; the verify-and-refuse guard is what makes the symptom
+  impossible, and it is a guarantee, not a diagnosis.
+  Superseded entry kept for the ledger: **v0.12.33 "Knowing what to do next"** (published
   2026-08-07 22:35Z on Joel's "Cut a release with all of this"; build stamp
   `898653a`, signed CN=Joel Andrew Chambers, API-verified, both assets; installed
   copy mirrored and relaunched, header reads 0.12.33). **Data 2026.1.1242 and
