@@ -136,7 +136,9 @@ def main():
        and 'totals.get("def_debuff_resist")' not in src)
     ok("...and applies it to the incoming pressure, capped at the game's 95%",
        'sc.get("def_debuff_in", 0.0) * (1.0 - _ddr)' in src and "0.95" in src)
-    ok("MODEL_VERSION moved with the scoring change", fp.MODEL_VERSION == 41,
+    # >= not ==: this pin exists to prove the bump HAPPENED with the change, and
+    # freezing it would fail every later term for no reason (v42 did exactly that).
+    ok("MODEL_VERSION moved with the scoring change", fp.MODEL_VERSION >= 41,
        f"MODEL_VERSION = {fp.MODEL_VERSION}")
 
     print(f"\ndefence-debuff-resistance battery: {PASS} passed, {FAIL} failed")

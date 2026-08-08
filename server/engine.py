@@ -128,6 +128,14 @@ ED_SCHEDULE = {"Defense": 1, "Resistance": 1, "ToHit": 1, "Range": 1,
                "Interrupt": 2, "Mez": 0}
 # Power types that are "always on" and counted in passive totals.
 ACTIVE_POWER_TYPES = {1, 2}   # Auto, Toggle
+# ⚠⚠ THE ENHANCEMENT ASPECT IS "RechargeTime", NEVER "Recharge" (found
+# 2026-08-08). Three places asked ed_by_aspect / _scaled_boosts for "Recharge"
+# and NO piece in the game carries that aspect - 633 carry "RechargeTime" - so
+# recharge slotting silently reached none of them: the v39 mode duty cycle, a
+# click buff's uptime, and TIMED PET uptime. Same defect family as the v28
+# accuracy allowlist: a name that can never match, failing quietly and always
+# downward. Named here so the three sites share one spelling.
+_RECH_ASPECT = "RechargeTime"
 
 # eSuppress events that fire the moment you fight (Mids' combat-suppression
 # checkboxes): Attacked(64) | HitByFoe(128) | ActivateAttackClick(512) |
@@ -320,6 +328,12 @@ def _empty_totals():
         # game ships no DDR set bonus, so nothing else can feed this and there
         # is nothing to double-count against.
         "def_debuff_resist": 0.0,
+        # v42: absorb. TWO numbers because they answer different questions and
+        # must never be added together - "absorb" is the shield's SIZE in hit
+        # points (what the player sees on the bar), "absorb_hps" is what it is
+        # worth as sustain, the pool divided by how often the power re-arms.
+        "absorb": 0.0,
+        "absorb_hps": 0.0,
         # v41: PROTECTION is a magnitude threshold, RESIST a duration cut -
         # different axes, never merged. Per mez type; protection is read as a
         # MINIMUM across types, not a sum (two powers giving 30 each do not
@@ -403,7 +417,14 @@ def _power_totals(build, totals, ctx):
         # everything and gets full magnitude, which is what makes Granite
         # Armor's -30% and Defensive Adaptation's -25% land correctly.
         if not include:
-            self_fx = [fx for fx in self_fx if fx.get(_MODE_KEY)]
+            # v42 ⚠ AN ABSORB SHIELD RIDES HERE TOO, and for the same reason a
+            # mode buff does: Particle Shielding and Master Brawler are CLICKS,
+            # so without this their rows are dropped and a correct back-fill
+            # measures zero. They are NOT duty-cycled like a mode buff - the
+            # pool stays the pool (that is what the player gets when they press
+            # it) and the cadence is applied once, in absorb_hps.
+            self_fx = [fx for fx in self_fx
+                       if fx.get(_MODE_KEY) or fx.get("effect") == "Absorb"]
             if not self_fx:
                 continue
         # sum this power's slotted enhancement values per aspect
@@ -463,7 +484,7 @@ def _power_totals(build, totals, ctx):
             # 0.75s tick against a 10s recharge. `include` is exactly the
             # always-on test the totals loop already trusts.
             if fx.get(_MODE_KEY) and not include:
-                val *= _mode_duty_cycle(fx, ed_by_aspect.get("Recharge", 0.0))
+                val *= _mode_duty_cycle(fx, ed_by_aspect.get(_RECH_ASPECT, 0.0))
             # Active amplifier preview: multiply this effect's contribution
             # when its family is amplified, it is buffable (Mids' per-effect
             # gate), and it isn't the amplifier's own effect (Power Boost
@@ -471,8 +492,18 @@ def _power_totals(build, totals, ctx):
             fam = amp.get(fx["effect"])
             if fam and not fx.get("unbuffable") and full not in amp_sources:
                 val *= (1.0 + fam)
+            # v42: an absorb shield re-arms on the power's OWN recharge, cut by
+            # the recharge it is slotted with - the same own-slotting-only rule
+            # _mode_duty_cycle uses, and for the same reason (totals["recharge"]
+            # is still accumulating in this loop, so reading it here would make
+            # the answer depend on power order).
+            _cycle = None
+            if fx["effect"] == "Absorb":
+                _r = fx.get("host_recharge") or 0.0
+                _cycle = (_r / (1.0 + max(0.0, ed_by_aspect.get(_RECH_ASPECT, 0.0)))
+                          if _r else (fx.get("duration") or 0.0))
             _add_power_effect(totals, fx["effect"], fx["damage_type"], val,
-                              base_hp=ctx.get("at_base_hp"))
+                              base_hp=ctx.get("at_base_hp"), cycle=_cycle)
         _attr_flush(attr, {"kind": "power", "power": full,
                            "name": p.get("display_name") or full.split(".")[-1]},
                     totals, _snap)
@@ -510,7 +541,8 @@ def _mode_duty_cycle(fx, own_recharge_enh):
     return min(1.0, dur / effective) if effective > 0 else 1.0
 
 
-def _add_power_effect(totals, et, dt, val, base_hp=None, from_attack=False):
+def _add_power_effect(totals, et, dt, val, base_hp=None, from_attack=False,
+                      cycle=None):
     if et == "Defense":
         if dt in totals["defense"]:
             totals["defense"][dt] += val
@@ -569,6 +601,18 @@ def _add_power_effect(totals, et, dt, val, base_hp=None, from_attack=False):
         # ⚠ VERIFY VIA bonus_extras.def_debuff_resist.value, NOT the top level -
         # calculate_build returns a curated response and this is not in it.
         totals["def_debuff_resist"] += val
+    elif et == "Absorb":
+        # v42: an absorb SHIELD - hit points that soak damage before your own.
+        # Point-valued, like Heal and HitPoints (`_POINT_HP`), so a Melee_HealSelf
+        # 3.0 is 401.6 HP on a Scrapper, not a percentage.
+        # ⚠ THE TWO NUMBERS ARE NOT THE SAME QUESTION. The pool is what the
+        # player sees; what it is WORTH is the pool divided by how often the
+        # power re-arms, because a shield soaks its pool once per cast. Adding
+        # the pool itself to effective HP would credit a 120-second click as
+        # though it were always up.
+        totals["absorb"] += val
+        if cycle and cycle > 0:
+            totals["absorb_hps"] += val / cycle
     elif et == "DamageBuff":
         # v39. The caller has already applied the duty cycle for a CLICK; a
         # TOGGLE arrives at full magnitude because it is always on. The game's
@@ -1378,9 +1422,9 @@ def _pet_damage_buff(build, totals, ctx, global_rech):
                     for slot in power.get("slots", []) or []:
                         if slot and slot.get("piece_uid"):
                             for asp, val in _scaled_boosts(slot, ctx):
-                                if asp == "Recharge":
+                                if asp == _RECH_ASPECT:
                                     rech_enh += val
-                    rech_boost = apply_ed_sched(ED_SCHEDULE.get("Recharge", 0),
+                    rech_boost = apply_ed_sched(ED_SCHEDULE.get(_RECH_ASPECT, 0),
                                                 rech_enh, mult_ed)
                 enh_rech = base_rech / (1.0 + global_rech + rech_boost)
                 uptime = min(1.0, dur / enh_rech) if enh_rech > 0 else 1.0
@@ -1457,7 +1501,7 @@ def _pet_offense(build, totals, ctx):
                 for asp, val in _scaled_boosts(slot, ctx):
                     if asp == "Damage":
                         dmg_enh += val
-                    elif asp == "Recharge":
+                    elif asp == _RECH_ASPECT:
                         rech_enh += val
                     elif asp == "Accuracy":
                         acc_enh += val
@@ -1471,7 +1515,7 @@ def _pet_offense(build, totals, ctx):
         if spec is not None and not spec.get("permanent"):
             dur = float(spec.get("duration") or 0.0)
             if dur > 0:
-                rech_boost = apply_ed_sched(ED_SCHEDULE.get("Recharge", 0),
+                rech_boost = apply_ed_sched(ED_SCHEDULE.get(_RECH_ASPECT, 0),
                                             rech_enh, mult_ed)
                 rech_eff = (p.get("base_recharge") or 0.0) / (1.0 + rech_boost
                                                               + global_rech)
@@ -2265,6 +2309,12 @@ def _to_display(totals, res_cap=RESISTANCE_HARD_CAP, sec_caps=None, ctx=None):
             "def_debuff_resist": {
                 "value": pct(totals.get("def_debuff_resist", 0.0)),
                 "label": "Defence debuff resistance"},
+            # v42: HIT POINTS, never a percent (the _POINT_HP rule - a heal
+            # total once printed as "+94303.2%").
+            "absorb": {"value": round(totals.get("absorb", 0.0), 1),
+                       "label": "Absorb shield (HP)"},
+            "absorb_hps": {"value": round(totals.get("absorb_hps", 0.0), 2),
+                           "label": "Absorb as sustain (HP/s)"},
             "mez_duration": {m: pct(v) for m, v in
                              (totals.get("mez_duration") or {}).items() if v},
             "movement": {"value": pct(totals.get("movement", 0.0)),

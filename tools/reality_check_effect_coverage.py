@@ -183,10 +183,10 @@ OPEN_GAPS = {
         "the empty-record class (877 of our powers hold zero effect rows while the "
         "client populates them) surfacing through this check"),
     ("Recovery", "Current"): (5, "Gamma Boost - see Regeneration/Current"),
-    ("Absorb", "Maximum"): (6,
-        "Particle Shielding and Master Brawler grant ABSORB, and Master Brawler's "
-        "record is empty. Absorb is not modelled ANYWHERE - the engine has no "
-        "branch for it, only an enhancement aspect of that name. A term is owed"),
+    # ✅ CLOSED by tools/patch_power_absorb.py + the v42 term: Absorb was
+    # "not modelled ANYWHERE" when this entry was written. Particle
+    # Shielding and Master Brawler now carry the shield and the scorer
+    # consumes it. The pin is what said so.
     ("Accuracy", "Strength"): (3,
         "Terra Firma and Combat Training: Offensive grant +Accuracy beside their "
         "+ToHit and we carry only the ToHit half. Both axes ARE modelled, so this "

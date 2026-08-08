@@ -76,10 +76,12 @@ OPEN_GAPS = {
         "power does nothing in the model. DATA is straightforward; the CONSUMER "
         "is not - nothing scores mez protection granted to an ALLY, and landing "
         "the data alone would be inert"),
-    "absorb-no-branch": (3,
-        "Master Brawler, Insulating Circuit, Spirit Ward. Absorb is not "
-        "modelled ANYWHERE - the engine has no branch, only an enhancement "
-        "aspect of that name. A term is owed before the data means anything"),
+    "absorb-no-branch": (2,
+        "Insulating Circuit and Spirit Ward - what is left after v42. Absorb "
+        "itself IS modelled now (patch_power_absorb + the engine branch), but "
+        "these two shield an ALLY, and nothing scores a shield placed on "
+        "someone else, so landing their data would be inert. Same blocker as "
+        "the ally mez-protection gap"),
     "endurance-discount": (6,
         "Conserve Power x5 + Conserve Energy. EnduranceDiscount has no "
         "_add_power_effect branch and no convention in our data to copy, and "
