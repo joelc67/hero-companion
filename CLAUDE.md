@@ -1250,16 +1250,44 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   VOCABULARY, not just the case.** Ours says `AoE` and `Negative` where the
   client says `Area` and `Negative_Energy`; Cloaking Device carries all eleven
   defence vectors and still reported two missing.
-- **⚠⚠ 877 OF OUR POWERS HOLD ZERO EFFECT ROWS WHILE THE CLIENT POPULATES THEM
-  (found 2026-08-08, the next real piece of the audit).** Radiation Armor's
-  **Gamma Boost** prints *"Auto: Self +Regen, +Recovery, Special"* and our
-  record carries **nothing at all**; so do **Master Brawler** (SR's whole absorb
-  sustain), **Active Defense** and **Smoke Flash**, every **Taunt**, and the
-  Staff Fighting **Forms**. 339 Incarnate / 103 Inherent / 152 pet / the rest
-  real player powers. **This is a CLASS, not a family** — the coverage check
-  only sees the corner of it that shows as a missing family. ⚠ Related and
-  named: **Absorb is not modelled ANYWHERE** (the engine has no branch, only an
-  enhancement aspect of that name), so absorb shields are invisible.
+- **📭 THE EMPTY-RECORD CLASS — 876 RECORDS, AND ONLY TWO WERE A DATA GAP
+  (classified 2026-08-08, `f7077f5a`; `reality_check_empty_records.py`).** Our
+  records holding ZERO effect rows while the client populates them looked like
+  the biggest hole in the tool. It is not: **632 are not player powers**
+  (Alpha/Genesis boost DEFINITIONS 339, inherent machinery whose scored members
+  v36 DERIVES 103, pet records 161, temp tokens 28, one redirect stub empty by
+  design), **210 are player records whose client templates are pure plumbing**
+  (Grant_Power, Set_Mode, Create_Entity, movement), **32 are real and pinned**,
+  and **2 were a plain data gap** — Ninjitsu's Bo Ryaku (now 7.5% resistance to
+  all eight types) and Stalker Shield Defense's Active Defense (11.25% melee
+  defence + S/L resistance; the Brute sibling's 12.75 is the AT column, not a
+  discrepancy). Champion exposure ZERO, so no score moved.
+  ⚠⚠ **THE STUB WAS WRONG IN TWO FIELDS, NOT ONE.** Both also carried
+  `power_type: 0` (a click) where the game says "Toggle:" and "Auto:", and the
+  engine only counts self effects when `power_type in ACTIVE_POWER_TYPES` — so a
+  CORRECT effect back-fill measured **0.0 through the real route**. The
+  correction demands TWO signals (the game's own prefix AND a populated sibling
+  on another archetype) and refuses to write if they disagree.
+  ⚠ **THE FIRST YIELDING GROUP WINS WHOLE, not row by row** — the client's
+  second effect group is the PvP variant and is NOT merely a copy: Shield
+  Defense's adds a Psionic defence vector our populated siblings all keep at
+  pv_mode 2. Per-(effect, damage type) merging let it into PvE.
+  ⚠⚠ **GAMMA BOOST IS NOT A BACK-FILL, and this is "check the game, not your
+  parse" earning its keep.** The client hands over flat `Regeneration 1.0` and
+  `Recovery 1.0`; the game's help says *"the LOWER your current health, the
+  greater the regeneration bonus… the HIGHER your current health, the greater
+  the recovery bonus"*. Two ends of ONE curve — writing them flat credits +100%
+  of each at once. Same class as **Agile's scaling damage resistance, which the
+  export carries at scale 0.0** for exactly this reason. Health-scaling effects
+  are their own unbuilt model.
+  ⚠ Still named and unbuilt: **Absorb is not modelled ANYWHERE** (no engine
+  branch, only an enhancement aspect of that name — Master Brawler, Insulating
+  Circuit, Spirit Ward, Particle Shielding), and **ally mez protection has no
+  consumer**, so Clear Mind / Clarity ×8 would land inert.
+- **✅ THE TWO-WAY PIN PAID FOR ITSELF THE SAME DAY IT WAS BUILT.** Fixing those
+  two records drove TEN of the coverage check's pinned damage-type gaps to zero,
+  and the check **hard-failed on the stale entries** instead of passing quietly.
+  A pin that only fails upward is half a pin.
 - **⚠ FOUR MORE RESISTANCE FAMILIES ARE REAL AND BLOCKED EXACTLY AS `mez_in` IS
   (2026-08-08).** ToHit-debuff resistance (13 powers — Obscure Sustenance,
   Fallout Shelter, Combat Training: Offensive), endurance-drain resistance (8 —

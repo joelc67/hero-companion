@@ -1,3 +1,58 @@
+# Resume point - 2026-08-08 (latest), the empty-record class is classified too
+
+## STATE
+HEAD pushed, tracked tree clean. Nothing running, nothing scheduled. Data
+**2026.1.1242**. Models **v39 / v40 / v41**, none re-certified. Re-cert union
+unchanged at **17 of 24** - this pass added nothing to it.
+
+## WHAT THIS PASS DID (`f7077f5a`)
+876 records held ZERO effect rows while the client populated them. **Classified:
+632 are not player powers, 210 are plumbing-only, 32 are real and pinned in
+seven named gaps, and exactly 2 were a plain data gap.** Both fixed, champion
+exposure zero, so no score moved and no model bump.
+
+- **Bo Ryaku** (Ninjitsu) 0 → **7.5% resistance to all eight damage types**.
+- **Active Defense on Stalker** → **11.25% melee defence + 11.25% S/L
+  resistance** (Brute reads 12.75; that is the archetype column, not a bug).
+
+## THREE TRAPS FROM THIS PASS
+- **⚠⚠ THE STUB WAS WRONG IN TWO FIELDS.** Both records also carried
+  `power_type: 0` (a click) where the game says "Toggle:" and "Auto:". The
+  engine only counts self effects on an auto or toggle, so a CORRECT effect
+  back-fill measured 0.0 through the real route. Always check both.
+- **⚠ THE FIRST YIELDING GROUP WINS WHOLE**, not row by row: the client's second
+  group is the PvP variant and adds vectors (Shield Defense's Psionic defence)
+  that our populated siblings keep at pv_mode 2.
+- **⚠ GAMMA BOOST IS NOT A BACK-FILL.** The game's help says the regeneration
+  and recovery halves are opposite ends of ONE health-scaling curve, so the
+  client's flat 1.0/1.0 can never both apply. Writing them would credit +100% of
+  each. Same class as Agile's scaling resistance (export carries it at 0.0).
+
+## OPEN - MINE, IN ORDER
+1. **Absorb is not modelled anywhere** (no engine branch) - Master Brawler,
+   Insulating Circuit, Spirit Ward, Particle Shielding. A term is owed.
+2. **Ally mez protection** - Clear Mind / Clarity x8 are blank, so an Empathy
+   Defender's signature buff does nothing. Data is easy; **nothing scores mez
+   protection on an ALLY**, so it needs the consumer first.
+3. **Health-scaling effects** (Gamma Boost x5, Agile's scaling resistance).
+4. Small and data-only once a branch exists: **+Accuracy** on Combat Training:
+   Offensive x2, **EnduranceDiscount** on Conserve Power x6, **Field Medic's
+   +Heal strength**.
+5. **Power Boost `Set_Mode`** (143 powers) · the 8 gated-only powers · ~460
+   unclassified cap/radius rows · knockback protection.
+
+## OPEN - JOEL'S (unchanged)
+- **`mez_in`**, which also blocks ToHit / end-drain / regen / recovery debuff
+  resistance (31 powers between them - all real, all inert without a rate).
+- **Fury** - a Brute farm log with 3+ single-target attacks.
+
+## THE STANDING CHECKS NOW COVER BOTH CLASSES
+`reality_check_effect_coverage.py` (families, 10 gaps pinned) and
+`reality_check_empty_records.py` (whole records, 7 gaps pinned). Both pin by
+COUNT and fail in BOTH directions. That paid off the same day: fixing the two
+records drove ten coverage pins to zero and the check failed on the STALE
+entries instead of passing quietly.
+
 # Resume point - 2026-08-08 (later), the families are classified
 
 ## STATE
