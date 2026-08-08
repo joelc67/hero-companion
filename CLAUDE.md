@@ -54,7 +54,7 @@ Joel's session context is a limited resource. Do not spend it on prose.
 
 ## Standing watch items
 
-- **PATCH-WATCH (public promise, posted round-5 correction 7(a); wired 2026-07-17).** Trigger: any Homecoming patch announcement, or Joel's word. Steps, in order: (1) full Bin Crawler re-export from `C:\Games\HC2\assets\live`; (2) structural diff vs current data — `tools/reality_check_effect_structure.py` (effect existence/enhanceability, the gap class scalar checks can't see) plus the scalar reality checks; (3) delta report to session-report.md; (4) **movers ruling BEFORE any certification run starts** — harden-before-certify applies in full. Release procedure addition: release notes state **data currency** — the date of the last client re-export vs the game's latest patch. **After any client re-export, also re-run the power-icon pipeline** (extract_power_icons → patch_power_icons).
+- **PATCH-WATCH (public promise, posted round-5 correction 7(a); wired 2026-07-17).** Trigger: any Homecoming patch announcement, or Joel's word. Steps, in order: (1) full Bin Crawler re-export from `C:\Games\HC2\assets\live`; (2) structural diff vs current data — `tools/reality_check_effect_structure.py` (effect existence/enhanceability, the gap class scalar checks can't see) plus the scalar reality checks; (3) `tools/reality_check_missing_powers.py` - what is genuinely NEW content versus what merely moved NAME (added 2026-08-08 after "459 missing powers" turned out to be 32 and 19 renames); (4) delta report to session-report.md; (5) **movers ruling BEFORE any certification run starts** — harden-before-certify applies in full. Release procedure addition: release notes state **data currency** — the date of the last client re-export vs the game's latest patch. **After any client re-export, also re-run the power-icon pipeline** (extract_power_icons → patch_power_icons).
 - **⚠⚠ ONE DEPLOYER, AND THE TWO HALVES MOVE TOGETHER (found 2026-08-06,
   `0c06b9df`).** From 07-27 to 08-06 the repo had TWO things deploying the site:
   GitHub's own per-push build (the legacy source) **and** a `deploy` job inside
@@ -1349,14 +1349,30 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   scaling, and the **Fighting-pool cross-boost** (Boxing/Kick/Cross Punch each
   stronger for owning the others — real, unmodelled, and named rather than
   invisible).
-- **⚠⚠ 459 CLIENT PLAYER POWERS ARE ABSENT FROM OUR DATA ENTIRELY (found
-  2026-08-08) — a DIFFERENT CLASS from every other gap in this audit.** Whole
-  shipping powersets our Mids-derived snapshot predates: **Wind Control**
-  (Controller + Dominator), **Shock Therapy** (Corruptor, Mastermind,
-  Controller), **Blaster Time Manipulation**, the **Gadgetry** pool. The tool
-  cannot plan them at all. ⚠ **Neither classification check can see this by
-  construction** — both compare only powers we already carry. Probably the
-  largest remaining data gap in the project; how to handle it is Joel's call.
+- **⚠⚠ "459 MISSING POWERS" WAS WRONG — IT IS 32, AND THE REST WAS NAMING
+  (retracted and corrected the same day, 2026-08-08, `0f585868`).** I reported
+  459 absent client powers "including whole shipping powersets — Wind Control,
+  **Shock Therapy**, **Blaster Time Manipulation**, Gadgetry". **Two of those
+  four are in the tool already**: the client's Shock Therapy is our
+  **Electrical Affinity** and its Time Manipulation is our **Temporal
+  Manipulation**, both matching on a display-name roster of **1.0, every power**.
+  **19 powersets are RENAMED, not missing** (also `Pool.Fitness` =
+  `Inherent.Fitness`, and 13 Epic sets already on the proven bridge).
+  ⚠⚠ **A RAW SET DIFFERENCE IS NOT A MEASUREMENT** — this is the three-namespaces
+  rule, walked into while writing up a finding about a different gap, which is
+  exactly when it bites.
+  **What is genuinely absent: 32 powers** — Wind Control (Controller +
+  Dominator, 20), `Pool.Gadgetry` (6), `Pool.Utility_Belt` (6), and **Boomerang
+  Slice** (4 records, a real level-1 Broad Sword attack in a set we already
+  have). ⚠ **The app does not OFFER any of the three sets** (powersets.json has
+  none of them), so nothing is broken on screen — a player simply cannot plan
+  them: an honest absence, not a defect. Everything else is accounted for and
+  printed: 24 namespace differences (the client files White Dwarf Strike under
+  the Kheldian set, we file it under `Inherent`), 6 never-pickable auto-issue
+  powers, 15 `_Aux` combo/redirect variants, and pet records.
+  **`tools/reality_check_missing_powers.py` is the standing instrument and it
+  belongs in PATCH-WATCH**: after any client re-export it answers what is
+  genuinely NEW versus what merely moved name.
 - **🤝 THE ALLY SIDE WAS NEVER SWEPT, AND `AnyAffected` IS NOT `ALLY`
   (2026-08-08, `4e3f68f9`).** `reality_check_effect_coverage.py` tested
   `target == "Self"` and stopped, so every buff a power places on someone ELSE

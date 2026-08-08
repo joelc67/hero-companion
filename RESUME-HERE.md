@@ -1,3 +1,62 @@
+# Resume point - 2026-08-08 (latest), the missing-powers retraction
+
+## STATE
+HEAD pushed, tracked tree clean. Nothing running. Data **2026.1.1242**, models
+**v39-v42**, **re-cert union 20 of 24**. This pass changed no data.
+
+## ⚠⚠ RETRACTION, and it is the important part (`0f585868`)
+The previous handoff said **"459 client player powers absent, including whole
+shipping powersets - Wind Control, Shock Therapy, Blaster Time Manipulation,
+Gadgetry"**. Two of those four are WRONG:
+
+- **Shock Therapy IS in the tool** - it is our **Electrical Affinity** (display
+  roster match 1.0, all 9 powers).
+- **Blaster Time Manipulation IS in the tool** - our **Temporal Manipulation**.
+- **19 powersets are RENAMED, not missing**, all at roster 1.0, including
+  `Pool.Fitness` = `Inherent.Fitness` and 13 Epic sets already on the bridge.
+
+The three-namespaces rule, walked into while writing up a different finding.
+**A raw set difference is not a measurement.**
+
+## WHAT IS ACTUALLY ABSENT: 32 powers
+- **Wind Control** (Controller + Dominator, 10 each) - a shipping set the tool
+  cannot plan; we hold its pet and none of its player powers.
+- **Pool.Gadgetry** (6) and **Pool.Utility_Belt** (6) - two whole pools.
+- **Boomerang Slice** (4 records) - a real level-1 Broad Sword attack in a set
+  we have. The only single-power absence in the whole sweep.
+
+⚠ **The app does not OFFER any of the three sets** (powersets.json has none of
+them), so nothing is broken on screen - a player simply cannot plan them. Honest
+absence, not a defect. Adding them means synthesising records from the client
+(effects, scales, slotting categories, icons, pick levels), which is a new
+pipeline rather than an additive patcher. **Joel's call whether it is worth it.**
+
+Accounted for and printed rather than counted as missing: 24 namespace
+differences (Kheldian forms live under `Inherent` for us), 6 never-pickable
+auto-issue powers, 15 `_Aux` redirect variants, and pet records.
+
+## THE NEW CHECK TIES INTO PATCH-WATCH
+`reality_check_missing_powers.py` answers, after any client re-export, **what is
+genuinely new versus what merely moved name** - the exact question a Homecoming
+patch raises and the one I just got wrong by hand. Add it to the PATCH-WATCH
+step list.
+
+## OPEN - JOEL'S, three questions, each one number or one call
+1. **`mez_in`** - unblocks 289 powers (self mez 229, ally mez 29, four
+   debuff-resistance families 31).
+2. **An operating health** for the 13 health-scaling powers. Recommended **50%**
+   (these curves are linear in health; a linear curve's average over the bar is
+   its midpoint - derived, not invented).
+3. **Wind Control / Gadgetry / Utility Belt** - worth a records pipeline or not?
+4. **Fury** - still a Brute farm log with 3+ single-target attacks.
+
+## OPEN - MINE
+- The ally channel (ally mez + ally absorb + ally slow resist, built once).
+- Data-only once a branch exists: +Accuracy on Combat Training: Offensive x2,
+  EnduranceDiscount on Conserve Power x6, Field Medic's +Heal strength.
+- Power Boost `Set_Mode` (143) · gated-only powers (8) · ~460 cap/radius rows ·
+  knockback protection · the Fighting-pool cross-boost · Boomerang Slice.
+
 # Resume point - 2026-08-08 (latest), health-scaling decoded
 
 ## STATE
