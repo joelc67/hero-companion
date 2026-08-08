@@ -136,6 +136,9 @@ DISPOSITIONS = {
     "Elusivity":         "PvP-only mechanic - inert in PvE exactly like a pv_mode 2 row",
     "ElusivityBase":     "PvP-only mechanic - see Elusivity",
     "Unknown":           "the client names no attribute for this id; nothing to carry",
+    "Untouchable":       "rez plumbing - Power of the Phoenix makes the target briefly "
+                         "untargetable while it fires",
+    "XPDebtProtection":  "rez plumbing - debt protection is not a combat stat",
 }
 # (family, aspect) entries - the aspect is what decides.
 DISPOSITIONS_BY_ASPECT = {
@@ -145,6 +148,9 @@ DISPOSITIONS_BY_ASPECT = {
     ("Endurance", "Strength"):  "buffs the endurance DRAIN your attacks do (Electrical "
                                 "Blast's Aim). Enemy endurance is not modelled anywhere - "
                                 "sapping has never been a scored axis",
+    ("Endurance", "Absolute"):  "the REZ's own endurance restore (Power of the Phoenix). A "
+                                "rez is already scored as a flat clutch credit in "
+                                "build_heal_output, not by what it hands back",
     ("Heal", "Resistance"):     "heal-debuff resistance on an inherent + the pet "
                                 "un-healable flag; no incoming heal-debuff exists in any "
                                 "scenario, so there is nothing to resist",
@@ -159,39 +165,39 @@ _VIGILANCE_NOTE = ("v36 derives Vigilance from the inherent's own scales; anythi
 # moves in EITHER direction: up means a new defect, down means someone fixed it
 # and left the entry behind.
 OPEN_GAPS = {
-    ("EnduranceDiscount", "Strength"): (20,
+    ("EnduranceDiscount", "Strength", "self"): (20,
         "Conserve Power and the Bio/Energy Aura discounts. Our records for these "
         "powers are EMPTY - Epic.Body_Mastery.Conserve_Power carries no effects at "
         "all. DATA is owed; SCORING is not, because end-discount is a v30 stated "
         "display-only exclusion"),
-    ("ToHit", "Resistance"): (13,
+    ("ToHit", "Resistance", "self"): (13,
         "ToHit-DEBUFF resistance (Obscure Sustenance, Fallout Shelter, Combat "
         "Training: Offensive). Real, and the same shape as the DDR gap v41 just "
         "closed - EXCEPT that no scenario carries incoming ToHit-debuff pressure, "
         "so there is nothing yet for it to resist. Blocked on a scenario input, "
         "the same blocker as mez_in"),
-    ("Endurance", "Resistance"): (8,
+    ("Endurance", "Resistance", "self"): (8,
         "endurance-DRAIN resistance (Inexhaustible, Murky Cloud, Gamma Boost). "
         "Blocked on a scenario input - no incoming end drain exists"),
-    ("Regeneration", "Resistance"): (7,
+    ("Regeneration", "Resistance", "self"): (7,
         "regeneration-debuff resistance. Blocked on a scenario input"),
-    ("Recovery", "Resistance"): (3,
+    ("Recovery", "Resistance", "self"): (3,
         "recovery-debuff resistance. Blocked on a scenario input"),
-    ("Regeneration", "Current"): (6,
+    ("Regeneration", "Current", "self"): (6,
         "WHOLE RECORDS ARE EMPTY. Radiation Armor's Gamma Boost prints 'Auto: "
         "Self +Regen, +Recovery, Special' and our record carries NOTHING. This is "
         "the empty-record class (877 of our powers hold zero effect rows while the "
         "client populates them) surfacing through this check"),
-    ("Recovery", "Current"): (5, "Gamma Boost - see Regeneration/Current"),
+    ("Recovery", "Current", "self"): (5, "Gamma Boost - see Regeneration/Current"),
     # ✅ CLOSED by tools/patch_power_absorb.py + the v42 term: Absorb was
     # "not modelled ANYWHERE" when this entry was written. Particle
     # Shielding and Master Brawler now carry the shield and the scorer
     # consumes it. The pin is what said so.
-    ("Accuracy", "Strength"): (3,
+    ("Accuracy", "Strength", "self"): (3,
         "Terra Firma and Combat Training: Offensive grant +Accuracy beside their "
         "+ToHit and we carry only the ToHit half. Both axes ARE modelled, so this "
         "is data-only - the v28 accuracy family again, on powers this time"),
-    ("Heal", "Strength"): (1,
+    ("Heal", "Strength", "self"): (1,
         "Field Medic's +Heal strength. The heal_strength axis has existed since "
         "v29, so this is data-only"),
     # ✅ CLOSED by tools/patch_empty_player_records.py: the ten damage-type
@@ -200,7 +206,55 @@ OPEN_GAPS = {
     # two-way pin is what surfaced it - they went to zero and this check
     # failed on the stale entries rather than quietly passing.
 }
+# ── THE ALLY SIDE, classified 2026-08-08 when the sweep first reached it ──
+# Amp Up is its own permanent disposition, not a gap: its Strength rows amplify
+# an ALLY'S OWN buffs, and we model no ally's build, so there is nothing to
+# amplify. Everything else here is real and pinned below.
+_AMP_UP = ("Defender_Buff.Shock_Therapy.Amp_Up amplifies an ALLY'S OWN effects "
+           "(aspect=Strength ON someone else). We model no ally's build, so "
+           "there is nothing for it to multiply - a permanent disposition, not "
+           "a gap")
+
+# ⚠ ALLY MEZ IS THE BIGGEST SINGLE GAP IN THE TOOL'S SUPPORT MODELLING, and it
+# is blocked on the SAME ONE NUMBER as everything else in the mez family.
+_ALLY_MEZ = ("ally mez PROTECTION (aspect=Current, negative magnitude) and "
+             "RESISTANCE (aspect=Resistance, duration) - Clear Mind, Clarity, "
+             "Thaw, Increase Density, O2 Boost, Shadow Fall. Blocked on mez_in, "
+             "exactly as self mez protection is, AND on a channel for 'a mezzed "
+             "teammate stops contributing' which the scenario has no term for. "
+             "One ruling on mez_in unblocks the largest support gap we have")
+_ALLY_MEZ_COUNTS = {("Stunned", "Current"): 29, ("Held", "Current"): 25,
+                    ("Immobilized", "Current"): 25, ("Sleep", "Current"): 25,
+                    ("Confused", "Current"): 21, ("Terrorized", "Current"): 21,
+                    ("Stunned", "Resistance"): 25, ("Sleep", "Resistance"): 21,
+                    ("Held", "Resistance"): 21, ("Immobilized", "Resistance"): 21,
+                    ("Confused", "Resistance"): 17, ("Terrorized", "Resistance"): 17}
+ALLY_GAPS = {(f, a, "ally"): (n, _ALLY_MEZ) for (f, a), n in _ALLY_MEZ_COUNTS.items()}
+ALLY_GAPS.update({
+    ("Endurance", "Resistance", "ally"): (8,
+        "ally endurance-DRAIN resistance (Insulation Shield). No scenario "
+        "carries incoming drain, so there is nothing to resist - the same "
+        "blocker as its self-side twin"),
+    ("Recovery", "Resistance", "ally"): (8,
+        "ally recovery-debuff resistance (Insulation Shield). Same blocker"),
+    ("RechargeTime", "Resistance", "ally"): (8,
+        "ally SLOW resistance (Antidote, Grant Cover). Unlike the two above, "
+        "the scenario DOES carry slow_in - but it only slows MY damage; the "
+        "team is a flat team_dps the model never slows. The channel, not the "
+        "input, is what is missing here"),
+    ("Absorb", "Maximum", "ally"): (2,
+        "ally absorb. Insulating Circuit is clean (2.0 on Ranged_Heal, one "
+        "ungated group) and would ride the team-heal channel that already "
+        "exists - but Spirit Ward's two groups disagree (0.2/20s and 1.0/10s, "
+        "an over-time toggle), so only ONE power is unambiguous. A term for one "
+        "power is not worth building before the ally channel is built properly "
+        "for the 29 mez powers above"),
+})
+
+OPEN_GAPS.update(ALLY_GAPS)
 NPC_TABLES = {"melee_archvillain_res", "ranged_archvillain_res"}
+# the power-level authority on which side a non-Self template lands on
+FRIEND = {"Friend", "DeadPlayerFriend", "DeadFriend", "DeadOrAliveLeaguemate"}
 _DMG_TYPES = {"Smashing", "Lethal", "Fire", "Cold", "Energy", "Negative_Energy",
               "Psionic", "Toxic", "Melee", "Ranged", "Area"}
 
@@ -221,7 +275,13 @@ def load():
     return ours, client
 
 
-def disposition_for(fam, aspect, full_name):
+def disposition_for(fam, aspect, full_name, side="self"):
+    # ⚠ A `Strength` ASPECT ON SOMEONE ELSE IS A GENERAL CASE, not nine
+    # coincidences: it amplifies the ALLY'S OWN effects (Amp Up). We model no
+    # ally's build, so there is nothing for it to multiply. Pinning these as
+    # gaps would park nine permanent entries under "open".
+    if side == "ally" and aspect == "Strength":
+        return _AMP_UP
     if (fam, aspect) in DISPOSITIONS_BY_ASPECT:
         return DISPOSITIONS_BY_ASPECT[(fam, aspect)]
     if fam in DISPOSITIONS:
@@ -262,8 +322,21 @@ def main():
                 if (g.get("requires_expression") or "").strip():
                     continue          # gated = a different, conditional claim
                 for t in (g.get("templates") or []):
-                    if t.get("target") != "Self":
-                        continue
+                    # ⚠⚠ THE ALLY SIDE WAS NEVER SWEPT UNTIL NOW. This check
+                    # tested `target == "Self"` and stopped, so every buff a
+                    # power places on someone ELSE was invisible to the one
+                    # instrument built to see everything - 45 uncarried families
+                    # on 151 Friend-targeted powers, led by ally mez protection
+                    # across 29 of them (Clear Mind, Clarity, Thaw).
+                    # ⚠⚠ AND "AnyAffected" IS NOT "ALLY". It means whoever the
+                    # power affects - a friend on Clear Mind, the FOES being hit
+                    # on a Brute cone attack. The power's own `target_type` is
+                    # the authority; reading the template's target as the side
+                    # would have classified Repulsing Torrent as a team buff.
+                    _self = t.get("target") == "Self"
+                    if not _self and c.get("target_type") not in FRIEND:
+                        continue          # foe-facing: the debuff lane's ground
+                    side = "self" if _self else "ally"
                     if (t.get("table") or "").lower() in NPC_TABLES:
                         continue
                     if not (t.get("scale") or 0):
@@ -275,7 +348,7 @@ def main():
                         if (a.lower() in mine or low in mine or tbl in mine
                                 or SYNONYMS.get(low, low) in mine):
                             continue
-                        why = disposition_for(fam, t.get("aspect"), p["full_name"])
+                        why = disposition_for(fam, t.get("aspect"), p["full_name"], side)
                         if why:
                             disposed[why] += 1
                             continue
@@ -289,7 +362,7 @@ def main():
                         if skipped:
                             src_excluded[skipped] += 1
                             continue
-                        key = (fam, t.get("aspect"))
+                        key = (fam, t.get("aspect"), side)
                         (gaps if key in OPEN_GAPS else residue)[key].add(p["full_name"])
 
     print(f"powers compared against the client : {covered}")
@@ -306,7 +379,7 @@ def main():
         want, note = OPEN_GAPS[key]
         got = len(gaps.get(key) or ())
         flag = "  " if got == want else " !"
-        print(f"{flag} {key[0]:<20} aspect={str(key[1]):<11} {got:>3} powers "
+        print(f"{flag} {key[0]:<20} aspect={str(key[1]):<11} {key[2]:<5} {got:>3} powers "
               f"(pinned {want})")
         print(f"       {note.splitlines()[0][:96]}")
         if got != want:
@@ -315,8 +388,8 @@ def main():
     if residue:
         rows = sorted(residue.items(), key=lambda x: -len(x[1]))
         print(f"\nUNCLASSIFIED - {len(rows)} families:")
-        for (fam, aspect), fns in (rows if show_all else rows[:25]):
-            print(f"  {fam:<24} aspect={str(aspect):<11} {len(fns):>5} powers")
+        for (fam, aspect, side), fns in (rows if show_all else rows[:25]):
+            print(f"  {fam:<24} aspect={str(aspect):<11} {side:<5} {len(fns):>5} powers")
             print(f"       e.g. {sorted(fns)[0][:70]}")
         if not show_all and len(rows) > 25:
             print(f"  ... {len(rows) - 25} more (--all to list)")
