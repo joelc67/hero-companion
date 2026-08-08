@@ -3753,9 +3753,17 @@ def _picks_legal(fns, primary, secondary):
         return False
     if len(set(pools) & _EXCLUSIVE_POOLS) > 1:
         return False
-    for a, b in _VEAT_DUPLICATE_PAIRS:      # base vs branch versions of the same grenade
-        if a in fns and b in fns:
-            return False
+    # ⚠ MUTUALLY EXCLUSIVE POWERS, from the CLIENT rather than by hand. This
+    # loop used to walk _VEAT_DUPLICATE_PAIRS, two grenade pairs someone had
+    # typed in - and the game forbids NINE pairs whose both sides we carry,
+    # Dark Regeneration <-> Obscure Sustenance across five archetypes among
+    # them. The gate that certifies champions knew about two of nine.
+    # The hardcoded pairs are a proven SUBSET of the client-sourced map
+    # (tools/patch_power_exclusions.py asserts it), so nothing is lost.
+    for fn in fns:
+        for other in ((POWER_BY_FULL.get(fn) or {}).get("excludes") or []):
+            if other in fns:
+                return False
     for ps, members in tiered.items():
         for fn in members:
             if len(members) - 1 < _prereq_need(fn, ps):

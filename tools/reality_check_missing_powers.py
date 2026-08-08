@@ -62,15 +62,10 @@ ABSENT = {
         "a whole power POOL we do not carry - Force Barrier's max-HP absorb was "
         "how it surfaced"),
     "Pool.Utility_Belt": (6, "the other power pool we do not carry"),
-    "Brute_Melee.Broad_Sword.Boomerang_Slice": (1,
-        "a REAL, pickable level-1 attack in a set we already have, missing on "
-        "all four Broad Sword archetypes. The only single-power absence in the "
-        "whole sweep, and the cheapest thing here to fix - but synthesising a "
-        "damage record (scales, tables, recharge, endurance, slotting "
-        "categories, icon) is a new pipeline, not an additive patcher"),
-    "Scrapper_Melee.Broad_Sword.Boomerang_Slice": (1, "see the Brute entry"),
-    "Stalker_Melee.Broad_Sword.Boomerang_Slice": (1, "see the Brute entry"),
-    "Tanker_Melee.Broad_Sword.Boomerang_Slice": (1, "see the Brute entry"),
+    # ✅ CLOSED by tools/add_boomerang_slice.py: all four records now exist,
+    # client-sourced, with the mutual exclusion against Slice enforced in the
+    # validator and in _picks_legal. The pin is what said so - it failed on
+    # the stale entries the moment the power landed.
 }
 
 

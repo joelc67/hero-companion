@@ -232,6 +232,26 @@ def validate_build(build):
     errors = []
     warnings = []
 
+    # ⚠ MUTUALLY EXCLUSIVE POWERS. The game says it in its own words -
+    # Boomerang Slice prints "This power is mutually exclusive from Slice" -
+    # and the client mirrors it as a `requires` of `<other> !` on BOTH records
+    # (tools/patch_power_exclusions.py). Nine pairs sit in our data, led by
+    # Dark Armor's Dark Regeneration <-> Obscure Sustenance on five archetypes,
+    # and until now the tool allowed both: the same defect class as the eight
+    # illegal champions 0.12.30 shipped. Legality outranks score.
+    # Reads the power dict the picker already holds (/powers ships `excludes`),
+    # so this needs no second lookup table.
+    _held = {p.get("full_name"): (p.get("display_name")
+                                  or (p.get("full_name") or "?").split(".")[-1])
+             for p in build.get("powers", []) if p.get("full_name")}
+    for _p in build.get("powers", []):
+        _fn = _p.get("full_name")
+        for _other in (_p.get("excludes") or []):
+            if _other in _held and _fn and _fn < _other:   # each pair once
+                errors.append(
+                    f"{_held[_fn]} and {_held[_other]} are mutually exclusive - "
+                    f"the game lets you take one or the other, not both")
+
     unique_seen = defaultdict(int)        # piece identity -> count
     bonus_counter = defaultdict(int)      # bonus signature -> count (rule of 5)
 
