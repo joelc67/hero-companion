@@ -50,8 +50,11 @@ def main():
     PS = "Scrapper_Defense.Radiation_Armor.Particle_Shielding"
     MB = "Sentinel_Defense.Super_Reflexes.Master_Brawler"
 
-    ok("back-fill covers the 6 heal-table absorb powers", len(carried) == 6,
-       f"{len(carried)}: {sorted(x.split('.')[-1] for x in carried)}")
+    heal_tbl = {fn for fn, r in rows.items() if r and not r[0].get("max_hp_frac")}
+    hp_prop = {fn for fn, r in rows.items() if r and r[0].get("max_hp_frac")}
+    ok("back-fill covers 6 heal-table + 10 max-HP-proportional absorb powers",
+       len(heal_tbl) == 6 and len(hp_prop) == 10,
+       f"{len(heal_tbl)} heal-table, {len(hp_prop)} proportional")
     ps = rows[PS]
     ok("Particle Shielding carries the client's 3.0 on Melee_HealSelf",
        len(ps) == 1 and ps[0]["scale"] == 3.0
@@ -66,9 +69,24 @@ def main():
        len(rows[MB]) == 1 and rows[MB][0]["scale"] == 4.0)
 
     # ---- NEGATIVE CONTROLS: what must NOT have been taken ----
-    ok("NEGATIVE CONTROL: the units-unknown *_Ones absorb was not taken "
-       "(Bio Armor's Ablative Carapace)",
-       not rows.get("Scrapper_Defense.Bio_Organic_Armor.Ablative_Carapace"))
+    # ⚠ THIS USED TO BE A NEGATIVE CONTROL ("units unknown, not taken") and the
+    # client answered it: the magnitude is not in the scale at all, it is an RPN
+    # magnitude_expression reading `Max.kHitPoints source> 0.3 * @Strength *`.
+    ac = rows.get("Scrapper_Defense.Bio_Organic_Armor.Ablative_Carapace") or []
+    ok("Ablative Carapace is 30% of max HP, decoded from the client's own RPN",
+       len(ac) == 1 and abs(ac[0].get("max_hp_frac", 0) - 0.3) < 1e-9)
+    pl = rows.get("Sentinel_Defense.Bio_Organic_Armor.Parasitic_Leech") or []
+    ok("...and an @StdResult variant resolves to its own scale (14.3%)",
+       len(pl) == 1 and abs(pl[0].get("max_hp_frac", 0) - 0.143) < 1e-9,
+       "safe because these rows all sit on Melee_Ones, 1.0 for all 15 playable "
+       "columns - checked, not assumed")
+    ok("NEGATIVE CONTROL: the GATED Defensive-Adaptation absorb was not taken",
+       all(abs(r.get("max_hp_frac", 0) - 0.09) > 1e-9
+           for r in (rows.get("Brute_Defense.Bio_Organic_Armor.Ablative_Carapace") or [])))
+    ok("NEGATIVE CONTROL: the health-DEPENDENT class was NOT taken - Gamma Boost "
+       "is still empty, because it needs an operating health nobody has ruled on",
+       not (by.get("Scrapper_Defense.Radiation_Armor.Gamma_Boost", {})
+            .get("self_effects") or []))
     ok("NEGATIVE CONTROL: ally-targeted absorb was not taken (Spirit Ward)",
        not rows.get("Pool.Sorcery.Spirit_Ward"))
     ok("NEGATIVE CONTROL: a heal power gained no absorb row",
@@ -104,6 +122,20 @@ def main():
        f"{bx(s, 'absorb')} HP / 60s = {bx(s, 'absorb_hps')} HP/s")
     ok("NEGATIVE CONTROL: a build with no absorb power reads 0.0 both ways",
        bx(a, "absorb") == 0.0 and bx(a, "absorb_hps") == 0.0)
+
+    # ---- the proportional class, live and against BASE hp on purpose ----
+    bio = calc(base + ["Scrapper_Defense.Bio_Organic_Armor.Ablative_Carapace"],
+               "Class_Scrapper")
+    biot = calc(["Tanker_Melee.Battle_Axe.Chop",
+                 "Tanker_Defense.Bio_Organic_Armor.Ablative_Carapace"], "Class_Tanker")
+    ok("Ablative Carapace reads 30% of the archetype's HP, live",
+       abs(bx(bio, "absorb") - 401.7) < 0.5 and abs(bx(biot, "absorb") - 562.2) < 0.5,
+       f"Scrapper {bx(bio, 'absorb')} of 1339, Tanker {bx(biot, 'absorb')} of 1874")
+    eng0 = open(os.path.join(ROOT, "server", "engine.py"), encoding="utf-8").read()
+    ok("...computed against BASE hp, never the build's boosted pool",
+       'float(fx["max_hp_frac"]) * (ctx.get("at_base_hp") or 0.0)' in eng0,
+       "totals['max_hp'] is still accumulating in that loop; reading it would "
+       "make the answer depend on power order")
 
     # ---- slotting moves both numbers, in the right direction each ----
     heal = [{"piece_uid": "Crafted_Heal", "level": 50}]

@@ -21,14 +21,22 @@ grants absorb two ways and only one has unambiguous units:
                                     Scrapper is 401.6 HP - about 30% of base HP,
                                     which is what "a strong absorption shield"
                                     should read.
-  Melee_Ones / Ranged_Ones 1.0   -> 19 records (Bio Armor's Ablative Carapace,
-                                    Nature's Wild Bastion). A literal 1.0 on the
-                                    ones table cannot mean one hit point, so the
-                                    scale is a multiplier into something the
-                                    export does not carry. NOT GUESSED AT - same
-                                    ruling as Gamma Boost's flat 1.0/1.0, which
-                                    the game's own help proves is a scaling
-                                    curve. Pinned in reality_check_empty_records.
+  Melee_Ones / Ranged_Ones 1.0   -> ANSWERED GAME-FIRST, 2026-08-08. A literal
+                                    1.0 could not mean one hit point, and the
+                                    reason is that the magnitude is NOT in the
+                                    scale at all: the client carries it as an
+                                    RPN `magnitude_expression`, and Bio Armor's
+                                    Ablative Carapace reads
+
+                                        Max.kHitPoints source> 0.3 * @Strength *
+
+                                    = 30% of the character's max HP. Eleven
+                                    self-targeted records are proportional to
+                                    max HP and carry no health dependence at
+                                    all, so they need NO scenario input and are
+                                    taken here. `@StdResult` variants resolve to
+                                    their own scale: their table is Melee_Ones,
+                                    which is 1.0 for every playable column.
 
 ⚠ SELF ONLY. 32 of the client's absorb templates target AnyAffected - Spirit
 Ward and Insulating Circuit shield an ALLY. Nothing scores a shield placed on
@@ -84,6 +92,42 @@ def client_index():
             if rec.get("full_name"):
                 out[rec["full_name"]] = rec
     return out
+
+
+def max_hp_fraction(t):
+    """The fraction of MAX HP an absorb template grants, or None.
+
+    The client carries these magnitudes as RPN, not as a table scale, which is
+    why the scale is a bare 1.0 and looked like "units unknown" until the
+    expression was read:
+
+        Max.kHitPoints source> 0.3 * @Strength *   -> 30% of max HP
+        Max.kHitPoints source> @StdResult *        -> the template's own scale
+
+    ⚠ ONLY THESE TWO SHAPES ARE DECODED, and anything else returns None rather
+    than a guess. `@StdResult` is safe to resolve here because every one of
+    these rows sits on Melee_Ones, which is 1.0 for all 15 playable columns -
+    checked, not assumed. Health-DEPENDENT expressions (kHitPoints%) are a
+    different class and are deliberately not touched: they need an operating
+    health, which is a scenario input nobody has ruled on.
+    """
+    e = (t.get("magnitude_expression") or "").split()
+    if len(e) < 2 or e[0] != "Max.kHitPoints" or e[1] != "source>":
+        return None
+    rest = e[2:]
+    if rest == ["@StdResult", "*"]:
+        return float(t.get("scale") or 0.0)
+    if len(rest) == 3 and rest[1] == "*" and rest[2] == "@Strength":
+        try:
+            return float(rest[0])
+        except ValueError:
+            return None
+    if len(rest) == 4 and rest[1] == "*" and rest[2] == "@Strength" and rest[3] == "*":
+        try:
+            return float(rest[0])
+        except ValueError:
+            return None
+    return None
 
 
 def absorb_row(crec):
@@ -186,13 +230,63 @@ def main():
             patched += 1
             touched.append((p["full_name"], row["scale"], row["dur"], rech))
 
+    # ---- the MAX-HP-PROPORTIONAL class, decoded from the client's own RPN ----
+    hp_patched, hp_touched, hp_refused = 0, [], 0
+    for _ps, lst in data.items():
+        for p in lst:
+            crec = client.get(p["full_name"])
+            if not crec or p["full_name"].split(".")[0] in NOT_PLAYER:
+                continue
+            frac = None
+            for grp in (crec.get("effects") or []):
+                if (grp.get("requires_expression") or "").strip():
+                    continue          # gated: Bio's Defensive Adaptation mode
+                for t in (grp.get("templates") or []):
+                    if ("Absorb" not in (t.get("attribs") or [])
+                            or t.get("target") != "Self"
+                            or not (t.get("magnitude_expression") or "")):
+                        continue
+                    f = max_hp_fraction(t)
+                    if f is None:
+                        hp_refused += 1
+                    elif frac is None:
+                        frac = (f, t.get("duration"))
+            if not frac or not frac[0]:
+                continue
+            if any(str(e.get("effect", "")).lower() == "absorb"
+                   for e in (p.get("self_effects") or [])):
+                continue
+            if not check_only:
+                p.setdefault("self_effects", []).append({
+                    "effect": "Absorb",
+                    "damage_type": "None",
+                    "scale": 1.0,
+                    "nmag": 1.0,
+                    "modifier_table": "Melee_Ones",
+                    "enhance_aspect": "Absorb",
+                    "ed_schedule": 0,
+                    "pv_mode": 0,
+                    "duration": _seconds(frac[1]),
+                    "host_recharge": p.get("base_recharge") or 0.0,
+                    # the engine multiplies the archetype's BASE hp by this
+                    "max_hp_frac": frac[0],
+                    MARK: True,
+                })
+            hp_patched += 1
+            hp_touched.append((p["full_name"], frac[0]))
+
     print(f"our powers covered by the client export        : {covered}")
     print(f"client grants a SELF heal-table absorb shield  : {expected}   <- denominator")
     print(f"  {'would patch' if check_only else 'patched'} : {patched}")
     for fn, sc, dur, rech in touched:
         print(f"      {fn}  scale {sc}, {dur}s shield, {rech}s recharge")
-    print(f"STATED EXCLUSION, units-unknown *_Ones absorb rows : {ones_class} "
-          f"(Bio Armor, Nature Affinity - a literal 1.0 cannot be one hit point)")
+    print(f"  MAX-HP-PROPORTIONAL shields ({'would patch' if check_only else 'patched'}) "
+          f": {hp_patched}")
+    for fn, f in hp_touched:
+        print(f"      {fn}  {f*100:.1f}% of max HP")
+    print(f"  RPN shapes refused rather than guessed        : {hp_refused}")
+    print(f"STATED EXCLUSION, *_Ones absorb rows read from the table : {ones_class} "
+          f"(their magnitude lives in the RPN expression, decoded above, not the table)")
     print(f"STATED EXCLUSION, PvE/PvP twin groups dropped      : {twin_dropped}")
     print(f"STATED EXCLUSION, not a player power               : {not_player}")
     print(f"STATED EXCLUSION, no cadence stated                : {no_rech}")

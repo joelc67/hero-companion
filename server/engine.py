@@ -476,6 +476,17 @@ def _power_totals(build, totals, ctx):
             if not row or col >= len(row):
                 continue
             base = fx["scale"] * fx.get("nmag", 1.0) * row[col]
+            # v42 HEALTH-PROPORTIONAL MAGNITUDES. Bio Armor's Ablative
+            # Carapace grants "30% of your max HP" as absorb, and the client
+            # carries that in an RPN magnitude_expression, NOT in the scale -
+            # which is why its table scale is a bare 1.0 and read as "units
+            # unknown" until the expression was decoded.
+            # ⚠ AGAINST BASE HP, NOT THE BUILD'S BOOSTED POOL: totals["max_hp"]
+            # is still accumulating in this loop, so reading it would make the
+            # answer depend on power order - the same rule the v39 duty cycle
+            # follows for recharge. Conservative and order-independent.
+            if fx.get("max_hp_frac"):
+                base = float(fx["max_hp_frac"]) * (ctx.get("at_base_hp") or 0.0)
             boost = ed_by_aspect.get(fx["enhance_aspect"], 0.0)
             val = base * (1.0 + boost)
             # ⚠ ONLY A CLICK GETS THE DUTY CYCLE. A toggle is always on, so its

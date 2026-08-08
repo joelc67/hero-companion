@@ -251,6 +251,23 @@ ALLY_GAPS.update({
         "for the 29 mez powers above"),
 })
 
+# ⚠ HEALTH-SCALING: the client hands the magnitude over as RPN and the curve is
+# fully readable - what is missing is the OPERATING HEALTH to evaluate it at.
+_HEALTH_SCALING = (
+    "HEALTH-SCALING magnitude, decoded from the client's own RPN and blocked "
+    "only on an operating health. Super Reflexes' scaling damage resistance is "
+    "`60 kHitPoints% source> - 0 100 minmax 60 / 0.2 *` = 20% resistance at 0 "
+    "HP falling to 0% at 60% HP; Gamma Boost's regeneration is `75 kHitPoints% "
+    "- 30 + 100 /` (5% of StdResult at full health, 105% at zero) and its "
+    "recovery runs the OTHER way, `1.2 kHitPoints% * 100 / .3 *`. The curves "
+    "are exact; the one missing input is what health to evaluate them at, "
+    "which is a scenario constant of the same class as kb_in and mez_in and is "
+    "Joel's to rule. Note the MAX-HP-PROPORTIONAL cousins needed no such input "
+    "and are already modelled (v42 absorb: Ablative Carapace = 30% of max HP)")
+for _dt in ("Smashing", "Lethal", "Fire", "Cold", "Energy", "Negative_Energy",
+            "Toxic"):
+    OPEN_GAPS[(_dt, "Resistance", "self")] = (13, _HEALTH_SCALING)
+
 OPEN_GAPS.update(ALLY_GAPS)
 NPC_TABLES = {"melee_archvillain_res", "ranged_archvillain_res"}
 # the power-level authority on which side a non-Self template lands on
@@ -273,6 +290,38 @@ def load():
         if c.get("full_name"):
             client[c["full_name"]] = c
     return ours, client
+
+
+_EXPR_DISPOSITIONS = (
+    (("activatetime", "areafactor"),
+     "DEFIANCE, and it must stay OUT of the data: v36 DERIVES it from the "
+     "power's own cast time and area (`.066 activatetime * areafactor /`), so "
+     "carrying it as well would count every Blaster blast twice. The zero scale "
+     "is the client telling us the magnitude is computed, not stored"),
+    (("KineticAssaultSecondaries", "TokenTime"),
+     "the combo/token systems (Kinetic Melee, Savage Blood Frenzy) - the meter "
+     "capability, queued with Set_Mode"),
+    (("kRage", "kMeter"),
+     "meter-driven magnitude (Rage, Domination) - the same queued capability"),
+    (("distance",),
+     "distance-scaling (Savage Leap): positional, and the model has no notion "
+     "of how far away you started"),
+    (("ownPowerNum?",),
+     "the Fighting pool's cross-boost - Boxing, Kick and Cross Punch each get "
+     "stronger for OWNING the others. Real and unmodelled, but it is a pick "
+     "interaction rather than an effect family; queued, not silently dropped"),
+    (("cur.kToHit",),
+     "scales off the caster's CURRENT ToHit - a within-fight state the model "
+     "does not track"),
+)
+
+
+def expression_class(expr):
+    """A magnitude the client computes rather than stores: disposition or None."""
+    for toks, why in _EXPR_DISPOSITIONS:
+        if any(tok in expr for tok in toks):
+            return why
+    return None
 
 
 def disposition_for(fam, aspect, full_name, side="self"):
@@ -340,7 +389,14 @@ def main():
                     if (t.get("table") or "").lower() in NPC_TABLES:
                         continue
                     if not (t.get("scale") or 0):
-                        continue      # rule 4: zero scale carries no magnitude
+                        # rule 4: zero scale carries no magnitude - UNLESS the
+                        # client hands the magnitude over in RPN instead. Super
+                        # Reflexes' scaling damage resistance is exactly that
+                        # shape (scale 0.0 + `60 kHitPoints% source> - 0 100
+                        # minmax 60 / 0.2 *`), so the old rule hid a real family
+                        # behind a rule written for Defiance's empty templates.
+                        if not (t.get("magnitude_expression") or "").strip():
+                            continue
                     tbl = (t.get("table") or "").lower()
                     for a in (t.get("attribs") or []):
                         fam = a.replace("_Dmg", "")
@@ -348,7 +404,11 @@ def main():
                         if (a.lower() in mine or low in mine or tbl in mine
                                 or SYNONYMS.get(low, low) in mine):
                             continue
-                        why = disposition_for(fam, t.get("aspect"), p["full_name"], side)
+                        _ex = (t.get("magnitude_expression") or "").strip()
+                        why = expression_class(_ex) if _ex else None
+                        if not why:
+                            why = disposition_for(fam, t.get("aspect"),
+                                                  p["full_name"], side)
                         if why:
                             disposed[why] += 1
                             continue
