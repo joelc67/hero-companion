@@ -45,8 +45,37 @@ def main():
     # 1. COVERAGE, with a denominator from the data itself
     total = sum(1 for p in by_name.values()
                 if any(e.get("mode") for e in (p.get("self_effects") or [])))
-    ok("the back-fill covers the expected 265 powers", total == 265,
+    # 345 have an ungated self damage template; Vigilance is dropped because its
+    # AT_Uniqueness table is one the engine does not carry, so 344 land.
+    ok("the back-fill covers the expected 344 powers", total == 344,
        f"{total} powers carry mode rows")
+    ok("NEGATIVE CONTROL: Vigilance stays out - its table is unresolvable",
+       not mode_rows("Inherent.Inherent.Vigilance"),
+       "AT_Uniqueness is absent from modifier_tables.json; skipped and reported")
+
+    # 1b. THE TABLES ARE READ FROM THE CLIENT, NOT CHOSEN. If they had been
+    # hardcoded to Melee_Buff_Dmg this would be 1 - and 1,356 of 2,946 rows
+    # would carry the wrong table, because Ranged_Ones and Melee_Ones are
+    # literal-magnitude tables, not archetype-scaled ones.
+    allrows0 = [e for p in by_name.values() for e in (p.get("self_effects") or [])
+                if e.get("mode")]
+    tables = {r["modifier_table"] for r in allrows0}
+    ok("the modifier tables come from the client, not a hardcoded guess",
+       len(tables) >= 4, f"{len(tables)} distinct tables: {sorted(tables)}")
+
+    # 1c. The game distinguishes stacking from replacing, and so do we
+    sd = [r for r in mode_rows("Epic.Corruptor_Soul_Mastery.Soul_Drain")]
+    per_target = [r for r in sd if r["scale"] == 0.8 and r.get("stack") == "Stack"]
+    flat = [r for r in sd if r["scale"] == 4.0 and r.get("stack") == "Replace"]
+    ok("Soul Drain keeps the game's split: 0.8 per-target Stack vs 4.0 flat Replace",
+       len(per_target) == 8 and len(flat) == 8,
+       f"{len(per_target)} stacking rows, {len(flat)} replacing rows")
+
+    # 1d. Rage's crash is carried as a PENALTY with the game's own 120s delay
+    rg = mode_rows("Brute_Melee.Super_Strength.Rage")
+    crash = [r for r in rg if r.get("penalty") and r.get("delay") == 120.0]
+    ok("Rage's -999 crash is kept as a penalty firing at the game's 120s delay",
+       len(crash) == 8, f"{len(crash)} crash rows")
 
     # 2. FAITHFUL to the client's own numbers, on three powers read by hand
     bu = mode_rows("Brute_Melee.Fiery_Melee.Build_Up")
@@ -57,12 +86,13 @@ def main():
        f"{len(bu)} rows, scale {bu[0]['scale'] if bu else '?'}, dur {bu[0]['duration'] if bu else '?'}")
 
     rage = mode_rows("Brute_Melee.Super_Strength.Rage")
-    ok("Rage: 120s buff on a 240s recharge, and its -999 crash row is NOT a buff",
-       len(rage) == 8 and all(r["duration"] == 120.0 for r in rage)
-       and all(r["scale"] > 0 for r in rage),
-       f"{len(rage)} rows, all positive: {all(r['scale'] > 0 for r in rage)}")
+    buff = [r for r in rage if not r.get("penalty")]
+    ok("Rage: the 120s BUFF rows are separated from the crash rows",
+       len(buff) == 8 and all(r["duration"] == 120.0 and r["scale"] > 0 for r in buff),
+       f"{len(buff)} buff rows of {len(rage)} total")
 
-    fe = mode_rows("Brute_Defense.Fiery_Aura.Fiery_Embrace")
+    fe = [r for r in mode_rows("Brute_Defense.Fiery_Aura.Fiery_Embrace")
+          if not r.get("penalty")]
     fire = [r for r in fe if r["damage_type"] == "Fire"]
     other = [r for r in fe if r["damage_type"] != "Fire"]
     ok("Fiery Embrace keeps the game's SPLIT: fire 10.0/20s, the rest 8.0/10s",

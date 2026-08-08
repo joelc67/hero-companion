@@ -11,17 +11,19 @@ bugs. Measured consequence before this patch: adding Aim to a build moved
 displayed ST DPS by 0.0, and Rage had its -0.2 defence and -0.25 endurance
 CRASH modelled with none of its +80% damage.
 
-WHAT IS GAME-SOURCED HERE AND WHAT IS NOT
------------------------------------------
-GAME: the effect's existence, its `scale`, its `duration`, which damage types it
-covers, and the host power's recharge - all read from the client export.
-OURS: the modifier table name. The client's templates carry NO `modifier_table`
-field, so `Melee_Buff_Dmg` is chosen because it is the exact parallel of
-`Melee_Buff_ToHit`, which our own parse already attaches to the ToHit half of
-these same powers on EVERY archetype, Blasters and Corruptors included. That
-resolves Build Up to +100% Blaster/Scrapper, +80% Brute/Defender/Stalker, +70%
-Tanker, +68% Corruptor/Dominator. ⚠ THAT ONE LINK IS UNCONFIRMED IN GAME and is
-flagged for Maelwys; if it is wrong, only the table name changes here.
+EVERY FIELD HERE IS THE GAME'S OWN
+----------------------------------
+Existence, `scale`, `duration`, the damage types, `stack`, `delay`, `flags` and
+the modifier TABLE all come straight from the client export.
+⚠ The table was very nearly an assumption. The crawler emits it as `table` (see
+export_powers.py:240) and an earlier pass of this tool missed the key, inferred
+`Melee_Buff_Dmg` from our own convention, and flagged it as unconfirmed. The
+client states it outright, on every one of them including the Blaster and the
+Corruptor: `Melee_Buff_Dmg`. It is now READ, never chosen. Resolved through the
+engine's own `scale x nmag x table[AT column]`, Build Up is +100% Blaster and
+Scrapper, +80% Brute/Defender/Stalker, +70% Tanker, +68% Corruptor/Dominator.
+⚠ And the lookup corrected a real error on the way: AIM IS SCALE 5.0, NOT 8.0 -
+Aim and Build Up are not the same buff, which an assumption would have flattened.
 
 WHY THIS CANNOT MOVE A SCORE (two independent locks, both verified)
 -------------------------------------------------------------------
@@ -46,6 +48,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 POWERS = os.path.join(ROOT, "data", "powers.json")
 CRAWL = os.path.join(ROOT, "tools", "gamedata", "bin-crawler", "out_full")
+TABLES = os.path.join(ROOT, "data", "modifier_tables.json")
 
 # client attrib -> our damage_type vocabulary (the names our damage_effects use)
 DMG_TYPE = {
@@ -54,7 +57,7 @@ DMG_TYPE = {
     "Negative_Energy_Dmg": "Negative", "Psionic_Dmg": "Psionic",
     "Toxic_Dmg": "Toxic",
 }
-TABLE = "Melee_Buff_Dmg"          # see the header - our own convention, not a client field
+TABLE_FALLBACK = "Melee_Buff_Dmg"  # only if the client omits `table`; it never has so far
 MARK = "mode"                     # the key that makes these rows identifiable and removable
 
 
@@ -125,10 +128,26 @@ def self_damage_rows(crec):
                 continue
             scale = t.get("scale")
             dur = _seconds(t.get("duration"))
-            if scale is None or scale <= 0:      # Rage's -999 crash row is NOT a buff
+            if scale is None:
                 continue
             for dt in types:
-                rows.append({"dt": dt, "scale": float(scale), "dur": dur})
+                rows.append({
+                    "dt": dt, "scale": float(scale), "dur": dur,
+                    # ⚠ THE GAME DISTINGUISHES THESE AND SO MUST WE. Soul Drain
+                    # carries TWO damage templates: scale 0.8 `Stack` (it
+                    # accumulates per foe hit) and scale 4.0 `Replace` (flat).
+                    # Written without `stack`, a later model would simply add
+                    # them and lose the per-target behaviour entirely.
+                    "stack": t.get("stack"),
+                    # Rage's crash is scale -999 with delay 120.0 - the game
+                    # fires it exactly as the 120s buff expires. Carried as a
+                    # PENALTY row rather than dropped, so the crash is visible
+                    # to whatever prices the buff.
+                    "delay": t.get("delay"),
+                    "flags": t.get("flags") or [],
+                    # THE GAME'S OWN table name, read not chosen
+                    "table": t.get("table") or TABLE_FALLBACK,
+                })
     return rows
 
 
@@ -139,14 +158,38 @@ def has_damage_self(p):
 
 def main():
     check_only = "--check" in sys.argv
+    # A row naming a table the engine cannot resolve is unusable, so it is
+    # SKIPPED AND REPORTED rather than written. Universal rule, not a
+    # named-power exclusion: today it catches AT_Uniqueness on Vigilance (the
+    # Defender inherent, team-size dependent and already an open ruling), and
+    # it will catch the next one without anybody editing this file.
+    known_tables = set(json.load(open(TABLES, encoding="utf-8"))["tables"])
     raw = open(POWERS, "rb").read()
     data = json.loads(raw.decode("utf-8"))
+    _orig = json.loads(raw.decode("utf-8"))
     client = client_index()
 
     covered = expected = patched = 0
     rows_added = 0
     skipped_have = 0
     gated_excluded = []
+    no_table = {}
+    r_tbl = lambda rs: rs[0]["table"]
+    # IDEMPOTENT: drop any rows a previous run added, then re-derive from the
+    # client. Without this the tool can only ever run once, and a fidelity fix
+    # like carrying `stack` could never be applied.
+    stripped = 0
+    for _ps, lst in data.items():
+        for p in lst:
+            fx = p.get("self_effects")
+            if not fx:
+                continue
+            kept = [e for e in fx if not e.get(MARK)]
+            if len(kept) != len(fx):
+                stripped += len(fx) - len(kept)
+                p["self_effects"] = kept
+    if stripped:
+        print(f"(re-run: stripped {stripped} rows from a previous pass)")
     for _ps, lst in data.items():
         for p in lst:
             crec = client.get(p["full_name"])
@@ -154,6 +197,10 @@ def main():
                 continue
             covered += 1
             rows = self_damage_rows(crec)
+            unresolvable = [r for r in rows if r["table"] not in known_tables]
+            if unresolvable:
+                no_table.setdefault(r_tbl(unresolvable), set()).add(p["full_name"])
+                rows = [r for r in rows if r["table"] in known_tables]
             if not rows:
                 if gated_only(crec):
                     gated_excluded.append(p["full_name"])
@@ -170,7 +217,7 @@ def main():
                         "damage_type": r["dt"],
                         "scale": r["scale"],
                         "nmag": 1.0,
-                        "modifier_table": TABLE,
+                        "modifier_table": r["table"],
                         "enhance_aspect": "Damage",
                         "ed_schedule": 0,
                         "pv_mode": 0,
@@ -179,6 +226,10 @@ def main():
                         # 10-second buff on a 90-second recharge as always-on
                         MARK: True,
                         "host_recharge": p.get("base_recharge"),
+                        "stack": r["stack"],
+                        "penalty": r["scale"] < 0,
+                        **({"delay": r["delay"]} if r["delay"] else {}),
+                        **({"flags": r["flags"]} if r["flags"] else {}),
                     })
             rows_added += len(rows)
             patched += 1
@@ -188,6 +239,9 @@ def main():
     print(f"  already had one (must be 0 today)     : {skipped_have}")
     print(f"  {'would patch' if check_only else 'patched'}                          : {patched}")
     print(f"  effect rows {'would be ' if check_only else ''}added            : {rows_added}")
+    for tname, fns in sorted(no_table.items()):
+        print(f"STATED EXCLUSION, table the engine lacks ({tname}) : {len(fns)} power(s) "
+              f"-> {sorted(fns)}")
     print(f"STATED EXCLUSION, self +Damage only behind a GATE : {len(gated_excluded)}")
     for fn in gated_excluded[:6]:
         print(f"    {fn}")
@@ -217,8 +271,14 @@ def main():
                     p["self_effects"] = kept
                 else:
                     p["self_effects"] = []
+    for _ps, lst in _orig.items():
+        for p in lst:
+            fx = p.get("self_effects")
+            if fx:
+                p["self_effects"] = [e for e in fx if not e.get(MARK)]
+    baseline = json.dumps(_orig, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     reverted = json.dumps(probe, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
-    if reverted != raw:
+    if reverted != baseline:
         print("\nINVARIANCE FAILED: stripping the added rows does not reproduce the "
               "original bytes - refusing to write")
         sys.exit(2)
