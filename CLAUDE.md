@@ -1284,6 +1284,46 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   branch, only an enhancement aspect of that name — Master Brawler, Insulating
   Circuit, Spirit Ward, Particle Shielding), and **ally mez protection has no
   consumer**, so Clear Mind / Clarity ×8 would land inert.
+- **🛡 ABSORB IS MODELLED (v42, 2026-08-08, `fc8e6ead` + `3b0ac15d`) — AND THE
+  TWO NUMBERS ARE DIFFERENT QUESTIONS.** 38 player powers grant an absorb shield
+  and our data carried none of it; the engine had no branch either (`Absorb`
+  existed only as an enhancement-aspect name and a display unit), so Radiation
+  Armor's signature survival click was scored on its regeneration half alone.
+  **`totals["absorb"]` is the shield's SIZE** (Scrapper Particle Shielding
+  **401.6 HP**, ~30% of base HP) and **`totals["absorb_hps"]` is what it is
+  WORTH** — the pool ÷ how often the power re-arms, because a shield soaks its
+  pool once per cast. ⚠ **NEVER ADD THEM**: crediting the pool itself scores a
+  120-second click as permanently up. Consumed as damage-not-taken per second
+  beside regen and self-heal. ⚠ **ONLY HEAL-TABLE ROWS ARE TAKEN** — 19 records
+  grant absorb as a literal `1.0` on a `*_Ones` table (Bio's Ablative Carapace,
+  Nature's Wild Bastion) and one hit point is not a shield, so those are pinned,
+  not guessed. ⚠⚠ **THE ENHANCE ASPECT IS `Absorb`, NOT `Heal`** — the client's
+  `boosts_allowed` says Heal, so "Heal" looks right and enhances NOTHING;
+  `Crafted_Heal` boosts Heal, HitPoints, Regeneration **and Absorb** (measured:
+  401.6 → 401.6 wrong, → 571.9 right). Three understatements stated: absorb does
+  not overheal, its burst value is invisible to time-to-live arithmetic, and the
+  v29 heal-strength bonuses are not applied. Champion exposure ZERO.
+- **⚠⚠ `Recharge` IS A DEAD WORD IN THIS ENGINE — THE ASPECT IS `RechargeTime`
+  (found 2026-08-08, fixed in v42).** No piece in the game carries the aspect
+  `Recharge`; **633 carry `RechargeTime`**; and THREE sites asked for the dead
+  name, so recharge slotting silently reached **none** of: the v39 mode duty
+  cycle, a click buff's uptime, or **TIMED PET uptime**. Always failing
+  downward. Same family as the v28 accuracy allowlist — a name that can never
+  match. Measured with three recharge IOs: **Rage's damage buff 0.40 → 0.796,
+  Category Five pet DPS +96.8%, Auto Turret +87.5%, Lightning Storm +53.8%**
+  (Storm Cell and Dark Servant unchanged — already capped at 1.0). The three
+  sites share `engine._RECH_ASPECT` now, and `test_absorb` checks that name
+  against the **SERVED** piece vocabulary so a rename fails loudly.
+  ⚠ **It was found only because a NEW feature reused the old spelling and its
+  battery measured no movement** — the general lesson being that a fresh
+  measurement across an old code path is how dead lookups surface.
+  ⚠ It widened the re-cert union from 17 to **20 of 24**.
+- **⚠ A CORRECT DATA PATCH READ ZERO THREE TIMES IN ONE SESSION, never once
+  because the data was wrong.** `power_type: 0` on a stub (the engine only
+  counts self effects on an auto/toggle) · the same click gate dropping an
+  absorb row · the dead `Recharge` word. **Generalize: when a back-fill you can
+  see in the file measures 0.0 through the route, suspect the ADMISSION PATH
+  before the data — and always read a known-good axis in the same probe.**
 - **✅ THE TWO-WAY PIN PAID FOR ITSELF THE SAME DAY IT WAS BUILT.** Fixing those
   two records drove TEN of the coverage check's pinned damage-type gaps to zero,
   and the check **hard-failed on the stale entries** instead of passing quietly.

@@ -1,4 +1,62 @@
-# Resume point - 2026-08-08 (latest), the empty-record class is classified too
+# Resume point - 2026-08-08 (latest), absorb + the dead recharge word
+
+## STATE
+HEAD pushed, tracked tree clean. Nothing running, nothing scheduled. Data
+**2026.1.1242**. Models **v39 / v40 / v41 / v42**, none re-certified.
+
+## ⚠ THE RE-CERT UNION IS NOW 20 OF 24 (was 17)
+Counted from the artifact: v39 mode powers **17** · v41 DDR **9** · timed pets
+**8** · v40 slow resist **8** · v42 absorb **0**. The widening is NOT absorb, it
+is the recharge-word fix below. One wave over the union, after the queue settles.
+
+## WHAT THIS PASS DID (`fc8e6ead`, `3b0ac15d`)
+**1. Absorb is modelled.** 38 powers grant a shield and we carried none of it;
+the engine had no branch either. Two totals that must never be added: `absorb`
+is the shield SIZE (Scrapper Particle Shielding **401.6 HP**), `absorb_hps` is
+what it is WORTH (**3.35 HP/s** = pool ÷ its 120s recharge, because a shield
+soaks its pool once per cast). Consumed beside regen and self-heal. Only
+heal-table rows taken; 19 `*_Ones` 1.0 records are pinned, not guessed.
+
+**2. ⚠⚠ `Recharge` IS A DEAD WORD - THE ASPECT IS `RechargeTime`.** No piece in
+the game carries `Recharge`; 633 carry `RechargeTime`; **three sites asked for
+the dead one**, so recharge slotting reached NONE of the v39 mode duty cycle, a
+click buff's uptime, or timed pet uptime. Measured with three recharge IOs:
+Rage's damage buff **0.40 → 0.796**, Category Five pet DPS **+96.8%**, Auto
+Turret **+87.5%**, Lightning Storm **+53.8%**. Found only because the absorb
+cadence reused the same spelling and its battery measured no movement.
+
+## TRAPS FROM THIS PASS
+- **⚠ The enhance aspect is `Absorb`, not `Heal`.** The client's boosts_allowed
+  says Heal, so "Heal" looks right and enhances NOTHING. `Crafted_Heal` boosts
+  Heal, HitPoints, Regeneration **and Absorb** - that is the aspect to name.
+- **⚠ A click's self rows are dropped from totals**, so an absorb row has to be
+  admitted beside the v39 mode buffs or a correct back-fill measures 0.0. That
+  is now the THIRD time this session a correct data patch read zero for a
+  reason that was not the data (power_type, the click gate, the dead word).
+- **✅ Three pins moved and every one FAILED FIRST** - the coverage check's
+  Absorb gap, the empty-record check's absorb-no-branch (3 → 2, the survivors
+  are ally-targeted), and the DDR battery's `MODEL_VERSION == 41`, which was
+  frozen where it should have been `>=`.
+
+## OPEN - MINE, IN ORDER
+1. **Ally-targeted buffs have no consumer.** Clear Mind / Clarity ×8 (mez
+   protection) and Insulating Circuit / Spirit Ward (absorb) are all blank or
+   inert for the same reason: nothing scores a buff placed on someone else.
+   One design decision would unblock all ten.
+2. **Health-scaling effects** (Gamma Boost ×5, Agile's scaling resistance, the
+   19 `*_Ones` absorb records).
+3. Data-only once a branch exists: **+Accuracy** on Combat Training: Offensive
+   ×2, **EnduranceDiscount** on Conserve Power ×6, **Field Medic's +Heal
+   strength**.
+4. **Power Boost `Set_Mode`** (143 powers) · the 8 gated-only powers · ~460
+   unclassified cap/radius rows · knockback protection.
+
+## OPEN - JOEL'S (unchanged)
+- **`mez_in`**, which also blocks ToHit / end-drain / regen / recovery debuff
+  resistance (31 powers, all real, all inert without a rate).
+- **Fury** - a Brute farm log with 3+ single-target attacks.
+
+# Resume point - 2026-08-08 (later), the empty-record class is classified too
 
 ## STATE
 HEAD pushed, tracked tree clean. Nothing running, nothing scheduled. Data
