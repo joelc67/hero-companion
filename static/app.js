@@ -3668,7 +3668,7 @@ window.closeBugModal = function () { const m = $("bug-modal"); if (m) m.classLis
 // already looking at the problem. `what` becomes the prefilled first line.
 function reportThisBtn(what) {
   return `<button class="linkbtn report-this" title="Report this to the developer — opens a pre-filled report, nothing is sent until you press Send"
-    onclick="reportBug(${JSON.stringify(String(what || "")).replace(/"/g, "&quot;")})">🐞 Report this</button>`;
+    onclick="${escHtml(`reportBug(${JSON.stringify(String(what || ""))})`)}">🐞 Report this</button>`;
 }
 window.reportThisBtn = reportThisBtn;
 
@@ -7325,11 +7325,11 @@ function singlesHtml(q) {
         ${r.pieces.map(p => {
           const pIcon = enhIconUrl(p.image);
           return `
-          <div class="piece" onclick='${p.fn}'
+          <div class="piece" onclick="${escHtml(p.fn)}"
             ${p.cand ? `data-cand='${escHtml(JSON.stringify(p.cand))}'` : ""}>
             ${pIcon ? `<img class="piece-icon" src="${pIcon}" alt="" loading="lazy">` : ""}
-            <span>${p.name}</span>
-            <span class="muted">${p.sub}</span>
+            <span>${escHtml(p.name)}</span>
+            <span class="muted">${escHtml(p.sub)}</span>
           </div>`;
         }).join("")}
       </div>
@@ -7385,6 +7385,19 @@ function renderModalSets() {
             const why = dupHere
               ? "Already slotted in this power — the game won't let a set piece repeat within one power."
               : `Unique — the game allows one per build, and you already have it in ${uniqAt}.`;
+            // ⚠⚠ AN APOSTROPHE IN A SET NAME BROKE THE CLICK, AND HAD SINCE THE
+            // FIRST COMMIT (field report BasiliskXVIII, 2026-08-07: a hard stop
+            // slotting Gaussian's proc, console "string literal contains an
+            // unescaped line break"). The handler was written
+            //   onclick='pickPiece("uid", "Gaussian's Synchronized Fire-Control", 3)'
+            // and JSON.stringify escapes the double quote and the newline but NOT
+            // the apostrophe, so the ' in Gaussian's CLOSED the attribute: the
+            // browser kept a truncated, unparseable handler and the row did
+            // nothing. 40 of our set and piece names carry an apostrophe -
+            // Basilisk's Gaze, Achilles' Heel, every ATO - so none of them could
+            // be picked by hand. Attribute payloads go through escHtml, which
+            // neutralises BOTH quote characters; JSON.stringify alone never made
+            // a value attribute-safe. tools/test_picker_attrs.js pins it.
             // data-cand carries the EXACT slot pickPiece would write, so the
             // "what would this do" compare prices the thing the click installs.
             const cand = {
@@ -7397,10 +7410,11 @@ function renderModalSets() {
             <div class="piece ${p.unique?'unique':''}${dup?' piece-dup':''}"
               ${dup ? "" : `data-cand='${escHtml(JSON.stringify(cand))}'`}
               ${dup ? `title="${escHtml(why)}"`
-                    : `onclick='pickPiece(${JSON.stringify(s.uid)}, ${JSON.stringify(s.name)}, ${pi})'`}>
+                    : `onclick="${escHtml(`pickPiece(${JSON.stringify(s.uid)}, `
+                        + `${JSON.stringify(s.name)}, ${pi})`)}"`}>
               ${pIcon ? `<img class="piece-icon" src="${pIcon}" alt="" loading="lazy">` : ""}
-              <span>${p.name}</span>
-              <span class="muted">${dup ? "✔ slotted here" : (p.enhances||[]).join("/")}</span>
+              <span>${escHtml(p.name)}</span>
+              <span class="muted">${dup ? "✔ slotted here" : escHtml((p.enhances||[]).join("/"))}</span>
             </div>`;
           }).join("")}
         </div>
@@ -11303,7 +11317,9 @@ function renderImproveDiff(before, res, hostId, opts) {
     ${perPower}
     ${changes.length ? `<details open><summary>${changes.length} power(s) re-slotted</summary><ul class="crit-list">${changes.join("")}</ul></details>` : ""}`
     + (bare ? "" : `
-    <p class="muted small">Happy with it? Use <strong>⬇ Export to Mids Reborn</strong> above to save the improved build.</p>`);
+    <p class="muted small keep-whole">Happy with it? Save the improved build with
+    <strong>Character → ⬇ Export to Mids Reborn</strong> in the menu bar at the top of the window.
+    <button class="linkbtn" onclick="exportMids()">⬇ Export it now</button></p>`);
 }
 
 async function applyGeneratedBuild(res) {

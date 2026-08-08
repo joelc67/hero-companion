@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- **Fixed: enhancement sets with an apostrophe in the name could not be slotted
+  by hand.** Clicking Gaussian's Synchronized Fire-Control, Basilisk's Gaze,
+  Achilles' Heel, Cupid's Crush or any of the archetype sets in the picker did
+  nothing at all, and left a syntax error in the console. The apostrophe was
+  ending the click handler early. 40 set and piece names are affected, and this
+  had been true since the first release. The solver could always slot them, so
+  it only bit you if you picked one yourself.
+- **The improvement report pointed at an export button that was not there.** It
+  said to use "Export to Mids Reborn above" when that item lives in the
+  Character menu. It now names the menu, and carries its own export button so
+  you do not have to go looking.
+
 ## 0.12.34 — 2026-08-07 — Your picks stay yours
 
 Game data is unchanged (Homecoming 2026.1.1242) and the optimizer's model stays
