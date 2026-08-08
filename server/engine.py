@@ -517,6 +517,22 @@ def _add_power_effect(totals, et, dt, val, base_hp=None, from_attack=False):
         totals["max_hp"] += val
     elif et == "ToHit":
         totals["tohit"] += val
+    elif et == "SlowResist":
+        # v40: POWER-GRANTED slow resistance (Wet Ice, Permafrost, Quickness,
+        # Time Lord...). Until now this axis was fed ONLY by IO set bonuses, so
+        # a build was credited for slow resist from bonuses and got zero from
+        # the powers that actually grant it.
+        # UNITS VERIFIED, not assumed: totals["slow_resist"] is a FRACTION - the
+        # set-bonus path writes it raw and first_principles reads it back as
+        # value/100 off the bonus_extras display, which pct() produced. Our rows
+        # resolve on the *_Ones tables (literal 1.0), so a client scale of 0.6
+        # IS 0.60 and needs no conversion. Same axis as the IO bonuses, so they
+        # ADD, which is correct - both resist the same debuff.
+        # ⚠ VERIFY VIA bonus_extras.slow_resist.value, NOT the top level.
+        # calculate_build returns a curated 20-key response and slow_resist is
+        # not one of them; probing the top level shows None however well the
+        # branch works, and that cost a correct change a revert.
+        totals["slow_resist"] += val
     elif et == "DamageBuff":
         # v39. The caller has already applied the duty cycle for a CLICK; a
         # TOGGLE arrives at full magnitude because it is always on. The game's

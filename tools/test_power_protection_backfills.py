@@ -113,10 +113,21 @@ def main():
     a = calc(base)
     b = calc(base + ["Brute_Defense.Invulnerability.Unyielding",
                      "Brute_Defense.Ice_Armor.Wet_Ice"])
-    ok("INERT: neither back-fill moves slow_resist or any mez total yet",
-       (a.get("slow_resist") or 0) == (b.get("slow_resist") or 0),
-       f"slow_resist {a.get('slow_resist')} -> {b.get('slow_resist')} "
-       f"(a consumer branch is still owed; this check SHOULD fail when it lands)")
+    # ⚠⚠ THIS CHECK USED TO READ THE TOP LEVEL AND PASSED FOR THE WRONG REASON.
+    # calculate_build returns a curated 20-key response; slow_resist is NOT one
+    # of them, it lives at bonus_extras.slow_resist.value. Probing the top level
+    # returns None however well the branch works - which is exactly what made me
+    # revert a correct change. Read where the value actually lives.
+    def slow_of(resp):
+        return ((resp.get("bonus_extras") or {}).get("slow_resist") or {}).get("value")
+    ok("v40: Wet Ice's slow resistance now REACHES the scored total",
+       slow_of(a) == 0.0 and slow_of(b) and slow_of(b) > 100,
+       f"{slow_of(a)} -> {slow_of(b)}  (0.6 + 0.5 on the literal Melee_Ones table)")
+    ok("NEGATIVE CONTROL: a power the client grants none still reads 0.0",
+       slow_of(calc(base + ["Brute_Defense.Fiery_Aura.Fire_Shield"])) == 0.0)
+    ok("mez is still INERT - no consumer branch exists for it yet",
+       b.get("mez_protection") is None and b.get("mez_resist") is None,
+       "should fail deliberately when the mez consumer lands")
 
     # ---- every row resolves against a table the engine actually has ----
     tables = set(json.load(open(os.path.join(ROOT, "data", "modifier_tables.json"),
