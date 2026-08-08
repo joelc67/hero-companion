@@ -1,3 +1,84 @@
+# Resume point - 2026-08-08 (Saturday), the game-knowledge audit
+
+## STATE
+HEAD pushed, tracked tree clean. **v0.12.35 released** (stamp `d76c043`, signed,
+both assets, installed copy mirrored). Nothing running, nothing scheduled.
+Data **2026.1.1242**; client bins are the **July 7 build, which IS the newest
+Homecoming patch** - the snapshot is live, not stale.
+Models bumped today: **v39** (self +Damage at honest duty cycle) and **v40**
+(power-granted slow resistance). Neither has been re-certified yet.
+
+## WHAT TODAY WAS
+Joel: "after 30+ releases we keep finding bugs related to in-game based
+knowledge. Review EVERYTHING." Root cause found and it is not carelessness:
+`reality_check_effect_structure.py` states in its own docstring that its scope is
+*deliberately* five survival families and NOT damage/control templates. Every gap
+of this class has therefore been found reactively from a field report - accuracy
+v28, heal-strength v29, +MaxEnd v35, and today's four.
+
+## SHIPPED (0.12.34 / 0.12.35)
+epic swap dropping picks | leveling chart hiding open seats | an apostrophe that
+broke 40 enhancement sets **since the first commit** | the export pointer.
+
+## COMMITTED, NOT RELEASED
+3 target-cap/radius drifts | self +Damage **275 powers** | slow resistance **126**
+| mez protection + resistance **229** | Granite Armor **-30%** and Bio Armor
+Defensive Adaptation **-25%** (never modelled) | v39 + v40 | mez availability term
+(built, proven, inert) | `reality_check_effect_coverage.py` | 3 sabotage-proven
+batteries.
+
+## OPEN - JOEL'S, AND BOTH BLOCK THE RE-CERT
+1. **`mez_in`** - how often content mezzes you. In NO bin; 43 MB of logs carry 14
+   mez-shaped lines. Cannot be extracted or measured. The mez term multiplies by
+   1.0 until it is set (kb_in precedent, PROVISIONAL). Because the design is
+   protection-dominant it ONLY governs unprotected builds.
+2. **Fury** - needs a Brute farm log whose rotation has 3+ single-target attacks.
+   Two clean attacks cannot separate a multiplier from a flat term.
+
+## OPEN - MINE, IN ORDER
+3. **104 undispositioned families** in the widened check (hard-fails on them).
+   `Melee_Ones` was 1 table of 45 and hid ONE real defect in 4,306 instances.
+   Do the rest biggest first, each family fixed or dispositioned with evidence.
+4. **Power Boost `Set_Mode`** (143 powers; the v39 mode machinery now exists).
+5. **The 8 gated-only powers** (Hardened Carapace, Cosmic Balance, Dark
+   Sustenance) - conditional, need the same scenario input mez does.
+6. **~460 unclassified cap/radius rows.**
+7. **Knockback protection** - pre-existing, filed as a "stated understatement",
+   now visibly the SAME CLASS as slow resist and mez. Worth reopening.
+
+## RE-CERT SCOPE when it is finally run
+13 contexts for the v39 damage term, 8 for v40 slow resist. NOT 24. Run one wave
+over the union AFTER 3 is done, or a family found later forces a re-run.
+
+## TRAPS LEARNED TODAY - these cost real time, do not re-pay
+- **A value the engine computes but never SURFACES cannot be verified.**
+  `calculate_build` returns a curated 20-key response; `slow_resist` lives at
+  `bonus_extras.slow_resist.value`. Probing the top level returns None however
+  well the code works - this made me REVERT A CORRECT BRANCH, and the battery had
+  the same bad probe baked in, passing 12/12 while blessing anything.
+- **Raw scale is not resolved magnitude.** I quoted mez protection as "30" all
+  session; through `Melee_Res_Boolean` it is **10.4** (Unyielding's real value),
+  20.8 stacked. Coverage 98.4%, not 98.9%.
+- **Compare modifier tables CASE-INSENSITIVELY** - ours `Ranged_DeBuff_ToHit`,
+  client `Ranged_Debuff_ToHit`. One capital B invented 121 phantom missing debuffs.
+- **Ask whether we carry the ATTRIB under any name before calling it absent.**
+- **ASPECT is part of the identity** - self RechargeTime is slow RESISTANCE at
+  aspect=Resistance and a recharge BUFF at aspect=Strength. 78 records would have
+  been corrupted.
+- **Zero-scale templates carry no magnitude** - every Blaster blast has one
+  (Defiance is derived from cast time), and counting them made 13 champion
+  contexts look exposed and stalled a re-cert over a double-count that could
+  never fire.
+- **Anything an inherent term already DERIVES stays out of the data** (Vigilance,
+  Defiance) or it is counted twice.
+- ⚠ **I wrote CRLF files as LF again** (`newline=''` on a text write): 3,147
+  insertions on a 92-line change. The whitespace-blind `git diff --stat` caught it.
+
+## THE PATTERN WORTH KEEPING
+Eight of my own numbers needed correcting today and EVERY ONE was caught by a
+check, never by re-reading. Measure before claiming; a probe that looks reasonable
+can be wrong in the same way the code is.
+
 # Resume point — 2026-08-07 (new session starts here)
 
 ## ✅ CLEAN START. Nothing is running, nothing is owed to a half-finished task.
