@@ -1,3 +1,52 @@
+# Resume point - 2026-08-08 (latest), the ally side is swept
+
+## STATE
+HEAD pushed, tracked tree clean. Nothing running, nothing scheduled. Data
+**2026.1.1242**. Models **v39-v42**, none re-certified. **Re-cert union stays
+20 of 24** - this pass moved no number, by design.
+
+## WHAT THIS PASS DID (`4e3f68f9`)
+**The coverage check only ever tested `target == "Self"`.** Every buff placed on
+someone ELSE was invisible to the one instrument built to see everything: 151
+Friend-targeted powers, **45 uncarried families**. All classified, residue 0.
+
+**⚠⚠ NO NEW TERM SHIPPED, deliberately.** The ally half of the absorb patcher
+was written, measured, and REVERTED: only Insulating Circuit is unambiguous
+(Spirit Ward's two groups disagree), and a term for one power no champion holds
+is not worth building before the ally channel is built properly for the 29 mez
+powers that need the same channel.
+
+## ⚠ THE `mez_in` ASK IS NOW THE HIGHEST-LEVERAGE THING IN THE QUEUE
+One ruling unblocks **289 powers across three families that score nothing
+today**: self mez protection (229, built and inert), **ally mez protection +
+resistance (29 - Clear Mind, Clarity, Thaw, Increase Density, Shadow Fall; the
+biggest support gap in the tool)**, and the four debuff-resistance families (31).
+
+## TRAPS FROM THIS PASS
+- **⚠⚠ `AnyAffected` IS NOT `ALLY`.** It means whoever the power affects - a
+  friend on Clear Mind, the FOES on a Brute cone attack. My first sweep read it
+  as a side and called Repulsing Torrent's -damage template a team buff. The
+  power's **`target_type`** (Friend/Foe/Self/Location) is the authority. Pins
+  are keyed by side now so the two can never be confused.
+- **A `Strength` aspect placed on someone else amplifies THEIR OWN effects**
+  (Amp Up) and we model no ally's build - a general disposition that retired
+  nine would-be pins, not nine coincidences.
+
+## OPEN - MINE, IN ORDER
+1. **The ally channel** - build it once, for ally mez (29) + ally absorb (2)
+   together, when `mez_in` lands. Ally slow resistance (8) needs the same
+   channel: `slow_in` exists but only slows MY damage, never the team's.
+2. **Health-scaling effects** (Gamma Boost x5, Agile's scaling resistance, the
+   19 `*_Ones` absorb records).
+3. Data-only once a branch exists: +Accuracy on Combat Training: Offensive x2,
+   EnduranceDiscount on Conserve Power x6, Field Medic's +Heal strength.
+4. **Power Boost `Set_Mode`** (143 powers) · the 8 gated-only powers · ~460
+   unclassified cap/radius rows · knockback protection.
+
+## OPEN - JOEL'S
+- **`mez_in`** - see the leverage note above.
+- **Fury** - a Brute farm log with 3+ single-target attacks.
+
 # Resume point - 2026-08-08 (latest), absorb + the dead recharge word
 
 ## STATE

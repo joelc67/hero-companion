@@ -1318,6 +1318,35 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   battery measured no movement** — the general lesson being that a fresh
   measurement across an old code path is how dead lookups surface.
   ⚠ It widened the re-cert union from 17 to **20 of 24**.
+- **🤝 THE ALLY SIDE WAS NEVER SWEPT, AND `AnyAffected` IS NOT `ALLY`
+  (2026-08-08, `4e3f68f9`).** `reality_check_effect_coverage.py` tested
+  `target == "Self"` and stopped, so every buff a power places on someone ELSE
+  was invisible to the one instrument built to see everything — **151
+  Friend-targeted player powers, 45 uncarried families**. ⚠⚠ **The template's
+  `target` field is NOT the side**: `AnyAffected` means whoever the power
+  affects — a friend on Clear Mind, the **FOES** on a Brute cone attack — and a
+  first sweep keyed on it classified Repulsing Torrent's −damage template as a
+  team buff. **The power's own `target_type` (Friend / Foe / Self / Location)
+  is the authority**, and pins are keyed by SIDE so a self-side and ally-side
+  gap of the same family can never be confused. ⚠ **A general disposition worth
+  keeping: an `aspect=Strength` row placed on someone else amplifies THEIR OWN
+  effects (Amp Up) — we model no ally's build, so there is nothing to
+  multiply.** That rule retired nine would-be pins.
+- **⚠⚠ `mez_in` IS NOW THE HIGHEST-LEVERAGE OPEN RULING IN THE PROJECT.** One
+  number unblocks **289 powers that score nothing today**: self mez protection
+  (229, built and proven but inert), **ally mez protection + resistance (29 —
+  Clear Mind, Clarity, Thaw, Increase Density, O2 Boost, Shadow Fall, the
+  biggest support gap in the tool)**, and the four debuff-resistance families
+  (31: ToHit, endurance-drain, regeneration, recovery). ⚠ Ally SLOW resistance
+  (8) is the one that is NOT blocked on an input — `slow_in` exists, but it only
+  slows MY damage and the team is a flat `team_dps` the model never slows, so
+  what is missing there is the CHANNEL.
+- **⛔ DON'T BUILD A TERM FOR ONE POWER WHEN THE CHANNEL IS COMING ANYWAY
+  (2026-08-08).** The ally half of `patch_power_absorb` was written, measured
+  and REVERTED: Insulating Circuit is clean but Spirit Ward's two ungated groups
+  disagree (0.2/20s vs 1.0/10s, an over-time toggle), leaving exactly ONE
+  unambiguous power that no champion holds. The same ally channel is needed for
+  the 29 mez powers, so it gets built once, properly, when `mez_in` lands.
 - **⚠ A CORRECT DATA PATCH READ ZERO THREE TIMES IN ONE SESSION, never once
   because the data was wrong.** `power_type: 0` on a stub (the engine only
   counts self effects on an auto/toggle) · the same click gate dropping an
