@@ -165,9 +165,16 @@ def main():
     check_only = "--check" in sys.argv
     # A row naming a table the engine cannot resolve is unusable, so it is
     # SKIPPED AND REPORTED rather than written. Universal rule, not a
-    # named-power exclusion: today it catches AT_Uniqueness on Vigilance (the
-    # Defender inherent, team-size dependent and already an open ruling), and
-    # it will catch the next one without anybody editing this file.
+    # named-power exclusion, and it will catch the next one unaided.
+    #
+    # ⚠ TODAY IT CATCHES VIGILANCE, AND THAT EXCLUSION IS RIGHT FOR A BETTER
+    # REASON THAN THE MISSING TABLE. AT_Uniqueness DOES exist in the client
+    # (tools/gamedata/tables/defender.json), so it could be added - but it must
+    # not be. first_principles ALREADY derives Vigilance
+    # (x = 0.30 - 0.10 x teammates), so writing the rows would credit it twice,
+    # which is precisely the Defiance trap. Any mechanic an inherent term
+    # already derives stays out of the data, and the derived term stays the
+    # single source of truth.
     known_tables = set(json.load(open(TABLES, encoding="utf-8"))["tables"])
     raw = open(POWERS, "rb").read()
     data = json.loads(raw.decode("utf-8"))
