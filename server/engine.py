@@ -316,6 +316,10 @@ def _empty_totals():
         # movement record RunningSpeed, every KB record Knockback).
         "kb_protection": 0.0,       # protection POINTS (mag), not a percent
         "slow_resist": 0.0,
+        # v41: defence-debuff resistance, a FRACTION. Power-granted only - the
+        # game ships no DDR set bonus, so nothing else can feed this and there
+        # is nothing to double-count against.
+        "def_debuff_resist": 0.0,
         # v41: PROTECTION is a magnitude threshold, RESIST a duration cut -
         # different axes, never merged. Per mez type; protection is read as a
         # MINIMUM across types, not a sum (two powers giving 30 each do not
@@ -432,7 +436,14 @@ def _power_totals(build, totals, ctx):
                 # Granite (measured: -0.30 -> nothing).
                 if fx.get("delay") or (fx.get("scale") or 0) <= -900:
                     continue
-                _key = (fx.get("scale"), fx.get("duration"), fx.get("stack"))
+                # ⚠ THE EFFECT NAME IS PART OF THE KEY. v39 was the only mode
+                # family, so (scale, duration, stack) was unambiguous; v41's DDR
+                # rows carry the same flag, and two DIFFERENT families that
+                # happened to share those three numbers on one power would have
+                # silently swallowed each other. No-op for v39 (its eight rows
+                # are all DamageBuff and still collapse to one).
+                _key = (fx.get("effect"), fx.get("scale"),
+                        fx.get("duration"), fx.get("stack"))
                 if _key in _seen_mode:
                     continue
                 _seen_mode.add(_key)
@@ -546,6 +557,18 @@ def _add_power_effect(totals, et, dt, val, base_hp=None, from_attack=False):
         # not one of them; probing the top level shows None however well the
         # branch works, and that cost a correct change a revert.
         totals["slow_resist"] += val
+    elif et == "DefDebuffResist":
+        # v41: DEFENCE DEBUFF RESISTANCE, and the game says so in its own words -
+        # Agile prints "Res(DeBuff DEF)", Tough Hide "+RES (Debuff DEF)". 178
+        # powers grant it and our data carried none of it, while the scorer has
+        # applied incoming -def pressure since v10 assuming nobody resists.
+        # Same units as slow_resist: a FRACTION. Agile resolves 0.2 x
+        # Melee_Res_Boolean(Scrapper 0.346) = 0.069; Tough Hide 0.25 x
+        # Melee_Ones(1.0) = 0.25. They ADD across powers, which is what the game
+        # does; the 95% game cap is applied where the term is consumed.
+        # ⚠ VERIFY VIA bonus_extras.def_debuff_resist.value, NOT the top level -
+        # calculate_build returns a curated response and this is not in it.
+        totals["def_debuff_resist"] += val
     elif et == "DamageBuff":
         # v39. The caller has already applied the duty cycle for a CLICK; a
         # TOGGLE arrives at full magnitude because it is always on. The game's
@@ -2239,6 +2262,9 @@ def _to_display(totals, res_cap=RESISTANCE_HARD_CAP, sec_caps=None, ctx=None):
                                "label": "Mez protection (lowest type)"},
             "slow_resist": {"value": pct(totals.get("slow_resist", 0.0)),
                             "label": "Slow resistance (recharge + movement)"},
+            "def_debuff_resist": {
+                "value": pct(totals.get("def_debuff_resist", 0.0)),
+                "label": "Defence debuff resistance"},
             "mez_duration": {m: pct(v) for m, v in
                              (totals.get("mez_duration") or {}).items() if v},
             "movement": {"value": pct(totals.get("movement", 0.0)),
