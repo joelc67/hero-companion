@@ -194,20 +194,11 @@ OPEN_GAPS = {
     ("Heal", "Strength"): (1,
         "Field Medic's +Heal strength. The heal_strength axis has existed since "
         "v29, so this is data-only"),
-    ("Melee", "Current"): (1, "Active Defense - see Smashing/Resistance"),
-    ("Psionic", "Current"): (1, "Active Defense - see Smashing/Resistance"),
-    ("Smashing", "Resistance"): (2,
-        "WHOLE RECORDS ARE EMPTY. Shield Defense's Active Defense prints 'Toggle: "
-        "Self +DEF(Melee), +Res(Lethal, Smashing)' and Ninjitsu's Smoke Flash "
-        "'+Res(Knockback, Knockup, All DMG)'; both carry zero effect rows in our "
-        "data. Empty-record class"),
-    ("Lethal", "Resistance"): (2, "Active Defense / Smoke Flash - see Smashing/Resistance"),
-    ("Fire", "Resistance"): (1, "Smoke Flash - see Smashing/Resistance"),
-    ("Cold", "Resistance"): (1, "Smoke Flash - see Smashing/Resistance"),
-    ("Energy", "Resistance"): (1, "Smoke Flash - see Smashing/Resistance"),
-    ("Negative_Energy", "Resistance"): (1, "Smoke Flash - see Smashing/Resistance"),
-    ("Psionic", "Resistance"): (1, "Smoke Flash - see Smashing/Resistance"),
-    ("Toxic", "Resistance"): (1, "Smoke Flash - see Smashing/Resistance"),
+    # ✅ CLOSED by tools/patch_empty_player_records.py: the ten damage-type
+    # entries that lived here were Shield Defense's Active Defense and
+    # Ninjitsu's Bo Ryaku, both of which held NO effect rows at all. The
+    # two-way pin is what surfaced it - they went to zero and this check
+    # failed on the stale entries rather than quietly passing.
 }
 NPC_TABLES = {"melee_archvillain_res", "ranged_archvillain_res"}
 _DMG_TYPES = {"Smashing", "Lethal", "Fire", "Cold", "Energy", "Negative_Energy",
