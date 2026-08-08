@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- **The game's self damage buffs are in our data at last.** Build Up, Aim,
+  Rage, Fiery Embrace, Focus Chi, Soul Drain, Spirit Drain and 258 more give
+  you a damage bonus that our records simply did not carry, only the to-hit
+  half. Rage was the starkest case: the tool modelled its defence and
+  endurance crash and none of its damage. The numbers now come straight from
+  the game. They are recorded but not yet counted in any total or score, and
+  they are labelled that way, because a buff that lasts ten seconds in every
+  ninety cannot honestly be added as though it were always on. Nothing about
+  your builds changes with this release.
+
 - **Three Soul Drain records corrected against the game.** Brute Dark Melee and
   Corruptor Soul Mastery had Soul Drain capped at 7 targets where the game hits
   10, and the Dominator version had a 15 foot radius where the game uses 10. No
