@@ -1349,6 +1349,47 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   scaling, and the **Fighting-pool cross-boost** (Boxing/Kick/Cross Punch each
   stronger for owning the others — real, unmodelled, and named rather than
   invisible).
+- **🚫 MUTUALLY EXCLUSIVE POWERS — THE TOOL ALLOWED WHAT THE GAME REFUSES
+  (found and fixed 2026-08-08, `35c97c6f`).** The client marks them with a
+  `requires` of `<other> !` on BOTH records, and **nine pairs already sat in our
+  data on both sides** with nothing stopping a user *or a certification wave*
+  from taking both: **Dark Regeneration ⟷ Obscure Sustenance on FIVE
+  archetypes**, Master Brawler ⟷ Practiced Brawler, the Widow's Build Up ⟷
+  Follow Up, and the two VEAT grenades. `engine.validate_build` raised nothing,
+  and **`_picks_legal` knew about TWO of the nine** because they had been typed
+  in by hand as `_VEAT_DUPLICATE_PAIRS`. That is the class that shipped eight
+  illegal champions in 0.12.30; legality outranks score. ✓ Exposure counted
+  BEFORE the change: **zero of 24** hold both sides. Now 13 client-derived
+  pairs, **mirrored-or-not-at-all** (a one-sided exclusion is a parse artefact),
+  the validator names the pair, and the gate reads the data — the hand-list is a
+  proven subset. Battery `tools/test_power_exclusions.py`.
+  ⚠ **A sabotage that mattered:** "adding the partner makes it illegal" PASSED
+  with the rule deleted, because a 25th pick breaks the ladder cap on its own.
+  **The check SWAPS a pick now** — when a negative test can pass for a second
+  reason, it is not testing what it names.
+- **🗡 BOOMERANG SLICE — the one whole POWER this audit added, and the pattern
+  for the rest (2026-08-08).** A real level-1 Broad Sword attack on four
+  archetypes. **Not an additive patch**: a whole record, so every field came
+  from the **client** (what the power is) or its sibling **Slice** (the
+  app-schema fields), the latter justified because the client says the two
+  accept an IDENTICAL set of categories and boosts on all four archetypes.
+  Live: 40.7 damage, 1.83s cast, cone, level 2 beside Slice, refusing to
+  coexist with it. ⚠ It could not be added until the exclusion rule above
+  existed — the tool would otherwise have offered a build the game refuses.
+  ⚠ **The 15-second Rending Slice bonus is NOT priced** (gated on a `Set_Mode`,
+  the meter class) — understated rather than guessed. ⚠ No certified score
+  moves, but the one Broad Sword context can now **re-pick into it**: search
+  space widening, not a number changing.
+- **⚠⚠ `child_effects` IS A LEVEL NOBODY HAD READ, AND THAT IS TWICE IN ONE DAY.**
+  Boomerang Slice's two damage groups read as **EMPTY** at the top level; the
+  damage hangs off `child_effects`, a group field no probe in this project had
+  ever descended into. It nearly ended the work as "the client has no damage for
+  it". The same shape as `magnitude_expression` hours earlier. **Generalize:
+  treat an empty-looking client group as UNREAD, not empty — enumerate the
+  field names before concluding the data is absent.**
+- **⚠ THE CLIENT'S `available_level` IS 0-BASED, OURS IS 1-BASED** — 5,478 of
+  5,589 matched powers agree on the +1. The Mids `IoLevel` trap in a new coat;
+  any record synthesised from the client must add one.
 - **⚠⚠ "459 MISSING POWERS" WAS WRONG — IT IS 32, AND THE REST WAS NAMING
   (retracted and corrected the same day, 2026-08-08, `0f585868`).** I reported
   459 absent client powers "including whole shipping powersets — Wind Control,

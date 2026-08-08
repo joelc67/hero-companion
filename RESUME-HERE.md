@@ -1,3 +1,53 @@
+# Resume point - 2026-08-08 (latest), Boomerang Slice + the legality hole
+
+## STATE
+HEAD pushed, tracked tree clean. Nothing running. Data **2026.1.1242**, models
+**v39-v42**, **re-cert union 20 of 24** (no score moved this pass).
+
+## WHAT THIS PASS DID (`35c97c6f`)
+**⚠⚠ THE TOOL ALLOWED BUILDS THE GAME REFUSES.** Boomerang Slice is mutually
+exclusive with Slice, so I checked how we enforce that - and **nine pairs were
+already in our data on both sides**, with nothing stopping a user OR A
+CERTIFICATION WAVE from taking both: **Dark Regeneration <-> Obscure Sustenance
+on five archetypes**, Master Brawler <-> Practiced Brawler, the Widow's Build Up
+<-> Follow Up, and two VEAT grenade pairs. `validate_build` raised nothing and
+`_picks_legal` knew about TWO of the nine, hand-typed as
+`_VEAT_DUPLICATE_PAIRS`. Same class as 0.12.30's eight illegal champions.
+✓ Exposure counted first: **zero of 24** hold both sides. Fixed at the source -
+13 client-derived mirrored pairs, the validator names the pair, and the gate
+reads the data instead of the hand-list.
+
+**BOOMERANG SLICE ADDED** - a real level-1 Broad Sword attack on four
+archetypes, the only whole power the audit found missing. Client for what the
+power IS, sibling Slice for the app-schema fields (the client says both accept
+identical categories and boosts). Live: **40.7 damage, 1.83s cast, cone**,
+served at level 2 beside Slice and refusing to coexist with it.
+
+## TRAPS FROM THIS PASS
+- **⚠⚠ `child_effects` IS A LEVEL NOBODY HAD READ.** Boomerang Slice's damage
+  groups look EMPTY at the top level; the damage hangs one level down. This
+  nearly ended as "the client has no damage for it". **Second time today** a
+  field existed and no probe had descended into it (the first was
+  `magnitude_expression`) - treat an empty-looking group as UNREAD, not empty.
+- **⚠ `available_level` is 0-BASED, ours is 1-based** (5,478 of 5,589 agree).
+- **⚠ A SABOTAGE THAT MATTERED:** "adding the partner makes it illegal" PASSED
+  with the exclusion rule deleted, because a 25th pick breaks the ladder cap on
+  its own. The check SWAPS a pick now, so only the exclusion can refuse it.
+- **⚠ The 15s Rending Slice bonus is NOT priced** (gated on a Set_Mode, the
+  meter class) - the power is understated rather than guessed at.
+
+## ONE CONSEQUENCE TO STATE
+No certified score moves, but the ONE Broad Sword context can now re-pick into
+Boomerang Slice, so a future wave may legitimately choose it over Slice. That is
+the search space widening, not a number changing.
+
+## STILL ABSENT (pins down to 4)
+Wind Control (Controller + Dominator, 20 powers), Pool.Gadgetry (6),
+Pool.Utility_Belt (6). The app does not offer them, so nothing is broken on
+screen. Adding them is the same record-synthesis path Boomerang Slice just
+proved out - **a known-cost job now rather than an unknown one**, and Joel's
+call whether it is worth it.
+
 # Resume point - 2026-08-08 (latest), the missing-powers retraction
 
 ## STATE
