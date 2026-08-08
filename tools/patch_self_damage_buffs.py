@@ -128,7 +128,12 @@ def self_damage_rows(crec):
                 continue
             scale = t.get("scale")
             dur = _seconds(t.get("duration"))
-            if scale is None:
+            if scale is None or scale == 0:
+                # ⚠ ZERO-SCALE ROWS CARRY NO MAGNITUDE. Every Blaster blast has
+                # one (DEFIANCE's magnitude is not in the template - it is
+                # derived from cast time, which first_principles already does).
+                # Writing them made 13 contexts look exposed and had me block a
+                # re-cert over a double-count that could never fire.
                 continue
             for dt in types:
                 rows.append({

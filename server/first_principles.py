@@ -562,6 +562,15 @@ def _meter_damage_mult(archetype, sc, totals):
     Domination is credited in the ENDURANCE term (perma refill), not here."""
     E = 0.95
     B = totals.get("damage_buff") or 0.0
+    # ⚠ DEFIANCE WOULD OTHERWISE BE COUNTED TWICE (found 2026-08-08). The v39
+    # back-fill puts every Blaster blast's self +damage row into damage_buff,
+    # and the Blaster branch below RE-DERIVES exactly that from cast times. The
+    # attack-borne share is removed here so `x` remains the single source of
+    # truth for it; every other archetype keeps its attack-borne buffs (Soul
+    # Drain is a real attack that really does buff) because none of them has an
+    # inherent term standing in for it.
+    if archetype == "Class_Blaster":
+        B -= totals.get("damage_buff_attacks") or 0.0
     x = 0.0
     mult = 1.0
     if archetype == "Class_Blaster":

@@ -45,10 +45,15 @@ def main():
     # 1. COVERAGE, with a denominator from the data itself
     total = sum(1 for p in by_name.values()
                 if any(e.get("mode") for e in (p.get("self_effects") or [])))
-    # 345 have an ungated self damage template; Vigilance is dropped because its
-    # AT_Uniqueness table is one the engine does not carry, so 344 land.
-    ok("the back-fill covers the expected 344 powers", total == 344,
-       f"{total} powers carry mode rows")
+    # 345 powers have an ungated self damage template. Vigilance drops out
+    # (AT_Uniqueness is not a table the engine carries) and 69 more carry only
+    # ZERO-scale rows - every Blaster blast has one, because Defiance's
+    # magnitude is derived from cast time, not stored in the template. 275 land.
+    ok("the back-fill covers the expected 275 powers with real magnitude",
+       total == 275, f"{total} powers carry mode rows")
+    ok("NEGATIVE CONTROL: a zero-magnitude Defiance row is not written",
+       not mode_rows("Blaster_Ranged.Fire_Blast.Fire_Blast"),
+       "Blaster blasts carry scale 0.0 templates; writing them would fake exposure")
     ok("NEGATIVE CONTROL: Vigilance stays out - its table is unresolvable",
        not mode_rows("Inherent.Inherent.Vigilance"),
        "AT_Uniqueness is absent from modifier_tables.json; skipped and reported")

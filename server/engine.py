@@ -493,7 +493,7 @@ def _mode_duty_cycle(fx, own_recharge_enh):
     return min(1.0, dur / effective) if effective > 0 else 1.0
 
 
-def _add_power_effect(totals, et, dt, val, base_hp=None):
+def _add_power_effect(totals, et, dt, val, base_hp=None, from_attack=False):
     if et == "Defense":
         if dt in totals["defense"]:
             totals["defense"][dt] += val
@@ -524,6 +524,8 @@ def _add_power_effect(totals, et, dt, val, base_hp=None):
         # scalar is faithful; Fiery Embrace's extra fire row simply adds more,
         # which is what the game does.
         totals["damage_buff"] += val
+        if from_attack:
+            totals["damage_buff_attacks"] += val
 
 
 def _incarnate_totals(build, totals, ctx):
