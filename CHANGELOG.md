@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.12.35 — 2026-08-07 — Every set is clickable
+
+Game data is unchanged (Homecoming 2026.1.1242) and the optimizer's model stays
+at v38, so no build's score moves and nothing was re-certified. Both fixes come
+from one field report.
+
 - **Fixed: enhancement sets with an apostrophe in the name could not be slotted
   by hand.** Clicking Gaussian's Synchronized Fire-Control, Basilisk's Gaze,
   Achilles' Heel, Cupid's Crush or any of the archetype sets in the picker did
