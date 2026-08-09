@@ -1121,6 +1121,39 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   ⚠ `var(--text)` IS UNDEFINED in style.css — the ink token is **`--ink`**.
   Three existing rules already use the dead name (`.sb-leg b`, `.jny-chip-how b`,
   and `.ghost-btn`, the only one with a fallback). Do not copy that pattern.
+- **🗡 v44 CRITICAL HITS — THE CHANCE THE CLIENT STATES, AT THE FLOOR IT
+  STATES IT (2026-08-09, `bad38824`, `tools/patch_power_crits.py`).** The
+  Scrapper's and Stalker's defining mechanic, never scored. **v36 deferred the
+  whole class for want of grounding** ("12/194 explicit, gates only — third-party
+  chance tables are forbidden basis"); the `tags` finding removed that obstacle.
+  Hack: base chance 1.0 scale 1.64, `CritSmall` 0.05 scale 1.64, `CritLarge`
+  0.10 scale 1.64 — **a crit adds 100% of the attack's own damage** and the crit
+  row IS the base row again. **253 rows on 247 powers.**
+  ⚠ **THE FLOOR IS TAKEN.** Crediting the 0.10 needs the spawn's rank mix and no
+  scenario writes one down — `rank_acc` and `ctrl_land` were each derived from a
+  mix but neither records it, and inverting `rank_acc` needs an assumption about
+  the tail. The minimum needs nothing and is exact on a minion-heavy spawn.
+  ⚠⚠ **THREE LEAKS, EACH CAUGHT BY MEASURING RATHER THAN READING** — and every
+  wrong version looked reasonable: (1) **a chance of 1.0 is not a die roll** —
+  StealthCrit is the guaranteed crit while HIDDEN, and taking it doubled Kyokan
+  and Mask Presence unconditionally; (2) **pet/redirect records carry the tags**
+  but a pet does not crit as its owner; (3) ⚠⚠ **our `Epic.*` records are SHARED
+  across archetypes**, so a first pass handed criticals to Defenders, Tankers,
+  Peacebringers and Warshades through their epic picks — **exposure read 14 of
+  24** until it was restricted to the two archetypes the game gives a crit
+  inherent, then **2**. Generalize: an `Epic.*` record is not archetype-scoped,
+  so never write an archetype-specific mechanic onto one.
+  ⚠ **THE INVARIANCE GUARD EARNED ITS KEEP**: it refused to write while the
+  BASELINE still held the previous pass's rows, leaving the over-broad version
+  on disk until the baseline was stripped too — the same idempotency trap as the
+  pools generator. Its failing is why the wrong data did not ship.
+  ⚠ **A re-cert is owed for 2 of 24** (Scrapper Broad_Sword/SR, Stalker
+  Rad_Melee/Dark_Armor). **NOT STARTED.** Battery `tools/test_crits.py` (12
+  checks, 3 sabotages) reads the scale and chance back out of the client.
+  ⚠ **VERSION PINS: `>=`, NOT `==`.** test_absorb and test_domination each
+  pinned MODEL_VERSION exactly and went red on the NEXT bump for a reason
+  unrelated to their subject. Both now pin "at or past the version my subject
+  landed in", which is what an exact pin was reaching for.
 - **👑 v43 DOMINATION — THE HALF THE GAME SETTLES, SHIPPED; THE HALF IT DOES
   NOT, STATED (2026-08-09, `4fc76239`).** The Dominator inherent. **Size, stated
   twice:** its own help says control powers *"will typically last 50 percent
