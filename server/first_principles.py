@@ -558,7 +558,12 @@ def _meter_damage_mult(archetype, sc, totals):
     DORMANT (displayed, never scored — failed basis audit or measurement):
       Fury (residual measurement UNCLEAN — component/tick confound),
       Opportunity (Global_Chance_Mod semantics + marked-target template
-      ungrounded), Gauntlet/Momentum/Combo/silent-crits (not yet modeled).
+      ungrounded), Gauntlet/Momentum/Combo (not yet modeled).
+    ⚠ UPDATED 2026-08-09: the silent CRITS left this list in v44 - the
+    client states every chance per power in its `tags` groups, so the basis
+    the v36 audit wanted exists (tools/patch_power_crits.py, 253 rows, the
+    FLOOR chance taken because no scenario carries a rank mix). And v43
+    credits Domination's +50% control DURATION beside its endurance refill.
     Domination is credited in the ENDURANCE term (perma refill), not here."""
     E = 0.95
     B = totals.get("damage_buff") or 0.0

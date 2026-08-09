@@ -128,9 +128,13 @@ TAGS = {
     "PowerBoostB": (MODE, "the second half of the same Power Boost window"),
 
     # ---------- SCENARIO: real, and blocked on one input ----------
-    "Containment": (SCENARIO, "the Controller inherent - double damage while the "
-                              "target is held/immobilised/slept. Needs the share "
-                              "of attacks landing on an already-mezzed target"),
+    "Containment": (DERIVED, "⚠ RECLASSIFIED 2026-08-09. v36 already GROUNDS "
+                             "Containment (paired equal-scale damage templates) "
+                             "and weights it by the scenario's own ctrl_land as "
+                             "the mezzed-target fraction. It was listed here as "
+                             "blocked on a scenario input it already had. The "
+                             "disposition is unchanged - skip - but the reason "
+                             "is a double-count, exactly like Defiance"),
     "BuildStatic": (SCENARIO, "Electrical Blast's Static meter - a stack count"),
     "BuildFrenzy": (SCENARIO, "Savage Melee's Frenzy stacks"),
     "Contaminated": (SCENARIO, "Radiation Blast's Contaminated state on the target"),
