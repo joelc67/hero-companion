@@ -1,4 +1,65 @@
-# Resume point - 2026-08-08 (latest), both origin pools SHIPPED + the mode gate found
+# Resume point - 2026-08-09 (latest), the mode/meter capability is classified
+
+## STATE
+HEAD `6186fbee` pushed. Nothing running. Data **2026.1.1242**, model **v42**
+unchanged, **re-cert union 20 of 24**. Champion exposure zero this pass.
+
+## THE CAPABILITY IS THE CLASSIFICATION
+`tools/mode_tags.py` adjudicates all **47** tags that reach a scored group of a
+power we carry, each with its evidence; `reality_check_mode_tags.py` hard-fails
+both ways (unadjudicated tag, or a stale entry). Five classes: **LABEL 22 ·
+PROB 14 · MODE 4 · SCENARIO 6 · DERIVED 1**.
+
+⚠⚠ **A TAG IS NOT AUTOMATICALLY A GATE, and assuming so was a live bug I
+shipped yesterday.** Skipping every tagged group is right for FieryEmbrace and
+wrong for `FireBlastBonusDoT`, the client's own name for Blaze's Fire DoT.
+**Three mechanical tests were tried and each got some of the 48 wrong in BOTH
+directions** - PowerBoostA gates but names no mode or power; `Damage` and
+`Taunt` name real powers but are labels. Hence a hand-adjudicated table.
+
+## ✅ THE BIGGEST ITEM WAS ALREADY DONE - THE ENTRY WAS STALE
+"The self +damage buff is missing from the entire Build-Up class, OPEN, owes a
+re-cert" has been in CLAUDE.md since 2026-08-07. **It is landed:** 275 powers
+carry a self `DamageBuff` row with the game's own duration and recharge, and
+through the real route **Build Up moves damage_buff 0 -> 0.1111 and ST DPS
+14.4 -> 16.0**. ⚠ The "0.0" behind that entry came from a probe that added
+`Scrapper_Melee.Martial_Arts.Build_Up`, **a full_name that does not exist**. I
+repeated the mistake today before catching it. **Assert the record RESOLVED
+before believing a zero.** No re-cert is owed and none ever was.
+
+## WHAT IS LEFT IN THE CLASS, each naming its missing input
+1. **The stack meters + Containment** (144 groups): BuildStatic, BuildFrenzy,
+   Contaminated, Disintegrate, EnergyRelease, ComboBuild, Perfection x3, Bio
+   adaptation. One scenario constant each, or one ruling for the class -
+   **Joel's, the `mez_in` family.**
+2. **Domination** (87 groups): the duty cycle IS derivable (client-stated 90s
+   on a 200s recharge) but it multiplies CONTROL magnitude and `role_output`
+   has no mode path. An engine change that moves Dominator champions, so it
+   wants its own measured pass.
+3. **The crits** (453 PROB groups): the chance is stated PER TARGET RANK, so
+   the missing input is the encounter's rank mix, not the chance. Dropped
+   today by the targeting/condition rule - honest, but it understates every
+   Scrapper and Stalker.
+4. ⚠ **FieryEmbrace (305 groups) hides a real question.** The client's Fiery
+   Embrace grants `Fire_Dmg` at aspect Strength - a **Fire-TYPED** buff - and
+   our engine folds every `DamageBuff` into one type-blind global. So it
+   currently raises ALL damage at an 11.1% duty cycle while the game adds Fire
+   components and boosts those. **Do not add the Fire templates** until the
+   type question is measured; that is the 2026-08-06 inflation trap.
+
+## ALSO CORRECTED
+Defiance's templates are **not** all scale 0.0 - 25 distinct scales up to 0.176
+- so the DERIVED skip prevents a real double-count rather than being a
+formality. Two Wind Control checks that had been passing for the wrong reason
+were rewritten to pin what is measured (battery back to 23).
+
+## STILL BLOCKED ON JOEL, unchanged
+`mez_in` · a Brute farm log with 3+ single-target attacks for Fury · the
+re-cert wave (21 contexts: 13 for v39, 8 for v40) is NOT started.
+
+---
+
+# Resume point - 2026-08-08, both origin pools SHIPPED + the mode gate found
 
 ## STATE
 HEAD pushed, tracked tree clean. Nothing running. Data **2026.1.1242**, models
