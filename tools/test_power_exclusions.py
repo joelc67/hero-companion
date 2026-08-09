@@ -113,7 +113,10 @@ def main():
     # ---- Boomerang Slice ----
     BS = "Brute_Melee.Broad_Sword.Boomerang_Slice"
     SL = "Brute_Melee.Broad_Sword.Slice"
-    added = [fn for fn, p in by.items() if p.get("added_from_client")]
+    # ⚠ `added_from_client` is shared by every client-synthesised record - Wind
+    # Control's 20 landed under the same marker - so count by LEAF, not marker.
+    added = [fn for fn, p in by.items()
+             if p.get("added_from_client") and fn.endswith(".Boomerang_Slice")]
     ok("Boomerang Slice exists on all four Broad Sword archetypes",
        len(added) == 4 and all(f.endswith(".Boomerang_Slice") for f in added),
        f"{sorted(x.split('.')[0] for x in added)}")
