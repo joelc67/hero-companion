@@ -25,11 +25,17 @@ Confirm progress with TWO snapshots, never one.
    shard BUT under `--recert` discards the result and rebuilds the skip set
    from its own shard alone, and the glob runs once at startup hours earlier.
    Verified after: 7 processes alive, logs still advancing on two snapshots.
-   ⚠ **KEPT: `champions_shard_v34_p0.json`** - it carries
-   `Class_Brute|Radiation_Melee|Fiery_Aura|farm_active`, which is **NOT in
-   champions.json** and not in the held-ladderfix list. Orphaned v34 work, or a
-   context dropped in the roster split - retiring it would have buried the
-   question. **Worth a look when the wave is done.**
+   ✅ **The v34 orphan is EXPLAINED and now retired too** (suffix
+   `.retired_2026-08-09_dropped_scenario`). `champions_shard_v34_p0.json` held
+   `Class_Brute|Radiation_Melee|Fiery_Aura|farm_active` - a CONVERGED champion
+   for a content type **the roster no longer carries at all**: there are zero
+   `farm_active` contexts in champions.json, and the only Brutes certified are
+   Battle_Axe/itrial and Spines/farm_afk. Its `canonical_score` was never
+   evaluated and the model has moved v34 -> v44, so nothing was lost. ⚠ It was
+   still a shadow hazard in its own way: a future `--pending` run would have
+   read it as "farm_active is certified" when the roster does not certify it.
+   Held back one round on purpose so the reason could be established rather
+   than swept - the file is renamed, never deleted.
    ⚠ KEPT: the 3 `champions_shard_e_gt_*` ground truths (never merged, belong
    in the union) and the live `champions_shard_v44_p*`.
 2. `recert_verdicts` / `evaluate_first` per context. ⚠ recert_verdicts OVERWRITES
