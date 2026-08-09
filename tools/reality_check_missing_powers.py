@@ -54,10 +54,17 @@ PICKABLE = (
 # ⚠ REAL AND PINNED. Counts are POWERS, and the pin fails in both directions.
 ABSENT = {
     "Controller_Control.Wind_Control": (10,
-        "a shipping Homecoming powerset the tool cannot plan at all. Our data "
-        "is Mids-derived and predates it; we hold its PET (Wind_Control_Vacuum) "
-        "and none of the player powers"),
-    "Dominator_Control.Wind_Control": (10, "the Dominator half of Wind Control"),
+        "a shipping Homecoming powerset the tool cannot plan. FULLY SPECIFIED "
+        "now - docs/wind-control-spec.md pins every mapping with its evidence "
+        "(level +1 on 5,478 powers, control encoding on 539, the two category "
+        "aliases on 1,128 and 452, summon entities via underscore "
+        "normalisation). Two things stop the build and neither is effort: the "
+        "Controller's Vortex pet entity is one where our data has one entity "
+        "and the client has two, on a TIER 9; and exposing a new powerset is a "
+        "deliberate act, because a mis-priced set is worse than an absent one"),
+    "Dominator_Control.Wind_Control": (10,
+        "the Dominator half - its Vortex entity DOES resolve, so it is the "
+        "Controller's tier 9 alone that is unsettled"),
     "Pool.Gadgetry": (6,
         "a whole power POOL we do not carry - Force Barrier's max-HP absorb was "
         "how it surfaced"),
