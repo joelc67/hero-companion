@@ -1,4 +1,47 @@
-# Resume point - 2026-08-09 (latest), the mode/meter capability is classified
+# Resume point - 2026-08-09 (latest), v43 Domination shipped
+
+## STATE
+HEAD `4fc76239`. Nothing running. Data **2026.1.1242**, **model v43**.
+⚠ **A RE-CERT IS OWED FOR 1 OF 24 CONTEXTS** — `Class_Dominator|Mind_Control|
+Fiery_Assault|itrial`. **NOT STARTED; Joel's call.** The v39/v40 re-cert union
+is still 20 of 24 and this does not widen it (the Dominator is already in it).
+
+## v43 DOMINATION
+Size stated twice by the game: the inherent's help says control powers "will
+typically last 50 percent longer", and **41 of 41** encoded client pairs carry
+exactly **1.5x** the base duration scale. Uptime from the inherent's own
+numbers: a **90s Set_Mode on a 200s recharge**, floor 45%, reaching 1.0 at
+**+122% global recharge** - the perma-dom threshold players build to, and
+capped there. Measured: control output **999.5 -> 1211.3** at no recharge,
+**-> 1423.1** at +100%.
+
+⚠⚠ **UNIVERSAL, NOT PER ENCODED POWER.** The client writes variant rows on only
+**12 of 26** Dominator sets - Plant's Strangler has one, Mind's identical
+Dominate does not. Encoding asymmetry, not a game one. Pricing only the encoded
+12 would bias the solver toward those sets. Rides the existing `mez_dur`
+channel, so there is one mechanism rather than two.
+
+⚠ **The MAGNITUDE half is deliberately NOT credited.** Whether the variant's
+magnitude adds to the base (doubling a mag-3 hold) or replaces it is ambiguous
+in the client and **3 of 41 pairs fit neither**. Too big to infer. If anyone
+settles it, that is a second model bump and a wider re-cert.
+
+## WHAT IS LEFT IN THE MODE/METER CLASS
+1. **The stack meters + Containment** (144 groups): one scenario constant each,
+   or one ruling for the class. Joel's, the `mez_in` family.
+2. **The crits** (453 PROB groups): the chance is stated PER TARGET RANK, so
+   the missing input is the encounter's rank mix. Understates every Scrapper.
+3. ⚠ **FieryEmbrace** (305 groups): the client's buff is **Fire-TYPED** while
+   our engine folds every DamageBuff into one type-blind global. Measure before
+   touching; adding the Fire templates first is the 2026-08-06 inflation trap.
+
+## STILL BLOCKED ON JOEL
+`mez_in` and the stack-meter scenario input - a Brute farm log with 3+
+single-target attacks for Fury - and whether to run the owed 1-context re-cert.
+
+---
+
+# Resume point - 2026-08-09, the mode/meter capability is classified
 
 ## STATE
 HEAD `6186fbee` pushed. Nothing running. Data **2026.1.1242**, model **v42**

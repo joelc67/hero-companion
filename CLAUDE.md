@@ -1121,6 +1121,37 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   ⚠ `var(--text)` IS UNDEFINED in style.css — the ink token is **`--ink`**.
   Three existing rules already use the dead name (`.sb-leg b`, `.jny-chip-how b`,
   and `.ghost-btn`, the only one with a fallback). Do not copy that pattern.
+- **👑 v43 DOMINATION — THE HALF THE GAME SETTLES, SHIPPED; THE HALF IT DOES
+  NOT, STATED (2026-08-09, `4fc76239`).** The Dominator inherent. **Size, stated
+  twice:** its own help says control powers *"will typically last 50 percent
+  longer"*, and **41 of 41** encoded pairs in the client carry exactly **1.5×**
+  the base duration scale. **Uptime, from the inherent's own numbers:** a 90s
+  Set_Mode on a 200s recharge, so the floor is 45% and global recharge shortens
+  the 200 like any click — it reaches 1.0 at **+122% recharge, which is the
+  perma-dom threshold players build to**, reproduced rather than assumed, and
+  capped there.
+  ⚠⚠ **APPLIED UNIVERSALLY, NOT PER ENCODED POWER.** The client writes the
+  variant rows on only **12 of the 26** Dominator sets — Plant's Strangler has
+  one and Mind's **Dominate, the identical tier-1 hold (scale 12.0, mag 3.0),
+  does not**. That is an ENCODING asymmetry, not a game one; the help says "your
+  control powers" unqualified. Pricing only the encoded 12 would bias the solver
+  toward those sets — the "patch just the reported case" the universal-rules
+  doctrine forbids. It rides the **existing `mez_dur` channel** the v30 set
+  bonuses use, so there is one mechanism, not two.
+  ⚠ **THE MAGNITUDE HALF IS DELIBERATELY NOT CREDITED.** The help also promises
+  you "more easily Dominate stronger opponents" and the variant rows carry their
+  own magnitude — but whether it ADDS to the base (both say `stack: Stack`,
+  which would double a mag-3 hold to 6) or REPLACES it is genuinely ambiguous in
+  the client, and **3 of the 41 pairs fit neither reading**. Doubling control
+  magnitude across an archetype is too big to infer. Understated and said so.
+  📏 Measured on the one certified Dominator: control output **999.5 → 1211.3**
+  at no global recharge, **→ 1423.1 at +100%**.
+  ⚠ **A RE-CERT IS OWED FOR 1 OF 24 CONTEXTS** (Mind_Control|Fiery_Assault|
+  itrial, which holds three control powers). **NOT STARTED — Joel's call.**
+  Battery `tools/test_domination.py` (16 checks, 4 sabotages) reads the 90/200
+  and the 1.5× back out of the client rather than trusting source constants.
+  ⚠ `test_absorb` pinned `MODEL_VERSION == 42` exactly and went red on this bump
+  for a reason unrelated to absorb; it is `>= 42` now, which is what it meant.
 - **🎛 THE MODE/METER CAPABILITY: THE CLASSIFICATION IS BUILT, AND MOST OF
   THE CLASS TURNED OUT NOT TO NEED A RULING (2026-08-08, `tools/mode_tags.py`
   + `reality_check_mode_tags.py` + `tools/test_mode_tags.py`).** 47 tags reach
