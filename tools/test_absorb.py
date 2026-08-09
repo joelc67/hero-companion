@@ -158,8 +158,12 @@ def main():
        "incoming - regen_hps - self_heal_hps - absorb_hps" in src)
     ok("...reading it from bonus_extras, never the curated top level",
        'get("bonus_extras") or {}).get("absorb_hps")' in src)
-    ok("MODEL_VERSION moved with the scoring change", fp.MODEL_VERSION == 42,
-       f"MODEL_VERSION = {fp.MODEL_VERSION}")
+    # ⚠ AT LEAST v42, not exactly. This battery's subject is absorb, which
+    # landed in v42; pinning equality made every later model bump fail here
+    # for a reason that has nothing to do with absorb (v43 Domination did).
+    # The pin that matters is "absorb shipped in or before this version".
+    ok("MODEL_VERSION is at or past the version absorb landed in",
+       fp.MODEL_VERSION >= 42, f"MODEL_VERSION = {fp.MODEL_VERSION}")
 
     # ---- the recharge-aspect fix that rode along, and its mechanical guard ----
     import engine  # noqa: E402
