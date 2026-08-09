@@ -2754,7 +2754,7 @@ def build_validate():
                       if (p.get("full_name") or "").rsplit(".", 1)[0] in _EXCLUSIVE_POOLS})
     if len(_origin) > 1:
         res.setdefault("errors", []).append(
-            "Only ONE of Sorcery / Experimentation / Force of Will may be taken per build "
+            "Only ONE origin pool (Sorcery / Experimentation / Force of Will / Gadgetry / Utility Belt) may be taken per build "
             f"(you have {', '.join(ps.split('.')[-1].replace('_', ' ') for ps in _origin)}).")
     # Common-build-mistakes coaching (soft, HC-accurate) — a distinct stream from hard errors/warnings.
     res["coaching"] = _build_coaching(build.get("archetype"), build.get("powers") or [])
@@ -3693,9 +3693,13 @@ def _slot_schedule_errors(powers):
     return errs
 
 
-# The origin-themed pools are ONE-PER-BUILD (homecoming.wiki Power Pools: "you can only
-# have one of these pools in a given build") — unlike ordinary pools. Gadgetry/Utility
-# Belt join this group if/when Homecoming ships them.
+# The origin-themed pools are ONE-PER-BUILD, unlike ordinary pools.
+# ⚠ PROVENANCE, checked against the client 2026-08-08: this rule is NOT in any
+# `requires` expression - Mystic Flight and Nano_Net both carry none - so it is
+# enforced SERVER-SIDE and cannot be verified from the bins, the same class as
+# zone level ranges and TF gates. It is kept because it matches known game
+# behaviour; what the client can be asked, has been asked, and it is silent.
+# Gadgetry and Utility Belt SHIPPED 2026-08-08 and were already listed here.
 _EXCLUSIVE_POOLS = {"Pool.Sorcery", "Pool.Experimentation", "Pool.Force_of_Will",
                     "Pool.Gadgetry", "Pool.Utility_Belt"}
 
@@ -6988,13 +6992,23 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
     # routes through (L1 seats, early, rest, fill-to-cap), and priority order
     # then decides which twin survives — the scorer chooses, not a hardcoded
     # preference for base or branch.
+    # ⚠⚠ READ THE DATA, NOT A HAND-WRITTEN LIST. This map was built from
+    # _VEAT_DUPLICATE_PAIRS - two pairs someone typed out - while our records
+    # mark THIRTEEN mutually exclusive pairs, every one of them a pair the game
+    # itself refuses. The validator and `_picks_legal` were generalised to read
+    # `excludes`; autopick was not, so it kept PROPOSING builds holding both
+    # sides. Measured before the fix: 62 of 2,721 proposals illegal, 43 of them
+    # Broad Sword holding Slice and Boomerang Slice together. The two hardcoded
+    # pairs are a strict subset of the thirteen, so nothing is lost by dropping
+    # the list. ⚠ A twin is a SET here - a power may exclude more than one.
     _twin = {}
-    for _a, _b in _VEAT_DUPLICATE_PAIRS:
-        _twin[_a] = _b
-        _twin[_b] = _a
+    for _fn, _rec in POWER_BY_FULL.items():
+        for _other in (_rec.get("excludes") or []):
+            _twin.setdefault(_fn, set()).add(_other)
+            _twin.setdefault(_other, set()).add(_fn)
 
     def place(fn, lvl):
-        if fn in placed or _twin.get(fn) in placed:
+        if fn in placed or (_twin.get(fn) or set()) & placed:
             return
         for i, sl in enumerate(slots):
             if sl >= lvl:
@@ -7016,7 +7030,16 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
             # two powers at level 1 (field report: a debuffer kit skipped both Sonic T1
             # blasts entirely, so nothing legal could sit at level 1). Inject the
             # better-scoring of the pair even though the priority list passed on it.
-            pair = [fn for s in _ok for fn in _set_first_two(s) if fn in POWER_BY_FULL]
+            # ⚠⚠ AND IT MUST ACTUALLY BE A LEVEL-1 POWER. `_set_first_two` returns
+            # the set's first two by tier, which is NOT the same as "available at
+            # level 1": Fortunata Teamwork's second is Mask Presence at level 20.
+            # It out-scored Fate Sealed, so the fallback seated a level-20 power
+            # into the level-1 slot and every Fortunata proposal came out
+            # unbuildable - the last of the 62 illegal autopick proposals, and
+            # the one the Broad Sword fix did not touch.
+            pair = [fn for s in _ok for fn in _set_first_two(s)
+                    if fn in POWER_BY_FULL
+                    and (POWER_BY_FULL[fn].get("level_available") or 1) <= 1]
             pair.sort(key=lambda fn: -_ps_priority(POWER_BY_FULL[fn], role, exposure, content))
             best = pair[0] if pair else None
         if best:

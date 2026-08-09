@@ -77,10 +77,29 @@ def main():
        held and all(e["kind"] == "hard" for e in held)
        and any(e["nmag"] >= 2 for e in held),
        f"{[(e['mez'], e['scale'], e['nmag'], e['pv_mode']) for e in held][:2]}")
-    ok("the Dominator's control is NOT a copy of the Controller's",
-       [e["scale"] for e in by[f"{DS}.Downdraft"]["control_effects"]]
-       != [e["scale"] for e in dd["control_effects"]],
-       "different archetype tables and template counts, as the client has them")
+    # ⚠⚠ THIS CHECK USED TO PASS FOR THE WRONG REASON. It compared Downdraft's
+    # rows across the two archetypes and found them different - but the whole
+    # difference was the Containment / Domination group, which is MODE-GATED
+    # (client `tags`) and must not be priced at all. Once those are dropped the
+    # two Downdrafts are legitimately identical, and the old check went red.
+    # What is actually true, and is pinned instead: FIVE of the ten powers still
+    # differ, and where the two agree it is because the client's only difference
+    # was the gated group - the per-archetype magnitude then comes from the
+    # shared modifier table's archetype column, not from the row.
+    _K = ("damage_effects", "control_effects", "debuff_effects",
+          "self_effects", "buff_effects", "heal_effects")
+    _differ = [p["power_name"] for p in powers[CS]
+               if any(json.dumps(p[k], sort_keys=True)
+                      != json.dumps(by[f"{DS}.{p['power_name']}"][k], sort_keys=True)
+                      for k in _K)]
+    ok("the Dominator's rows are not a blanket copy - 5 of the 10 still differ",
+       len(_differ) == 5, f"{sorted(_differ)}")
+    ok("...and Downdraft is one of the five that now AGREE, because the client's "
+       "only difference there was Containment vs Domination",
+       "Downdraft" not in _differ
+       and [e["scale"] for e in by[f"{DS}.Downdraft"]["control_effects"]]
+       == [e["scale"] for e in dd["control_effects"]],
+       "the archetype's own magnitude rides the modifier table, not the row")
 
     # ---- categories and enhancements came from OUR vocabulary ----
     sc = json.load(open(os.path.join(ROOT, "data", "set_categories.json"), encoding="utf-8"))

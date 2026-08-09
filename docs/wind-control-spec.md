@@ -61,3 +61,40 @@ The pet side already exists: `Pets_Wind_Control_Vacuum_Controller`,
 - **269 of our `summons[]` entries do not resolve** to an entity in
   summons.json. Most are pseudo-pets (`PL_StaticObject` class), but the number
   has never been classified.
+
+## ⚠⚠ CORRECTION, 2026-08-08: the first Wind Control records were INFLATED
+
+Both archetypes' records shipped earlier the same day counting effect groups
+the game gates behind a MODE. Found while adding the Gadgetry and Utility Belt
+pools, whose attacks are written once per archetype and so made the same defect
+unmissable (Wrist Blaster carries 23 damage groups for one attack).
+
+Two signals separate a real row from a variant, both now read by
+`effects_from` and both measured across the whole client:
+
+1. **`tags` is the client's own mode gate, and it always was.** 349 effect
+   groups across 342 powers carry `tags: ["FieryEmbrace"]`, plus Containment
+   (119), Domination (90), Overpower (86), the Scrapper crit trio, Defiance,
+   PowerBoostA/B. ⚠ This **falsifies** the standing note that the crawler was
+   not capturing the Fiery Embrace gate: the gate is in the export, in a field
+   nothing had read. A tagged group is skipped and COUNTED, never silently.
+2. **Targeting is not a condition.** A `requires_expression` mixes "who may
+   this land on" with "when does it apply", and only the second makes a group
+   conditional. Strike out the pure-targeting clauses (`enttype target>`,
+   `entref target.owner>`, `target.isFriend?`, the operators) and 5,123 of the
+   7,323 expression-carrying groups reduce to nothing; every residue is a real
+   condition (archetype variants, `kMeter`, `Source.Mode?`, random rolls,
+   token ownership). Testing for `critter`/`player` alone let all 22 of Wrist
+   Blaster's variants through, because they name `critter` or `player` too.
+
+Also corrected in the same pass: **`chance: 0.0` means UNSET**, not "never" —
+the crawler writes 0.0 for an absent field, and Poisoned Dagger's -DMG group
+reads 0.0 while the game's own short help states the -DMG. Corpus-wide only 64
+untagged chance-0 groups exist and every one carries a real, help-stated effect.
+
+Effect of the correction on Wind Control: 18 row-sets changed, all downward
+(Breathless 4 damage rows to 1, Vacuum's Lethal DoT to 0 — it is gated on
+holding 6 stacks of the set's own Pressure mechanic, which is REPORTED rather
+than credited or silently dropped). Champion exposure zero, so no score moved.
+
+⚠ Item 1 of "NOT SETTLED" above is CLOSED: Joel ruled the Vortex entity shared.

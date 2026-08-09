@@ -122,7 +122,16 @@ def main():
     # (the client has no Scrapper Mace Mastery — the game gives Mace to
     # Stalkers). The remaining 52 = 40 inherents the snapshot omits + 12
     # roster diffs.
-    KNOWN_UNVERIFIED_TOTAL = 52
+    # Re-pinned 52 → 43 (2026-08-08). This was ALREADY STALE at HEAD, not moved
+    # by the day's work: measured with the day's data reverted, and again with
+    # only the two new origin pools removed, the count read 43 both times. The
+    # nine that left did so when build_power_aliases gained its display-name
+    # rung (2026-08-07) and the map grew to 174 - they became verifiable THROUGH
+    # an alias rather than disappearing. The register is now 39 Inherent.Inherent
+    # + Savage_Melee 1 + Alpha_Wolf_2/3 + Beast_Mastery, all snapshot omissions.
+    # ⚠ The pin is two-way on purpose: a SHRINK is as much a signal as a growth,
+    # and leaving a known-stale pin red is the trap this project keeps naming.
+    KNOWN_UNVERIFIED_TOTAL = 43
     print(f"Coverage: {len(player) - len(unverified)} of {len(player)} player-facing "
           f"powers verifiable against the client snapshot ({len(aliases)} via the "
           f"alias map; {len(unverified)} unverified; pinned register {KNOWN_UNVERIFIED_TOTAL}).")

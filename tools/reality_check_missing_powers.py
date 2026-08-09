@@ -56,10 +56,16 @@ ABSENT = {
     # ✅ CLOSED by tools/add_wind_control.py: both archetypes' Wind Control
     # is in the data, offered in powersets.json and priced (pets included).
     # The pin failed the moment it landed, which is what a pin is for.
-    "Pool.Gadgetry": (6,
-        "a whole power POOL we do not carry - Force Barrier's max-HP absorb was "
-        "how it surfaced"),
-    "Pool.Utility_Belt": (6, "the other power pool we do not carry"),
+    # ✅ CLOSED by tools/add_origin_pools.py: both origin pools are in the data,
+    # served to all 15 archetypes, prerequisites read from the game's own
+    # requires expression and enforced by _picks_legal, and the two auto-issue
+    # free riders (Turbo Boost, Athletics) deliberately left out. Their pins
+    # went red the moment the pools landed, which is what a pin is for.
+    # ⚠ NO PIN REMAINS for either. 5 of the 6 client records per pool are
+    # pickable and now exist; the sixth (Turbo Boost / Athletics) carries the
+    # auto-issue sentinel and is already counted under NEVER-PICKABLE above, so
+    # a pin of 1 here would double-count it - as a first attempt at retiring
+    # these did, and the check said so.
     # ✅ CLOSED by tools/add_boomerang_slice.py: all four records now exist,
     # client-sourced, with the mutual exclusion against Slice enforced in the
     # validator and in _picks_legal. The pin is what said so - it failed on

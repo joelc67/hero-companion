@@ -142,6 +142,17 @@ def min_others(expr, siblings):
     if hi is not None and lo is None:
         # only reachable when eligible -- the POWER count is still hi
         return hi, "exact"
+    if lo is not None and hi is None:
+        # ⚠ THE MIRROR CASE, and it is the same argument. A NEGATED archetype
+        # gate ("$archtype @Class_Peacebringer == !") is satisfiable exactly
+        # when the gate does NOT hold, so the polarities swap - but the
+        # question being asked is unchanged: for every archetype that can take
+        # the power at all, how many SIBLING POWERS does the game demand? That
+        # answer is lo, and whether an archetype is barred outright is a
+        # different axis (recorded as `archetype_excluded` on the record).
+        # Found by Pool.Gadgetry.Jetpack, which the game bars from Kheldians;
+        # without this it read "gate-dependent" and stopped the wave launcher.
+        return lo, "exact"
     return (hi if hi is not None else lo), "gate-dependent"
 
 

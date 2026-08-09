@@ -104,6 +104,11 @@ DISPOSITIONS = {
                          "control on Dwarf Step and the travel powers)",
     "MovementFriction":  "v30 stated display-only exclusion (movement physics)",
     "Evade":             "v30 stated display-only exclusion (movement - leap evasion)",
+    "Ninja_Run":         "v30 stated display-only exclusion (movement). It is a "
+                         "movement MODE rather than a speed number - Utility "
+                         "Belt's Freerunning sets it - but the thing it changes "
+                         "is still how fast you travel, which nothing scores. It "
+                         "entered scope only when the origin pools landed",
     "Range":             "v30 stated display-only exclusion (range)",
     "PerceptionRadius":  "no scoring path; perception is not modelled",
     "Translucency":      "stealth: how visible you are. Not modelled, same class as "

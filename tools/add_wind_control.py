@@ -37,7 +37,24 @@ Usage:  python tools/add_wind_control.py [--check]
 """
 import json
 import os
+import re
 import sys
+
+# ⚠⚠ TARGETING IS NOT A CONDITION. A `requires_expression` mixes two unrelated
+# jobs: WHO the effect may land on (always true for the enemy in front of you)
+# and WHEN it applies (a mode, a state, a die roll). Only the second makes a
+# group conditional. Censused over the whole client: 5,123 of the 7,323
+# expression-carrying groups reduce to nothing but the clauses below, and every
+# residue is a genuine condition (random rolls, kMeter, Source.Mode?, archetype
+# variants, token ownership). Strip these, and anything LEFT means conditional.
+_TARGETING = re.compile("|".join((
+    r"enttype\s+target>\s+(?:critter|player)\s+eq",   # which side
+    r"entref\s+target\.owner>\s+entref\s+source>\s+eq",   # not my own pet
+    r"entref\s+target>\s+entref\s+source>\s+eq",          # is / is not me
+    r"target\.isFriend\?", r"source\.isFriend\?", r"target\.isPlayer\?",
+    r"&&", r"\|\|", r"!",
+)))
+_ENT_ONLY = re.compile(r"enttype\s+target>\s+(?:critter|player)\s+eq")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 POWERS = os.path.join(ROOT, "data", "powers.json")
@@ -55,7 +72,17 @@ AREA = {"SingleTarget": 1, "Sphere": 2, "Cone": 3, "Location": 4, "Chain": 1, "M
 PTYPE = {"Click": 0, "Toggle": 2, "Auto": 1}
 # empirically derived from the powers we already hold (counts in the docstring)
 CAT_ALIAS = {"Universal Damage Sets": "Universal Damage",
-             "Ranged AoE Damage": "Targeted AoE Damage"}
+             "Ranged AoE Damage": "Targeted AoE Damage",
+             # travel, proven against the powers we hold: Super Speed's client
+             # "Running & Sprints" is our "Run (No Sprint)", Combat Jumping's
+             # "Leaping & Sprints" is our "Jump (No Sprint)", and Fly's
+             # "Universal Travel" is our "Travel".
+             "Universal Travel": "Travel",
+             "Running & Sprints": "Run (No Sprint)",
+             "Leaping & Sprints": "Jump (No Sprint)"}
+# ⚠ ONE CLIENT CATEGORY, TWO OF OURS: every record we hold that accepts client
+# "Flight" also accepts our "Flight (No Sprint)" (Fly itself is the witness).
+CAT_ALSO = {"Flight": "Flight (No Sprint)"}
 BOOST_ALIAS = {
     "Accuracy": "Accuracy", "Buff_Defense": "Defense Buff",
     "Buff_ToHit": "To Hit Buff", "Confuse": "Confuse Duration",
@@ -124,7 +151,58 @@ SKIP_FAMILIES = {
     "StealthRadius_PVE": "stealth", "StealthRadius_PVP": "stealth",
     "PerceptionRadius": "perception, not modelled",
     "ThreatLevel": "threat is not modelled",
+    "Global_Chance_Mod": "v36 DORMANT - Opportunity semantics ungrounded",
+    "Ninja_Run": "a movement MODE, the v30 movement exclusion",
 }
+
+
+def skip_reason(key):
+    """Why a group or family was left out. ⚠ EVERY key gets a TRUE sentence:
+    the first version defaulted to "sapping is not a scored axis" and printed
+    it against tag: and conditional: keys it had nothing to do with. A stated
+    exclusion whose stated reason is wrong is worse than an unstated one."""
+    if key.startswith("tag:"):
+        return (f"the game gates this group on {key[4:]} - a mode/meter, "
+                "which the engine does not model (Fury class)")
+    if key.startswith("conditional:"):
+        return ("group(s) the game gates on state the engine cannot read "
+                "(a stack count, a die roll, an archetype)")
+    return SKIP_FAMILIES.get(key, "sapping is not a scored axis")
+
+
+def _ticks(t):
+    """How many times a periodic template applies. int(duration/period), the
+    same reading our damage rows already agree with on 12 client DoTs (a 4.1s
+    1s-period DoT is 4 ticks - the .1 is the client's epsilon)."""
+    per = float(t.get("application_period") or 0.0)
+    dur = _sec(t.get("duration"))
+    return max(1, int(dur / per)) if per > 0 and dur > 0 else 1
+
+
+def _at_full_health(t):
+    """The magnitude multiplier of a health-scaling template AT FULL HEALTH.
+
+    Life Support System's heal is `100 kHitPoints% source> - X / Y + @StdResult *`
+    = ((100 - HP%) / X + Y) x StdResult, so at full health the multiplier is the
+    constant Y and it rises as you lose health - which is exactly what the
+    game's own help says ("This power's potency increases as your health
+    decreases"). We take the FULL-HEALTH FLOOR: it is the value that is always
+    true, and crediting the wounded bonus would need a scenario nobody has
+    ruled on. Returns 1.0 when there is no expression, None when there is one
+    this cannot read - the caller then refuses rather than guesses.
+    """
+    e = (t.get("magnitude_expression") or "").split()
+    if not e:
+        return 1.0
+    # "100 kHitPoints% source> - X / Y + @StdResult *" - Y is token 6
+    if (len(e) >= 8 and e[0] == "100" and e[1] == "kHitPoints%"
+            and e[2] == "source>" and e[3] == "-" and e[5] == "/"
+            and e[7] == "+"):
+        try:
+            return float(e[6])                   # the constant term Y
+        except ValueError:
+            return None
+    return None
 
 
 def effects_from(crec, refuse, skipped):
@@ -136,7 +214,7 @@ def effects_from(crec, refuse, skipped):
     reading the template would have thrown its entire buff away as un-mappable.
     Same trap the ally sweep hit earlier today, in a new place.
     """
-    dmg, ctrl, deb, selff, buff = [], [], [], [], []
+    dmg, ctrl, deb, selff, buff, heal = [], [], [], [], [], []
     # ⚠⚠ `targets_affected` IS THE DISCRIMINATOR, not target_type. Thundergust
     # and Wind Shear are BOTH target_type "Self" - meaning centred on you - and
     # both land entirely on FOES; only `targets_affected` tells them apart from
@@ -160,6 +238,39 @@ def effects_from(crec, refuse, skipped):
                               "scale": float(t.get("scale") or 0.0), "nmag": 1.0,
                               "modifier_table": tbl, "enhance_aspect": "None",
                               "ed_schedule": 0, "pv_mode": pv, "duration": dur})
+            # ⚠ HEAL AND ABSORB COME FIRST. They have their own buckets, and the
+            # generic self-buff branch below would swallow them into
+            # self_effects where nothing reads them. Order matters in this chain.
+            elif me and fam == "Absorb" and asp == "Maximum":
+                _e = (t.get("magnitude_expression") or "").split()
+                _row = {"effect": "Absorb", "damage_type": "None",
+                        "scale": float(t.get("scale") or 0.0), "nmag": 1.0,
+                        "modifier_table": tbl, "enhance_aspect": "Absorb",
+                        "ed_schedule": 0, "pv_mode": pv, "duration": dur,
+                        "host_recharge": float(crec.get("recharge_time") or 0.0)}
+                if len(_e) >= 4 and _e[0] == "Max.kHitPoints" and _e[1] == "source>":
+                    try:
+                        _row["max_hp_frac"] = (float(t.get("scale") or 0.0)
+                                               if _e[2] == "@StdResult"
+                                               else float(_e[2]))
+                    except ValueError:
+                        refuse.add(f"{_who}: absorb RPN {' '.join(_e)!r}")
+                selff.append(_row)
+            elif me and fam == "Heal" and asp in ("Absolute", "Current"):
+                # ⚠ A HEAL ROW CARRIES NO DURATION - `role_output.power_heal_output`
+                # multiplies scale x table and divides by recharge, so a
+                # heal-over-time must arrive as its TOTAL. Our damage rows keep
+                # the per-tick scale plus a duration (verified against 12 client
+                # DoTs, ratio 1.00); heals have no such field, so the ticks are
+                # folded in here instead of inventing one nothing reads.
+                sc, mult = float(t.get("scale") or 0.0), _at_full_health(t)
+                if mult is None:
+                    refuse.add(f"{_who}: heal magnitude_expression "
+                               f"{t.get('magnitude_expression')!r}")
+                    continue
+                heal.append({"to_who": 2, "scale": sc * mult * _ticks(t),
+                             "nmag": 1.0, "modifier_table": tbl,
+                             "probability": float(chance), "pv_mode": pv})
             elif me and asp in ("Current", "Strength", "Absolute"):
                 eff = {"ToHit": "ToHit", "RechargeTime": "RechargeTime",
                        "Recovery": "Recovery", "Regeneration": "Regeneration",
@@ -172,6 +283,12 @@ def effects_from(crec, refuse, skipped):
                                   "ed_schedule": 0, "pv_mode": pv, "duration": dur})
                 else:
                     refuse.add(f"{_who}: self {fam}/{asp}")
+            elif not me and fam in ("Regeneration", "Recovery") and asp == "Current":
+                # "Foe -Regen" on Nano Net / Wrist Blaster / Blaster Barrage
+                deb.append({"effect": fam, "damage_type": "None",
+                            "scale": float(t.get("scale") or 0.0), "nmag": 1.0,
+                            "modifier_table": tbl, "probability": float(chance),
+                            "duration": dur, "pv_mode": pv})
             elif not me and asp == "Strength":
                 # a STRENGTH aspect on a FOE is a debuff of that family -
                 # Breathless's -damage/-recharge/+endcost, Downdraft's -recharge.
@@ -220,23 +337,50 @@ def effects_from(crec, refuse, skipped):
     for grp in (crec.get("effects") or []):
         req = (grp.get("requires_expression") or "").strip()
         pv = 1 if "critter" in req else 2 if "player" in req else 0
-        gated = bool(req) and pv == 0
-        chance = grp.get("chance") if grp.get("chance") is not None else 1.0
+        # ⚠⚠ A GROUP CAN BE PvE-TAGGED **AND** CONDITIONAL. Wrist Blaster's
+        # damage is written once per archetype and again per game state
+        # ("arch source> Class_Scrapper eq enttype target> critter eq" is a
+        # Scrapper crit at 5%), so testing for "critter" alone let 22 extra
+        # damage rows through as if they were all unconditional - a 20x attack.
+        # A group counts as plain only when NOTHING remains after the entity
+        # test is struck out. Wind Control never showed this: an archetype
+        # powerset needs no per-archetype variants.
+        gated = bool(_TARGETING.sub(" ", req).strip())
+        # ⚠⚠ `tags` IS THE MODE GATE, AND THE CLIENT HAS ALWAYS CARRIED IT.
+        # 349 groups tagged FieryEmbrace across 342 powers, plus Containment,
+        # Domination, Overpower, Defiance, the Scrapper crit trio and
+        # PowerBoostA/B. A tagged group applies only while that mode is up, so
+        # ingesting it unconditionally is the Fiery-Embrace inflation this
+        # project has warned about since 2026-08-06 - the difference is that
+        # the gate is READABLE, not missing.
+        if grp.get("tags"):
+            for _t in grp["tags"]:
+                skipped[f"tag:{_t}"] = skipped.get(f"tag:{_t}", 0) + 1
+            continue
+        # ⚠ chance 0.0 MEANS UNSET, not "never". The crawler writes 0.0 for an
+        # absent field: Poisoned Dagger's -DMG group reads 0.0 while the game's
+        # own short help says "-DMG". Corpus-wide only 64 untagged chance-0
+        # groups exist and every one carries a real, help-stated effect.
+        chance = grp.get("chance") or 1.0
         if gated:
-            continue                       # conditional: a different claim
+            # A CONDITIONAL GROUP IS A DIFFERENT CLAIM, and it is REPORTED.
+            # Vacuum's whole Lethal DoT sits behind "hold 6 stacks of Wind
+            # Control Pressure"; crediting it unconditionally would make a
+            # meter-gated attack look permanent, and dropping it silently would
+            # leave an attack reading zero damage with nothing to explain it.
+            skipped[f"conditional:{_who}"] = skipped.get(f"conditional:{_who}", 0) + 1
+            continue
         for t in (grp.get("templates") or []):
             if t.get("scale") or t.get("magnitude"):
                 take(t, pv, chance, gated)
         for ch in (grp.get("child_effects") or []):     # ⚠ where damage hides
             if (ch.get("requires_expression") or "").strip():
                 continue
-            cch = ch.get("chance") if ch.get("chance") is not None else 1.0
-            if cch <= 0:
-                continue
+            cch = ch.get("chance") or 1.0        # 0.0 means unset, see above
             for t in (ch.get("templates") or []):
                 if t.get("scale") or t.get("magnitude"):
                     take(t, pv, cch, False)
-    return dmg, ctrl, deb, selff, buff
+    return dmg, ctrl, deb, selff, buff, heal
 
 
 def main():
@@ -303,12 +447,13 @@ def main():
             # categories
             cats = []
             for name in (c.get("allowed_set_categories") or []):
-                ours_name = CAT_ALIAS.get(name, name)
-                hit = cat_id.get(ours_name.lower())
-                if not hit:
-                    refuse.add(f"set category {name!r}")
-                    continue
-                cats.append(hit)
+                for ours_name in ([CAT_ALIAS.get(name, name)]
+                                  + ([CAT_ALSO[name]] if name in CAT_ALSO else [])):
+                    hit = cat_id.get(ours_name.lower())
+                    if not hit:
+                        refuse.add(f"set category {name!r}")
+                    elif hit not in cats:
+                        cats.append(hit)
             boosts = []
             for name in (c.get("boosts_allowed") or []):
                 ours_name = BOOST_ALIAS.get(name)
@@ -317,7 +462,7 @@ def main():
                     refuse.add(f"boost {name!r}")
                     continue
                 boosts.append(hit)
-            dmg, ctrl, deb, selff, buff = effects_from(c, refuse, skipped)
+            dmg, ctrl, deb, selff, buff, heal = effects_from(c, refuse, skipped)
             summons, spec_pets, spec_dur = [], [], 0.0
             for g in (c.get("effects") or []):
                 for t in (g.get("templates") or []):
@@ -379,7 +524,7 @@ def main():
                 "debuff_effects": deb,
                 "self_effects": selff,
                 "buff_effects": buff,
-                "heal_effects": [],
+                "heal_effects": heal,
                 "summons": summons,
                 "pet_powersets": [],
                 MARK: True,
@@ -402,8 +547,7 @@ def main():
         sys.exit(1)
 
     for fam, n in sorted(skipped.items(), key=lambda x: -x[1]):
-        print(f"STATED EXCLUSION x{n:<4} {fam}: "
-              f"{SKIP_FAMILIES.get(fam, 'sapping is not a scored axis')}")
+        print(f"STATED EXCLUSION x{n:<4} {fam}: {skip_reason(fam)}")
     for ps_name, recs in made:
         print(f"{ps_name}: {len(recs)} powers")
         for r in recs:

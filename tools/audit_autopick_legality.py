@@ -124,6 +124,19 @@ def main():
                                f" + {twins[fn].rsplit('.', 1)[-1]}")
             if len(picks) > len(srv._PICK_LEVELS) + 2:      # +2 inherent Fitness
                 why.append(f"{len(picks)} picks exceeds the ladder")
+            # ⚠ A LEVEL-1 SEAT MUST HOLD A LEVEL-1 POWER. The creation-pick
+            # fallback picks the better-scoring of a set's first TWO powers,
+            # and "first two by tier" is not "available at level 1" - Fortunata
+            # Teamwork's second is Mask Presence at 20, which out-scored Fate
+            # Sealed and was seated at level 1. _picks_legal caught it only
+            # indirectly (as a missing L1 seat for the secondary); this states
+            # the actual rule, so the next set shaped that way is named.
+            for p in ((r or {}).get("powers") or []):
+                lvl = (srv.POWER_BY_FULL.get(p["full_name"]) or {}).get(
+                    "level_available") or 1
+                if p.get("pick_level") is not None and lvl > p["pick_level"]:
+                    why.append(f"seated too early: {p['full_name'].rsplit('.', 1)[-1]}"
+                               f" (available {lvl}) at pick level {p['pick_level']}")
             if why:
                 fails.append((at, pri, sec, content, "; ".join(sorted(set(why)))))
             elif VERBOSE:
