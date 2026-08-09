@@ -1,3 +1,53 @@
+# Resume point - 2026-08-08 (latest), Wind Control SHIPPED + all issues closed
+
+## STATE
+HEAD pushed, tracked tree clean. Nothing running. Data **2026.1.1242**, models
+**v39-v42**, **re-cert union 20 of 24** - nothing this pass moved a score.
+
+## WIND CONTROL IS IN (`982a8572`, `343d028d`)
+A whole shipping powerset the tool could not plan: **20 records across Controller
+and Dominator, offered in the app, priced end to end including the pets** (the
+Vortex pet reads 7.6 DPS). Everything from the game client; every mapping
+measured against powers we already hold. **No wiki was used for any of it.**
+
+⚠⚠ **`targets_affected` IS THE SIDE, NOT `target_type`.** Thundergust and Wind
+Shear are both `target_type: Self` - meaning *centred on you* - and land entirely
+on FOES. Reading target_type would have written a cone attack's damage as a self
+buff. The generator refused until this was right.
+
+⚠ **Clear Skies carries nothing on purpose** - every effect is gated on
+`kClearSkies Source.Mode?`, the mode class. Pickable, unpriced, stated.
+
+⚠ **Joel's ruling applied**: Controller and Dominator share the Vortex entity.
+
+## CONTROL DRIFT CLOSED, GAME-FIRST (`70f97249`)
+Our control encoding agreed with the client on 539 powers and **disagreed on 29**.
+25 synced (the game wins): ten epic holds read 12.0 where the game says 10.0,
+four Electric Shackles 8.0 -> 10.0, Hymn of Dissonance magnitude 1 -> 3, and
+**Telekinesis was recorded as a HOLD when the game says "Foe Immobilize"**.
+⚠ Four left alone and reported - Synaptic Overload, Cryo Freeze Ray, EM Pulse and
+Seismic Smash are multi-row ENCODINGS, not wrong values, and collapsing one is a
+different question from correcting a number. ✓ Exposure zero of 24.
+
+## THE 269 UNRESOLVED SUMMONS: NOT A DEFECT
+Pricing reads the SPEC, which carries uid/count/class inline (197 of the 234
+distinct uids have one), so the entity map is metadata rather than a pricing
+input. The one case drivable end to end (Shadow Field) produces no pet damage
+because its pseudo-pet genuinely has none.
+
+## ⚠⚠ A TRAP THAT COST 17 MB, AND THE FIX
+**`open(path, "wb").write(expr)` TRUNCATES BEFORE IT EVALUATES `expr`.** A
+NameError in that expression emptied `powers.json` to zero bytes. Recovered
+whole from git plus the tools - every change since the last commit is generated -
+but the writers build all bytes first and only then open anything.
+⚠ Related: **match each file's own serialisation.** powers.json and summons.json
+are compact single-line; **powersets.json is indent=1 with CRLF**, and writing it
+compact turned a two-entry addition into a 3,102-line diff. Fixed in `343d028d`.
+
+## STILL ABSENT (2 pins)
+`Pool.Gadgetry` (6) and `Pool.Utility_Belt` (6). Same record-synthesis path Wind
+Control just proved twice; no blockers known.
+
 # Resume point - 2026-08-08 (latest), Wind Control specified, not built
 
 ## STATE

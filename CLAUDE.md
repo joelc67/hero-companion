@@ -1349,6 +1349,45 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   scaling, and the **Fighting-pool cross-boost** (Boxing/Kick/Cross Punch each
   stronger for owning the others — real, unmodelled, and named rather than
   invisible).
+- **🌪 WIND CONTROL SHIPPED — a whole powerset added from the client (2026-08-08,
+  `982a8572`).** 20 records across Controller and Dominator, offered in
+  `powersets.json`, priced end to end with pets. Every mapping was MEASURED
+  against powers we already hold (`docs/wind-control-spec.md`): level +1 (5,478
+  of 5,589), Click/Toggle/Auto → 0/2/1, effect_area, `is_attack` = has damage,
+  control rows on the 539-power convention, `kind` hard/soft by mez name
+  (unanimous), categories by name + two aliases (1,128× and 452×), summon
+  entities by underscore normalisation (570 exact + 7), and the spec's
+  `permanent` ⟺ duration ≥ 99999 (483/53, perfect). ⚠⚠ **`targets_affected` IS
+  THE SIDE, NOT `target_type`** — Thundergust and Wind Shear are `target_type:
+  Self` (centred on you) and land entirely on FOES; reading target_type would
+  have written a cone attack's damage as a self buff. ⚠ **Clear Skies carries
+  nothing on purpose**: all its effects are gated on `kClearSkies Source.Mode?`,
+  the mode class. ⚠ **Joel's ruling: Controller and Dominator SHARE the Vortex
+  entity.** ⚠ The generator REFUSES rather than guesses — it fired three times
+  during the build and each refusal was a real misunderstanding.
+- **⚠⚠ `open(path, "wb").write(expr)` TRUNCATES BEFORE IT EVALUATES `expr` — it
+  emptied powers.json to ZERO BYTES (2026-08-08).** A `NameError` inside the
+  expression was enough: 17 MB gone in one statement. Recovered whole from git
+  plus the tools, because every change since the last commit is generated — but
+  **build all bytes first, then open**. ⚠ Related, same day: **match each file's
+  own serialisation** — powers.json and summons.json are compact single-line,
+  **powersets.json is `indent=1` with CRLF**, and writing it compact turned a
+  two-entry addition into a 3,102-line diff (content identical, review
+  impossible).
+- **🎯 CONTROL DRIFT: 29 POWERS DISAGREED WITH THE CLIENT, 25 SYNCED GAME-FIRST
+  (2026-08-08, `70f97249`).** Our control encoding matches the client on 539
+  powers. Of the 29 that did not: **ten epic holds read a 12.0 duration scale
+  where the game says 10.0** (Block of Ice, Fossilize, Char, Dominate, Shocking
+  Bolt, Melt Armor), the four **Electric Shackles** 8.0 → 10.0, **Hymn of
+  Dissonance** magnitude 1 → 3, and **Telekinesis was recorded as a HOLD when
+  the game's own short help says "Foe Immobilize, Repel"**. ⚠ **Four were left
+  alone**: Synaptic Overload, Cryo Freeze Ray, EM Pulse and Seismic Smash carry
+  multi-row ENCODINGS, not wrong values — collapsing one is a different question
+  from correcting a number. ✓ Exposure zero of 24.
+  ⚠ **The 269 unresolved `summons[]` references are NOT a pricing gap** —
+  pricing reads the SPEC, which carries uid/count/class inline; the entity map
+  is metadata. The one case drivable end to end (Shadow Field) shows no pet
+  damage because its pseudo-pet genuinely has none.
 - **🚫 MUTUALLY EXCLUSIVE POWERS — THE TOOL ALLOWED WHAT THE GAME REFUSES
   (found and fixed 2026-08-08, `35c97c6f`).** The client marks them with a
   `requires` of `<other> !` on BOTH records, and **nine pairs already sat in our
