@@ -1,3 +1,51 @@
+# ⏳ A WAVE IS RUNNING - 2026-08-09 04:45 ET, v43+v44 re-certification
+
+## IF YOU ARE READING THIS AND THE SESSION DIED, READ THIS BLOCK FIRST
+**19 of 24 contexts are re-converging RIGHT NOW.** Launched detached at
+**04:45:45** via a scheduled task (since unregistered); orchestrator + 6 workers.
+⚠ **champions.json and every shard belong to THAT process until it exits** - no
+`git add -A`, no checkout, no merge.
+
+- launcher: `Run V44 Recert Wave.bat` · orchestrator log: `wave_v44.log`
+- worker logs: `champions_shard_v44_p0..p5.log` · shards: `champions_shard_v44_p*.json`
+- flags: `--recert --workers 6 --shard-prefix champions_shard_v44`, node cap 50000,
+  **NO --merge** (deliberate - verdicts first, then Joel's word)
+- estimated finish **~11:00-12:00 ET** (worker 5 holds PB triform, the 261-minute
+  context; the others are median ~77)
+
+### To check on it
+`tail champions_shard_v44_p*.log` - each `[Nm]` marker is one context finishing.
+Confirm progress with TWO snapshots, never one.
+
+### When it finishes, in this order
+1. ⚠⚠ **RETIRE THE 26 STALE ROOT SHARDS FIRST.** `certified_union()` globs
+   `champions_shard_*.json` and **26 old shards shadow all 19 of these keys** -
+   measured before launch. The wave itself was safe because `--recert` bypasses
+   the union, but the VERDICT step is not. Rename them to a non-matching suffix
+   (`.retired_2026-08-09`). ⚠ KEEP `champions_shard_e_gt_*.json` - the E ground
+   truths are deliberately never merged and belong in the union.
+2. `recert_verdicts` / `evaluate_first` per context. ⚠ recert_verdicts OVERWRITES
+   its output per invocation - regenerate COMPLETE before any merge.
+3. **Verdict table to Joel. Do not merge without his word.** Then merge BY
+   CONTEXT with `--verdicts`, keep the canonical winner, retire the shards.
+
+## WHY THESE 19
+Measured, not assumed: the union of every context holding a power touched by
+v40 slow-resist (8), v41 DDR (9), v42's RechargeTime fix (17), v43 Domination
+(1) and v44 crits (2). The other **5 are owed nothing** and their incumbents
+stand: Spines/FA farm_afk, Plant/Poison, Rad_Emission/Sonic, Demon/Rad, and the
+base Warshade itrial.
+
+## PRE-FLIGHT THAT WAS RUN (all green)
+prereq gate 477/477 · 12 batteries · 7 reality checks/audits · zero live workers
+· **Fiery Embrace exposure measured at ZERO**, so the one open correctness
+question (its Fire-typed buff vs our type-blind global) does not block this.
+⚠ Laptop-only, and that is a justified idle rather than a silent one: the gaming
+box has written **no heartbeat since 2026-07-29** and its last order was
+withdrawn, so there is no healthy worker to split to.
+
+---
+
 # Resume point - 2026-08-09 (latest), v44 crits - the mode/meter class is done
 
 ## STATE
