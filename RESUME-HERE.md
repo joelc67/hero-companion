@@ -1,3 +1,44 @@
+# Resume point - 2026-08-08 (latest), Wind Control specified, not built
+
+## STATE
+HEAD pushed, tracked tree clean. Nothing running. Data **2026.1.1242**, models
+**v39-v42**, **re-cert union 20 of 24**. No data changed this pass.
+
+## WHAT THIS PASS DID (`09d24a0d`) - and what it deliberately did NOT
+Wind Control is 10 powers x 2 archetypes the tool cannot plan. **Every mapping
+is now pinned and measured** (`docs/wind-control-spec.md`), so the build is
+mechanical. I stopped before building, and not for effort:
+
+- `level_available` = client **+1** (5,478 of 5,589 matched powers agree)
+- control encoding: client `scale`->our `scale`, client `magnitude`->our `nmag`,
+  critter group -> `pv_mode 1` — **539 powers agree**, 29 do not (see below)
+- control `kind`: hard/soft **by mez name**, unanimous across every existing row
+- set categories by name + TWO aliases derived from powers we already hold:
+  "Universal Damage Sets"->"Universal Damage" (1,128x), "Ranged AoE
+  Damage"->"Targeted AoE Damage" (452x)
+- summons resolve by **normalising underscores** (client
+  `Pets_WindControl_Vacuum_Controller` = our `Pets_Wind_Control_Vacuum_Controller`);
+  570 exact + 7 via normalisation. **The pet entities already exist.**
+- damage from templates AND `child_effects` (the Boomerang Slice pattern)
+
+## ⚠ THE TWO THINGS THAT STOPPED IT — the first is Joel's
+1. **The Controller's Vortex pet.** The client has TWO entity defs
+   (`Pets_WindControl_Vortex_Controller` and `Pets_WindControl_Vortex`); our
+   data has ONE. Sharing one across Controller and Dominator is a documented
+   pattern here (v26 says so), so it is probably right - but it is an assumption
+   about the game on a **TIER 9**, and this project rules on those.
+2. **Exposing a powerset is a bigger act than any data patch.** Adding it to
+   `powersets.json` makes it selectable: the solver will optimise into it and a
+   player will trust the numbers. **A mis-priced set is worse than an absent
+   one**, so that switch gets flipped deliberately, not as a side effect.
+
+## TWO FINDINGS THAT FELL OUT (pre-existing, unrelated to Wind Control)
+- **29 control powers we ALREADY SHIP disagree with the client** on (mez, scale,
+  magnitude): Hymn of Dissonance reads mag 1 where the client says 3, Entangle
+  4 vs 3, Synaptic Overload's whole ladder is shifted. Deserves its own pass.
+- **269 of our `summons[]` entries resolve to no entity** in summons.json.
+  Mostly pseudo-pets (`PL_StaticObject`), never classified.
+
 # Resume point - 2026-08-08 (latest), Boomerang Slice + the legality hole
 
 ## STATE
