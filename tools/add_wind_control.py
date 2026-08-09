@@ -274,6 +274,19 @@ def main():
                 entry[kind] = keep
     for k in [x for x in summ["powers"] if x.rsplit(".", 1)[0] in SETS]:
         del summ["powers"][k]
+    # ⚠ THE BASELINE MUST BE STRIPPED TOO. `orig`/`porig`/`sorig` are read from
+    # disk, which on a re-run already contains the set - so the invariance check
+    # compared "without" against "with" and refused a perfectly good re-run.
+    for _b in (orig,):
+        for ps in [x for x in _b if x in SETS]:
+            del _b[ps]
+    for _b in (porig,):
+        for _at, _e in (_b.get("by_archetype") or {}).items():
+            for _k in ("primary", "secondary"):
+                if _e.get(_k):
+                    _e[_k] = [s for s in _e[_k] if s["full_name"] not in SETS]
+    for k in [x for x in sorig["powers"] if x.rsplit(".", 1)[0] in SETS]:
+        del sorig["powers"][k]
     if dropped:
         print(f"(re-run: dropped {dropped} record(s) from a previous pass)")
 
@@ -415,7 +428,13 @@ def main():
             != json.dumps(orig, separators=(",", ":"), ensure_ascii=False).encode("utf-8")):
         print("INVARIANCE FAILED on powers.json - refusing to write")
         sys.exit(2)
-    pout = json.dumps(psets, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    # ⚠⚠ MATCH THE FILE'S OWN SERIALISATION. powers.json and summons.json are
+    # COMPACT single-line; powersets.json is indent=1 with CRLF. Writing it
+    # compact collapsed a 3,088-line file into one and turned a two-entry
+    # addition into a 3,102-line diff - content identical, review impossible.
+    _CRLF, _LF = b"\r\n", b"\n"
+    pout = json.dumps(psets, indent=1, ensure_ascii=False).encode("utf-8")
+    pout = pout.replace(_CRLF, _LF).replace(_LF, _CRLF)
     pprobe = json.loads(pout.decode("utf-8"))
     for _at, entry in pprobe.get("by_archetype", {}).items():
         for kind in ("primary", "secondary"):
