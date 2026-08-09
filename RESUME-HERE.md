@@ -18,14 +18,20 @@
 Confirm progress with TWO snapshots, never one.
 
 ### When it finishes, in this order
-1. **Retire the 26 stale root shards** (rename to `.retired_2026-08-09`).
-   ⚠ CORRECTION to what this block first said: `recert_verdicts` and
-   `merge_champion_shards` both take EXPLICIT shard paths, so they are NOT at
-   risk - checked, not assumed. The hazard is `certified_union()`, which globs
-   `champions_shard_*.json`, so it bites the NEXT wave launch and the
-   stale-shadow guard. Still worth doing, just not a blocker for step 2.
-   ⚠ KEEP `champions_shard_e_gt_*.json` - the E ground truths are deliberately
-   never merged and belong in the union.
+1. ~~Retire the stale root shards~~ **DONE 2026-08-09 08:15, mid-wave**
+   (`12ce6647`). 30 renamed to `*.retired_2026-08-09`; shards shadowing an
+   owed key at a future launch went **26 -> 0**. Safe mid-wave for two
+   independent reasons, both checked: `buildout_champions` globs every root
+   shard BUT under `--recert` discards the result and rebuilds the skip set
+   from its own shard alone, and the glob runs once at startup hours earlier.
+   Verified after: 7 processes alive, logs still advancing on two snapshots.
+   ⚠ **KEPT: `champions_shard_v34_p0.json`** - it carries
+   `Class_Brute|Radiation_Melee|Fiery_Aura|farm_active`, which is **NOT in
+   champions.json** and not in the held-ladderfix list. Orphaned v34 work, or a
+   context dropped in the roster split - retiring it would have buried the
+   question. **Worth a look when the wave is done.**
+   ⚠ KEPT: the 3 `champions_shard_e_gt_*` ground truths (never merged, belong
+   in the union) and the live `champions_shard_v44_p*`.
 2. `recert_verdicts` / `evaluate_first` per context. ⚠ recert_verdicts OVERWRITES
    its output per invocation - regenerate COMPLETE before any merge.
 3. **Verdict table to Joel. Do not merge without his word.** Then merge BY
