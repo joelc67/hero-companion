@@ -1,4 +1,97 @@
-# Resume point - 2026-08-08 (latest), Wind Control SHIPPED + all issues closed
+# Resume point - 2026-08-08 (latest), both origin pools SHIPPED + the mode gate found
+
+## STATE
+HEAD pushed, tracked tree clean. Nothing running. Data **2026.1.1242**, models
+**v39-v42** unchanged, **re-cert union 20 of 24** - nothing this pass moved a
+score, and all 24 certified builds remain legal.
+
+## GADGETRY AND UTILITY BELT ARE IN (`22b7be2f`)
+The last two absences the missing-powers check was pinning. **10 pickable powers,
+served to all 15 archetypes**, prerequisites read from the game's own requires
+expression and enforced by `_picks_legal`. `reality_check_missing_powers` now
+reads **0 genuinely absent** - every client power we lack is renamed, filed
+elsewhere, never-pickable, or an `_Aux` variant, each accounted for.
+
+⚠ Turbo Boost and Athletics are ABSENT ON PURPOSE (auto-issue sentinel, the
+`Fly_Boost` ruling). ⚠ Jetpack's archetype bar (Peacebringer, Warshade) is
+RECORDED and reported - the tool has no per-power archetype gate for pools.
+⚠ The one-origin-pool rule is **not in any `requires` expression** (checked);
+it is server-side and unverifiable from the bins. Battery
+`tools/test_origin_pools.py` - 32 checks, 7 sabotages, all caught.
+
+## ⚠⚠ THE BIG ONE: `tags` IS THE CLIENT'S MODE GATE, AND IT ALWAYS WAS
+This project has recorded since 2026-08-06 that the crawler was **not capturing**
+the Fiery Embrace gate. **That was wrong.** The gate is an effect-group field
+nothing had read: **349 groups on 342 powers carry `tags: ["FieryEmbrace"]`**,
+and the same field carries **Containment 119 · Domination 90 · Overpower 86 ·
+Defiance 33 · PowerBoostA/B · the Scrapper crit trio** and ~150 more.
+
+**Why it matters beyond today:** the whole mode/meter capability - Fury, Rage,
+Domination, Power Boost, the self +damage buff class - now has a **mechanical
+roster**. Whoever starts that work no longer has to find the affected powers.
+The tag names the mode; it does NOT give the uptime, and uptime was always the
+part needing Joel's ruling.
+
+## ⚠⚠ WIND CONTROL SHIPPED INFLATED THIS MORNING, AND IS CORRECTED
+The pools exposed it: the client writes an attack's damage **once per archetype
+and again per game state**, so Wrist Blaster carries **23 damage groups for one
+attack**. Testing for `critter`/`player` alone let all 22 variants through -
+they name `critter`/`player` too. Two rules now, both measured corpus-wide:
+
+1. **A tagged group is skipped and counted** (see above).
+2. **Targeting is not a condition.** Strike out the pure-targeting clauses
+   (`enttype target>`, `entref target.owner>`, `target.isFriend?`, operators)
+   and **5,123 of 7,323** expression-carrying groups reduce to nothing; every
+   residue is a real condition (archetype, `kMeter`, `Source.Mode?`, `rand`).
+
+⚠ **`chance: 0.0` means UNSET, not never** - the crawler writes 0.0 for an
+absent field. Poisoned Dagger's -DMG reads 0.0 while the game's help states it.
+
+Result: 18 Wind Control row-sets changed, all downward. **Vacuum's Lethal DoT
+drops to zero** - the game gates it on 6 stacks of the set's own Pressure
+mechanic - and that is REPORTED per power, never silently dropped.
+⚠ Its battery had a check passing for the WRONG REASON (it compared Controller
+against Dominator and found a difference that WAS the mode group). Rewritten.
+
+## ⚠⚠ AUTOPICK WAS PROPOSING ILLEGAL BUILDS - 61 of 2,721
+`place()` filtered twins from **a hand-written list of two pairs** while our
+records mark **thirteen**, so Broad Sword proposals held Slice and Boomerang
+Slice together on 43 combos. `_picks_legal` and the validator had already been
+generalised to read `excludes`; autopick had not. Built from the data now.
+
+⚠⚠ **Fixing it EXPOSED a latent second defect.** The creation-pick fallback
+seats "the better-scoring of the set's first two", and **first-two-by-tier is
+not available-at-level-1**: Fortunata Teamwork's second is **Mask Presence at
+level 20**, which out-scored Fate Sealed and was seated into the LEVEL-1 slot.
+Every Fortunata proposal was unbuildable. Measured three ways: HEAD 61 · twin
+fix alone 1 · both fixes **2,721 of 2,721 legal**. The audit gained a check that
+states the actual rule (a pick level must be >= the power's `level_available`),
+so the next set shaped that way is NAMED rather than showing up as a symptom.
+
+## SMALLER, EACH WITH ITS EVIDENCE
+- `min_others` gained **the mirror of a rule it already had**: a NEGATED
+  archetype gate swaps the polarities but not the question. One expression
+  reclassified (Jetpack), count 0 either way, **zero data change** (proven by
+  running the patcher: 0 changed). Prereq gate **477 of 477 agree**.
+- `reality_check_powers` re-pinned **52 -> 43**. Measured **stale at HEAD**, not
+  moved by this work; the nine left when the alias map gained its display-name
+  rung. ⚠ The pin is two-way: a shrink is as much a signal as a growth.
+- `Ninja_Run` dispositioned in the coverage check (v30 movement exclusion) - it
+  entered scope only when the pools landed. **Every family classified.**
+- Life Support System's heal-over-time is decoded from the client's own RPN at
+  the **full-health floor** and multiplied by its 9 ticks, because a heal row
+  carries no duration and `role_output` divides by recharge. The game says
+  potency rises as health falls; crediting that needs a scenario nobody ruled.
+
+## WHAT IS OPEN
+- **Blocked on Joel, unchanged:** `mez_in` (the mez term is built and proven but
+  inert without it) and a Brute farm log with 3+ single-target attacks for Fury.
+- **The re-cert wave has NOT been started** and must not be until the scope is
+  settled: **21 contexts** (13 for v39, 8 for v40). Nothing today widened it.
+- The mode/meter capability, now with a roster (see `tags` above).
+
+---
+# Resume point - 2026-08-08, Wind Control SHIPPED + all issues closed
 
 ## STATE
 HEAD pushed, tracked tree clean. Nothing running. Data **2026.1.1242**, models

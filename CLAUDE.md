@@ -845,11 +845,37 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   a `Fire_Dmg` template whose `requires_expression` is EMPTY in the bin-crawler
   export, across Claws, Rad Melee, everything. It is not unconditional: 124
   clean logged swings show ZERO Fire components, because in game it only applies
-  while Fiery Embrace is up. **The crawler is not capturing that gate.** Our
-  Mids-derived base correctly counts Smashing+Energy alone; counting the Fire
-  template would inflate those 86 attacks by ~45% (RS 74.1 → 107.4). A future
-  reconciliation pass that trusts `requires_expression == ""` will do exactly
-  that.
+  while Fiery Embrace is up. Our Mids-derived base correctly counts
+  Smashing+Energy alone; counting the Fire template would inflate those 86
+  attacks by ~45% (RS 74.1 → 107.4). A future reconciliation pass that trusts
+  `requires_expression == ""` will do exactly that.
+  ⚠⚠ **CORRECTED 2026-08-08 — "the crawler is not capturing that gate" WAS
+  WRONG, and the correction is the useful half. The gate is `tags`, an effect-
+  group field nothing in this project had read.** Censused across the whole
+  export: **349 groups on 342 powers carry `tags: ["FieryEmbrace"]`**, and the
+  same field carries **Containment 119 · Domination 90 · Overpower 86 · the
+  Scrapper crit trio · Defiance 33 · PowerBoostA/B · SSDamage · Contaminated**
+  and ~150 more. So the whole mode/meter class — the one queued as Fury / Power
+  Boost / the self +damage buff — is **mechanically identifiable in the data**,
+  which is what any of that work needed first. The tag names the mode; it does
+  NOT give the uptime, so it enables the work rather than doing it.
+  `add_wind_control.effects_from` skips tagged groups and COUNTS them, and
+  `tools/test_origin_pools.py` pins the 349.
+- **⚠⚠ A `requires_expression` MIXES TARGETING WITH CONDITIONS, AND ONLY ONE OF
+  THEM MAKES A GROUP CONDITIONAL (2026-08-08).** "Who may this land on"
+  (`enttype target> critter eq`, `entref target.owner> entref source> eq !`,
+  `target.isFriend? !`) is always true for the enemy in front of you; "when does
+  it apply" (an archetype, `kMeter`, `Source.Mode?`, a `rand` roll, token
+  ownership) is the real gate. **Strike out the targeting clauses and 5,123 of
+  the 7,323 expression-carrying groups reduce to nothing**; every residue is a
+  genuine condition. ⚠ Testing for `critter`/`player` alone is NOT enough — the
+  client writes an attack's damage **once per archetype and again per game
+  state**, and those variants name `critter`/`player` too: Wrist Blaster has
+  **23 damage groups for one attack**, and a naive side test took all 23.
+  ⚠ **And `chance: 0.0` means UNSET, not "never"** — the crawler writes 0.0 for
+  an absent field. Poisoned Dagger's -DMG group reads 0.0 while the game's own
+  short help states the -DMG; corpus-wide only 64 untagged chance-0 groups
+  exist and every one carries a real, help-stated effect.
 - **🔥 FURY: THE NAMED INSTRUMENT IS BUILT, AND IT MOVED THE BLOCKER (2026-08-06).**
   v36 left Fury dormant at a 228% residual spread with a named next step —
   component-summed swing reconstruction. `tools/measure_fury_residual.py` v2
@@ -889,6 +915,13 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   standing ruling (a meter has no headline number without a scenario).
   ✓ **Champion exposure is ZERO** — no certified build holds Power Boost — so
   whenever this lands it cannot move a certified score, and needs no re-cert.
+  ▶ **2026-08-08: the ROSTER for this work now exists and is mechanical.** The
+  client's `tags` field names every one of these modes on the effect groups
+  they gate (FieryEmbrace 349 · Containment 119 · Domination 90 · Overpower 86 ·
+  Defiance 33 · PowerBoostA/B · the Scrapper crits · ~150 more) — see the
+  corrected Fiery Embrace entry above. Whoever starts the mode/meter work no
+  longer has to find the affected powers; the remaining unknown is UPTIME, and
+  that is the part that was always Joel's ruling.
 - **🧭 THE ORDER TO WORK IN IS STATED ONCE, AT THE TOP (Joel, 2026-08-07: "I
   really do not see a well defined decision tree, just lots of choices").**
   The evaluation, measured on a 900px window with a level-50 loaded: Powers &
@@ -1088,6 +1121,44 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   ⚠ `var(--text)` IS UNDEFINED in style.css — the ink token is **`--ink`**.
   Three existing rules already use the dead name (`.sb-leg b`, `.jny-chip-how b`,
   and `.ghost-btn`, the only one with a fallback). Do not copy that pattern.
+- **🧰 GADGETRY AND UTILITY BELT SHIPPED (2026-08-08, `22b7be2f`,
+  `tools/add_origin_pools.py`) — and a POOL needs three things an archetype set
+  does not.** (1) **Prerequisites, which the game states outright**: Blaster
+  Barrage's requires is "any TWO of the three", read from the expression into
+  `prereq_count` and enforced by `_picks_legal` — never left to the tier proxy.
+  (2) **The never-pickable free rider**: Turbo Boost and Athletics carry
+  `available_level 4294967295`, so they are deliberately absent — the
+  `Pool.Flight.Fly_Boost` ruling applied again. (3) **An archetype gate the tool
+  cannot express**: the game bars Jetpack from Peacebringers and Warshades, so
+  it is RECORDED on the record (`archetype_excluded`) and REPORTED, not dropped
+  and not faked. Both pools were ALREADY in `_EXCLUSIVE_POOLS`, so the
+  one-origin-pool rule and the four-pool cap covered them the moment they
+  existed — checked, not assumed. ⚠ The origin-pool rule itself is **not in any
+  `requires` expression** (checked 2026-08-08; Mystic Flight and Nano Net both
+  carry none), so it is server-side and unverifiable from the bins, the same
+  class as zone level ranges. Battery `tools/test_origin_pools.py` (32 checks,
+  7 sabotages). Champion exposure zero; `reality_check_missing_powers` now reads
+  **0 genuinely absent**.
+- **⚠⚠ AUTOPICK WAS PROPOSING BUILDS THE GAME REFUSES — 61 of 2,721, AND THE
+  CAUSE WAS A HAND-WRITTEN LIST (2026-08-08).** `_auto_pick_powers`' `place()`
+  funnel filtered mutually exclusive twins from `_VEAT_DUPLICATE_PAIRS` — **two
+  pairs someone typed out** — while our records mark **thirteen**, so Broad
+  Sword proposals held Slice and Boomerang Slice together on 43 combos. The
+  validator and `_picks_legal` had already been generalised to read `excludes`;
+  autopick had not. The map is built from the data now (the hardcoded pairs are
+  a proven subset, so the list is gone). ⚠ **A twin is a SET, not one power** —
+  a power may exclude more than one.
+  ⚠⚠ **And fixing it EXPOSED a latent second defect, which is the better
+  lesson.** The creation-pick fallback seats "the better-scoring of the set's
+  first two", and **first-two-by-tier is not available-at-level-1**: Fortunata
+  Teamwork's second is **Mask Presence at level 20**, it out-scored Fate Sealed,
+  and it was seated into the LEVEL-1 slot — an unbuildable Fortunata on every
+  proposal. `_picks_legal` only saw it indirectly (a missing L1 seat), so
+  `audit_autopick_legality` gained a check that states the actual rule: **a pick
+  level must be at or above the power's own `level_available`**, which names the
+  next set shaped that way instead of leaving a symptom. Measured three ways:
+  HEAD 61 illegal · twin fix alone 1 (the exposed Fortunata) · both fixes
+  **2,721 of 2,721 legal**. All 24 certified contexts and builds stay legal.
 - **🪪 THE ALIAS MAP LEARNED THE DISPLAY NAME, AND THE RUNG THAT MATTERS IS
   "TWO OF OURS WANT ONE OF THEIRS" (2026-08-07).** `build_power_aliases.py`
   matched on internal names, fuzzy names and scalar fingerprints — three rungs,
