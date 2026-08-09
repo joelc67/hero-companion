@@ -18,12 +18,14 @@
 Confirm progress with TWO snapshots, never one.
 
 ### When it finishes, in this order
-1. ⚠⚠ **RETIRE THE 26 STALE ROOT SHARDS FIRST.** `certified_union()` globs
-   `champions_shard_*.json` and **26 old shards shadow all 19 of these keys** -
-   measured before launch. The wave itself was safe because `--recert` bypasses
-   the union, but the VERDICT step is not. Rename them to a non-matching suffix
-   (`.retired_2026-08-09`). ⚠ KEEP `champions_shard_e_gt_*.json` - the E ground
-   truths are deliberately never merged and belong in the union.
+1. **Retire the 26 stale root shards** (rename to `.retired_2026-08-09`).
+   ⚠ CORRECTION to what this block first said: `recert_verdicts` and
+   `merge_champion_shards` both take EXPLICIT shard paths, so they are NOT at
+   risk - checked, not assumed. The hazard is `certified_union()`, which globs
+   `champions_shard_*.json`, so it bites the NEXT wave launch and the
+   stale-shadow guard. Still worth doing, just not a blocker for step 2.
+   ⚠ KEEP `champions_shard_e_gt_*.json` - the E ground truths are deliberately
+   never merged and belong in the union.
 2. `recert_verdicts` / `evaluate_first` per context. ⚠ recert_verdicts OVERWRITES
    its output per invocation - regenerate COMPLETE before any merge.
 3. **Verdict table to Joel. Do not merge without his word.** Then merge BY
