@@ -1121,6 +1121,51 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   ⚠ `var(--text)` IS UNDEFINED in style.css — the ink token is **`--ink`**.
   Three existing rules already use the dead name (`.sb-leg b`, `.jny-chip-how b`,
   and `.ghost-btn`, the only one with a fallback). Do not copy that pattern.
+- **🎛 THE MODE/METER CAPABILITY: THE CLASSIFICATION IS BUILT, AND MOST OF
+  THE CLASS TURNED OUT NOT TO NEED A RULING (2026-08-08, `tools/mode_tags.py`
+  + `reality_check_mode_tags.py` + `tools/test_mode_tags.py`).** 47 tags reach
+  a scored group of a power we carry, and every one is adjudicated with its
+  evidence; the check hard-fails BOTH ways (an unadjudicated tag, or a stale
+  entry for a tag the client no longer carries). Five classes:
+  **LABEL 22** (not a gate at all — the client naming the power's own effect),
+  **PROB 14** (a chance the client STATES — weighted, never skipped),
+  **MODE 4** (duty cycle derivable from the game's own duration and recharge),
+  **SCENARIO 6** (real, blocked on one input — Joel's, the `mez_in` class),
+  **DERIVED 1** (Defiance — v36 derives it; taking it would double-count).
+  ⚠⚠ **A TAG IS NOT AUTOMATICALLY A GATE, AND ASSUMING SO WAS A LIVE BUG I
+  SHIPPED THE SAME DAY.** The first fix skipped every tagged group; that is
+  right for FieryEmbrace and WRONG for `FireBlastBonusDoT`, which is simply the
+  client's name for Blaze's own Fire DoT — unconditional, in the power's help,
+  on 29 Fire attacks. **Three mechanical tests were tried** (does the tag name a
+  Set_Mode / a power / does the group carry a requires residue) **and each got
+  some of the 48 wrong in BOTH directions** — PowerBoostA names neither a mode
+  called PowerBoostA nor a power yet is a gate; `Damage` and `Taunt` name real
+  powers yet are labels. Hence a hand-adjudicated table, the project's standing
+  pattern. ⚠ Adjudicating Overpower as PROB (0.2/0.5, stated) rather than a
+  gate put five weighted Controller mez rows back into Wind Control.
+  ⚠ **Defiance's templates are NOT all scale 0.0** — 25 distinct scales up to
+  0.176 — so the DERIVED skip is load-bearing, not a formality. The older note
+  saying they are zero is corrected.
+  ▶ **WHAT IS ACTUALLY LEFT, and each names its missing input:**
+  (1) **Containment / the stack meters** (BuildStatic, BuildFrenzy, Contaminated,
+  Disintegrate, EnergyRelease, ComboBuild, Perfection×3, Bio adaptation — 144
+  groups): one scenario constant each, or one ruling for the class.
+  (2) **Domination** (87 groups): the duty cycle IS derivable (Set_Mode 90s on a
+  200s recharge, both client-stated) but it multiplies CONTROL magnitude, and
+  `role_output` has no mode path — an engine change that moves Dominator
+  champions, so it is its own measured pass.
+  (3) **The crits** (453 PROB groups): the chance is stated PER TARGET RANK
+  (`arch target> Class_Minion_Grunt eq` → 0.05, boss → 0.1), so what is missing
+  is the encounter's rank mix, not the chance. Today they are dropped by the
+  targeting/condition rule, which is honest but understates every Scrapper.
+  (4) ⚠ **FieryEmbrace's 305 groups stay excluded, and there is a REAL question
+  behind it:** the client's Fiery Embrace record grants `Fire_Dmg` at aspect
+  Strength — a **Fire-typed** buff — and our engine folds every `DamageBuff`
+  into one type-blind global `damage_buff`. So Fiery Embrace currently raises
+  ALL damage at an 11.1% duty cycle, while the game adds Fire components to
+  attacks and boosts those. Whether that over- or under-states it is a
+  measurement, not a reading. **Do not 'fix' it by adding the Fire templates**
+  until the type question is settled — that is the 2026-08-06 inflation trap.
 - **🧰 GADGETRY AND UTILITY BELT SHIPPED (2026-08-08, `22b7be2f`,
   `tools/add_origin_pools.py`) — and a POOL needs three things an archetype set
   does not.** (1) **Prerequisites, which the game states outright**: Blaster
@@ -1264,8 +1309,25 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   parse as JS. ⚠ Its source rule is deliberately narrow — JSON.stringify inside
   an inline handler — because a wider regex flagged 19 sites that are safe by
   inspection, and **a check that cries wolf is worse than none**.
-- **⚠⚠ THE SELF +DAMAGE BUFF IS MISSING FROM THE ENTIRE BUILD-UP CLASS — OPEN,
-  AND IT OWES A RE-CERT (found 2026-08-07).** The client ships, per power,
+- **✅ CLOSED — THE SELF +DAMAGE BUFF CLASS IS LANDED AND WORKING, AND THIS
+  ENTRY WAS STALE FOR A DAY (verified by measurement 2026-08-08).**
+  **275 powers carry a self `DamageBuff` row** with `mode: true` and the
+  game's own duration and recharge — Build Up scale 8.0 for 10s on 90s,
+  Aim 5.0, Rage 8.0 for 120s on 240s, Soul Drain 0.8, Follow Up 3.0, Power
+  Build Up 8.0, Fiery Embrace 10.0 (Fire-typed). **Measured through the real
+  /build/calculate route: adding Build Up moves `damage_buff` 0 → 0.1111 and
+  the attack's ST DPS 14.4 → 16.0.** v39's `mode`/`host_recharge` duty cycle
+  is what prices it, exactly as this entry said it should be.
+  ⚠⚠ **THE "ST DPS MOVES BY 0.0" MEASUREMENT WAS A BAD PROBE, NOT A BUG** —
+  it added `Scrapper_Melee.Martial_Arts.Build_Up`, **a full_name that does
+  not exist**, so no power was added and of course nothing moved. I made the
+  identical mistake again today before catching it. **A probe that adds a
+  power must assert the record RESOLVED** — `POWER_BY_FULL.get(fn)` — before
+  believing a zero. Pinned by `tools/test_mode_tags.py`.
+  ⚠ No re-cert is owed and none ever was: the data has carried these rows
+  since v39, so certified scores already include them.
+  Superseded text kept below for the reasoning it contains.
+- **(superseded) the 2026-08-07 report.** The client ships, per power,
   self-targeted `Strength` templates across all EIGHT damage types (scale 0.8
   and 4.0, duration 15s/30s) beside the ToHit ones. **Our records carry only the
   ToHit half.** Verified on Aim, Build Up, Rage, Follow Up, Power Build Up, Soul

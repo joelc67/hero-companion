@@ -92,14 +92,35 @@ def main():
                if any(json.dumps(p[k], sort_keys=True)
                       != json.dumps(by[f"{DS}.{p['power_name']}"][k], sort_keys=True)
                       for k in _K)]
-    ok("the Dominator's rows are not a blanket copy - 5 of the 10 still differ",
-       len(_differ) == 5, f"{sorted(_differ)}")
-    ok("...and Downdraft is one of the five that now AGREE, because the client's "
-       "only difference there was Containment vs Domination",
-       "Downdraft" not in _differ
-       and [e["scale"] for e in by[f"{DS}.Downdraft"]["control_effects"]]
-       == [e["scale"] for e in dd["control_effects"]],
-       "the archetype's own magnitude rides the modifier table, not the row")
+    ok("the Dominator's rows are not a blanket copy of the Controller's - "
+       "7 of the 10 differ",
+       len(_differ) == 7, f"{sorted(_differ)}")
+    # ⚠⚠ THIS COUNT HAS MOVED TWICE IN ONE DAY, AND BOTH MOVES WERE CORRECT.
+    # It read "different" for every power while the mode-gated Containment and
+    # Domination groups were being priced as unconditional; dropping those made
+    # five agree; then adjudicating Overpower as a stated PROBABILITY rather
+    # than a gate put the Controller's 20% mez rows back and took it to seven.
+    # What the number MEANS is the durable part: the archetypes differ exactly
+    # where the client gives them different unconditional or probabilistic
+    # rows, and nowhere else - a shared modifier table carries the
+    # per-archetype magnitude, so identical rows are not a copy-paste bug.
+    # ⚠ Overpower is stated at 0.2 on most groups and 0.5 on some - both come
+    # from the client, so the check reads "a probability below 1", not a number
+    # I picked. Five Controller powers carry one; no Dominator does, because
+    # Overpower is the Controller's inherent.
+    _cont_only = sorted(p["power_name"] for p in powers[CS]
+                        if any((e.get("probability") or 1) < 1
+                               for e in p["control_effects"]))
+    _dom_probs = {round(e.get("probability") or 1, 3)
+                  for p in powers[DS] for e in p["control_effects"]}
+    ok("...and the Controller's extra rows are Overpower, weighted at the "
+       "chance the client states rather than taken whole or thrown away",
+       _cont_only == ["Breathless", "Downdraft", "Keening_Winds",
+                      "Microburst", "Vacuum"] and _dom_probs == {1.0},
+       f"{_cont_only} carry a sub-1 chance; Dominator probabilities {_dom_probs}")
+    ok("...while the other two differences are DAMAGE, which the client scales "
+       "per archetype (Updraft and Thundergust)",
+       set(_differ) - set(_cont_only) == {"Updraft", "Thundergust"})
 
     # ---- categories and enhancements came from OUR vocabulary ----
     sc = json.load(open(os.path.join(ROOT, "data", "set_categories.json"), encoding="utf-8"))

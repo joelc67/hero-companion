@@ -40,6 +40,9 @@ import os
 import re
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from mode_tags import group_disposition   # noqa: E402  - ONE copy of the rule
+
 # ⚠⚠ TARGETING IS NOT A CONDITION. A `requires_expression` mixes two unrelated
 # jobs: WHO the effect may land on (always true for the enemy in front of you)
 # and WHEN it applies (a mode, a state, a die roll). Only the second makes a
@@ -346,14 +349,21 @@ def effects_from(crec, refuse, skipped):
         # test is struck out. Wind Control never showed this: an archetype
         # powerset needs no per-archetype variants.
         gated = bool(_TARGETING.sub(" ", req).strip())
-        # ⚠⚠ `tags` IS THE MODE GATE, AND THE CLIENT HAS ALWAYS CARRIED IT.
-        # 349 groups tagged FieryEmbrace across 342 powers, plus Containment,
-        # Domination, Overpower, Defiance, the Scrapper crit trio and
-        # PowerBoostA/B. A tagged group applies only while that mode is up, so
-        # ingesting it unconditionally is the Fiery-Embrace inflation this
-        # project has warned about since 2026-08-06 - the difference is that
-        # the gate is READABLE, not missing.
-        if grp.get("tags"):
+        # ⚠⚠ A TAG IS NOT AUTOMATICALLY A GATE. `tags` is where the client
+        # gates its modes - FieryEmbrace, Domination, Containment, the Scrapper
+        # crits, PowerBoostA/B - and the first version of this skipped EVERY
+        # tagged group. That is wrong for `FireBlastBonusDoT`, which is just the
+        # client's name for Blaze's own Fire DoT: unconditional, in the power's
+        # help, and dropping it understates 29 Fire attacks. Three mechanical
+        # tests were tried and each misclassified some of the 48 in both
+        # directions, so the adjudication is a table with its evidence
+        # (tools/mode_tags.py) and a check that hard-fails on anything new.
+        _disp = group_disposition(grp.get("tags"))
+        if _disp == "unknown":
+            refuse.add(f"{_who}: unadjudicated tag(s) {grp.get('tags')} - add "
+                       f"them to tools/mode_tags.py")
+            continue
+        if _disp == "skip":
             for _t in grp["tags"]:
                 skipped[f"tag:{_t}"] = skipped.get(f"tag:{_t}", 0) + 1
             continue
