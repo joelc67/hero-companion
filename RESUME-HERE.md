@@ -1,4 +1,55 @@
-# Resume point - 2026-08-09 (latest), v43 Domination shipped
+# Resume point - 2026-08-09 (latest), v44 crits - the mode/meter class is done
+
+## STATE
+HEAD `e3362892` pushed. Nothing running. Data **2026.1.1242**, **model v44**.
+⚠⚠ **THREE CONTEXTS OWE A RE-CERT AND NONE IS STARTED** - the Dominator (v43),
+and the Scrapper Broad_Sword/SR + Stalker Rad_Melee/Dark_Armor (v44). All three
+are already inside the existing **20 of 24** v39/v40 union, so the wave is not
+bigger, just more overdue. **Joel's call.**
+
+## v44 CRITS
+A crit adds **100% of the attack's own damage** - the crit row IS the base row -
+at **0.05 vs a minion, 0.10 above**. 253 rows on 247 powers. **The FLOOR is
+taken**: crediting the 0.10 needs a spawn rank mix and no scenario carries one.
+⚠⚠ Three leaks, each caught by measuring: **a chance of 1.0 is not a die roll**
+(StealthCrit = the guaranteed crit while HIDDEN); **pet/redirect records carry
+the tags** but a pet does not crit as its owner; and ⚠⚠ **`Epic.*` records are
+SHARED across archetypes**, so a first pass gave crits to Defenders, Tankers and
+Kheldians through epic picks - exposure 14 of 24 until restricted, then 2.
+⚠ The invariance guard REFUSED to write while the baseline still held the last
+pass's rows; that failure is the only reason the over-broad data did not ship.
+
+## ⚠⚠ THREE STALE 'BLOCKED' NOTES CAUGHT IN ONE ARC
+The self +damage buff was already landed; Defiance's templates are NOT all
+scale 0.0; and **Containment has been modelled since v36** (grounded from the
+paired templates, weighted by `ctrl_land` - which IS the mezzed-target share it
+was supposedly waiting on). All three were written as conclusions rather than
+measurements. **Re-measure any pinned "blocked" claim before quoting it.**
+
+## THE MODE/METER CLASS, FINAL STATE
+Done: the 47-tag classification (hard-fails both ways) · the self +damage buff
+(already there) · Domination's duration half (v43) · the crits (v44) ·
+Containment (already there, now correctly labelled DERIVED).
+
+Left, each naming its input:
+1. **The stack meters** (23 groups): Static, Frenzy, Contaminated, Disintegrate,
+   Energy Focus, the combo systems, Bio's stance. One scenario constant each or
+   one ruling for the class - **Joel's, the `mez_in` family**.
+2. **The crit premium above the floor** - needs a spawn RANK MIX, which would
+   sharpen other terms too. The single highest-value scenario input now.
+3. **Domination's magnitude half** - ambiguous in the client, 3 of 41 pairs fit
+   neither reading.
+4. ⚠ **Fiery Embrace** - the client's buff is **Fire-TYPED** while our engine
+   folds every DamageBuff into one type-blind global. Measure before touching;
+   adding the Fire templates first is the 2026-08-06 inflation trap.
+
+## STILL BLOCKED ON JOEL
+`mez_in` · the stack-meter constant · a spawn rank mix · a Brute farm log with
+3+ single-target attacks for Fury · whether to run the 3-context re-cert.
+
+---
+
+# Resume point - 2026-08-09, v43 Domination shipped
 
 ## STATE
 HEAD `4fc76239`. Nothing running. Data **2026.1.1242**, **model v43**.
