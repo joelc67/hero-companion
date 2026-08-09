@@ -136,8 +136,11 @@ def main():
                                          encoding="utf-8")).values()
                for p in lst))
 
-    ok("MODEL_VERSION is bumped - this moves scores", fp.MODEL_VERSION == 43,
-       f"v{fp.MODEL_VERSION}")
+    # ⚠ AT LEAST v43, not exactly - the same lesson test_absorb learned an hour
+    # earlier. This battery's subject is Domination, which landed in v43; a
+    # later bump (v44 crits) must not fail here for an unrelated reason.
+    ok("MODEL_VERSION is at or past the version Domination landed in",
+       fp.MODEL_VERSION >= 43, f"v{fp.MODEL_VERSION}")
 
     print(f"\ndomination battery: {PASS} passed, {FAIL} failed")
     return 1 if FAIL else 0
