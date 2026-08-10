@@ -44,6 +44,22 @@ def _cats(cats):
     return {CATMAP.get(c, c) for c in (cats or [])} - TRAVEL
 
 
+# ⚠ ASSASSIN DUAL-FORM PINS (adjudicated 2026-08-10 — this closed the last red
+# row of the audit). Our record is the QUICK form the player actually uses; the
+# alias map lands on the client's SLOW parent (Stone Assassins_Rockslide: cast
+# 3.17, interrupt 2.0) or its redirect DISPATCHER (Sonic Assassins_Resonance:
+# range 150 is the dispatcher's targeting envelope — the real attack twins
+# Assassins_Whisper_Quick/Stealth both carry range 7, which is our value).
+# Comparing a quick form against a slow parent is not drift. TWO-WAY PIN:
+# exactly these rows must drift; a fourth Assassin row appearing, or one of
+# these going quiet, is a real change and fails.
+_AS_DUAL_FORM_PINS = {
+    ("Stalker_Melee.Sonic_Melee.Assassins_Whisper", "range"),
+    ("Stalker_Melee.Stone_Melee.Assassins_Smash", "range"),
+    ("Stalker_Melee.Stone_Melee.Assassins_Smash", "cast_time"),
+}
+
+
 def main():
     snap = json.load(open(SNAP, encoding="utf-8"))
     amap = json.load(open(ALIASES, encoding="utf-8"))
@@ -54,6 +70,7 @@ def main():
     val_drift = {f[0]: 0 for f in FIELDS}
     val_drift["cast_time"] = 0
     snipe_cond = slot_add = slot_rem = matched = 0
+    pinned_hits = set()
     samples = []
     for fn, g in snap.items():
         # An ADJUDICATED alias outranks a same-name coincidence. Blaster Tactical
@@ -71,11 +88,16 @@ def main():
             if ov is None or gv is None:
                 continue
             if abs(float(ov) - float(gv)) > max(0.01, 0.02 * abs(float(gv))):
-                val_drift[of] += 1
+                if (p["full_name"], of) in _AS_DUAL_FORM_PINS:
+                    pinned_hits.add((p["full_name"], of))
+                else:
+                    val_drift[of] += 1
         ov, gv = p.get("cast_time"), g.get("cast")
         if ov is not None and gv is not None and abs(float(ov) - float(gv)) > 0.02:
             if float(ov) - float(gv) > 1.0:
                 snipe_cond += 1
+            elif (p["full_name"], "cast_time") in _AS_DUAL_FORM_PINS:
+                pinned_hits.add((p["full_name"], "cast_time"))
             else:
                 val_drift["cast_time"] += 1
         gc, oc = _cats(g.get("cats")), _cats(p.get("accepted_set_categories"))
@@ -148,6 +170,12 @@ def main():
     print(f"SLOTTING drift: +{slot_add} categories the game allows and we don't, "
           f"-{slot_rem} we allow and the game doesn't (minus travel-set taxonomy)")
     print(f"snipe conditional cast-times (expected, not drift): {snipe_cond}")
+    print(f"assassin dual-form rows (pinned, not drift): {len(pinned_hits)} of "
+          f"{len(_AS_DUAL_FORM_PINS)} expected")
+    if pinned_hits != _AS_DUAL_FORM_PINS:
+        print("  PIN MISMATCH (two-way): "
+              f"missing={sorted(_AS_DUAL_FORM_PINS - pinned_hits)} "
+              f"unexpected={sorted(pinned_hits - _AS_DUAL_FORM_PINS)}")
     if samples:
         print("\nslotting samples:")
         for s in samples:
@@ -155,7 +183,7 @@ def main():
     if not total:
         print("\nPower values and slotting match the live game (bar snipe conditionals"
               " and the pinned unverified register).")
-    return total + coverage_fail
+    return total + coverage_fail + (0 if pinned_hits == _AS_DUAL_FORM_PINS else 1)
 
 
 if __name__ == "__main__":

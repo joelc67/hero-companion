@@ -38,6 +38,14 @@ out. Rules going forward:
 Joel's session context is a limited resource. Do not spend it on prose.
 
 - **Chat replies: 10 lines max.** State what was done, what's blocked, what you need from Joel. No narrative recaps, no restating the plan, no explaining code Joel didn't ask about.
+- **⚠⚠ COMPLETE, THEN BRIEF (Joel, 2026-08-10: "Stop giving me incomplete and
+  overwhelming threads of responses. You are literally wasting my tokens by
+  performing an incomplete request. And I am not reading the Iliad and Odyssey
+  just to check your work.")** Finish the WHOLE request — including the
+  follow-through a finding demands (an audit that finds a red row FIXES the
+  row, it does not report it) — before writing anything to chat. Then the
+  10-line protocol taken literally: outcome, one proof reference, what is his.
+  Never hand back a partially-executed thread or enumerate middle steps.
 - **All detail goes to the outbound report:** `C:\Users\joelc\code\session-report.md` (outside this repo, never committed). Prepend each session's entry at the top with a date + session heading. Write dense and factual — findings, decisions, file/function names, open questions — not play-by-play.
 - Joel reads session-report.md through his Cowork chat and sends follow-ups via `ideas.md`. So: `ideas.md` = inbound, `session-report.md` = outbound, chat = short status only.
 - Long explanations, root-cause writeups, and "where things stand" summaries belong in session-report.md, never in chat.

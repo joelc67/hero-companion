@@ -185,8 +185,12 @@ option space for **all three re-cert waves, ~17.3 hours of compute**.
   exemplar, display-name-collisions.
 - Reality checks green: effect coverage (32 gaps pinned), mode tags 47/47,
   missing powers (8 pinned, incl. the retractions), empty records.
-- ⚠ `reality_check_powers` exits 1 on `range 2, cast_time 1` drift. **This is
-  PRE-EXISTING** - verified stale at HEAD before this session touched anything.
+- ~~⚠ `reality_check_powers` exits 1 on `range 2, cast_time 1` drift~~
+  ✅ **CLOSED 2026-08-10 (the audit's last red row):** all three were our
+  QUICK-form Assassin's Strike records compared against the client's SLOW
+  parent (Stone: cast 3.17/interrupt 2.0) or redirect dispatcher (Sonic:
+  range 150 envelope; the real twins carry range 7 = our value). Pinned
+  two-way in the check (`_AS_DUAL_FORM_PINS`, 3 of 3 expected); exit 0.
 
 ## ⛔ RELEASE IS HELD, AND HALF-PREPPED
 `VERSION` is bumped to **0.12.36 but nothing shipped**. Also already changed:
