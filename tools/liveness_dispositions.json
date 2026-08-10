@@ -1,1 +1,6 @@
-{}
+{
+ "Brute_Melee.Broad_Sword.Boomerang_Slice": "LIVE since Feb 10 2026 (i28p3, official patch note: a new mutually exclusive option to Slice; cited by Maelwys on topic 64761, page read directly 2026-08-10). Restored after a wrongful retraction.",
+ "Scrapper_Melee.Broad_Sword.Boomerang_Slice": "LIVE since Feb 10 2026 - same patch note.",
+ "Stalker_Melee.Broad_Sword.Boomerang_Slice": "LIVE since Feb 10 2026 - same patch note (Stalker target cap 10 stated there too).",
+ "Tanker_Melee.Broad_Sword.Boomerang_Slice": "LIVE since Feb 10 2026 - same patch note."
+}

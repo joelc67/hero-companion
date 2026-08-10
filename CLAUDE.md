@@ -237,6 +237,24 @@ and the needs-eyes-in-game list, each citing its entry here.
   the solver's option space for all three re-cert waves (~17.3 hours of
   compute). Every green check I had compared the client against our data; not
   one asked whether the client's content is in the game.
+  ⚠⚠ **AND THE AUTHORITY HAS A PROVEN FALSE-NEGATIVE MODE (same day, evening):
+  the Mids-derived snapshot LAGS the live game.** Maelwys, on topic 64761,
+  citing the official Feb 10 2026 i28p3 patch note: **Boomerang Slice IS
+  live** ("A new mutually exclusive option to slice") — it had been in the
+  game for six months while the Mids snapshot never carried it, and the
+  retraction wrongly took it out. Read directly from the patch-notes page
+  (browser pane; the note's stats match our client-derived record on every
+  number: 1.83 cast, 8s recharge, 30ft/30°, scale 0.877, the −9% res debuff,
+  Stalker cap 10). **Restored 2026-08-10 evening through the designed flow:
+  the 4 records are DISPOSITIONED in `tools/liveness_dispositions.json` with
+  the patch-note evidence.** The rule, sharpened: absence from the snapshot
+  means NOT LIVE **until the game says otherwise — and official patch notes
+  ARE the game saying otherwise**; they outrank the snapshot's absence, and
+  Joel's in-game check outranks a fan post but not the game's own notes.
+  Wind Control / Gadgetry / Utility Belt appear in no patch notes and STAY
+  retracted. ⚠ The retraction also left DEBRIS the invariance guard caught:
+  dangling `excludes` and stale `added_from_client_excl` markers on the four
+  Slice records — a wholesale record removal must strip the mirror edits too.
   ✅ **THE HOLE IS CLOSED (2026-08-10): `tools/reality_check_liveness.py`** —
   current powers.json record names + powersets.json offered sets vs the SAME
   files at the highest release tag; any diff hard-fails both ways unless named

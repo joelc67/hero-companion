@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- **Boomerang Slice is back, and it was never gone from the game.** The
+  0.12.36 notes retracted it as not live; that was wrong for this one power.
+  It has been live since the February 10 update (Issue 28 Page 3), as Maelwys
+  pointed out on the forum with the patch note in hand — thank you. The
+  restored record matches the game's stated numbers exactly: 1.83s cast, 8s
+  recharge, 30ft reach in a 30 degree arc, a 15-second resistance debuff, and
+  it remains mutually exclusive with Slice, which the tool enforces. The
+  15-second Rending Slice bonus is shown but deliberately not scored yet.
+  Wind Control and the Gadgetry and Utility Belt pools appear in no patch
+  notes and stay out.
+
 - **Search help, inside the app.** Help menu → 🔎 Search help: start typing
   (solve, lock, exemplar, set bonuses, import…) and the most likely term
   appears first with its one-line answer, other candidates beneath — arrow

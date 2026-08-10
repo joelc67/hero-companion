@@ -1,3 +1,24 @@
+# ⚔ 2026-08-10 (evening): BOOMERANG SLICE RESTORED — Maelwys proved it live
+
+The 0.12.36 retraction was wrong for ONE of the four items: **Boomerang
+Slice has been live since Feb 10 2026 (i28p3)** — Maelwys cited the official
+patch note on topic 64761 and the page was read directly (stats match our
+client-derived record on every number). Restored via the DESIGNED flow:
+`add_boomerang_slice.py` re-run (its invariance guard first caught retraction
+debris — dangling excludes + stale markers on Slice — cleaned), crit rows
+re-patched (253/247 again), the 4 records dispositioned in
+`tools/liveness_dispositions.json` with the evidence, missing-powers pins
+down to 4 (Wind Control ×2 + both pools, which appear in NO patch notes and
+stay out). All checks green; quick check: NEEDS UPDATE none (search-space
+widening only — the Broad Sword context may re-pick into it at next wave).
+⚠ Doctrine sharpened in CLAUDE.md: the Mids snapshot LAGS the game (six
+months here) — official patch notes ARE "the game saying otherwise".
+⚠ PUBLIC CORRECTIONS OWED (Joel's hand): the 0.12.36 release notes on GitHub
+still claim none of the four are live; a reply draft conceding to Maelwys is
+at `C:\Users\joelc\Downloads\hero-companion-boomerang-reply.txt`.
+
+---
+
 # 🔎 2026-08-10 (after the release): searchable help is IN THE CLIENT — now v2
 
 **v2 (Joel's flow, same evening):** typing shows a suggestion dropdown (most

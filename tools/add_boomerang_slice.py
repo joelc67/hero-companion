@@ -289,6 +289,24 @@ def main():
             != json.dumps(orig, separators=(",", ":"), ensure_ascii=False).encode("utf-8")):
         print("\nINVARIANCE FAILED: dropping the added records does not reproduce "
               "the baseline - refusing to write")
+        # name the divergence instead of leaving the operator to guess
+        for ps in orig:
+            po, pp = orig.get(ps), probe.get(ps)
+            if json.dumps(po, sort_keys=True) == json.dumps(pp, sort_keys=True):
+                continue
+            names_o = [p["full_name"] for p in po]
+            names_p = [p["full_name"] for p in pp]
+            if names_o != names_p:
+                print(f"  {ps}: record order or roster differs:")
+                print(f"    baseline: {names_o}")
+                print(f"    stripped: {names_p}")
+            else:
+                for a, b in zip(po, pp):
+                    if json.dumps(a, sort_keys=True) != json.dumps(b, sort_keys=True):
+                        keys = [k for k in set(a) | set(b)
+                                if json.dumps(a.get(k), sort_keys=True)
+                                != json.dumps(b.get(k), sort_keys=True)]
+                        print(f"  {ps} / {a['full_name']}: fields differ: {keys}")
         sys.exit(2)
     print("invariance: dropping the added records reproduces the baseline exactly")
     open(POWERS, "wb").write(out)
