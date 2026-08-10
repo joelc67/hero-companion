@@ -19,6 +19,8 @@ import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, "server"))
+import first_principles as fp        # noqa: E402  - for MODEL_VERSION only
 MAIN = os.path.join(ROOT, "benchmarks", "champions.json")
 
 
@@ -80,6 +82,16 @@ def main():
                     continue
             replaced += 1 if k in data else 0
             seen_in_shards.add(k)
+            # ⚠ STAMP THE MODEL THAT CERTIFIED IT. Until 2026-08-10 a champion
+            # recorded nothing about which model produced it, so "is this
+            # champion current?" could only be answered by RUNNING
+            # evaluate_first and watching for movers - and that ambiguity is
+            # exactly what let the v43+v44 wave be scoped by "holds a patched
+            # power" instead of by the movers, costing a second wave. With the
+            # stamp, the scope question is answerable by inspection.
+            # ⚠ Metadata only: it is never read by the engine or the scorer, so
+            # it cannot move a score. The battery pins that.
+            v = dict(v, model_version=fp.MODEL_VERSION)
             data[k] = v
         print(f"merged {len(sd):2d} champion(s) from {os.path.basename(sp)}")
     with open(MAIN, "w", encoding="utf-8") as f:

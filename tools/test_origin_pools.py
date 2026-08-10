@@ -252,8 +252,21 @@ def main():
                if any((p.get("full_name") if isinstance(p, dict) else p)
                       .startswith((GAD + ".", UB + "."))
                       for p in v["picks"])]
-    ok("champion exposure is ZERO, so no certified score moved",
-       not exposed and len(ch) == 24, f"{len(ch)} contexts checked")
+    # ⚠ THIS CHECK USED TO ASSERT ZERO, AND WAS RIGHT TO. When the pools landed
+    # (2026-08-08) no certified champion held one, so adding them could not have
+    # moved a score - that was the claim, and it was true. The v43+v44 re-cert
+    # then let the solver actually CHOOSE from them, and it did: both of the
+    # follow-up wave's two supersedes picked one. Exposure is now 2, and that is
+    # the pools earning their place rather than a defect. What still matters is
+    # that they are only ever held by a build the solver re-derived under the
+    # current model, never grandfathered in.
+    ok("the pools are now CHOSEN by certified builds - 2 of 24, both of them "
+       "champions the re-cert superseded",
+       len(exposed) == 2 and len(ch) == 24,
+       f"{[k.split('|')[0].replace('Class_','') for k in exposed]}")
+    ok("...and every champion holding one was certified under the CURRENT model",
+       all((ch[k].get("model_version") or 0) == 44 for k in exposed),
+       "so none was grandfathered in from before the pools existed")
 
     # ---- 11. the vocabulary came from OUR data, not invented ----
     sc = json.load(open(os.path.join(ROOT, "data", "set_categories.json"),

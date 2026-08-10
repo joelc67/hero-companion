@@ -41,10 +41,11 @@
     "verdict": "unaffected",
     "canonical_score": 1773.2
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 1773.2
+  "canonical_score": 1773.2,
+  "model_version": 44
  },
  "Class_Defender|Defender_Buff.Poison|Defender_Ranged.Sonic_Attack|itrial": {
   "picks": [
@@ -81,7 +82,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -104,7 +105,8 @@
     "canonical_score": 2037.06
    }
   },
-  "canonical_score": 2037.06
+  "canonical_score": 2037.06,
+  "model_version": 44
  },
  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Sonic_Attack|itrial": {
   "picks": [
@@ -141,7 +143,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -164,7 +166,8 @@
     "canonical_score": 1971.17
    }
   },
-  "canonical_score": 1971.17
+  "canonical_score": 1971.17,
+  "model_version": 44
  },
  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|itrial": {
   "picks": [
@@ -201,7 +204,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -224,7 +227,8 @@
     "canonical_score": 1926.16
    }
   },
-  "canonical_score": 1926.16
+  "canonical_score": 1926.16,
+  "model_version": 44
  },
  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Radiation_Emission|itrial": {
   "picks": [
@@ -268,10 +272,11 @@
     "verdict": "unaffected",
     "canonical_score": 1330.75
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 1330.75
+  "canonical_score": 1330.75,
+  "model_version": 44
  },
  "Class_Brute|Brute_Melee.Battle_Axe|Brute_Defense.Fiery_Aura|itrial": {
   "picks": [
@@ -308,7 +313,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -331,7 +336,8 @@
     "canonical_score": 1345.2
    }
   },
-  "canonical_score": 1345.2
+  "canonical_score": 1345.2,
+  "model_version": 44
  },
  "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Super_Strength|itrial": {
   "picks": [
@@ -368,7 +374,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 1,
@@ -391,7 +397,8 @@
     "canonical_score": 1459.17
    }
   },
-  "canonical_score": 1459.17
+  "canonical_score": 1459.17,
+  "model_version": 44
  },
  "Class_Blaster|Blaster_Ranged.Fire_Blast|Blaster_Support.Energy_Manipulation|itrial": {
   "picks": [
@@ -428,7 +435,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -451,7 +458,8 @@
     "canonical_score": 349.98
    }
   },
-  "canonical_score": 349.98
+  "canonical_score": 349.98,
+  "model_version": 44
  },
  "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Dark_Armor|itrial": {
   "picks": [
@@ -488,7 +496,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -511,7 +519,8 @@
     "canonical_score": 1650.22
    }
   },
-  "canonical_score": 1650.22
+  "canonical_score": 1650.22,
+  "model_version": 44
  },
  "Class_Dominator|Dominator_Control.Mind_Control|Dominator_Assault.Fiery_Assault|itrial": {
   "picks": [
@@ -555,10 +564,11 @@
     "verdict": "unaffected",
     "canonical_score": 778.47
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 778.47
+  "canonical_score": 778.47,
+  "model_version": 44
  },
  "Class_Scrapper|Scrapper_Melee.Broad_Sword|Scrapper_Defense.Super_Reflexes|itrial": {
   "picks": [
@@ -602,10 +612,11 @@
     "verdict": "unaffected",
     "canonical_score": 1384.49
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 1384.49
+  "canonical_score": 1384.49,
+  "model_version": 44
  },
  "Class_Sentinel|Sentinel_Ranged.Fire_Blast|Sentinel_Defense.Willpower|itrial": {
   "picks": [
@@ -642,7 +653,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -665,7 +676,8 @@
     "canonical_score": 1756.7
    }
   },
-  "canonical_score": 1756.7
+  "canonical_score": 1756.7,
+  "model_version": 44
  },
  "Class_Arachnos_Soldier|Arachnos_Soldiers.Crab_Spider_Soldier|Training_Gadgets.Crab_Spider_Training|itrial": {
   "picks": [
@@ -702,7 +714,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -725,7 +737,8 @@
     "canonical_score": 1621.23
    }
   },
-  "canonical_score": 1621.23
+  "canonical_score": 1621.23,
+  "model_version": 44
  },
  "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial": {
   "picks": [
@@ -762,7 +775,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -777,7 +790,8 @@
     "canonical_score": 1623.07
    }
   },
-  "canonical_score": 1623.07
+  "canonical_score": 1623.07,
+  "model_version": 44
  },
  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial": {
   "picks": [
@@ -814,7 +828,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -829,7 +843,8 @@
     "canonical_score": 1361.68
    }
   },
-  "canonical_score": 1361.68
+  "canonical_score": 1361.68,
+  "model_version": 44
  },
  "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|dwarf": {
   "picks": [
@@ -866,7 +881,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -889,7 +904,8 @@
     "canonical_score": 1717.8
    }
   },
-  "canonical_score": 1717.8
+  "canonical_score": 1717.8,
+  "model_version": 44
  },
  "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|nova": {
   "picks": [
@@ -926,7 +942,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -949,7 +965,8 @@
     "canonical_score": 1506.12
    }
   },
-  "canonical_score": 1506.12
+  "canonical_score": 1506.12,
+  "model_version": 44
  },
  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|dwarf": {
   "picks": [
@@ -986,7 +1003,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -1009,7 +1026,8 @@
     "canonical_score": 1698.27
    }
   },
-  "canonical_score": 1698.27
+  "canonical_score": 1698.27,
+  "model_version": 44
  },
  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|nova": {
   "picks": [
@@ -1046,7 +1064,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 1,
@@ -1069,7 +1087,8 @@
     "canonical_score": 1261.05
    }
   },
-  "canonical_score": 1261.05
+  "canonical_score": 1261.05,
+  "model_version": 44
  },
  "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|triform": {
   "picks": [
@@ -1106,7 +1125,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -1129,7 +1148,8 @@
     "canonical_score": 1612.57
    }
   },
-  "canonical_score": 1612.57
+  "canonical_score": 1612.57,
+  "model_version": 44
  },
  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|triform": {
   "picks": [
@@ -1166,7 +1186,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -1181,7 +1201,8 @@
     "canonical_score": 1870.29
    }
   },
-  "canonical_score": 1870.29
+  "canonical_score": 1870.29,
+  "model_version": 44
  },
  "Class_Arachnos_Widow|Widow_Training.Night_Widow_Training|Teamwork.Widow_Teamwork|itrial": {
   "picks": [
@@ -1218,7 +1239,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -1241,7 +1262,8 @@
     "canonical_score": 1981.19
    }
   },
-  "canonical_score": 1981.19
+  "canonical_score": 1981.19,
+  "model_version": 44
  },
  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|itrial": {
   "picks": [
@@ -1278,7 +1300,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -1301,7 +1323,8 @@
     "canonical_score": 386.07
    }
   },
-  "canonical_score": 386.07
+  "canonical_score": 386.07,
+  "model_version": 44
  },
  "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk": {
   "picks": [
@@ -1338,7 +1361,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -1397,6 +1420,7 @@
     "canonical_score": 283.43
    }
   },
-  "canonical_score": 283.43
+  "canonical_score": 283.43,
+  "model_version": 44
  }
 }
