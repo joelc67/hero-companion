@@ -1899,6 +1899,21 @@ carries it via push_statics).
 - Verified through the REAL path on a live 5081 server: menu click → loop
   home → term/alias/no-match search → `tab:` switches the tab → `tour:` opens
   the tour. audit_tabs / audit_links / audit_tour all green after the surgery.
+- **v2, same day (Joel's flow: anticipate the typing → dropdown → full screen →
+  leave help and work on it).** Typing shows a SUGGESTION list — most likely
+  term first with its one-line answer, ↑↓/Enter or click — and Enter opens a
+  **full-screen page** (`.help-full`, min(1150px, 96vw)): the four answers, a
+  **For example** block (38 topics, only verified facts — LotG 37.5, the
+  3-Ribosome parity, set_min−3, cap+5, the 5% floor), and where it helps a
+  **figure taken from the guided tour's mock** (15 topics; `fig:` names a
+  `data-for` stand-in, rendered inside a `#tour-mock`-scoped wrapper so the
+  real stylesheet paints it — position static, pointer-events none).
+  ⚠⚠ **CLOSING EMPTIES `#help-search-out`, never just hides** — a hidden
+  figure carries a `#tour-mock` node that would shadow the real tour's mock by
+  document order. Battery pins this (20 checks, 5 sabotages incl. a dead fig).
+  ⚠ Every topic should carry a `go` — the live walk caught Exemplar view
+  without one, which silently made "leave help and work on it" unreachable
+  for that topic.
 - ⚠ help.md's stale "(v23 today)" model pin was removed in the same pass —
   versions belong in About, never hardcoded in prose.
 - The PDF stays: built from docs/help.md at release, linked in the same menu.

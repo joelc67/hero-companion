@@ -3536,3 +3536,30 @@ body.layout-mode .lay-target .lay-target .lay-target .lay-target::before { top: 
 .help-wf { font-size: 13px; line-height: 1.45; margin: 5px 0; }
 .help-go { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
 .help-term { margin: 1px 0; }
+
+/* Help v2 (same day): suggestions dropdown -> full page with example + figure.
+   The figure is a fragment of the tour mock, so #tour-mock-scoped styles paint
+   it; position/z-index are neutralised and pointer-events are off because it
+   is an illustration. .help-full is the full-screen answer page. */
+.help-search-box.help-full { width: min(1150px, 96vw); max-height: 92vh; }
+.help-sugs { display: flex; flex-direction: column; gap: 4px; }
+.help-sug { display: flex; gap: 10px; align-items: baseline; text-align: left;
+  padding: 7px 10px; background: transparent; border: 1px solid transparent;
+  border-radius: 6px; cursor: pointer; font: inherit; color: inherit; }
+.help-sug.sel, .help-sug:hover { border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.help-sug b { flex: 0 0 auto; font-size: 14px; }
+.help-sug span { color: var(--muted); font-size: 12px; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.help-back { margin-bottom: 6px; }
+.help-grid { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 18px; align-items: start; }
+@media (max-width: 900px) { .help-grid { grid-template-columns: 1fr; } }
+.help-ex { border-left: 3px solid var(--accent); padding-left: 10px; }
+.help-fig { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.help-fig #tour-mock { position: static; inset: auto; z-index: auto;
+  overflow: hidden; max-height: 380px; pointer-events: none;
+  background: var(--bg); padding: 10px; }
+.help-fig-cap { font-size: 11px; color: var(--muted); padding: 5px 10px;
+  border-top: 1px solid var(--border); background: var(--panel2); }
+.help-go .muted { margin-right: 4px; }

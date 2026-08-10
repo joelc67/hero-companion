@@ -21,7 +21,7 @@ def ok(cond, msg):
     print(f"  {n}. ok - {msg}")
 
 
-def problems(data, tab_ids, tour_keys):
+def problems(data, tab_ids, tour_keys, mock_ids=None):
     """Structural faults in a help_topics dict. Pure, so sabotages can drive it."""
     out = []
     for k in ("building", "updating", "tweaking", "manual"):
@@ -40,6 +40,10 @@ def problems(data, tab_ids, tour_keys):
                 out.append(f"{name}: '{f}' is empty - all four questions must be answered")
         if t.get("stage") not in STAGES:
             out.append(f"{name}: unknown stage {t.get('stage')!r}")
+        if "example" in t and not (t.get("example") or "").strip():
+            out.append(f"{name}: 'example' present but empty")
+        if t.get("fig") and mock_ids is not None and t["fig"] not in mock_ids:
+            out.append(f"{name}: fig '{t['fig']}' is not a tour-mock stand-in")
         for pair in t.get("go") or []:
             if len(pair) != 2:
                 out.append(f"{name}: malformed go entry {pair!r}")
@@ -64,10 +68,11 @@ def main():
 
     tab_ids = set(re.findall(r'id="tab-([a-z]+)"', idx))
     tour_keys = set(re.findall(r'key:\s*["\']([a-z0-9-]+)["\']', tour))
+    mock_ids = set(re.findall(r'data-for="([a-zA-Z0-9_-]+)"', tour))
     ok(tab_ids >= {"powers", "stats", "leveling", "logging"},
        f"the four tabs exist in index.html ({sorted(tab_ids)})")
 
-    faults = problems(data, tab_ids, tour_keys)
+    faults = problems(data, tab_ids, tour_keys, mock_ids)
     ok(not faults, f"{len(data['topics'])} topics structurally clean: "
        + ("; ".join(faults[:5]) or "no faults"))
     ok(len(data["topics"]) >= 35,
@@ -98,6 +103,19 @@ def main():
     s4 = copy.deepcopy(data); s4["topics"].append(dict(s4["topics"][0]))
     ok(any("duplicate term" in p for p in problems(s4, tab_ids, tour_keys)),
        "SABOTAGE caught: a duplicate term fails")
+    s5 = copy.deepcopy(data); s5["topics"][0]["fig"] = "no-such-standin"
+    ok(any("not a tour-mock stand-in" in p for p in problems(s5, tab_ids, tour_keys, mock_ids)),
+       "SABOTAGE caught: a figure naming a nonexistent mock stand-in fails")
+
+    # v2 wiring: suggestions, the full page, and the figure-safety clear
+    n_ex = sum(1 for t in data["topics"] if t.get("example"))
+    n_fig = sum(1 for t in data["topics"] if t.get("fig"))
+    ok(n_ex >= 30, f"{n_ex} of >=30 expected examples present")
+    ok(n_fig >= 10, f"{n_fig} of >=10 expected figures present, all resolving to mock stand-ins")
+    ok("_helpOpenTopic" in appjs and "help-full" in appjs and "_helpSugsHtml" in appjs,
+       "app.js carries the suggestion list and the full-page view")
+    ok('$("help-search-out").innerHTML = ""' in appjs,
+       "closing EMPTIES the output (a hidden #tour-mock duplicate would shadow the real tour)")
 
     print(f"help-search battery: {n}/{n} OK")
 

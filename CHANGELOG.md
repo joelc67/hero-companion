@@ -2,14 +2,17 @@
 
 ## Unreleased
 
-- **Search help, inside the app.** Help menu → 🔎 Search help: type a term
-  (solve, lock, exemplar, set bonuses, import…) and get four plain answers —
+- **Search help, inside the app.** Help menu → 🔎 Search help: start typing
+  (solve, lock, exemplar, set bonuses, import…) and the most likely term
+  appears first with its one-line answer, other candidates beneath — arrow
+  keys choose, Enter opens the full page. That page gives four plain answers —
   what it does, how it works, why it exists, and where it sits in the workflow
-  of building, updating, tweaking or manually changing a build. Opening it
-  with nothing typed shows the four-step loop itself, with every term one
-  click away. 44 topics at launch; every "take me there" button jumps to the
-  real surface or the exact guided-tour step. The PDF user guide stays for
-  long-form reading.
+  of building, updating, tweaking or manually changing a build — plus a
+  concrete example and, where it helps, a picture taken straight from the
+  guided tour's example build. Every page ends with "go work on it directly":
+  one click leaves help and lands on the real surface or the exact tour step.
+  Opening help with nothing typed shows the four-step loop itself. 44 topics
+  at launch; the PDF user guide stays for long-form reading.
 
 ## 0.12.36 — 2026-08-10 — The second accuracy pass
 

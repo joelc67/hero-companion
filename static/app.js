@@ -11699,10 +11699,11 @@ async function _helpData() {
   _HELP = (r && r.ok) ? await r.json() : { workflows: {}, loop: [], topics: [] };
   return _HELP;
 }
-function _helpGo(action) {
+function _helpGoAction(action) {
+  // "Leave help and work on it directly" - the modal is already closed (and
+  // emptied) by the caller before the jump happens.
   const i = action.indexOf(":");
   const kind = action.slice(0, i), arg = action.slice(i + 1);
-  $("help-search-modal").classList.add("hidden");
   if (kind === "tab" && typeof activateTab === "function") activateTab(arg);
   else if (kind === "tour" && typeof explainStep === "function") explainStep(arg);
 }
@@ -11730,17 +11731,47 @@ const _HELP_STAGES = {
   tweaking: "Tweaking with the optimizer", manual: "Changing things by hand",
   reference: "Reference",
 };
+function _helpFigHtml(fig) {
+  // A real illustration, borrowed from the guided tour's mock: the fragment is
+  // painted by the app's own stylesheet under the #tour-mock scope. It is an
+  // ILLUSTRATION - pointer-events off - and the modal is EMPTIED whenever it
+  // hides so this #tour-mock can never shadow the real tour's.
+  if (!fig || typeof TOUR_MOCK_HTML === "undefined") return "";
+  try {
+    const d = document.createElement("div");
+    d.innerHTML = TOUR_MOCK_HTML;
+    const el = d.querySelector(`[data-for="${fig}"]`);
+    if (!el) return "";
+    return `<div class="help-fig"><div id="tour-mock">${el.outerHTML}</div>
+      <div class="help-fig-cap">From the guided tour's example build</div></div>`;
+  } catch (e) { return ""; }
+}
 function _helpTopicHtml(t) {
   const go = (t.go || []).map(([a, label]) =>
     `<button class="linkbtn" data-help-go="${escHtml(a)}">${escHtml(label)}</button>`).join(" ");
-  return `<div class="help-topic keep-whole">
-    <h3>${escHtml(t.term)} <span class="help-stage">${escHtml(_HELP_STAGES[t.stage] || t.stage)}</span></h3>
+  const fig = _helpFigHtml(t.fig);
+  const body = `
     <p><b>What it does.</b> ${escHtml(t.what)}</p>
     <p><b>How it works.</b> ${escHtml(t.how)}</p>
     <p><b>Why it exists.</b> ${escHtml(t.why)}</p>
     <p><b>Where it sits.</b> ${escHtml(t.where)}</p>
-    ${go ? `<div class="help-go">${go}</div>` : ""}
+    ${t.example ? `<p class="help-ex"><b>For example.</b> ${escHtml(t.example)}</p>` : ""}`;
+  return `<div class="help-topic keep-whole">
+    <button class="linkbtn help-back" data-help-back="1">← All topics</button>
+    <h3>${escHtml(t.term)} <span class="help-stage">${escHtml(_HELP_STAGES[t.stage] || t.stage)}</span></h3>
+    ${fig ? `<div class="help-grid"><div>${body}</div>${fig}</div>` : body}
+    ${go ? `<div class="help-go"><span class="muted small">Go work on it directly:</span> ${go}</div>` : ""}
   </div>`;
+}
+function _helpFirstSentence(t) {
+  const s = (t.what || "").split(". ")[0];
+  return s.length > 96 ? s.slice(0, 96) + "…" : s;
+}
+function _helpSugsHtml(hits) {
+  return `<div class="help-sugs">` + hits.map(([, t], i) =>
+    `<button class="help-sug${i === _HELP_SEL ? " sel" : ""}" data-help-term="${escHtml(t.term)}">
+       <b>${escHtml(t.term)}</b><span>${escHtml(_helpFirstSentence(t))}</span></button>`).join("")
+    + `</div><p class="muted small keep-whole">↑ ↓ to choose · Enter opens the full page</p>`;
 }
 function _helpTermChips(topics) {
   return topics.map(t =>
@@ -11759,46 +11790,82 @@ function _helpHomeHtml(d) {
     <p class="muted small keep-whole">Or browse a term: ${_helpTermChips(d.topics)}</p>
   </div>`;
 }
+let _HELP_SEL = 0;
+function _helpHits(d, q) {
+  return d.topics.map(t => [_helpScore(t, q), t])
+    .filter(([s]) => s > 0).sort((a, b) => b[0] - a[0]).slice(0, 8);
+}
+function _helpBox() { return document.querySelector("#help-search-modal .modal-box"); }
 async function _helpRender() {
+  // Typing shows SUGGESTIONS (the most likely term with its one-line answer,
+  // then the other candidates); Enter or a click opens the full page.
   const d = await _helpData();
   const q = ($("help-search-input").value || "").trim();
   const out = $("help-search-out");
   if (!out) return;
+  _helpBox().classList.remove("help-full");
   if (!q) { out.innerHTML = _helpHomeHtml(d); return; }
-  const hits = d.topics.map(t => [_helpScore(t, q), t])
-    .filter(([s]) => s > 0).sort((a, b) => b[0] - a[0]).slice(0, 6);
+  const hits = _helpHits(d, q);
+  _HELP_SEL = Math.min(_HELP_SEL, Math.max(0, hits.length - 1));
   if (!hits.length) {
     out.innerHTML = `<p class="muted keep-whole">Nothing here matched
       "${escHtml(q)}". Try a shorter word — and the ❓ User guide PDF in the
       Help menu covers everything in prose.</p>`;
     return;
   }
-  out.innerHTML = _helpTopicHtml(hits[0][1])
-    + (hits.length > 1
-      ? `<p class="muted small keep-whole">Also matched: ${_helpTermChips(hits.slice(1).map(([, t]) => t))}</p>`
-      : "");
+  out.innerHTML = _helpSugsHtml(hits);
+}
+async function _helpOpenTopic(term) {
+  const d = await _helpData();
+  const t = d.topics.find(x => x.term === term);
+  if (!t) return;
+  _helpBox().classList.add("help-full");     // the full-screen answer page
+  $("help-search-out").innerHTML = _helpTopicHtml(t);
+}
+function _helpClose() {
+  // ⚠ EMPTY, never just hide: a rendered figure carries a #tour-mock node, and
+  // a hidden duplicate would shadow the real tour's mock by document order.
+  $("help-search-modal").classList.add("hidden");
+  $("help-search-out").innerHTML = "";
+  _helpBox().classList.remove("help-full");
 }
 function openHelpSearch() {
   $("help-search-modal").classList.remove("hidden");
   $("help-search-input").value = "";
+  _HELP_SEL = 0;
   _helpRender();
   $("help-search-input").focus();
 }
 function initHelpSearch() {
   if ($("help-search-btn")) $("help-search-btn").addEventListener("click", openHelpSearch);
-  if ($("help-search-close")) $("help-search-close").addEventListener("click",
-    () => $("help-search-modal").classList.add("hidden"));
+  if ($("help-search-close")) $("help-search-close").addEventListener("click", _helpClose);
   // ✕ or a click on the backdrop closes; Escape is deliberately not advertised
   // (it does not reach the page in the frozen shell).
   if ($("help-search-modal")) $("help-search-modal").addEventListener("click", (e) => {
-    if (e.target === $("help-search-modal")) $("help-search-modal").classList.add("hidden");
+    if (e.target === $("help-search-modal")) _helpClose();
   });
-  if ($("help-search-input")) $("help-search-input").addEventListener("input", _helpRender);
+  if ($("help-search-input")) {
+    $("help-search-input").addEventListener("input", () => { _HELP_SEL = 0; _helpRender(); });
+    $("help-search-input").addEventListener("keydown", async (e) => {
+      const q = (e.target.value || "").trim();
+      if (!q || !_HELP) return;
+      const hits = _helpHits(_HELP, q);
+      if (!hits.length) return;
+      if (e.key === "ArrowDown") {
+        e.preventDefault(); _HELP_SEL = Math.min(_HELP_SEL + 1, hits.length - 1); _helpRender();
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault(); _HELP_SEL = Math.max(_HELP_SEL - 1, 0); _helpRender();
+      } else if (e.key === "Enter") {
+        e.preventDefault(); _helpOpenTopic(hits[_HELP_SEL][1].term);
+      }
+    });
+  }
   if ($("help-search-out")) $("help-search-out").addEventListener("click", (e) => {
     const go = e.target.closest("[data-help-go]");
-    if (go) { _helpGo(go.dataset.helpGo); return; }
+    if (go) { const a = go.dataset.helpGo; _helpClose(); _helpGoAction(a); return; }
+    if (e.target.closest("[data-help-back]")) { _helpRender(); return; }
     const term = e.target.closest("[data-help-term]");
-    if (term) { $("help-search-input").value = term.dataset.helpTerm; _helpRender(); }
+    if (term) { _helpOpenTopic(term.dataset.helpTerm); }
   });
 }
 

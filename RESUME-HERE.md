@@ -1,4 +1,14 @@
-# 🔎 2026-08-10 (after the release): searchable help is IN THE CLIENT
+# 🔎 2026-08-10 (after the release): searchable help is IN THE CLIENT — now v2
+
+**v2 (Joel's flow, same evening):** typing shows a suggestion dropdown (most
+likely term first with its one-line answer, ↑↓/Enter), Enter opens a
+FULL-SCREEN page with the four answers + a "For example" block (38 topics,
+verified facts only) + a figure lifted from the tour's mock (15 topics,
+`fig:` = a data-for stand-in, inert, painted by the real stylesheet), ending
+with "Go work on it directly" - one click leaves help onto the real surface
+or tour step. ⚠ Closing EMPTIES the panel (a hidden figure's #tour-mock would
+shadow the real tour's). Battery 20 checks / 5 sabotages; whole flow proven
+live; statics pushed, installed copy relaunched. v1 details below.
 
 Joel's order: help leaves the PDF. Help menu → "🔎 Search help": type a term,
 get what it does / how it works / why it exists / where it sits in the
