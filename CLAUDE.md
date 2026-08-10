@@ -2514,9 +2514,8 @@ strict-dominance experiment.
   links in ink, the ponytail cleanup. Data 2026.1.1242 + model v44 unchanged;
   no score moved. ⚠ Liveness baseline auto-rolled to v0.12.37 and the four
   Boomerang dispositions were EMPTIED (they went stale by design the moment
-  the release contained the records — the two-way pin working). ⚠ Not yet
-  announced on the forum; Joel's earlier reply already told the thread the
-  restoration ships "in the next update", so a one-liner suffices.
+  the release contained the records — the two-way pin working). ✅ ANNOUNCED on topic 64761 2026-08-10 (Joel posted the 0.12.37 reply,
+  leading with the Boomerang restoration and crediting Maelwys).
   Superseded entry kept for the ledger: **v0.12.36 "The second accuracy pass"** (2026-08-10, stamp
   `0556ff8`, signed, API-verified, both assets; installed copy mirrored and
   relaunched, /meta reads 0.12.36 model 44). Model **v38 → v44** (v39-v44:
