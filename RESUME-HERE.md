@@ -1,3 +1,54 @@
+# Resume point - 2026-08-09, WAVE MERGED - and I under-scoped it by 5 contexts
+
+## STATE
+HEAD `306370bb`. Nothing running. Data **2026.1.1242**, **model v44**.
+Roster **24 contexts, 24/24 SERVED, 24/24 legal**, all canonical scores fresh.
+Wave: 19 of 24 re-converged, 880.6 min, 6 workers rc=0, **8 supersede / 11 keep**,
+merged on Joel's word. Shards retired `.merged_2026-08-09`.
+
+## ⚠⚠ THE THING TO FIX NEXT: MY WAVE SCOPE WAS WRONG
+I scoped the wave by asking **"does this build HOLD a power carrying a new
+row?"** (DDR / slow-resist / mode / crit) plus Dominators, and got 19. Then
+`evaluate_first --write` reported **16 canonical scores moved, and FIVE of them
+were contexts I had excluded**:
+
+```
+  Spines/Fiery_Aura [farm_afk]        375.9 ->  227.6   (-148.3)
+  Radiation_Emission/Sonic_Attack    1644.2 -> 1739.0    (+94.8)
+  Umbral_Blast/Umbral_Aura [base]    1452.6 -> 1361.7    (-90.9)
+  Demon_Summoning/Radiation_Emission 1275.8 -> 1330.7    (+54.9)
+  Plant_Control/Poison               1808.1 -> 1773.2    (-34.9)
+```
+
+**Why the test was wrong:** a term does not have to sit on a power the build
+HOLDS in order to move its score. v42's RechargeTime fix reaches **timed PET
+uptime** - which is why the Mastermind and the farm build moved - and scenario
+and team-buff channels move scores without any patched power being picked.
+**Holding a patched power is sufficient, not necessary.** The right scope test
+is an evaluate-first pass BEFORE the wave: re-score every context under the new
+model and take the movers. That is what `evaluate_first` is for, and I used it
+afterwards instead of first.
+
+⚠ Consequence: those five now have a REFRESHED canonical but a build that was
+optimised under an older model and never re-converged. The eleven KEEPs are
+fine - they were re-converged and the challenger honestly lost.
+
+**A small follow-up wave of those 5 is owed. NOT started - Joel's call.**
+
+## VERDICT SUMMARY
+8 supersede: Battle_Axe/FA +314.5 · PB dwarf +256.4 · PB triform +160.5 ·
+WS nova +136.5 · Poison/Sonic +120.4 · WS dwarf +89.3 · Water/Kin +54.1 ·
+Invuln/SS +13.1. Supersedes again CONCENTRATE in Kheldian form-locked contexts.
+⚠ The v43/v44 targets all KEEP - Dominator -385.1, Stalker -344.3, Scrapper
+-198.3. The new terms did not produce better builds.
+
+## WHAT I VERIFIED BY HAND (the verdict log does not say)
+Legality: ran `_picks_legal` over all 19 challengers and 11 standing incumbents
+- **zero illegal**. Silence in a log is not proof, and this is the exact failure
+that shipped 8 unbuildable champions in 0.12.30.
+
+---
+
 # ⏳ A WAVE IS RUNNING - 2026-08-09 04:45 ET, v43+v44 re-certification
 
 ## IF YOU ARE READING THIS AND THE SESSION DIED, READ THIS BLOCK FIRST
