@@ -3568,3 +3568,7 @@ body.layout-mode .lay-target .lay-target .lay-target .lay-target::before { top: 
 .menu-kbd { float: right; font-weight: normal; font-size: 11px;
   color: var(--muted); border: 1px solid var(--border); border-radius: 4px;
   padding: 0 5px; margin-left: 10px; }
+
+/* About footer links in the app's ink, not browser blue (Joel, 2026-08-10:
+   'way too bright blue'). Underline stays so they still read as links. */
+.about-links a { color: var(--ink); }
