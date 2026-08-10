@@ -25,16 +25,12 @@ renderIngameFound); BasiliskXVIII's Aug 7 pair shipped in 0.12.35; and the
 Soul Drain claim closed ITSELF - **Maelwys and Jacke both posted on Aug 8
 that Spirit Drain is Dark Mastery and Soul Mastery keeps Soul Drain**,
 exactly what our 2026-08-07 game-first check pinned. No data change owed.
-⚠ Joel's Aug 7 reply conceded "I think you are right... a fresh pull of the
-client data is the next thing I do" - that concession is now known wrong and
-publicly corrected by two other posters. ✍ **The closing reply IS DRAFTED, on
-his order: `C:\Users\joelc\Downloads\hero-companion-0.12.36-post.txt`** -
-agrees with Maelwys and Jacke, corrects the concession, announces 0.12.36
-(including the retraction paragraph, owned plainly), credits the thread.
-Posting it is Joel's hand. ⚠ It SUPERSEDES the unsent 0.12.35 draft
-(`hero-companion-0.12.35-post.txt`) - do not resurrect that one; its
-apostrophe-fix content is folded into the thread already (Joel posted a
-0.12.35 reply directly on Aug 7).
+✅ **CLOSED (Joel posted the reply, 2026-08-10):** the Soul Drain concession
+is publicly corrected (agreeing with Maelwys and Jacke) and **0.12.36 is
+announced on topic 64761**, retraction paragraph included. The Aug 7
+"fresh pull" promise is discharged. The unsent 0.12.35 draft
+(`hero-companion-0.12.35-post.txt`) stays superseded - do not resurrect it.
+No forum watch item is open; next trigger is any new reply on the thread.
 ⚠ Open feature ask from Basilisk: the fine-tune words box cannot request a
 specific SET by name (lock-and-resolve is the route today). On the list.
 

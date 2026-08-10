@@ -2357,7 +2357,10 @@ strict-dominance experiment.
   retraction, which the release notes state publicly. Joel skipped the clean
   re-cert on the quick check's "NEEDS UPDATE: none" and ordered the cut.
   ⚠ Release notes name the new liveness guard; smoke pins now rest at
-  0.12.36/model 44 (the shipped values). ⚠ Not yet announced on the forum.
+  0.12.36/model 44 (the shipped values). ✅ ANNOUNCED on topic 64761
+  2026-08-10 (Joel posted it): the reply also corrects his Aug 7 Soul Drain
+  concession, agreeing with Maelwys and Jacke on-thread, and owns the Wind
+  Control retraction publicly.
   Superseded entry kept for the ledger: **v0.12.35 "Every set is clickable"**
   (2026-08-08T00:21Z, stamp `d76c043`, signed, API-verified, both assets;
   installed copy mirrored and relaunched). Carries the apostrophe/escHtml picker fix and the improvement
