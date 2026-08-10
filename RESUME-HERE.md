@@ -1,3 +1,19 @@
+# 🚀 2026-08-10 (night): v0.12.37 "Help, shortcuts, and a faster front door" SHIPPED
+
+Joel: "Lets push this small update." Tag `v0.12.37`, stamp `375d2b6`, both
+assets signed + API-verified; installed copy mirrored + relaunched (0.12.37,
+model 44). Frozen smoke PASS, gold 24/24 SERVED. Carries: searchable help
+v1+v2 · menu accelerators · the staged launch (splash 1.3s) · launch on
+Powers & Slots · Boomerang Slice restored (notes credit Maelwys + correct
+0.12.36's claim) · About links in ink · ponytail cleanup. Data + model
+unchanged, no score moved. Liveness baseline rolled to v0.12.37 and the four
+Boomerang dispositions emptied (stale by design once the release carried the
+records; check reads goal-state clean, 10,984 records). ⚠ Forum: not
+announced; Joel's Boomerang reply already promised "the next update", so a
+one-line follow-up covers it — his hand.
+
+---
+
 # ⚔ 2026-08-10 (evening): BOOMERANG SLICE RESTORED — Maelwys proved it live
 
 The 0.12.36 retraction was wrong for ONE of the four items: **Boomerang

@@ -2502,7 +2502,22 @@ strict-dominance experiment.
 
 ### Carried forward (2026-07-27 night)
 
-- **Latest release: 🚀 v0.12.36 "The second accuracy pass"** (2026-08-10, stamp
+- **Latest release: 🚀 v0.12.37 "Help, shortcuts, and a faster front door"**
+  (2026-08-10, stamp `375d2b6`, signed, API-verified, both assets; installed
+  copy mirrored + relaunched, /meta 0.12.37 model 44). Carries: searchable
+  help (v1+v2: suggestions → full page with examples + tour figures + go-to-it
+  exits, 45 topics incl. Keyboard shortcuts), the menu accelerators
+  (Ctrl+S/I/E/K, Ctrl+1..4, shown on the menus, parity-pinned), the staged
+  launch (bootloader splash 1.3s / window 3.6s / ready 4.1s), launch always
+  on Powers & Slots, **Boomerang Slice restored** (live since Feb 10 i28p3;
+  the notes credit Maelwys and correct the 0.12.36 claim publicly), About
+  links in ink, the ponytail cleanup. Data 2026.1.1242 + model v44 unchanged;
+  no score moved. ⚠ Liveness baseline auto-rolled to v0.12.37 and the four
+  Boomerang dispositions were EMPTIED (they went stale by design the moment
+  the release contained the records — the two-way pin working). ⚠ Not yet
+  announced on the forum; Joel's earlier reply already told the thread the
+  restoration ships "in the next update", so a one-liner suffices.
+  Superseded entry kept for the ledger: **v0.12.36 "The second accuracy pass"** (2026-08-10, stamp
   `0556ff8`, signed, API-verified, both assets; installed copy mirrored and
   relaunched, /meta reads 0.12.36 model 44). Model **v38 → v44** (v39-v44:
   self-damage buffs, slow resist, DDR, absorb + the RechargeTime fix,
