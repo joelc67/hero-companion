@@ -164,11 +164,14 @@
    "aliases": [
     "what changed",
     "edit receipt",
-    "revert"
+    "revert",
+    "ctrl+z",
+    "ctrl z",
+    "keyboard shortcut"
    ],
    "stage": "manual",
-   "what": "Every edit you make reports what it changed - the real before and after on every number that moved - and offers an Undo.",
-   "how": "The report covers any change from any surface, not just the Stats panel. Opening a character is not an edit and never fills the undo history.",
+   "what": "Every edit you make reports what it changed - the real before and after on every number that moved - and offers an Undo. Ctrl+Z anywhere in the app does the same.",
+   "how": "Two routes, deliberately different. The Undo button acts immediately - clicking it is already a deliberate act. Ctrl+Z first asks, naming exactly what it will take back, because a keystroke that silently rewrites a build is the one edit you cannot see happen. While you are typing in a text box, Ctrl+Z is left alone so normal text undo keeps working. The report covers any change from any surface, and opening a character is never an edit.",
    "why": "Fearless experimentation: you can always see what a change did and take it back.",
    "where": "Everywhere you edit, throughout tweaking and manual work.",
    "go": [
@@ -177,7 +180,7 @@
      "Open Stats"
     ]
    ],
-   "example": "Remove a piece, watch a defense number fall, press Undo: the piece and the number come straight back."
+   "example": "Mis-click a slot icon? Press Ctrl+Z: a prompt names the change and one click takes it back, with the count of history steps remaining."
   },
   {
    "term": "Lock",
@@ -839,7 +842,7 @@
    ],
    "stage": "reference",
    "what": "A step-by-step walk of every surface, on a safe example build - it never touches your character.",
-   "how": "Pick a chapter or take the whole thing; your spot can be saved and resumed. Question-mark buttons around the app deep-link to the exact step explaining that control.",
+   "how": "Pick a chapter or take the whole thing; your spot can be saved and resumed. Question-mark buttons around the app deep-link to the exact step explaining that control. Advance with Next, the space bar or the arrow keys; leave with Exit; your spot can be saved from any step.",
    "why": "The fastest way to learn the tool is being shown, in place.",
    "where": "Help menu, Guided tour. It teaches the same four-step loop this help describes.",
    "go": [

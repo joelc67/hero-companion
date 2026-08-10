@@ -1914,6 +1914,14 @@ carries it via push_statics).
   ⚠ Every topic should carry a `go` — the live walk caught Exemplar view
   without one, which silently made "leave help and work on it" unreachable
   for that topic.
+  ⚠ **A CONTROL'S HELP STATES ITS KEYBOARD SHORTCUT, verified from the code
+  binding, never assumed** (Joel's field test, 2026-08-10: the Undo topic
+  explained the function and never mentioned Ctrl+Z). The Undo topic now
+  carries the whole truth from app.js:6900 — Ctrl+Z anywhere, ASKS first
+  naming what it takes back (his 2026-08-04 ruling), skipped while typing so
+  text fields keep native undo, the button immediate. The shortcut is also an
+  ALIAS ("ctrl+z"), so typing the keystroke finds the topic. When authoring a
+  topic for anything with a binding, grep for the keydown handler first.
 - ⚠ help.md's stale "(v23 today)" model pin was removed in the same pass —
   versions belong in About, never hardcoded in prose.
 - The PDF stays: built from docs/help.md at release, linked in the same menu.
