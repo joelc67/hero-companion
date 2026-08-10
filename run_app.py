@@ -53,6 +53,18 @@ def _load_server():
     return _s
 
 
+def _close_boot_splash():
+    """Retire the PyInstaller bootloader splash (frozen builds only). The
+    bootloader paints assets/splash.png in under a second; the moment the real
+    window (or any fallback path) is on duty, this hands over. Safe to call
+    anywhere, any number of times — source runs simply have no pyi_splash."""
+    try:
+        import pyi_splash
+        pyi_splash.close()
+    except Exception:  # noqa: BLE001 — not frozen, or already closed
+        pass
+
+
 # The splash the window opens on while the engine loads. Honest indeterminate
 # spinner — a progress BAR would be fake progress, the banned class. Colors
 # match style.css --bg/--ink/--accent so there is no flash when the app lands.
@@ -411,7 +423,11 @@ def _run_window(port, start_server=None):
         # bought nothing (window at 3.8s) — the 17MB json parse holds the GIL
         # and starves the GUI thread. webview.start(func) runs func in its own
         # thread only once the window exists, so the splash paints first.
-        webview.start(start_server,
+        def _gui_up():
+            _close_boot_splash()          # the bootloader splash hands over
+            if start_server:
+                start_server()
+        webview.start(_gui_up,
                       private_mode=False,
                       storage_path=os.path.join(_APPDIR, "webview"),
                       icon=icon if os.path.exists(icon) else None)
@@ -482,6 +498,7 @@ def main():
     # WebView2 — a browser tab, exactly as the app worked before.
     if _WINDOW and _run_window(port, _start_server_once):
         return
+    _close_boot_splash()      # no window came up; the splash must not linger
     _start_server_once()      # every fallback path still needs the server
     if os.environ.get("HC_NO_BROWSER") != "1" and not from_autostart:
         if after_update:

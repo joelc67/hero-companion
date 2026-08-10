@@ -73,9 +73,24 @@ a = Analysis(
 )
 pyz = PYZ(a.pure)
 
+# ⚠ THE BOOTLOADER SPLASH (2026-08-10, the launch-latency fix's real half).
+# Measured: the WebView2/.NET window costs ~3.7s to exist no matter when the
+# game data loads — so the instant feedback must come from BELOW Python. The
+# PyInstaller bootloader paints this PNG in well under a second; run_app
+# closes it (pyi_splash.close()) the moment the real window is up. The image
+# is generated (Pillow, brand colors from style.css) and committed.
+splash = Splash(
+    "assets/splash.png",
+    binaries=a.binaries,
+    datas=a.datas,
+    text_pos=None,
+    always_on_top=False,
+)
+
 exe = EXE(
     pyz,
     a.scripts,
+    splash,
     exclude_binaries=True,
     name="HeroCompanion",
     debug=False,
@@ -88,6 +103,7 @@ exe = EXE(
 )
 coll = COLLECT(
     exe,
+    splash.binaries,
     a.binaries,
     a.datas,
     strip=False,
