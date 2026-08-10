@@ -1869,6 +1869,40 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   which (autopick reading retired ids) was silently dropping the wizard's
   exposure/travel answers from every generated build.
 
+## 🔎 SEARCHABLE HELP (Joel's order, 2026-08-10: help leaves the PDF and enters the client)
+
+Joel: *"type in a term and get a breakdown of what it does, how it functions,
+why it exists, and where is sits in the workflow of building, updating,
+tweaking or manually changing builds… making the workflow stupid easy to
+follow is vital."* Shipped statics-only (staged Unreleased; his installed copy
+carries it via push_statics).
+
+- **Content = `static/help_topics.json`** — 44 topics, each answering the FOUR
+  questions (`what`/`how`/`why`/`where`) plus a `stage` (building / updating /
+  tweaking / manual / reference) and `go` actions. **Statics-only by design:
+  content edits need no rebuild**, just push_statics + relaunch.
+- **The empty query IS the workflow**: opening help with nothing typed shows
+  the four-step loop and the four workflow descriptions, every term one click
+  away. The loop text is the same order the band and the tour teach — three
+  surfaces, one order.
+- **Actions are a two-word vocabulary**: `tab:<key>` (activateTab) and
+  `tour:<key>` (explainStep deep link). Battery `tools/test_help_search.py`
+  (15 checks, 4 sabotages) fails any action naming a tab or tour key that does
+  not exist — a help button that goes nowhere teaches distrust.
+- **Modal follows the `.about-body` pattern** (scrolls inside the 80vh modal
+  cap — the sanctioned exception to no-inner-scrollbars). Body text 14px per
+  the tool-lede rule; all topic text renders through escHtml; `.keep-whole` on
+  every block at birth. ✕/backdrop close; Escape deliberately not advertised.
+- **Content sourcing rule applies**: topics were written from docs/help.md,
+  the shipped ledes and this file's pinned rulings — never guessed. The honest
+  gaps live in a topic of their own ("What is deliberately not counted").
+- Verified through the REAL path on a live 5081 server: menu click → loop
+  home → term/alias/no-match search → `tab:` switches the tab → `tour:` opens
+  the tour. audit_tabs / audit_links / audit_tour all green after the surgery.
+- ⚠ help.md's stale "(v23 today)" model pin was removed in the same pass —
+  versions belong in About, never hardcoded in prose.
+- The PDF stays: built from docs/help.md at release, linked in the same menu.
+
 ## 🖥 THE TABBED APP (Joel's redesign, 2026-08-03 — supersedes the tile layout)
 
 The single-page app became a tabbed desktop application: build tile

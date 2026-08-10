@@ -11686,5 +11686,122 @@ window.resetLayoutDraft = function () {
   location.reload();          // the shipped layout comes back from the shipped HTML
 };
 
+// ── 🔎 Searchable help (Joel, 2026-08-10) ───────────────────────────────────
+// Type a term, get four answers: what it does, how it works, why it exists,
+// where it sits in the workflow. Content lives in static/help_topics.json
+// (statics-only — content edits need no rebuild). An EMPTY query shows THE
+// LOOP, because the workflow being easy to follow is the point. The PDF stays
+// as the long-form manual; this is the in-place answer.
+let _HELP = null;
+async function _helpData() {
+  if (_HELP) return _HELP;
+  const r = await fetch("/static/help_topics.json").catch(() => null);
+  _HELP = (r && r.ok) ? await r.json() : { workflows: {}, loop: [], topics: [] };
+  return _HELP;
+}
+function _helpGo(action) {
+  const i = action.indexOf(":");
+  const kind = action.slice(0, i), arg = action.slice(i + 1);
+  $("help-search-modal").classList.add("hidden");
+  if (kind === "tab" && typeof activateTab === "function") activateTab(arg);
+  else if (kind === "tour" && typeof explainStep === "function") explainStep(arg);
+}
+function _helpScore(t, q) {
+  const words = q.toLowerCase().trim();
+  if (!words) return 0;
+  const term = t.term.toLowerCase();
+  let s = 0;
+  if (term === words) s = 10;
+  else if (term.startsWith(words)) s = 6;
+  else if (term.includes(words)) s = 4;
+  for (const a of (t.aliases || [])) {
+    if (a === words) s = Math.max(s, 8);
+    else if (a.startsWith(words)) s = Math.max(s, 5);
+    else if (a.includes(words)) s = Math.max(s, 3);
+  }
+  if (!s) {
+    const body = `${t.what} ${t.how} ${t.why} ${t.where}`.toLowerCase();
+    if (body.includes(words)) s = 1;
+  }
+  return s;
+}
+const _HELP_STAGES = {
+  building: "Building a character", updating: "Updating an imported character",
+  tweaking: "Tweaking with the optimizer", manual: "Changing things by hand",
+  reference: "Reference",
+};
+function _helpTopicHtml(t) {
+  const go = (t.go || []).map(([a, label]) =>
+    `<button class="linkbtn" data-help-go="${escHtml(a)}">${escHtml(label)}</button>`).join(" ");
+  return `<div class="help-topic keep-whole">
+    <h3>${escHtml(t.term)} <span class="help-stage">${escHtml(_HELP_STAGES[t.stage] || t.stage)}</span></h3>
+    <p><b>What it does.</b> ${escHtml(t.what)}</p>
+    <p><b>How it works.</b> ${escHtml(t.how)}</p>
+    <p><b>Why it exists.</b> ${escHtml(t.why)}</p>
+    <p><b>Where it sits.</b> ${escHtml(t.where)}</p>
+    ${go ? `<div class="help-go">${go}</div>` : ""}
+  </div>`;
+}
+function _helpTermChips(topics) {
+  return topics.map(t =>
+    `<button class="linkbtn help-term" data-help-term="${escHtml(t.term)}">${escHtml(t.term)}</button>`).join(" ");
+}
+function _helpHomeHtml(d) {
+  const wfNames = {
+    building: "🧱 Build a new character", updating: "📥 Update one you play",
+    tweaking: "🎯 Tweak with the optimizer", manual: "🔧 Change things by hand",
+  };
+  return `<div class="help-topic keep-whole">
+    <h3>The loop — the order to work in</h3>
+    <ol class="help-loop">${(d.loop || []).map(s => `<li>${escHtml(s)}</li>`).join("")}</ol>
+    ${Object.entries(wfNames).map(([k, name]) =>
+      `<p class="help-wf"><b>${name}.</b> ${escHtml((d.workflows || {})[k] || "")}</p>`).join("")}
+    <p class="muted small keep-whole">Or browse a term: ${_helpTermChips(d.topics)}</p>
+  </div>`;
+}
+async function _helpRender() {
+  const d = await _helpData();
+  const q = ($("help-search-input").value || "").trim();
+  const out = $("help-search-out");
+  if (!out) return;
+  if (!q) { out.innerHTML = _helpHomeHtml(d); return; }
+  const hits = d.topics.map(t => [_helpScore(t, q), t])
+    .filter(([s]) => s > 0).sort((a, b) => b[0] - a[0]).slice(0, 6);
+  if (!hits.length) {
+    out.innerHTML = `<p class="muted keep-whole">Nothing here matched
+      "${escHtml(q)}". Try a shorter word — and the ❓ User guide PDF in the
+      Help menu covers everything in prose.</p>`;
+    return;
+  }
+  out.innerHTML = _helpTopicHtml(hits[0][1])
+    + (hits.length > 1
+      ? `<p class="muted small keep-whole">Also matched: ${_helpTermChips(hits.slice(1).map(([, t]) => t))}</p>`
+      : "");
+}
+function openHelpSearch() {
+  $("help-search-modal").classList.remove("hidden");
+  $("help-search-input").value = "";
+  _helpRender();
+  $("help-search-input").focus();
+}
+function initHelpSearch() {
+  if ($("help-search-btn")) $("help-search-btn").addEventListener("click", openHelpSearch);
+  if ($("help-search-close")) $("help-search-close").addEventListener("click",
+    () => $("help-search-modal").classList.add("hidden"));
+  // ✕ or a click on the backdrop closes; Escape is deliberately not advertised
+  // (it does not reach the page in the frozen shell).
+  if ($("help-search-modal")) $("help-search-modal").addEventListener("click", (e) => {
+    if (e.target === $("help-search-modal")) $("help-search-modal").classList.add("hidden");
+  });
+  if ($("help-search-input")) $("help-search-input").addEventListener("input", _helpRender);
+  if ($("help-search-out")) $("help-search-out").addEventListener("click", (e) => {
+    const go = e.target.closest("[data-help-go]");
+    if (go) { _helpGo(go.dataset.helpGo); return; }
+    const term = e.target.closest("[data-help-term]");
+    if (term) { $("help-search-input").value = term.dataset.helpTerm; _helpRender(); }
+  });
+}
+
 init();
+initHelpSearch();
 setTimeout(() => collapseLongExplanations(), 800);   // static prose present at load

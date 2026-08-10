@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- **Search help, inside the app.** Help menu → 🔎 Search help: type a term
+  (solve, lock, exemplar, set bonuses, import…) and get four plain answers —
+  what it does, how it works, why it exists, and where it sits in the workflow
+  of building, updating, tweaking or manually changing a build. Opening it
+  with nothing typed shows the four-step loop itself, with every term one
+  click away. 44 topics at launch; every "take me there" button jumps to the
+  real surface or the exact guided-tour step. The PDF user guide stays for
+  long-form reading.
+
 ## 0.12.36 — 2026-08-10 — The second accuracy pass
 
 Six model versions of accuracy work (v39 to v44) and a full re-certification of

@@ -260,6 +260,7 @@
         <div class="menu">
           <button class="menu-top" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="m-help">Help</button>
           <div class="menu-drop" id="m-help" role="menu" hidden>
+            <button id="help-search-btn" role="menuitem" type="button"><b>🔎 Search help</b><i>Type a term and get what it does, how, why, and where it fits</i></button>
             <button id="tour-btn" role="menuitem" type="button"><b>🧭 Guided tour</b><i>Pick a section and I will walk you through it</i></button>
             <a id="help-btn" role="menuitem" href="/static/help/HeroCompanion-Help.pdf" target="_blank" rel="noopener"><b>❓ User guide</b><i>The manual and release notes, as a PDF</i></a>
             <div class="menu-sep" role="separator"></div>
@@ -786,6 +787,25 @@
        menu item used to just walk you to a bare dropdown, which told you nothing
        about what exemplaring is. The two dials (build tile, Stats row) still
        work and stay synced — this explains the idea and sets the level. -->
+  <!-- 🔎 SEARCHABLE HELP (Joel, 2026-08-10): type a term, get what it does /
+       how it works / why it exists / where it sits in the workflow. Content is
+       static/help_topics.json (statics-only — edits need no rebuild). Empty
+       query shows THE LOOP, because the workflow being stupid easy to follow
+       is the point. The PDF stays as the long-form manual. -->
+  <div id="help-search-modal" class="modal hidden">
+    <div class="modal-box help-search-box">
+      <div class="modal-head">
+        <strong>🔎 Search help</strong>
+        <button id="help-search-close">✕</button>
+      </div>
+      <div class="help-search-body">
+        <input id="help-search-input" type="text" autocomplete="off"
+               placeholder="Type a term: solve, lock, exemplar, set bonuses, import…">
+        <div id="help-search-out"></div>
+      </div>
+    </div>
+  </div>
+
   <div id="exemplar-modal" class="modal hidden">
     <div class="modal-box">
       <div class="modal-head">

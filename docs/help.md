@@ -241,7 +241,7 @@ all strictly opt-in — the app never sends anything on its own:
 A few words the tool uses precisely: a **champion** is the best certified build for an
 archetype + powersets + role combination — champions ship with the app and give the
 optimizer its head start. A **candidate** is your claim to beat one. The **model
-version** (v23 today) stamps which generation of the scoring physics produced a
+version** stamps which generation of the scoring physics produced a
 number, and the **data version** stamps which game database it was computed against —
 so scores are always compared apples to apples.
 

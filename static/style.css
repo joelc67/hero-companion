@@ -3518,3 +3518,21 @@ body.layout-mode .lay-target .lay-target .lay-target .lay-target::before { top: 
   border-radius: var(--r1); border: 1px solid var(--accent); background: var(--panel2);
   color: inherit; cursor: pointer; }
 .lay-hud-btns button:hover { background: var(--accent); color: #111; }
+
+/* 🔎 Searchable help (2026-08-10). Follows the modal-body pattern exactly:
+   .about-body already scrolls inside the 80vh modal cap, so the help body does
+   the same. Text at 14px per the tool-lede rule - .small stays for chips. */
+.help-search-box { width: min(660px, 92vw); }
+.help-search-body { overflow-y: auto; margin-top: 8px; }
+#help-search-input { width: 100%; box-sizing: border-box; font-size: 14px;
+  padding: 8px 10px; margin-bottom: 10px; }
+.help-topic h3 { margin: 4px 0 8px; }
+.help-topic p { font-size: 14px; line-height: 1.45; margin: 6px 0; }
+.help-topic .help-stage { font-size: 11px; font-weight: normal;
+  color: var(--accent); margin-left: 8px; text-transform: uppercase;
+  letter-spacing: 0.04em; }
+.help-loop { margin: 6px 0 10px 20px; padding: 0; font-size: 14px;
+  line-height: 1.5; }
+.help-wf { font-size: 13px; line-height: 1.45; margin: 5px 0; }
+.help-go { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.help-term { margin: 1px 0; }

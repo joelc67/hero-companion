@@ -1,3 +1,20 @@
+# 🔎 2026-08-10 (after the release): searchable help is IN THE CLIENT
+
+Joel's order: help leaves the PDF. Help menu → "🔎 Search help": type a term,
+get what it does / how it works / why it exists / where it sits in the
+workflow (building / updating / tweaking / manual). Empty query shows the
+four-step loop itself. 44 topics in `static/help_topics.json` (statics-only,
+content edits need no rebuild); actions are `tab:`/`tour:` only, validated by
+`tools/test_help_search.py` (15 checks, 4 sabotages). Verified live through
+the real path on a throwaway 5081 server; audit_tabs/links/tour green;
+statics pushed to both frozen copies and the installed app relaunched
+(0.12.36 + the new statics - a statics-only change is a whole update).
+Staged under Unreleased for 0.12.37. Full ruling in CLAUDE.md's
+"SEARCHABLE HELP" section. ⚠ Geometry needs Joel's eyes (pane cannot
+screenshot); the logic half is proven.
+
+---
+
 # 🚀 2026-08-10: v0.12.36 "The second accuracy pass" SHIPPED
 
 Joel: "Since nothing needs an update, skip the clean re-cert and cut 0.12.36."
