@@ -1,3 +1,45 @@
+# ⏳ FOLLOW-UP WAVE RUNNING - 2026-08-09 21:29 ET, the 5 the first wave missed
+
+## IF THE SESSION DIED, READ THIS FIRST
+**5 contexts are re-converging.** Launched detached 21:29:40 (task since
+unregistered); orchestrator + 5 workers, ONE context each.
+⚠ **champions.json and the shards belong to that process until it exits.**
+
+- launcher `Run V44 Followup Wave.bat` · orchestrator log `wave_v44b.log`
+- workers `champions_shard_v44b_p0..p4.log` · shards `champions_shard_v44b_p*.json`
+- `--recert --workers 5 --shard-prefix champions_shard_v44b`, node cap 50000,
+  **NO --merge**
+
+### The five, and why they were missed
+```
+  Spines/Fiery_Aura [farm_afk]        375.9 ->  227.6   (-148.3)
+  Radiation_Emission/Sonic_Attack    1644.2 -> 1739.0    (+94.8)
+  Umbral_Blast/Umbral_Aura [base]    1452.6 -> 1361.7    (-90.9)
+  Demon_Summoning/Radiation_Emission 1275.8 -> 1330.7    (+54.9)
+  Plant_Control/Poison               1808.1 -> 1773.2    (-34.9)
+```
+The first wave was scoped by "does the build HOLD a patched power?" - which is
+SUFFICIENT but not NECESSARY. v42's RechargeTime fix reaches timed PET uptime
+(the Mastermind, the farm build) and scenario channels move scores with no
+patched power picked. **The right scope test is an evaluate-first pass BEFORE
+the wave, taking the movers.** Use that next time.
+
+### When it finishes
+1. `recert_verdicts champions_shard_v44b_p0..p4.json` in ONE invocation (it
+   overwrites its output per run). ⚠ This will OVERWRITE recert_verdicts.json,
+   which currently holds the first wave's 19 - that one is already merged and
+   committed at `306370bb`, so losing it is harmless, but know it.
+2. ⚠ Check legality by hand - the verdict log never mentions it and silence is
+   not proof. `_picks_legal` over challengers AND standing incumbents.
+3. Table to Joel. **No merge without his word.** Then merge by context with
+   `--verdicts`, retire the shards, validate, evaluate_first --write.
+
+## ALREADY DONE THIS SESSION
+First wave merged at `306370bb`: 19 contexts, 8 supersede / 11 keep, roster 24,
+24/24 SERVED, 24/24 legal, all canonical scores fresh. Shards retired.
+
+---
+
 # Resume point - 2026-08-09, WAVE MERGED - and I under-scoped it by 5 contexts
 
 ## STATE
