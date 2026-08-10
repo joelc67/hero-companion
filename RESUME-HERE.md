@@ -17,12 +17,16 @@ question below: the quick check says nothing is owed on any provable ground;
 the residual doubt (fake options steering three waves' exploration) is
 search-shaped and only the 17 hours can retire it.
 
-⚠ FOUND BY THE NEW LEGALITY COLUMN: all 3 `champions_shard_e_gt_*` ground
-truths are game-ILLEGAL under the corrected prereq model (Weave/Vengeance/
-Wall of Force/Misdirection now need 2 pool others; the E builds predate the
-2026-07-29 fix and never re-converged). Non-shipping, nothing owed - but an
-E-verdict against them compares to a floor the game refuses. Joel's call:
-retire or re-converge.
+✅ FOUND BY THE NEW LEGALITY COLUMN AND RETIRED ON JOEL'S RULING ("retire the
+e_gt shards; they are illegal floors"): all 3 `champions_shard_e_gt_*` ground
+truths were game-ILLEGAL under the corrected prereq model - verified
+concretely, all 12 flagged contexts hold a tier-4/5 pool power (Weave/
+Vengeance/Wall of Force/Misdirection) with ONE pool-mate where the game
+demands two. Renamed `.retired_2026-08-10_illegal_prereq_floors`; the
+certified union is champions.json alone (24) until a wave writes new shards;
+`e_derived_verdict` refuses to run until `run_e_overnight.py` regenerates
+legal floors. Quick check re-run after retirement: 24 contexts, NEEDS UPDATE
+none.
 
 ---
 

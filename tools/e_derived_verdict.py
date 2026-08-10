@@ -23,6 +23,17 @@ Pre-registered bar: derived >= 97% of GT canonical on >= 90% of the sample,
 zero battery failures, worst case (min/p10/median) reported regardless.
 
 Run:  py tools\\e_derived_verdict.py        (writes benchmarks/e_verdict.json)
+
+⛔ RETIRED FLOORS (Joel's ruling, 2026-08-10: "retire the e_gt shards; they
+are illegal floors"). All three ground-truth shards held builds the game
+refuses - tier-4/5 pool powers (Weave, Vengeance, Wall of Force, Misdirection)
+with ONE pool-mate where the game demands two. They predate the 2026-07-29
+prereq correction and were never re-converged. The files are renamed
+`.retired_2026-08-10_illegal_prereq_floors`; this tool refuses to run until
+fresh LEGAL ground truths exist (regenerate via tools/run_e_overnight.py -
+the search now refuses illegal rosters, so new floors come out buildable).
+The past verdict is not invalidated downward: an illegal floor is at least as
+strong as a legal one, so "derived >= 97% of GT" was a harder bar, not easier.
 """
 import copy
 import json
@@ -42,6 +53,16 @@ import first_principles as fp  # noqa: E402
 
 GT_SHARDS = ["champions_shard_e_gt_p0.json", "champions_shard_e_gt_p1.json",
              "champions_shard_e_gt_p2.json"]
+
+# The refusal, mechanical (see the RETIRED FLOORS note in the docstring): a
+# missing shard means the floors were retired, not that something is broken.
+_missing = [s for s in GT_SHARDS if not os.path.exists(os.path.join(ROOT, s))]
+if _missing:
+    sys.exit(
+        "e_derived_verdict: the ground-truth floors were RETIRED 2026-08-10 "
+        "(game-illegal under the corrected prereq model - Joel's ruling; see "
+        "this file's docstring). Regenerate legal floors with "
+        "tools/run_e_overnight.py before running this verdict.")
 
 # PATH-IDENTITY LABEL (verifier flag, ideas.md 2026-07-16): the strategic
 # meaning of the verdict hangs on exactly which code path produced the
