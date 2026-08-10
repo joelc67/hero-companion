@@ -2,91 +2,57 @@
 
 ## Unreleased
 
-## 0.12.36 - 2026-08-10 - The accuracy release
+## 0.12.36 - UNRELEASED - held back
 
-The biggest change to how the tool understands the game since launch. Six
-model versions (v39 to v44), a whole powerset the planner could not plan, two
-power pools, and every one of the 24 bundled champions re-certified from
-scratch. Ten of them changed.
+⚠ THIS ENTRY IS NOT FINAL AND THIS VERSION HAS NOT SHIPPED. It is left here so
+the next session can see what was claimed and check each line against reality.
 
-Everything below came from the game's own client files. No wiki, no third-party
-tables, no guesses. Where the game is ambiguous we left the number out and said
-so rather than inventing one.
-
-### New content you can now plan
-
-- **Wind Control**, the full powerset, on Controllers and Dominators. Twenty
-  powers priced end to end including the pets.
-- **Gadgetry and Utility Belt**, the two origin power pools. Ten powers, with
-  the game's own prerequisites enforced.
-- **Boomerang Slice** for Broad Sword, a real level 1 attack that was simply
-  missing on all four archetypes.
+Six model versions of accuracy work (v39 to v44) and a full re-certification of
+all 24 bundled champions. Everything below is engine and data work against the
+game's own client files.
 
 ### Things the tool was not counting, and now is
 
-- **Critical hits.** Scrapper and Stalker criticals have never been scored, in
-  any version. They are now, at the chance the game states per power.
-- **Domination.** Your control powers last 50 percent longer while it is up,
-  which is what the game's own help says, priced at the uptime its numbers
-  imply. Enough recharge reaches perma-dom and the model reaches it too.
-- **Self damage buffs.** Build Up, Aim, Rage, Follow Up, Soul Drain and 270
-  more. The tool knew these powers were worth taking and never counted the
-  damage they give you.
-- **Absorb shields.** Radiation Armor's signature survival click was being
-  scored on its regeneration half alone.
-- **Defence debuff resistance.** The tool assumed nobody had any, which was a
-  quiet insult to Super Reflexes, whose whole identity is that the debuff does
-  not land. 178 powers.
-- **Slow resistance from powers.** Only set bonuses counted before, so Wet Ice
-  and Permafrost contributed nothing.
+- **Critical hits.** Scrapper and Stalker criticals had never been scored in any
+  version. Counted at the chance the game states per power, taking the lower of
+  the two rates (the one against minions).
+- **Domination.** Control powers last 50 percent longer while it is up, priced
+  at the uptime the inherent's own numbers imply.
+- **Self damage buffs.** Build Up, Aim, Rage, Follow Up, Soul Drain and more.
+- **Absorb shields**, **defence debuff resistance** (178 powers, which Super
+  Reflexes had been denied entirely), and **slow resistance from powers**.
+- **A dead lookup fixed:** the engine asked for an enhancement aspect called
+  Recharge, which no enhancement carries. Recharge slotting was reaching none
+  of your timed pets or click uptimes.
 
-### A fix that reached further than it looked
+### Corrections
 
-The engine asked for an enhancement aspect called Recharge. No enhancement in
-the game carries that name; they carry RechargeTime. Three places asked for the
-dead word, so recharge slotting was silently reaching none of your timed pets
-or click uptimes. Slotting recharge in Category Five now nearly doubles its
-damage contribution, as it always should have.
+- Three Soul Drain records had the wrong target cap or radius.
+- Twenty-five control powers had the wrong duration or magnitude.
+- Thirteen pairs of mutually exclusive powers are now refused, as the game does.
 
 ### Your builds
 
-All 24 bundled champions were re-certified under the new model across two
-waves. Ten were replaced by better builds; fourteen were challenged and kept,
-meaning a fresh search could not beat them. Every one is legal in game, and
-each now records which model version certified it.
+All 24 champions re-certified across two waves. Every one is legal in game and
+records which model version certified it.
 
-One honest note: the Spines/Fiery Aura farm champion scores lower than it did.
-That is not a worse build, it is a more accurate price. The old number came
-from a model that was over-crediting it.
-
-### Smaller corrections
-
-- **Three Soul Drain records corrected against the game.** Brute Dark Melee and
-  Corruptor Soul Mastery had Soul Drain capped at 7 targets where the game hits
-  10, and the Dominator version used a 15 foot radius where the game uses 10.
-- **Twenty-five control powers had the wrong duration or magnitude.** Ten epic
-  holds read a 12.0 duration scale where the game says 10.0, the four Electric
-  Shackles read 8.0 against the game's 10.0, Hymn of Dissonance claimed
-  magnitude 1 where the game says 3, and Telekinesis was recorded as a hold
-  when the game calls it an immobilise plus repel.
-- **Thirteen pairs of mutually exclusive powers are now refused.** The game
-  lets you take Dark Regeneration or Obscure Sustenance, not both, and the
-  planner used to allow it. Same for Master Brawler and Practiced Brawler.
-- **The planner no longer offers a power to an archetype the game bars it
-  from.** Kheldians cannot take Gadgetry's Jetpack in game, and now cannot
-  take it here either.
+⚠ The Spines/Fiery Aura farm champion scores lower than before. That is a more
+accurate price, not a worse build.
 
 ### Stated and deliberately not counted
 
-- **Mez protection** is in the data and on screen for 229 powers, but it does
-  not affect any score yet. Crediting it needs a decision about how often
-  content actually mezzes you, and inventing that number would be worse than
-  waiting.
-- **Criticals are counted at the lower of the two chances the game states**, the
-  one against minions. Crediting the higher rate needs to know the mix of enemy
-  ranks in a fight, which the model does not track.
-- **Domination's magnitude bonus** is not counted, only its duration. The game
-  is genuinely ambiguous about whether that magnitude adds or replaces.
+- **Mez protection** is in the data and on screen for 229 powers but does not
+  affect any score. It needs a decision about how often content mezzes you.
+- **Criticals** use the lower of the two stated chances; the higher needs a mix
+  of enemy ranks the model does not track.
+- **Domination's magnitude bonus** is not counted, only its duration.
+
+### ⚠ RETRACTED BEFORE RELEASE - see RESUME-HERE.md
+
+An earlier draft of this release claimed Wind Control, the Gadgetry and Utility
+Belt power pools, and Boomerang Slice. **None of them are live in the game.**
+They were added from client files that carry unreleased content, all 34 records
+have been removed, and no version shipped with them.
 
 Game data is unchanged (Homecoming 2026.1.1242).
 

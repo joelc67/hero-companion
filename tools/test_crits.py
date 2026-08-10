@@ -51,7 +51,10 @@ def main():
     names = {fn for fn, _ in rows}
 
     ok("crit rows exist and are marked so they can be stripped",
-       len(rows) == 253 and len(names) == 247, f"{len(rows)} rows, {len(names)} powers")
+       len(rows) == 251 and len(names) == 245, f"{len(rows)} rows, {len(names)} powers")
+    # ⚠ was 253/247 until 2026-08-10, when Boomerang Slice was retracted as
+    # not-live content; its Scrapper and Stalker records took 2 crit rows with
+    # them. The pin moved because the DATA moved, not because crits changed.
 
     # ---- 1. only the two archetypes the game gives a crit inherent ----
     spaces = sorted({fn.split(".")[0] for fn in names})

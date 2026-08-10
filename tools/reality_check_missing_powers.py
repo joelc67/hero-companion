@@ -71,6 +71,12 @@ ABSENT = {
     # one parse of an undocumented field. This is the 2026-07-29 lesson again.
     # ⚠ tools/add_origin_pools.py is KEPT so this is one command away if
     # Homecoming ever ships them, but the DATA must stay out until it does.
+    "Controller_Control.Wind_Control": (10, "NOT LIVE - client-only content, retracted 2026-08-10 with the pools; same evidence, same error"),
+    "Dominator_Control.Wind_Control": (10, "NOT LIVE - client-only content, the Dominator half of the same retraction"),
+    "Brute_Melee.Broad_Sword.Boomerang_Slice": (1, "NOT LIVE - Joel: Broad Sword has no Boomerang Slice in game"),
+    "Scrapper_Melee.Broad_Sword.Boomerang_Slice": (1, "NOT LIVE - same retraction"),
+    "Stalker_Melee.Broad_Sword.Boomerang_Slice": (1, "NOT LIVE - same retraction"),
+    "Tanker_Melee.Broad_Sword.Boomerang_Slice": (1, "NOT LIVE - same retraction"),
     "Pool.Gadgetry": (6, "NOT LIVE on Homecoming - client-only content. Do not "
                          "re-add without in-game confirmation"),
     "Pool.Utility_Belt": (6, "NOT LIVE on Homecoming - client-only content, "

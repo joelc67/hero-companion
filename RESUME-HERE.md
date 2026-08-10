@@ -1,3 +1,85 @@
+# ⛔ READ THIS BEFORE TRUSTING ANYTHING FROM 2026-08-08..10
+
+**Assume this session's work is unverified.** It landed six model versions and
+a full re-certification, and it also added 34 records of content that IS NOT IN
+THE GAME and had to be retracted. The same judgement produced both. Your job is
+to find out which parts are real.
+
+## THE ERROR, so you do not repeat it
+I added Wind Control (20 records), Pool.Gadgetry (6), Pool.Utility_Belt (6) and
+Boomerang Slice (4) because the CLIENT BINS carry them in full - display names,
+help text, icons, `available_level` arrays shaped exactly like known-live sets.
+**None of that is evidence of release.** Joel: *"There is NO GADGETRY pool"*,
+*"Boomerang Slice is not live"*, *"We do not know if old code in game never
+matured into actual live game used live."*
+
+⚠⚠ **THE LIVENESS AUTHORITY IS THE MIDS-DERIVED SNAPSHOT** (`data/powers.json`
+as shipped in the last release), because Mids tracks LIVE Homecoming. If the
+bins have it and that snapshot does not, it is NOT live. I had this signal,
+wrote down that the absence was "honest, not a defect", and overrode it anyway.
+
+⚠ Measured so you do not repeat the search: **no client field separates live
+from dev content** (Wind Control's index entry is indistinguishable from Ice
+Control's), and **the play logs cannot answer it** - a name search returned 0
+for Wind Control AND 0 for Storm Summoning, which is certainly live.
+
+💥 Cost: the fake pools reached two certified champions and sat in the solver's
+option space for **all three re-cert waves, ~17.3 hours of compute**.
+
+## STATE RIGHT NOW (measured 2026-08-10)
+- All 34 fake records **removed**. Nothing v0.12.35 shipped was lost (checked
+  both directions). Roster **24/24 served, 24/24 legal, 0 references to removed
+  powers**. Prereq gate 467/467.
+- Batteries green: gate 24, model-stamp 8, crits 12, domination 16, mode-tags
+  19, absorb 27, empty-records 17, verdict-legality, pvp-variant, plateau,
+  exemplar, display-name-collisions.
+- Reality checks green: effect coverage (32 gaps pinned), mode tags 47/47,
+  missing powers (8 pinned, incl. the retractions), empty records.
+- ⚠ `reality_check_powers` exits 1 on `range 2, cast_time 1` drift. **This is
+  PRE-EXISTING** - verified stale at HEAD before this session touched anything.
+
+## ⛔ RELEASE IS HELD, AND HALF-PREPPED
+`VERSION` is bumped to **0.12.36 but nothing shipped**. Also already changed:
+the five smoke pins (`smoke_release` x2, `smoke_gold` x3 incl. model 44), and
+the help PDF is rebuilt at 0.12.36. The CHANGELOG 0.12.36 entry is marked
+UNRELEASED and carries a RETRACTED section. **Either finish the release or back
+all of that out - do not leave it half-set.**
+
+## WHAT MIGHT BE REAL, AND HOW TO CHECK IT YOURSELF
+Six model versions landed. Each was measured at the time, but so was the
+content that turned out fake. Verify independently:
+
+| version | claim | the check that would falsify it |
+|---|---|---|
+| v39 | self +damage buffs priced at duty cycle | add Build Up via /build/calculate; damage_buff 0 -> 0.111, ST DPS 14.4 -> 16.0 |
+| v40 | power-granted slow resistance | Wet Ice alone should read a real slow_resist in bonus_extras |
+| v41 | defence debuff resistance, 178 powers | Agile 6.92%, full SR 48.44%, capped 95% |
+| v42 | absorb + the dead `Recharge` word | absorb via bonus_extras (NOT top level); 3 recharge IOs move Rage 0.40 -> 0.796 |
+| v43 | Domination +50% control duration | floor 0.225 at no recharge, 0.5 at +122%, 0 for a Controller |
+| v44 | Scrapper/Stalker criticals at the stated floor | crit row scale == base row scale; only Scrapper_/Stalker_ records |
+
+⚠ **The thing I could NOT verify and neither can the batteries: whether the
+champions are optimal.** All three waves ran with fake content in the option
+space. The 22 that never took a fake power are legal and correctly scored, but
+whether they would converge identically in the TRUE space is unproven. **A
+clean re-cert is the only way to know, and it is Joel's call whether it is
+worth another ~17 hours.**
+
+## SUGGESTED ORDER FOR THE NEXT SESSION
+1. **Audit the audit.** Every check I built compares the CLIENT to our data;
+   not one asks whether the client's content is live. Add that test, or accept
+   that the whole coverage suite is blind to the failure that actually happened.
+2. Re-verify the six model terms from the table above, independently.
+3. Decide the clean re-cert (Joel).
+4. Then finish or unwind the release prep.
+
+## DORMANT TOOLS (kept deliberately, DO NOT RUN)
+`add_wind_control.py`, `add_origin_pools.py`, `add_boomerang_slice.py` - they
+re-add content that is not in the game. Kept only so it is one command away IF
+the game ever ships it. Their batteries were deleted.
+
+---
+
 # Resume point - 2026-08-10, THE ROSTER IS FULLY v44 - both waves merged
 
 ## STATE
