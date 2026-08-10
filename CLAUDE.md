@@ -183,6 +183,36 @@ Joel's session context is a limited resource. Do not spend it on prose.
 
 ## Certification protocol rules (learned the hard way — each one has a corpse behind it)
 
+- **🎯 SCOPE A WAVE BY THE MOVERS, NOT BY WHO HOLDS A PATCHED POWER (2026-08-09,
+  cost a second wave).** I scoped the v43+v44 re-cert by asking *"does this build
+  HOLD a power carrying one of the new rows?"* — measured, not guessed, and
+  still wrong. It gave 19 of 24; `evaluate_first` afterwards reported **16 moved,
+  FIVE of them contexts that test had excluded** (Spines/Fiery_Aura −148.3,
+  Rad_Emission/Sonic +94.8, Warshade base −90.9, Demon_Summoning +54.9,
+  Plant/Poison −34.9). **Holding a patched power is SUFFICIENT, NOT NECESSARY:**
+  v42's RechargeTime fix reaches **timed PET uptime**, which is why a Mastermind
+  and a farm build moved without holding anything patched, and scenario and
+  team-buff channels move a score with no patched power picked at all.
+  ⚠ **THE RIGHT TEST IS AN EVALUATE-FIRST PASS *BEFORE* THE WAVE** — re-score
+  every context under the new model and take the movers. The tool exists for
+  exactly this; running it afterwards is how you discover the wave was
+  under-scoped. **Done properly the wave ENDS with `0 moved`, which is the
+  completion signal** (it read 52 unaffected / 0 moved / 0 failed once both
+  waves merged).
+- **⚠ A CHAMPION RECORDS NO MODEL VERSION, so nothing in the data can tell you
+  whether it is current (found 2026-08-09 when Joel asked "have we updated all
+  the champions?").** `model_version` is absent on all 24 entries; the only way
+  to answer is to run `evaluate_first` and watch for movers. Stamping the model
+  version at merge would make the scope test above answerable by inspection.
+  **Not done — Joel was asked and the session ended first.**
+- **⚠ THE VERDICT LOG NEVER MENTIONS LEGALITY, AND SILENCE IS NOT PROOF.** Both
+  2026-08-09 waves: I ran `_picks_legal` by hand over every challenger AND every
+  standing incumbent (zero illegal both times). The gate's legality dimension
+  exists and `test_verdict_legality` passes, but it prints nothing, so a run
+  where it silently failed to execute would look identical. **Keep checking by
+  hand until the tool prints a legality column.** This is the 0.12.30 failure
+  that shipped 8 unbuildable champions.
+
 - **🚨 CHECK THE GAME, NOT YOUR PARSE (2026-07-29 — cost a 12-hour wave).** I parsed a client `requires` string, declared ~20 champions "game-illegal", rewrote the legality gate and launched a fleet wave. The game's OWN help text then said: Tough needs "one other Fighting Powers" (ANY one). **My gate change was WRONG and is reverted (00ed2a39).** Rules: a parse of an undocumented field is a HYPOTHESIS — the game's display_help, weeks of working evidence, and Joel outrank it; a finding that invalidates certified work is JOEL'S RULING, never my wave.
 - **✅ PREREQ MODEL, CORRECTED PROPERLY (3f55cc37, 2026-07-29).** The game STATES each power's prerequisite count in display_help; our position-based proxy disagreed in BOTH directions. **`server._prereq_need` is now THE authority** (prefers data `prereq_count`, falls back to the tier proxy for the 68 records the game doesn't state). Data: `tools/patch_prereq_counts.py`. **EVIDENCE RULE — patch only where TWO of three signals agree:** (A) the help sentence, (B) whether the requires expression names other POWERS (⚠ NOT "is it non-empty" — most epic expressions are ARCHETYPE gates `$archetype @Class_Scrapper ==`), (C) the corpus-validated tier model. 404/472 patched, **9 HELD and reported** (6 whose help sentence describes a DIFFERENT power — Vengeance's says "before selecting Victory Rush"). Real corrections: travel powers (Fly/Teleport/Super Speed/Invisibility/Mystic Flight/Arcane Bolt/Toxic Dart/Project Will/Long Jump) were OVER-required → we were REFUSING legal builds; Weave/Group Fly/Wall of Force/Invoke Panic/Burnout/Misdirection/Field Medic were UNDER-required (game wants 2). **STANDING CHECK: `tools/reality_check_prereqs.py`** — the game's words vs what the app enforces, every pool/epic power, self-skeptical (flags help text that names another power as TEXT evidence, not RULE evidence). 405/413 agree (was 388).
 - **🚦 THE PREREQ REALITY CHECK NOW GATES THE LAUNCHER (78bd351d, 2026-07-30 — Joel: "why are you checking reality of game AFTER the builds?").** The check existed as a manual tool written as the lesson of the burn, and the very next wave launched without it. `converge_parallel` now runs `reality_check_prereqs.py --gate` BEFORE spawning a worker, failing only on disagreements NEW since `tools/prereq_disagreement_baseline.json` (8 accepted: 6 are help sentences naming a DIFFERENT power, 1 Field_Medic parse artifact, 1 unparsable). Override `--skip-reality-check` exists to be said out loud. Proven both directions (passes at 405-agree; an emptied `HC_PREREQ_BASELINE` blocks the launch). **Generalize the pattern: a lesson that lives only in a docstring is a note — wire it into the thing it protects.**
