@@ -1,3 +1,39 @@
+# ✅ SESSION CLOSED CLEAN — 2026-08-10. START HERE.
+
+## STATE
+HEAD `02527c97`, pushed, tracked tree clean. **Nothing running, no scheduled
+tasks armed.** Latest release **v0.12.37** (stamp `375d2b6`), announced on
+topic 64761; installed copy runs it. Data **2026.1.1242** · model **v44** ·
+roster **24/24 served, legal, stamped v44**. Every reality check and battery
+exits green; liveness baseline v0.12.37, dispositions empty (goal state).
+
+## WHAT THIS SESSION DID (detail in session-report.md, rulings in CLAUDE.md)
+1. Verified the whole 08-08..10 arc: liveness gate built+gated, six model
+   versions independently re-verified, e_gt floors retired (Joel's ruling).
+2. The quick needs-update check (`evaluate_first --skip-riders`, 0.7 min) —
+   the answer to "do we owe a wave?" — plus the known-gaps ledger
+   (`docs/KNOWN-GAPS.md`, gap_ledger --check) and the complete-then-brief rule.
+3. SHIPPED v0.12.36 (the accuracy pass) AND v0.12.37 (searchable help v1+v2,
+   menu accelerators, bootloader splash 1.3s, launch on Powers & Slots,
+   **Boomerang Slice restored** — live since Feb, Maelwys's patch note).
+   Both announced. All field reports through Aug 8 confirmed handled.
+
+## OPEN — JOEL'S, none blocking
+- FP/whitelist submissions for 0.12.37 (signing runbook), his hand.
+- The standing scenario asks: `mez_in` · stack-meter constant · spawn rank
+  mix · a Brute farm log with 3+ single-target attacks (Fury) · the in-game
+  one-looks (/thumbtack, Iron Man grant, Unrelenting Fury cap, Domination
+  magnitude). All catalogued in docs/KNOWN-GAPS.md — pick from the ledger.
+- Design critique findings (2026-08-10, screenshots taken): link color
+  app-wide, power-card control crowding, road-card clipping beside zone art.
+  **Joel said "no changes to design" for 0.12.37** — they wait for his word.
+
+## WATCHES
+Topic 64761 replies · NetSol renewal · INBOX_READ_TOKEN 2026-10-12 ·
+signing identity 2027-07-15 · inbox Actions still disabled (billing, Joel's).
+
+---
+
 # 🚀 2026-08-10 (night): v0.12.37 "Help, shortcuts, and a faster front door" SHIPPED
 
 Joel: "Lets push this small update." Tag `v0.12.37`, stamp `375d2b6`, both
