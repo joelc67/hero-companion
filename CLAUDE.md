@@ -334,6 +334,9 @@ and the needs-eyes-in-game list, each citing its entry here.
   Rad_Emission took Freerunning, Brute Spines took Nano Net). Exposure 0 → 2.
   The check now pins that, plus the rule that a champion holding one must carry
   the current model stamp rather than being grandfathered in.
+  (Superseded hours later by the retraction: the pools were not live, the two
+  contaminated champions were re-converged clean, and the battery was deleted
+  with the content — kept as the record of how contamination spread.)
 - **⚠ THE VERDICT LOG NEVER MENTIONS LEGALITY, AND SILENCE IS NOT PROOF.** Both
   2026-08-09 waves: I ran `_picks_legal` by hand over every challenger AND every
   standing incumbent (zero illegal both times). The gate's legality dimension
@@ -1047,7 +1050,8 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   which is what any of that work needed first. The tag names the mode; it does
   NOT give the uptime, so it enables the work rather than doing it.
   `add_wind_control.effects_from` skips tagged groups and COUNTS them, and
-  `tools/test_origin_pools.py` pins the 349.
+  ~~`tools/test_origin_pools.py` pins the 349~~ (battery deleted with the
+  2026-08-10 retraction; the tags census itself stands).
 - **⚠⚠ A `requires_expression` MIXES TARGETING WITH CONDITIONS, AND ONLY ONE OF
   THEM MAKES A GROUP CONDITIONAL (2026-08-08).** "Who may this land on"
   (`enttype target> critter eq`, `entref target.owner> entref source> eq !`,
@@ -1432,9 +1436,9 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   existed — checked, not assumed. ⚠ The origin-pool rule itself is **not in any
   `requires` expression** (checked 2026-08-08; Mystic Flight and Nano Net both
   carry none), so it is server-side and unverifiable from the bins, the same
-  class as zone level ranges. Battery `tools/test_origin_pools.py` (32 checks,
-  7 sabotages). Champion exposure zero; `reality_check_missing_powers` now reads
-  **0 genuinely absent**.
+  class as zone level ranges. ⚠ Battery `tools/test_origin_pools.py` was
+  DELETED with the 2026-08-10 retraction (the pools are not live); this entry
+  stays as the record of how a pool differs from an archetype set.
 - **⚠⚠ AUTOPICK WAS PROPOSING BUILDS THE GAME REFUSES — 61 of 2,721, AND THE
   CAUSE WAS A HAND-WRITTEN LIST (2026-08-08).** `_auto_pick_powers`' `place()`
   funnel filtered mutually exclusive twins from `_VEAT_DUPLICATE_PAIRS` — **two
@@ -1785,7 +1789,9 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   BEFORE the change: **zero of 24** hold both sides. Now 13 client-derived
   pairs, **mirrored-or-not-at-all** (a one-sided exclusion is a parse artefact),
   the validator names the pair, and the gate reads the data — the hand-list is a
-  proven subset. Battery `tools/test_power_exclusions.py`.
+  proven subset. ⚠ Battery `tools/test_power_exclusions.py` was deleted with
+  the 2026-08-10 retraction; the 13 mirrored pairs and the gate rule live on
+  (re-verified when Boomerang Slice was restored the same day).
   ⚠ **A sabotage that mattered:** "adding the partner makes it illegal" PASSED
   with the rule deleted, because a 25th pick breaks the ladder cap on its own.
   **The check SWAPS a pick now** — when a negative test can pass for a second
