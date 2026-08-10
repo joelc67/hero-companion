@@ -2,14 +2,12 @@
 
 ## Unreleased
 
-## 0.12.36 - UNRELEASED - held back
-
-⚠ THIS ENTRY IS NOT FINAL AND THIS VERSION HAS NOT SHIPPED. It is left here so
-the next session can see what was claimed and check each line against reality.
+## 0.12.36 — 2026-08-10 — The second accuracy pass
 
 Six model versions of accuracy work (v39 to v44) and a full re-certification of
 all 24 bundled champions. Everything below is engine and data work against the
-game's own client files.
+game's own client files — and every claim in this entry was re-verified
+independently before release, after the retraction described at the bottom.
 
 ### Things the tool was not counting, and now is
 
@@ -33,8 +31,8 @@ game's own client files.
 
 ### Your builds
 
-All 24 champions re-certified across two waves. Every one is legal in game and
-records which model version certified it.
+All 24 champions re-certified across three waves. Every one is legal in game
+and records which model version certified it.
 
 ⚠ The Spines/Fiery Aura farm champion scores lower than before. That is a more
 accurate price, not a worse build.
@@ -47,12 +45,14 @@ accurate price, not a worse build.
   of enemy ranks the model does not track.
 - **Domination's magnitude bonus** is not counted, only its duration.
 
-### ⚠ RETRACTED BEFORE RELEASE - see RESUME-HERE.md
+### ⚠ RETRACTED BEFORE RELEASE
 
 An earlier draft of this release claimed Wind Control, the Gadgetry and Utility
 Belt power pools, and Boomerang Slice. **None of them are live in the game.**
 They were added from client files that carry unreleased content, all 34 records
-have been removed, and no version shipped with them.
+have been removed, and no version shipped with them. A new standing check now
+compares the tool's data against the last shipped release, so content the game
+does not offer can never enter again unnoticed.
 
 Game data is unchanged (Homecoming 2026.1.1242).
 
