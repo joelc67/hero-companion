@@ -221,7 +221,7 @@ def _pick_port(start):
 _WINDOW = os.environ.get("HC_WINDOW") != "0"
 
 
-def _run_window(port):
+def _run_window(port, start_server=None):
     """Hero Companion in its own window. Blocks until the window closes, which
     quits the app — no tray, no background copy left running. False if pywebview
     or the WebView2 runtime is unavailable (caller falls back to the browser)."""
@@ -406,7 +406,13 @@ def _run_window(port):
         # saved spot and its "finished" flag, all silently forgotten each time the
         # app opens. An app remembers; a private browsing window is what forgets.
         # storage_path keeps it beside the app's other state.
-        webview.start(private_mode=False,
+        # ⚠ THE SERVER LOAD STARTS FROM HERE, AFTER THE WINDOW IS UP. Measured
+        # 2026-08-10: starting the load on a plain thread before webview.start
+        # bought nothing (window at 3.8s) — the 17MB json parse holds the GIL
+        # and starves the GUI thread. webview.start(func) runs func in its own
+        # thread only once the window exists, so the splash paints first.
+        webview.start(start_server,
+                      private_mode=False,
                       storage_path=os.path.join(_APPDIR, "webview"),
                       icon=icon if os.path.exists(icon) else None)
     except Exception as e:  # noqa: BLE001
@@ -447,8 +453,11 @@ def main():
         _write_lock(port)
 
     # The server thread owns the slow part now: it imports server (the game
-    # database), wires the frozen-only registry hooks, and serves. The window
-    # below opens on its splash while this loads (the launch-latency fix).
+    # database), wires the frozen-only registry hooks, and serves. In window
+    # mode it is started BY webview.start once the splash is on screen (the
+    # json parse holds the GIL, so starting it earlier starves the GUI thread
+    # and the window appears late — measured, not guessed). Fallback paths
+    # start it directly.
     def _serve():
         s = _load_server()
         if _FROZEN:
@@ -461,12 +470,19 @@ def main():
         print(f"Hero Companion v{s.APP_VERSION} — model "
               f"v{__import__('first_principles').MODEL_VERSION} — data {s.DB_VERSION}")
         s.app.run(host="127.0.0.1", port=port, debug=False)
-    threading.Thread(target=_serve, daemon=True).start()
+
+    _serve_started = {"on": False}
+
+    def _start_server_once():
+        if not _serve_started["on"]:
+            _serve_started["on"] = True
+            threading.Thread(target=_serve, daemon=True).start()
     # The window owns the whole lifecycle: it blocks here, and closing it quits.
     # Everything below is the fallback for HC_WINDOW=0 or a machine with no
     # WebView2 — a browser tab, exactly as the app worked before.
-    if _WINDOW and _run_window(port):
+    if _WINDOW and _run_window(port, _start_server_once):
         return
+    _start_server_once()      # every fallback path still needs the server
     if os.environ.get("HC_NO_BROWSER") != "1" and not from_autostart:
         if after_update:
             # Relaunched by the installer after a self-update. The tab the user
