@@ -579,6 +579,34 @@ toggle **in the app UI**, and a **one-time share prompt** for the Pulse feed.
   self contained application like Mids Reborn"* — was aimed at scaffolding I
   handed him (a .bat, a console, python.exe). Handing a source run as the
   artifact is the mistake; `dist\HeroCompanion\HeroCompanion.exe` is the app.
+- **🚀 THE LAUNCH IS STAGED, AND EVERY STAGE WAS MEASURED (2026-08-10, Joel:
+  "some latency when loading... do we need a prelaunch loading bar like Mids?").**
+  Before: double-click → 3.8s of NOTHING (the game database loaded before any
+  window could exist). Now three stages: **bootloader splash at 1.3s**
+  (PyInstaller `Splash`, assets/splash.png generated with Pillow in brand
+  colors; the ONLY thing that can paint early — measured, the WebView2/.NET
+  window costs ~3.7s to exist no matter what) → **app window at 3.6s** on an
+  in-window HTML splash (`_SPLASH_HTML` in run_app; honest spinner, NEVER a
+  progress bar) → **engine ready at 4.1s**, when `_navigate_when_ready`'s
+  socket probe swaps the app in. Three structural rules with corpses:
+  (1) `import server` is LAZY (`_load_server` on the server thread) — a
+  top-level import made the window the last thing to exist; (2) **the server
+  load starts FROM `webview.start`'s callback** — starting it on a plain
+  thread earlier bought nothing because the 17MB json parse holds the GIL and
+  starves the GUI thread (measured: window still 3.8s); (3) `pyi_splash.close()`
+  fires on window-up AND on the no-window fallback, and the shutdown hook
+  wires only when the lazy server exists (disarmed if the window died).
+  ⚠ The spec excludes tkinter but `Splash` packs its own Tcl runtime —
+  compatible, build-proven. ⚠ test_desktop_app pins all of it (138 checks).
+- **🧭 LAUNCH LANDS ON POWERS & SLOTS, ALWAYS (Joel, 2026-08-10: "each time my
+  tool loads, its starts on the leveling guide").** The resume-time journey
+  auto-open and the remembered-tab restore (`cohTab`) are RETIRED — launch is
+  the first tab, every time. The road still greets a new 1-50 character ONCE,
+  at creation (the wizard-exit call sites keep `maybeAutoOpenJourney`), and a
+  character loaded while the Leveling tab is open still rebuilds the road for
+  THAT character (the 2026-08-03 empty-placeholder fix). Proven live with a
+  planted stale `cohTab=leveling` and a resumed sub-50 character: both land
+  on Powers & Slots.
 - **⚠ pywebview's defaults are a BROWSER's defaults, and three of them are
   wrong for an app.** `SHOW_DEFAULT_MENUS` = WebView2's right-click
   Back/Reload/Save-as/View-source menu (the loudest "this is a browser" tell);

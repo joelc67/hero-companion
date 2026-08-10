@@ -2,11 +2,12 @@
 
 ## Unreleased
 
-- **The window opens instantly.** The app used to load its whole game database
-  before any window could exist, so double-clicking meant three-plus seconds of
-  nothing. The window now appears immediately with a loading screen and switches
-  to the app the moment the engine is ready. No fake progress bar; an honest
-  spinner and one line saying what is happening.
+- **Launching shows a loading screen in about a second.** Double-clicking used
+  to mean nearly four seconds of nothing while the game database loaded before
+  any window could exist. A branded loading screen now appears almost
+  immediately, hands over to the app window, and the app takes over the moment
+  the engine is ready. No fake progress bar; an honest spinner and one line
+  saying what is happening.
 - **The app opens on Powers & Slots, every time.** It used to reopen on the
   Leveling Guide for leveling characters. The road still introduces itself once,
   when a new 1-50 character is created; launching lands on the first tab.
