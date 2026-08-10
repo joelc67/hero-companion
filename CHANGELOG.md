@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.12.37 — 2026-08-10 — Help, shortcuts, and a faster front door
+
 - **Launching shows a loading screen in about a second.** Double-clicking used
   to mean nearly four seconds of nothing while the game database loaded before
   any window could exist. A branded loading screen now appears almost
