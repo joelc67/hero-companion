@@ -199,12 +199,26 @@ Joel's session context is a limited resource. Do not spend it on prose.
   under-scoped. **Done properly the wave ENDS with `0 moved`, which is the
   completion signal** (it read 52 unaffected / 0 moved / 0 failed once both
   waves merged).
-- **⚠ A CHAMPION RECORDS NO MODEL VERSION, so nothing in the data can tell you
-  whether it is current (found 2026-08-09 when Joel asked "have we updated all
-  the champions?").** `model_version` is absent on all 24 entries; the only way
-  to answer is to run `evaluate_first` and watch for movers. Stamping the model
-  version at merge would make the scope test above answerable by inspection.
-  **Not done — Joel was asked and the session ended first.**
+- **✅ EVERY CHAMPION NOW RECORDS THE MODEL THAT CERTIFIED IT (2026-08-10,
+  `e042a5e6`).** `merge_champion_shards` stamps `model_version` at its single
+  write point; the 24 were back-filled with v44. The scope test above is now one
+  line of inspection — `(v.get("model_version") or 0) < fp.MODEL_VERSION` — with
+  no tool run, which is what made it wrong-able before.
+  ⚠ **METADATA ONLY, and pinned as such:** the back-fill was written only after
+  proving that stripping the stamp reproduces the roster byte-for-byte, and
+  `tools/test_model_stamp.py` (8 checks, 3 sabotages) forbids any scoring module
+  from READING it. ⚠ That check tests the field ACCESS, not the bare word — a
+  first version flagged server.py, which only ever reports the module constant
+  `fp.MODEL_VERSION`. It also drives the REAL merge tool over an unstamped
+  scratch shard, because a roster that happens to be stamped proves only that
+  someone did it once by hand.
+- **🧰 AND THE NEW POOLS ARE BEING CHOSEN.** `test_origin_pools`' "champion
+  exposure is ZERO" went red after the re-cert — correctly. That claim was true
+  when Gadgetry and Utility Belt landed 2026-08-08; the wave then let the solver
+  pick from them and **both of the follow-up wave's supersedes did** (Defender
+  Rad_Emission took Freerunning, Brute Spines took Nano Net). Exposure 0 → 2.
+  The check now pins that, plus the rule that a champion holding one must carry
+  the current model stamp rather than being grandfathered in.
 - **⚠ THE VERDICT LOG NEVER MENTIONS LEGALITY, AND SILENCE IS NOT PROOF.** Both
   2026-08-09 waves: I ran `_picks_legal` by hand over every challenger AND every
   standing incumbent (zero illegal both times). The gate's legality dimension

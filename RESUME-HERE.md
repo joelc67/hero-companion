@@ -46,13 +46,17 @@ merge (`.merged_2026-08-09`); only the 3 `e_gt` ground truths remain in the
 `certified_union` glob. Wave-1 verdicts preserved as
 `recert_verdicts_wave1.json.kept_2026-08-09`.
 
-## ⏭ FIRST THING NEXT SESSION (offered, not yet done)
-**Stamp `model_version` on each champion at merge.** Joel asked "have we updated
-all the champions?" and the honest answer needed a tool run, because no entry
-records what model certified it. Stamping it in `merge_champion_shards` makes
-the scope question answerable by inspection and directly prevents the
-under-scoping that cost a second wave today. He was asked; the session ended
-before he answered, so **do not assume approval** - ask again.
+## ✅ DONE 2026-08-10: the model stamp (`e042a5e6`)
+`merge_champion_shards` stamps `model_version` at its single write point and
+the 24 are back-filled with v44. **"Have we updated all the champions?" is now
+answerable by inspection** — `(v.get("model_version") or 0) < fp.MODEL_VERSION`
+returns nothing. Metadata only: proven byte-identical with the stamp stripped,
+and no scoring module may read it (battery, 8 checks, 3 sabotages).
+
+⚠ It surfaced that the NEW POOLS ARE BEING CHOSEN: `test_origin_pools`' "exposure
+is zero" went red because the re-cert let the solver pick them, and **both
+follow-up supersedes did** (Defender Rad_Emission → Freerunning, Brute Spines →
+Nano Net). Exposure 0 → 2. Check updated to pin the truth.
 
 ## STILL OPEN (all Joel's, none blocking)
 `mez_in` · the stack-meter scenario constant · a spawn RANK MIX (would let the
