@@ -236,6 +236,27 @@ Joel's session context is a limited resource. Do not spend it on prose.
   under-scoped. **Done properly the wave ENDS with `0 moved`, which is the
   completion signal** (it read 52 unaffected / 0 moved / 0 failed once both
   waves merged).
+- **⚡ THE QUICK NEEDS-UPDATE CHECK IS `evaluate_first --skip-riders`, NO
+  --write — 0.7 MINUTES MEASURED, and it is the ANSWER to "do we owe a wave?"
+  (Joel, 2026-08-10: "sick of wasting 17 hours on something that should take
+  minutes to verify if its actually needed").** One run now answers all three
+  reasons a shipping champion can owe an update, per context and with one
+  bottom line: **MOVED** (fresh re-solve of its own picks scores off canonical),
+  **ILLEGAL** (`_picks_legal`, printed at last — the by-hand ritual for THIS
+  tool is retired; ⚠ recert_verdicts still prints no legality column, keep
+  checking merges by hand), **STALE STAMP** (model_version < current). Writes
+  nothing without --write. "NEEDS UPDATE: none" = no wave is owed; a wave runs
+  only over the contexts it names. ⚠ **THE CEILING, so nobody oversells it: it
+  proves the stored build is legal, current, and correctly scored — it CANNOT
+  prove a different pick-set wouldn't win.** Only a converge wave searches;
+  this says whether one is owed, never what it would find.
+  ⚠ Its first run also found: **all 3 `champions_shard_e_gt_*` ground truths
+  are game-ILLEGAL under the corrected prereq model** (every failure = a pool
+  power now needing 2 others: Weave/Vengeance/Wall of Force/Misdirection —
+  they predate the 2026-07-29 prereq fix and were never re-converged).
+  Non-shipping measurement artifacts, so nothing is owed — but any E-verdict
+  comparing against them is comparing to a floor the game refuses. Joel's call
+  whether to retire or re-converge them.
 - **✅ EVERY CHAMPION NOW RECORDS THE MODEL THAT CERTIFIED IT (2026-08-10,
   `e042a5e6`).** `merge_champion_shards` stamps `model_version` at its single
   write point; the 24 were back-filled with v44. The scope test above is now one

@@ -30,6 +30,22 @@ re-solves run anyway):
 
 Run:   py tools\\evaluate_first.py [--write] [--skip-riders]
 Then:  py tools\\converge_parallel.py --recert --workers N --merge --keys <movers>
+
+⚡ THE QUICK NEEDS-UPDATE CHECK (Joel, 2026-08-10: "sick of wasting 17 hours on
+something that should take minutes to verify if its actually needed"). This
+tool, run as `py tools\\evaluate_first.py --skip-riders` with NO --write, IS
+that check - minutes, nothing written to champions.json. It now answers all
+three reasons a shipping champion can owe an update, per context and with one
+bottom line:
+  MOVED        the model/data changed under the stored build (fresh re-solve
+               of its own picks scores differently than canonical)
+  ILLEGAL      the stored picks fail current _picks_legal (the 0.12.30 class)
+  STALE STAMP  certified under an older model_version than the current one
+"NEEDS UPDATE: none" is the completion signal; a 17-hour wave is only ever owed
+for the contexts this names. ⚠ THE CEILING, stated: this proves the stored
+build is legal, current, and correctly scored - it CANNOT prove a different
+pick-set wouldn't win. Only a converge wave searches; this tells you whether
+one is owed, not what it would find.
 """
 import argparse
 import copy
@@ -105,7 +121,14 @@ def main():
     print(f"evaluating {len(champs)} certified context(s) against the current "
           f"model+code (model {fp.MODEL_VERSION})\n")
 
+    # the SHIPPING roster - the needs-update verdict is about these; the E
+    # ground-truth shards ride the union for scoring but ship nowhere
+    shipping = set(json.load(open(os.path.join(ROOT, "benchmarks",
+                                               "champions.json"),
+                                  encoding="utf-8")))
+    t_run = time.perf_counter()
     movers, unaffected, failed = [], [], []
+    needs = {}  # shipping key -> [reason, ...]
     rider_rows = []
     for key in sorted(champs):
         parts = key.split("|")
@@ -119,6 +142,22 @@ def main():
                 or srv._AT_DEFAULT_ROLE.get(at, "damage"))
         entry = champs[key]
         form = parts[4] if len(parts) > 4 else None
+        # LEGALITY, PRINTED (closes the by-hand ritual: "keep checking by hand
+        # until the tool prints a legality column"). Same call as
+        # _champion_picks: inherents excluded, primary/secondary from the key.
+        real = {fn for fn in entry["picks"] if not fn.startswith("Inherent")}
+        legal = srv._picks_legal(real, prim, sec)
+        # STAMP: metadata inspection only (test_model_stamp forbids SCORING
+        # modules from reading it; this is the one-line scope test it exists for)
+        stamp = entry.get("model_version")
+        stale = key in shipping and (stamp or 0) < fp.MODEL_VERSION
+        flags = ("" if legal else "  !! ILLEGAL") + (
+            f"  !! stamp v{stamp or '?'} < v{fp.MODEL_VERSION}" if stale else "")
+        if key in shipping:
+            if not legal:
+                needs.setdefault(key, []).append("illegal")
+            if stale:
+                needs.setdefault(key, []).append(f"stamp v{stamp or '?'}")
         # canonical-vs-canonical: the run score (entry["score"]) is a
         # within-run ranking, not a portable baseline (see docstring). The
         # FIRST pass records the canonical baseline; later passes diff it.
@@ -136,13 +175,15 @@ def main():
             verdict = "BASELINE"
             unaffected.append(key)
             print(f"  BASELINE   canonical={new:9.1f} (run score "
-                  f"{entry.get('score', 0):9.1f})  {name}")
+                  f"{entry.get('score', 0):9.1f})  {name}{flags}")
         else:
             delta = new - old
             verdict = "UNAFFECTED" if abs(delta) <= EPS else "MOVED"
             (unaffected if verdict == "UNAFFECTED" else movers).append(key)
+            if verdict == "MOVED" and key in shipping:
+                needs.setdefault(key, []).append(f"moved {delta:+.1f}")
             print(f"  {verdict:10s} canonical {old:9.1f} -> {new:9.1f} "
-                  f"(Δ {delta:+8.1f})  {name}")
+                  f"(Δ {delta:+8.1f})  {name}{flags}")
         entry["canonical_score"] = round(new, 2)
         if not args.skip_riders:
             os.environ["HC_SOLVER_BACKEND"] = "highs"
@@ -177,13 +218,23 @@ def main():
               "benchmarks/champions.json")
 
     out = {"movers": movers, "unaffected": unaffected, "failed": failed,
-           "riders": rider_rows}
+           "needs_update": needs, "riders": rider_rows}
     rp = os.path.join(ROOT, "benchmarks", "evaluate_first_afix.json")
     with open(rp, "w", encoding="utf-8") as f:
         json.dump(out, f, indent=1)
 
     print(f"\n=== EVALUATE-FIRST: {len(unaffected)} unaffected, {len(movers)} "
-          f"moved, {len(failed)} failed, of {len(champs)} ===")
+          f"moved, {len(failed)} failed, of {len(champs)} "
+          f"({(time.perf_counter() - t_run) / 60:.1f} min) ===")
+    if needs:
+        print(f"=== NEEDS UPDATE: {len(needs)} of {len(shipping)} shipping "
+              f"champion(s) ===")
+        for k in sorted(needs):
+            print(f"  {k}: {', '.join(needs[k])}")
+    else:
+        print(f"=== NEEDS UPDATE: none - all {len(shipping)} shipping champions "
+              f"legal, stamped v{fp.MODEL_VERSION}, scores unmoved. "
+              f"No wave is owed. ===")
     if rider_rows:
         tc = sum(r["cbc_s"] for r in rider_rows)
         th = sum(r["highs_s"] for r in rider_rows)

@@ -1,3 +1,31 @@
+# ⚡ 2026-08-10 (latest): the quick needs-update check exists and reads CLEAN
+
+Joel's order: a minutes-scale answer to "do any champions actually need an
+update?" instead of a 17-hour wave. **It is `py tools\evaluate_first.py
+--skip-riders` (no --write) - measured 0.7 minutes over all 52 contexts,
+writes nothing to champions.json.** evaluate_first now prints, per context,
+the three reasons a shipping champion can owe an update - MOVED / ILLEGAL
+(the legality column, at last) / STALE STAMP - and one bottom line.
+
+**Today's run: `NEEDS UPDATE: none - all 24 shipping champions legal, stamped
+v44, scores unmoved. No wave is owed.`**
+
+⚠ The ceiling, stated in the tool's own docstring: it cannot prove a
+different pick-set wouldn't win - only a wave searches. It tells you whether
+a wave is OWED, never what it would find. That also frames the clean-re-cert
+question below: the quick check says nothing is owed on any provable ground;
+the residual doubt (fake options steering three waves' exploration) is
+search-shaped and only the 17 hours can retire it.
+
+⚠ FOUND BY THE NEW LEGALITY COLUMN: all 3 `champions_shard_e_gt_*` ground
+truths are game-ILLEGAL under the corrected prereq model (Weave/Vengeance/
+Wall of Force/Misdirection now need 2 pool others; the E builds predate the
+2026-07-29 fix and never re-converged). Non-shipping, nothing owed - but an
+E-verdict against them compares to a floor the game refuses. Joel's call:
+retire or re-converge.
+
+---
+
 # ✅ Resume point - 2026-08-10 (later), the audit-of-the-audit is DONE
 
 The block below this one ordered four things. Three are done, one is Joel's.
