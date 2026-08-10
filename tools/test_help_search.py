@@ -117,6 +117,29 @@ def main():
     ok('$("help-search-out").innerHTML = ""' in appjs,
        "closing EMPTIES the output (a hidden #tour-mock duplicate would shadow the real tour)")
 
+    # ⌨ SHORTCUT PARITY (Joel, 2026-08-10: help must state the combos, and the
+    # combos must be real). Every key in app.js's _KBD table is documented in
+    # the Keyboard-shortcuts topic, and the topic claims nothing the table
+    # (plus the separate Ctrl+Z handler) does not bind.
+    kbd_block = re.search(r"const _KBD = \{(.*?)\};", appjs, re.S)
+    ok(kbd_block is not None, "app.js carries the _KBD accelerator table")
+    bound = set(re.findall(r'"(\w)":', kbd_block.group(1)))
+    topic = next(t for t in data["topics"] if t["term"] == "Keyboard shortcuts")
+    text = topic["what"] + " " + topic["how"] + " " + (topic.get("example") or "")
+    undocumented = [k for k in bound
+                    if f"Ctrl+{k.upper()}" not in text
+                    and not (k.isdigit() and "Ctrl+1" in text)]
+    ok(not undocumented, f"every bound combo is documented ({sorted(bound)}; "
+       f"undocumented: {undocumented})")
+    claimed = set(re.findall(r"Ctrl\+(\w)", text))
+    phantom = [k for k in claimed
+               if k.lower() not in bound and k.upper() != "Z"
+               and not (k.isdigit() and k.lower() in bound | {"1", "2", "3", "4"})]
+    ok(not phantom, f"the topic claims no combo the code does not bind "
+       f"(claimed {sorted(claimed)}; phantom: {phantom})")
+    ok("ctrlKey" in appjs.split("const _KBD")[1][:900],
+       "the accelerator handler exists beside its table")
+
     print(f"help-search battery: {n}/{n} OK")
 
 

@@ -194,10 +194,10 @@
             <button id="entry-scratch" role="menuitem" type="button"><b>✨ Start a new character</b><i>Tell me how you want to play and I will pick the build</i></button>
             <button id="entry-respec" role="menuitem" type="button"><b>♻️ Build a new level 50</b><i>An end-game kit from scratch, no file needed</i></button>
             <div class="menu-sep" role="separator"></div>
-            <button id="import-btn" role="menuitem" type="button"><b>📋 Import a build</b><i>From Mids Reborn, or a character you play — I will show you how</i></button>
-            <button id="export-btn" role="menuitem" type="button"><b>⬇ Export to Mids Reborn</b><i>Write a .mbd you can open in Mids</i></button>
+            <button id="import-btn" role="menuitem" type="button"><b>📋 Import a build<span class="menu-kbd">Ctrl+I</span></b><i>From Mids Reborn, or a character you play — I will show you how</i></button>
+            <button id="export-btn" role="menuitem" type="button"><b>⬇ Export to Mids Reborn<span class="menu-kbd">Ctrl+E</span></b><i>Write a .mbd you can open in Mids</i></button>
             <div class="menu-sep" role="separator"></div>
-            <button id="save-btn" role="menuitem" type="button"><b>💾 Save this character</b><i>Plan and progress, so you can resume later</i></button>
+            <button id="save-btn" role="menuitem" type="button"><b>💾 Save this character<span class="menu-kbd">Ctrl+S</span></b><i>Plan and progress, so you can resume later</i></button>
             <button id="start-over-btn" role="menuitem" type="button"><b>↺ Switch character</b><i>Load another one, or start over</i></button>
           </div>
         </div>
@@ -260,7 +260,7 @@
         <div class="menu">
           <button class="menu-top" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="m-help">Help</button>
           <div class="menu-drop" id="m-help" role="menu" hidden>
-            <button id="help-search-btn" role="menuitem" type="button"><b>🔎 Search help</b><i>Type a term and get what it does, how, why, and where it fits</i></button>
+            <button id="help-search-btn" role="menuitem" type="button"><b>🔎 Search help<span class="menu-kbd">Ctrl+K</span></b><i>Type a term and get what it does, how, why, and where it fits</i></button>
             <button id="tour-btn" role="menuitem" type="button"><b>🧭 Guided tour</b><i>Pick a section and I will walk you through it</i></button>
             <a id="help-btn" role="menuitem" href="/static/help/HeroCompanion-Help.pdf" target="_blank" rel="noopener"><b>❓ User guide</b><i>The manual and release notes, as a PDF</i></a>
             <div class="menu-sep" role="separator"></div>
@@ -295,16 +295,16 @@
        across four of them on every recompute, and a change on one tab (an epic
        pick, an accolade) must reach the others. See tabbed-layout-spec.md §5. -->
   <nav class="tabbar" id="tabbar" role="tablist" aria-label="Sections">
-    <button class="tab" id="tab-btn-powers" role="tab" aria-controls="tab-powers"
+    <button class="tab" id="tab-btn-powers" title="Ctrl+1" role="tab" aria-controls="tab-powers"
       aria-selected="true" tabindex="0">Powers &amp; Slots</button>
-    <button class="tab" id="tab-btn-stats" role="tab" aria-controls="tab-stats"
+    <button class="tab" id="tab-btn-stats" title="Ctrl+2" role="tab" aria-controls="tab-stats"
       aria-selected="false" tabindex="-1">Stats</button>
     <!-- End Game tab RETIRED (Joel, 2026-08-04): its tools live on Powers &
          Slots now — accolades under the wall, the epic/incarnate plan in the
          side column, echoing the pre-tab rail he preferred. -->
-    <button class="tab" id="tab-btn-leveling" role="tab" aria-controls="tab-leveling"
+    <button class="tab" id="tab-btn-leveling" title="Ctrl+3" role="tab" aria-controls="tab-leveling"
       aria-selected="false" tabindex="-1">Leveling Guide</button>
-    <button class="tab" id="tab-btn-logging" role="tab" aria-controls="tab-logging"
+    <button class="tab" id="tab-btn-logging" title="Ctrl+4" role="tab" aria-controls="tab-logging"
       aria-selected="false" tabindex="-1">Logging</button>
   </nav>
 

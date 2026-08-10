@@ -1922,6 +1922,21 @@ carries it via push_statics).
   text fields keep native undo, the button immediate. The shortcut is also an
   ALIAS ("ctrl+z"), so typing the keystroke finds the topic. When authoring a
   topic for anything with a binding, grep for the keydown handler first.
+- **⌨ MENU ACCELERATORS EXIST NOW (Joel, same day: "every major usage on the
+  menus has a shortcut keyboard combo" — the census said Ctrl+Z was the ONLY
+  player-facing one, so the set was BUILT, not documented).** `_KBD` table in
+  app.js beside the Ctrl+Z handler: **Ctrl+S save · Ctrl+I import · Ctrl+E
+  export · Ctrl+K search help · Ctrl+1..4 tabs.** Rules baked in: every combo
+  presses the SAME control the menu clicks (a menu rewire carries the shortcut
+  for free); combos skip while typing; the tour owns the keys while a
+  driver-popover exists; Ctrl+letter is the PROVEN class in the frozen shell
+  (Ctrl+Z / Ctrl+Shift+L reach it, Escape does not) — never bind bare F-keys
+  or Escape. Hints ride the menu items (`.menu-kbd`) and tab tooltips.
+  ⚠ The battery enforces PARITY both ways: every `_KBD` key documented in the
+  "Keyboard shortcuts" help topic, and the topic may claim nothing the code
+  does not bind (test_help_search checks 21-24).
+  ⚠ New combos are page-proven; ONE press each in the frozen shell (Joel's
+  hands) is the final word, per the Escape lesson.
 - ⚠ help.md's stale "(v23 today)" model pin was removed in the same pass —
   versions belong in About, never hardcoded in prose.
 - The PDF stays: built from docs/help.md at release, linked in the same menu.

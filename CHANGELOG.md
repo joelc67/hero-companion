@@ -11,8 +11,13 @@
   concrete example and, where it helps, a picture taken straight from the
   guided tour's example build. Every page ends with "go work on it directly":
   one click leaves help and lands on the real surface or the exact tour step.
-  Opening help with nothing typed shows the four-step loop itself. 44 topics
+  Opening help with nothing typed shows the four-step loop itself. 45 topics
   at launch; the PDF user guide stays for long-form reading.
+- **Keyboard shortcuts for every major menu action.** Ctrl+S saves, Ctrl+I
+  imports, Ctrl+E exports to Mids, Ctrl+K opens Search help, Ctrl+Z undoes
+  (asking first, naming what it takes back), and Ctrl+1 through Ctrl+4 switch
+  tabs. The combos are shown on the menu items themselves, ignored while you
+  are typing, and documented in help — search "shortcuts".
 
 ## 0.12.36 — 2026-08-10 — The second accuracy pass
 

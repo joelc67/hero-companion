@@ -229,7 +229,7 @@
     "bring in a character"
    ],
    "stage": "updating",
-   "what": "One door, two routes: a character you actually play (from the game itself), or a planned build from Mids Reborn (.mbd).",
+   "what": "One door, two routes: a character you actually play (from the game itself), or a planned build from Mids Reborn (.mbd). Ctrl+I opens it from anywhere.",
    "how": "For a played character: type /build_save_file in game, then let the tool find your Homecoming saves itself - unusual install location? Tell it your game folder once and it remembers. For a planned build: load the .mbd file Mids saves. Either way the tool evaluates the build first and can optimize from there.",
    "why": "Most players arrive with a character, not a blank slate.",
    "where": "The front door of the updating workflow. Character menu, Import a build.",
@@ -259,7 +259,7 @@
    ],
    "stage": "updating",
    "what": "The community's standard build planner. Hero Companion imports and exports its .mbd files, both directions.",
-   "how": "The round trip is verified piece for piece: every power returns, every slot keeps its exact piece, and the numbers do not move. Export lives in the Character menu.",
+   "how": "The round trip is verified piece for piece: every power returns, every slot keeps its exact piece, and the numbers do not move. Export lives in the Character menu. Ctrl+E exports at any moment.",
    "why": "Your builds are yours. If you use this tool, you have every reason to keep using Mids too - the data it ships comes from the Mids team's database.",
    "where": "Both ends of the updating workflow: import at the start, export when you are done.",
    "go": [],
@@ -828,7 +828,7 @@
     "characters"
    ],
    "stage": "reference",
-   "what": "Characters save locally - plan, progress, locks, targets, everything - and auto-save runs in the background.",
+   "what": "Characters save locally - plan, progress, locks, targets, everything - and auto-save runs in the background. Ctrl+S saves at any moment.",
    "how": "Named characters update automatically; the Continue list shows each save's real state ('In progress, N of 24 picks'). Nothing ever leaves your machine.",
    "why": "Resume exactly where you left off, always.",
    "where": "Reference; the Character menu.",
@@ -851,6 +851,23 @@
      "Start at the workflow step"
     ]
    ]
+  },
+  {
+   "term": "Keyboard shortcuts",
+   "aliases": [
+    "shortcuts",
+    "hotkeys",
+    "keys",
+    "keyboard",
+    "accelerators"
+   ],
+   "stage": "reference",
+   "what": "Every major menu action has a key combo: Ctrl+S saves the character, Ctrl+I opens Import, Ctrl+E exports to Mids Reborn, Ctrl+K opens this help search, Ctrl+Z undoes the last edit, and Ctrl+1 through Ctrl+4 switch to Powers and Slots, Stats, the Leveling Guide and Logging.",
+   "how": "Each combo presses the same control the menu does, so they always agree. Combos are ignored while you are typing in a text box, and while the guided tour is running the tour owns the keys. Ctrl+Z asks before it acts, naming what it will take back; everything else acts immediately. The combos are shown on the menu items themselves, and hovering a tab shows its number.",
+   "why": "A menu you use daily should not need the mouse. The combos follow Windows conventions where one exists.",
+   "where": "Everywhere, all the time - they are the fast lane through the whole loop.",
+   "go": [],
+   "example": "Ctrl+I to import your character, Ctrl+2 to check a number on Stats, Ctrl+Z if a change was a mistake, Ctrl+S to save: a whole session without touching the menus."
   }
  ]
 }

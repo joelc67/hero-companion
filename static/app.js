@@ -6931,6 +6931,34 @@ document.addEventListener("keydown", async (e) => {
 });
 let _UNDO_ASKING = false;      // one prompt at a time, however fast the key repeats
 
+// ⌨ MENU ACCELERATORS (Joel, 2026-08-10: "every major usage on the menus has a
+// shortcut keyboard combo"). Census before this existed: Ctrl+Z was the ONLY
+// player-facing global combo. Ctrl+<letter> is the proven class in the frozen
+// shell (Ctrl+Z and Ctrl+Shift+L both reach it; Escape does not). Every action
+// routes through the SAME control the menu clicks — never a second copy of a
+// behavior — so a menu rewire carries the shortcut with it for free.
+const _KBD = {
+  "s": () => $("save-btn") && $("save-btn").click(),        // Save this character
+  "i": () => $("import-btn") && $("import-btn").click(),    // Import a build
+  "e": () => $("export-btn") && $("export-btn").click(),    // Export to Mids
+  "k": () => typeof openHelpSearch === "function" && openHelpSearch(),
+  "1": () => typeof activateTab === "function" && activateTab("powers"),
+  "2": () => typeof activateTab === "function" && activateTab("stats"),
+  "3": () => typeof activateTab === "function" && activateTab("leveling"),
+  "4": () => typeof activateTab === "function" && activateTab("logging"),
+};
+document.addEventListener("keydown", (e) => {
+  if (!(e.ctrlKey || e.metaKey) || e.shiftKey || e.altKey) return;
+  const fn = _KBD[e.key.toLowerCase()];
+  if (!fn) return;
+  const t = e.target;
+  if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+  if (document.querySelector(".driver-popover")) return;    // the tour owns the keys
+  e.preventDefault();
+  if (typeof closeMenus === "function") closeMenus();
+  fn();
+});
+
 // Patron Power Pools (Mace/Mu/Soul/Leviathan Mastery) must be unlocked by completing a Patron
 // arc in-game, unlike Ancillary pools — flag the epic selector when one is chosen.
 function isPatronEpic(fullName) {
