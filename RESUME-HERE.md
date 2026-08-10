@@ -1,3 +1,59 @@
+# Resume point - 2026-08-10, THE ROSTER IS FULLY v44 - both waves merged
+
+## STATE
+HEAD `d4183fc5`, pushed. Nothing running. Data **2026.1.1242**, **model v44**.
+Roster **24 contexts · 24/24 SERVED · 24/24 legal · all canonical fresh**.
+⚠⚠ **`evaluate_first` now reports 52 unaffected, 0 MOVED, 0 failed.** Every
+context has been re-converged under v44 and every stored canonical equals a
+fresh evaluation. **The v40-v44 model bump is fully absorbed. No re-cert owed.**
+
+## THE TWO WAVES
+**Wave 1** (19 contexts, 880.6 min, 6 workers): 8 supersede / 11 keep, merged
+`306370bb`. **Wave 2** (5 contexts, 142.4 min, 5 workers): 2 supersede / 3 keep,
+merged `d4183fc5`. All 11 workers rc=0 across both; every certificate converged
+with no budget truncation. 10 champions replaced in total.
+
+### ⚠⚠ THE SCOPING LESSON, which is the durable part
+Wave 1 was scoped by **"does this build HOLD a power carrying a new row?"** and
+got 19. `evaluate_first` afterwards showed **16 moved, five of them excluded**.
+Holding a patched power is SUFFICIENT, NOT NECESSARY: v42's RechargeTime fix
+reaches **timed PET uptime** (hence the Mastermind and the farm build) and
+scenario channels move a score with no patched power picked at all.
+**THE RIGHT SCOPE TEST IS AN EVALUATE-FIRST PASS BEFORE THE WAVE - re-score
+every context under the new model and take the movers.** The tool exists for
+exactly this and I ran it afterwards instead of first, costing a second wave.
+
+### ⚠ SPINES/FIERY_AURA - do not quote the old farm number
+The shipped farm champion fell **375.9 -> 227.6** under v40-v44; the re-converge
+recovers it only to **283.4**. Not a wave failure - the new terms price that
+build lower than v38 did and a fresh search cannot reach the old figure. Any
+public farm claim resting on 375.9 is stale.
+
+### What KEPT is as informative as what moved
+The v43 and v44 targets ALL kept: Dominator -385.1, Stalker Rad_Melee -344.3,
+Scrapper Broad_Sword -198.3. The new terms are more accurate but did not produce
+better builds. Supersedes again CONCENTRATE in Kheldian form-locked contexts.
+
+### Verification that is NOT in the tools
+⚠ The verdict log never mentions legality. Both times I ran `_picks_legal` by
+hand over challengers AND standing incumbents: **zero illegal**. Silence in a
+log is not proof, and this is the exact failure that shipped 8 unbuildable
+champions in 0.12.30. **Keep doing this by hand until the gate prints it.**
+
+## HOUSEKEEPING DONE
+31 stale shards retired (`.retired_2026-08-09`), both waves' shards retired at
+merge (`.merged_2026-08-09`); only the 3 `e_gt` ground truths remain in the
+`certified_union` glob. Wave-1 verdicts preserved as
+`recert_verdicts_wave1.json.kept_2026-08-09`.
+
+## STILL OPEN (all Joel's, none blocking)
+`mez_in` · the stack-meter scenario constant · a spawn RANK MIX (would let the
+crits take the 0.10 branch instead of the 0.05 floor) · a Brute farm log with 3+
+single-target attacks for Fury · Fiery Embrace's Fire-typed-vs-global question
+(zero champion exposure, so it blocks nothing).
+
+---
+
 # ⏳ FOLLOW-UP WAVE RUNNING - 2026-08-09 21:29 ET, the 5 the first wave missed
 
 ## IF THE SESSION DIED, READ THIS FIRST
