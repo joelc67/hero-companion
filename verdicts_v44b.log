@@ -1,0 +1,19 @@
+Loading game data...
+  15 playable archetypes, 3654 powersets of powers, 227 enhancement sets.
+  AI: Messages API fast-path (oauth), model=claude-opus-4-8
+verdict gate under model 44 (fresh-process canonical vs canonical, EPS 0.05)
+
+  SUPERSEDE  incumbent     227.6 vs recert     283.4 (Δ    +55.9)  Spines/Fiery_Aura
+      run: 28 sweeps · 38063 solves (~1359/sweep) · 6 restarts · converged
+  KEEP       incumbent    1773.2 vs recert    1618.4 (Δ   -154.8)  Plant_Control/Poison
+      run: 29 sweeps · 42076 solves (~1451/sweep) · 6 restarts · converged
+  SUPERSEDE  incumbent    1739.0 vs recert    1971.2 (Δ   +232.2)  Radiation_Emission/Sonic_Attack
+      run: 33 sweeps · 53286 solves (~1615/sweep) · 6 restarts · converged
+  KEEP       incumbent    1330.7 vs recert    1007.0 (Δ   -323.7)  Demon_Summoning/Radiation_Emission
+      run: 29 sweeps · 36979 solves (~1275/sweep) · 6 restarts · converged
+  KEEP       incumbent    1361.7 vs recert    1281.2 (Δ    -80.4)  Umbral_Blast/Umbral_Aura
+      run: 40 sweeps · 64667 solves (~1617/sweep) · 6 restarts · converged
+
+=== VERDICTS: 2 supersede, 3 keep, of 5 ===
+written: C:\Users\joelc\code\coh-builder\recert_verdicts.json  (2026-08-09 23:53)
+TABLE GOES TO JOEL BEFORE champions.json COMMITS (standing order).

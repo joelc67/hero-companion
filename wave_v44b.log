@@ -1,0 +1,24 @@
+===== v44 follow-up wave launch Sun 08/09/2026 21:29:40.84 ===== 
+PREREQ GATE OK â€” 477 of 477 agree; 0 known disagreement(s), none new; 0 dispositioned. Safe to certify.
+certified sources: champions.json (24), champions_shard_e_gt_p0.json (10), champions_shard_e_gt_p1.json (9), champions_shard_e_gt_p2.json (9)
+5 context(s) across 5 worker(s), 6 sweep threads each (cpu=32):
+  worker 0: 1 context(s) -> champions_shard_v44b_p0.json (log champions_shard_v44b_p0.log)
+    Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk
+  worker 1: 1 context(s) -> champions_shard_v44b_p1.json (log champions_shard_v44b_p1.log)
+    Class_Controller|Controller_Control.Plant_Control|Controller_Buff.Poison|itrial
+  worker 2: 1 context(s) -> champions_shard_v44b_p2.json (log champions_shard_v44b_p2.log)
+    Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Sonic_Attack|itrial
+  worker 3: 1 context(s) -> champions_shard_v44b_p3.json (log champions_shard_v44b_p3.log)
+    Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Radiation_Emission|itrial
+  worker 4: 1 context(s) -> champions_shard_v44b_p4.json (log champions_shard_v44b_p4.log)
+    Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial
+[  25.6m] worker 0 exited rc=0
+[  26.5m] worker 1 exited rc=0
+[  27.5m] worker 2 exited rc=0
+[  27.5m] worker 3 exited rc=0
+[ 142.4m] worker 4 exited rc=0
+
+5 of 5 workers clean, 142.4 min total
+merge when ready:
+  C:\Users\joelc\AppData\Local\Programs\Python\Python313\python.exe C:\Users\joelc\code\coh-builder\tools\merge_champion_shards.py --replace C:\Users\joelc\code\coh-builder\champions_shard_v44b_p0.json C:\Users\joelc\code\coh-builder\champions_shard_v44b_p1.json C:\Users\joelc\code\coh-builder\champions_shard_v44b_p2.json C:\Users\joelc\code\coh-builder\champions_shard_v44b_p3.json C:\Users\joelc\code\coh-builder\champions_shard_v44b_p4.json
+===== wave exited 0 at Sun 08/09/2026 23:52:04.67 ===== 
