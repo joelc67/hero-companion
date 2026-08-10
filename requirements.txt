@@ -1,5 +1,5 @@
 flask==2.3.3
-requests==2.31.0
+requests==2.33.0
 Werkzeug==2.3.7
 pulp==3.3.2          # ILP constraint solver (server/solver.py); bundles CBC
 Pillow==12.2.0  # Companion Lite only (pystray icon drawing) + dev-side art extraction tools
