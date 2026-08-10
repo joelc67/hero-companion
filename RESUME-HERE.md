@@ -8,9 +8,10 @@ Powers & Slots · Boomerang Slice restored (notes credit Maelwys + correct
 0.12.36's claim) · About links in ink · ponytail cleanup. Data + model
 unchanged, no score moved. Liveness baseline rolled to v0.12.37 and the four
 Boomerang dispositions emptied (stale by design once the release carried the
-records; check reads goal-state clean, 10,984 records). ⚠ Forum: not
-announced; Joel's Boomerang reply already promised "the next update", so a
-one-line follow-up covers it — his hand.
+records; check reads goal-state clean, 10,984 records). ✅ **ANNOUNCED on
+topic 64761 (Joel posted the 0.12.37 reply, 2026-08-10)** — leads with the
+Boomerang restoration, closing the "next update" promise, credits Maelwys.
+No forum watch item is open; next trigger is any new reply on the thread.
 
 ---
 
