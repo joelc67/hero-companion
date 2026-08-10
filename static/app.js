@@ -391,12 +391,14 @@ window.loadSave = async function (id) {
   _lastSavedSnapshot = buildSnapshot();   // just loaded — already clean
   hideEntry();
   recompute();
-  // resuming a 1-50 character leads with the road; and if the REMEMBERED tab is
-  // already Leveling Guide (launch reopens both the character and the tab), the
-  // road must be rebuilt for THIS character — the tab used to sit on its empty
-  // placeholder text with a level-50 character loaded (Joel, 2026-08-03).
-  if (!maybeAutoOpenJourney() && !$("tab-leveling").hidden
-      && (build.powers || []).length) openJourneyView();
+  // ⚠ RESUME NO LONGER AUTO-OPENS THE ROAD (Joel, 2026-08-10: "each time my
+  // tool loads, its starts on the leveling guide. Can it default to the first
+  // tab?"). Launch lands on Powers & Slots, always. The road still greets a
+  // 1-50 character ONCE, at creation (the wizard-exit call sites) — that was
+  // the greet's whole purpose. If the Leveling tab is already open when a
+  // character is loaded mid-session, the road is rebuilt for THIS character
+  // (the 2026-08-03 empty-placeholder fix).
+  if (!$("tab-leveling").hidden && (build.powers || []).length) openJourneyView();
 };
 
 window.deleteSave = async function (id) {
@@ -7918,7 +7920,7 @@ function activateTab(key, moveFocus) {
     document.body.classList.toggle("tab-" + k, on);
     if (on && moveFocus) btn.focus();
   }
-  try { localStorage.setItem("cohTab", key); } catch (e) {}
+  // (cohTab is no longer written: launch always opens Powers & Slots)
   // ⚠ The road is built from THIS character, so opening its tab has to build it.
   // Clicking the tab directly used to show an empty panel, because only the
   // header pill ever called openJourneyView. The guard stops the recursion:
@@ -7953,9 +7955,9 @@ function initTabs() {
     e.preventDefault();
     activateTab(_TABS[(to + _TABS.length) % _TABS.length], true);
   });
-  let saved = null;
-  try { saved = localStorage.getItem("cohTab"); } catch (e) {}
-  activateTab(saved || "powers");
+  // ⚠ ALWAYS Powers & Slots at launch (Joel, 2026-08-10) — the remembered-tab
+  // restore is retired; the cohTab write in activateTab went with it.
+  activateTab("powers");
 }
 
 // ── FIT BY ZOOM, NOT BY REARRANGING (Joel, 2026-08-03) ──────────────────────

@@ -3519,6 +3519,8 @@ body.layout-mode .lay-target .lay-target .lay-target .lay-target::before { top: 
   color: inherit; cursor: pointer; }
 .lay-hud-btns button:hover { background: var(--accent); color: #111; }
 
+/* ── end layout mode ── rules below are ordinary app CSS, not the design tool */
+
 /* 🔎 Searchable help (2026-08-10). Follows the modal-body pattern exactly:
    .about-body already scrolls inside the 80vh modal cap, so the help body does
    the same. Text at 14px per the tool-lede rule - .small stays for chips. */

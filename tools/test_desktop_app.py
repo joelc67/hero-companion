@@ -22,7 +22,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 134          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 138          # coverage denominator — hard-fail if a check silently skips
+#                        134 -> 138, 2026-08-10: the launch-latency pins (lazy
+#                        server import, splash window, honest spinner, hook wire)
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
 #                        living inside the powers tab after the tab retirement;
 #                        82 -> 88, 2026-08-05: portable-vs-installed detection
@@ -121,9 +123,25 @@ def main():
           and 'ROOT, "build_commit.txt"' in _srv,
           "spec stamps it at build time, server.py reads it when frozen")
 
+    # ── LAUNCH LATENCY (Joel, 2026-08-10): the window opens INSTANTLY on a
+    # splash while the server loads on its own thread. Pin the structure: no
+    # eager top-level import, the splash exists, the window opens ON it, and
+    # a navigator swaps in the app when the port answers.
+    check("server import is LAZY - no top-level 'import server' in run_app",
+          "\nimport server" not in run_app and "_load_server" in run_app,
+          "an eager import made the window the LAST thing to exist (3.2s stare)")
+    check("the window opens on the splash, not on the not-yet-serving URL",
+          "html=_SPLASH_HTML" in run_app and "_navigate_when_ready" in run_app)
+    check("the splash is honest - a spinner, never a fake progress bar",
+          "_SPLASH_HTML" in run_app and "progress" not in run_app.split(
+              '_SPLASH_HTML = """')[1].split('"""')[0].lower())
+    check("the shutdown hook is wired the moment the lazy server exists",
+          "_wire_shutdown_hook" in run_app and "_SERVER_READY.wait()" in run_app)
+
     # The fallback is the whole reason the flag is safe: no pywebview / no
     # WebView2 must return False, not take the app down.
     import run_app as ra
+    ra._load_server()   # server is LAZY since the latency fix; probe needs it real
     saved, ra.server.SHUTDOWN_HOOK = ra.server.SHUTDOWN_HOOK, None
     real, sys.modules["webview"] = sys.modules.get("webview"), None   # import -> ImportError
     try:
@@ -168,7 +186,8 @@ def main():
 
     # ── 4. AUTOSTART LIVES IN THE UI ────────────────────────────────────────
     check("run_app hands the SETTER to the server (read-only would be useless)",
-          "server.AUTOSTART_SET_FN = _set_autostart" in run_app)
+          "AUTOSTART_SET_FN = _set_autostart" in run_app,
+          "wired inside _serve since the lazy-import latency fix")
     check("the About/Settings dialog renders the toggle when supported",
           "setAutostart(this.checked)" in app_js and "META.autostart || {}" in app_js)
     check("the checkbox re-renders from the ANSWER, not the click",
@@ -308,6 +327,11 @@ def main():
     # layout, and leaving the mode would no longer restore it. Rules that only
     # target the tool's own furniture (#lay-hud, .lay-*) are fine unscoped.
     _laycss = css[css.find("/* ── 🧩 LAYOUT MODE"):]
+    # the section used to run to end-of-file; later features append their own CSS
+    # below it, so the slice now ends at the explicit end marker
+    _layend = _laycss.find("/* ── end layout mode")
+    if _layend > 0:
+        _laycss = _laycss[:_layend]
     _laysel = [ln.split("{")[0].strip() for ln in _laycss.splitlines() if "{" in ln
                and not ln.strip().startswith(("/*", "*"))]
     check("...and it is scoped: no layout-mode rule touches an app selector unscoped",

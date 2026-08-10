@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **The window opens instantly.** The app used to load its whole game database
+  before any window could exist, so double-clicking meant three-plus seconds of
+  nothing. The window now appears immediately with a loading screen and switches
+  to the app the moment the engine is ready. No fake progress bar; an honest
+  spinner and one line saying what is happening.
+- **The app opens on Powers & Slots, every time.** It used to reopen on the
+  Leveling Guide for leveling characters. The road still introduces itself once,
+  when a new 1-50 character is created; launching lands on the first tab.
 - **Boomerang Slice is back, and it was never gone from the game.** The
   0.12.36 notes retracted it as not live; that was wrong for this one power.
   It has been live since the February 10 update (Issue 28 Page 3), as Maelwys

@@ -34,7 +34,44 @@ if _WINDOWED:
     _log = open(os.path.join(_logdir, "app.log"), "a", encoding="utf-8", buffering=1)
     sys.stdout = sys.stderr = _log
 
-import server  # noqa: E402  — the Flask app module; loads the game data on import
+# ⚠ LAZY ON PURPOSE (2026-08-10, the launch-latency fix). Importing server
+# loads the whole game database (~2-3s frozen), and it used to happen before
+# any window code could run — the user double-clicked and stared at nothing
+# for the whole load. The import now happens on the SERVER thread; the window
+# opens immediately on a splash and navigates the moment the port answers.
+# `server` is published here once loaded for the few late readers below, and
+# _SERVER_READY gates anything that must not run before it exists.
+server = None
+_SERVER_READY = threading.Event()
+
+
+def _load_server():
+    global server
+    import server as _s                      # the slow part: the game database
+    server = _s
+    _SERVER_READY.set()
+    return _s
+
+
+# The splash the window opens on while the engine loads. Honest indeterminate
+# spinner — a progress BAR would be fake progress, the banned class. Colors
+# match style.css --bg/--ink/--accent so there is no flash when the app lands.
+_SPLASH_HTML = """<!doctype html><html><head><meta charset="utf-8"><style>
+html,body{height:100%;margin:0;background:#11151c;color:#e6edf3;
+font-family:'Segoe UI',system-ui,sans-serif;display:flex;align-items:center;justify-content:center}
+.wrap{text-align:center}
+h1{font-size:28px;letter-spacing:.12em;margin:0 0 6px;font-weight:800}
+h1 b{color:#4da3ff}
+p{margin:14px 0 0;color:#9fb0c3;font-size:13px}
+.spin{width:26px;height:26px;margin:18px auto 0;border:3px solid #27395c;
+border-top-color:#4da3ff;border-radius:50%;animation:r .9s linear infinite}
+@keyframes r{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.spin{animation:none;border-top-color:#27395c}}
+</style></head><body><div class="wrap">
+<h1>HERO <b>COMPANION</b></h1>
+<div class="spin"></div>
+<p>Reading the game data and starting the engine…</p>
+</div></body></html>"""
 
 
 # ── SINGLE INSTANCE (field report: THREE copies running at once) ─────────────
@@ -202,7 +239,16 @@ def _run_window(port):
     # retires this copy through the same hook the tray used. There is no icon to
     # remove, so the exit is immediate — the tray's "let the message loop delete the
     # icon first" delay was solving a problem that no longer exists.
-    server.SHUTDOWN_HOOK = _quit
+    # ⚠ server loads LAZILY now (the launch-latency fix): wire the hook the
+    # moment it exists. Safe because /app/shutdown can only arrive after the
+    # server is serving, which is after this thread has run.
+    _hook_armed = {"on": True}     # the failure path below disarms it, so a
+                                   # dead window can never leave a hook behind
+    def _wire_shutdown_hook():
+        _SERVER_READY.wait()
+        if _hook_armed["on"]:
+            server.SHUTDOWN_HOOK = _quit
+    threading.Thread(target=_wire_shutdown_hook, daemon=True).start()
 
     # ⚠ The window reference lives HERE, in a closure — NEVER as an attribute on
     # the js_api object. pywebview walks the api object to build the JS bridge,
@@ -299,7 +345,11 @@ def _run_window(port):
         print(f"window: {win_w}x{win_h}")
         icon = os.path.join(BASE, "assets", "HeroCompanion.ico")
         win = webview.create_window(
-            "Hero Companion", f"http://127.0.0.1:{port}",
+            # ⚠ The window opens on the SPLASH, instantly — the engine is still
+            # loading on the server thread. _navigate_when_ready swaps in the
+            # real app the moment the port answers (the latency fix, 2026-08-10:
+            # the window used to be the LAST thing to exist).
+            "Hero Companion", html=_SPLASH_HTML,
             # Mids Reborn opens at roughly 1075x800 and that is the size this
             # tool is judged against (Joel, 2026-08-03: "a dedicated size similar
             # to the size that mids reborn has by default"). A little taller,
@@ -310,6 +360,21 @@ def _run_window(port):
             text_select=False, zoomable=False, js_api=_api,
             background_color="#11151c")   # style.css --bg: no white browser flash on open
         _winref["w"] = win                # save_file's dialog owner (closure, not api attr)
+
+        # Swap the splash for the app the moment the server answers its port.
+        # A socket probe, not an HTTP fetch: cheapest thing that proves ready.
+        def _navigate_when_ready():
+            import socket
+            import time as _t
+            deadline = _t.time() + 90
+            while _t.time() < deadline:
+                try:
+                    socket.create_connection(("127.0.0.1", port), 0.3).close()
+                    break
+                except OSError:
+                    _t.sleep(0.15)
+            win.load_url(f"http://127.0.0.1:{port}")
+        threading.Thread(target=_navigate_when_ready, daemon=True).start()
         # ⚠ CLOSING IS NOT A LICENCE TO THROW WORK AWAY (Joel, 2026-08-03). The
         # window quits the app, so an unnamed character with powers picked would
         # vanish on the X. The page owns the question — it knows WHAT is unsaved
@@ -346,7 +411,9 @@ def _run_window(port):
                       icon=icon if os.path.exists(icon) else None)
     except Exception as e:  # noqa: BLE001
         print(f"native window failed to start ({e}); falling back to browser + tray")
-        server.SHUTDOWN_HOOK = None
+        _hook_armed["on"] = False            # the waiter must not wire a dead window
+        if server is not None:               # lazy: may not have loaded yet
+            server.SHUTDOWN_HOOK = None
         return False
     _quit()
     return True
@@ -370,26 +437,31 @@ def main():
             if os.environ.get("HC_NO_BROWSER") != "1":
                 webbrowser.open(f"http://localhost:{existing}")
             return
-    if _FROZEN:
-        # /meta answers autostart state through the live registry read — the
-        # setting shown anywhere can never disagree with registry reality.
-        server.AUTOSTART_STATE_FN = _autostart_enabled
-        # …and the setter, so the toggle can live in the app UI. With no tray menu
-        # the UI is the ONLY place this choice exists (Joel, 2026-08-02).
-        server.AUTOSTART_SET_FN = _set_autostart
     want = int(os.environ.get("PORT", "5000"))
     port = _pick_port(want)
-    print(f"Hero Companion v{server.APP_VERSION} — model v{__import__('first_principles').MODEL_VERSION}"
-          f" — data {server.DB_VERSION}")
     if port != want:
         print(f"Port {want} is busy (another copy running?) — using {port} instead.")
     print(f"Running at http://localhost:{port}")
 
     if _SINGLE:
         _write_lock(port)
-    threading.Thread(
-        target=lambda: server.app.run(host="127.0.0.1", port=port, debug=False),
-        daemon=True).start()
+
+    # The server thread owns the slow part now: it imports server (the game
+    # database), wires the frozen-only registry hooks, and serves. The window
+    # below opens on its splash while this loads (the launch-latency fix).
+    def _serve():
+        s = _load_server()
+        if _FROZEN:
+            # /meta answers autostart state through the live registry read — the
+            # setting shown anywhere can never disagree with registry reality.
+            s.AUTOSTART_STATE_FN = _autostart_enabled
+            # …and the setter, so the toggle can live in the app UI. With no tray
+            # menu the UI is the ONLY place this choice exists (Joel, 2026-08-02).
+            s.AUTOSTART_SET_FN = _set_autostart
+        print(f"Hero Companion v{s.APP_VERSION} — model "
+              f"v{__import__('first_principles').MODEL_VERSION} — data {s.DB_VERSION}")
+        s.app.run(host="127.0.0.1", port=port, debug=False)
+    threading.Thread(target=_serve, daemon=True).start()
     # The window owns the whole lifecycle: it blocks here, and closing it quits.
     # Everything below is the fallback for HC_WINDOW=0 or a machine with no
     # WebView2 — a browser tab, exactly as the app worked before.
@@ -405,7 +477,7 @@ def main():
                 import time
                 deadline = time.time() + 30
                 while time.time() < deadline:
-                    if server.SEEN_REQUEST:
+                    if server is not None and server.SEEN_REQUEST:
                         print("after-update: the existing tab reconnected — not opening a new one")
                         return
                     time.sleep(1)
@@ -413,7 +485,14 @@ def main():
                 webbrowser.open(f"http://localhost:{port}")
             threading.Thread(target=_open_if_no_tab, daemon=True).start()
         else:
-            threading.Timer(1.0, lambda: webbrowser.open(f"http://localhost:{port}")).start()
+            # lazy server: wait for the load instead of a fixed 1s, or the tab
+            # opens on a connection-refused page while the database still reads
+            def _open_when_ready():
+                _SERVER_READY.wait(60)
+                import time as _t
+                _t.sleep(0.5)                 # give app.run a beat to bind
+                webbrowser.open(f"http://localhost:{port}")
+            threading.Thread(target=_open_when_ready, daemon=True).start()
 
     # ⚠ NO TRAY HERE ANY MORE. In the browser fallback the app has no icon and no
     # menu, so a windowed (console-less) build would serve forever with nothing to
