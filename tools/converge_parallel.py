@@ -149,6 +149,23 @@ def main():
                 "PREREQ GATE FAILED — no wave starts on a rule the game "
                 "disputes. Settle it game-first, or pass --skip-reality-check "
                 "and say why.")
+        # LIVENESS GATE (2026-08-10): 34 client-only records reached the solver's
+        # option space for three waves (~17.3h) because no check asked whether
+        # the client's content is LIVE. No wave starts holding content the last
+        # shipped Mids-derived snapshot lacks.
+        gate = subprocess.run(
+            [sys.executable, os.path.join(ROOT, "tools",
+                                          "reality_check_liveness.py"), "--gate"],
+            capture_output=True, text=True)
+        print(gate.stdout.strip().splitlines()[0] if gate.stdout.strip()
+              else "(liveness gate produced no output)")
+        if gate.returncode:
+            print(gate.stdout)
+            raise SystemExit(
+                "LIVENESS GATE FAILED — the data holds content the shipped "
+                "snapshot lacks; the bins prove mechanics, not liveness. "
+                "Disposition it with evidence or remove it, or pass "
+                "--skip-reality-check and say why.")
 
     certified, srcs = certified_union()
     print("certified sources: " + ", ".join(f"{k} ({v})" for k, v in srcs.items()))

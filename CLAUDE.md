@@ -206,6 +206,15 @@ Joel's session context is a limited resource. Do not spend it on prose.
   the solver's option space for all three re-cert waves (~17.3 hours of
   compute). Every green check I had compared the client against our data; not
   one asked whether the client's content is in the game.
+  ✅ **THE HOLE IS CLOSED (2026-08-10): `tools/reality_check_liveness.py`** —
+  current powers.json record names + powersets.json offered sets vs the SAME
+  files at the highest release tag; any diff hard-fails both ways unless named
+  in `tools/liveness_dispositions.json` with its evidence (empty = the goal
+  state, and it is empty: 10,980 records / 458 offered sets, zero drift vs
+  v0.12.35). Gated into `converge_parallel` beside the prereq gate, proven by
+  aborting a launch on a sabotaged disposition; battery `tools/test_liveness.py`
+  (6 checks, 4 sabotages). Real new content rides PATCH-WATCH: the release that
+  ships it moves the baseline tag forward automatically.
 - **⚠ A PICK THE DATA DOES NOT HAVE IS NOT LEGAL (same day, same incident).**
   `_picks_legal` did `POWER_BY_FULL.get(fn) or {}` everywhere, so an unknown
   power yielded `{}` and passed every rule — two champions naming deleted powers

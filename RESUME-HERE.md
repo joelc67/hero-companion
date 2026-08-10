@@ -1,4 +1,57 @@
-# ⛔ READ THIS BEFORE TRUSTING ANYTHING FROM 2026-08-08..10
+# ✅ Resume point - 2026-08-10 (later), the audit-of-the-audit is DONE
+
+The block below this one ordered four things. Three are done, one is Joel's.
+
+## 1. THE AUDIT HOLE IS CLOSED
+`tools/reality_check_liveness.py`: current powers.json record names + offered
+powersets vs the SAME files at the highest release tag (v0.12.35 today). Any
+diff hard-fails BOTH ways unless dispositioned with evidence in
+`tools/liveness_dispositions.json` - which is EMPTY, the goal state: 10,980
+records / 458 offered sets, zero drift vs shipped. Wired into
+`converge_parallel` beside the prereq gate (proven: a sabotaged disposition
+aborts the launch before any worker spawns). Battery `tools/test_liveness.py`,
+6 checks / 4 sabotages. Real new content arrives via PATCH-WATCH and the
+release that ships it moves the baseline tag forward by existing.
+
+## 2. ALL SIX MODEL VERSIONS VERIFIED INDEPENDENTLY
+Fresh probes through the real routes (test_client /build/calculate + fp), not
+the batteries. Every falsification check passed, most to the exact digit:
+- **v39** damage_buff 0 -> 0.1111, ST DPS 14.4 -> 16.0 (exact)
+- **v40** Wet Ice alone reads slow_resist 110% in bonus_extras
+- **v41** Agile 6.92 exact; the table's "48.44" is the FIVE-power subset
+  (6.92x3 + 13.84x2); all nine SR powers sum 86.51 (adds Evasion 13.84,
+  Elude 6.23 duty-cycled, Practiced Brawler 18.0 - all client-derived rows)
+- **v42** Particle Shielding absorb 401.6 HP via bonus_extras only (top level
+  clean); 3 recharge IOs move Rage 0.40 -> 0.7963
+- **v43** floor 0.225, 0.5 at +122% and capped, Controller reads 0
+- **v44** 251 rows / 245 powers, Scrapper_/Stalker_ only, and **251/251 equal
+  a fresh derivation from the client** (patch_power_crits.crit_rows re-run).
+  ⚠ Two glosses in the old table were imprecise, the data is right: the floor
+  is per DAMAGE TYPE from the client's own stated chances (Eviscerate/Head
+  Splitter state a FLAT 0.15, Storm Kick's minion branch states 0.10 - taking
+  those IS the floor rule), and "crit row == base row" holds as the SUM of the
+  base components (Claws Slash: two 0.66 rows, crit 1.32), not per row.
+
+## 3. RELEASE PREP BACKED OUT
+VERSION, both smoke tools and the help PDF are byte-identical to v0.12.35
+again (checked with `git diff v0.12.35 --stat`, empty). The CHANGELOG keeps
+its UNRELEASED 0.12.36 entry with the RETRACTED section - that is normal
+staging. The release procedure re-bumps all four mechanically when Joel says
+cut.
+
+## 4. STILL JOEL'S, unchanged
+- **The clean re-cert.** All three waves ran with fake content in the option
+  space. The 22 uncontaminated champions are legal and correctly scored but
+  not provably optimal in the true space; the 2 contaminated ones were
+  re-converged clean (v44c). ~17 hours to know for sure.
+- Cutting 0.12.36 (carries the retraction; champions.json bundles, so the
+  re-cert decision naturally comes first).
+- The standing scenario asks: `mez_in`, the stack-meter constant, a spawn
+  rank mix, the third clean Fury attack log.
+
+---
+
+# ⛔ (RESOLVED 2026-08-10, see above) READ THIS BEFORE TRUSTING ANYTHING FROM 2026-08-08..10
 
 **Assume this session's work is unverified.** It landed six model versions and
 a full re-certification, and it also added 34 records of content that IS NOT IN
