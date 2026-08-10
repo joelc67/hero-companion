@@ -1,4 +1,40 @@
-# ⚡ 2026-08-10 (latest): the quick needs-update check exists and reads CLEAN
+# 🚀 2026-08-10: v0.12.36 "The second accuracy pass" SHIPPED
+
+Joel: "Since nothing needs an update, skip the clean re-cert and cut 0.12.36."
+The clean-re-cert question is CLOSED (skipped on the quick check's verdict,
+his ruling); the release is out.
+
+- Tag `v0.12.36`, stamp `0556ff8`, both assets signed CN=Joel Andrew Chambers,
+  API-verified. Model v44, data 2026.1.1242 (re-checked current at release:
+  the game's newest patch is still July 7; i28p4 unreleased).
+- Full procedure ran clean: data currency -> VERSION/pins/PDF (restored from
+  the prep commit, so the back-out cost nothing) -> CHANGELOG dated ->
+  build (stamp = release commit) -> frozen smoke PASS + gold 24/24 SERVED ->
+  sign exe -> ISCC -> sign installer -> zip -> push -> release -> installed
+  copy mirrored + relaunched, /meta reads 0.12.36 model 44.
+- The release notes state the retraction and the new liveness guard publicly.
+- Liveness baseline auto-rolled to v0.12.36 (fetch --tags; zero drift).
+- ⚠ NOT announced on topic 64761. ⚠ FP/whitelist submissions per
+  docs/signing-runbook.md are Joel's hand, as every release.
+
+## Field-report intake swept same day (Joel: "have we imported corrections?")
+YES, all of them - verified against the inbox and the thread, not memory:
+the Aug 2 Web3Forms D:\CoH\Homecoming report was fixed 2026-08-03 (shipped
+0.12.31; the accounts folder WAS found, the message lied - see app.js
+renderIngameFound); BasiliskXVIII's Aug 7 pair shipped in 0.12.35; and the
+Soul Drain claim closed ITSELF - **Maelwys and Jacke both posted on Aug 8
+that Spirit Drain is Dark Mastery and Soul Mastery keeps Soul Drain**,
+exactly what our 2026-08-07 game-first check pinned. No data change owed.
+⚠ Joel's Aug 7 reply conceded "I think you are right... a fresh pull of the
+client data is the next thing I do" - that concession is now known wrong and
+publicly corrected by two other posters; a short reply agreeing with them
+(optionally carrying the 0.12.36 announcement) closes it. His hand.
+⚠ Open feature ask from Basilisk: the fine-tune words box cannot request a
+specific SET by name (lock-and-resolve is the route today). On the list.
+
+---
+
+# ⚡ 2026-08-10 (was latest): the quick needs-update check exists and reads CLEAN
 
 Joel's order: a minutes-scale answer to "do any champions actually need an
 update?" instead of a 17-hour wave. **It is `py tools\evaluate_first.py

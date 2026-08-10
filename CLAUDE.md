@@ -2347,9 +2347,20 @@ strict-dominance experiment.
 
 ### Carried forward (2026-07-27 night)
 
-- **Latest release: 🚀 v0.12.35 "Every set is clickable"** (2026-08-08T00:21Z,
-  stamp `d76c043`, signed, API-verified, both assets; installed copy mirrored
-  and relaunched). Carries the apostrophe/escHtml picker fix and the improvement
+- **Latest release: 🚀 v0.12.36 "The second accuracy pass"** (2026-08-10, stamp
+  `0556ff8`, signed, API-verified, both assets; installed copy mirrored and
+  relaunched, /meta reads 0.12.36 model 44). Model **v38 → v44** (v39-v44:
+  self-damage buffs, slow resist, DDR, absorb + the RechargeTime fix,
+  Domination, crits), data unchanged 2026.1.1242 (current with the game's
+  July 7 patch, re-checked at release). All 24 champions re-certified across
+  three waves, every claim independently re-verified after the Wind Control
+  retraction, which the release notes state publicly. Joel skipped the clean
+  re-cert on the quick check's "NEEDS UPDATE: none" and ordered the cut.
+  ⚠ Release notes name the new liveness guard; smoke pins now rest at
+  0.12.36/model 44 (the shipped values). ⚠ Not yet announced on the forum.
+  Superseded entry kept for the ledger: **v0.12.35 "Every set is clickable"**
+  (2026-08-08T00:21Z, stamp `d76c043`, signed, API-verified, both assets;
+  installed copy mirrored and relaunched). Carries the apostrophe/escHtml picker fix and the improvement
   report's export pointer. **Preceded by v0.12.34 "Your picks stay yours"**
   (2026-08-07T23:43Z, stamp `3431636`) — the epic-swap refill drawing on the
   build's own pools, the champion shortcut barred from answering a seat-fill,
