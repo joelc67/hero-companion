@@ -97,6 +97,29 @@ Joel's session context is a limited resource. Do not spend it on prose.
 - **Artifact Signing identity revalidation expires 2027-07-15** (Azure Trusted Signing, account `herocompanionsign`). A lapse HALTS all signing. Portal → the signing account → Identity validations. Facts + prereqs: docs/signing-runbook.md; signer: tools/sign_artifacts.py (needs `az login` + "Artifact Signing Certificate Profile Signer" role + `TRUSTED_SIGNING_PROFILE=hero-companion-public`).
 - **Unrelenting Fury stack cap — UNRESOLVED DATA CONFLICT (2026-07-16, v33 ruling C).** Template says `stack_limit 2`; the piece's help text says "stacks up to 5 times"; both client-derived. We ship the TEMPLATE value (conservative, errs AGAINST our own sustain claim); disagreement bounded at 1.5pp of regen. **Resolve game-first when convenient** (bins elsewhere, or live-game measurement on Joel's logs). This entry exists so "conservative forever" can never become a silent default.
 
+## 📖 THE KNOWN-GAPS LEDGER (Joel's doctrine, 2026-08-10: proactive, never one-bug-at-a-time)
+
+Joel: *"our main encounter of new bugs are based on not having knowledge about
+everything in-game... having only detailed knowledge when one person brings up
+one bug is not really being well thought out."* The knowledge existed but was
+scattered across six instruments' pins. **`tools/gap_ledger.py` compiles it
+into `docs/KNOWN-GAPS.md`** — the coverage check's OPEN_GAPS and the mode-tags
+classes pulled LIVE (they cannot drift silently), plus the ruling-class items
+and the needs-eyes-in-game list, each citing its entry here.
+
+- **TRIAGE EVERY NEW FIELD REPORT AGAINST THE LEDGER FIRST.** A report
+  matching a known gap confirms priority; one matching nothing is genuinely
+  new knowledge and belongs in an instrument before it belongs in a fix.
+- `--check` fails when the doc is stale vs regeneration — run it after any
+  change to OPEN_GAPS, mode_tags, or the curated lists (they live in the
+  generator, one copy). Regenerate after every PATCH-WATCH re-export.
+- The 2026-08-10 census that motivated it: every table class in shipped
+  0.12.36 equals its pre-retraction count exactly (zero real rows lost; the
+  one absorb host that vanished was Wind Control's own record). Prose numbers
+  larger than shipped counts ("229 mez", "38 absorb") were CLIENT-side class
+  denominators; the landed subset is smaller by exclusions pinned in the
+  batteries, which read the client and go red if a row vanishes.
+
 ## Release rules
 
 - Nothing is released without Joel's say-so — **always ask before `gh release create`, asset uploads, or publish-intent version bumps.** Commits and pushes stay autonomous. Changelog entries are staged under **"Unreleased"** until he approves.
