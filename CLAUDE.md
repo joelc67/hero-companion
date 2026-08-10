@@ -183,6 +183,34 @@ Joel's session context is a limited resource. Do not spend it on prose.
 
 ## Certification protocol rules (learned the hard way — each one has a corpse behind it)
 
+- **⛔⛔ THE CLIENT BINS PROVE MECHANICS, NOT LIVENESS. NEVER ADD CONTENT THE
+  MIDS-DERIVED SNAPSHOT LACKS (2026-08-10, Joel: "There is NO GADGETRY pool" /
+  "Boomerang Slice is not live").** I added Pool.Gadgetry, Pool.Utility_Belt,
+  Wind Control and Boomerang Slice — 34 records — because the client carried
+  them in full: display names, help text, icons, `available_level` arrays shaped
+  exactly like known-live sets. **None of that is evidence of release.** The
+  game ships client assets for content that never matured: Praetoria is not
+  startable, `Fly_Boost` is never pickable, the i24 archive sits unused.
+  ⚠⚠ **THE LIVENESS AUTHORITY IS `data/powers.json` AS SHIPPED — the
+  Mids-derived snapshot, which tracks LIVE Homecoming.** If a powerset or power
+  is in the bins and NOT in that snapshot, it is not live until the game says
+  otherwise. I had this signal, wrote down that the app not offering those sets
+  was "an honest absence, not a defect", and then overrode it with a parse.
+  ⚠ **AND THERE IS NO CLIENT FIELD THAT SEPARATES THEM — measured.** Wind
+  Control's index entry is indistinguishable from Ice Control's; Gadgetry's from
+  Sorcery's. Do not go looking for one again.
+  ⚠ **The play logs cannot answer it either** — a search for Wind Control names
+  returned 0, but so did Storm Summoning, which is certainly live. The
+  instrument is blind; a zero there means nothing.
+  💥 **WHAT IT COST:** the fake pools reached TWO certified champions and sat in
+  the solver's option space for all three re-cert waves (~17.3 hours of
+  compute). Every green check I had compared the client against our data; not
+  one asked whether the client's content is in the game.
+- **⚠ A PICK THE DATA DOES NOT HAVE IS NOT LEGAL (same day, same incident).**
+  `_picks_legal` did `POWER_BY_FULL.get(fn) or {}` everywhere, so an unknown
+  power yielded `{}` and passed every rule — two champions naming deleted powers
+  read as LEGAL while `validate_champions` said 22/24. Now refused outright.
+
 - **🎯 SCOPE A WAVE BY THE MOVERS, NOT BY WHO HOLDS A PATCHED POWER (2026-08-09,
   cost a second wave).** I scoped the v43+v44 re-cert by asking *"does this build
   HOLD a power carrying one of the new rows?"* — measured, not guessed, and

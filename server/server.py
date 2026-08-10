@@ -3768,9 +3768,38 @@ def _picks_legal(fns, primary, secondary):
         for other in ((POWER_BY_FULL.get(fn) or {}).get("excludes") or []):
             if other in fns:
                 return False
+    # ⚠⚠ A PICK THE DATA DOES NOT HAVE IS NOT LEGAL. Every other rule here does
+    # `POWER_BY_FULL.get(fn) or {}`, and an unknown power yields {} which passes
+    # all of them silently - so a build referencing a power that no longer
+    # exists read as LEGAL. Found 2026-08-10 when Gadgetry and Utility Belt were
+    # retracted: two certified champions still named their powers and the gate
+    # said nothing while validate_champions dropped to 22/24. A build you cannot
+    # make in game is the one thing this gate exists to refuse.
+    for fn in fns:
+        if fn not in POWER_BY_FULL:
+            return False
     for ps, members in tiered.items():
         for fn in members:
             if len(members) - 1 < _prereq_need(fn, ps):
+                return False
+    # ⚠⚠ THE ARCHETYPE GATE. `archetype_excluded` marks any power the game bars
+    # from specific archetypes - today only Pool.Gadgetry.Jetpack, which
+    # Kheldians cannot take (they have their own flight). Adding Gadgetry
+    # recorded that and enforced it NOWHERE, so a wave could have converged onto
+    # an unbuildable champion: precisely how 0.12.30 shipped eight of them.
+    # ⚠ The archetype is not a parameter here, so it is derived from the primary
+    # powerset. If it cannot be derived the check is SKIPPED rather than
+    # guessed - fail-open, because engine.validate_build is the user-facing
+    # backstop and refusing a legal build is the worse failure.
+    _arch = None
+    for _a, _sets in ((POWERSETS.get("by_archetype") or {}) if POWERSETS else {}).items():
+        if any((s["full_name"] if isinstance(s, dict) else s) == primary
+               for s in (_sets.get("primary") or [])):
+            _arch = _a
+            break
+    if _arch:
+        for fn in fns:
+            if _arch in ((POWER_BY_FULL.get(fn) or {}).get("archetype_excluded") or []):
                 return False
     for want in (primary, secondary):
         # VEAT dual access: the base set satisfies the level-1 seat for its branch

@@ -252,6 +252,25 @@ def validate_build(build):
                     f"{_held[_fn]} and {_held[_other]} are mutually exclusive - "
                     f"the game lets you take one or the other, not both")
 
+    # ⚠⚠ AN ARCHETYPE THE GAME BARS FROM A POWER. Same family as the pair rule
+    # above, and it was a hole WE opened: adding Pool.Gadgetry recorded
+    # `archetype_excluded` on Jetpack (the game bars Kheldians, who have their
+    # own flight) and then enforced it nowhere, so the planner happily offered a
+    # Peacebringer a power the game refuses. Reads the record the picker already
+    # holds, like `excludes`, so there is no second lookup table.
+    # ⚠ Exactly ONE pickable power in the whole Pool/Epic space carries such a
+    # gate today - swept from the client, not assumed - but the rule is written
+    # against the DATA so the next one is covered without a code change.
+    _at = build.get("archetype")
+    if _at:
+        for _p in build.get("powers", []):
+            if _at in (_p.get("archetype_excluded") or []):
+                _nm = (_p.get("display_name")
+                       or (_p.get("full_name") or "?").split(".")[-1])
+                errors.append(
+                    f"{_nm} is not available to this archetype - the game does "
+                    f"not offer it here")
+
     unique_seen = defaultdict(int)        # piece identity -> count
     bonus_counter = defaultdict(int)      # bonus signature -> count (rule of 5)
 

@@ -56,6 +56,11 @@ PLUMBING = {
     "OnlyAffectsSelf", "Clear_Damagers", "Rage", "RunningSpeed", "FlyingSpeed",
     "JumpingSpeed", "JumpHeight", "Fly", "SpeedRunning", "MovementControl",
     "MovementFriction", "Evade", "Range", "Teleport", "PerceptionRadius",
+    # ⚠ Ninja_Run is a movement MODE rather than a speed number (Utility Belt's
+    # Freerunning sets it), but the thing it changes is still how fast you
+    # travel - the same v30 exclusion, and the same disposition the effect
+    # coverage check already gives it.
+    "Ninja_Run",
     "Translucency", "StealthRadius_PVE", "StealthRadius_PVP", "ElusivityBase",
     "Knockback", "Knockup", "Repel", "Special", "Untouchable", "Intangible",
 }

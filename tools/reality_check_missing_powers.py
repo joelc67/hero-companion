@@ -56,16 +56,25 @@ ABSENT = {
     # ✅ CLOSED by tools/add_wind_control.py: both archetypes' Wind Control
     # is in the data, offered in powersets.json and priced (pets included).
     # The pin failed the moment it landed, which is what a pin is for.
-    # ✅ CLOSED by tools/add_origin_pools.py: both origin pools are in the data,
-    # served to all 15 archetypes, prerequisites read from the game's own
-    # requires expression and enforced by _picks_legal, and the two auto-issue
-    # free riders (Turbo Boost, Athletics) deliberately left out. Their pins
-    # went red the moment the pools landed, which is what a pin is for.
-    # ⚠ NO PIN REMAINS for either. 5 of the 6 client records per pool are
-    # pickable and now exist; the sixth (Turbo Boost / Athletics) carries the
-    # auto-issue sentinel and is already counted under NEVER-PICKABLE above, so
-    # a pin of 1 here would double-count it - as a first attempt at retiring
-    # these did, and the check said so.
+    # ⚠⚠ RETRACTED 2026-08-10 ON JOEL'S WORD: "There is NO GADGETRY pool."
+    # I made Pool.Gadgetry and Pool.Utility_Belt pickable on 2026-08-08. That
+    # was WRONG. The client carries them in full - display name, help text, icon,
+    # and an available_level array shaped exactly like Experimentation's - but
+    # the client shipping content does not mean the SERVER offers it. This
+    # project already documents that pattern: Praetoria is not startable,
+    # Pool.Flight.Fly_Boost is never pickable, the i24 assets sit unused.
+    # ⚠ THE SIGNAL I OVERRODE WAS IN OUR OWN DATA. The Mids-derived powersets
+    # never carried them and v0.12.35 shipped 12 pools, not 14. I wrote at the
+    # time that the app not offering them was "an honest absence, not a defect"
+    # and then treated it as a defect anyway, on the strength of a client parse.
+    # Two independent signals - Mids, and the person who plays the game - beat
+    # one parse of an undocumented field. This is the 2026-07-29 lesson again.
+    # ⚠ tools/add_origin_pools.py is KEPT so this is one command away if
+    # Homecoming ever ships them, but the DATA must stay out until it does.
+    "Pool.Gadgetry": (6, "NOT LIVE on Homecoming - client-only content. Do not "
+                         "re-add without in-game confirmation"),
+    "Pool.Utility_Belt": (6, "NOT LIVE on Homecoming - client-only content, "
+                             "same retraction"),
     # ✅ CLOSED by tools/add_boomerang_slice.py: all four records now exist,
     # client-sourced, with the mutual exclusion against Slice enforced in the
     # validator and in _picks_legal. The pin is what said so - it failed on

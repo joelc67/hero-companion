@@ -1,7 +1,4 @@
 {
- "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk": "supersede",
- "Class_Controller|Controller_Control.Plant_Control|Controller_Buff.Poison|itrial": "keep",
  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Sonic_Attack|itrial": "supersede",
- "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Radiation_Emission|itrial": "keep",
- "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial": "keep"
+ "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk": "supersede"
 }

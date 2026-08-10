@@ -41,7 +41,7 @@
     "verdict": "unaffected",
     "canonical_score": 1773.2
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order (2026-07-16 IG flip)",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
   "canonical_score": 1773.2,
@@ -82,7 +82,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -110,7 +110,6 @@
  },
  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Sonic_Attack|itrial": {
   "picks": [
-   "Defender_Buff.Radiation_Emission.Accelerate_Metabolism",
    "Defender_Buff.Radiation_Emission.EMP_Pulse",
    "Defender_Buff.Radiation_Emission.Enervating__Field",
    "Defender_Buff.Radiation_Emission.Fallout",
@@ -123,27 +122,28 @@
    "Defender_Ranged.Sonic_Attack.Shriek",
    "Defender_Ranged.Sonic_Attack.Sirens_Song",
    "Epic.Ice_Mastery_DefCorr.Flash_Freeze",
-   "Epic.Ice_Mastery_DefCorr.Frozen_Armor",
    "Epic.Ice_Mastery_DefCorr.Hoarfrost",
    "Epic.Ice_Mastery_DefCorr.Ice_Elemental",
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
    "Pool.Fighting.Boxing",
    "Pool.Fighting.Tough",
+   "Pool.Force_of_Will.Mighty_Leap",
+   "Pool.Force_of_Will.Project_Will",
+   "Pool.Force_of_Will.Unleash_Potential",
    "Pool.Medicine.Aid_Self",
+   "Pool.Medicine.Field_Medic",
    "Pool.Medicine.Stimulant",
    "Pool.Speed.Hasten",
-   "Pool.Speed.Super_Speed",
-   "Pool.Speed.Whirlwind",
-   "Pool.Utility_Belt.Freerunning"
+   "Pool.Speed.Super_Speed"
   ],
-  "score": 2034.3015000000003,
+  "score": 2009.7595800000001,
   "certificate": {
-   "sweeps": 33,
+   "sweeps": 28,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -155,18 +155,12 @@
    "tie_arbitration": {
     "winner": "eps",
     "scores": {
-     "eps": 2034.3,
-     "lex": 2011.12,
-     "plain": 2034.3
+     "eps": 2009.76,
+     "lex": 2005.27,
+     "plain": 2007.48
     }
-   },
-   "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "baseline",
-    "canonical_score": 1971.17
    }
   },
-  "canonical_score": 1971.17,
   "model_version": 44
  },
  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|itrial": {
@@ -204,7 +198,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -272,7 +266,7 @@
     "verdict": "unaffected",
     "canonical_score": 1330.75
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order (2026-07-16 IG flip)",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
   "canonical_score": 1330.75,
@@ -313,7 +307,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -374,7 +368,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 1,
@@ -435,7 +429,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -496,7 +490,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -564,7 +558,7 @@
     "verdict": "unaffected",
     "canonical_score": 778.47
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order (2026-07-16 IG flip)",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
   "canonical_score": 778.47,
@@ -612,7 +606,7 @@
     "verdict": "unaffected",
     "canonical_score": 1384.49
    },
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order (2026-07-16 IG flip)",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
   "canonical_score": 1384.49,
@@ -653,7 +647,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -714,7 +708,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -775,7 +769,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -828,7 +822,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -881,7 +875,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -942,7 +936,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -1003,7 +997,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -1064,7 +1058,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 1,
@@ -1125,7 +1119,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -1186,7 +1180,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -1239,7 +1233,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -1300,7 +1294,7 @@
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -1328,40 +1322,40 @@
  },
  "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk": {
   "picks": [
-   "Brute_Defense.Fiery_Aura.Burn",
-   "Brute_Defense.Fiery_Aura.Consume",
+   "Brute_Defense.Fiery_Aura.Blazing_Aura",
    "Brute_Defense.Fiery_Aura.Fiery_Embrace",
    "Brute_Defense.Fiery_Aura.Fire_Shield",
    "Brute_Defense.Fiery_Aura.Healing_Flames",
-   "Brute_Defense.Fiery_Aura.Plasma_Shield",
-   "Brute_Defense.Fiery_Aura.Rise_of_the_Phoenix",
    "Brute_Defense.Fiery_Aura.Temperature_Protection",
    "Brute_Melee.Spines.Lunge",
    "Brute_Melee.Spines.Quills",
    "Brute_Melee.Spines.Ripper",
    "Brute_Melee.Spines.Spine_Burst",
+   "Brute_Melee.Spines.Taunt",
    "Brute_Melee.Spines.Throw_Spines",
-   "Epic.Pyre_Mastery.Fire_Blast",
+   "Epic.Pyre_Mastery.Char",
+   "Epic.Pyre_Mastery.Fire_Ball",
    "Epic.Pyre_Mastery.Melt_Armor",
-   "Epic.Pyre_Mastery.Ring_of_Fire",
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Boxing",
    "Pool.Fighting.Cross_Punch",
    "Pool.Fighting.Kick",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
-   "Pool.Gadgetry.Nano_Net",
    "Pool.Invisibility.Stealth",
+   "Pool.Medicine.Aid_Self",
+   "Pool.Medicine.Stimulant",
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed"
   ],
-  "score": 377.1784,
+  "score": 390.4215,
   "certificate": {
-   "sweeps": 28,
+   "sweeps": 27,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal — see the one-objective work order",
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
    "picks_filled": 0,
@@ -1373,14 +1367,14 @@
    "tie_arbitration": {
     "winner": "eps",
     "scores": {
-     "eps": 377.18,
-     "lex": 377.18,
-     "plain": 366.45
+     "eps": 390.42,
+     "lex": 390.42,
+     "plain": 373.89
     }
    },
    "afk_sustain": {
-    "hp": 2101.3,
-    "regen_hps": 28.99,
+    "hp": 2077.3,
+    "regen_hps": 27.27,
     "auto_fire_heal": "Healing_Flames",
     "auto_fire_hps": 10.04,
     "heal_rates": [
@@ -1390,9 +1384,9 @@
       "interruptible": false
      },
      {
-      "power": "Rise_of_the_Phoenix",
-      "self_hps": 0.54,
-      "interruptible": false
+      "power": "Aid_Self",
+      "self_hps": 15.74,
+      "interruptible": true
      }
     ],
     "assumed_accolades": [
@@ -1403,7 +1397,7 @@
     "accolade_hp": 321.3,
     "buff_proc_regen_pct": 0.0,
     "buff_proc_detail": [],
-    "sustain_hps": 39.03,
+    "sustain_hps": 37.31,
     "requirements": {
      "0": 26.4,
      "1": 29.1,
@@ -1412,15 +1406,9 @@
      "4": 37.0
     },
     "tier": 4,
-    "label": "AFK-certified at +4x8: 39.0 HP/s sustained (regen 29.0 + Healing_Flames on auto-fire 10.0) meets the 37 HP/s asteroid worst case. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
-   },
-   "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "baseline",
-    "canonical_score": 283.43
+    "label": "AFK-certified at +4x8: 37.3 HP/s sustained (regen 27.3 + Healing_Flames on auto-fire 10.0) meets the 37 HP/s asteroid worst case. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
    }
   },
-  "canonical_score": 283.43,
   "model_version": 44
  }
 }

@@ -939,12 +939,6 @@
      "display_name": "Symphony Control",
      "set_type": "Primary",
      "archetype_index": 1
-    },
-    {
-     "full_name": "Controller_Control.Wind_Control",
-     "display_name": "Wind Control",
-     "set_type": "Primary",
-     "archetype_index": 1
     }
    ],
    "secondary": [
@@ -1445,12 +1439,6 @@
     {
      "full_name": "Dominator_Control.Symphony_Control",
      "display_name": "Symphony Control",
-     "set_type": "Primary",
-     "archetype_index": 11
-    },
-    {
-     "full_name": "Dominator_Control.Wind_Control",
-     "display_name": "Wind Control",
      "set_type": "Primary",
      "archetype_index": 11
     }
@@ -3054,12 +3042,6 @@
    "archetype_index": -1
   },
   {
-   "full_name": "Pool.Gadgetry",
-   "display_name": "Gadgetry",
-   "set_type": "Pool",
-   "archetype_index": -1
-  },
-  {
    "full_name": "Pool.Leadership",
    "display_name": "Leadership",
    "set_type": "Pool",
@@ -3098,12 +3080,6 @@
   {
    "full_name": "Pool.Teleportation",
    "display_name": "Teleportation",
-   "set_type": "Pool",
-   "archetype_index": -1
-  },
-  {
-   "full_name": "Pool.Utility_Belt",
-   "display_name": "Utility Belt",
    "set_type": "Pool",
    "archetype_index": -1
   }
