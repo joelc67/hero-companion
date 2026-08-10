@@ -1,0 +1,425 @@
+{
+ "movers": [
+  "Class_Arachnos_Soldier|Arachnos_Soldiers.Crab_Spider_Soldier|Training_Gadgets.Crab_Spider_Training|itrial",
+  "Class_Arachnos_Widow|Widow_Training.Night_Widow_Training|Teamwork.Widow_Teamwork|itrial",
+  "Class_Blaster|Blaster_Ranged.Fire_Blast|Blaster_Support.Energy_Manipulation|itrial",
+  "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk",
+  "Class_Controller|Controller_Control.Plant_Control|Controller_Buff.Poison|itrial",
+  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|itrial",
+  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Sonic_Attack|itrial",
+  "Class_Dominator|Dominator_Control.Mind_Control|Dominator_Assault.Fiery_Assault|itrial",
+  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Radiation_Emission|itrial",
+  "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial",
+  "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|nova",
+  "Class_Scrapper|Scrapper_Melee.Broad_Sword|Scrapper_Defense.Super_Reflexes|itrial",
+  "Class_Sentinel|Sentinel_Ranged.Fire_Blast|Sentinel_Defense.Willpower|itrial",
+  "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Dark_Armor|itrial",
+  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial",
+  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|triform"
+ ],
+ "unaffected": [
+  "Class_Blaster|Blaster_Ranged.Assault_Rifle|Blaster_Support.Ice_Manipulation|itrial",
+  "Class_Blaster|Blaster_Ranged.Dark_Blast|Blaster_Support.Plant_Manipulation|itrial",
+  "Class_Blaster|Blaster_Ranged.Fire_Blast|Blaster_Support.Tactical_Arrow|itrial",
+  "Class_Blaster|Blaster_Ranged.Radiation_Blast|Blaster_Support.Radiation_Manipulation|itrial",
+  "Class_Brute|Brute_Melee.Battle_Axe|Brute_Defense.Fiery_Aura|itrial",
+  "Class_Brute|Brute_Melee.Savage_Melee|Brute_Defense.Regeneration|itrial",
+  "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|general",
+  "Class_Controller|Controller_Control.Arsenal_Control|Controller_Buff.Poison|itrial",
+  "Class_Controller|Controller_Control.Fire_Control|Controller_Buff.Force_Field|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Kinetics|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Dark_Miasma|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|general",
+  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|itrial",
+  "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Seismic_Blast|itrial",
+  "Class_Defender|Defender_Buff.Poison|Defender_Ranged.Sonic_Attack|itrial",
+  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|general",
+  "Class_Defender|Defender_Buff.Storm_Summoning|Defender_Ranged.Dark_Blast|itrial",
+  "Class_Dominator|Dominator_Control.Gravity_Control|Dominator_Assault.Sonic_Assault|itrial",
+  "Class_Dominator|Dominator_Control.Symphony_Control|Dominator_Assault.Psionic_Assault|itrial",
+  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Radiation_Emission|team",
+  "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|dwarf",
+  "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|triform",
+  "Class_Scrapper|Scrapper_Melee.Dark_Melee|Scrapper_Defense.Stone_Armor|itrial",
+  "Class_Sentinel|Sentinel_Ranged.Archery|Sentinel_Defense.Willpower|itrial",
+  "Class_Sentinel|Sentinel_Ranged.Fire_Blast|Sentinel_Defense.Willpower|av",
+  "Class_Sentinel|Sentinel_Ranged.Psychic_Blast|Sentinel_Defense.Bio_Organic_Armor|itrial",
+  "Class_Sentinel|Sentinel_Ranged.Radiation_Blast|Sentinel_Defense.Dark_Armor|itrial",
+  "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Dark_Armor|general",
+  "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Fiery_Aura|itrial",
+  "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Invulnerability|itrial",
+  "Class_Tanker|Tanker_Defense.Bio_Organic_Armor|Tanker_Melee.Super_Strength|itrial",
+  "Class_Tanker|Tanker_Defense.Energy_Aura|Tanker_Melee.Super_Strength|itrial",
+  "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Super_Strength|itrial",
+  "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Titan_Weapons|itrial",
+  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|dwarf",
+  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|nova"
+ ],
+ "failed": [],
+ "riders": [
+  {
+   "key": "Class_Arachnos_Soldier|Arachnos_Soldiers.Crab_Spider_Soldier|Training_Gadgets.Crab_Spider_Training|itrial",
+   "cbc_s": 1.17,
+   "highs_s": 1.72,
+   "cbc_score": 1621.227075,
+   "highs_score": 1574.6701750000002
+  },
+  {
+   "key": "Class_Arachnos_Widow|Widow_Training.Night_Widow_Training|Teamwork.Widow_Teamwork|itrial",
+   "cbc_s": 0.53,
+   "highs_s": 0.78,
+   "cbc_score": 1981.1862000000003,
+   "highs_score": 1980.9534
+  },
+  {
+   "key": "Class_Blaster|Blaster_Ranged.Assault_Rifle|Blaster_Support.Ice_Manipulation|itrial",
+   "cbc_s": 0.57,
+   "highs_s": 0.75,
+   "cbc_score": 568.7610500000001,
+   "highs_score": 563.9676999999999
+  },
+  {
+   "key": "Class_Blaster|Blaster_Ranged.Dark_Blast|Blaster_Support.Plant_Manipulation|itrial",
+   "cbc_s": 0.63,
+   "highs_s": 0.9,
+   "cbc_score": 1060.3094999999998,
+   "highs_score": 1114.1475
+  },
+  {
+   "key": "Class_Blaster|Blaster_Ranged.Fire_Blast|Blaster_Support.Energy_Manipulation|itrial",
+   "cbc_s": 0.72,
+   "highs_s": 1.52,
+   "cbc_score": 349.97917500000005,
+   "highs_score": 383.51475000000005
+  },
+  {
+   "key": "Class_Blaster|Blaster_Ranged.Fire_Blast|Blaster_Support.Tactical_Arrow|itrial",
+   "cbc_s": 0.38,
+   "highs_s": 0.38,
+   "cbc_score": 560.384,
+   "highs_score": 415.79660000000007
+  },
+  {
+   "key": "Class_Blaster|Blaster_Ranged.Radiation_Blast|Blaster_Support.Radiation_Manipulation|itrial",
+   "cbc_s": 0.5,
+   "highs_s": 0.44,
+   "cbc_score": 715.1616,
+   "highs_score": 718.7264250000001
+  },
+  {
+   "key": "Class_Brute|Brute_Melee.Battle_Axe|Brute_Defense.Fiery_Aura|itrial",
+   "cbc_s": 3.13,
+   "highs_s": 13.06,
+   "cbc_score": 1345.2015,
+   "highs_score": 1342.3781000000001
+  },
+  {
+   "key": "Class_Brute|Brute_Melee.Savage_Melee|Brute_Defense.Regeneration|itrial",
+   "cbc_s": 2.74,
+   "highs_s": 7.7,
+   "cbc_score": 972.2332500000001,
+   "highs_score": 901.0847999999999
+  },
+  {
+   "key": "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk",
+   "cbc_s": 0.49,
+   "highs_s": 2.0,
+   "cbc_score": 227.56230000000002,
+   "highs_score": 231.26250000000002
+  },
+  {
+   "key": "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|general",
+   "cbc_s": 0.74,
+   "highs_s": 1.14,
+   "cbc_score": 677.1840000000001,
+   "highs_score": 701.568
+  },
+  {
+   "key": "Class_Controller|Controller_Control.Arsenal_Control|Controller_Buff.Poison|itrial",
+   "cbc_s": 0.24,
+   "highs_s": 0.35,
+   "cbc_score": 1665.79335,
+   "highs_score": 1523.51415
+  },
+  {
+   "key": "Class_Controller|Controller_Control.Fire_Control|Controller_Buff.Force_Field|itrial",
+   "cbc_s": 0.31,
+   "highs_s": 0.4,
+   "cbc_score": 1927.6725,
+   "highs_score": 1927.6725
+  },
+  {
+   "key": "Class_Controller|Controller_Control.Plant_Control|Controller_Buff.Poison|itrial",
+   "cbc_s": 0.31,
+   "highs_s": 0.27,
+   "cbc_score": 1773.1974750000002,
+   "highs_score": 1773.1974750000002
+  },
+  {
+   "key": "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Kinetics|itrial",
+   "cbc_s": 0.46,
+   "highs_s": 0.72,
+   "cbc_score": 350.55855,
+   "highs_score": 350.81925
+  },
+  {
+   "key": "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Dark_Miasma|itrial",
+   "cbc_s": 0.45,
+   "highs_s": 0.44,
+   "cbc_score": 795.1739399999999,
+   "highs_score": 800.5223599999999
+  },
+  {
+   "key": "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|general",
+   "cbc_s": 0.3,
+   "highs_s": 0.18,
+   "cbc_score": 737.664,
+   "highs_score": 736.704
+  },
+  {
+   "key": "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|itrial",
+   "cbc_s": 0.22,
+   "highs_s": 0.15,
+   "cbc_score": 386.069985,
+   "highs_score": 385.94049
+  },
+  {
+   "key": "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Seismic_Blast|itrial",
+   "cbc_s": 0.45,
+   "highs_s": 0.63,
+   "cbc_score": 1169.02606,
+   "highs_score": 1157.62887
+  },
+  {
+   "key": "Class_Defender|Defender_Buff.Poison|Defender_Ranged.Sonic_Attack|itrial",
+   "cbc_s": 0.23,
+   "highs_s": 0.2,
+   "cbc_score": 2037.0611399999998,
+   "highs_score": 2036.5089
+  },
+  {
+   "key": "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|general",
+   "cbc_s": 0.2,
+   "highs_s": 0.17,
+   "cbc_score": 783.4846,
+   "highs_score": 792.5027
+  },
+  {
+   "key": "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|itrial",
+   "cbc_s": 0.21,
+   "highs_s": 0.16,
+   "cbc_score": 1926.15559,
+   "highs_score": 1926.15559
+  },
+  {
+   "key": "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Sonic_Attack|itrial",
+   "cbc_s": 0.31,
+   "highs_s": 0.23,
+   "cbc_score": 1738.9643099999998,
+   "highs_score": 1748.854695
+  },
+  {
+   "key": "Class_Defender|Defender_Buff.Storm_Summoning|Defender_Ranged.Dark_Blast|itrial",
+   "cbc_s": 0.18,
+   "highs_s": 0.11,
+   "cbc_score": 1336.9944,
+   "highs_score": 1336.9944
+  },
+  {
+   "key": "Class_Dominator|Dominator_Control.Gravity_Control|Dominator_Assault.Sonic_Assault|itrial",
+   "cbc_s": 0.66,
+   "highs_s": 0.47,
+   "cbc_score": 789.0439499999999,
+   "highs_score": 840.0763499999999
+  },
+  {
+   "key": "Class_Dominator|Dominator_Control.Mind_Control|Dominator_Assault.Fiery_Assault|itrial",
+   "cbc_s": 0.52,
+   "highs_s": 0.54,
+   "cbc_score": 778.471875,
+   "highs_score": 890.3736000000001
+  },
+  {
+   "key": "Class_Dominator|Dominator_Control.Symphony_Control|Dominator_Assault.Psionic_Assault|itrial",
+   "cbc_s": 1.08,
+   "highs_s": 1.8,
+   "cbc_score": 623.16865,
+   "highs_score": 636.9803999999999
+  },
+  {
+   "key": "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Radiation_Emission|itrial",
+   "cbc_s": 0.21,
+   "highs_s": 0.23,
+   "cbc_score": 1330.74507,
+   "highs_score": 1330.7531250000002
+  },
+  {
+   "key": "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Radiation_Emission|team",
+   "cbc_s": 0.16,
+   "highs_s": 0.15,
+   "cbc_score": 1444.428645,
+   "highs_score": 1445.428635
+  },
+  {
+   "key": "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial",
+   "cbc_s": 1.35,
+   "highs_s": 3.19,
+   "cbc_score": 1623.0745,
+   "highs_score": 1660.7685
+  },
+  {
+   "key": "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|dwarf",
+   "cbc_s": 0.76,
+   "highs_s": 2.62,
+   "cbc_score": 1717.8029999999999,
+   "highs_score": 1673.435
+  },
+  {
+   "key": "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|nova",
+   "cbc_s": 3.39,
+   "highs_s": 3.46,
+   "cbc_score": 1506.1200750000003,
+   "highs_score": 1514.1849750000001
+  },
+  {
+   "key": "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|triform",
+   "cbc_s": 4.18,
+   "highs_s": 4.42,
+   "cbc_score": 1612.57,
+   "highs_score": 1612.57
+  },
+  {
+   "key": "Class_Scrapper|Scrapper_Melee.Broad_Sword|Scrapper_Defense.Super_Reflexes|itrial",
+   "cbc_s": 0.58,
+   "highs_s": 0.67,
+   "cbc_score": 1384.4919249999998,
+   "highs_score": 1263.4699000000003
+  },
+  {
+   "key": "Class_Scrapper|Scrapper_Melee.Dark_Melee|Scrapper_Defense.Stone_Armor|itrial",
+   "cbc_s": 1.41,
+   "highs_s": 2.58,
+   "cbc_score": 1577.8839999999998,
+   "highs_score": 1544.2085
+  },
+  {
+   "key": "Class_Sentinel|Sentinel_Ranged.Archery|Sentinel_Defense.Willpower|itrial",
+   "cbc_s": 0.49,
+   "highs_s": 0.56,
+   "cbc_score": 1670.239,
+   "highs_score": 1704.6194999999998
+  },
+  {
+   "key": "Class_Sentinel|Sentinel_Ranged.Fire_Blast|Sentinel_Defense.Willpower|av",
+   "cbc_s": 0.42,
+   "highs_s": 0.3,
+   "cbc_score": 191.08320000000003,
+   "highs_score": 190.59920000000002
+  },
+  {
+   "key": "Class_Sentinel|Sentinel_Ranged.Fire_Blast|Sentinel_Defense.Willpower|itrial",
+   "cbc_s": 0.58,
+   "highs_s": 1.35,
+   "cbc_score": 1756.6955,
+   "highs_score": 1730.352
+  },
+  {
+   "key": "Class_Sentinel|Sentinel_Ranged.Psychic_Blast|Sentinel_Defense.Bio_Organic_Armor|itrial",
+   "cbc_s": 0.35,
+   "highs_s": 0.58,
+   "cbc_score": 1779.984,
+   "highs_score": 1742.3839999999998
+  },
+  {
+   "key": "Class_Sentinel|Sentinel_Ranged.Radiation_Blast|Sentinel_Defense.Dark_Armor|itrial",
+   "cbc_s": 0.63,
+   "highs_s": 1.03,
+   "cbc_score": 1690.93695,
+   "highs_score": 1563.4914749999998
+  },
+  {
+   "key": "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Dark_Armor|general",
+   "cbc_s": 1.0,
+   "highs_s": 2.09,
+   "cbc_score": 929.1840000000001,
+   "highs_score": 889.152
+  },
+  {
+   "key": "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Dark_Armor|itrial",
+   "cbc_s": 0.82,
+   "highs_s": 1.36,
+   "cbc_score": 1650.2169999999999,
+   "highs_score": 1650.2169999999999
+  },
+  {
+   "key": "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Fiery_Aura|itrial",
+   "cbc_s": 1.12,
+   "highs_s": 2.77,
+   "cbc_score": 1417.2522000000001,
+   "highs_score": 1440.6960749999998
+  },
+  {
+   "key": "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Invulnerability|itrial",
+   "cbc_s": 0.61,
+   "highs_s": 1.43,
+   "cbc_score": 1445.7783,
+   "highs_score": 1429.86225
+  },
+  {
+   "key": "Class_Tanker|Tanker_Defense.Bio_Organic_Armor|Tanker_Melee.Super_Strength|itrial",
+   "cbc_s": 0.77,
+   "highs_s": 1.13,
+   "cbc_score": 1420.3165,
+   "highs_score": 1397.7095
+  },
+  {
+   "key": "Class_Tanker|Tanker_Defense.Energy_Aura|Tanker_Melee.Super_Strength|itrial",
+   "cbc_s": 1.02,
+   "highs_s": 2.04,
+   "cbc_score": 1397.0045,
+   "highs_score": 1397.0045
+  },
+  {
+   "key": "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Super_Strength|itrial",
+   "cbc_s": 0.46,
+   "highs_s": 1.29,
+   "cbc_score": 1459.1666750000002,
+   "highs_score": 1463.8385
+  },
+  {
+   "key": "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Titan_Weapons|itrial",
+   "cbc_s": 1.17,
+   "highs_s": 4.12,
+   "cbc_score": 1970.3244999999997,
+   "highs_score": 2063.0840999999996
+  },
+  {
+   "key": "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial",
+   "cbc_s": 0.53,
+   "highs_s": 0.46,
+   "cbc_score": 1361.6839999999997,
+   "highs_score": 870.874875
+  },
+  {
+   "key": "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|dwarf",
+   "cbc_s": 0.96,
+   "highs_s": 1.91,
+   "cbc_score": 1698.2744999999998,
+   "highs_score": 1695.3605
+  },
+  {
+   "key": "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|nova",
+   "cbc_s": 2.03,
+   "highs_s": 2.53,
+   "cbc_score": 1261.0457999999999,
+   "highs_score": 1319.5719999999997
+  },
+  {
+   "key": "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|triform",
+   "cbc_s": 0.64,
+   "highs_s": 0.66,
+   "cbc_score": 1870.2944999999997,
+   "highs_score": 1959.4299999999998
+  }
+ ]
+}

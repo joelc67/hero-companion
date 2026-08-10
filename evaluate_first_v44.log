@@ -1,0 +1,66 @@
+Loading game data...
+  15 playable archetypes, 3654 powersets of powers, 227 enhancement sets.
+  AI: Messages API fast-path (oauth), model=claude-opus-4-8
+certified sources: champions.json (24), champions_shard_e_gt_p0.json (10), champions_shard_e_gt_p1.json (9), champions_shard_e_gt_p2.json (9)
+evaluating 52 certified context(s) against the current model+code (model 44)
+
+  MOVED      canonical    1818.4 ->    1621.2 (Δ   -197.2)  Crab_Spider_Soldier/Crab_Spider_Training
+  MOVED      canonical    1622.0 ->    1981.2 (Δ   +359.2)  Night_Widow_Training/Widow_Teamwork
+  BASELINE   canonical=    568.8 (run score     568.2)  Assault_Rifle/Ice_Manipulation
+  BASELINE   canonical=   1060.3 (run score    1225.2)  Dark_Blast/Plant_Manipulation
+  MOVED      canonical     394.7 ->     350.0 (Δ    -44.7)  Fire_Blast/Energy_Manipulation
+  BASELINE   canonical=    560.4 (run score     551.8)  Fire_Blast/Tactical_Arrow
+  BASELINE   canonical=    715.2 (run score     662.4)  Radiation_Blast/Radiation_Manipulation
+  BASELINE   canonical=   1345.2 (run score    1776.3)  Battle_Axe/Fiery_Aura
+  BASELINE   canonical=    972.2 (run score    1006.6)  Savage_Melee/Regeneration
+  MOVED      canonical     375.9 ->     227.6 (Δ   -148.3)  Spines/Fiery_Aura
+  BASELINE   canonical=    677.2 (run score     461.1)  Spines/Fiery_Aura
+  BASELINE   canonical=   1665.8 (run score    1699.0)  Arsenal_Control/Poison
+  BASELINE   canonical=   1927.7 (run score    2022.2)  Fire_Control/Force_Field
+  MOVED      canonical    1808.1 ->    1773.2 (Δ    -34.9)  Plant_Control/Poison
+  BASELINE   canonical=    350.6 (run score     379.9)  Dual_Pistols/Kinetics
+  BASELINE   canonical=    795.2 (run score     776.6)  Fire_Blast/Dark_Miasma
+  BASELINE   canonical=    737.7 (run score     499.5)  Water_Blast/Kinetics
+  BASELINE   canonical=    386.1 (run score     445.9)  Water_Blast/Kinetics
+  BASELINE   canonical=   1169.0 (run score    1202.8)  Cold_Domination/Seismic_Blast
+  BASELINE   canonical=   2037.1 (run score    2168.5)  Poison/Sonic_Attack
+  BASELINE   canonical=    783.5 (run score     607.1)  Radiation_Emission/Radiation_Blast
+  MOVED      canonical    1827.4 ->    1926.2 (Δ    +98.8)  Radiation_Emission/Radiation_Blast
+  MOVED      canonical    1644.2 ->    1739.0 (Δ    +94.8)  Radiation_Emission/Sonic_Attack
+  BASELINE   canonical=   1337.0 (run score    1374.8)  Storm_Summoning/Dark_Blast
+  BASELINE   canonical=    789.0 (run score     885.3)  Gravity_Control/Sonic_Assault
+  MOVED      canonical     601.9 ->     778.5 (Δ   +176.6)  Mind_Control/Fiery_Assault
+  BASELINE   canonical=    623.2 (run score     792.5)  Symphony_Control/Psionic_Assault
+  MOVED      canonical    1275.8 ->    1330.7 (Δ    +55.0)  Demon_Summoning/Radiation_Emission
+  BASELINE   canonical=   1444.4 (run score    1456.2)  Demon_Summoning/Radiation_Emission
+  MOVED      canonical    1427.0 ->    1623.1 (Δ   +196.0)  Luminous_Blast/Luminous_Aura
+  BASELINE   canonical=   1717.8 (run score    1742.4)  Luminous_Blast/Luminous_Aura [dwarf]
+  MOVED      canonical    1226.8 ->    1506.1 (Δ   +279.3)  Luminous_Blast/Luminous_Aura [nova]
+  BASELINE   canonical=   1612.6 (run score    1780.6)  Luminous_Blast/Luminous_Aura [triform]
+  MOVED      canonical    1241.3 ->    1384.5 (Δ   +143.2)  Broad_Sword/Super_Reflexes
+  BASELINE   canonical=   1577.9 (run score    1572.3)  Dark_Melee/Stone_Armor
+  BASELINE   canonical=   1670.2 (run score    1588.5)  Archery/Willpower
+  BASELINE   canonical=    191.1 (run score     264.0)  Fire_Blast/Willpower
+  MOVED      canonical    1639.4 ->    1756.7 (Δ   +117.3)  Fire_Blast/Willpower
+  BASELINE   canonical=   1780.0 (run score    1701.7)  Psychic_Blast/Bio_Organic_Armor
+  BASELINE   canonical=   1690.9 (run score    1736.6)  Radiation_Blast/Dark_Armor
+  BASELINE   canonical=    929.2 (run score     799.2)  Radiation_Melee/Dark_Armor
+  MOVED      canonical    1411.9 ->    1650.2 (Δ   +238.3)  Radiation_Melee/Dark_Armor
+  BASELINE   canonical=   1417.3 (run score    1561.4)  Radiation_Melee/Fiery_Aura
+  BASELINE   canonical=   1445.8 (run score    1247.1)  Radiation_Melee/Invulnerability
+  BASELINE   canonical=   1420.3 (run score    1598.0)  Bio_Organic_Armor/Super_Strength
+  BASELINE   canonical=   1397.0 (run score    1253.0)  Energy_Aura/Super_Strength
+  BASELINE   canonical=   1459.2 (run score    1491.7)  Invulnerability/Super_Strength
+  BASELINE   canonical=   1970.3 (run score    2086.4)  Invulnerability/Titan_Weapons
+  MOVED      canonical    1452.6 ->    1361.7 (Δ    -90.9)  Umbral_Blast/Umbral_Aura
+  BASELINE   canonical=   1698.3 (run score    1826.8)  Umbral_Blast/Umbral_Aura [dwarf]
+  BASELINE   canonical=   1261.0 (run score    1393.6)  Umbral_Blast/Umbral_Aura [nova]
+  MOVED      canonical    1709.6 ->    1870.3 (Δ   +160.7)  Umbral_Blast/Umbral_Aura [triform]
+
+annotations + canonical baselines written to benchmarks/champions.json
+
+=== EVALUATE-FIRST: 36 unaffected, 16 moved, 0 failed, of 52 ===
+RIDER (backend portfolio): CBC 43.4s vs HiGHS 80.1s; true-scorer diversity: HiGHS better on 21, CBC better on 23, tied on 8 (details in evaluate_first_afix.json)
+
+re-converge the movers:
+  py tools\converge_parallel.py --recert --merge --workers 4 --keys "Class_Arachnos_Soldier|Arachnos_Soldiers.Crab_Spider_Soldier|Training_Gadgets.Crab_Spider_Training|itrial,Class_Arachnos_Widow|Widow_Training.Night_Widow_Training|Teamwork.Widow_Teamwork|itrial,Class_Blaster|Blaster_Ranged.Fire_Blast|Blaster_Support.Energy_Manipulation|itrial,Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk,Class_Controller|Controller_Control.Plant_Control|Controller_Buff.Poison|itrial,Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|itrial,Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Sonic_Attack|itrial,Class_Dominator|Dominator_Control.Mind_Control|Dominator_Assault.Fiery_Assault|itrial,Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Radiation_Emission|itrial,Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial,Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|nova,Class_Scrapper|Scrapper_Melee.Broad_Sword|Scrapper_Defense.Super_Reflexes|itrial,Class_Sentinel|Sentinel_Ranged.Fire_Blast|Sentinel_Defense.Willpower|itrial,Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Dark_Armor|itrial,Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial,Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|triform"

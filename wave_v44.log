@@ -1,0 +1,40 @@
+===== v43+v44 recert wave launch Sun 08/09/2026  4:45:46.10 ===== 
+PREREQ GATE OK â€” 477 of 477 agree; 0 known disagreement(s), none new; 0 dispositioned. Safe to certify.
+certified sources: champions.json (24), champions_shard_crab_p0.json (1), shadow-blocked:champions_shard_crab_p0.json (1), champions_shard_e_gt_p0.json (10), champions_shard_e_gt_p1.json (9), champions_shard_e_gt_p2.json (9), champions_shard_legalfix.json (8), shadow-blocked:champions_shard_legalfix.json (8), champions_shard_par_p0.json (6), shadow-blocked:champions_shard_par_p0.json (6), champions_shard_par_p1.json (5), shadow-blocked:champions_shard_par_p1.json (5), champions_shard_par_p2.json (6), shadow-blocked:champions_shard_par_p2.json (6), champions_shard_par_p3.json (4), shadow-blocked:champions_shard_par_p3.json (4), champions_shard_par_resume1_p0.json (1), shadow-blocked:champions_shard_par_resume1_p0.json (1), champions_shard_par_resume1_p1.json (1), shadow-blocked:champions_shard_par_resume1_p1.json (1), champions_shard_par_resume1_p2.json (0), champions_shard_par_resume2_p2.json (1), shadow-blocked:champions_shard_par_resume2_p2.json (1), champions_shard_prereq2_p1.json (1), shadow-blocked:champions_shard_prereq2_p1.json (1), champions_shard_prereq2_p2.json (1), shadow-blocked:champions_shard_prereq2_p2.json (1), champions_shard_prereqfix_r2_p1.json (2), shadow-blocked:champions_shard_prereqfix_r2_p1.json (2), champions_shard_prereqfix_rescued_p1.json (1), shadow-blocked:champions_shard_prereqfix_rescued_p1.json (1), champions_shard_prereqfix_rescued_p3.json (1), shadow-blocked:champions_shard_prereqfix_rescued_p3.json (1), champions_shard_prereqfix_resume1_p0.json (2), shadow-blocked:champions_shard_prereqfix_resume1_p0.json (2), champions_shard_prereqfix_resume1_p1.json (2), shadow-blocked:champions_shard_prereqfix_resume1_p1.json (2), champions_shard_prereqfix_resume1_p2.json (2), shadow-blocked:champions_shard_prereqfix_resume1_p2.json (2), champions_shard_prereqfix_resume1_p3.json (2), shadow-blocked:champions_shard_prereqfix_resume1_p3.json (2), champions_shard_prereqfix_split1_p0.json (2), shadow-blocked:champions_shard_prereqfix_split1_p0.json (2), champions_shard_prereqfix_split1_p1.json (2), shadow-blocked:champions_shard_prereqfix_split1_p1.json (2), champions_shard_prereqfix_split1_p2.json (3), shadow-blocked:champions_shard_prereqfix_split1_p2.json (3), champions_shard_prereqfix_split1_p4.json (2), shadow-blocked:champions_shard_prereqfix_split1_p4.json (2), champions_shard_prereqfix_split1_p5.json (2), shadow-blocked:champions_shard_prereqfix_split1_p5.json (2), champions_shard_prereqfix_tail_p1.json (1), shadow-blocked:champions_shard_prereqfix_tail_p1.json (1), champions_shard_remote_wave_20260729_083134_p1.json (1), shadow-blocked:champions_shard_remote_wave_20260729_083134_p1.json (1), champions_shard_remote_wave_20260729_083134_p3.json (1), shadow-blocked:champions_shard_remote_wave_20260729_083134_p3.json (1), champions_shard_v34_p0.json (1), champions_shard_v36_p0.json (1), shadow-blocked:champions_shard_v36_p0.json (1), champions_shard_v36_p1.json (1), shadow-blocked:champions_shard_v36_p1.json (1), champions_shard_v36_p2.json (1), shadow-blocked:champions_shard_v36_p2.json (1)
+19 context(s) across 6 worker(s), 5 sweep threads each (cpu=32):
+  worker 0: 4 context(s) -> champions_shard_v44_p0.json (log champions_shard_v44_p0.log)
+    Class_Arachnos_Soldier|Arachnos_Soldiers.Crab_Spider_Soldier|Training_Gadgets.Crab_Spider_Training|itrial
+    Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|itrial
+    Class_Scrapper|Scrapper_Melee.Broad_Sword|Scrapper_Defense.Super_Reflexes|itrial
+    Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|triform
+  worker 1: 3 context(s) -> champions_shard_v44_p1.json (log champions_shard_v44_p1.log)
+    Class_Arachnos_Widow|Widow_Training.Night_Widow_Training|Teamwork.Widow_Teamwork|itrial
+    Class_Dominator|Dominator_Control.Mind_Control|Dominator_Assault.Fiery_Assault|itrial
+    Class_Sentinel|Sentinel_Ranged.Fire_Blast|Sentinel_Defense.Willpower|itrial
+  worker 2: 3 context(s) -> champions_shard_v44_p2.json (log champions_shard_v44_p2.log)
+    Class_Blaster|Blaster_Ranged.Fire_Blast|Blaster_Support.Energy_Manipulation|itrial
+    Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial
+    Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Dark_Armor|itrial
+  worker 3: 3 context(s) -> champions_shard_v44_p3.json (log champions_shard_v44_p3.log)
+    Class_Brute|Brute_Melee.Battle_Axe|Brute_Defense.Fiery_Aura|itrial
+    Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|dwarf
+    Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Super_Strength|itrial
+  worker 4: 3 context(s) -> champions_shard_v44_p4.json (log champions_shard_v44_p4.log)
+    Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|itrial
+    Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|nova
+    Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|dwarf
+  worker 5: 3 context(s) -> champions_shard_v44_p5.json (log champions_shard_v44_p5.log)
+    Class_Defender|Defender_Buff.Poison|Defender_Ranged.Sonic_Attack|itrial
+    Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|triform
+    Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|nova
+[ 547.2m] worker 0 exited rc=0
+[ 547.2m] worker 1 exited rc=0
+[ 547.2m] worker 2 exited rc=0
+[ 689.1m] worker 3 exited rc=0
+[ 689.1m] worker 4 exited rc=0
+[ 880.6m] worker 5 exited rc=0
+
+6 of 6 workers clean, 880.6 min total
+merge when ready:
+  C:\Users\joelc\AppData\Local\Programs\Python\Python313\python.exe C:\Users\joelc\code\coh-builder\tools\merge_champion_shards.py --replace C:\Users\joelc\code\coh-builder\champions_shard_v44_p0.json C:\Users\joelc\code\coh-builder\champions_shard_v44_p1.json C:\Users\joelc\code\coh-builder\champions_shard_v44_p2.json C:\Users\joelc\code\coh-builder\champions_shard_v44_p3.json C:\Users\joelc\code\coh-builder\champions_shard_v44_p4.json C:\Users\joelc\code\coh-builder\champions_shard_v44_p5.json
+===== wave exited 0 at Sun 08/09/2026 19:26:25.35 ===== 

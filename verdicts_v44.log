@@ -1,0 +1,47 @@
+Loading game data...
+  15 playable archetypes, 3654 powersets of powers, 227 enhancement sets.
+  AI: Messages API fast-path (oauth), model=claude-opus-4-8
+verdict gate under model 44 (fresh-process canonical vs canonical, EPS 0.05)
+
+  KEEP       incumbent    1621.2 vs recert    1272.6 (Δ   -348.6)  Crab_Spider_Soldier/Crab_Spider_Training
+      run: 31 sweeps · 68169 solves (~2199/sweep) · 6 restarts · converged
+  KEEP       incumbent    1926.2 vs recert    1785.8 (Δ   -140.4)  Radiation_Emission/Radiation_Blast
+      run: 28 sweeps · 38953 solves (~1391/sweep) · 6 restarts · converged
+  KEEP       incumbent    1384.5 vs recert    1186.1 (Δ   -198.3)  Broad_Sword/Super_Reflexes
+      run: 31 sweeps · 45665 solves (~1473/sweep) · 6 restarts · converged
+  KEEP       incumbent    1870.3 vs recert    1444.3 (Δ   -426.0)  Umbral_Blast/Umbral_Aura [triform]
+      run: 27 sweeps · 44575 solves (~1651/sweep) · 6 restarts · converged
+  KEEP       incumbent    1981.2 vs recert    1912.5 (Δ    -68.7)  Night_Widow_Training/Widow_Teamwork
+      run: 34 sweeps · 68773 solves (~2023/sweep) · 6 restarts · converged
+  KEEP       incumbent     778.5 vs recert     393.4 (Δ   -385.1)  Mind_Control/Fiery_Assault
+      run: 28 sweeps · 32207 solves (~1150/sweep) · 6 restarts · converged
+  KEEP       incumbent    1756.7 vs recert    1728.3 (Δ    -28.4)  Fire_Blast/Willpower
+      run: 30 sweeps · 39990 solves (~1333/sweep) · 6 restarts · converged
+  KEEP       incumbent     350.0 vs recert     294.9 (Δ    -55.1)  Fire_Blast/Energy_Manipulation
+      run: 28 sweeps · 35873 solves (~1281/sweep) · 6 restarts · converged
+  KEEP       incumbent    1623.1 vs recert    1299.3 (Δ   -323.8)  Luminous_Blast/Luminous_Aura
+      run: 29 sweeps · 50197 solves (~1731/sweep) · 6 restarts · converged
+  KEEP       incumbent    1650.2 vs recert    1306.0 (Δ   -344.3)  Radiation_Melee/Dark_Armor
+      run: 26 sweeps · 43931 solves (~1690/sweep) · 6 restarts · converged
+  SUPERSEDE  incumbent    1030.7 vs recert    1345.2 (Δ   +314.5)  Battle_Axe/Fiery_Aura
+      run: 30 sweeps · 41022 solves (~1367/sweep) · 6 restarts · converged
+  SUPERSEDE  incumbent    1461.4 vs recert    1717.8 (Δ   +256.4)  Luminous_Blast/Luminous_Aura [dwarf]
+      run: 22 sweeps · 26823 solves (~1219/sweep) · 6 restarts · converged
+  SUPERSEDE  incumbent    1446.1 vs recert    1459.2 (Δ    +13.1)  Invulnerability/Super_Strength
+      run: 25 sweeps · 37332 solves (~1493/sweep) · 6 restarts · converged
+  SUPERSEDE  incumbent     332.0 vs recert     386.1 (Δ    +54.1)  Water_Blast/Kinetics
+      run: 26 sweeps · 33048 solves (~1271/sweep) · 6 restarts · converged
+  KEEP       incumbent    1506.1 vs recert    1426.9 (Δ    -79.2)  Luminous_Blast/Luminous_Aura [nova]
+      run: 38 sweeps · 57422 solves (~1511/sweep) · 6 restarts · converged
+  SUPERSEDE  incumbent    1609.0 vs recert    1698.3 (Δ    +89.3)  Umbral_Blast/Umbral_Aura [dwarf]
+      run: 36 sweeps · 49536 solves (~1376/sweep) · 6 restarts · converged
+  SUPERSEDE  incumbent    1916.7 vs recert    2037.1 (Δ   +120.4)  Poison/Sonic_Attack
+      run: 29 sweeps · 46227 solves (~1594/sweep) · 6 restarts · converged
+  SUPERSEDE  incumbent    1452.1 vs recert    1612.6 (Δ   +160.5)  Luminous_Blast/Luminous_Aura [triform]
+      run: 32 sweeps · 59767 solves (~1868/sweep) · 6 restarts · converged
+  SUPERSEDE  incumbent    1124.6 vs recert    1261.0 (Δ   +136.5)  Umbral_Blast/Umbral_Aura [nova]
+      run: 34 sweeps · 47182 solves (~1388/sweep) · 6 restarts · converged
+
+=== VERDICTS: 8 supersede, 11 keep, of 19 ===
+written: C:\Users\joelc\code\coh-builder\recert_verdicts.json  (2026-08-09 19:28)
+TABLE GOES TO JOEL BEFORE champions.json COMMITS (standing order).
