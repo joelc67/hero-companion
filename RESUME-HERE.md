@@ -27,8 +27,14 @@ that Spirit Drain is Dark Mastery and Soul Mastery keeps Soul Drain**,
 exactly what our 2026-08-07 game-first check pinned. No data change owed.
 ⚠ Joel's Aug 7 reply conceded "I think you are right... a fresh pull of the
 client data is the next thing I do" - that concession is now known wrong and
-publicly corrected by two other posters; a short reply agreeing with them
-(optionally carrying the 0.12.36 announcement) closes it. His hand.
+publicly corrected by two other posters. ✍ **The closing reply IS DRAFTED, on
+his order: `C:\Users\joelc\Downloads\hero-companion-0.12.36-post.txt`** -
+agrees with Maelwys and Jacke, corrects the concession, announces 0.12.36
+(including the retraction paragraph, owned plainly), credits the thread.
+Posting it is Joel's hand. ⚠ It SUPERSEDES the unsent 0.12.35 draft
+(`hero-companion-0.12.35-post.txt`) - do not resurrect that one; its
+apostrophe-fix content is folded into the thread already (Joel posted a
+0.12.35 reply directly on Aug 7).
 ⚠ Open feature ask from Basilisk: the fine-tune words box cannot request a
 specific SET by name (lock-and-resolve is the route today). On the list.
 
