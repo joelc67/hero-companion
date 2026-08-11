@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.12.38 — 2026-08-11 — The window that says why
+
 - **A window that cannot start now says why.** If the engine fails to launch
   (most often an antivirus quarantining part of a fresh update), the window
   used to sit dark and empty. It now shows what went wrong, names the log file
