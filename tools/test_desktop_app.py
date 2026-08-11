@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 CHECKS = []
-EXPECTED = 138          # coverage denominator — hard-fail if a check silently skips
+EXPECTED = 141          # coverage denominator — hard-fail if a check silently skips
 #                        134 -> 138, 2026-08-10: the launch-latency pins (lazy
 #                        server import, splash window, honest spinner, hook wire)
 #                        (54 -> 55, 2026-08-04: +1 for the End Game surfaces
@@ -137,6 +137,16 @@ def main():
               '_SPLASH_HTML = """')[1].split('"""')[0].lower())
     check("the shutdown hook is wired the moment the lazy server exists",
           "_wire_shutdown_hook" in run_app and "_SERVER_READY.wait()" in run_app)
+    # ── A BLANK WINDOW MUST EXPLAIN ITSELF (Glacier Peak, topic 64761,
+    # 2026-08-11). The engine dying silently plus a navigation to the dead
+    # port rendered as a dark empty page. Three pins:
+    check("an engine that fails to start is CAPTURED, never a silent thread death",
+          '_SERVE_ERROR["text"]' in run_app and "traceback.print_exc()" in run_app)
+    check("the window NEVER navigates to a dead port - it shows the diagnosis page",
+          "load_html(_engine_failed_html" in run_app,
+          "WebView2 renders a dead port as the blank window users screenshot")
+    check("the diagnosis names the log that holds the reason",
+          "app.log" in run_app.split("def _engine_failed_html")[1][:2000])
 
     # The fallback is the whole reason the flag is safe: no pywebview / no
     # WebView2 must return False, not take the app down.

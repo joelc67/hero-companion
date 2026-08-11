@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **A window that cannot start now says why.** If the engine fails to launch
+  (most often an antivirus quarantining part of a fresh update), the window
+  used to sit dark and empty. It now shows what went wrong, names the log file
+  that holds the full reason, and says what to do about it. Reported by
+  Glacier Peak on the forum.
+
 ## 0.12.37 — 2026-08-10 — Help, shortcuts, and a faster front door
 
 - **Launching shows a loading screen in about a second.** Double-clicking used

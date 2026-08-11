@@ -53,6 +53,36 @@ def _load_server():
     return _s
 
 
+_SERVE_ERROR = {"text": None}      # set by _serve's catch; read by the window
+
+
+def _engine_failed_html(port):
+    """What the window shows INSTEAD of sitting blank when the engine never
+    answers. Names the log that holds the reason, the likeliest cause, and
+    where to report - a dark empty window teaches nothing (Glacier Peak)."""
+    import html as _h
+    err = _SERVE_ERROR["text"]
+    logp = os.path.join(os.environ.get("APPDATA") or "", "HeroCompanion", "app.log")
+    return f"""<!doctype html><html><head><meta charset="utf-8"><style>
+    html,body{{height:100%;margin:0;background:#11151c;color:#e6edf3;
+    font-family:'Segoe UI',system-ui,sans-serif;display:flex;align-items:center;justify-content:center}}
+    .box{{max-width:560px;padding:24px;line-height:1.5}}
+    h1{{font-size:20px;margin:0 0 10px}} p{{margin:8px 0;font-size:14px}}
+    code{{background:#1b2740;padding:2px 6px;border-radius:4px;font-size:12px;word-break:break-all}}
+    .err{{color:#ff8f8f}} .muted{{color:#9fb0c3;font-size:13px}}
+    </style></head><body><div class="box">
+    <h1>The engine did not start</h1>
+    {f'<p class="err"><code>{_h.escape(err)}</code></p>' if err else
+     '<p class="muted">The window opened but the engine never answered.</p>'}
+    <p>The full reason is written in this file:<br><code>{_h.escape(logp)}</code></p>
+    <p>The most common cause is an antivirus quarantining part of a freshly
+    updated app. Check its quarantine, restore anything from Hero Companion,
+    and reinstall from the releases page.</p>
+    <p class="muted">Still stuck? Post the last lines of that log on the forum
+    thread or the project's GitHub issues, and it will get fixed.</p>
+    </div></body></html>"""
+
+
 def _close_boot_splash():
     """Retire the PyInstaller bootloader splash (frozen builds only). The
     bootloader paints assets/splash.png in under a second; the moment the real
@@ -378,13 +408,31 @@ def _run_window(port, start_server=None):
         def _navigate_when_ready():
             import socket
             import time as _t
-            deadline = _t.time() + 90
-            while _t.time() < deadline:
+
+            def _up():
                 try:
                     socket.create_connection(("127.0.0.1", port), 0.3).close()
-                    break
+                    return True
                 except OSError:
-                    _t.sleep(0.15)
+                    return False
+            deadline = _t.time() + 30
+            while _t.time() < deadline and not _up():
+                if _SERVE_ERROR["text"]:
+                    break                      # the engine already died; say so now
+                _t.sleep(0.15)
+            if _up():
+                win.load_url(f"http://127.0.0.1:{port}")
+                return
+            # ⚠ NEVER navigate to a dead port — WebView2 renders it as a dark
+            # empty page, which is exactly the blank window Glacier Peak
+            # screenshotted (topic 64761, 2026-08-11). Show the diagnosis
+            # instead, and keep listening in case the engine is just slow.
+            win.load_html(_engine_failed_html(port))
+            while not _up():
+                if _SERVE_ERROR["text"]:
+                    win.load_html(_engine_failed_html(port))   # now with the reason
+                    return
+                _t.sleep(1.0)
             win.load_url(f"http://127.0.0.1:{port}")
         threading.Thread(target=_navigate_when_ready, daemon=True).start()
         # ⚠ CLOSING IS NOT A LICENCE TO THROW WORK AWAY (Joel, 2026-08-03). The
@@ -475,17 +523,29 @@ def main():
     # and the window appears late — measured, not guessed). Fallback paths
     # start it directly.
     def _serve():
-        s = _load_server()
-        if _FROZEN:
-            # /meta answers autostart state through the live registry read — the
-            # setting shown anywhere can never disagree with registry reality.
-            s.AUTOSTART_STATE_FN = _autostart_enabled
-            # …and the setter, so the toggle can live in the app UI. With no tray
-            # menu the UI is the ONLY place this choice exists (Joel, 2026-08-02).
-            s.AUTOSTART_SET_FN = _set_autostart
-        print(f"Hero Companion v{s.APP_VERSION} — model "
-              f"v{__import__('first_principles').MODEL_VERSION} — data {s.DB_VERSION}")
-        s.app.run(host="127.0.0.1", port=port, debug=False)
+        # ⚠ A SILENT DEATH HERE IS A BLANK WINDOW FOREVER (field report,
+        # Glacier Peak, topic 64761, 2026-08-11: "after I open the program
+        # it's blank"). If the engine cannot start — an antivirus quarantined
+        # a file, a broken install, anything — the failure is CAPTURED so the
+        # window can say so instead of sitting dark. The traceback goes to
+        # app.log either way.
+        try:
+            s = _load_server()
+            if _FROZEN:
+                # /meta answers autostart state through the live registry read — the
+                # setting shown anywhere can never disagree with registry reality.
+                s.AUTOSTART_STATE_FN = _autostart_enabled
+                # …and the setter, so the toggle can live in the app UI. With no tray
+                # menu the UI is the ONLY place this choice exists (Joel, 2026-08-02).
+                s.AUTOSTART_SET_FN = _set_autostart
+            print(f"Hero Companion v{s.APP_VERSION} — model "
+                  f"v{__import__('first_principles').MODEL_VERSION} — data {s.DB_VERSION}")
+            s.app.run(host="127.0.0.1", port=port, debug=False)
+        except Exception as e:  # noqa: BLE001 — every shape of engine death
+            import traceback
+            _SERVE_ERROR["text"] = f"{type(e).__name__}: {e}"
+            print("ENGINE FAILED TO START:")
+            traceback.print_exc()
 
     _serve_started = {"on": False}
 
