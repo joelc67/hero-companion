@@ -2502,7 +2502,16 @@ strict-dominance experiment.
 
 ### Carried forward (2026-07-27 night)
 
-- **Latest release: 🚀 v0.12.37 "Help, shortcuts, and a faster front door"**
+- **Latest release: 🚀 v0.12.38 "The window that says why"** (2026-08-11,
+  stamp `92bc365`, signed, API-verified; installed copy mirrored + relaunched).
+  One fix, shipped same-day on a field report (Glacier Peak, topic 64761,
+  blank window): an engine that fails to start is CAPTURED (traceback to
+  app.log, reason held for the UI) and the window shows a diagnosis page —
+  the error, the app.log path, the antivirus-quarantine remedy — instead of
+  ever navigating to a dead port (WebView2 renders that as the blank window).
+  Battery 141/141. Data 2026.1.1242 + model v44 unchanged. ⚠ Awaiting Glacier
+  Peak's app.log; the reply draft in Downloads is Joel's hand.
+  Superseded entry kept for the ledger: **v0.12.37 "Help, shortcuts, and a faster front door"**
   (2026-08-10, stamp `375d2b6`, signed, API-verified, both assets; installed
   copy mirrored + relaunched, /meta 0.12.37 model 44). Carries: searchable
   help (v1+v2: suggestions → full page with examples + tour figures + go-to-it

@@ -1,4 +1,21 @@
-# ✅ SESSION CLOSED CLEAN — 2026-08-10. START HERE.
+# 🚀 2026-08-11: v0.12.38 "The window that says why" SHIPPED
+
+One-fix release on Joel's word, same day as the Glacier Peak blank-window
+report. Tag `v0.12.38`, stamp `92bc365`, both assets signed + API-verified;
+smoke PASS, gold 24/24; installed copy mirrored + relaunched (0.12.38, model
+44). The fix: an engine that fails to start is captured with its reason, and
+the window shows a diagnosis page (error + app.log path + the antivirus-
+quarantine remedy) instead of ever navigating to a dead port. Liveness
+baseline rolled to v0.12.38, dispositions empty, zero drift. Data + model
+unchanged, no score moved.
+⚠ AWAITING Glacier Peak's reply with their app.log lines — whatever the log
+names is the next real bug. ⚠ Joel's reply draft is in Downloads
+(hero-companion-glacierpeak-reply.txt); posting it is his hand, and it should
+now also say 0.12.38 is up with the fix. FP/whitelist per runbook, his hand.
+
+---
+
+# ✅ (previous close-out) SESSION CLOSED CLEAN — 2026-08-10.
 
 ## STATE
 HEAD `02527c97`, pushed, tracked tree clean. **Nothing running, no scheduled
