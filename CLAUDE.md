@@ -2509,8 +2509,11 @@ strict-dominance experiment.
   app.log, reason held for the UI) and the window shows a diagnosis page —
   the error, the app.log path, the antivirus-quarantine remedy — instead of
   ever navigating to a dead port (WebView2 renders that as the blank window).
-  Battery 141/141. Data 2026.1.1242 + model v44 unchanged. ⚠ Awaiting Glacier
-  Peak's app.log; the reply draft in Downloads is Joel's hand.
+  Battery 141/141. Data 2026.1.1242 + model v44 unchanged. ✅ Joel posted both
+  replies on topic 64761 2026-08-11 (the Glacier Peak response + the 0.12.38
+  announcement). ⚠ Still awaiting Glacier Peak's answer (app.log lines +
+  installer-or-portable, fresh-or-update); thread checked 2026-08-11, nothing
+  new after Joel's posts.
   Superseded entry kept for the ledger: **v0.12.37 "Help, shortcuts, and a faster front door"**
   (2026-08-10, stamp `375d2b6`, signed, API-verified, both assets; installed
   copy mirrored + relaunched, /meta 0.12.37 model 44). Carries: searchable
