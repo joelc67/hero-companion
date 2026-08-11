@@ -1,3 +1,21 @@
+# ✅ SESSION CLOSED CLEAN — 2026-08-11 morning. START HERE.
+
+HEAD `116f8650`, pushed, tracked tree clean, nothing running, nothing armed.
+Latest release **v0.12.38** (details in the block below); installed copy runs
+it; all checks green; graph fresh.
+
+**FIRST MOVES NEXT SESSION:**
+1. **Check topic 64761 / Gmail for Glacier Peak's answer** — if Joel posted
+   the drafted 0.12.38 post, their app.log lines (or "the update fixed it")
+   is the highest-priority lead. Triage against docs/KNOWN-GAPS.md as always.
+2. Joel's hand, whenever: post `Downloads\hero-companion-0.12.38-post.txt`
+   if not yet posted · FP/whitelist submissions (runbook) — now for 0.12.38.
+3. Otherwise: pick from docs/KNOWN-GAPS.md, or the held design-critique
+   findings (link color, card control crowding, road-card clipping — waiting
+   on Joel's word since "no design changes").
+
+---
+
 # 🚀 2026-08-11: v0.12.38 "The window that says why" SHIPPED
 
 One-fix release on Joel's word, same day as the Glacier Peak blank-window
