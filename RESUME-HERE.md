@@ -9,9 +9,10 @@ quarantine remedy) instead of ever navigating to a dead port. Liveness
 baseline rolled to v0.12.38, dispositions empty, zero drift. Data + model
 unchanged, no score moved.
 ⚠ AWAITING Glacier Peak's reply with their app.log lines — whatever the log
-names is the next real bug. ⚠ Joel's reply draft is in Downloads
-(hero-companion-glacierpeak-reply.txt); posting it is his hand, and it should
-now also say 0.12.38 is up with the fix. FP/whitelist per runbook, his hand.
+names is the next real bug. ✍ THE POST IS DRAFTED:
+`Downloads\hero-companion-0.12.38-post.txt` — announcement + Glacier Peak
+reply in ONE (supersedes the standalone glacierpeak-reply draft; never post
+both). Posting is Joel's hand. FP/whitelist per runbook, his hand.
 
 ---
 
