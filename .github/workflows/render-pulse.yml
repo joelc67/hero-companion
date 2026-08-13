@@ -66,7 +66,7 @@ jobs:
     steps:
       - name: PAT expiry self-reminder (the runbook's first line of defense)
         run: |
-          EXPIRY="2026-10-12"
+          EXPIRY="2026-11-11"
           days_left=$(( ($(date -d "$EXPIRY" +%s) - $(date +%s)) / 86400 ))
           if [ "$days_left" -le 14 ]; then
             echo "::warning::INBOX_READ_TOKEN expires $EXPIRY (${days_left}d) — rotate per docs/pulse-pipeline-runbook.md"
