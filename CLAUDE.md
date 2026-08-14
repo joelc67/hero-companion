@@ -1326,6 +1326,18 @@ unusually fragile incumbent, not a control artifact. Merge stays Joel's call
 Two lab parity gaps noted: the lab seed path emits unseatable slot layouts for
 Tanker Inv/SS and PB base (their certified picks seat fine — lab-only issue).
 
+**⚠ THE 2026-08-11 FARM-ALT WAVE IS HALF-BANKED, UNMERGED (rediscovered
+2026-08-14 as uncommitted edits; code now committed `edd88f07`).** Joel's four
+fire-farm alternatives ran as the first real `--sweep-backend process` wave:
+**3 of 4 converged** — shards `champions_shard_farmalt_p0/p1/p3.json` (Tanker
+FA/FM afk 439.6 · Brute TW/Bio afk · Stalker Claws/EA active) sit live-named
+at the root; **p2 (Scrapper Rad/Rad farm_active) DIED MID-SWEEP, no shard.**
+Not served (server never reads shards) but the shards ARE in
+`certified_union`, so any converge run skips those three contexts. Owed, on
+Joel's word: relaunch p2 → complete recert_verdicts → verdict table → merge
+by context with --verdicts → retire shards `.merged`. Or retire all three
+unmerged if he'd rather re-run the set whole.
+
 **Nothing is running; no scheduled tasks armed.** Live handoff detail:
 `coh-builder/RESUME-HERE.md`.
 
