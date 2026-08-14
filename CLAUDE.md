@@ -1313,7 +1313,16 @@ channel.** The wave's 17 production-validated refined slottings (+8% to +64%,
 median ~+17%) are saved in `coh-scorer-lab/wave_pop_results/` as evidence for
 the **slotting-integration work item**: persist a slotting layer or make the
 population refine a finale pass — blocked on Joel's certificate-doctrine
-ruling. Dominator Mind/Fiery (+183.8%) HELD for control-channel scrutiny.
+ruling. **Dominator Mind/Fiery (+183.8%): SCRUTINY DONE 2026-08-14
+(`coh-scorer-lab/scrutiny_dominator.py`, fresh-process) — the control channel
+is EXONERATED: both builds sit at the prevented-control CAP (ctrl_frac 0.9,
+identical 1170 credit), Domination duration is near-neutral (−8/−73 with the
+credit zeroed), perma-dom refill inert (endurance sustainable both). The whole
+delta is AVAILABILITY 0.366 → 1.0 (ttl 14.8s → 338.8s): the challenger cashed
+past-the-cap control-duration pieces into defense/HP/regen. Rule-of-five clean
+(exactly 5 LotG globals). The magnitude is the one-objective gap on an
+unusually fragile incumbent, not a control artifact. Merge stays Joel's call
+(blocked on the same slotting-persistence channel as the 17).**
 Two lab parity gaps noted: the lab seed path emits unseatable slot layouts for
 Tanker Inv/SS and PB base (their certified picks seat fine — lab-only issue).
 
