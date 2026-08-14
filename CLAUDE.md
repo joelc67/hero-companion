@@ -1302,9 +1302,20 @@ recordEdit, saveProgress, a solve or autoSaveTick, and every CSS rule is scoped 
 waves, the v38+HO wave, the slotting-remainder pieces, the remote-worker maiden
 run, the superseded release chain back to 0.12.30): docs/claude-md-ledger.md.**
 
-**▶▶ TONIGHT (2026-08-13, Joel's word): the owed 20-mover re-cert wave, then the
-sweep-rework scoping — exact command + protocol in session-report.md's top
-block ("▶▶ TONIGHT"). Wave first, detached, no --merge; verdicts to Joel.**
+**✅ THE OWED 20-MOVER WAVE IS DISCHARGED (2026-08-14, Joel's rulings: new-shape
+population wave → "merge 17, hold the Dominator" → "refresh the scores").**
+`evaluate_first --write` refreshed the 20 stale canonical scores on deduped
+data (picks unchanged); re-run reads **0 moved / no wave owed**, 24/24 SERVED,
+all stamped v44 (commit `3ca12b1e`). ⚠⚠ **THE STRUCTURAL FINDING: champions.json
+stores PICKS ONLY — the app re-derives slotting at serve time (`_champion_picks`
+→ autopick → client solver), so population-refined SLOTTING has no persistence
+channel.** The wave's 17 production-validated refined slottings (+8% to +64%,
+median ~+17%) are saved in `coh-scorer-lab/wave_pop_results/` as evidence for
+the **slotting-integration work item**: persist a slotting layer or make the
+population refine a finale pass — blocked on Joel's certificate-doctrine
+ruling. Dominator Mind/Fiery (+183.8%) HELD for control-channel scrutiny.
+Two lab parity gaps noted: the lab seed path emits unseatable slot layouts for
+Tanker Inv/SS and PB base (their certified picks seat fine — lab-only issue).
 
 **Nothing is running; no scheduled tasks armed.** Live handoff detail:
 `coh-builder/RESUME-HERE.md`.
