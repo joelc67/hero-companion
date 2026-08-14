@@ -76,6 +76,19 @@ NEW_CONTEXTS = [
     # hand-certified (the public promise's exact shape).
     "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk",
     "Class_Brute|Brute_Melee.Radiation_Melee|Brute_Defense.Fiery_Aura|farm_active",
+    # FIRE-FARM ALTERNATIVES (2026-08-11, Joel's order: "4 completely
+    # different builds never done before... make all four fire farm
+    # alternative builds" — the first real-wave test of --sweep-backend
+    # process, tools/converge_parallel.py). Deliberately diverse: different
+    # archetype, primary, secondary AND content mode each, none overlapping
+    # the one existing farm champion (Brute Spines/Fiery_Aura) or each
+    # other. Verified game-first before launch (autopick resolves, picks
+    # legal) — see coh-builder/sandbox/solver_upgrade/ for the backend
+    # validation this wave is exercising.
+    "Class_Tanker|Tanker_Defense.Fiery_Aura|Tanker_Melee.Fiery_Melee|farm_afk",
+    "Class_Brute|Brute_Melee.Titan_Weapons|Brute_Defense.Bio_Organic_Armor|farm_afk",
+    "Class_Scrapper|Scrapper_Melee.Radiation_Melee|Scrapper_Defense.Radiation_Armor|farm_active",
+    "Class_Stalker|Stalker_Melee.Claws|Stalker_Defense.Energy_Aura|farm_active",
 ]
 
 _PB_DWARF = "Peacebringer_Defensive.Luminous_Aura.White_Dwarf"

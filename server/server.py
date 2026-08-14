@@ -3910,6 +3910,48 @@ def _endurance_recovery_floor(bt, targets):
             targets["recovery"] = pct
 
 
+def _sweep_candidate_solve(archetype, content, role, pws, targets, perk, roles,
+                           res_cap, role_mix):
+    """Process-pool worker for deep_optimize's Phase-2 sweep dispatch
+    (HC_SWEEP_BACKEND=process, opt-in — default is the shipping thread path,
+    byte-identical, unchanged). Module-level and stateless by design so it's
+    picklable across a process boundary: the only thing shipped to a worker
+    is this call's own arguments, never the caller's shared cache/budget/
+    POWER_BY_FULL. Mirrors evaluate()'s expensive step exactly — same chain,
+    same order, nothing added or dropped.
+
+    Returns (score, solved, ev, capped). `capped` reports whether THIS solve
+    hit the node cap: solver.CAPPED_SOLVES is a process-global list, so a
+    worker process can't share it with the orchestrator — it must report its
+    own delta and the caller sums them across workers. Proven byte-identical
+    to the thread path across real contexts and real search shapes before
+    this seam was wired — see
+    coh-builder/sandbox/solver_upgrade/PHASE1_RESULTS.md."""
+    import copy as _c
+    import first_principles as fp
+    before = len(solver.CAPPED_SOLVES)
+    ctx = _stat_ctx(archetype)
+    ctx["power_by_full"] = POWER_BY_FULL
+    arch_row = ARCH_BY_NAME.get(archetype)
+    r = _assess_solve(archetype, _c.deepcopy(pws), _c.deepcopy(targets), "premium",
+                      perk, roles, False, False, False, with_powers=True,
+                      content=content)
+    if not r:
+        return (None, None, None, False)
+    _tot, solved = r
+    solved = proc_pass.apply_proc_pass(solved, POWER_BY_FULL, role=role,
+                                       content=content)
+    solved = _endurance_relief_pass(solved, archetype, ctx, res_cap)
+    tot = engine.calculate_build({"archetype": archetype, "powers": solved},
+                                 SET_BONUSES, res_cap=res_cap, ctx=ctx)
+    ev = fp.encounter_value(archetype, solved, ctx, tot, scenario=content,
+                            arch_row=arch_row, role_output_mod=role_output)
+    _tm = (fp.SCENARIOS.get(content) or fp.SCENARIOS["general"]).get("teammates", 0)
+    score = fp.role_contribution(ev, role_mix or role, teammates=_tm)
+    capped = len(solver.CAPPED_SOLVES) > before
+    return (score, solved, ev, capped)
+
+
 def deep_optimize(archetype, primary, secondary, role, content, powers_in,
                   scorer="first_principles", max_solves=1500, restarts=3, seed=1337,
                   ban=None, role_mix=None, pin=None, form=None):
@@ -4205,6 +4247,21 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
         else int(os.environ.get("HC_SWEEP_WORKERS")
                  or max(1, min(8, (os.cpu_count() or 4) - 2)))
     _tpe = __import__("concurrent.futures", fromlist=["ThreadPoolExecutor"])
+    # SWEEP BACKEND SEAM (2026-08-11, opt-in — HC_SWEEP_BACKEND=process;
+    # default "thread" is the shipping path above, untouched). Routes Phase 2
+    # through a ProcessPoolExecutor dispatching the module-level, picklable
+    # _sweep_candidate_solve instead of the evaluate() closure (which can't
+    # cross a process boundary — it closes over cache/n_solves/POWER_BY_FULL).
+    # One pool per deep_optimize call, created here so its ~1-2s-per-worker
+    # game-data-load cost is paid once and amortized across every sweep and
+    # restart in this context — see DEEP_OPTIMIZE_REDESIGN_SCOPE.md for why
+    # per-context (not a longer-lived pool) is the right lifetime.
+    _sweep_backend = os.environ.get("HC_SWEEP_BACKEND", "thread")
+    _pool = None
+    _process_capped = [0]   # cross-process CAPPED_SOLVES accounting — see
+                            # _sweep_candidate_solve's docstring
+    if _sweep_backend == "process" and _workers > 1:
+        _pool = _tpe.ProcessPoolExecutor(max_workers=_workers)
     for r in range(restarts + 1):
         while True:                                  # climb THIS basin to the top
             sweep_best, sweep_move = None, None
@@ -4231,7 +4288,36 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
             # Phase 2: evaluate the uncached trials concurrently.
             pending = [(i, t) for i, (idx, d, a, t, res) in enumerate(ordered)
                        if res is None]
-            if pending and _workers > 1:
+            if pending and _pool is not None:
+                # process path: evaluate() can't cross a process boundary, so
+                # the budget claim moves to here — serially, still in move
+                # order (Phase 1 above is unchanged and still single-
+                # threaded), spending the SAME reservation `claims` already
+                # proved fits under max_solves. Proven equivalent to the
+                # thread path's per-item claim-under-lock in the Phase 1
+                # sandbox proof (same total n_solves, same trials evaluated).
+                with _n_lock:
+                    n_solves[0] += len(pending)
+                futs = {_pool.submit(_sweep_candidate_solve, archetype, content,
+                                     role, t, targets, perk, roles, res_cap,
+                                     role_mix): (i, t)
+                        for i, t in pending}
+                for f in _tpe.as_completed(futs):
+                    i, t = futs[f]
+                    sc_r, solved_r, ev_r, capped_r = f.result()
+                    key = frozenset(p["full_name"] for p in t)
+                    result = (sc_r, solved_r, ev_r)
+                    cache[key] = result
+                    if capped_r:
+                        _process_capped[0] += 1
+                    if solved_r is not None:
+                        explored.append({"picks": sorted(key), "score": ev_r["contribution"],
+                                         "deal": ev_r["my_dps"], "amplify": ev_r["amplified"],
+                                         "prevent": ev_r["prevented"],
+                                         "avail": ev_r["availability"]})
+                    idx, d, a, t2, _ = ordered[i]
+                    ordered[i] = (idx, d, a, t2, result)
+            elif pending and _workers > 1:
                 with _tpe.ThreadPoolExecutor(max_workers=_workers) as ex:
                     futs = {ex.submit(evaluate, t): i for i, t in pending}
                     for f in _tpe.as_completed(futs):
@@ -4292,6 +4378,9 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
         else:
             sc, solved, ev = r2
         cert["restarts_done"] += 1
+    if _pool is not None:
+        _pool.shutdown(wait=True)   # fill-to-cap/finale below use evaluate()
+                                    # only — the pool's job ends with the sweep
     if n_solves[0] >= max_solves:
         cert["budget_truncated"] = True
         cert["converged"] = False        # the FULL search (incl. restarts) wasn't finished…
@@ -4356,7 +4445,8 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
         os.environ["HC_SOLVER_NODE_CAP"] = _cap_prev
     cert["node_cap"] = {"cap": int(os.environ.get("HC_DEEP_NODE_CAP", "50000")),
                         "capped_solves_floor":
-                            len(solver.CAPPED_SOLVES) - _capped_before}
+                            (_process_capped[0] if _sweep_backend == "process"
+                             else len(solver.CAPPED_SOLVES) - _capped_before)}
     def _finale_arm(style):
         """Full re-solve + downstream chain + fresh fp score for one tie-break
         style. Returns (score, solved, ev) or None."""

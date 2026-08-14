@@ -110,6 +110,15 @@ def main():
     ap.add_argument("--restarts", type=int, default=6)
     ap.add_argument("--sweep-workers", type=int, default=0,
                     help="per-worker sweep threads (0 = (cpu-2)//workers)")
+    ap.add_argument("--sweep-backend", choices=["thread", "process"], default="thread",
+                    help="deep_optimize's internal Phase-2 dispatch. 'process' "
+                         "is a validated, byte-identical-correct alternative "
+                         "(sandbox/solver_upgrade/PHASE3_RESULTS.md, 2026-08-11: "
+                         "2.20x on an ordinary context, 1.11x on the heaviest/"
+                         "plateau-prone one measured, real-scale, zero mismatches "
+                         "across every phase of that validation). Default stays "
+                         "'thread' (deep_optimize's own conservative default) — "
+                         "opt in explicitly per wave with --sweep-backend process.")
     ap.add_argument("--shard-prefix", default="champions_shard_par")
     ap.add_argument("--merge", action="store_true",
                     help="auto-run merge_champion_shards when all workers exit 0")
@@ -191,14 +200,15 @@ def main():
     slices = [keys[i::n] for i in range(n)]
 
     print(f"{len(keys)} context(s) across {n} worker(s), "
-          f"{sweep} sweep threads each (cpu={os.cpu_count()}):")
+          f"{sweep} sweep {args.sweep_backend}(s) each (cpu={os.cpu_count()}):")
     procs = []
     t0 = time.time()
     for i, sl in enumerate(slices):
         shard = os.path.join(ROOT, f"{args.shard_prefix}_p{i}.json")
         log = os.path.join(ROOT, f"{args.shard_prefix}_p{i}.log")
         env = dict(os.environ, HC_CHAMPIONS_PATH=shard,
-                   HC_SWEEP_WORKERS=str(sweep))
+                   HC_SWEEP_WORKERS=str(sweep),
+                   HC_SWEEP_BACKEND=args.sweep_backend)
         cmd = [PY, BUILDOUT, "--keys", ",".join(sl),
                "--max-solves", str(args.max_solves),
                "--restarts", str(args.restarts)] \
