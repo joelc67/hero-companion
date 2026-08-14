@@ -1326,17 +1326,21 @@ unusually fragile incumbent, not a control artifact. Merge stays Joel's call
 Two lab parity gaps noted: the lab seed path emits unseatable slot layouts for
 Tanker Inv/SS and PB base (their certified picks seat fine — lab-only issue).
 
-**⚠ THE 2026-08-11 FARM-ALT WAVE IS HALF-BANKED, UNMERGED (rediscovered
-2026-08-14 as uncommitted edits; code now committed `edd88f07`).** Joel's four
-fire-farm alternatives ran as the first real `--sweep-backend process` wave:
-**3 of 4 converged** — shards `champions_shard_farmalt_p0/p1/p3.json` (Tanker
-FA/FM afk 439.6 · Brute TW/Bio afk · Stalker Claws/EA active) sit live-named
-at the root; **p2 (Scrapper Rad/Rad farm_active) DIED MID-SWEEP, no shard.**
-Not served (server never reads shards) but the shards ARE in
-`certified_union`, so any converge run skips those three contexts. Owed, on
-Joel's word: relaunch p2 → complete recert_verdicts → verdict table → merge
-by context with --verdicts → retire shards `.merged`. Or retire all three
-unmerged if he'd rather re-run the set whole.
+**✅ THE FARM-ALT WAVE IS BANKED (2026-08-14, Joel: "relaunch the scrapper and
+merge the three").** The 2026-08-11 half-run (rediscovered as uncommitted
+edits, code committed `edd88f07`) is resolved: the 3 converged shards MERGED
+as new contexts (plain merge — no incumbents; hand-run `_picks_legal` + pick
+liveness green first), shards retired `.merged_2026-08-14`. **Roster = 27
+contexts, 27/27 SERVED**, canonical baselines set fresh on CURRENT post-dedup
+data via `evaluate_first --write` (the pre-dedup in-run scores shed the
+expected inflation): Tanker FA/FM afk 275.8 · Brute TW/Bio afk 359.8 ·
+Stalker Claws/EA active 658.2. **The 4th (Scrapper Rad/Rad farm_active)
+RELAUNCHED detached 2026-08-14 ~18:57 ET** on current data — shard prefix
+`champions_shard_farmalt2` (non-colliding), 1 worker, `--sweep-backend
+process`, launched via one-shot ScheduledTask (trigger-only, unregistered
+after process verify). On convergence: hand legality check → plain merge →
+retire shard → evaluate_first --write → validate_champions (expect 28/28).
+The new champions ride the next release's champions.json per standing rule.
 
 **Nothing is running; no scheduled tasks armed.** Live handoff detail:
 `coh-builder/RESUME-HERE.md`.

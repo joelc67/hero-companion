@@ -38,7 +38,7 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1753.72
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
@@ -162,7 +162,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1791.41
    }
   },
@@ -223,7 +223,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1916.53
    }
   },
@@ -269,7 +269,7 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1324.13
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
@@ -332,7 +332,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 981.07
    }
   },
@@ -393,7 +393,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1155.05
    }
   },
@@ -454,7 +454,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 274.95
    }
   },
@@ -515,7 +515,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1319.83
    }
   },
@@ -561,7 +561,7 @@
    "picks_filled": 2,
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 759.79
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
@@ -609,7 +609,7 @@
    "picks_filled": 0,
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 945.53
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
@@ -672,7 +672,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1188.89
    }
   },
@@ -733,7 +733,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1185.44
    }
   },
@@ -786,7 +786,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1339.37
    }
   },
@@ -839,7 +839,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1134.84
    }
   },
@@ -900,7 +900,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1329.58
    }
   },
@@ -961,7 +961,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1214.3
    }
   },
@@ -1022,7 +1022,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1364.22
    }
   },
@@ -1083,7 +1083,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1068.76
    }
   },
@@ -1144,7 +1144,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1425.09
    }
   },
@@ -1197,7 +1197,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1475.89
    }
   },
@@ -1258,7 +1258,7 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1357.34
    }
   },
@@ -1416,11 +1416,261 @@
    },
    "evaluated": {
     "against": "model 44, 2026-08-14",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 192.21
    }
   },
   "model_version": 44,
   "canonical_score": 192.21
+ },
+ "Class_Tanker|Tanker_Defense.Fiery_Aura|Tanker_Melee.Fiery_Melee|farm_afk": {
+  "picks": [
+   "Epic.Pyre_Mastery.Char",
+   "Epic.Pyre_Mastery.Melt_Armor",
+   "Epic.Pyre_Mastery.Ring_of_Fire",
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Kick",
+   "Pool.Fighting.Tough",
+   "Pool.Fighting.Weave",
+   "Pool.Leaping.Combat_Jumping",
+   "Pool.Medicine.Aid_Self",
+   "Pool.Medicine.Stimulant",
+   "Pool.Speed.Flurry",
+   "Pool.Speed.Hasten",
+   "Pool.Speed.Super_Speed",
+   "Pool.Speed.Whirlwind",
+   "Tanker_Defense.Fiery_Aura.Consume",
+   "Tanker_Defense.Fiery_Aura.Fiery_Embrace",
+   "Tanker_Defense.Fiery_Aura.Fire_Shield",
+   "Tanker_Defense.Fiery_Aura.Healing_Flames",
+   "Tanker_Defense.Fiery_Aura.Plasma_Sheild",
+   "Tanker_Defense.Fiery_Aura.Temperature_protection",
+   "Tanker_Melee.Fiery_Melee.Breath_of_Fire",
+   "Tanker_Melee.Fiery_Melee.Build_Up",
+   "Tanker_Melee.Fiery_Melee.Fire_Sword_Circle",
+   "Tanker_Melee.Fiery_Melee.Scorch"
+  ],
+  "score": 439.566,
+  "certificate": {
+   "sweeps": 33,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
+   },
+   "tie_arbitration": {
+    "winner": "eps",
+    "scores": {
+     "eps": 439.57,
+     "lex": 416.69,
+     "plain": 416.69
+    }
+   },
+   "afk_sustain": {
+    "hp": 2485.5,
+    "regen_hps": 33.87,
+    "auto_fire_heal": "Healing_Flames",
+    "auto_fire_hps": 12.3,
+    "heal_rates": [
+     {
+      "power": "Aid_Self",
+      "self_hps": 19.28,
+      "interruptible": true
+     },
+     {
+      "power": "Healing_Flames",
+      "self_hps": 12.3,
+      "interruptible": false
+     }
+    ],
+    "assumed_accolades": [
+     "Task Force Commander",
+     "Freedom Phalanx Reserve",
+     "Portal Jockey"
+    ],
+    "accolade_hp": 374.8,
+    "buff_proc_regen_pct": 0.0,
+    "buff_proc_detail": [],
+    "sustain_hps": 46.17,
+    "requirements": {
+     "0": 26.4,
+     "1": 29.1,
+     "2": 31.7,
+     "3": 34.4,
+     "4": 37.0
+    },
+    "tier": 4,
+    "label": "AFK-certified at +4x8: 46.2 HP/s sustained (regen 33.9 + Healing_Flames on auto-fire 12.3) meets the 37 HP/s asteroid worst case. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +375 HP)."
+   },
+   "evaluated": {
+    "against": "model 44, 2026-08-14",
+    "verdict": "baseline",
+    "canonical_score": 275.76
+   }
+  },
+  "model_version": 44,
+  "canonical_score": 275.76
+ },
+ "Class_Brute|Brute_Melee.Titan_Weapons|Brute_Defense.Bio_Organic_Armor|farm_afk": {
+  "picks": [
+   "Brute_Defense.Bio_Organic_Armor.Ablative_Carapace",
+   "Brute_Defense.Bio_Organic_Armor.Adaptation",
+   "Brute_Defense.Bio_Organic_Armor.Environmental_Adaptation",
+   "Brute_Defense.Bio_Organic_Armor.Hardened_Carapace",
+   "Brute_Defense.Bio_Organic_Armor.Inexhaustible",
+   "Brute_Melee.Titan_Weapons.Arc_of_Destruction",
+   "Brute_Melee.Titan_Weapons.Build_Up",
+   "Brute_Melee.Titan_Weapons.Defensive_Sweep",
+   "Brute_Melee.Titan_Weapons.Sweeping_Strike",
+   "Epic.Pyre_Mastery.Char",
+   "Epic.Pyre_Mastery.Fire_Ball",
+   "Epic.Pyre_Mastery.Fire_Blast",
+   "Epic.Pyre_Mastery.Ring_of_Fire",
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Boxing",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Kick",
+   "Pool.Fighting.Tough",
+   "Pool.Fighting.Weave",
+   "Pool.Invisibility.Stealth",
+   "Pool.Medicine.Aid_Self",
+   "Pool.Medicine.Stimulant",
+   "Pool.Speed.Hasten",
+   "Pool.Speed.Super_Speed",
+   "Pool.Speed.Whirlwind"
+  ],
+  "score": 553.88,
+  "certificate": {
+   "sweeps": 35,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 2.73
+   },
+   "tie_arbitration": {
+    "winner": "lex",
+    "scores": {
+     "eps": 551.15,
+     "lex": 553.88,
+     "plain": 551.15
+    }
+   },
+   "afk_sustain": {
+    "hp": 2276.1,
+    "regen_hps": 31.69,
+    "auto_fire_heal": null,
+    "auto_fire_hps": 0.0,
+    "heal_rates": [
+     {
+      "power": "Aid_Self",
+      "self_hps": 15.74,
+      "interruptible": true
+     }
+    ],
+    "assumed_accolades": [
+     "Task Force Commander",
+     "Freedom Phalanx Reserve",
+     "Portal Jockey"
+    ],
+    "accolade_hp": 321.3,
+    "buff_proc_regen_pct": 0.0,
+    "buff_proc_detail": [],
+    "sustain_hps": 31.69,
+    "requirements": {
+     "0": 26.4,
+     "1": 29.1,
+     "2": 31.7,
+     "3": 34.4,
+     "4": 37.0
+    },
+    "tier": 1,
+    "label": "AFK-certified at +1x8 (sustain 31.7 HP/s: regen 31.7); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed). Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
+   },
+   "evaluated": {
+    "against": "model 44, 2026-08-14",
+    "verdict": "baseline",
+    "canonical_score": 359.77
+   }
+  },
+  "model_version": 44,
+  "canonical_score": 359.77
+ },
+ "Class_Stalker|Stalker_Melee.Claws|Stalker_Defense.Energy_Aura|farm_active": {
+  "picks": [
+   "Epic.Blaze_Mastery.Char",
+   "Epic.Blaze_Mastery.Fire_Ball",
+   "Epic.Blaze_Mastery.Melt_Armor",
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Boxing",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Weave",
+   "Pool.Force_of_Will.Mighty_Leap",
+   "Pool.Force_of_Will.Wall_of_Force",
+   "Pool.Force_of_Will.Weaken_Resolve",
+   "Pool.Speed.Flurry",
+   "Pool.Speed.Hasten",
+   "Pool.Speed.Super_Speed",
+   "Pool.Speed.Whirlwind",
+   "Pool.Teleportation.Teleport",
+   "Stalker_Defense.Energy_Aura.Energy_Drain",
+   "Stalker_Defense.Energy_Aura.Entropy_Shield",
+   "Stalker_Defense.Energy_Aura.Hide",
+   "Stalker_Defense.Energy_Aura.Kinetic_Shield",
+   "Stalker_Defense.Energy_Aura.Repulse",
+   "Stalker_Melee.Claws.Assassins_Claw",
+   "Stalker_Melee.Claws.Build_Up",
+   "Stalker_Melee.Claws.Placate",
+   "Stalker_Melee.Claws.Shockwave",
+   "Stalker_Melee.Claws.Strike"
+  ],
+  "score": 897.5000000000001,
+  "certificate": {
+   "sweeps": 24,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
+   "primary_converged": true,
+   "picks_filled": 0,
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
+   },
+   "tie_arbitration": {
+    "winner": "eps",
+    "scores": {
+     "eps": 897.5,
+     "lex": 877.9,
+     "plain": 897.5
+    }
+   },
+   "evaluated": {
+    "against": "model 44, 2026-08-14",
+    "verdict": "baseline",
+    "canonical_score": 658.2
+   }
+  },
+  "model_version": 44,
+  "canonical_score": 658.2
  }
 }
