@@ -211,165 +211,164 @@ lives in the repo + graphify, not in the always-loaded file). Query it via
 
 ## Certification protocol rules (learned the hard way — each one has a corpse behind it)
 
+**Full corpse stories: docs/claude-md-ledger.md (graphify-indexed).**
+
 - **⛔⛔ THE CLIENT BINS PROVE MECHANICS, NOT LIVENESS. NEVER ADD CONTENT THE
-  MIDS-DERIVED SNAPSHOT LACKS (2026-08-10, Joel: "There is NO GADGETRY pool" /
-  "Boomerang Slice is not live").** I added Pool.Gadgetry, Pool.Utility_Belt,
-  Wind Control and Boomerang Slice — 34 records — because the client carried
-  them in full: display names, help text, icons, `available_level` arrays shaped
-  exactly like known-live sets. **None of that is evidence of release.** The
-  game ships client assets for content that never matured: Praetoria is not
-  startable, `Fly_Boost` is never pickable, the i24 archive sits unused.
-  ⚠⚠ **THE LIVENESS AUTHORITY IS `data/powers.json` AS SHIPPED — the
-  Mids-derived snapshot, which tracks LIVE Homecoming.** If a powerset or power
-  is in the bins and NOT in that snapshot, it is not live until the game says
-  otherwise. I had this signal, wrote down that the app not offering those sets
-  was "an honest absence, not a defect", and then overrode it with a parse.
-  ⚠ **AND THERE IS NO CLIENT FIELD THAT SEPARATES THEM — measured.** Wind
-  Control's index entry is indistinguishable from Ice Control's; Gadgetry's from
-  Sorcery's. Do not go looking for one again.
-  ⚠ **The play logs cannot answer it either** — a search for Wind Control names
-  returned 0, but so did Storm Summoning, which is certainly live. The
-  instrument is blind; a zero there means nothing.
-  💥 **WHAT IT COST:** the fake pools reached TWO certified champions and sat in
-  the solver's option space for all three re-cert waves (~17.3 hours of
-  compute). Every green check I had compared the client against our data; not
-  one asked whether the client's content is in the game.
-  ⚠⚠ **AND THE AUTHORITY HAS A PROVEN FALSE-NEGATIVE MODE (same day, evening):
-  the Mids-derived snapshot LAGS the live game.** Maelwys, on topic 64761,
-  citing the official Feb 10 2026 i28p3 patch note: **Boomerang Slice IS
-  live** ("A new mutually exclusive option to slice") — it had been in the
-  game for six months while the Mids snapshot never carried it, and the
-  retraction wrongly took it out. Read directly from the patch-notes page
-  (browser pane; the note's stats match our client-derived record on every
-  number: 1.83 cast, 8s recharge, 30ft/30°, scale 0.877, the −9% res debuff,
-  Stalker cap 10). **Restored 2026-08-10 evening through the designed flow:
-  the 4 records are DISPOSITIONED in `tools/liveness_dispositions.json` with
-  the patch-note evidence.** The rule, sharpened: absence from the snapshot
-  means NOT LIVE **until the game says otherwise — and official patch notes
-  ARE the game saying otherwise**; they outrank the snapshot's absence, and
-  Joel's in-game check outranks a fan post but not the game's own notes.
-  Wind Control / Gadgetry / Utility Belt appear in no patch notes and STAY
-  retracted. ⚠ The retraction also left DEBRIS the invariance guard caught:
-  dangling `excludes` and stale `added_from_client_excl` markers on the four
-  Slice records — a wholesale record removal must strip the mirror edits too.
-  ✅ **THE HOLE IS CLOSED (2026-08-10): `tools/reality_check_liveness.py`** —
-  current powers.json record names + powersets.json offered sets vs the SAME
-  files at the highest release tag; any diff hard-fails both ways unless named
-  in `tools/liveness_dispositions.json` with its evidence (empty = the goal
-  state, and it is empty: 10,980 records / 458 offered sets, zero drift vs
-  v0.12.35). Gated into `converge_parallel` beside the prereq gate, proven by
-  aborting a launch on a sabotaged disposition; battery `tools/test_liveness.py`
-  (6 checks, 4 sabotages). Real new content rides PATCH-WATCH: the release that
-  ships it moves the baseline tag forward automatically.
-- **⚠ A PICK THE DATA DOES NOT HAVE IS NOT LEGAL (same day, same incident).**
-  `_picks_legal` did `POWER_BY_FULL.get(fn) or {}` everywhere, so an unknown
-  power yielded `{}` and passed every rule — two champions naming deleted powers
-  read as LEGAL while `validate_champions` said 22/24. Now refused outright.
-
-- **🎯 SCOPE A WAVE BY THE MOVERS, NOT BY WHO HOLDS A PATCHED POWER (2026-08-09,
-  cost a second wave).** I scoped the v43+v44 re-cert by asking *"does this build
-  HOLD a power carrying one of the new rows?"* — measured, not guessed, and
-  still wrong. It gave 19 of 24; `evaluate_first` afterwards reported **16 moved,
-  FIVE of them contexts that test had excluded** (Spines/Fiery_Aura −148.3,
-  Rad_Emission/Sonic +94.8, Warshade base −90.9, Demon_Summoning +54.9,
-  Plant/Poison −34.9). **Holding a patched power is SUFFICIENT, NOT NECESSARY:**
-  v42's RechargeTime fix reaches **timed PET uptime**, which is why a Mastermind
-  and a farm build moved without holding anything patched, and scenario and
-  team-buff channels move a score with no patched power picked at all.
-  ⚠ **THE RIGHT TEST IS AN EVALUATE-FIRST PASS *BEFORE* THE WAVE** — re-score
-  every context under the new model and take the movers. The tool exists for
-  exactly this; running it afterwards is how you discover the wave was
-  under-scoped. **Done properly the wave ENDS with `0 moved`, which is the
-  completion signal** (it read 52 unaffected / 0 moved / 0 failed once both
-  waves merged).
-- **⚡ THE QUICK NEEDS-UPDATE CHECK IS `evaluate_first --skip-riders`, NO
-  --write — 0.7 MINUTES MEASURED, and it is the ANSWER to "do we owe a wave?"
-  (Joel, 2026-08-10: "sick of wasting 17 hours on something that should take
-  minutes to verify if its actually needed").** One run now answers all three
-  reasons a shipping champion can owe an update, per context and with one
-  bottom line: **MOVED** (fresh re-solve of its own picks scores off canonical),
-  **ILLEGAL** (`_picks_legal`, printed at last — the by-hand ritual for THIS
-  tool is retired; ⚠ recert_verdicts still prints no legality column, keep
-  checking merges by hand), **STALE STAMP** (model_version < current). Writes
-  nothing without --write. "NEEDS UPDATE: none" = no wave is owed; a wave runs
-  only over the contexts it names. ⚠ **THE CEILING, so nobody oversells it: it
-  proves the stored build is legal, current, and correctly scored — it CANNOT
-  prove a different pick-set wouldn't win.** Only a converge wave searches;
-  this says whether one is owed, never what it would find.
-  ⚠ Its first run also found: **all 3 `champions_shard_e_gt_*` ground truths
-  are game-ILLEGAL under the corrected prereq model** (every failure = a pool
-  power now needing 2 others: Weave/Vengeance/Wall of Force/Misdirection —
-  they predate the 2026-07-29 prereq fix and were never re-converged).
-  Non-shipping measurement artifacts, so nothing is owed — but any E-verdict
-  comparing against them is comparing to a floor the game refuses.
-  ✅ **RETIRED on Joel's ruling the same day** ("retire the e_gt shards; they
-  are illegal floors") — verified concretely first: all 12 flagged contexts
-  hold a tier-4/5 pool power (Weave/Vengeance/Wall of Force/Misdirection) with
-  ONE pool-mate where the game demands two, the exact class 0.12.30's field
-  reports proved unbuildable. Renamed `.retired_2026-08-10_illegal_prereq_floors`;
-  `e_derived_verdict` now refuses until `run_e_overnight.py` regenerates legal
-  floors (the search refuses illegal rosters now, so new floors come out
-  buildable). The past E verdict is not invalidated downward — an illegal floor
-  is at least as strong as a legal one, so clearing 97% of it was the harder bar.
-- **✅ EVERY CHAMPION NOW RECORDS THE MODEL THAT CERTIFIED IT (2026-08-10,
-  `e042a5e6`).** `merge_champion_shards` stamps `model_version` at its single
-  write point; the 24 were back-filled with v44. The scope test above is now one
-  line of inspection — `(v.get("model_version") or 0) < fp.MODEL_VERSION` — with
-  no tool run, which is what made it wrong-able before.
-  ⚠ **METADATA ONLY, and pinned as such:** the back-fill was written only after
-  proving that stripping the stamp reproduces the roster byte-for-byte, and
-  `tools/test_model_stamp.py` (8 checks, 3 sabotages) forbids any scoring module
-  from READING it. ⚠ That check tests the field ACCESS, not the bare word — a
-  first version flagged server.py, which only ever reports the module constant
-  `fp.MODEL_VERSION`. It also drives the REAL merge tool over an unstamped
-  scratch shard, because a roster that happens to be stamped proves only that
-  someone did it once by hand.
-- **🧰 AND THE NEW POOLS ARE BEING CHOSEN.** `test_origin_pools`' "champion
-  exposure is ZERO" went red after the re-cert — correctly. That claim was true
-  when Gadgetry and Utility Belt landed 2026-08-08; the wave then let the solver
-  pick from them and **both of the follow-up wave's supersedes did** (Defender
-  Rad_Emission took Freerunning, Brute Spines took Nano Net). Exposure 0 → 2.
-  The check now pins that, plus the rule that a champion holding one must carry
-  the current model stamp rather than being grandfathered in.
-  (Superseded hours later by the retraction: the pools were not live, the two
-  contaminated champions were re-converged clean, and the battery was deleted
-  with the content — kept as the record of how contamination spread.)
-- **⚠ THE VERDICT LOG NEVER MENTIONS LEGALITY, AND SILENCE IS NOT PROOF.** Both
-  2026-08-09 waves: I ran `_picks_legal` by hand over every challenger AND every
-  standing incumbent (zero illegal both times). The gate's legality dimension
-  exists and `test_verdict_legality` passes, but it prints nothing, so a run
-  where it silently failed to execute would look identical. **Keep checking by
-  hand until the tool prints a legality column.** This is the 0.12.30 failure
-  that shipped 8 unbuildable champions.
-
-- **🚨 CHECK THE GAME, NOT YOUR PARSE (2026-07-29 — cost a 12-hour wave).** I parsed a client `requires` string, declared ~20 champions "game-illegal", rewrote the legality gate and launched a fleet wave. The game's OWN help text then said: Tough needs "one other Fighting Powers" (ANY one). **My gate change was WRONG and is reverted (00ed2a39).** Rules: a parse of an undocumented field is a HYPOTHESIS — the game's display_help, weeks of working evidence, and Joel outrank it; a finding that invalidates certified work is JOEL'S RULING, never my wave.
-- **✅ PREREQ MODEL, CORRECTED PROPERLY (3f55cc37, 2026-07-29).** The game STATES each power's prerequisite count in display_help; our position-based proxy disagreed in BOTH directions. **`server._prereq_need` is now THE authority** (prefers data `prereq_count`, falls back to the tier proxy for the 68 records the game doesn't state). Data: `tools/patch_prereq_counts.py`. **EVIDENCE RULE — patch only where TWO of three signals agree:** (A) the help sentence, (B) whether the requires expression names other POWERS (⚠ NOT "is it non-empty" — most epic expressions are ARCHETYPE gates `$archetype @Class_Scrapper ==`), (C) the corpus-validated tier model. 404/472 patched, **9 HELD and reported** (6 whose help sentence describes a DIFFERENT power — Vengeance's says "before selecting Victory Rush"). Real corrections: travel powers (Fly/Teleport/Super Speed/Invisibility/Mystic Flight/Arcane Bolt/Toxic Dart/Project Will/Long Jump) were OVER-required → we were REFUSING legal builds; Weave/Group Fly/Wall of Force/Invoke Panic/Burnout/Misdirection/Field Medic were UNDER-required (game wants 2). **STANDING CHECK: `tools/reality_check_prereqs.py`** — the game's words vs what the app enforces, every pool/epic power, self-skeptical (flags help text that names another power as TEXT evidence, not RULE evidence). 405/413 agree (was 388).
-- **🚦 THE PREREQ REALITY CHECK NOW GATES THE LAUNCHER (78bd351d, 2026-07-30 — Joel: "why are you checking reality of game AFTER the builds?").** The check existed as a manual tool written as the lesson of the burn, and the very next wave launched without it. `converge_parallel` now runs `reality_check_prereqs.py --gate` BEFORE spawning a worker, failing only on disagreements NEW since `tools/prereq_disagreement_baseline.json` (8 accepted: 6 are help sentences naming a DIFFERENT power, 1 Field_Medic parse artifact, 1 unparsable). Override `--skip-reality-check` exists to be said out loud. Proven both directions (passes at 405-agree; an emptied `HC_PREREQ_BASELINE` blocks the launch). **Generalize the pattern: a lesson that lives only in a docstring is a note — wire it into the thing it protects.**
-- **⏱ PER-CONTEXT COST, MEASURED CORRECTLY (2026-07-30 — supersedes the 484-min figure).** ⚠ `buildout_champions` prints `total: X min` for the **whole worker queue**, not one context (`t0` is set once before the loop, line ~211) — per-context duration is the gap between consecutive `[Xm]` markers. Measured over 19 completed contexts under the corrected prereq model: **min 12 (Defender/Poison) · median 77 · mean 75 · max 261 (PB triform)**. The old "PB triform = 484 min / no hardware beats that" entry was pre-prereq-fix and must not be re-quoted. Full space = **2,691 combos** (AT × primary × secondary, VEAT cross-branch excluded; Scrapper/Tanker/Brute ~320 each, Kheldians and VEATs 1-3 because their sets are fixed) ⇒ ~3,370 worker-hours ⇒ **28 concurrent workers for a 5-day full sweep, ~70 for 2 days.** Content types multiply that directly, so which contents matter is a bigger lever than any purchase.
-- **🐌 SPEED LEDGER (measured, py-spy — restored 2026-07-30; CORRECTED by the solver-upgrade sandbox).** ⚠ The "30-40% of worker time is PuLP rebuild + MPS I/O" figure held only on FAST contexts — cProfile on a hard plateau context reads **89.8% waiting on cbc.exe's own compute**, so Python-side optimization has little to reclaim there. **Every in-process backend swap is tried and REJECTED**: HiGHS ~3× slower (2026-07-14) · python-mip 2× slower + segfaults under the threaded sweep (2026-07-30, `_solve_inprocess` stays as the `HC_SOLVER_BACKEND=mip` measurement seam, dev-only dependency, NEVER shipped) · OR-tools in-process under the real 30-thread sweep 8-10× SLOWER (GIL: subprocess CBC is how the sweep escapes the GIL). **The one measured WIN: process-pool persistent workers + in-process OR-tools CBC per worker = 1.5-1.9× wall-clock** (+52% on the hardest context), `sandbox/solver_upgrade/RESULTS.md` — real surgery on deep_optimize's shared sweep state (incumbent/restarts/DEBUG_OBJ/learning hooks need IPC), awaiting Joel's scoping. Also measured: CBC warm-start ≈1.0× (bound-proving dominates), parallel sweeps 3.2× (shipped), context parallelism near-linear (shipped). **Solver backend is settled and is NOT a lever:** CBC keeps the crown — per-solve HiGHS ~2.65× slower under v38 (median 0.59s vs 1.07s, `solver_backend_ab_2026-07-29.log`, equivalence 24/24), and end-to-end on real certification runs **1.2-1.7× slower** (`bench_solver_e2e.log`: brute_farm 112s vs 190s, defender_support 89 vs 115, mastermind_pets 78 vs 92). ⚠ Quote the END-TO-END number for wall-clock decisions; the per-solve ratio does not transfer. ⚠ `deep_optimize` force-sets `HC_SOLVER_NODE_CAP` but `solver._mip_solver` reads it only on the CBC branch — the HiGHS branch returns first and ignores it, so a naive A/B runs CBC capped and HiGHS uncapped (the e2e harness neutralises this and asserts `capped_floor == 0`). ⚠ `bench_solver_e2e.py` guards itself against running beside a live wave — but on 2026-07-29 the wave died as it started, so treat that guard as unproven and check for live workers by hand.
-- **⚠ THE CANONICAL RETRACTION, WITH ITS EVIDENCE (9a7a5f8) — and it was never root-caused.** The finale uncapped re-solve does NOT make stored scores canonical: the r3 worker scored its winner **430.0**; a fresh process reproduces **387.3** (stable, repeatable). In-process state after a ~7,000-solve 30-thread run changes evaluation; **mechanism NOT root-caused** (100-solve single-run churn does not reproduce it; same family as the historical run-vs-canonical gaps). Stored score = within-run ranking only; `canonical_score` from a fresh-process evaluate is the only portable number. `evaluate_first` mirrors `deep_optimize` exactly (archetype= + content-first role — two counterfeit-comparison defects fixed, proven no-op on the 23).
-- **⚠ SKIP-CHECK UNION (wave/orchestrator, restored).** `converge_parallel` unions champions.json PLUS every root `champions_shard_*.json` MINUS `champions_held_ladderfix.json` (held = deliberately pulled, must re-converge). Shard-vs-shard collisions still hard-fail. Held-context shards get renamed OUT of the glob.
-- **🔬 AURA/PATCH PROC VALUATION — OPEN RULING WITH FIELD DATA (restored; do not lose again).** Field re-derivation from Joel's archived chatlogs (`tools/measure_ig_procs.py`, per-proc/per-host attribution via ToLG+Shield Breaker → Ice Grasp): **measured 10.66% per hit-tick vs the v31 dev-archive AF formula's 6.14% (AF=1: 11.67) — the formula undershoots the field by 42%; effective AF ≈ 1.1.** Also measured and still UNPRICED: IG base damage 7.97/hit/target (the stated v31 exclusion), and real farming double-stacks IG (1.21s effective cadence). The 2026-07-07 note said per-proc 56.7% ±3.2/window and "price from the MEASURED number". Any change here = model bump ⇒ re-converge both farm champions.
-- **⚡ EFFICIENCY EVERY WAVE (Joel's standing ask, 2026-07-29).** `tools/wave_cost_report.py` mines worker logs (no instrumentation) for per-context minutes/sweeps/solves/throughput → `benchmarks/wave_cost_history.json`. **Measured truth: the Kheldian slowness is PEACEBRINGER, not Warshade.** ⚠ The absolute minutes below are the PRE-prereq-fix run (2026-07-29) and are SUPERSEDED — see the per-context entry above for the current numbers (PB triform 484 → **261**, median 53 → 77). What survives is the SHAPE, and it is the durable finding: PB triform was 16.7 min/sweep vs a median ~1.5, PB dwarf and even Battle_Axe (not a Kheldian) ranked above every Warshade. **Sweep COUNTS are uniform (24-37) — slow contexts do the same number of iterations at up to 16× the per-sweep cost, so the lever is neighborhood size × solve difficulty, NOT iteration count.** **`split_wave.py` now schedules LPT** (longest-first, dealt to least-predicted-load-relative-to-capacity — ⚠ never SLICE the sorted list, that hands every monster to one machine): balanced 333 vs 335 min/worker on the current roster vs ~2× scheduling loss before. **Predicted makespan floor = the single longest context — no hardware beats that** (currently 261 min, PB triform); shrinking it is the next real lever, and per the speed ledger the lever is PuLP model reuse, not silicon. Run wave_cost_report after every wave to refresh the history.
-- **🖥 HARDWARE SIZING (2026-07-30, from the corrected per-context numbers).** The workload is hundreds of thousands of INDEPENDENT single-threaded CBC solves ⇒ throughput scales with core count × sustained clock; no GPU, storage irrelevant. Laptop = i9-13900HX (24C/32T, 8P+16E, 64GB) and it THROTTLES under sustained all-core load; the gaming box = i9-9900K (8C/16T) measured ~2× slower per context. **Whole 24-context wave in one shot needs ~24 concurrent workers** (wall clock then = the single longest context). Full 2,691-combo sweep: **~28 concurrent for 5 days (Threadripper 7970X 32C/64T, ~$4.5k), ~70 for 2 days (7980X 64C/128T, ~$8k)**. ⚠ RAM is the binding constraint and it is a SOFTWARE bug: `learn.marginals()` → `_load_log()` parses the ENTIRE `benchmarks/exploration_log.jsonl` (1.87 GB / ~1.6M rows as of 2026-07-30) into dicts once per `deep_optimize` call (server.py:3670) — ~12s CPU and 1+ GB resident per context, per worker. Under 1% of runtime today, but it sets the RAM spec for wide fan-out and grows every wave. ~~**Fix the parse before buying 256GB.**~~ ✅ FIXED 0.12.32: `_load_log` is now `learn._iter_log`, a streaming read with a needle pre-filter (89.3s/6.17GB → 29.3s/393MB) — RAM no longer constrains fan-out width. ⚠ Joel's standing frame: hardware buys VOLUME, never speed on the slow ones — and size any purchase on a measured full-parallel run (rent a box for one night), not on my arithmetic.
-- **📡 REMOTE HEARTBEAT SHOWS MOTION (25b7bb8a):** the box's heartbeat reports per-worker current context + sweep/restart + best + minutes-in (`in_flight_summary`), because a banked count alone reads "0 of 8" for 40 minutes and Joel nearly cancelled a healthy order. Lands on the box automatically via the next order's commit pin.
-- **⚠ USE THE FLEET (Joel's rebuke, 2026-07-29 3:33 AM — "you made adding a worker pointless").** At every wave launch/resume, partition the UN-STARTED keys across every available healthy worker (laptop + gaming box) — in-flight contexts stay put, queued ones split. The v38+HO wave soloed on the laptop to 3:30 AM while the freshly-validated box idled six hours. A safety concern gets SOLVED (collision-proof split tooling), never used as a reason to idle capacity; idling a worker must be justified out loud, never a silent default. Split tooling gets built BEFORE the next wave.
-
-- **EXPENSIVE RUNS LAUNCH DETACHED, NEVER AS SESSION BACKGROUND TASKS (2026-07-16).** Any convergence wave / champion build-out / roster battery starts as its OWN process that outlives the chat session — a session auth failure once killed two live workers mid-context (~50-55 min compute each; deep_optimize does NOT checkpoint mid-context). **Launch mechanism: Windows scheduled task via `Register-ScheduledTask` cmdlets (schtasks.exe quoting breaks under PS 5.1), action = `wscript.exe launch_hidden.vbs "<bat>"` window style 0** ⚠⚠ **NEVER register a near-future trigger AND call `Start-ScheduledTask` — it DOUBLE-FIRES the launcher** (cost 2026-07-30: the i6r wave launched twice 10s apart; run 2 saw run 1's contexts in flight, re-split the BOX's slice, and spawned 3 local workers on the SAME shard prefix — the collision this file already warns about — plus a duplicate box order. Caught in ~30 min: no shard had been written, zero results lost; killed run 2's orchestrator+workers by PID, deleted the unclaimed duplicate order. ⚠ run 2 also TRUNCATED run 1's p0-p2 logs on open, so a double-fire garbles the very logs you monitor with.) **Use the trigger alone (+10s) OR register far-future and Start manually — never both.** (visible task consoles got killed by a literal ^C twice; Start-Process detachment failed to survive twice). Unregister the task after the processes are confirmed running. Recovery: relaunch detached — converge_parallel skips certified shards — then VERIFY the shard logs are actually advancing (two snapshots) before trusting it. ⚠ Shard-prefix collision: a resumed wave with fewer workers reassigns `_pN` suffixes — copy completed shards to non-colliding names (still `champions_shard_*`) BEFORE relaunching.
-- **NEVER MERGE A SHARD WHOLESALE — MERGE BY CONTEXT, AND CHECK THE VERDICT FIRST (2026-07-16).** The printed "merge when ready" hint is a footgun: (a) one shard can hold a shipping context AND a held one; (b) `--replace` supersedes by construction, so a WORSE re-convergence silently replaces a better build. Read the shard's CONTEXTS, merge only cleared ones (split mixed shards), run evaluate-first after, KEEP THE CANONICAL WINNER — a recert earns supersession, it is not entitled to it. Held-context shards get renamed OUT of the glob. Bare `--replace` now HARD-FAILS without --verdicts (structural).
-- **SHARD RETIREMENT AT MERGE (2026-07-16).** The moment a shard merges, RENAME it to a non-matching suffix (`.merged_YYYY-MM-DD`) — `certified_union()` globs `champions_shard_*.json` and a stale copy once SHADOWED a live champions.json entry (8 stale shards, 28 shadowing attempts, caught by luck). The certified_union stale-shadow guard is the second lock. **Deliberately-never-merged shards are NOT stale** — ~~the E ground truths stay in the union~~ **SUPERSEDED 2026-08-10 (Joel: "retire the e_gt shards; they are illegal floors"): all three were game-illegal under the corrected prereq model and are renamed `.retired_2026-08-10_illegal_prereq_floors`; the union is champions.json alone until a wave writes new shards.** `e_derived_verdict` refuses to run until legal floors are regenerated (`run_e_overnight.py`).
-- **VERDICT BEFORE `--write` (2026-07-16).** Read and RECORD the wave's verdict before `evaluate_first --write` runs — `--write` overwrites `canonical_score`, the very values the verdict compares.
-- **EVERY NEW PRICING TERM SHIPS WITH A NEGATIVE CONTROL (2026-07-16)** — a real build that must read 0.0, alongside its positive test. The negative control is what proves a term reads ACTUAL slotting rather than firing on a lookalike.
-- **"READY FOR YOUR WALK" IS A CLAIM WITH A DEFINITION — AND IT NAMES THE COMMIT HASH (2026-07-16).** ALL of: (a) server restarted from current HEAD after the last server-side edit, (b) a FRESH page load with zero injected state, (c) the exact URL Joel opens, driven through a REAL entry path he would use, (d) the claim states the commit hash. Anything less is "probably ready" and must be said that way. Verification theater = the same defect class as a fake progress bar; the tell: the check never touched the thing the user touches. **Drive the real path** (the Journey-greeting and escHtml lessons).
-- **THE MACHINE CLOCK IS LOCAL EASTERN — `Get-Date` IS THE TIME AUTHORITY, NEVER A TZ CONVERSION (2026-07-16; re-bitten 07-27 with a same-evening "7/28" erratum; re-bitten TWICE 07-30 by deriving elapsed time from monitor-tick COUNTS — told Joel "35 min to the pause" when it was 75, then "~20 min" at what was already 4:02).** For anything a deadline, ritual, or timestamp depends on, run `Get-Date` and use it verbatim — and **never STATE a clock time, countdown, or "N minutes until X" without a same-turn `Get-Date`**. Event cadence (monitor ticks, notification arrival) is not a clock; ticks queue, lag, and batch. `date -u` only for UTC-labelled facts; never convert to derive local time.
-- **SCRIPTED-WRITE GUARD (2026-07-16) — the catch is mechanical, not vigilant.**
-  ⚠⚠ **BROKEN TWICE IN TWO DAYS, both times the SAME way: `io.open(p,'w',newline='')`
-  after reading in TEXT mode, which silently rewrites every CRLF as LF.**
-  `server.py` (8,356 lines, 2026-08-07) and `RESUME-HERE.md` (869 lines, same
-  day) — a 4-line and a 29-line change reported as 16,729 and 1,724. The
-  whitespace-blind diff is the tell, and on server.py I ran it only AFTER
-  committing. **This repo is CRLF: read `'rb'`, transform bytes, write `'wb'`,
-  and never pass `newline=''` to a text-mode write.** (a) Every scripted edit of a repo file writes binary/newline-preserving (`open(p,'rb')`→transform→`'wb'`) and matches the file's existing serialisation (powers.json is COMPACT single-line — never `indent=`). (b) Before committing, compare `git diff --stat` to INTENDED size (cross-check `--ignore-all-space`); >2× intent or whitespace-blind much smaller → STOP and diagnose. (c) Prefer the dedicated edit tooling; **NEVER PowerShell string rewrites on source files** (PS5.1 reads BOM-less UTF-8 as ANSI and mangles unicode).
+  MIDS-DERIVED SNAPSHOT LACKS** (Joel 2026-08-10; the fake Gadgetry/Utility
+  Belt/Wind Control records reached two certified champions and three re-cert
+  waves, ~17.3 h). **The liveness authority is `data/powers.json` AS SHIPPED.**
+  There is NO client field separating live from unshipped (measured — do not
+  look again) and the play logs are blind (Storm Summoning also greps to zero).
+  **The authority lags:** official patch notes ARE the game saying otherwise
+  (Boomerang Slice restored via `tools/liveness_dispositions.json` with
+  patch-note evidence); Joel's in-game check outranks a fan post but not the
+  game's own notes. Wind Control / Gadgetry / Utility Belt STAY retracted.
+  ⚠ A wholesale record removal must strip the mirror edits too (dangling
+  `excludes` debris). ✅ Standing guard: `tools/reality_check_liveness.py` —
+  current record names + offered sets vs the SAME files at the highest release
+  tag, hard-fails both ways unless dispositioned with evidence (empty = the
+  goal state); gated into `converge_parallel`; battery `tools/test_liveness.py`.
+  Real new content rides PATCH-WATCH (the shipping release moves the baseline).
+- **⚠ A PICK THE DATA DOES NOT HAVE IS NOT LEGAL** — `_picks_legal` refuses
+  unknown powers outright (`.get(fn) or {}` had passed every rule while two
+  champions named deleted powers).
+- **🎯 SCOPE A WAVE BY THE MOVERS, NOT BY WHO HOLDS A PATCHED POWER** — holding
+  is sufficient, not necessary (pet uptime, scenario and team channels move
+  scores with nothing patched picked; cost a second wave). **The right test is
+  an evaluate-first pass BEFORE the wave; done properly the wave ENDS with
+  `0 moved`, which is the completion signal.**
+- **⚡ THE QUICK NEEDS-UPDATE CHECK IS `evaluate_first --skip-riders`, no
+  --write (0.7 min measured)** — answers MOVED / ILLEGAL / STALE STAMP per
+  context; "NEEDS UPDATE: none" = no wave owed; a wave runs only over the
+  contexts it names. ⚠ **THE CEILING:** it proves the stored build is legal,
+  current, correctly scored — it CANNOT prove a different pick-set wouldn't
+  win; only a converge wave searches. ⚠ recert_verdicts still prints no
+  legality column — **keep checking merges by hand** (the 0.12.30 failure that
+  shipped 8 unbuildable champions).
+- **✅ The `e_gt` ground-truth shards are RETIRED (Joel: "illegal floors")** —
+  game-illegal under the corrected prereq model
+  (`.retired_2026-08-10_illegal_prereq_floors`); `e_derived_verdict` refuses
+  until `run_e_overnight.py` regenerates legal floors. Past E clearances
+  stand — an illegal floor is at least as strong as a legal one.
+- **✅ EVERY CHAMPION RECORDS THE MODEL THAT CERTIFIED IT** —
+  `merge_champion_shards` stamps `model_version` at its single write point;
+  scope checks are one line of inspection. ⚠ METADATA ONLY:
+  `tools/test_model_stamp.py` forbids scoring modules from READING it (tests
+  field ACCESS, not the bare word; drives the real merge tool over an
+  unstamped shard).
+- **🚨 CHECK THE GAME, NOT YOUR PARSE** (cost a 12-hour wave): a parse of an
+  undocumented field is a HYPOTHESIS — the game's display_help, weeks of
+  working evidence, and Joel outrank it; a finding that invalidates certified
+  work is JOEL'S RULING, never my wave.
+- **✅ PREREQ MODEL: `server._prereq_need` is THE authority** (data
+  `prereq_count` first, tier proxy for the 68 the game doesn't state).
+  Evidence rule — patch only where TWO of three signals agree: the help
+  sentence · the requires expression NAMES other powers (not merely non-empty;
+  most epic expressions are archetype gates) · the corpus-validated tier
+  model. Standing check `tools/reality_check_prereqs.py` (self-skeptical:
+  help text naming another power is TEXT evidence, not RULE evidence), and
+  **it GATES the launcher** — `converge_parallel` runs `--gate` BEFORE
+  spawning, failing on disagreements new since
+  `tools/prereq_disagreement_baseline.json`; `--skip-reality-check` exists to
+  be said out loud. **A lesson that lives only in a docstring is a note —
+  wire it into the thing it protects.**
+- **⏱ PER-CONTEXT COST (corrected 2026-07-30):** min 12 · median 77 · mean 75
+  · max 261 min (PB triform; never re-quote the pre-prereq-fix 484).
+  ⚠ `buildout_champions`' printed `total:` is the WHOLE worker queue —
+  per-context = the gap between consecutive `[Xm]` markers. Full space =
+  2,691 combos ⇒ ~3,370 worker-hours (~28 concurrent for 5 days, ~70 for 2);
+  content types multiply that directly.
+- **🐌 SPEED LEDGER (measured; the solver backend is SETTLED and NOT a
+  lever):** CBC keeps the crown — HiGHS 2.65× per-solve and **1.2-1.7×
+  END-TO-END (quote the end-to-end number for wall-clock decisions)**;
+  python-mip and in-process OR-tools both rejected (GIL — subprocess CBC is
+  how the sweep escapes it); warm-start ≈1.0×. Hard plateau contexts sit
+  89.8% inside cbc.exe — Python-side optimization reclaims little there.
+  **The one measured win, awaiting Joel's scoping: process-pool persistent
+  workers + in-process OR-tools CBC per worker = 1.5-1.9× wall-clock**
+  (`sandbox/solver_upgrade/RESULTS.md`). ⚠ `HC_SOLVER_NODE_CAP` is read only
+  on the CBC branch — a naive A/B runs CBC capped and HiGHS uncapped.
+  ⚠ `bench_solver_e2e.py`'s live-wave guard is UNPROVEN — check for live
+  workers by hand (it once killed 10 in-flight contexts).
+- **⚠ THE CANONICAL RETRACTION (never root-caused):** in-process state after a
+  ~7,000-solve 30-thread run changes evaluation (in-run 430.0 vs fresh 387.3,
+  stable). **Stored score = within-run ranking ONLY; `canonical_score` from a
+  fresh-process evaluate is the only portable number.**
+- **⚠ SKIP-CHECK UNION:** `converge_parallel` unions champions.json + every
+  root `champions_shard_*.json` − held shards (held = deliberately pulled,
+  must re-converge); shard-vs-shard collisions hard-fail.
+- **🔬 AURA/PATCH PROC VALUATION — OPEN RULING WITH FIELD DATA (do not lose
+  again):** measured 10.66% per hit-tick vs the v31 formula's 6.14% — the
+  formula undershoots the field by 42%. IG base damage (7.97/hit/target) and
+  farming's double-stack still unpriced. Any change = model bump ⇒ re-converge
+  both farm champions. `tools/measure_ig_procs.py`.
+- **⚡ EFFICIENCY EVERY WAVE (Joel's standing ask):** run
+  `tools/wave_cost_report.py` after every wave. The Kheldian slowness is
+  PEACEBRINGER; sweep COUNTS are uniform — the lever is neighborhood size ×
+  solve difficulty, not iteration count. `split_wave.py` schedules LPT
+  (⚠ never SLICE the sorted list — that hands every monster to one machine).
+  Makespan floor = the single longest context; the lever is PuLP model reuse,
+  not silicon.
+- **🖥 HARDWARE SIZING:** the workload is independent single-threaded CBC
+  solves ⇒ cores × sustained clock, no GPU. The laptop (24C/32T) THROTTLES
+  under sustained all-core load; the box ~2× slower per context. A 24-context
+  wave in one shot needs ~24 workers. The RAM ceiling is FIXED (0.12.32,
+  `learn._iter_log` streams). ⚠ Joel's frame: hardware buys VOLUME, never
+  speed on the slow ones — size any purchase on a measured rented-box run,
+  not my arithmetic.
+- **📡 The box heartbeat reports per-worker motion** (`in_flight_summary`) — a
+  banked count alone reads "0 of 8" for 40 minutes and nearly got a healthy
+  order cancelled.
+- **⚠ USE THE FLEET (Joel's rebuke):** at every wave launch/resume, partition
+  the un-started keys across every healthy worker; idling a worker must be
+  justified out loud, never a silent default.
+- **EXPENSIVE RUNS LAUNCH DETACHED, NEVER AS SESSION BACKGROUND TASKS** (a
+  session auth failure once killed two live workers mid-context;
+  deep_optimize does not checkpoint mid-context). Mechanism:
+  `Register-ScheduledTask` cmdlets (schtasks.exe quoting breaks under PS
+  5.1), action `wscript.exe launch_hidden.vbs "<bat>"` window style 0.
+  ⚠⚠ **Use the trigger alone (+10s) OR register far-future and Start
+  manually — NEVER both: trigger+Start DOUBLE-FIRES the launcher** (a
+  double-fire re-splits in-flight work onto colliding shard prefixes AND
+  truncates the logs you monitor with). Unregister the task once processes
+  are verified. Recovery: relaunch detached (certified shards are skipped),
+  then VERIFY shard logs advance (two snapshots). ⚠ A resumed wave with fewer
+  workers reassigns `_pN` suffixes — copy completed shards to non-colliding
+  names (still `champions_shard_*`) BEFORE relaunching.
+- **NEVER MERGE A SHARD WHOLESALE — MERGE BY CONTEXT, AND CHECK THE VERDICT
+  FIRST.** Read the shard's CONTEXTS, merge only cleared ones, run
+  evaluate-first after, KEEP THE CANONICAL WINNER — a recert earns
+  supersession, it is not entitled to it. Bare `--replace` hard-fails without
+  --verdicts (structural).
+- **SHARD RETIREMENT AT MERGE:** rename merged shards `.merged_YYYY-MM-DD`
+  immediately — `certified_union()` globs `champions_shard_*.json` and a
+  stale copy once SHADOWED a live champions.json entry. With the e_gt shards
+  retired, the union is champions.json alone until a wave writes new shards.
+- **VERDICT BEFORE `--write`** — `evaluate_first --write` overwrites
+  `canonical_score`, the very values the verdict compares.
+- **EVERY NEW PRICING TERM SHIPS WITH A NEGATIVE CONTROL** — a real build that
+  must read 0.0 beside the positive test; that is what proves the term reads
+  ACTUAL slotting rather than firing on a lookalike.
+- **"READY FOR YOUR WALK" IS A CLAIM WITH A DEFINITION — AND IT NAMES THE
+  COMMIT HASH.** ALL of: server restarted from current HEAD · a FRESH page
+  load with zero injected state · the exact URL Joel opens, driven through a
+  REAL entry path · the claim states the hash. Anything less is "probably
+  ready" and must be said that way. Verification theater's tell: the check
+  never touched the thing the user touches. **Drive the real path.**
+- **THE MACHINE CLOCK IS LOCAL EASTERN — `Get-Date` IS THE TIME AUTHORITY,
+  NEVER A TZ CONVERSION** (re-bitten three times). Never STATE a clock time,
+  countdown, or "N minutes until X" without a same-turn `Get-Date`; event
+  cadence (monitor ticks) is not a clock. `date -u` only for UTC-labelled
+  facts.
+- **SCRIPTED-WRITE GUARD — the catch is mechanical, not vigilant.** This repo
+  is CRLF: read `'rb'` → transform bytes → write `'wb'`; **never
+  `newline=''` on a text-mode write** (silently rewrites CRLF→LF; bit
+  server.py and RESUME-HERE.md in one week). Match each file's existing
+  serialisation (powers.json is COMPACT single-line — never `indent=`).
+  Before committing, compare `git diff --stat` to INTENDED size (cross-check
+  `--ignore-all-space`); >2× intent or whitespace-blind much smaller → STOP.
+  **Never PowerShell string rewrites on source files** (PS5.1 reads BOM-less
+  UTF-8 as ANSI and mangles unicode).
 
 ## Naming: three namespaces, and the trap (settled game-first 2026-07-30)
 
@@ -1299,254 +1298,109 @@ recordEdit, saveProgress, a solve or autoSaveTick, and every CSS rule is scoped 
 
 ## ⭐ CURRENT STATE & open queue (2026-07-31)
 
+**Completed-batch narratives (engine-accuracy items 1-6, the 2026-07-30/31
+waves, the v38+HO wave, the slotting-remainder pieces, the remote-worker maiden
+run, the superseded release chain back to 0.12.30): docs/claude-md-ledger.md.**
+
 **▶▶ TONIGHT (2026-08-13, Joel's word): the owed 20-mover re-cert wave, then the
 sweep-rework scoping — exact command + protocol in session-report.md's top
 block ("▶▶ TONIGHT"). Wave first, detached, no --merge; verdicts to Joel.**
 
-**Nothing is running; no scheduled tasks armed.** Shipped v0.12.30 "Accuracy pass".
-The live handoff detail is `coh-builder/RESUME-HERE.md`; the entries below are the
-standing record of how the engine-accuracy batch was done.
-**✅ SHIPPED 2026-07-31 evening (Joel accepted both on sight):** the **four-way
-alignment** (3d62f4fa + eb1aa204 — 🦸 Hero / 🛡️ Vigilante / 😈 Rogue / 🦹 Villain,
-header picker + four entry cards; the middles are a **third THEME**, a peer of
-theme-hero/theme-villain with their own `--bg`/`--panel`/`--accent`, sharing the
-Journey's amber `#e0a63c` so the app and the 1-50 road agree; build-neutral proven
-end-to-end with a negative control) and the **archetype emblems** (e99524e1 +
-59e25203 — the game's own art on the Build panel and the saved-character rows,
-15 of 15 archetypes resolving).
-⚠ **`#masthead` carries an ID and outranks `body.theme-x header`, so the themed
-header gradients + 2px underlines have NEVER rendered on hero or villain.** The
-middle rule is scoped to `body.align-mid #masthead` to win; the other two are left
-DEAD on purpose — reviving them changes both shipped themes, which is Joel's call.
+**Nothing is running; no scheduled tasks armed.** Live handoff detail:
+`coh-builder/RESUME-HERE.md`.
 
-**▶ OPEN, in Joel's order:** (1) ~~verdict-gate legality hole~~ **CLOSED
+**Latest release: 🚀 v0.12.38 "The window that says why"** (2026-08-11, stamp
+`92bc365`, signed, API-verified; installed copy mirrored + relaunched): an
+engine that fails to start is CAPTURED (traceback to app.log, reason held for
+the UI) and the window shows a diagnosis page instead of navigating to a dead
+port. Battery 141/141; data 2026.1.1242 + model v44 unchanged. ⚠ Awaiting
+Glacier Peak's answer on topic 64761 (app.log lines + installer-or-portable);
+thread checked 2026-08-11, nothing new after Joel's posts.
+
+**▶ OPEN, in Joel's order:** (1) ~~verdict-gate legality hole~~ **CLOSED**
 (07ce596e + tools/test_verdict_legality.py — legality outranks score, all four
-branches, fail-safe on unmeasurable)** · (2) Iron Man accolade grant (Joel's
-in-game look) · (3) origin plates extracted but unplaced (~~i24 glob bug~~ fixed
-7a67c48c, see pitfalls) · gaming box silent since 2026-07-29 11:51 · drafted
-forum/Discord posts unsent · reduced-motion, ~~exploration-log parse~~ (✅
-SHIPPED 0.12.32 — learn._iter_log streams with a cheap-reject needle filter,
-89.3s/6.17GB → 29.3s/393MB; the RAM ceiling for wide fan-out is gone),
+branches, fail-safe on unmeasurable) · (2) Iron Man accolade grant (Joel's
+in-game look) · (3) origin plates extracted but unplaced · gaming box silent
+since 2026-07-29 11:51 (dual-3090 + 1200W rebuild pending — Qwen3.8-27B slated
+for it) · drafted forum/Discord posts unsent · reduced-motion ·
 strict-dominance experiment.
 
-- **🔧 ENGINE-ACCURACY WORK ORDER: ITEMS 1-4 DONE (2026-07-30 morning; commits
-  4c9243cc · 9de25d30 · 9025dee8 · e4d63760 — details in session-report).**
-  (1) The user-facing validator now checks POOL prerequisites, not just Epic
-  (`_epic_prereq_errors` widened; proof = `tools/audit_pool_prereq_validator.py`,
-  both arms through the real /build/validate route, negative-controlled; its
-  `--champions` re-derived the 12-of-24 illegal list independently — matches §1.1).
-  (2) `reality_check_prereqs.py` RE-BASED on the requires EXPRESSION the game
-  executes; prose = corroboration only; the "no sentence means needs 0" default
-  is DELETED. **Full accounting is enforced**: every one of our pool/epic powers
-  either game-verified or named in `tools/prereq_unmatched_dispositions.json`,
-  hard-fail otherwise (Joel: "knowing all, not just most"). Baseline regenerated
-  EMPTY (was 8 prose-era entries); gate interface unchanged for converge_parallel.
-  (3) Bridge 9→12 pairs + display-identity resolver rung → **prereq coverage
-  467 of 467, all from the expression, zero held** (was 413/472); all 54 new
-  counts equal the proxy's — ZERO enforcement movers. (4) §1.6 disposed (see the
-  Naming section — Scrapper Mace removed, Fly_Boost deliberately absent).
-  Also fixed: the standing gate was RED at HEAD (pre-existing) — lone-HO
-  Ribosome in an armor toggle had no `_slot_plan` note; HO branch added, 23/23.
-  Verification stack: 467/467 · gate OK · 273/273 · 23/23 · epic-tiers clean ·
-  autopick legality 2,691/2,691 (re-run because Scrapper eligibility changed).
-  **✅ ITEM 5 RULED AND IMPLEMENTED (aea7e1fd, same morning).** Joel's rulings:
-  tie-break = what the user chose the build for, ROLE always the focus; fix =
-  (b) the TWO-STAGE solve; "never assume we need a re-cert — always check
-  whether the change justifies it" (STANDING RULE); endurance recovery ranks
-  first among tie-breaks, then DPS (damage) / survivability (tanks). Design:
-  `C:\Users\joelc\code\plateau-fix-paper.md`. Implementation: `_ilp_pass`
-  step 2 re-solves among tied optima (step-1 optimum = hard floor constraint;
-  failed step 2 restores step 1 verbatim; HC_TWO_STAGE=0 = A/B seam). NOT a
-  model bump — canonical scores stay comparable (Piece 3 family). Battery
-  test_plateau_twostep.py 5/5 (tie pin, floor negative control, cushion,
-  recovery-never-worse, kill switch); gate 23/23, HO/proc/pet green. ⚠ Step 2
-  is an ADDED solve: spot A/B 0.5s→1.9s, identical step-1 outcome — the trade
-  is tie-correctness for wall time; the paper's original "speed win" hope was
-  WRONG and is corrected in the paper. **📊 MEASUREMENT DONE (911d998b,
-  tools/measure_plateau_ab.py — solve-level A/B, all 24 contexts, both arms,
-  ZERO floor defects):** recovery-first (Joel's ordering) = 12 up / 5 down /
-  3 flat, median +1.31%, range −20.3% (Blaster Fire/EM) .. +61.9% (Warshade
-  itrial); role-first comparison arm = 7/8/4, median 0.0% — **Joel's ordering
-  wins on every axis and stands.** Honest negatives: 3 outliers (Blaster
-  −20.3, Battle_Axe/FA −9.5, Stalker Rad/Dark −7.2 — linear proxies can't see
-  procs/chains that fp prices) and cost 3.15× ILP wall (up to 9× per solve).
-  `HC_TS_REC_W` = measurement seam for the recovery dominance.
-  **✅ NEGATIVES CLOSED STRUCTURALLY (7820d06a, Joel's "fix the honest
-  negatives"):** no static tie-break weighting survives fp (measured 3-way:
-  each fixes one outlier, breaks another — no more weight tuning, ever). Fix =
-  (a) tie-break STYLES per-call on solve_ilp ("eps" = tie-preference folded
-  into step 1, HC_TS_EPS cap 0.001, measured 1.05× = FREE, outliers bounded
-  −4.6%, the DEFAULT everywhere incl. sweeps; "lex" = the two-solve step 2;
-  False = plain) — per-call param, never env (sweep pool is threaded);
-  (b) **deep_optimize FINALE solves the winner under every style and PHYSICS
-  picks** (cert["tie_arbitration"] records arms) — committed champions never
-  worse than any style by construction, cost 2 solves per CONTEXT.
-  **🐌 SLOW-BUILD DIAGNOSIS COMPLETE:** sweep counts uniform — per-solve cost
-  is the whole story; eps FALSIFIED the degeneracy-collapse hypothesis (1.05×,
-  not <1×) so plateau bound-proving is INTRINSIC; ~~the remaining measured lever
-  = the 30-40% PuLP rebuild/MPS-I/O overhead → in-process CBC (python-mip)~~
-  **SUPERSEDED — python-mip was built and REJECTED 2026-07-30 (2× slower +
-  sweep segfaults); the live lever is the process-pool + OR-tools combo, see
-  the corrected SPEED LEDGER entry.**
-  ⚠ Battery lesson: eps makes re-solves REPRODUCIBLE — the v35 lock check's
-  "others changed" witness died of it; now locks a MANGLED slotting instead
-  (byte-identity proves the lock overrides the optimizer). All batteries
-  green. ⚠ RETRACTED same day: "CBC tie choice varies under CPU load" — the
-  observed drift was (a) three concurrent measurement copies interleaving
-  writes to one output file and (b) LEARNING CARRYOVER: any deep_optimize
-  probe warm-starts from HC_CHAMPIONS_PATH and appends to the REAL
-  exploration log, so back-to-back probes on one context are NOT independent
-  — isolate scratch paths PER ARM and run separate processes, or the ladder
-  measures learning, not the variable.
-- **✅ NO-SHORTCUTS AUDIT (8d676076, Joel: "make sure we did not take
-  shortcuts that will undermine the accuracy"):** three holes found+closed —
-  (1) the eps floor is now a STANDING battery check for BOTH styles
-  (discrete-gap fixture, exact); (2) the lock check regained the
-  "allocated empties stay empty" half (mangled slotting carries an explicit
-  None; empties = the None entries in the incoming list, NOT derived from
-  earned); (3) **serve-time /build/solve now physics-arbitrates too** —
-  generated/full-re-slot solves with a scorable objective run the plain arm
-  and fp picks (preserve/keep-layout/perk-chip skip; ~2× solve seconds).
-  Gate grew check 24: both arms RAN and the arbitration swallow did NOT fire
-  — silent death is the failure mode, and this check caught a real NameError
-  pre-ship. Gate 24/24 · plateau 6/6.
-- **🧾 MOVERS WAVE (2026-07-30 afternoon — Joel's ruling mid-run: this is the
-  FIRST TRANCHE OF ITEM 6, never "just a test"; a same-cost rehearsal of
-  certification is a waste — the cheap instrument answers "did it move", the
-  next spend goes to the REAL artifact):** 6 mover contexts, --recert, eps
-  solver + arbitrated finales, launched detached 12:34 PM, paused clean 4:05
-  (armed pre-departure), 5 banked; Warshade resumed on Joel's "continue"
-  (4:54 PM, distinct prefix abmov_ws per the collision rule) and converged
-  in 88.6 min. **WAVE COMPLETE 6/6 — verdicts (recert_verdicts.json 18:25,
-  regenerated with ALL six shards — ⚠ the tool OVERWRITES per invocation,
-  always regenerate complete before any merge): 2 SUPERSEDE (Night_Widow
-  +99.3 · Blaster Fire/EM +6.3) / 4 KEEP (Broad_Sword −180.8, Warshade
-  −352.0, Stalker Rad/Dark −304.6, Battle_Axe −551.0 — gate held).**
-  Notable, both directions: the Blaster (worst solve-level outlier, −20.3%)
-  SUPERSEDES converged; the Warshade (+61.9% solve-level) KEEPS —
-  single-solve tie deltas predict NOTHING about converged outcomes; the
-  sweep+arbitrated-finale decides and the verdict gate protects the roster.
-  ✅ MERGED on Joel's word (73aaab77, evening): Night_Widow + Blaster by
-  context via --verdicts; all abmov shards retired (.merged /
-  .kept_incumbent); validate_champions exit 0, both new champions SERVED.
-  **✅ ITEM 6 COMPLETE (2026-07-31): 24 of 24 contexts re-certified under
-  the new solver across both tranches — **8 SUPERSEDE / 16 KEEP**, all
-  supersedes MERGED on Joel's word (73aaab77 movers, ed03df77 remainder).
-  Remainder wave 18/18: PB nova +391.2, Crab +248.9, Poison/Sonic +131.6,
-  WS dwarf +85.6, Sentinel Fire/WP +77.7, Rad/Sonic +55.9; PB dwarf ran
-  last (101.3 min) and KEEPS. Supersedes CONCENTRATED in form-locked
-  Kheldian + VEAT contexts — the tie-break work earned its keep.
-  All shards retired .merged_2026-07-31; validate_champions exit 0.
-  ✓ MERGE SAFETY, VERIFIED not assumed: workers write ONLY their own shard
-  (HC_CHAMPIONS_PATH, converge_parallel:183), never champions.json — so a
-  merge is safe while a worker runs; and merge_champion_shards filters
-  PER CONTEXT against --verdicts, so MIXED shards need NO manual splitting
-  (it prints 'KEEP incumbent' for each non-superseding context).
-  ⚠ The gaming box has NOT woken since 2026-07-29 11:51 (no heartbeat,
-  orders unclaimed) — check it before the next wave counts on it.
-  **▶ OPEN: box health · optional strict-dominance solver experiment ·
-  release still HELD (Mids export fix + slotting batch staged Unreleased).** ~~Cheap win parked: exploration-log parse~~ (✅ shipped 0.12.32 as learn._iter_log — this parked note went stale).
-- **⚠ MY OWN ERRORS THIS WAVE, recorded so the pattern is visible:** quoted a per-solve solver ratio (2.65×) as if it were end-to-end (really 1.2-1.7×); quoted a pre-fix 484 min as current (really 261); inflated the banked count by 2 by incrementing from monitor events instead of counting the shards; read a docstring's history as current state and wrongly declared a healthy wave's premise broken. **Common thread: passing along a number without checking what it measured.** Count from the artifact, not from the narration.
+**Queue (carried forward):** budget/balanced/premium as a REAL player choice
+again (the tier dial is vestigial; do not resurrect R3-as-posed) · Leveling
+Companion batch (shares the Journey surface) · Fury meter class
+(Fury/Rage/Domination/Defiance/Gauntlet — no public Brute damage absolutes
+until then) · pricing #31 (single-claim pairing) · 18 inherent icons
+(optional) · i24 archive content (Joel's torrent hand) · alias-map roster
+reconciliation + Power Boost amplifier effects (parser allowlist family) ·
+Maelwys leftovers (CJ-vs-Weave slot modeling, attack-card wording awaiting
+Joel's text) · **Lite is at 0.1.18** (notes saying "0.1.17 next" are stale).
 
-### Carried forward (2026-07-27 night)
+Standing rules and facts that survive the moved narratives:
 
-- **Latest release: 🚀 v0.12.38 "The window that says why"** (2026-08-11,
-  stamp `92bc365`, signed, API-verified; installed copy mirrored + relaunched).
-  One fix, shipped same-day on a field report (Glacier Peak, topic 64761,
-  blank window): an engine that fails to start is CAPTURED (traceback to
-  app.log, reason held for the UI) and the window shows a diagnosis page —
-  the error, the app.log path, the antivirus-quarantine remedy — instead of
-  ever navigating to a dead port (WebView2 renders that as the blank window).
-  Battery 141/141. Data 2026.1.1242 + model v44 unchanged. ✅ Joel posted both
-  replies on topic 64761 2026-08-11 (the Glacier Peak response + the 0.12.38
-  announcement). ⚠ Still awaiting Glacier Peak's answer (app.log lines +
-  installer-or-portable, fresh-or-update); thread checked 2026-08-11, nothing
-  new after Joel's posts.
-  Superseded entry kept for the ledger: **v0.12.37 "Help, shortcuts, and a faster front door"**
-  (2026-08-10, stamp `375d2b6`, signed, API-verified, both assets; installed
-  copy mirrored + relaunched, /meta 0.12.37 model 44). Carries: searchable
-  help (v1+v2: suggestions → full page with examples + tour figures + go-to-it
-  exits, 45 topics incl. Keyboard shortcuts), the menu accelerators
-  (Ctrl+S/I/E/K, Ctrl+1..4, shown on the menus, parity-pinned), the staged
-  launch (bootloader splash 1.3s / window 3.6s / ready 4.1s), launch always
-  on Powers & Slots, **Boomerang Slice restored** (live since Feb 10 i28p3;
-  the notes credit Maelwys and correct the 0.12.36 claim publicly), About
-  links in ink, the ponytail cleanup. Data 2026.1.1242 + model v44 unchanged;
-  no score moved. ⚠ Liveness baseline auto-rolled to v0.12.37 and the four
-  Boomerang dispositions were EMPTIED (they went stale by design the moment
-  the release contained the records — the two-way pin working). ✅ ANNOUNCED on topic 64761 2026-08-10 (Joel posted the 0.12.37 reply,
-  leading with the Boomerang restoration and crediting Maelwys).
-  Superseded entry kept for the ledger: **v0.12.36 "The second accuracy pass"** (2026-08-10, stamp
-  `0556ff8`, signed, API-verified, both assets; installed copy mirrored and
-  relaunched, /meta reads 0.12.36 model 44). Model **v38 → v44** (v39-v44:
-  self-damage buffs, slow resist, DDR, absorb + the RechargeTime fix,
-  Domination, crits), data unchanged 2026.1.1242 (current with the game's
-  July 7 patch, re-checked at release). All 24 champions re-certified across
-  three waves, every claim independently re-verified after the Wind Control
-  retraction, which the release notes state publicly. Joel skipped the clean
-  re-cert on the quick check's "NEEDS UPDATE: none" and ordered the cut.
-  ⚠ Release notes name the new liveness guard; smoke pins now rest at
-  0.12.36/model 44 (the shipped values). ✅ ANNOUNCED on topic 64761
-  2026-08-10 (Joel posted it): the reply also corrects his Aug 7 Soul Drain
-  concession, agreeing with Maelwys and Jacke on-thread, and owns the Wind
-  Control retraction publicly.
-  Superseded entry kept for the ledger: **v0.12.35 "Every set is clickable"**
-  (2026-08-08T00:21Z, stamp `d76c043`, signed, API-verified, both assets;
-  installed copy mirrored and relaunched). Carries the apostrophe/escHtml picker fix and the improvement
-  report's export pointer. **Preceded by v0.12.34 "Your picks stay yours"**
-  (2026-08-07T23:43Z, stamp `3431636`) — the epic-swap refill drawing on the
-  build's own pools, the champion shortcut barred from answering a seat-fill,
-  the refill verifying it reached 24 rather than solving a short build, and the
-  leveling chart reporting open seats. **Data 2026.1.1242 and model v38
-  unchanged in both, so no certified score moved.** ⚠ Neither is announced yet;
-  a 0.12.35 reply to BasiliskXVIII is drafted at
-  `C:\Users\joelc\Downloads\hero-companion-0.12.35-post.txt`.
-  ⚠ **The 0.12.34 refill failure was never root-caused** — every server path
-  reproduced clean; the verify-and-refuse guard is what makes the symptom
-  impossible, and it is a guarantee, not a diagnosis.
-  Superseded entry kept for the ledger: **v0.12.33 "Knowing what to do next"** (published
-  2026-08-07 22:35Z on Joel's "Cut a release with all of this"; build stamp
-  `898653a`, signed CN=Joel Andrew Chambers, API-verified, both assets; installed
-  copy mirrored and relaunched, header reads 0.12.33). **Data 2026.1.1242 and
-  model v38 BOTH unchanged, so no certified score moved and no re-cert is owed** —
-  the one data edit (Tactical Arrow's `Gymnastics`, `patch_display_name_collisions.py`)
-  has **zero champion exposure, counted not assumed**. Carries: the order-to-work-in
-  band + its tour step · the Assistant/Stats ledes (`.keep-whole` + `.tool-lede`;
-  the two-column variant was tried and REVERTED on his word) · the epic-swap
-  "Switch and refill" (`_pick_epic(force=)`, byte-identical at 272 combos) ·
-  the Gymnastics repair · the phantom edit receipt + the undo-stack leak + the
-  ten-global per-character sweep · the three unboxed panels · the `↳` glyph ·
-  the PvP-variant disposition.
-  ✅ **ANNOUNCED on topic 64761, 2026-08-07** (Joel posted it himself).
-  ⚠⚠ **THE 0.12.31 AND 0.12.32 ANNOUNCEMENT DRAFTS WERE NEVER POSTED AND NEVER
-  WILL BE — do not resurrect them.** Both sat written-and-unsent for days; the
-  0.12.33 post supersedes them. ⚠ **Joel's ruling: the catch-up paragraph was
-  CUT** ("Cut the catch-up section, I never posted about 0.12.31"), so **nothing
-  public has ever announced that the app stopped being a browser tab** — if a
-  field report ever reads as "why is this not opening in my browser", or someone
-  is surprised by the four-tab window, that is why, and it is not a bug.
-  ⚠ The post carries a **public correction**: an earlier forum reply of Joel's
-  said the update check only runs when you click it, which stopped being true in
-  0.12.31. That correction is now made; the stale-reply watch item is CLOSED.
-  ⚠ The post states plainly that **`/thumbtack` is untested in game**. If anyone
-  ever confirms the marker lands, that is the trigger to strengthen the claim
-  (see the map-marker entry in the pinned game facts).
-  ⚠ FP/whitelist submissions per docs/signing-runbook.md are Joel's hand.
-  Superseded entry kept for the ledger: **v0.12.32 "The Stats page becomes a workbench"** (published
-  2026-08-06 23:02Z on Joel's "Cut 0.12.32"; signed, API-verified, both assets;
-  installed copy mirrored to `e164fd1` and relaunched; the 0.12.31 signed
-  installer was NOT overwritten). ⚠ Its announcement was drafted and **NEVER
-  POSTED — superseded by the 0.12.33 post (2026-08-07); do not resurrect it**.
-  ⚠ Its badge sentence was corrected
-  before publishing: it claims only that `/thumbtack` is the command the client
-  registers for placing a minimap marker, never that the marker lands as
-  expected — nobody has confirmed that in game, and Joel said to skip the check.
-  Superseded entry kept for the ledger: **v0.12.31 "The desktop app"** (published 2026-08-05 8:35 PM ET on Joel's thumbs-up after his review walk; signed, API-verified, both assets; installed copy mirrored to the release build b2161e1 and relaunched). Superseded entry kept for the ledger: **v0.12.30 "Accuracy pass"** (published 2026-07-31, signed, API-verified; model v38, data currency 2026.1.1242). It carried the whole held batch: display units, honest panel headers, scale/target data patch, model v37 target-aware scoring, v38 pet hit chance, solver HO options, the proc-vs-set trade note, and the 8 superseding champions. **hero-companion.com is live** (see Standing watch).
-- **✅ THE 2026-07-28 RELEASE HOLD IS DISCHARGED** — everything staged under Unreleased shipped in 0.12.30. The standing rule that survives is the ordinary one: nothing publishes without Joel's say-so, changelog entries stage under "Unreleased" until he approves.
-- **⚠ 0.12.30 caught a real defect on the way out, and it is NOT fully closed:** 8 of 24 bundled champions could not be built in game (Wall of Force / Misdirection / Weave held with one pool power where the game wants two). The verdict gate had "kept" them because **it compares SCORE ONLY** and the illegal incumbents outscored their legal replacements. Joel's ruling: **legality outranks score.** The champions were fixed (gold 16/24 → 24/24 SERVED) but **the verdict gate still has no legality dimension** — close it before the next wave.
-- **Joel's hand (post-0.12.29):** FP/whitelist submissions, gaming-box install acceptance, tray relaunch (BD watch), forum announcement (draft in session-report; "thirteen times" tally verified).
-- **▶ ACTIVE BATCH (Joel's pick 2026-07-28, re-orders the queue): SLOTTING-JUDGMENT REMAINDER.** Paper = `C:\Users\joelc\code\slotting-remainder-paper.md` (plain-English per his flag: every new number ships with its explanation + a tour card). **✅ RULINGS R1-R3 ANSWERED (Joel, 2026-07-28 afternoon):** R1 = an unpinnable pet fact HOLDS its sub-piece with an honest label (Fury's "shown, not yet scored" pattern), no log hunts by default. R2 = champions may use HOs **only in endgame content presets (itrial, farm)**, every HO carries an attain note ("from Hamidon raids or merits"). R3 = **MOOT AND DEFERRED — Joel: "we have not had a real scale or choice to pick cheap over expensive builds in a long time"** (the tier dial exists in solver.py:920 but every API path defaults premium); HOs are gated by R2 alone, NO per-tier HO rule; "make budget/balanced/premium a real player choice again" is queued as its own future item — do not resurrect R3-as-posed. **✅ PIECE 1 SHIPPED (2d8dbca9, staged Unreleased): the proc-vs-set trade explains itself.** proc_pass records `_proc_trade` (kind bomb/hybrid/anchor/ff + displaced slots; fresh pass clears stale notes on unlocked powers); engine `_offense` emits the display-only ledger (proc_dmg/proc_n/proc_per + trade_* — displaced pieces priced by the same enhancement math, invariance proven byte-identical); ⓘ card renders one sentence per kind (a −res anchor in a non-damage toggle renders from the power record — no offense row exists); tour step 57 "Why these enhancements" (key `proc-why`, the note's ? deep-links to it); tools/test_proc_trade_note.py = 8-check battery (negative control, invariance, real /build/solve route). NOTE: **pet accuracy is now v38** (the paper's "v37" was taken by target-aware scoring); the paper's role_output caster-penalty question was already answered/fixed in v37. graphify-out/ now gitignored (derived). **✅ PIECE 2 SHIPPED (8aec988d, staged Unreleased): MODEL v38 pet hit chance.** All four facts pinned (NO R1 hold needed): pets roll like PLAYERS (wiki Attack Mechanics "Pet Accuracy" — 75% base table, rank acc 1.00), MM tiers −2/−1/−0 at full count (wiki Mastermind, count-gated; bins structurally silent), Levelminus pets client-pinned (patch_summon_level_shift 474/474), inherent accuracy client-pinned (patch_pet_accuracy 529/559, Incarnate_Pets/Redirects named exclusions), Supremacy ToHit = **7.5% as table-priced** (0.1 scale × MM table), Tactics routes, Focused Accuracy excluded. Citations: docs/pet-tohit-sources.md. Structural: pet DPS outside my_dps (meter exemption structural; no hasten elasticity on pets; end_factor whole — stated). PP/base tables extended +6/+7 (wiki Purple_Patch). Display: per-pet "fights at −N"/"acc ×M" tags + pet ToHit list + retired always-hit apology; tour support-note rewritten; help.md "How pet damage is counted". Batteries: test_pet_hit_v38 7/7, Piece 1 regression 8/8, gate 23/23, tour 8/8. **⚠ MM/pet-controller champions NOT recerted yet — the ONE combined wave runs after Piece 3.** ⚠ wiki fetch route: Chrome-MCP Edge tab works (bot-check auto-clears); pane and urllib both dead. **✅ PIECE 3 SHIPPED (237fafdf, staged Unreleased): solver proposes HOs.** Search capability, NO model bump: `_options_for_power` offers armor-toggle HO options (synthetic single-piece sets: no bonuses/sigs, stackable, rank 0 per R3-deferred), engine-ED-priced server-side (`_ho_solver_pieces` from _special_accepts legality + piece_boosts; ⚠ DIRECTION GUARD: DeBuff pieces' Defense aspect never credits armor). Gate `_HO_CONTENTS` = {itrial, fire_farm, farm_afk, farm_active} (R2), threaded via `_assess_solve(content=)` + build_solve/headroom/deep_optimize — champions inherit per-context; any other content ho_pieces=None = byte-identical solve (battery-pinned). Attacks/holds keep v27 proc-pass HO cores. Attain note on EVERY ⓘ-card HO (ILP/proc-pass/hand) + tour step 59 `ho-why` (picker scene) + help.md paragraph. Battery test_ho_solver.py 6/6 (farm solve placed 2 Ribosomes unprompted — 3 HOs = 6-piece res enh in half the slots, ED 0.2/0.4/0.56); all regressions green. **🧾 WAVE COMPLETE 23/24, VERDICTS READY (2026-07-29 morning): 3 SUPERSEDE (Water/Kin +319.2, PB nova +162.3, WS dwarf +132.8) / 20 KEEP, zero collapsed — TABLE WITH JOEL, merge awaits his word** (recert_verdicts.json + verdicts_v38ho.log; merge = by context, --verdicts, retire shards .merged). **⛔ 24th context = NAMED DEFECT: Crab Spider Soldier AUTOPICK emits a ladder-ILLEGAL 26-pick seed** ("seed cannot be made pick-legal", zero pins; _assign_pick_levels concurs; failed instantly EVERY wave leg — the "in flight for hours" read was wrong, buildout's TypeError crash masked it, now fixed to report score-NONE). ⚠ Autopick feeds the WIZARD → likely user-facing VEAT bug (two-phase branch vs pick ladder suspected). Harden-before-certify: NO recert attempts for this context until fixed; incumbent (canonical 1691.19) stands. ⚠ Stale champions_shard_par_p0 (canonical None) queued for .merged retirement. Fleet splitter SHIPPED (tools/remote_worker/split_wave.py); scheduled-pause log appends now (the 6:10 pause DID fire, result 0 — its log was clobbered, not its run). Wave history: (launched 2026-07-28 11:35 AM ET): scope finding — ALL 24 certified contexts are itrial/farm content, so the whole roster re-converges ("Run V38 HO Wave.bat", 6 workers × 4 contexts, node cap 50000, shards champions_shard_v38ho_p0..p5, NO --merge; launcher task unregistered after process verification; stale par_/v34/v36 root shards = shadow-blocked pre-existing condition, untouched). **⚠ champions.json + shards belong to the wave process until it completes (~2.5-4 h est).** THEN: recert_verdicts/evaluate_first per context → **VERDICT TABLE TO JOEL BEFORE any champions.json merge** → merge by context with --verdicts, canonical winner kept, shards retired .merged_2026-07-28. Fact-hunt details (2026-07-28 evening checkpoint — session-report): Fact 4 PINNED (Tactics buff_effects ToHit projects / Focused Accuracy self-only excluded / **Supremacy carries +10% ToHit buff the v34 lever deferred**); Fact 3 PINNED (14 pet-set Accuracy pieces; copy_boosts routes, same as Damage); Fact 2 half-pinned (client per-attack `accuracy` field swept, 559 files, 1.0–1.2; base 50% held; MISSING the critter attacking-UP level ladder); Fact 1: **bins SILENT on MM henchman tier level shift** (all 8 sets × 3 tiers = `Ranged_Ones`, no offset; entity defs level-less; Controller pets DO encode −1 via `Ranged_Levelminus` — Fire Imps pinned) → server-engine behavior, R1 hold-with-label unless wiki-cited. ⚠ homecoming.wiki now 403s tools/fetch_zone_pages.py too (not just Anthropic's fetcher); ⚠⚠ **the in-app browser pane CRASHED Claude desktop 2× opening homecoming.wiki — use Claude-in-Chrome (Edge) for that site, never the pane.** **✅ R4 + BOTH DATA PASSES DONE 2026-07-28 morning ("fix all these", b230c8dc, staged):** patch_effect_scales_targets.py (client = sole authority) → exactly **2** ×100 records normalized (Shock family; movers = ZERO, no champion slots them), **1452 targets back-filled** (engine panels skip target==Self — Absorb Pain caster penalty no longer an "ally buff", save-verified), 1187 scales confirmed exact, **drift measured not touched: 264 multi-template + 1635 table-name mismatches = the reconciliation lane's hard numbers**. Display units (staged): Heal/Absorb/HitPoints→HP BY EFFECT, Endurance→end points; headers "all your powers applied once, unenhanced" (R4a). Probe = tools/probe_display_magnitudes.py (26 residual flags = legit sums). **✅ Scoring question ANSWERED + FIXED = MODEL v37** (abs() was crediting caster penalties as ally buffs; Self rows skipped; ZERO champion movement proven). **✅ RECONCILIATION PASS (91921fcf): vocabulary corrected (client slow attribs = RunningSpeed/FlyingSpeed/JumpingSpeed/JumpHeight), confirmed 1787, targets 1841, 3 one-to-one value syncs (Jolting Chain ×2, Blood Widow Poison Dart; zero champion exposure). ⚠ Sync rule guard: our side must have EXACTLY ONE row — the unguarded draft multiplied client values onto every flattened row (Lightning_Strike 4× overcount, caught pre-commit). RESIDUE FULLY DISPOSITIONED (6720c191, tools/classify_unmatched_effects.py = the lane's instrument): 761 pseudo-pet folds + **230 REDIRECT folds PROVEN by twin value-match (Zapp-class: player records are zero-template stubs, effects live on pets/*_normal|_quick twins — fold correct by design)** + 167 stub-class (twin naming unknown) + 26 grant/revoke = by design; **✅ 293 CLOSED (ac08d084): EV/pv census 293→135 hard; tools/patch_family_rebuild.py REPLACED the hard groups with client-template flattenings (69 groups / 225 rows / 63 powers, `rebuilt_from_client` marked, idempotent); absent-family side = +92 set-entity + +317 weak-proof entity folds (Storm Cell class under pets/). ~~IRREDUCIBLE CORE = 8 rows: Chrono_Shift Regeneration ×4 AT variants, values match nothing client-side (suspected Mids pre-enhanced bakes)~~ **CLOSED 2026-08-07 — see the PvP-variant entry in Recurring pitfalls. They are neither irreducible nor bakes: pv_mode 2 (PvE-gated) and exactly 5.33× the client's own timed heal scales.** MOVERS ZERO, triple-checked (scanner sanity-verified, 624 picks; Water/Kin Transfusion = Corruptor variant, client-confirmed).** Piece 1 (per-attack proc-vs-set display) is UNGATED and builds first; Pieces 2 (pet accuracy = v37, his own option-B deferral coming due; MM+pet-controller recerts) + 3 (solver HO options — search capability, NOT a model bump) build behind rulings; ONE combined certification wave at the end.
-- **✅ REMOTE WORKER KIT BUILT (f34549b0, 2026-07-28 evening — tools/remote_worker/, README is the authority):** the gaming box crunches, the laptop conducts from anywhere. OUTBOUND-ONLY (Joel asked about internet accessibility — the box needs NONE: it polls `%OneDrive%\HeroCompanionCompute` for orders and git-fetches the public repo pinned to the order's commit; no ports/tokens/inbound; LAN IP irrelevant to operation). send_work refuses unpushed commits; the box verifies the checkout; box NEVER merges — laptop verdict gate only. **✅ INSTALLED ON THE BOX 2026-07-28 evening** (Joel ran install-worker.bat: clone + deps + mailbox + HC_RemoteWorker task all verified; box runs Python 3.11.9 via the 3.13→3.11→PATH ladder; canonical scoring stays laptop-side). **The box is an i9-9900K @ 3.60GHz — 8 cores / 16 logical** (Joel's exact spec; laptop = 32 logical, so the laptop stays the bigger single engine and the box adds ~50% fleet capacity); orders may omit `workers` (auto-sizes to the box's cores → 3 workers there, 1596b6ce). **🎉 MAIDEN RUN VALIDATED END-TO-END (wave-20260728-193746, 2026-07-28 evening):** box claimed via OneDrive, verified pin 07483a67, crunched the Spines/FA farm_afk context in 25 min (converged, 34 sweeps, no truncation, exit 0), returned shard+logs+DONE manifest. Shard = VALIDATION-ONLY, left in results/, never collected to root (⚠ in-run 377.5 is NOT comparable to the laptop's in-run 302.0 — within-run ranking only; canonical is the only portable number). Maiden #1 (192056) FAILED loudly as designed — dirty-check counted untracked files (the tick's own log); fixed 07483a67, box pulled by hand once (future updates ride each order's pin). ⚠ Observed claim latency ~7-10 min (OneDrive legs + 5-min tick); "Always keep on this device" on the mailbox folder recommended, tick can go 1-min via `schtasks /change /tn HC_RemoteWorker /ri 1` if ever wanted. ⚠ GitHub sign-in is NEVER needed on the box (public repo, anonymous read; a stray "Continue with Google" GitHub account got created during setup — harmless, Joel may delete). Retire: `schtasks /delete /f /tn HC_RemoteWorker`. · make budget/balanced/premium a REAL player choice again (Joel's R3 answer — the dial is vestigial; UI + honest cost story; its own item, not part of this batch) · Leveling Companion batch (shares the Journey surface) · Fury meter class (Fury/Rage/Domination/Defiance/Gauntlet — silently absent; no public Brute damage absolutes until then) · pricing #31 (single-claim pairing) · 18 inherent icons (optional) · i24 archive content (Joel's torrent hand) · alias-map roster reconciliation + Power Boost amplifier effects (parser allowlist family) · Maelwys leftovers (CJ-vs-Weave slot modeling, attack-card wording awaiting Joel's text) · **Lite is at 0.1.18** (⚠ notes saying "0.1.17 next" are stale).
+- **⚠ `#masthead` carries an ID and outranks `body.theme-x header`** — the
+  themed header gradients have NEVER rendered on hero or villain; the middle
+  theme is scoped `body.align-mid #masthead` to win; the other two are left
+  DEAD on purpose — reviving them changes both shipped themes, Joel's call.
+- **The tie-break machinery (engine-accuracy item 5, shipped):** solve_ilp
+  takes tie-break STYLES per-call — "eps" (folded into step 1, HC_TS_EPS cap
+  0.001, measured 1.05× = free) is the DEFAULT everywhere incl. sweeps; "lex"
+  = the two-solve step 2; per-call param, NEVER env (the sweep pool is
+  threaded). **deep_optimize's finale solves the winner under every style and
+  PHYSICS picks** (cert["tie_arbitration"]); serve-time /build/solve
+  physics-arbitrates too (preserve/keep-layout/perk-chip skip). NOT a model
+  bump. Plateau bound-proving is INTRINSIC (eps falsified the
+  degeneracy-collapse hypothesis). Joel's tie-break ordering (recovery first,
+  then role) measured and stands.
+- **⚠ Probe isolation:** any deep_optimize probe warm-starts from
+  HC_CHAMPIONS_PATH and appends to the REAL exploration log — back-to-back
+  probes on one context are NOT independent; isolate scratch paths PER ARM in
+  separate processes, or the ladder measures learning, not the variable.
+- **Single-solve tie deltas predict NOTHING about converged outcomes** — the
+  sweep + arbitrated finale decides; the verdict gate protects the roster.
+- **Merge safety, verified not assumed:** workers write ONLY their own shard
+  (HC_CHAMPIONS_PATH), never champions.json — merging while a worker runs is
+  safe; merge_champion_shards filters PER CONTEXT against --verdicts, so
+  mixed shards need no manual splitting.
+- **⚠ recert_verdicts OVERWRITES per invocation** — always regenerate complete
+  (ALL shards) before any merge.
+- **Count from the artifact, never the narration** — the recorded wave-week
+  errors (stale figures re-quoted, counts incremented from monitor events)
+  all shared that thread.
+- **⚠⚠ Release-announcement rulings:** the 0.12.31 and 0.12.32 announcement
+  drafts were NEVER posted and never will be (the 0.12.33 post superseded
+  them; Joel cut the catch-up paragraph) — so **nothing public has ever
+  announced that the app stopped being a browser tab**; a "why is this not in
+  my browser" field report is that, not a bug. The 0.12.33 post publicly
+  corrected the update-check claim (watch item CLOSED) and states
+  `/thumbtack` is untested in game (confirmation = the trigger to strengthen
+  it). FP/whitelist submissions per docs/signing-runbook.md are Joel's hand.
+- **⚠ The 0.12.34 refill failure was never root-caused** — the
+  verify-and-refuse guard makes the symptom impossible; that is a guarantee,
+  not a diagnosis.
+- **Release-hold rule that survives:** nothing publishes without Joel's
+  say-so; changelog entries stage under "Unreleased" until he approves.
+- **Remote worker kit** (tools/remote_worker/ — README is the authority): the
+  box crunches, the laptop conducts. OUTBOUND-ONLY: the box polls
+  `%OneDrive%\HeroCompanionCompute` and git-fetches the public repo pinned to
+  the order's commit — no ports/tokens/inbound. send_work refuses unpushed
+  commits; **the box NEVER merges** — laptop verdict gate only; canonical
+  scoring stays laptop-side. Box = i9-9900K 8C/16T (~50% fleet add; orders
+  may omit `workers`, auto-sizes to 3 there). Claim latency ~7-10 min
+  observed. Retire: `schtasks /delete /f /tn HC_RemoteWorker`. ⚠ GitHub
+  sign-in is never needed on the box.
+- **Slotting-remainder rulings that stand:** R1 = an unpinnable pet fact
+  HOLDS its sub-piece with an honest label; R2 = champions may use HOs
+  **only in endgame content presets** (`_HO_CONTENTS` = itrial/farms), every
+  HO carries an attain note; R3 = MOOT AND DEFERRED. Pet-hit facts +
+  citations: docs/pet-tohit-sources.md. Proc-trade + HO display surfaces
+  shipped with batteries (test_proc_trade_note, test_pet_hit_v38,
+  test_ho_solver).
+- **⚠ homecoming.wiki route: Claude-in-Chrome (Edge) ONLY** — the in-app
+  browser pane CRASHED Claude desktop twice on that site; automated fetchers
+  403.
+- **Reconciliation-lane guard:** a one-to-one value sync requires our side to
+  have EXACTLY ONE row — the unguarded draft multiplied client values onto
+  every flattened row (4× overcount, caught pre-commit).
 
 ## Session history & retention
 
