@@ -37,14 +37,14 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1773.2
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 1753.72
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 1773.2,
+  "canonical_score": 1753.72,
   "model_version": 44
  },
  "Class_Defender|Defender_Buff.Poison|Defender_Ranged.Sonic_Attack|itrial": {
@@ -100,7 +100,7 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
+    "against": "model 44, 2026-08-14",
     "verdict": "unaffected",
     "canonical_score": 2037.06
    }
@@ -159,9 +159,15 @@
      "lex": 2005.27,
      "plain": 2007.48
     }
+   },
+   "evaluated": {
+    "against": "model 44, 2026-08-14",
+    "verdict": "baseline",
+    "canonical_score": 1791.41
    }
   },
-  "model_version": 44
+  "model_version": 44,
+  "canonical_score": 1791.41
  },
  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|itrial": {
   "picks": [
@@ -216,12 +222,12 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1926.16
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 1916.53
    }
   },
-  "canonical_score": 1926.16,
+  "canonical_score": 1916.53,
   "model_version": 44
  },
  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Radiation_Emission|itrial": {
@@ -262,14 +268,14 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1330.75
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 1324.13
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 1330.75,
+  "canonical_score": 1324.13,
   "model_version": 44
  },
  "Class_Brute|Brute_Melee.Battle_Axe|Brute_Defense.Fiery_Aura|itrial": {
@@ -325,12 +331,12 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1345.2
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 981.07
    }
   },
-  "canonical_score": 1345.2,
+  "canonical_score": 981.07,
   "model_version": 44
  },
  "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Super_Strength|itrial": {
@@ -386,12 +392,12 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1459.17
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 1155.05
    }
   },
-  "canonical_score": 1459.17,
+  "canonical_score": 1155.05,
   "model_version": 44
  },
  "Class_Blaster|Blaster_Ranged.Fire_Blast|Blaster_Support.Energy_Manipulation|itrial": {
@@ -447,12 +453,12 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 349.98
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 274.95
    }
   },
-  "canonical_score": 349.98,
+  "canonical_score": 274.95,
   "model_version": 44
  },
  "Class_Stalker|Stalker_Melee.Radiation_Melee|Stalker_Defense.Dark_Armor|itrial": {
@@ -508,12 +514,12 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1650.22
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 1319.83
    }
   },
-  "canonical_score": 1650.22,
+  "canonical_score": 1319.83,
   "model_version": 44
  },
  "Class_Dominator|Dominator_Control.Mind_Control|Dominator_Assault.Fiery_Assault|itrial": {
@@ -554,14 +560,14 @@
    "primary_converged": true,
    "picks_filled": 2,
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 778.47
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 759.79
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 778.47,
+  "canonical_score": 759.79,
   "model_version": 44
  },
  "Class_Scrapper|Scrapper_Melee.Broad_Sword|Scrapper_Defense.Super_Reflexes|itrial": {
@@ -602,14 +608,14 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1384.49
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 945.53
    },
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order (2026-07-16 IG flip)",
    "canonical_optimality_checked": false
   },
-  "canonical_score": 1384.49,
+  "canonical_score": 945.53,
   "model_version": 44
  },
  "Class_Sentinel|Sentinel_Ranged.Fire_Blast|Sentinel_Defense.Willpower|itrial": {
@@ -665,12 +671,12 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1756.7
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 1188.89
    }
   },
-  "canonical_score": 1756.7,
+  "canonical_score": 1188.89,
   "model_version": 44
  },
  "Class_Arachnos_Soldier|Arachnos_Soldiers.Crab_Spider_Soldier|Training_Gadgets.Crab_Spider_Training|itrial": {
@@ -726,12 +732,12 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1621.23
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 1185.44
    }
   },
-  "canonical_score": 1621.23,
+  "canonical_score": 1185.44,
   "model_version": 44
  },
  "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial": {
@@ -779,12 +785,12 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1623.07
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 1339.37
    }
   },
-  "canonical_score": 1623.07,
+  "canonical_score": 1339.37,
   "model_version": 44
  },
  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial": {
@@ -832,12 +838,12 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1361.68
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 1134.84
    }
   },
-  "canonical_score": 1361.68,
+  "canonical_score": 1134.84,
   "model_version": 44
  },
  "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|dwarf": {
@@ -893,12 +899,12 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1717.8
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 1329.58
    }
   },
-  "canonical_score": 1717.8,
+  "canonical_score": 1329.58,
   "model_version": 44
  },
  "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|nova": {
@@ -954,12 +960,12 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1506.12
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 1214.3
    }
   },
-  "canonical_score": 1506.12,
+  "canonical_score": 1214.3,
   "model_version": 44
  },
  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|dwarf": {
@@ -1015,12 +1021,12 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1698.27
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 1364.22
    }
   },
-  "canonical_score": 1698.27,
+  "canonical_score": 1364.22,
   "model_version": 44
  },
  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|nova": {
@@ -1076,12 +1082,12 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1261.05
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 1068.76
    }
   },
-  "canonical_score": 1261.05,
+  "canonical_score": 1068.76,
   "model_version": 44
  },
  "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|triform": {
@@ -1137,12 +1143,12 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1612.57
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 1425.09
    }
   },
-  "canonical_score": 1612.57,
+  "canonical_score": 1425.09,
   "model_version": 44
  },
  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|triform": {
@@ -1190,12 +1196,12 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1870.29
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 1475.89
    }
   },
-  "canonical_score": 1870.29,
+  "canonical_score": 1475.89,
   "model_version": 44
  },
  "Class_Arachnos_Widow|Widow_Training.Night_Widow_Training|Teamwork.Widow_Teamwork|itrial": {
@@ -1251,12 +1257,12 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
-    "verdict": "unaffected",
-    "canonical_score": 1981.19
+    "against": "model 44, 2026-08-14",
+    "verdict": "moved",
+    "canonical_score": 1357.34
    }
   },
-  "canonical_score": 1981.19,
+  "canonical_score": 1357.34,
   "model_version": 44
  },
  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|itrial": {
@@ -1312,7 +1318,7 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-10",
+    "against": "model 44, 2026-08-14",
     "verdict": "unaffected",
     "canonical_score": 386.07
    }
@@ -1407,8 +1413,14 @@
     },
     "tier": 4,
     "label": "AFK-certified at +4x8: 37.3 HP/s sustained (regen 27.3 + Healing_Flames on auto-fire 10.0) meets the 37 HP/s asteroid worst case. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
+   },
+   "evaluated": {
+    "against": "model 44, 2026-08-14",
+    "verdict": "baseline",
+    "canonical_score": 192.21
    }
   },
-  "model_version": 44
+  "model_version": 44,
+  "canonical_score": 192.21
  }
 }
