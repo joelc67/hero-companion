@@ -2525,6 +2525,23 @@ def _slot_plan(power, archetype=None, all_powers=None):
                             "The solve spent the 67-slot budget elsewhere; move slots "
                             "here if you want more from this power."
                             + (_res_job_note(power, all_powers) or "")}
+        if s.get("set_uid"):
+            # A lone ORDINARY set piece (2026-08-15, surfaced by the certified
+            # slotting layers — the population refine places single multi-aspect
+            # pieces for pure enhancement or proc value, a move the ILP rarely
+            # makes; the card must defend it like any other 1-slot decision).
+            if _piece_is_proc(s):
+                return {"kind": "single-proc",
+                        "text": f"Single proc: {s.get('set_name')} "
+                                f"{s.get('piece_name') or ''} — rolls its effect "
+                                "on each use; chosen for the proc itself, no set "
+                                "bonus intended."}
+            return {"kind": "single-piece",
+                    "text": f"One {s.get('set_name')} piece "
+                            f"({s.get('piece_name') or 'multi-aspect'}) — several "
+                            "enhancement aspects in one slot, stronger here than a "
+                            "generic IO. Set bonuses need 2+ pieces; this slot is "
+                            "pure enhancement value."}
         return None
     if len(slots) < 2:
         return None
