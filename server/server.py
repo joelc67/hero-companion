@@ -5111,7 +5111,7 @@ def build_solve():
         and not keep_layout and not perk_focus
         and not body.get("targets")) else None
     if _csol is not None:
-        understood.insert(0, "Certified build — served exactly as certified")
+        understood.insert(0, "Certified build: served exactly as certified")
     _arb = (_csol is None) and ((not preserve or _generated) and (content or role)
             and not perk_focus and at is not None and tlctx is None)
     _pristine = copy.deepcopy(powers) if _arb else None
