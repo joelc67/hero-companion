@@ -1348,11 +1348,18 @@ MUTATES one in-set piece so serving it proves the layer beat the solver).
 ⚠ Lifecycle: `learn.save_champion` writes picks/score/certificate only, so a
 re-certification DROPS the layer — correct (stale by definition); the context
 falls back to solver serve until a new refine wave banks a new layer, and
-evaluate_first flags the basis change as MOVED. ⚠ Gold smoke now FAILS on the
-frozen dist exe until the next release build (stale bundled champions.json —
-the champion-mask class, working as designed). ⚠ evaluate_first's printed
+evaluate_first flags the basis change as MOVED. ⚠ evaluate_first's printed
 "re-converge the movers" advice after a BANKING pass is a false alarm — the
 proof of health is the second run reading 0 moved.
+**✅ INTEGRATED PRE-POST (same night, Joel's order): frozen exe rebuilt (stamp
+`defe1b0` = HEAD), smoke PASS + gold 28/28 PASS (the earlier stale-bundle gold
+failures are gone), installed copy mirrored + relaunched, Dominator serves
+`certified_slotting: true` through the installed app's real HTTP path.
+RECERT: NONE OWED (28 unaffected / 0 moved, v44 — the layer is serve
+capability, not a model bump). Changelog staged under Unreleased; VERSION
+stays 0.12.38 until Joel cuts the release.** Optional, not owed: 10 contexts
+lack layers (2 lab-parity + 3 itrial non-movers + 5 farm) — a ~10-min
+wave_pop run over the 8 refinable ones completes the roster.
 
 **✅ THE FARM-ALT WAVE IS BANKED (2026-08-14, Joel: "relaunch the scrapper and
 merge the three").** The 2026-08-11 half-run (rediscovered as uncommitted
