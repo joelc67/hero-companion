@@ -1411,9 +1411,14 @@ incumbents by the gate — that most recerts lose remains the norm.
 ⚠ NEW `_slot_plan` rule: a LONE ordinary set piece now carries its own note
 (single-piece / single-proc kinds) — the refined layers place 43 such
 singles, and a card that cannot explain itself is half-built.
-**RELEASE IS STAGED AND READY TO CUT — awaiting Joel's word** (changelog
-under Unreleased; VERSION 0.12.38 unbumped; cut = bump → pins → help PDF →
-rebuild → smokes → sign → ISCC → sign → zip → gh release, per procedure).
+**🚀 RELEASED as v0.12.39 "Certified builds, served as certified"
+(2026-08-15, Joel's "cut the release"): stamp `b87d832`, both assets signed
+(CN=Joel Andrew Chambers) + API-verified (published 13:22Z); smoke PASS,
+gold 28/28; installed copy mirrored + relaunched at 0.12.39. Notes state
+data currency (July 7 2026 patch, re-export verified 08-07). Announcement
+draft: `Downloads\hero-companion-0.12.39-post.txt` — posting is Joel's hand.
+FP/whitelist submissions per signing runbook: Joel's hand, now for 0.12.39.
+Liveness baseline: roll to v0.12.39 on next check.**
 
 Otherwise nothing running. Live handoff detail:
 `coh-builder/RESUME-HERE.md`.
