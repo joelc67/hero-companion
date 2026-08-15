@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+- **Four new fire-farm alternative champions.** The farm roster grows from one
+  build to five, each a genuinely different way to farm: Tanker Fiery Aura /
+  Fiery Melee (AFK), Brute Titan Weapons / Bio Organic Armor (AFK), Scrapper
+  Radiation Melee / Radiation Armor (active), and Stalker Claws / Energy Aura
+  (active) — none overlapping the existing Brute Spines / Fiery Aura, and all
+  certified on current game data.
+- **Champions now arrive with their certified slotting.** Until now the tool
+  stored each champion's power picks and re-derived the slotting fresh on
+  every visit, so the build you received could differ from the build the
+  certification actually measured. Eighteen champions now carry their exact
+  certified slotting and hand it to you unchanged — what the numbers describe
+  is what you get. The moment you change anything (your own targets, your own
+  earned slots, a different role), the solver takes over and builds for your
+  ask, exactly as before.
+
 ## 0.12.38 — 2026-08-11 — The window that says why
 
 - **A window that cannot start now says why.** If the engine fails to launch
