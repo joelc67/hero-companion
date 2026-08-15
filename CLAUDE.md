@@ -1394,22 +1394,26 @@ secondary + farm mode, none overlapping Brute Spines/FA. They ride the next
 release's champions.json per standing rule. wave_cost_report run (standing
 ask): the Scrapper's 65 min sits under the 77-min roster median.
 
-**🌊 IN FLIGHT (launched 2026-08-14 ~20:51 ET, detached, survives sessions):
-the 27-context PICK-LEVEL re-cert wave on post-dedup data** — Joel's go ("if
-its only going to improve the tool, prep it for publishing"). `Run Recert27
-Wave.bat` → converge_parallel --recert, 4 workers, --sweep-backend process,
-shards `champions_shard_recert27_p0..p3`; every context except Scrapper
-Rad/Rad farm_active (already searched on current data). ETA 5-9 h. ON BANK,
-in order: recert_verdicts COMPLETE over all 4 shards → verdict table +
-hand-check legality → merge winners by context `--verdicts` (losers keep
-incumbents) → retire shards `.merged` → **wave_pop refine + bank_refined_
-slotting over every SUPERSEDED context** (a recert drops its layer by
-design) → evaluate_first --write + stability 0-moved → validate_champions
-(expect 28/28 + layers) → rebuild/smoke/gold/mirror/relaunch → **ready-to-cut
-release summary for Joel's word** (VERSION bump + gh release are HIS gate;
-changelog already staged under Unreleased). ⚠ While it runs:
-benchmarks/champions.json belongs to the wave protocol — no champion
-commits, no checkout. One-shot task already unregistered.
+**✅ THE RECERT27 WAVE IS BANKED WHOLE (2026-08-15, the full ritual).**
+27/27 converged (12.2 h wall, 4 workers, `--sweep-backend process`, makespan
+= the Kheldian tail as always). Verdicts: **10 SUPERSEDE / 17 KEEP**
+(canonical-vs-canonical, both sides fresh re-solve = the honest picks-level
+comparison; hand legality 10/10). Winners merged `--verdicts`, shards retired
+`.merged_2026-08-15`. The 11 then-layer-less contexts re-refined (wave_pop,
+3.2 min): 10 banked; **PB base remains the ONE lab-parity holdout** (solver
+serve, honest). **End state: 28 contexts, 27 layers, stability 28/0,
+validate 28/28 + 27 `+SLOTTING`, batteries slotting 11/11 · demo 24/24 ·
+desktop 141/141; integrated at stamp `e9a7ac4`** (smoke + gold 28/28 PASS,
+installed copy mirrored + relaunched). Roster top: Poison/Sonic 2718 ·
+RadEm/Sonic 2519 (superseded picks) · RadEm/RadBlast 2376 · Plant/Poison
+2307 · Dominator 2156. ⚠ Superseded-pick recerts that LOST (17) stay
+incumbents by the gate — that most recerts lose remains the norm.
+⚠ NEW `_slot_plan` rule: a LONE ordinary set piece now carries its own note
+(single-piece / single-proc kinds) — the refined layers place 43 such
+singles, and a card that cannot explain itself is half-built.
+**RELEASE IS STAGED AND READY TO CUT — awaiting Joel's word** (changelog
+under Unreleased; VERSION 0.12.38 unbumped; cut = bump → pins → help PDF →
+rebuild → smokes → sign → ISCC → sign → zip → gh release, per procedure).
 
 Otherwise nothing running. Live handoff detail:
 `coh-builder/RESUME-HERE.md`.
