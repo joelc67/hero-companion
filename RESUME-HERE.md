@@ -1,4 +1,31 @@
-# ✅ SESSION CLOSED CLEAN — 2026-08-11 morning. START HERE.
+# ✅ SESSION CLOSED CLEAN — 2026-08-15. START HERE.
+
+**Latest release: 🚀 v0.12.39 "Certified builds, served as certified"**
+(2026-08-15, stamp `b87d832`, both assets signed + API-verified; installed
+copy runs it). The release carries: the certified-slotting serve layer
+(27/28 champions serve their exact certified builds), the 1,970-row dedup
+fix, the full 27-context pick re-cert (10 supersedes / 17 keeps), four new
+fire-farm alternatives (roster 28), and one-slot card notes. All rulings +
+traps from the 08-14/15 arc are in CLAUDE.md (certified-slotting section);
+full narrative in session-report.md.
+
+**FIRST MOVES NEXT SESSION:**
+1. **Joel's hand, pending: post `Downloads\hero-companion-0.12.39-post.txt`**
+   (announcement, em-dash-free) to topic 64761 + wherever he chooses.
+2. Check topic 64761 / Gmail for replies (incl. any Glacier Peak follow-up
+   from the 0.12.38 thread). Triage vs docs/KNOWN-GAPS.md as always.
+3. ⛔ **BITDEFENDER IS REMOVED from this machine (Joel, 2026-08-15)** — every
+   Bitdefender rule in CLAUDE.md is history; never diagnose a dead process
+   as a Bitdefender kill. FP submissions no longer per-release routine.
+4. Open items: PB base is the one context with no slotting layer (lab
+   seed-parity holdout) · liveness baseline label rolls to v0.12.39 after a
+   tag fetch · the rest of the standing queue in CLAUDE.md CURRENT STATE.
+5. Nothing running, no scheduled tasks armed, tree clean at `bac0f993`
+   (push if not yet pushed: `! git -C C:/Users/joelc/code/coh-builder push`).
+
+---
+
+# (superseded) SESSION CLOSED CLEAN — 2026-08-11 morning.
 
 HEAD `116f8650`, pushed, tracked tree clean, nothing running, nothing armed.
 Latest release **v0.12.38** (details in the block below); installed copy runs
