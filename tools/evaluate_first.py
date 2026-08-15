@@ -67,7 +67,7 @@ from converge_parallel import certified_union  # noqa: E402
 EPS = 0.05
 
 
-def evaluate_picks(at, prim, sec, content, picks, role, form=None):
+def evaluate_picks(at, prim, sec, content, picks, role, form=None, slotting=None):
     """deep_optimize's evaluate() chain, verbatim, on the stored pick list.
     Certified scores were computed on SEARCH-CONSTRUCTED candidate dicts
     (bare full_name/pick_level — _assess_solve reads only full_name), so bare
@@ -88,18 +88,26 @@ def evaluate_picks(at, prim, sec, content, picks, role, form=None):
     arch_row = srv.ARCH_BY_NAME.get(at)
     res_cap = (round(arch_row["res_cap"] * 100, 1) if arch_row
                else srv.engine.RESISTANCE_HARD_CAP)
-    powers = [{"full_name": fn} for fn in picks]
-    t0 = time.perf_counter()
-    r = srv._assess_solve(at, copy.deepcopy(powers), copy.deepcopy(targets),
-                          "premium", perk, roles, False, False, False,
-                          with_powers=True)
-    dt = time.perf_counter() - t0
-    if not r:
-        return None, dt
-    _tot, solved = r
-    solved = proc_pass.apply_proc_pass(solved, srv.POWER_BY_FULL, role=role,
-                                       content=content)
-    solved = srv._endurance_relief_pass(solved, at, ctx, res_cap)
+    # GAME-TRUTH (Joel's ruling, 2026-08-14): a banked slotting layer IS the
+    # served build, so canonical scores it directly — no re-solve. Without a
+    # layer, the fresh pipeline re-solve below remains the canonical basis.
+    if slotting:
+        t0 = time.perf_counter()
+        solved = copy.deepcopy(slotting)
+        dt = time.perf_counter() - t0
+    else:
+        powers = [{"full_name": fn} for fn in picks]
+        t0 = time.perf_counter()
+        r = srv._assess_solve(at, copy.deepcopy(powers), copy.deepcopy(targets),
+                              "premium", perk, roles, False, False, False,
+                              with_powers=True)
+        dt = time.perf_counter() - t0
+        if not r:
+            return None, dt
+        _tot, solved = r
+        solved = proc_pass.apply_proc_pass(solved, srv.POWER_BY_FULL, role=role,
+                                           content=content)
+        solved = srv._endurance_relief_pass(solved, at, ctx, res_cap)
     tot = srv.engine.calculate_build({"archetype": at, "powers": solved},
                                      srv.SET_BONUSES, res_cap=res_cap, ctx=ctx)
     ev = fp.encounter_value(at, solved, ctx, tot, scenario=content,
@@ -164,7 +172,8 @@ def main():
         old = entry.get("canonical_score")
         os.environ["HC_SOLVER_BACKEND"] = "cbc"
         new, t_cbc = evaluate_picks(at, prim, sec, content, entry["picks"],
-                                    role, form=form)
+                                    role, form=form,
+                                    slotting=entry.get("slotting"))
         if new is None:
             failed.append(key)
             print(f"  EVAL FAILED           {key}")
@@ -185,7 +194,9 @@ def main():
             print(f"  {verdict:10s} canonical {old:9.1f} -> {new:9.1f} "
                   f"(Δ {delta:+8.1f})  {name}{flags}")
         entry["canonical_score"] = round(new, 2)
-        if not args.skip_riders:
+        if not args.skip_riders and not entry.get("slotting"):
+            # a banked slotting layer runs no solver — the rider (solver
+            # diversity data) has nothing to measure there
             os.environ["HC_SOLVER_BACKEND"] = "highs"
             new_h, t_h = evaluate_picks(at, prim, sec, content, entry["picks"],
                                         role, form=form)

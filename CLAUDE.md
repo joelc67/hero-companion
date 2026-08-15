@@ -1326,6 +1326,34 @@ unusually fragile incumbent, not a control artifact. Merge stays Joel's call
 Two lab parity gaps noted: the lab seed path emits unseatable slot layouts for
 Tanker Inv/SS and PB base (their certified picks seat fine — lab-only issue).
 
+**✅ THE CERTIFIED-SLOTTING LAYER IS BUILT AND BANKED (2026-08-14, Joel's
+game-truth ruling: "Whatever is valid to game truth" — the stored score and
+the served build must be the same real, game-legal build).** This CLOSES the
+slotting-integration item and the Dominator merge question. Mechanism, one
+copy each: champion entries may carry **`slotting`** (the production-validated
+refined build); `server._champion_slotting` serves it VERBATIM inside
+`/build/solve` on the exact champion-delivery shape (generated kit + content
+preset + certified role + no custom/targets/exemplar/pvp/keep-layout/
+perk-chips) after re-validating on TODAY's data — **FAIL OPEN to the solver on
+any doubt**; `evaluate_first` scores a stored layer directly (no re-solve) so
+canonical describes the served build; `tools/bank_refined_slotting.py` is the
+only writer (hard-fails on pick mismatch / validation / seating). Response
+carries `certified_slotting`; validate_champions prints `+SLOTTING` /
+`!!SLOT-DRIFT` by driving the REAL /build/solve. **Banked: the 18 CHALLENGER
+layers from the 08-14 wave incl. the Dominator (canonical 759.8 → 2156.0;
+whole-roster median gain ~+17%).** One-time MOVED rows at banking = the basis
+change, not drift (second run: 28 unaffected). Battery
+`tools/test_champion_slotting.py` (9 checks, 2 sabotages; the positive control
+MUTATES one in-set piece so serving it proves the layer beat the solver).
+⚠ Lifecycle: `learn.save_champion` writes picks/score/certificate only, so a
+re-certification DROPS the layer — correct (stale by definition); the context
+falls back to solver serve until a new refine wave banks a new layer, and
+evaluate_first flags the basis change as MOVED. ⚠ Gold smoke now FAILS on the
+frozen dist exe until the next release build (stale bundled champions.json —
+the champion-mask class, working as designed). ⚠ evaluate_first's printed
+"re-converge the movers" advice after a BANKING pass is a false alarm — the
+proof of health is the second run reading 0 moved.
+
 **✅ THE FARM-ALT WAVE IS BANKED (2026-08-14, Joel: "relaunch the scrapper and
 merge the three").** The 2026-08-11 half-run (rediscovered as uncommitted
 edits, code committed `edd88f07`) is resolved: the 3 converged shards MERGED

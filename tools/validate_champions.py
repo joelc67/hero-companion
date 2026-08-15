@@ -23,6 +23,20 @@ for key, entry in champs.items():
     status = "SERVED" if served > 0.9 else f"partial {served:.0%}"
     if served > 0.9: ok += 1
     else: rej += 1
+    # certified-slotting layer (game-truth ruling 2026-08-14): when banked, the
+    # REAL /build/solve on the autopicked kit must hand back exactly that build
+    slot_col = ""
+    if entry.get("slotting") and served > 0.9:
+        sv = c.post("/build/solve", json={"archetype": at, "content": content,
+                                          "powers": ap["powers"]}).get_json()
+        def _sig(pw):
+            return {p["full_name"]: sorted((s.get("set_uid") or "", s.get("piece_uid") or "")
+                                           for s in (p.get("slots") or []) if s)
+                    for p in pw if p.get("slots")}
+        if (sv or {}).get("certified_slotting") and _sig(sv["powers"]) == _sig(entry["slotting"]):
+            slot_col = " +SLOTTING"
+        else:
+            slot_col = " !!SLOT-DRIFT"; rej += 1; ok -= 1
     tag = f" [{form}]" if form else ""
-    print(f"  {status:12s} {prim.split('.')[-1]:18s}/{sec.split('.')[-1]:18s}{tag} score={entry['score']:.0f}")
+    print(f"  {status:12s}{slot_col} {prim.split('.')[-1]:18s}/{sec.split('.')[-1]:18s}{tag} score={entry['score']:.0f}")
 print(f"\nchampions served by autopick: {ok}/{len(champs)}")

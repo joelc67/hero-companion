@@ -5100,10 +5100,22 @@ def build_solve():
     # near-empty, latency matters).
     # ⚠ fp scores at level 50 — arbitrating a TARGET-LEVEL solve with it would
     # judge the wrong game. The eps tie-break still runs; the solve note states it.
-    _arb = ((not preserve or _generated) and (content or role)
+    # CERTIFIED-SLOTTING SERVE (Joel's game-truth ruling, 2026-08-14): when
+    # this is exactly the champion-delivery solve (generated kit, preset
+    # targets, certified role, no user asks) and the champion carries a banked
+    # slotting layer, serve THAT build — it is the build canonical_score
+    # describes. Any player ask (custom targets, earned slots, exemplar level,
+    # pvp, keep-layout, perk chips, explicit targets) takes the solver.
+    _csol = _champion_slotting(archetype, content, powers, role) if (
+        _generated and content and not custom and tlctx is None and not pvp
+        and not keep_layout and not perk_focus
+        and not body.get("targets")) else None
+    if _csol is not None:
+        understood.insert(0, "Certified build — served exactly as certified")
+    _arb = (_csol is None) and ((not preserve or _generated) and (content or role)
             and not perk_focus and at is not None and tlctx is None)
     _pristine = copy.deepcopy(powers) if _arb else None
-    sol = _serve_pipeline(powers)
+    sol = _csol or _serve_pipeline(powers)
     if sol is None:
         return jsonify({"ok": False, "response": "The solver couldn't finish this "
                         "build. Try again, or change a pick or target."})
@@ -5255,6 +5267,7 @@ def build_solve():
                     "target_summary": target_summary,
                     "target_level": sol.get("target_level"),   # Layer 3: solved FOR this level
                     "totals": final, "report": report,
+                    "certified_slotting": bool(sol.get("certified_slotting")),
                     "preserved": sol.get("preserved", False),
                     "kept_sets": sol.get("kept_sets", []),
                     "removed_expensive": removed_expensive,
@@ -6906,6 +6919,66 @@ def _pick_epic(archetype, content, role="damage", exposure="flex", force=None):
                                         -_epic_power_value(q, exposure), q["full_name"]))
             take = [entries[0]] + take
     return [(p["full_name"], p.get("level_available") or 35) for p in take]
+
+
+def _champion_slotting(archetype, content, powers, role):
+    """Certified SLOTTING for the champion whose picks exactly match `powers`,
+    or None. Game-truth ruling (Joel, 2026-08-14): canonical_score describes
+    the certified slotting, so the serve path must hand back that exact build —
+    serve-time re-derivation made the stored score describe a build users never
+    received. FAIL OPEN: any doubt (no layer, role mismatch, fails today's
+    validation, unseatable on the ladder) returns None and the normal solver
+    pipeline runs. Only tools/bank_refined_slotting.py writes the layer; a
+    re-certification that rewrites the entry drops it (stale by definition) and
+    the context falls back to solver serve until a new layer is banked."""
+    try:
+        import learn as _learn
+        data = json.load(open(_learn.CHAMPIONS_PATH, encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return None
+    want = frozenset(p["full_name"] for p in powers
+                     if not p["full_name"].startswith("Inherent"))
+    for key, entry in data.items():
+        parts = key.split("|")
+        if (parts[0] != archetype
+                or (parts[3] if len(parts) > 3 else None) != content):
+            continue
+        stored = entry.get("slotting")
+        if not stored:
+            continue
+        have = frozenset(fn for fn in entry.get("picks") or []
+                         if not fn.startswith("Inherent"))
+        if have != want:
+            continue
+        # Certified role only: the layer was scored under the context's own
+        # role resolution (content default, else AT default) — a user-declared
+        # different role is their ask and takes the solver.
+        cert_role = (ai_build.CONTENT_PRESETS.get(content or "", {})
+                     .get("default_role")
+                     or _AT_DEFAULT_ROLE.get(archetype, "damage"))
+        if role and role != cert_role:
+            return None
+        out = copy.deepcopy(stored)
+        try:
+            errs = engine.validate_build({"archetype": archetype, "powers": out})
+            if isinstance(errs, dict):
+                errs = errs.get("errors") or []
+            if errs or not _assign_pick_levels(copy.deepcopy(out), archetype):
+                return None
+        except Exception:  # noqa: BLE001
+            diag.swallowed("_champion_slotting: validation")
+            return None
+        # inherents the client grants that the certified build doesn't slot
+        # ride through empty, so the response covers every requested power
+        stored_names = {p.get("full_name") for p in out}
+        out += [dict(p, slots=[]) for p in powers
+                if p["full_name"] not in stored_names]
+        return {"powers": out,
+                "slots_used": sum(len(p.get("slots") or []) for p in out),
+                "added_slots": sum(max(0, len(p.get("slots") or []) - 1)
+                                   for p in out),
+                "preserved": False, "certified_slotting": True}
+    return None
 
 
 def _champion_picks(archetype, primary, secondary, content, form=None):
