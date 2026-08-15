@@ -1357,9 +1357,24 @@ failures are gone), installed copy mirrored + relaunched, Dominator serves
 `certified_slotting: true` through the installed app's real HTTP path.
 RECERT: NONE OWED (28 unaffected / 0 moved, v44 — the layer is serve
 capability, not a model bump). Changelog staged under Unreleased; VERSION
-stays 0.12.38 until Joel cuts the release.** Optional, not owed: 10 contexts
-lack layers (2 lab-parity + 3 itrial non-movers + 5 farm) — a ~10-min
-wave_pop run over the 8 refinable ones completes the roster.
+stays 0.12.38 until Joel cuts the release.**
+**✅ LAYERS COMPLETE (same night, Joel: "run the refine wave on the 8" →
+"bank the 8 and reintegrate"): 26 of 28 contexts carry certified slotting** —
+the 8-context wave ran 2.4 min, 8/8 CHALLENGER (Spines/FA +193.6%,
+Poison/Sonic 2037→2718, Rad/Sonic 1791→2458), banked, stability 28/0,
+reintegrated at stamp **`c6d136a`** (smoke + gold 28/28 PASS, installed copy
+mirrored + relaunched, farm AND itrial layers verified serving through the
+real HTTP path). Only the 2 lab-parity contexts (Tanker Inv/SS, PB base)
+remain layer-less — blocked on the lab seed-parity fix, not owed.
+**⚠⚠ GATE TRAP, FIXED + PINNED (battery check 11): a content PRESET can carry
+its own `perk_focus` — the certified-slotting gate must test the USER's ask
+(`_user_perk`, captured before the preset overlay), never the post-overlay
+value.** Reading it post-overlay rejected every FARM champion's layer while
+itrial served fine (validate_champions caught it: 23/28, 5-farm SLOT-DRIFT).
+Generalize: any serve-gate condition on a request field must ask whether the
+PRESET fills that field downstream. `wave_pop.py` now takes keys via argv;
+prior verdicts preserved as `.banked_2026-08-14` before any rerun (it
+overwrites, same trap class as recert_verdicts).
 
 **✅ THE FARM-ALT WAVE IS BANKED (2026-08-14, Joel: "relaunch the scrapper and
 merge the three").** The 2026-08-11 half-run (rediscovered as uncommitted
