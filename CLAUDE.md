@@ -1335,12 +1335,14 @@ contexts, 27/27 SERVED**, canonical baselines set fresh on CURRENT post-dedup
 data via `evaluate_first --write` (the pre-dedup in-run scores shed the
 expected inflation): Tanker FA/FM afk 275.8 · Brute TW/Bio afk 359.8 ·
 Stalker Claws/EA active 658.2. **The 4th (Scrapper Rad/Rad farm_active)
-RELAUNCHED detached 2026-08-14 ~18:57 ET** on current data — shard prefix
-`champions_shard_farmalt2` (non-colliding), 1 worker, `--sweep-backend
-process`, launched via one-shot ScheduledTask (trigger-only, unregistered
-after process verify). On convergence: hand legality check → plain merge →
-retire shard → evaluate_first --write → validate_champions (expect 28/28).
-The new champions ride the next release's champions.json per standing rule.
+relaunched detached on current data and CONVERGED same evening** (65.2 min,
+clean certificate, `--sweep-backend process`, `farmalt2` prefix): merged,
+shard retired, canonical **699.7** (in-run 790.3 — the usual inflation).
+**ROSTER = 28 CONTEXTS, 28/28 SERVED, all legal, stamped v44, 0 moved, no
+wave owed.** All four fire-farm alternatives are distinct in AT + primary +
+secondary + farm mode, none overlapping Brute Spines/FA. They ride the next
+release's champions.json per standing rule. wave_cost_report run (standing
+ask): the Scrapper's 65 min sits under the 77-min roster median.
 
 **Nothing is running; no scheduled tasks armed.** Live handoff detail:
 `coh-builder/RESUME-HERE.md`.
