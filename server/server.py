@@ -4867,6 +4867,12 @@ def build_solve():
     perk_focus = body.get("perk_focus")    # hp|recovery|regen|recharge|defense|resistance
     if not isinstance(perk_focus, str):    # ignore non-string (e.g. a stray click event)
         perk_focus = None
+    # the USER's perk ask, captured before the preset overlay below fills
+    # perk_focus with the content's own default — the certified-slotting gate
+    # must reject only what the PLAYER asked for (farm presets carry a
+    # perk_focus of their own; reading it post-overlay rejected every farm
+    # champion's layer, found 2026-08-14 on the 5-farm SLOT-DRIFT)
+    _user_perk = perk_focus
     roles = [r for r in (body.get("roles") or []) if isinstance(r, str)]
     content = body.get("content")          # preset: fire_farm|itrial|team|general
     role = body.get("role")                # preset: buffer|healer|damage|tank
@@ -5108,7 +5114,7 @@ def build_solve():
     # pvp, keep-layout, perk chips, explicit targets) takes the solver.
     _csol = _champion_slotting(archetype, content, powers, role) if (
         _generated and content and not custom and tlctx is None and not pvp
-        and not keep_layout and not perk_focus
+        and not keep_layout and not _user_perk
         and not body.get("targets")) else None
     if _csol is not None:
         understood.insert(0, "Certified build: served exactly as certified")

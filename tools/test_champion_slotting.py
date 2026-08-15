@@ -151,6 +151,31 @@ def main():
     check(8, "picks mismatch -> no certified serve",
           bool(r.get("ok")) and not r.get("certified_slotting"))
 
+    # 10 a USER perk chip is a player ask -> solver path
+    json.dump({KEY: entry}, open(SCRATCH, "w", encoding="utf-8"))
+    r = solve({**copy.deepcopy(base_payload), "perk_focus": "recovery"})
+    check(10, "a user perk chip takes the solver path",
+          bool(r.get("ok")) and not r.get("certified_slotting"))
+
+    # 11 a content PRESET's own perk_focus must NOT block the layer (the
+    # 2026-08-14 five-farm SLOT-DRIFT defect: farm presets carry perk_focus,
+    # and reading it post-overlay rejected every farm champion's layer)
+    real_all = json.load(open(os.path.join(ROOT, "benchmarks", "champions.json"),
+                              encoding="utf-8"))
+    fkey = next((k for k, v in real_all.items()
+                 if k.split("|")[3].startswith("farm") and v.get("slotting")), None)
+    if fkey:
+        fentry = real_all[fkey]
+        json.dump({fkey: fentry}, open(SCRATCH, "w", encoding="utf-8"))
+        fat, _, _, fcontent = fkey.split("|")[:4]
+        r = solve({"archetype": fat, "content": fcontent,
+                   "powers": [{"full_name": fn} for fn in fentry["picks"]]})
+        check(11, f"farm preset's own perk_focus does not block the layer ({fcontent})",
+              bool(r.get("ok")) and r.get("certified_slotting") is True)
+    else:
+        check(11, "farm preset check SKIPPED — no farm champion carries a layer", False)
+    json.dump({KEY: entry}, open(SCRATCH, "w", encoding="utf-8"))
+
     # 9 evaluate_first scores the stored layer directly
     sys.path.insert(0, os.path.join(ROOT, "tools"))
     import evaluate_first as ef
@@ -170,7 +195,7 @@ def main():
           got is not None and abs(got - want) < 0.01)
 
     os.remove(SCRATCH)
-    print(f"\n{'ALL 9 CHECKS PASS' if not FAILS else f'FAILED: {FAILS}'}")
+    print(f"\n{'ALL 11 CHECKS PASS' if not FAILS else f'FAILED: {FAILS}'}")
     sys.exit(1 if FAILS else 0)
 
 
