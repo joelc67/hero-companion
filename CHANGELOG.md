@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.12.39 — 2026-08-15 — Certified builds, served as certified
+
 - **Four new fire-farm alternative champions.** The farm roster grows from one
   build to five, each a genuinely different way to farm: Tanker Fiery Aura /
   Fiery Melee (AFK), Brute Titan Weapons / Bio Organic Armor (AFK), Scrapper
@@ -16,6 +18,21 @@
   is what you get. The moment you change anything (your own targets, your own
   earned slots, a different role), the solver takes over and builds for your
   ask, exactly as before.
+- **A long-standing double-count in the game data is fixed.** 845 powers
+  carried duplicate effect rows (an artifact of how conditional variants like
+  critical hits and Containment parse), and the model summed the copies —
+  pool and epic attacks were the most inflated (Boxing read roughly three
+  times its real damage). 1,970 duplicate rows are removed; every displayed
+  number and every score now sits on the corrected data.
+- **Every champion re-certified on the corrected data.** The full power-pick
+  search re-ran for all 27 existing contexts; ten champions found genuinely
+  better power choices and were superseded (both Arachnos builds, Battle Axe
+  Brute, two Kheldian forms, Invulnerability Tanker, Water/Kinetics
+  Corruptor, and three farm builds). The other seventeen incumbents beat
+  their challengers and stand unchanged.
+- **One-slot powers explain themselves.** Cards holding a single set piece or
+  a single proc now say what that slot is doing and why, like every other
+  slotting decision.
 
 ## 0.12.38 — 2026-08-11 — The window that says why
 
