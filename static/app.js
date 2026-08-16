@@ -7785,6 +7785,28 @@ async function recompute() {
   renderRoleOutput();             // per-job output — needs the FRESH totals above
   build._accoladeHp = (LAST_TOTALS && LAST_TOTALS.accolade_hp) || 0;  // v34: live accolade HP for the panel line
   loadAccolades().then(renderAccolades);   // (summary band deleted — its accolade sync stays)
+  // Self-heal: picks the game never offers (auto-granted set mechanics like
+  // Bio's Adaptation stances — saved by versions before the _pickable rule).
+  // The game grants these for free, so dropping the pick loses nothing the
+  // player chose; the seat comes back. One follow-up recompute refreshes the
+  // numbers; it terminates because the next response carries no never_picks.
+  if (totals && (totals.never_picks || []).length) {
+    const drop = new Set(totals.never_picks);
+    const gone = build.powers.filter(p => drop.has(p.full_name))
+      .map(p => p.display_name || p.full_name.split(".").pop().replace(/_/g, " "));
+    if (gone.length) {
+      build.powers = build.powers.filter(p => !drop.has(p.full_name));
+      renderPowers();
+      // ⚠ under 26 words and one write — collapseLongExplanations folds longer
+      // muted blocks and shows both copies (the standing trap).
+      const s = $("gen-status");
+      if (s) s.textContent = `🧹 Removed ${gone.join(", ")}: the game grants `
+        + `${gone.length === 1 ? "it" : "them"} free with your power set. `
+        + `${gone.length === 1 ? "1 seat" : gone.length + " seats"} freed.`;
+      recompute();
+      return;
+    }
+  }
   // Server-corrected pick levels (older saves carry naive assignments — e.g. both
   // Poison powers badged level 1). Adopt them and repaint the wall once.
   let repaint = false;

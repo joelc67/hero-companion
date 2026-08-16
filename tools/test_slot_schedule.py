@@ -165,5 +165,25 @@ check("bare-shape heal seats one PRIMARY + one SECONDARY at L1",
       {k.rsplit(".", 1)[0] for k in l1} ==
       {"Brute_Melee.Ice_Melee", "Brute_Defense.Ice_Armor"}, ", ".join(l1))
 
+# ── 7. never-pick self-heal (field report 2026-08-16): a saved build holding an
+# auto-granted set mechanic as a pick gets it NAMED for client-side removal.
+print("\n── never-pick self-heal ──")
+stancey = [{"full_name": "Tanker_Defense.Bio_Organic_Armor.Hardened_Carapace", "pick_level": 1, "slots": [None]},
+           {"full_name": "Tanker_Melee.Radiation_Melee.Contaminated_Strike", "pick_level": 1, "slots": [None]},
+           {"full_name": "Tanker_Defense.Bio_Organic_Armor.Defensive_Adaptation", "pick_level": 4, "slots": [None]}]
+calc = c.post("/build/calculate", json={"archetype": "Class_Tanker",
+                                        "primary": "Tanker_Defense.Bio_Organic_Armor",
+                                        "secondary": "Tanker_Melee.Radiation_Melee",
+                                        "powers": stancey}).get_json()
+nv = calc.get("never_picks") or []
+check("calculate names the stance for removal",
+      nv == ["Tanker_Defense.Bio_Organic_Armor.Defensive_Adaptation"], str(nv))
+clean = c.post("/build/calculate", json={"archetype": "Class_Tanker",
+                                         "primary": "Tanker_Defense.Bio_Organic_Armor",
+                                         "secondary": "Tanker_Melee.Radiation_Melee",
+                                         "powers": stancey[:2]}).get_json()
+check("NEGATIVE CONTROL: a clean build carries no never_picks",
+      not clean.get("never_picks"))
+
 print(f"\n══ {'ALL PASS' if not fails else f'{len(fails)} FAILURE(S): ' + ', '.join(fails)} ══")
 sys.exit(1 if fails else 0)

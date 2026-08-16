@@ -2940,6 +2940,15 @@ def build_calculate():
         _assign_pick_levels(pw, build.get("archetype"))
         res["pick_levels"] = {p["full_name"]: p["pick_level"]
                               for p in pw if p.get("pick_level")}
+    # Self-heal never-pickable picks (field report 2026-08-16): builds saved
+    # before the _pickable rule carry auto-granted set mechanics (Bio stances…)
+    # as picks. Name them so the client removes them and frees the seats — the
+    # game grants these for free, so nothing the player chose is lost.
+    never = [p["full_name"] for p in real
+             if p.get("full_name") in POWER_BY_FULL
+             and not _pickable(POWER_BY_FULL[p["full_name"]])]
+    if never:
+        res["never_picks"] = never
     # Slotting rationale per power (the transparency chips), attached on EVERY recompute so a
     # RESUMED or IMPORTED build shows them too — not only a freshly solved one (field report:
     # chips missing after Resume, which read as the update being ignored).
