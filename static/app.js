@@ -7731,6 +7731,12 @@ function collapseLongExplanations(root) {
 }
 
 async function recompute() {
+  // ⚠ FIRST LINE, before ANY await: the epoch names the character this run is
+  // for. Captured any later (the first version captured it beside buildPayload,
+  // AFTER the ensureInherents await) a swap during an earlier await gets
+  // captured as the NEW epoch and the stale write sails through — caught by
+  // driving the real page, not by the battery.
+  const _epoch = _BUILD_EPOCH;
   renderEndgameWarnings();   // warn if a leveling character previews epic/incarnate content
   syncNameField();           // build-tile Name rides every state change
   renderExemplarBanners();   // the exemplared-view statement rides every recompute
@@ -7756,7 +7762,6 @@ async function recompute() {
   const cb = $("changes-btn");
   if (cb) cb.style.display = (hasPowers && IMPORTED_POWERS && CHANGES_AVAILABLE) ? "block" : "none";
   const payload = buildPayload();
-  const _epoch = _BUILD_EPOCH;   // the character this request describes
   const [totals, validation] = await Promise.all([
     api("/build/calculate", postJson(payload)),
     api("/build/validate", postJson(payload)),

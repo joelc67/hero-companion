@@ -132,12 +132,17 @@ check("resetBuildScopedState refreshes the edit bar", mod.state().bar > before);
   mod.resetBuildScopedState();
   check("a character swap bumps the build epoch", mod.state().epoch === e0 + 1);
   const rc = src.slice(src.indexOf("async function recompute"),
-                       src.indexOf("async function recompute") + 2600);
+                       src.indexOf("async function recompute") + 3400);
   const cap = rc.indexOf("_epoch = _BUILD_EPOCH");
   const gate = rc.indexOf("_epoch !== _BUILD_EPOCH");
   const write = rc.indexOf("LAST_TOTALS =");
-  check("recompute captures the epoch before its await and gates the write",
-        cap > 0 && gate > cap && write > gate);
+  // ⚠ the capture must precede the FIRST await in the function — captured any
+  // later, a swap during an earlier await reads as the NEW epoch and the stale
+  // write passes (the first version had it after ensureInherents; caught by
+  // driving the real page).
+  const firstAwait = rc.indexOf("await ensureInherents");   // recompute's first real await
+  check("recompute captures the epoch before its FIRST await and gates the write",
+        cap > 0 && firstAwait > 0 && cap < firstAwait && gate > cap && write > gate);
 }
 
 // 8b. THE CLOSE PROMPT READS PUSHED STATE (field report 2026-08-15: pressed Save,
