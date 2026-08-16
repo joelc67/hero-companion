@@ -37,7 +37,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 2306.73
    },
@@ -1415,7 +1415,7 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 2718.27
    }
@@ -2607,8 +2607,8 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
-    "verdict": "baseline",
+    "against": "model 45, 2026-08-16",
+    "verdict": "unaffected",
     "canonical_score": 2518.67
    }
   },
@@ -3793,7 +3793,7 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 2376.3
    }
@@ -4970,7 +4970,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 1685.53
    },
@@ -6155,8 +6155,8 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
-    "verdict": "baseline",
+    "against": "model 45, 2026-08-16",
+    "verdict": "unaffected",
     "canonical_score": 1499.75
    }
   },
@@ -7507,8 +7507,8 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
-    "verdict": "baseline",
+    "against": "model 45, 2026-08-16",
+    "verdict": "unaffected",
     "canonical_score": 1229.63
    }
   },
@@ -8870,7 +8870,7 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 452.36
    }
@@ -10126,7 +10126,7 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 1543.4
    }
@@ -11475,7 +11475,7 @@
    "primary_converged": true,
    "picks_filled": 2,
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 2155.98
    },
@@ -12701,7 +12701,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 1336.67
    },
@@ -14041,7 +14041,7 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 1391.53
    }
@@ -15343,8 +15343,8 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
-    "verdict": "baseline",
+    "against": "model 45, 2026-08-16",
+    "verdict": "unaffected",
     "canonical_score": 1574.16
    }
   },
@@ -16601,7 +16601,7 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 1339.37
    }
@@ -16654,7 +16654,7 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 1303.62
    }
@@ -18000,8 +18000,8 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
-    "verdict": "baseline",
+    "against": "model 45, 2026-08-16",
+    "verdict": "unaffected",
     "canonical_score": 1497.05
    }
   },
@@ -19344,7 +19344,7 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 1380.73
    }
@@ -20618,7 +20618,7 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 1528.08
    }
@@ -21965,8 +21965,8 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
-    "verdict": "baseline",
+    "against": "model 45, 2026-08-16",
+    "verdict": "unaffected",
     "canonical_score": 1306.62
    }
   },
@@ -23269,7 +23269,7 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 1639.93
    }
@@ -24562,7 +24562,7 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 1618.2
    }
@@ -25924,8 +25924,8 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
-    "verdict": "baseline",
+    "against": "model 45, 2026-08-16",
+    "verdict": "unaffected",
     "canonical_score": 1871.28
    }
   },
@@ -27191,8 +27191,8 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
-    "verdict": "baseline",
+    "against": "model 45, 2026-08-16",
+    "verdict": "unaffected",
     "canonical_score": 763.47
    }
   },
@@ -28324,11 +28324,11 @@
   "picks": [
    "Brute_Defense.Fiery_Aura.Blazing_Aura",
    "Brute_Defense.Fiery_Aura.Burn",
-   "Brute_Defense.Fiery_Aura.Fiery_Embrace",
    "Brute_Defense.Fiery_Aura.Fire_Shield",
    "Brute_Defense.Fiery_Aura.Healing_Flames",
+   "Brute_Defense.Fiery_Aura.Plasma_Shield",
+   "Brute_Defense.Fiery_Aura.Rise_of_the_Phoenix",
    "Brute_Defense.Fiery_Aura.Temperature_Protection",
-   "Brute_Melee.Spines.Impale",
    "Brute_Melee.Spines.Lunge",
    "Brute_Melee.Spines.Quills",
    "Brute_Melee.Spines.Ripper",
@@ -28336,10 +28336,9 @@
    "Brute_Melee.Spines.Taunt",
    "Brute_Melee.Spines.Throw_Spines",
    "Epic.Pyre_Mastery.Char",
-   "Epic.Pyre_Mastery.Melt_Armor",
+   "Epic.Pyre_Mastery.Fire_Blast",
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
-   "Pool.Fighting.Boxing",
    "Pool.Fighting.Cross_Punch",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
@@ -28347,9 +28346,10 @@
    "Pool.Medicine.Aid_Self",
    "Pool.Medicine.Stimulant",
    "Pool.Speed.Hasten",
-   "Pool.Speed.Super_Speed"
+   "Pool.Speed.Super_Speed",
+   "Pool.Speed.Whirlwind"
   ],
-  "score": 287.9485,
+  "score": 235.059,
   "certificate": {
    "sweeps": 30,
    "converged": true,
@@ -28358,23 +28358,23 @@
    "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
    "canonical_optimality_checked": false,
    "primary_converged": true,
-   "picks_filled": 0,
+   "picks_filled": 2,
    "node_cap": {
     "cap": 50000,
     "capped_solves_floor": 0,
-    "final_resolve_delta": 3.83
+    "final_resolve_delta": 0.0
    },
    "tie_arbitration": {
-    "winner": "plain",
+    "winner": "eps",
     "scores": {
-     "eps": 284.12,
-     "lex": 284.12,
-     "plain": 287.95
+     "eps": 235.06,
+     "lex": 235.06,
+     "plain": 235.06
     }
    },
    "afk_sustain": {
-    "hp": 2077.3,
-    "regen_hps": 26.74,
+    "hp": 2107.5,
+    "regen_hps": 28.01,
     "auto_fire_heal": "Healing_Flames",
     "auto_fire_hps": 10.04,
     "heal_rates": [
@@ -28387,6 +28387,11 @@
       "power": "Aid_Self",
       "self_hps": 15.74,
       "interruptible": true
+     },
+     {
+      "power": "Rise_of_the_Phoenix",
+      "self_hps": 0.54,
+      "interruptible": false
      }
     ],
     "assumed_accolades": [
@@ -28397,7 +28402,104 @@
     "accolade_hp": 321.3,
     "buff_proc_regen_pct": 0.0,
     "buff_proc_detail": [],
-    "sustain_hps": 36.78,
+    "sustain_hps": 38.05,
+    "requirements": {
+     "0": 26.4,
+     "1": 29.1,
+     "2": 31.7,
+     "3": 34.4,
+     "4": 37.0
+    },
+    "tier": 4,
+    "label": "AFK-certified at +4x8: 38.1 HP/s sustained (regen 28.0 + Healing_Flames on auto-fire 10.0) meets the 37 HP/s asteroid worst case. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
+   },
+   "evaluated": {
+    "against": "model 45, 2026-08-16",
+    "verdict": "baseline",
+    "canonical_score": 209.66
+   }
+  },
+  "model_version": 45,
+  "canonical_score": 209.66
+ },
+ "Class_Tanker|Tanker_Defense.Fiery_Aura|Tanker_Melee.Fiery_Melee|farm_afk": {
+  "picks": [
+   "Epic.Pyre_Mastery.Char",
+   "Epic.Pyre_Mastery.Fire_Blast",
+   "Epic.Pyre_Mastery.Melt_Armor",
+   "Epic.Pyre_Mastery.Ring_of_Fire",
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Tough",
+   "Pool.Fighting.Weave",
+   "Pool.Invisibility.Stealth",
+   "Pool.Medicine.Aid_Self",
+   "Pool.Medicine.Field_Medic",
+   "Pool.Medicine.Resuscitate",
+   "Pool.Medicine.Stimulant",
+   "Pool.Speed.Flurry",
+   "Pool.Speed.Hasten",
+   "Pool.Speed.Super_Speed",
+   "Pool.Speed.Whirlwind",
+   "Tanker_Defense.Fiery_Aura.Blazing_Aura",
+   "Tanker_Defense.Fiery_Aura.Fiery_Embrace",
+   "Tanker_Defense.Fiery_Aura.Fire_Shield",
+   "Tanker_Defense.Fiery_Aura.Rise_of_the_Phoenix",
+   "Tanker_Defense.Fiery_Aura.Temperature_protection",
+   "Tanker_Melee.Fiery_Melee.Breath_of_Fire",
+   "Tanker_Melee.Fiery_Melee.Combustion",
+   "Tanker_Melee.Fiery_Melee.Scorch"
+  ],
+  "score": 321.63599999999997,
+  "certificate": {
+   "sweeps": 33,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
+   "primary_converged": true,
+   "picks_filled": 1,
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
+   },
+   "tie_arbitration": {
+    "winner": "eps",
+    "scores": {
+     "eps": 321.64,
+     "lex": 286.85,
+     "plain": 286.85
+    }
+   },
+   "afk_sustain": {
+    "hp": 2520.5,
+    "regen_hps": 34.14,
+    "auto_fire_heal": "Rise_of_the_Phoenix",
+    "auto_fire_hps": 0.69,
+    "heal_rates": [
+     {
+      "power": "Aid_Self",
+      "self_hps": 20.2,
+      "interruptible": true
+     },
+     {
+      "power": "Rise_of_the_Phoenix",
+      "self_hps": 0.69,
+      "interruptible": false
+     }
+    ],
+    "assumed_accolades": [
+     "Task Force Commander",
+     "Freedom Phalanx Reserve",
+     "Portal Jockey"
+    ],
+    "accolade_hp": 374.8,
+    "buff_proc_regen_pct": 0.0,
+    "buff_proc_detail": [],
+    "sustain_hps": 34.83,
     "requirements": {
      "0": 26.4,
      "1": 29.1,
@@ -28406,1292 +28508,32 @@
      "4": 37.0
     },
     "tier": 3,
-    "label": "AFK-certified at +3x8 (sustain 36.8 HP/s: regen 26.7 + Healing_Flames on auto-fire 10.0); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed). Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
+    "label": "AFK-certified at +3x8 (sustain 34.8 HP/s: regen 34.1 + Rise_of_the_Phoenix on auto-fire 0.7); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed). Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +375 HP)."
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "baseline",
-    "canonical_score": 652.9
+    "canonical_score": 294.51
    }
   },
-  "model_version": 44,
-  "slotting": [
-   {
-    "full_name": "Brute_Defense.Fiery_Aura.Blazing_Aura",
-    "display_name": "Blazing Aura",
-    "powerset_full_name": "Brute_Defense.Fiery_Aura",
-    "accepted_set_category_ids": [
-     4,
-     24,
-     34,
-     44
-    ],
-    "accepted_set_categories": [
-     "PBAoE Damage",
-     "Threat Duration",
-     "Brute Archetype Sets",
-     "Universal Damage"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Fury of the Gladiator",
-      "set_name": "Fury of the Gladiator",
-      "piece_name": "proc",
-      "piece_uid": "Crafted_Fury_of_the_Gladiator_F",
-      "category_id": 24,
-      "_proc": true
-     }
-    ],
-    "_proc_trade": {
-     "kind": "bomb",
-     "displaced": [
-      {
-       "set_uid": "Triumphant_Insult",
-       "set_name": "Triumphant Insult",
-       "piece_name": "Threat/Placate",
-       "piece_uid": "Crafted_Triumphant_Insult_A",
-       "category_id": 24
-      },
-      {
-       "set_uid": "Triumphant_Insult",
-       "set_name": "Triumphant Insult",
-       "piece_name": "Threat/Placate/Recharge",
-       "piece_uid": "Crafted_Triumphant_Insult_B",
-       "category_id": 24
-      }
-     ]
-    }
-   },
-   {
-    "full_name": "Brute_Defense.Fiery_Aura.Burn",
-    "display_name": "Burn",
-    "powerset_full_name": "Brute_Defense.Fiery_Aura",
-    "accepted_set_category_ids": [
-     4,
-     34,
-     44,
-     24
-    ],
-    "accepted_set_categories": [
-     "PBAoE Damage",
-     "Brute Archetype Sets",
-     "Universal Damage",
-     "Threat Duration"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Triumphant_Insult",
-      "set_name": "Triumphant Insult",
-      "piece_name": "Chance to Disorient",
-      "piece_uid": "Crafted_Triumphant_Insult_C",
-      "category_id": 24
-     },
-     {
-      "set_uid": "Triumphant_Insult",
-      "set_name": "Triumphant Insult",
-      "piece_name": "Threat/Placate/Recharge",
-      "piece_uid": "Crafted_Triumphant_Insult_B",
-      "category_id": 24
-     },
-     {
-      "set_uid": "Triumphant_Insult",
-      "set_name": "Triumphant Insult",
-      "piece_name": "Threat/Placate",
-      "piece_uid": "Crafted_Triumphant_Insult_A",
-      "category_id": 24
-     }
-    ]
-   },
-   {
-    "full_name": "Brute_Defense.Fiery_Aura.Fiery_Embrace",
-    "display_name": "Fiery Embrace",
-    "powerset_full_name": "Brute_Defense.Fiery_Aura",
-    "accepted_set_category_ids": [],
-    "accepted_set_categories": [],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": null,
-      "set_name": "Common IO",
-      "piece_uid": "Crafted_Recharge",
-      "piece_name": "Recharge Reduction IO",
-      "category_id": null,
-      "io_level": 50
-     },
-     {
-      "set_uid": null,
-      "set_name": "Common IO",
-      "piece_uid": "Crafted_Recharge",
-      "piece_name": "Recharge Reduction IO",
-      "category_id": null,
-      "io_level": 50
-     }
-    ]
-   },
-   {
-    "full_name": "Brute_Defense.Fiery_Aura.Fire_Shield",
-    "display_name": "Fire Shield",
-    "powerset_full_name": "Brute_Defense.Fiery_Aura",
-    "accepted_set_category_ids": [
-     8
-    ],
-    "accepted_set_categories": [
-     "Resist Damage"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance/Endurance",
-      "piece_uid": "Crafted_Aegis_A",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance/Recharge",
-      "piece_uid": "Crafted_Aegis_B",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance/Endurance/Recharge",
-      "piece_uid": "Crafted_Aegis_D",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance",
-      "piece_uid": "Crafted_Aegis_E",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Psionic/Status Resistance",
-      "piece_uid": "Crafted_Aegis_F",
-      "category_id": 8
-     }
-    ]
-   },
-   {
-    "full_name": "Brute_Defense.Fiery_Aura.Healing_Flames",
-    "display_name": "Healing Flames",
-    "powerset_full_name": "Brute_Defense.Fiery_Aura",
-    "accepted_set_category_ids": [
-     8,
-     9
-    ],
-    "accepted_set_categories": [
-     "Resist Damage",
-     "Healing"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Steadfast_Protection",
-      "set_name": "Steadfast Protection",
-      "piece_name": "Resistance/+Def 3%",
-      "piece_uid": "Crafted_Steadfast_Protection_B",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Gladiators_Armor",
-      "set_name": "Gladiator's Armor",
-      "piece_name": "TP Protection +3% Def (All)",
-      "piece_uid": "Crafted_Gladiators_Armor_F",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Numinas_Convalesence",
-      "set_name": "Numina's Convalesence",
-      "piece_name": "+Regeneration/+Recovery",
-      "piece_uid": "Crafted_Numinas_Convalesence_F",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Miracle",
-      "set_name": "Miracle",
-      "piece_name": "Heal",
-      "piece_uid": "Crafted_Miracle_E",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Regenerative_Tissue",
-      "set_name": "Regenerative Tissue",
-      "piece_name": "+Regeneration",
-      "piece_uid": "Crafted_Regenerative_Tissue_E",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Steadfast_Protection",
-      "set_name": "Steadfast Protection",
-      "piece_name": "Knockback Protection",
-      "piece_uid": "Crafted_Steadfast_Protection_C",
-      "category_id": 8
-     }
-    ]
-   },
-   {
-    "full_name": "Brute_Defense.Fiery_Aura.Temperature_Protection",
-    "display_name": "Temperature Protection",
-    "powerset_full_name": "Brute_Defense.Fiery_Aura",
-    "accepted_set_category_ids": [
-     8
-    ],
-    "accepted_set_categories": [
-     "Resist Damage",
-     "Healing"
-    ],
-    "power_type": 1,
-    "include_in_totals": true,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Psionic/Status Resistance",
-      "piece_uid": "Crafted_Aegis_F",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Endurance/Recharge",
-      "piece_uid": "Crafted_Aegis_C",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance/Recharge",
-      "piece_uid": "Crafted_Aegis_B",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance/Endurance",
-      "piece_uid": "Crafted_Aegis_A",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance",
-      "piece_uid": "Crafted_Aegis_E",
-      "category_id": 8
-     }
-    ]
-   },
-   {
-    "full_name": "Brute_Melee.Spines.Impale",
-    "display_name": "Impale",
-    "powerset_full_name": "Brute_Melee.Spines",
-    "accepted_set_category_ids": [
-     2,
-     12,
-     13,
-     24,
-     34,
-     44
-    ],
-    "accepted_set_categories": [
-     "Ranged Damage",
-     "Immobilize",
-     "Slow Movement",
-     "Threat Duration",
-     "Brute Archetype Sets",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 4,
-    "slots": [
-     {
-      "set_uid": "Gravitational_Anchor",
-      "set_name": "Gravitational Anchor",
-      "piece_name": "Immobilize/Endurance",
-      "piece_uid": "Crafted_Gravitational_Anchor_E",
-      "category_id": 12
-     },
-     {
-      "set_uid": "Gravitational_Anchor",
-      "set_name": "Gravitational Anchor",
-      "piece_name": "Chance for Hold",
-      "piece_uid": "Crafted_Gravitational_Anchor_F",
-      "category_id": 12
-     }
-    ]
-   },
-   {
-    "full_name": "Brute_Melee.Spines.Lunge",
-    "display_name": "Lunge",
-    "powerset_full_name": "Brute_Melee.Spines",
-    "accepted_set_category_ids": [
-     1,
-     13,
-     24,
-     34,
-     44
-    ],
-    "accepted_set_categories": [
-     "Melee Damage",
-     "Slow Movement",
-     "Threat Duration",
-     "Brute Archetype Sets",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 6,
-    "slots": [
-     {
-      "set_uid": "Ice_Mistrals_Torment",
-      "set_name": "Ice Mistral's Torment",
-      "piece_name": "Damage/Slow",
-      "piece_uid": "Crafted_Ice_Mistrals_Torment_C",
-      "category_id": 13
-     },
-     {
-      "set_uid": "Ice_Mistrals_Torment",
-      "set_name": "Ice Mistral's Torment",
-      "piece_name": "Accuracy/Damage/Endurance",
-      "piece_uid": "Crafted_Ice_Mistrals_Torment_D",
-      "category_id": 13
-     },
-     {
-      "set_uid": "Ice_Mistrals_Torment",
-      "set_name": "Ice Mistral's Torment",
-      "piece_name": "Chance for Cold Damage",
-      "piece_uid": "Crafted_Ice_Mistrals_Torment_F",
-      "category_id": 13
-     }
-    ]
-   },
-   {
-    "full_name": "Brute_Melee.Spines.Quills",
-    "display_name": "Quills",
-    "powerset_full_name": "Brute_Melee.Spines",
-    "accepted_set_category_ids": [
-     4,
-     13,
-     34,
-     44
-    ],
-    "accepted_set_categories": [
-     "PBAoE Damage",
-     "Slow Movement",
-     "Brute Archetype Sets",
-     "Universal Damage"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Scirocco's Dervish",
-      "set_name": "Scirocco's Dervish",
-      "piece_name": "proc",
-      "piece_uid": "Crafted_Sciroccos_Dervish_F",
-      "category_id": 13,
-      "_proc": true
-     },
-     {
-      "set_uid": "Obliteration",
-      "set_name": "Obliteration",
-      "piece_name": "proc",
-      "piece_uid": "Crafted_Obliteration_F",
-      "category_id": 13,
-      "_proc": true
-     },
-     {
-      "set_uid": "Obliteration",
-      "set_name": "Obliteration",
-      "piece_name": "Accuracy/Damage/Endurance/Recharge",
-      "piece_uid": "Crafted_Obliteration_E",
-      "category_id": 13,
-      "_proc": true
-     },
-     {
-      "set_uid": "Obliteration",
-      "set_name": "Obliteration",
-      "piece_name": "Damage",
-      "piece_uid": "Crafted_Obliteration_A",
-      "category_id": 13,
-      "_proc": true
-     },
-     {
-      "set_uid": "Obliteration",
-      "set_name": "Obliteration",
-      "piece_name": "Damage/Recharge",
-      "piece_uid": "Crafted_Obliteration_C",
-      "category_id": 13,
-      "_proc": true
-     }
-    ],
-    "_proc_trade": {
-     "kind": "bomb",
-     "displaced": [
-      {
-       "set_uid": "Ice_Mistrals_Torment",
-       "set_name": "Ice Mistral's Torment",
-       "piece_name": "Endurance/Slow",
-       "piece_uid": "Crafted_Ice_Mistrals_Torment_A",
-       "category_id": 13
-      },
-      {
-       "set_uid": "Ice_Mistrals_Torment",
-       "set_name": "Ice Mistral's Torment",
-       "piece_name": "Damage/Recharge",
-       "piece_uid": "Crafted_Ice_Mistrals_Torment_B",
-       "category_id": 13
-      }
-     ]
-    }
-   },
-   {
-    "full_name": "Brute_Melee.Spines.Ripper",
-    "display_name": "Ripper",
-    "powerset_full_name": "Brute_Melee.Spines",
-    "accepted_set_category_ids": [
-     4,
-     13,
-     23,
-     24,
-     34,
-     44
-    ],
-    "accepted_set_categories": [
-     "PBAoE Damage",
-     "Slow Movement",
-     "Knockback",
-     "Threat Duration",
-     "Brute Archetype Sets",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Impeded Swiftness",
-      "set_name": "Impeded Swiftness",
-      "piece_name": "proc",
-      "piece_uid": "Crafted_Impeded_Swiftness_F",
-      "category_id": 13,
-      "_proc": true
-     }
-    ],
-    "_proc_trade": {
-     "kind": "bomb",
-     "displaced": [
-      {
-       "set_uid": "Ice_Mistrals_Torment",
-       "set_name": "Ice Mistral's Torment",
-       "piece_name": "Endurance/Slow",
-       "piece_uid": "Crafted_Ice_Mistrals_Torment_A",
-       "category_id": 13
-      },
-      {
-       "set_uid": "Ice_Mistrals_Torment",
-       "set_name": "Ice Mistral's Torment",
-       "piece_name": "Damage/Recharge",
-       "piece_uid": "Crafted_Ice_Mistrals_Torment_B",
-       "category_id": 13
-      }
-     ]
-    }
-   },
-   {
-    "full_name": "Brute_Melee.Spines.Spine_Burst",
-    "display_name": "Spine Burst",
-    "powerset_full_name": "Brute_Melee.Spines",
-    "accepted_set_category_ids": [
-     4,
-     13,
-     24,
-     34,
-     44
-    ],
-    "accepted_set_categories": [
-     "PBAoE Damage",
-     "Slow Movement",
-     "Threat Duration",
-     "Brute Archetype Sets",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Ice_Mistrals_Torment",
-      "set_name": "Ice Mistral's Torment",
-      "piece_name": "Chance for Cold Damage",
-      "piece_uid": "Crafted_Ice_Mistrals_Torment_F",
-      "category_id": 13
-     },
-     {
-      "set_uid": "Ice_Mistrals_Torment",
-      "set_name": "Ice Mistral's Torment",
-      "piece_name": "Damage/Slow",
-      "piece_uid": "Crafted_Ice_Mistrals_Torment_C",
-      "category_id": 13
-     },
-     {
-      "set_uid": "Ice_Mistrals_Torment",
-      "set_name": "Ice Mistral's Torment",
-      "piece_name": "Accuracy/Damage/Endurance",
-      "piece_uid": "Crafted_Ice_Mistrals_Torment_D",
-      "category_id": 13
-     }
-    ]
-   },
-   {
-    "full_name": "Brute_Melee.Spines.Taunt",
-    "display_name": "Taunt",
-    "powerset_full_name": "Brute_Melee.Spines",
-    "accepted_set_category_ids": [
-     24
-    ],
-    "accepted_set_categories": [
-     "Threat Duration"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 6,
-    "slots": [
-     {
-      "set_uid": "Mocking_Beratement",
-      "set_name": "Mocking Beratement",
-      "piece_name": "Threat/Placate/Range",
-      "piece_uid": "Crafted_Mocking_Beratement_E",
-      "category_id": 24
-     },
-     {
-      "set_uid": "Mocking_Beratement",
-      "set_name": "Mocking Beratement",
-      "piece_name": "Threat/Placate/Recharge/Range",
-      "piece_uid": "Crafted_Mocking_Beratement_C",
-      "category_id": 24
-     },
-     {
-      "set_uid": "Mocking_Beratement",
-      "set_name": "Mocking Beratement",
-      "piece_name": "Accuracy/Recharge",
-      "piece_uid": "Crafted_Mocking_Beratement_D",
-      "category_id": 24
-     },
-     {
-      "set_uid": "Mocking_Beratement",
-      "set_name": "Mocking Beratement",
-      "piece_name": "Recharge",
-      "piece_uid": "Crafted_Mocking_Beratement_F",
-      "category_id": 24
-     },
-     {
-      "set_uid": "Mocking_Beratement",
-      "set_name": "Mocking Beratement",
-      "piece_name": "Threat/Placate/Recharge",
-      "piece_uid": "Crafted_Mocking_Beratement_B",
-      "category_id": 24
-     }
-    ]
-   },
-   {
-    "full_name": "Brute_Melee.Spines.Throw_Spines",
-    "display_name": "Throw Spines",
-    "powerset_full_name": "Brute_Melee.Spines",
-    "accepted_set_category_ids": [
-     3,
-     13,
-     24,
-     34,
-     44
-    ],
-    "accepted_set_categories": [
-     "Targeted AoE Damage",
-     "Slow Movement",
-     "Threat Duration",
-     "Brute Archetype Sets",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Ice_Mistrals_Torment",
-      "set_name": "Ice Mistral's Torment",
-      "piece_name": "Chance for Cold Damage",
-      "piece_uid": "Crafted_Ice_Mistrals_Torment_F",
-      "category_id": 13
-     },
-     {
-      "set_uid": "Ice_Mistrals_Torment",
-      "set_name": "Ice Mistral's Torment",
-      "piece_name": "Accuracy/Damage/Endurance",
-      "piece_uid": "Crafted_Ice_Mistrals_Torment_D",
-      "category_id": 13
-     },
-     {
-      "set_uid": "Ice_Mistrals_Torment",
-      "set_name": "Ice Mistral's Torment",
-      "piece_name": "Damage/Slow",
-      "piece_uid": "Crafted_Ice_Mistrals_Torment_C",
-      "category_id": 13
-     }
-    ]
-   },
-   {
-    "full_name": "Epic.Pyre_Mastery.Char",
-    "display_name": "Char",
-    "powerset_full_name": "Epic.Pyre_Mastery",
-    "accepted_set_category_ids": [
-     2,
-     10,
-     44
-    ],
-    "accepted_set_categories": [
-     "Ranged Damage",
-     "Holds",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Unbreakable_Constraint",
-      "set_name": "Unbreakable Constraint",
-      "piece_name": "Hold/Endurance",
-      "piece_uid": "Crafted_Unbreakable_Constraint_E",
-      "category_id": 10
-     },
-     {
-      "set_uid": "Unbreakable_Constraint",
-      "set_name": "Unbreakable Constraint",
-      "piece_name": "Hold/Recharge",
-      "piece_uid": "Crafted_Unbreakable_Constraint_B",
-      "category_id": 10
-     }
-    ],
-    "_proc_trade": {
-     "kind": "hybrid",
-     "displaced": [
-      {
-       "set_uid": "Unbreakable_Constraint",
-       "set_name": "Unbreakable Constraint",
-       "piece_name": "Hold",
-       "piece_uid": "Crafted_Unbreakable_Constraint_A",
-       "category_id": 10
-      },
-      {
-       "set_uid": "Unbreakable_Constraint",
-       "set_name": "Unbreakable Constraint",
-       "piece_name": "Hold/Recharge",
-       "piece_uid": "Crafted_Unbreakable_Constraint_B",
-       "category_id": 10
-      },
-      {
-       "set_uid": "Unbreakable_Constraint",
-       "set_name": "Unbreakable Constraint",
-       "piece_name": "Hold/Recharge/Accuracy",
-       "piece_uid": "Crafted_Unbreakable_Constraint_C",
-       "category_id": 10
-      },
-      {
-       "set_uid": "Unbreakable_Constraint",
-       "set_name": "Unbreakable Constraint",
-       "piece_name": "Recharge/Accuracy",
-       "piece_uid": "Crafted_Unbreakable_Constraint_D",
-       "category_id": 10
-      },
-      {
-       "set_uid": "Unbreakable_Constraint",
-       "set_name": "Unbreakable Constraint",
-       "piece_name": "Hold/Endurance",
-       "piece_uid": "Crafted_Unbreakable_Constraint_E",
-       "category_id": 10
-      }
-     ]
-    }
-   },
-   {
-    "full_name": "Epic.Pyre_Mastery.Melt_Armor",
-    "display_name": "Melt Armor",
-    "powerset_full_name": "Epic.Pyre_Mastery",
-    "accepted_set_category_ids": [
-     21,
-     30
-    ],
-    "accepted_set_categories": [
-     "Defense Debuff",
-     "Accurate Defense Debuff"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Shield_Breaker",
-      "set_name": "Shield Breaker",
-      "piece_name": "Defense Debuff",
-      "piece_uid": "Crafted_Shield_Breaker_A",
-      "category_id": 30
-     },
-     {
-      "set_uid": "Shield_Breaker",
-      "set_name": "Shield Breaker",
-      "piece_name": "Accuracy/Defense Debuff",
-      "piece_uid": "Crafted_Shield_Breaker_B",
-      "category_id": 30
-     },
-     {
-      "set_uid": "Shield_Breaker",
-      "set_name": "Shield Breaker",
-      "piece_name": "Accuracy/Recharge",
-      "piece_uid": "Crafted_Shield_Breaker_C",
-      "category_id": 30
-     },
-     {
-      "set_uid": "Shield_Breaker",
-      "set_name": "Shield Breaker",
-      "piece_name": "Defense Debuff/Endurance/Recharge",
-      "piece_uid": "Crafted_Shield_Breaker_D",
-      "category_id": 30
-     },
-     {
-      "set_uid": "Shield_Breaker",
-      "set_name": "Shield Breaker",
-      "piece_name": "Chance for Lethal Damage",
-      "piece_uid": "Crafted_Shield_Breaker_F",
-      "category_id": 30
-     },
-     {
-      "set_uid": "Shield_Breaker",
-      "set_name": "Shield Breaker",
-      "piece_name": "Accuracy/Endurance/Recharge",
-      "piece_uid": "Crafted_Shield_Breaker_E",
-      "category_id": 30
-     }
-    ],
-    "_proc_trade": {
-     "kind": "anchor",
-     "displaced": [
-      {
-       "set_uid": "Shield_Breaker",
-       "set_name": "Shield Breaker",
-       "piece_name": "Accuracy/Endurance/Recharge",
-       "piece_uid": "Crafted_Shield_Breaker_E",
-       "category_id": 30
-      }
-     ]
-    }
-   },
-   {
-    "full_name": "Inherent.Fitness.Health",
-    "display_name": "Health",
-    "powerset_full_name": "Inherent.Fitness",
-    "accepted_set_category_ids": [
-     9
-    ],
-    "accepted_set_categories": [
-     "Healing"
-    ],
-    "power_type": 1,
-    "include_in_totals": true,
-    "slotCount": 1,
-    "slots": [
-     {
-      "set_uid": "Panacea",
-      "set_name": "Panacea",
-      "piece_name": "+Hit Points/Endurance",
-      "piece_uid": "Crafted_Panacea_F",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Panacea",
-      "set_name": "Panacea",
-      "piece_name": "Heal/Recharge",
-      "piece_uid": "Crafted_Panacea_C",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Panacea",
-      "set_name": "Panacea",
-      "piece_name": "Heal",
-      "piece_uid": "Crafted_Panacea_E",
-      "category_id": 9
-     }
-    ]
-   },
-   {
-    "full_name": "Inherent.Fitness.Stamina",
-    "display_name": "Stamina",
-    "powerset_full_name": "Inherent.Fitness",
-    "accepted_set_category_ids": [
-     22
-    ],
-    "accepted_set_categories": [
-     "Endurance Modification"
-    ],
-    "power_type": 1,
-    "include_in_totals": true,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Performance_Shifter",
-      "set_name": "Performance Shifter",
-      "piece_name": "Chance for +End",
-      "piece_uid": "Crafted_Performance_Shifter_F",
-      "category_id": 22
-     },
-     {
-      "set_uid": "Power_Transfer",
-      "set_name": "Power Transfer",
-      "piece_name": "EndMod",
-      "piece_uid": "Crafted_Power_Transfer_A",
-      "category_id": 22
-     },
-     {
-      "set_uid": "Performance_Shifter",
-      "set_name": "Performance Shifter",
-      "piece_name": "EndMod",
-      "piece_uid": "Crafted_Performance_Shifter_A",
-      "category_id": 22
-     },
-     {
-      "set_uid": "Performance_Shifter",
-      "set_name": "Performance Shifter",
-      "piece_name": "EndMod/Accuracy",
-      "piece_uid": "Crafted_Performance_Shifter_E",
-      "category_id": 22
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Fighting.Boxing",
-    "display_name": "Boxing",
-    "powerset_full_name": "Pool.Fighting",
-    "accepted_set_category_ids": [
-     1,
-     11,
-     44
-    ],
-    "accepted_set_categories": [
-     "Melee Damage",
-     "Stuns",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Absolute_Amazement",
-      "set_name": "Absolute Amazement",
-      "piece_name": "Chance for ToHit Debuff",
-      "piece_uid": "Crafted_Absolute_Amazement_F",
-      "category_id": 11
-     },
-     {
-      "set_uid": "Absolute_Amazement",
-      "set_name": "Absolute Amazement",
-      "piece_name": "Stun",
-      "piece_uid": "Crafted_Absolute_Amazement_A",
-      "category_id": 11
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Fighting.Cross_Punch",
-    "display_name": "Cross Punch",
-    "powerset_full_name": "Pool.Fighting",
-    "accepted_set_category_ids": [
-     4,
-     11,
-     23,
-     44
-    ],
-    "accepted_set_categories": [
-     "PBAoE Damage",
-     "Stuns",
-     "Knockback",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Stupefy",
-      "set_name": "Stupefy",
-      "piece_name": "Accuracy/Endurance",
-      "piece_uid": "Crafted_Stupefy_C",
-      "category_id": 11
-     },
-     {
-      "set_uid": "Stupefy",
-      "set_name": "Stupefy",
-      "piece_name": "Stun/Range",
-      "piece_uid": "Crafted_Stupefy_D",
-      "category_id": 11
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Fighting.Tough",
-    "display_name": "Tough",
-    "powerset_full_name": "Pool.Fighting",
-    "accepted_set_category_ids": [
-     8
-    ],
-    "accepted_set_categories": [
-     "Resist Damage"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 6,
-    "slots": [
-     {
-      "set_uid": "Impervium_Armor",
-      "set_name": "Impervium Armor",
-      "piece_name": "Resistance/Endurance",
-      "piece_uid": "Crafted_Impervium_Armor_A",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Impervium_Armor",
-      "set_name": "Impervium Armor",
-      "piece_name": "Resistance",
-      "piece_uid": "Crafted_Impervium_Armor_E",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance/Endurance",
-      "piece_uid": "Crafted_Aegis_A",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance/Recharge",
-      "piece_uid": "Crafted_Aegis_B",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance",
-      "piece_uid": "Crafted_Aegis_E",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Psionic/Status Resistance",
-      "piece_uid": "Crafted_Aegis_F",
-      "category_id": 8
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Fighting.Weave",
-    "display_name": "Weave",
-    "powerset_full_name": "Pool.Fighting",
-    "accepted_set_category_ids": [
-     7
-    ],
-    "accepted_set_categories": [
-     "Defense Sets"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 4,
-    "slots": [
-     {
-      "set_uid": "Luck_of_the_Gambler",
-      "set_name": "Luck of the Gambler",
-      "piece_name": "Defense",
-      "piece_uid": "Crafted_Luck_of_the_Gambler_E",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Shield_Wall",
-      "set_name": "Shield Wall",
-      "piece_name": "+Res (Teleportation), +5% Res (All)",
-      "piece_uid": "Crafted_Shield_Wall_F",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Reactive_Defenses",
-      "set_name": "Reactive Defenses",
-      "piece_name": "Scaling Resist Damage",
-      "piece_uid": "Crafted_Reactive_Defenses_F",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Kismet",
-      "set_name": "Kismet",
-      "piece_name": "Accuracy +6%",
-      "piece_uid": "Crafted_Kismet_E",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Shield_Wall",
-      "set_name": "Shield Wall",
-      "piece_name": "Defense/Endurance",
-      "piece_uid": "Crafted_Shield_Wall_A",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Reactive_Defenses",
-      "set_name": "Reactive Defenses",
-      "piece_name": "Defense/Endurance/RechargeTime",
-      "piece_uid": "Crafted_Reactive_Defenses_E",
-      "category_id": 7
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Invisibility.Stealth",
-    "display_name": "Stealth",
-    "powerset_full_name": "Pool.Invisibility",
-    "accepted_set_category_ids": [
-     7
-    ],
-    "accepted_set_categories": [
-     "Defense Sets"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 6,
-    "slots": [
-     {
-      "set_uid": "Luck_of_the_Gambler",
-      "set_name": "Luck of the Gambler",
-      "piece_name": "Defense",
-      "piece_uid": "Crafted_Luck_of_the_Gambler_E",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Serendipity",
-      "set_name": "Serendipity",
-      "piece_name": "Defense/Endurance",
-      "piece_uid": "Crafted_Serendipity_A",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Serendipity",
-      "set_name": "Serendipity",
-      "piece_name": "Defense/Endurance/Recharge",
-      "piece_uid": "Crafted_Serendipity_D",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Serendipity",
-      "set_name": "Serendipity",
-      "piece_name": "Defense",
-      "piece_uid": "Crafted_Serendipity_E",
-      "category_id": 7
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Medicine.Aid_Self",
-    "display_name": "Aid Self",
-    "powerset_full_name": "Pool.Medicine",
-    "accepted_set_category_ids": [
-     9
-    ],
-    "accepted_set_categories": [
-     "Healing"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 3,
-    "slots": [
-     {
-      "set_uid": "Miracle",
-      "set_name": "Miracle",
-      "piece_name": "Endurance/Recharge",
-      "piece_uid": "Crafted_Miracle_B",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Miracle",
-      "set_name": "Miracle",
-      "piece_name": "Heal",
-      "piece_uid": "Crafted_Miracle_E",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Miracle",
-      "set_name": "Miracle",
-      "piece_name": "+Recovery",
-      "piece_uid": "Crafted_Miracle_F",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Miracle",
-      "set_name": "Miracle",
-      "piece_name": "Heal/Recharge",
-      "piece_uid": "Crafted_Miracle_C",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Miracle",
-      "set_name": "Miracle",
-      "piece_name": "Heal/Endurance",
-      "piece_uid": "Crafted_Miracle_A",
-      "category_id": 9
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Medicine.Stimulant",
-    "display_name": "Injection",
-    "powerset_full_name": "Pool.Medicine",
-    "accepted_set_category_ids": [
-     13,
-     26,
-     31
-    ],
-    "accepted_set_categories": [
-     "Slow Movement",
-     "To Hit Debuff",
-     "Accurate To-Hit Debuff"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 6,
-    "slots": [
-     {
-      "set_uid": "Siphon_Insight",
-      "set_name": "Siphon Insight",
-      "piece_name": "ToHit Debuff",
-      "piece_uid": "Crafted_Siphon_Insight_A",
-      "category_id": 31
-     },
-     {
-      "set_uid": "Siphon_Insight",
-      "set_name": "Siphon Insight",
-      "piece_name": "Accuracy/ToHit Debuff",
-      "piece_uid": "Crafted_Siphon_Insight_B",
-      "category_id": 31
-     },
-     {
-      "set_uid": "Siphon_Insight",
-      "set_name": "Siphon Insight",
-      "piece_name": "Accuracy/Recharge",
-      "piece_uid": "Crafted_Siphon_Insight_C",
-      "category_id": 31
-     },
-     {
-      "set_uid": "Siphon_Insight",
-      "set_name": "Siphon Insight",
-      "piece_name": "ToHit Debuff/Endurance/Recharge",
-      "piece_uid": "Crafted_Siphon_Insight_D",
-      "category_id": 31
-     },
-     {
-      "set_uid": "Siphon_Insight",
-      "set_name": "Siphon Insight",
-      "piece_name": "Chance for +ToHit",
-      "piece_uid": "Crafted_Siphon_Insight_F",
-      "category_id": 31
-     },
-     {
-      "set_uid": "Siphon_Insight",
-      "set_name": "Siphon Insight",
-      "piece_name": "Accuracy/Endurance/Recharge",
-      "piece_uid": "Crafted_Siphon_Insight_E",
-      "category_id": 31
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Speed.Hasten",
-    "display_name": "Hasten",
-    "powerset_full_name": "Pool.Speed",
-    "accepted_set_category_ids": [],
-    "accepted_set_categories": [],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": null,
-      "set_name": "Common IO",
-      "piece_uid": "Crafted_Recharge",
-      "piece_name": "Recharge Reduction IO",
-      "category_id": null,
-      "io_level": 50
-     },
-     {
-      "set_uid": null,
-      "set_name": "Common IO",
-      "piece_uid": "Crafted_Recharge",
-      "piece_name": "Recharge Reduction IO",
-      "category_id": null,
-      "io_level": 50
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Speed.Super_Speed",
-    "display_name": "Super Speed",
-    "powerset_full_name": "Pool.Speed",
-    "accepted_set_category_ids": [
-     19,
-     28,
-     46
-    ],
-    "accepted_set_categories": [
-     "Running",
-     "Travel",
-     "Run (No Sprint)"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 1,
-    "slots": [
-     {
-      "set_uid": null,
-      "set_name": "Common IO",
-      "piece_uid": "Crafted_Endurance_Discount",
-      "piece_name": "Endurance Reduction IO",
-      "category_id": null,
-      "io_level": 50
-     }
-    ]
-   }
-  ],
-  "canonical_score": 652.9
+  "model_version": 45,
+  "canonical_score": 294.51
  },
- "Class_Tanker|Tanker_Defense.Fiery_Aura|Tanker_Melee.Fiery_Melee|farm_afk": {
+ "Class_Brute|Brute_Melee.Titan_Weapons|Brute_Defense.Bio_Organic_Armor|farm_afk": {
   "picks": [
+   "Brute_Defense.Bio_Organic_Armor.Ablative_Carapace",
+   "Brute_Defense.Bio_Organic_Armor.Adaptation",
+   "Brute_Defense.Bio_Organic_Armor.Environmental_Adaptation",
+   "Brute_Defense.Bio_Organic_Armor.Genetic_Contamination",
+   "Brute_Defense.Bio_Organic_Armor.Hardened_Carapace",
+   "Brute_Defense.Bio_Organic_Armor.Inexhaustible",
+   "Brute_Defense.Bio_Organic_Armor.Parasitic_Aura",
+   "Brute_Melee.Titan_Weapons.Build_Up",
+   "Brute_Melee.Titan_Weapons.Defensive_Sweep",
+   "Brute_Melee.Titan_Weapons.Sweeping_Strike",
    "Epic.Pyre_Mastery.Char",
    "Epic.Pyre_Mastery.Fire_Blast",
+   "Epic.Pyre_Mastery.Melt_Armor",
    "Epic.Pyre_Mastery.Ring_of_Fire",
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
@@ -29701,25 +28543,14 @@
    "Pool.Invisibility.Stealth",
    "Pool.Medicine.Aid_Self",
    "Pool.Medicine.Stimulant",
-   "Pool.Speed.Burnout",
    "Pool.Speed.Flurry",
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed",
-   "Pool.Speed.Whirlwind",
-   "Tanker_Defense.Fiery_Aura.Burn",
-   "Tanker_Defense.Fiery_Aura.Consume",
-   "Tanker_Defense.Fiery_Aura.Fiery_Embrace",
-   "Tanker_Defense.Fiery_Aura.Fire_Shield",
-   "Tanker_Defense.Fiery_Aura.Healing_Flames",
-   "Tanker_Defense.Fiery_Aura.Temperature_protection",
-   "Tanker_Melee.Fiery_Melee.Breath_of_Fire",
-   "Tanker_Melee.Fiery_Melee.Build_Up",
-   "Tanker_Melee.Fiery_Melee.Combustion",
-   "Tanker_Melee.Fiery_Melee.Scorch"
+   "Pool.Speed.Whirlwind"
   ],
-  "score": 403.76,
+  "score": 317.2956,
   "certificate": {
-   "sweeps": 26,
+   "sweeps": 34,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
@@ -29735,1395 +28566,14 @@
    "tie_arbitration": {
     "winner": "eps",
     "scores": {
-     "eps": 403.76,
-     "lex": 354.27,
-     "plain": 382.1
+     "eps": 317.3,
+     "lex": 307.44,
+     "plain": 306.59
     }
    },
    "afk_sustain": {
-    "hp": 2520.5,
-    "regen_hps": 33.72,
-    "auto_fire_heal": "Healing_Flames",
-    "auto_fire_hps": 11.71,
-    "heal_rates": [
-     {
-      "power": "Healing_Flames",
-      "self_hps": 11.71,
-      "interruptible": false
-     },
-     {
-      "power": "Aid_Self",
-      "self_hps": 18.37,
-      "interruptible": true
-     }
-    ],
-    "assumed_accolades": [
-     "Task Force Commander",
-     "Freedom Phalanx Reserve",
-     "Portal Jockey"
-    ],
-    "accolade_hp": 374.8,
-    "buff_proc_regen_pct": 0.0,
-    "buff_proc_detail": [],
-    "sustain_hps": 45.43,
-    "requirements": {
-     "0": 26.4,
-     "1": 29.1,
-     "2": 31.7,
-     "3": 34.4,
-     "4": 37.0
-    },
-    "tier": 4,
-    "label": "AFK-certified at +4x8: 45.4 HP/s sustained (regen 33.7 + Healing_Flames on auto-fire 11.7) meets the 37 HP/s asteroid worst case. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +375 HP)."
-   },
-   "evaluated": {
-    "against": "model 44, 2026-08-15",
-    "verdict": "baseline",
-    "canonical_score": 509.6
-   }
-  },
-  "model_version": 44,
-  "slotting": [
-   {
-    "full_name": "Epic.Pyre_Mastery.Char",
-    "display_name": "Char",
-    "powerset_full_name": "Epic.Pyre_Mastery",
-    "accepted_set_category_ids": [
-     2,
-     10,
-     44
-    ],
-    "accepted_set_categories": [
-     "Ranged Damage",
-     "Holds",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Unbreakable_Constraint",
-      "set_name": "Unbreakable Constraint",
-      "piece_name": "Hold/Endurance",
-      "piece_uid": "Crafted_Unbreakable_Constraint_E",
-      "category_id": 10
-     },
-     {
-      "set_uid": "Unbreakable_Constraint",
-      "set_name": "Unbreakable Constraint",
-      "piece_name": "Recharge/Accuracy",
-      "piece_uid": "Crafted_Unbreakable_Constraint_D",
-      "category_id": 10
-     }
-    ],
-    "_proc_trade": {
-     "kind": "hybrid",
-     "displaced": [
-      {
-       "set_uid": "Unbreakable_Constraint",
-       "set_name": "Unbreakable Constraint",
-       "piece_name": "Hold",
-       "piece_uid": "Crafted_Unbreakable_Constraint_A",
-       "category_id": 10
-      },
-      {
-       "set_uid": "Unbreakable_Constraint",
-       "set_name": "Unbreakable Constraint",
-       "piece_name": "Hold/Recharge",
-       "piece_uid": "Crafted_Unbreakable_Constraint_B",
-       "category_id": 10
-      },
-      {
-       "set_uid": "Unbreakable_Constraint",
-       "set_name": "Unbreakable Constraint",
-       "piece_name": "Hold/Recharge/Accuracy",
-       "piece_uid": "Crafted_Unbreakable_Constraint_C",
-       "category_id": 10
-      },
-      {
-       "set_uid": "Unbreakable_Constraint",
-       "set_name": "Unbreakable Constraint",
-       "piece_name": "Recharge/Accuracy",
-       "piece_uid": "Crafted_Unbreakable_Constraint_D",
-       "category_id": 10
-      },
-      {
-       "set_uid": "Unbreakable_Constraint",
-       "set_name": "Unbreakable Constraint",
-       "piece_name": "Hold/Endurance",
-       "piece_uid": "Crafted_Unbreakable_Constraint_E",
-       "category_id": 10
-      }
-     ]
-    }
-   },
-   {
-    "full_name": "Epic.Pyre_Mastery.Fire_Blast",
-    "display_name": "Fire Blast",
-    "powerset_full_name": "Epic.Pyre_Mastery",
-    "accepted_set_category_ids": [
-     2,
-     44
-    ],
-    "accepted_set_categories": [
-     "Ranged Damage",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 4,
-    "slots": [
-     {
-      "set_uid": "Hamidon_Origin",
-      "set_name": "Hamidon Origin",
-      "piece_name": "Nucleolus Exposure",
-      "piece_uid": "Hamidon_Damage_Accuracy",
-      "category_id": 44,
-      "_ho": true
-     },
-     {
-      "set_uid": "Overwhelming Force",
-      "set_name": "Overwhelming Force",
-      "piece_name": "proc",
-      "piece_uid": "Attuned_Overwhelming_Force_F",
-      "category_id": 44,
-      "_proc": true
-     },
-     {
-      "set_uid": "Cupid's Crush",
-      "set_name": "Cupid's Crush",
-      "piece_name": "proc",
-      "piece_uid": "Attuned_Cupids_Crush_F",
-      "category_id": 44,
-      "_proc": true
-     }
-    ],
-    "_proc_trade": {
-     "kind": "hybrid",
-     "displaced": [
-      {
-       "set_uid": "Attuned_Cupids_Crush",
-       "set_name": "Cupid's Crush",
-       "piece_name": "Damage/Recharge",
-       "piece_uid": "Attuned_Cupids_Crush_A",
-       "category_id": 44
-      },
-      {
-       "set_uid": "Attuned_Cupids_Crush",
-       "set_name": "Cupid's Crush",
-       "piece_name": "Endurance/Recharge",
-       "piece_uid": "Attuned_Cupids_Crush_B",
-       "category_id": 44
-      },
-      {
-       "set_uid": "Attuned_Cupids_Crush",
-       "set_name": "Cupid's Crush",
-       "piece_name": "Accuracy/Damage/Endurance",
-       "piece_uid": "Attuned_Cupids_Crush_C",
-       "category_id": 44
-      },
-      {
-       "set_uid": "Attuned_Cupids_Crush",
-       "set_name": "Cupid's Crush",
-       "piece_name": "Accuracy/Damage/Recharge",
-       "piece_uid": "Attuned_Cupids_Crush_D",
-       "category_id": 44
-      }
-     ]
-    }
-   },
-   {
-    "full_name": "Epic.Pyre_Mastery.Ring_of_Fire",
-    "display_name": "Ring of Fire",
-    "powerset_full_name": "Epic.Pyre_Mastery",
-    "accepted_set_category_ids": [
-     2,
-     12,
-     44
-    ],
-    "accepted_set_categories": [
-     "Ranged Damage",
-     "Immobilize",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 4,
-    "slots": [
-     {
-      "set_uid": "Gravitational_Anchor",
-      "set_name": "Gravitational Anchor",
-      "piece_name": "Immobilize/Endurance",
-      "piece_uid": "Crafted_Gravitational_Anchor_E",
-      "category_id": 12
-     },
-     {
-      "set_uid": "Gravitational_Anchor",
-      "set_name": "Gravitational Anchor",
-      "piece_name": "Immobilize/Recharge",
-      "piece_uid": "Crafted_Gravitational_Anchor_B",
-      "category_id": 12
-     },
-     {
-      "set_uid": "Gravitational_Anchor",
-      "set_name": "Gravitational Anchor",
-      "piece_name": "Immobilize/Recharge/Accuracy",
-      "piece_uid": "Crafted_Gravitational_Anchor_C",
-      "category_id": 12
-     },
-     {
-      "set_uid": "Gravitational_Anchor",
-      "set_name": "Gravitational Anchor",
-      "piece_name": "Recharge/Accuracy",
-      "piece_uid": "Crafted_Gravitational_Anchor_D",
-      "category_id": 12
-     },
-     {
-      "set_uid": "Gravitational_Anchor",
-      "set_name": "Gravitational Anchor",
-      "piece_name": "Chance for Hold",
-      "piece_uid": "Crafted_Gravitational_Anchor_F",
-      "category_id": 12
-     }
-    ]
-   },
-   {
-    "full_name": "Inherent.Fitness.Health",
-    "display_name": "Health",
-    "powerset_full_name": "Inherent.Fitness",
-    "accepted_set_category_ids": [
-     9
-    ],
-    "accepted_set_categories": [
-     "Healing"
-    ],
-    "power_type": 1,
-    "include_in_totals": true,
-    "slotCount": 4,
-    "slots": [
-     {
-      "set_uid": "Numinas_Convalesence",
-      "set_name": "Numina's Convalesence",
-      "piece_name": "+Regeneration/+Recovery",
-      "piece_uid": "Crafted_Numinas_Convalesence_F",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Miracle",
-      "set_name": "Miracle",
-      "piece_name": "+Recovery",
-      "piece_uid": "Crafted_Miracle_F",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Regenerative_Tissue",
-      "set_name": "Regenerative Tissue",
-      "piece_name": "+Regeneration",
-      "piece_uid": "Crafted_Regenerative_Tissue_E",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Panacea",
-      "set_name": "Panacea",
-      "piece_name": "+Hit Points/Endurance",
-      "piece_uid": "Crafted_Panacea_F",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Panacea",
-      "set_name": "Panacea",
-      "piece_name": "Heal",
-      "piece_uid": "Crafted_Panacea_E",
-      "category_id": 9
-     }
-    ]
-   },
-   {
-    "full_name": "Inherent.Fitness.Stamina",
-    "display_name": "Stamina",
-    "powerset_full_name": "Inherent.Fitness",
-    "accepted_set_category_ids": [
-     22
-    ],
-    "accepted_set_categories": [
-     "Endurance Modification"
-    ],
-    "power_type": 1,
-    "include_in_totals": true,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Performance_Shifter",
-      "set_name": "Performance Shifter",
-      "piece_name": "Chance for +End",
-      "piece_uid": "Crafted_Performance_Shifter_F",
-      "category_id": 22
-     },
-     {
-      "set_uid": "Performance_Shifter",
-      "set_name": "Performance Shifter",
-      "piece_name": "EndMod",
-      "piece_uid": "Crafted_Performance_Shifter_A",
-      "category_id": 22
-     },
-     {
-      "set_uid": "Performance_Shifter",
-      "set_name": "Performance Shifter",
-      "piece_name": "EndMod/Accuracy",
-      "piece_uid": "Crafted_Performance_Shifter_E",
-      "category_id": 22
-     },
-     {
-      "set_uid": "Performance_Shifter",
-      "set_name": "Performance Shifter",
-      "piece_name": "Accuracy/Recharge",
-      "piece_uid": "Crafted_Performance_Shifter_D",
-      "category_id": 22
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Fighting.Cross_Punch",
-    "display_name": "Cross Punch",
-    "powerset_full_name": "Pool.Fighting",
-    "accepted_set_category_ids": [
-     4,
-     11,
-     23,
-     44
-    ],
-    "accepted_set_categories": [
-     "PBAoE Damage",
-     "Stuns",
-     "Knockback",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Fury of the Gladiator",
-      "set_name": "Fury of the Gladiator",
-      "piece_name": "proc",
-      "piece_uid": "Crafted_Fury_of_the_Gladiator_F",
-      "category_id": 11,
-      "_proc": true
-     },
-     {
-      "set_uid": "Eradication",
-      "set_name": "Eradication",
-      "piece_name": "Damage/Recharge",
-      "piece_uid": "Crafted_Eradication_C",
-      "category_id": 11,
-      "_proc": true
-     },
-     {
-      "set_uid": "Eradication",
-      "set_name": "Eradication",
-      "piece_name": "Damage",
-      "piece_uid": "Crafted_Eradication_A",
-      "category_id": 11,
-      "_proc": true
-     },
-     {
-      "set_uid": "Eradication",
-      "set_name": "Eradication",
-      "piece_name": "Accuracy/Damage/Recharge",
-      "piece_uid": "Crafted_Eradication_D",
-      "category_id": 11,
-      "_proc": true
-     },
-     {
-      "set_uid": "Eradication",
-      "set_name": "Eradication",
-      "piece_name": "Accuracy/Damage/Endurance/Recharge",
-      "piece_uid": "Crafted_Eradication_E",
-      "category_id": 11,
-      "_proc": true
-     },
-     {
-      "set_uid": "Eradication",
-      "set_name": "Eradication",
-      "piece_name": "Chance for Energy Damage",
-      "piece_uid": "Crafted_Eradication_F",
-      "category_id": 11,
-      "_proc": true
-     }
-    ],
-    "_proc_trade": {
-     "kind": "bomb",
-     "displaced": [
-      {
-       "set_uid": "Stupefy",
-       "set_name": "Stupefy",
-       "piece_name": "Accuracy/Recharge",
-       "piece_uid": "Crafted_Stupefy_A",
-       "category_id": 11
-      },
-      {
-       "set_uid": "Stupefy",
-       "set_name": "Stupefy",
-       "piece_name": "Endurance/Stun",
-       "piece_uid": "Crafted_Stupefy_B",
-       "category_id": 11
-      }
-     ]
-    }
-   },
-   {
-    "full_name": "Pool.Fighting.Tough",
-    "display_name": "Tough",
-    "powerset_full_name": "Pool.Fighting",
-    "accepted_set_category_ids": [
-     8
-    ],
-    "accepted_set_categories": [
-     "Resist Damage"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Impervium_Armor",
-      "set_name": "Impervium Armor",
-      "piece_name": "Resistance/Endurance",
-      "piece_uid": "Crafted_Impervium_Armor_A",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Impervium_Armor",
-      "set_name": "Impervium Armor",
-      "piece_name": "Resistance/Endurance/Recharge",
-      "piece_uid": "Crafted_Impervium_Armor_D",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance/Endurance",
-      "piece_uid": "Crafted_Aegis_A",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance/Recharge",
-      "piece_uid": "Crafted_Aegis_B",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance",
-      "piece_uid": "Crafted_Aegis_E",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Impervium_Armor",
-      "set_name": "Impervium Armor",
-      "piece_name": "Resistance",
-      "piece_uid": "Crafted_Impervium_Armor_E",
-      "category_id": 8
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Fighting.Weave",
-    "display_name": "Weave",
-    "powerset_full_name": "Pool.Fighting",
-    "accepted_set_category_ids": [
-     7
-    ],
-    "accepted_set_categories": [
-     "Defense Sets"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 4,
-    "slots": [
-     {
-      "set_uid": "Luck_of_the_Gambler",
-      "set_name": "Luck of the Gambler",
-      "piece_name": "Defense/Increased Global Recharge Speed",
-      "piece_uid": "Crafted_Luck_of_the_Gambler_F",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Shield_Wall",
-      "set_name": "Shield Wall",
-      "piece_name": "+Res (Teleportation), +5% Res (All)",
-      "piece_uid": "Crafted_Shield_Wall_F",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Reactive_Defenses",
-      "set_name": "Reactive Defenses",
-      "piece_name": "Scaling Resist Damage",
-      "piece_uid": "Crafted_Reactive_Defenses_F",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Kismet",
-      "set_name": "Kismet",
-      "piece_name": "Accuracy +6%",
-      "piece_uid": "Crafted_Kismet_E",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Kismet",
-      "set_name": "Kismet",
-      "piece_name": "Defense/Endurance/Recharge",
-      "piece_uid": "Crafted_Kismet_D",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Kismet",
-      "set_name": "Kismet",
-      "piece_name": "Defense/Endurance",
-      "piece_uid": "Crafted_Kismet_A",
-      "category_id": 7
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Invisibility.Stealth",
-    "display_name": "Stealth",
-    "powerset_full_name": "Pool.Invisibility",
-    "accepted_set_category_ids": [
-     7
-    ],
-    "accepted_set_categories": [
-     "Defense Sets"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 6,
-    "slots": [
-     {
-      "set_uid": "Luck_of_the_Gambler",
-      "set_name": "Luck of the Gambler",
-      "piece_name": "Defense/Increased Global Recharge Speed",
-      "piece_uid": "Crafted_Luck_of_the_Gambler_F",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Serendipity",
-      "set_name": "Serendipity",
-      "piece_name": "Defense/Endurance",
-      "piece_uid": "Crafted_Serendipity_A",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Serendipity",
-      "set_name": "Serendipity",
-      "piece_name": "Endurance/Recharge",
-      "piece_uid": "Crafted_Serendipity_C",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Serendipity",
-      "set_name": "Serendipity",
-      "piece_name": "Defense/Endurance/Recharge",
-      "piece_uid": "Crafted_Serendipity_D",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Serendipity",
-      "set_name": "Serendipity",
-      "piece_name": "Defense",
-      "piece_uid": "Crafted_Serendipity_E",
-      "category_id": 7
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Medicine.Aid_Self",
-    "display_name": "Aid Self",
-    "powerset_full_name": "Pool.Medicine",
-    "accepted_set_category_ids": [
-     9
-    ],
-    "accepted_set_categories": [
-     "Healing"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 6,
-    "slots": [
-     {
-      "set_uid": "Miracle",
-      "set_name": "Miracle",
-      "piece_name": "Heal/Recharge",
-      "piece_uid": "Crafted_Miracle_C",
-      "category_id": 9
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Medicine.Stimulant",
-    "display_name": "Injection",
-    "powerset_full_name": "Pool.Medicine",
-    "accepted_set_category_ids": [
-     13,
-     26,
-     31
-    ],
-    "accepted_set_categories": [
-     "Slow Movement",
-     "To Hit Debuff",
-     "Accurate To-Hit Debuff"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 6,
-    "slots": [
-     {
-      "set_uid": "Hamidon_Origin",
-      "set_name": "Hamidon Origin",
-      "piece_name": "Endoplasm Exposure",
-      "piece_uid": "Hamidon_Accuracy_Mez",
-      "category_id": 13,
-      "_ho": true
-     },
-     {
-      "set_uid": "Hamidon_Origin",
-      "set_name": "Hamidon Origin",
-      "piece_name": "Endoplasm Exposure",
-      "piece_uid": "Hamidon_Accuracy_Mez",
-      "category_id": 13,
-      "_ho": true
-     },
-     {
-      "set_uid": "Impeded Swiftness",
-      "set_name": "Impeded Swiftness",
-      "piece_name": "proc",
-      "piece_uid": "Crafted_Impeded_Swiftness_F",
-      "category_id": 13,
-      "_proc": true
-     },
-     {
-      "set_uid": "Cloud Senses",
-      "set_name": "Cloud Senses",
-      "piece_name": "proc",
-      "piece_uid": "Crafted_Cloud_Senses_F",
-      "category_id": 13,
-      "_proc": true
-     },
-     {
-      "set_uid": "Hamidon_Origin",
-      "set_name": "Hamidon Origin",
-      "piece_name": "Endoplasm Exposure",
-      "piece_uid": "Hamidon_Accuracy_Mez",
-      "category_id": 13,
-      "_ho": true
-     },
-     {
-      "set_uid": "Hamidon_Origin",
-      "set_name": "Hamidon Origin",
-      "piece_name": "Endoplasm Exposure",
-      "piece_uid": "Hamidon_Accuracy_Mez",
-      "category_id": 13,
-      "_ho": true
-     }
-    ],
-    "_proc_trade": {
-     "kind": "hybrid",
-     "displaced": [
-      {
-       "set_uid": "Ice_Mistrals_Torment",
-       "set_name": "Ice Mistral's Torment",
-       "piece_name": "Endurance/Slow",
-       "piece_uid": "Crafted_Ice_Mistrals_Torment_A",
-       "category_id": 13
-      },
-      {
-       "set_uid": "Ice_Mistrals_Torment",
-       "set_name": "Ice Mistral's Torment",
-       "piece_name": "Damage/Recharge",
-       "piece_uid": "Crafted_Ice_Mistrals_Torment_B",
-       "category_id": 13
-      },
-      {
-       "set_uid": "Ice_Mistrals_Torment",
-       "set_name": "Ice Mistral's Torment",
-       "piece_name": "Damage/Slow",
-       "piece_uid": "Crafted_Ice_Mistrals_Torment_C",
-       "category_id": 13
-      },
-      {
-       "set_uid": "Ice_Mistrals_Torment",
-       "set_name": "Ice Mistral's Torment",
-       "piece_name": "Accuracy/Damage/Endurance",
-       "piece_uid": "Crafted_Ice_Mistrals_Torment_D",
-       "category_id": 13
-      },
-      {
-       "set_uid": "Ice_Mistrals_Torment",
-       "set_name": "Ice Mistral's Torment",
-       "piece_name": "Accuracy/Damage/Endurance/Recharge",
-       "piece_uid": "Crafted_Ice_Mistrals_Torment_E",
-       "category_id": 13
-      },
-      {
-       "set_uid": "Ice_Mistrals_Torment",
-       "set_name": "Ice Mistral's Torment",
-       "piece_name": "Chance for Cold Damage",
-       "piece_uid": "Crafted_Ice_Mistrals_Torment_F",
-       "category_id": 13
-      }
-     ]
-    }
-   },
-   {
-    "full_name": "Pool.Speed.Burnout",
-    "display_name": "Burnout",
-    "powerset_full_name": "Pool.Speed",
-    "accepted_set_category_ids": [],
-    "accepted_set_categories": [],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": null,
-      "set_name": "Common IO",
-      "piece_uid": "Crafted_Recharge",
-      "piece_name": "Recharge Reduction IO",
-      "category_id": null,
-      "io_level": 50
-     },
-     {
-      "set_uid": null,
-      "set_name": "Common IO",
-      "piece_uid": "Crafted_Recharge",
-      "piece_name": "Recharge Reduction IO",
-      "category_id": null,
-      "io_level": 50
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Speed.Flurry",
-    "display_name": "Flurry",
-    "powerset_full_name": "Pool.Speed",
-    "accepted_set_category_ids": [
-     1,
-     11,
-     44
-    ],
-    "accepted_set_categories": [
-     "Melee Damage",
-     "Stuns",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Absolute_Amazement",
-      "set_name": "Absolute Amazement",
-      "piece_name": "Chance for ToHit Debuff",
-      "piece_uid": "Crafted_Absolute_Amazement_F",
-      "category_id": 11
-     },
-     {
-      "set_uid": "Absolute_Amazement",
-      "set_name": "Absolute Amazement",
-      "piece_name": "Stun/Recharge",
-      "piece_uid": "Crafted_Absolute_Amazement_B",
-      "category_id": 11
-     },
-     {
-      "set_uid": "Absolute_Amazement",
-      "set_name": "Absolute Amazement",
-      "piece_name": "Stun/Recharge/Accuracy",
-      "piece_uid": "Crafted_Absolute_Amazement_C",
-      "category_id": 11
-     },
-     {
-      "set_uid": "Absolute_Amazement",
-      "set_name": "Absolute Amazement",
-      "piece_name": "Stun",
-      "piece_uid": "Crafted_Absolute_Amazement_A",
-      "category_id": 11
-     },
-     {
-      "set_uid": "Absolute_Amazement",
-      "set_name": "Absolute Amazement",
-      "piece_name": "Stun/Endurance",
-      "piece_uid": "Crafted_Absolute_Amazement_E",
-      "category_id": 11
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Speed.Hasten",
-    "display_name": "Hasten",
-    "powerset_full_name": "Pool.Speed",
-    "accepted_set_category_ids": [],
-    "accepted_set_categories": [],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": null,
-      "set_name": "Common IO",
-      "piece_uid": "Crafted_Recharge",
-      "piece_name": "Recharge Reduction IO",
-      "category_id": null,
-      "io_level": 50
-     },
-     {
-      "set_uid": null,
-      "set_name": "Common IO",
-      "piece_uid": "Crafted_Recharge",
-      "piece_name": "Recharge Reduction IO",
-      "category_id": null,
-      "io_level": 50
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Speed.Super_Speed",
-    "display_name": "Super Speed",
-    "powerset_full_name": "Pool.Speed",
-    "accepted_set_category_ids": [
-     19,
-     28,
-     46
-    ],
-    "accepted_set_categories": [
-     "Running",
-     "Travel",
-     "Run (No Sprint)"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 1,
-    "slots": [
-     {
-      "set_uid": null,
-      "set_name": "Common IO",
-      "piece_uid": "Crafted_Endurance_Discount",
-      "piece_name": "Endurance Reduction IO",
-      "category_id": null,
-      "io_level": 50
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Speed.Whirlwind",
-    "display_name": "Whirlwind",
-    "powerset_full_name": "Pool.Speed",
-    "accepted_set_category_ids": [
-     23
-    ],
-    "accepted_set_categories": [
-     "Knockback"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 1,
-    "slots": [
-     {
-      "set_uid": null,
-      "set_name": "Common IO",
-      "piece_uid": "Crafted_Endurance_Discount",
-      "piece_name": "Endurance Reduction IO",
-      "category_id": null,
-      "io_level": 50
-     }
-    ]
-   },
-   {
-    "full_name": "Tanker_Defense.Fiery_Aura.Burn",
-    "display_name": "Burn",
-    "powerset_full_name": "Tanker_Defense.Fiery_Aura",
-    "accepted_set_category_ids": [
-     4,
-     43,
-     44,
-     24
-    ],
-    "accepted_set_categories": [
-     "PBAoE Damage",
-     "Tanker Archetype Sets",
-     "Universal Damage",
-     "Threat Duration"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Triumphant_Insult",
-      "set_name": "Triumphant Insult",
-      "piece_name": "Threat/Placate/Recharge",
-      "piece_uid": "Crafted_Triumphant_Insult_B",
-      "category_id": 24
-     }
-    ]
-   },
-   {
-    "full_name": "Tanker_Defense.Fiery_Aura.Consume",
-    "display_name": "Consume",
-    "powerset_full_name": "Tanker_Defense.Fiery_Aura",
-    "accepted_set_category_ids": [
-     4,
-     22,
-     24,
-     43,
-     44,
-     9
-    ],
-    "accepted_set_categories": [
-     "PBAoE Damage",
-     "Endurance Modification",
-     "Threat Duration",
-     "Tanker Archetype Sets",
-     "Universal Damage",
-     "Healing"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 4,
-    "slots": [
-     {
-      "set_uid": "Miracle",
-      "set_name": "Miracle",
-      "piece_name": "Heal/Recharge",
-      "piece_uid": "Crafted_Miracle_C",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Miracle",
-      "set_name": "Miracle",
-      "piece_name": "Endurance/Recharge",
-      "piece_uid": "Crafted_Miracle_B",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Panacea",
-      "set_name": "Panacea",
-      "piece_name": "Heal/Recharge",
-      "piece_uid": "Crafted_Panacea_C",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Panacea",
-      "set_name": "Panacea",
-      "piece_name": "Endurance/Recharge",
-      "piece_uid": "Crafted_Panacea_B",
-      "category_id": 9
-     }
-    ]
-   },
-   {
-    "full_name": "Tanker_Defense.Fiery_Aura.Fiery_Embrace",
-    "display_name": "Fiery Embrace",
-    "powerset_full_name": "Tanker_Defense.Fiery_Aura",
-    "accepted_set_category_ids": [],
-    "accepted_set_categories": [],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": null,
-      "set_name": "Common IO",
-      "piece_uid": "Crafted_Recharge",
-      "piece_name": "Recharge Reduction IO",
-      "category_id": null,
-      "io_level": 50
-     },
-     {
-      "set_uid": null,
-      "set_name": "Common IO",
-      "piece_uid": "Crafted_Recharge",
-      "piece_name": "Recharge Reduction IO",
-      "category_id": null,
-      "io_level": 50
-     }
-    ]
-   },
-   {
-    "full_name": "Tanker_Defense.Fiery_Aura.Fire_Shield",
-    "display_name": "Fire Shield",
-    "powerset_full_name": "Tanker_Defense.Fiery_Aura",
-    "accepted_set_category_ids": [
-     8
-    ],
-    "accepted_set_categories": [
-     "Resist Damage"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance/Endurance",
-      "piece_uid": "Crafted_Aegis_A",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance/Recharge",
-      "piece_uid": "Crafted_Aegis_B",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Endurance/Recharge",
-      "piece_uid": "Crafted_Aegis_C",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance/Endurance/Recharge",
-      "piece_uid": "Crafted_Aegis_D",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance",
-      "piece_uid": "Crafted_Aegis_E",
-      "category_id": 8
-     }
-    ]
-   },
-   {
-    "full_name": "Tanker_Defense.Fiery_Aura.Healing_Flames",
-    "display_name": "Healing Flames",
-    "powerset_full_name": "Tanker_Defense.Fiery_Aura",
-    "accepted_set_category_ids": [
-     8,
-     9
-    ],
-    "accepted_set_categories": [
-     "Resist Damage",
-     "Healing"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Steadfast_Protection",
-      "set_name": "Steadfast Protection",
-      "piece_name": "Resistance/+Def 3%",
-      "piece_uid": "Crafted_Steadfast_Protection_B",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Gladiators_Armor",
-      "set_name": "Gladiator's Armor",
-      "piece_name": "TP Protection +3% Def (All)",
-      "piece_uid": "Crafted_Gladiators_Armor_F",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Steadfast_Protection",
-      "set_name": "Steadfast Protection",
-      "piece_name": "Knockback Protection",
-      "piece_uid": "Crafted_Steadfast_Protection_C",
-      "category_id": 8
-     }
-    ]
-   },
-   {
-    "full_name": "Tanker_Defense.Fiery_Aura.Temperature_protection",
-    "display_name": "Temperature Protection",
-    "powerset_full_name": "Tanker_Defense.Fiery_Aura",
-    "accepted_set_category_ids": [
-     8
-    ],
-    "accepted_set_categories": [
-     "Resist Damage",
-     "Healing"
-    ],
-    "power_type": 1,
-    "include_in_totals": true,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance/Endurance",
-      "piece_uid": "Crafted_Aegis_A",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance/Recharge",
-      "piece_uid": "Crafted_Aegis_B",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Resistance/Endurance/Recharge",
-      "piece_uid": "Crafted_Aegis_D",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Psionic/Status Resistance",
-      "piece_uid": "Crafted_Aegis_F",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Aegis",
-      "set_name": "Aegis",
-      "piece_name": "Endurance/Recharge",
-      "piece_uid": "Crafted_Aegis_C",
-      "category_id": 8
-     }
-    ]
-   },
-   {
-    "full_name": "Tanker_Melee.Fiery_Melee.Breath_of_Fire",
-    "display_name": "Fiery Breath",
-    "powerset_full_name": "Tanker_Melee.Fiery_Melee",
-    "accepted_set_category_ids": [
-     3,
-     24,
-     43,
-     44
-    ],
-    "accepted_set_categories": [
-     "Targeted AoE Damage",
-     "Threat Duration",
-     "Tanker Archetype Sets",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Triumphant_Insult",
-      "set_name": "Triumphant Insult",
-      "piece_name": "Threat/Placate",
-      "piece_uid": "Crafted_Triumphant_Insult_A",
-      "category_id": 24
-     },
-     {
-      "set_uid": "Triumphant_Insult",
-      "set_name": "Triumphant Insult",
-      "piece_name": "Threat/Placate/Recharge",
-      "piece_uid": "Crafted_Triumphant_Insult_B",
-      "category_id": 24
-     },
-     {
-      "set_uid": "Triumphant_Insult",
-      "set_name": "Triumphant Insult",
-      "piece_name": "Chance to Disorient",
-      "piece_uid": "Crafted_Triumphant_Insult_C",
-      "category_id": 24
-     }
-    ]
-   },
-   {
-    "full_name": "Tanker_Melee.Fiery_Melee.Build_Up",
-    "display_name": "Build Up",
-    "powerset_full_name": "Tanker_Melee.Fiery_Melee",
-    "accepted_set_category_ids": [
-     25
-    ],
-    "accepted_set_categories": [
-     "To Hit Buff"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Adjusted_Targeting",
-      "set_name": "Adjusted Targeting",
-      "piece_name": "To Hit Buff",
-      "piece_uid": "Crafted_Adjusted_Targeting_A",
-      "category_id": 25
-     },
-     {
-      "set_uid": "Adjusted_Targeting",
-      "set_name": "Adjusted Targeting",
-      "piece_name": "To Hit Buff/Recharge",
-      "piece_uid": "Crafted_Adjusted_Targeting_B",
-      "category_id": 25
-     },
-     {
-      "set_uid": "Adjusted_Targeting",
-      "set_name": "Adjusted Targeting",
-      "piece_name": "Recharge",
-      "piece_uid": "Crafted_Adjusted_Targeting_F",
-      "category_id": 25
-     },
-     {
-      "set_uid": "Adjusted_Targeting",
-      "set_name": "Adjusted Targeting",
-      "piece_name": "Endurance/Recharge",
-      "piece_uid": "Crafted_Adjusted_Targeting_D",
-      "category_id": 25
-     },
-     {
-      "set_uid": "Adjusted_Targeting",
-      "set_name": "Adjusted Targeting",
-      "piece_name": "To Hit Buff/Endurance/Recharge",
-      "piece_uid": "Crafted_Adjusted_Targeting_C",
-      "category_id": 25
-     }
-    ]
-   },
-   {
-    "full_name": "Tanker_Melee.Fiery_Melee.Combustion",
-    "display_name": "Combustion",
-    "powerset_full_name": "Tanker_Melee.Fiery_Melee",
-    "accepted_set_category_ids": [
-     4,
-     24,
-     43,
-     44
-    ],
-    "accepted_set_categories": [
-     "PBAoE Damage",
-     "Threat Duration",
-     "Tanker Archetype Sets",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Triumphant_Insult",
-      "set_name": "Triumphant Insult",
-      "piece_name": "Threat/Placate/Recharge",
-      "piece_uid": "Crafted_Triumphant_Insult_B",
-      "category_id": 24
-     }
-    ]
-   },
-   {
-    "full_name": "Tanker_Melee.Fiery_Melee.Scorch",
-    "display_name": "Scorch",
-    "powerset_full_name": "Tanker_Melee.Fiery_Melee",
-    "accepted_set_category_ids": [
-     1,
-     24,
-     43,
-     44
-    ],
-    "accepted_set_categories": [
-     "Melee Damage",
-     "Threat Duration",
-     "Tanker Archetype Sets",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Mocking_Beratement",
-      "set_name": "Mocking Beratement",
-      "piece_name": "Recharge",
-      "piece_uid": "Crafted_Mocking_Beratement_F",
-      "category_id": 24
-     },
-     {
-      "set_uid": "Mocking_Beratement",
-      "set_name": "Mocking Beratement",
-      "piece_name": "Threat/Placate/Recharge",
-      "piece_uid": "Crafted_Mocking_Beratement_B",
-      "category_id": 24
-     },
-     {
-      "set_uid": "Mocking_Beratement",
-      "set_name": "Mocking Beratement",
-      "piece_name": "Threat/Placate/Range",
-      "piece_uid": "Crafted_Mocking_Beratement_E",
-      "category_id": 24
-     },
-     {
-      "set_uid": "Mocking_Beratement",
-      "set_name": "Mocking Beratement",
-      "piece_name": "Threat/Placate",
-      "piece_uid": "Crafted_Mocking_Beratement_A",
-      "category_id": 24
-     }
-    ]
-   }
-  ],
-  "canonical_score": 509.6
- },
- "Class_Brute|Brute_Melee.Titan_Weapons|Brute_Defense.Bio_Organic_Armor|farm_afk": {
-  "picks": [
-   "Brute_Defense.Bio_Organic_Armor.Ablative_Carapace",
-   "Brute_Defense.Bio_Organic_Armor.Adaptation",
-   "Brute_Defense.Bio_Organic_Armor.Environmental_Adaptation",
-   "Brute_Defense.Bio_Organic_Armor.Hardened_Carapace",
-   "Brute_Defense.Bio_Organic_Armor.Inexhaustible",
-   "Brute_Melee.Titan_Weapons.Arc_of_Destruction",
-   "Brute_Melee.Titan_Weapons.Build_Up",
-   "Brute_Melee.Titan_Weapons.Defensive_Sweep",
-   "Brute_Melee.Titan_Weapons.Sweeping_Strike",
-   "Epic.Pyre_Mastery.Char",
-   "Epic.Pyre_Mastery.Fire_Ball",
-   "Epic.Pyre_Mastery.Fire_Blast",
-   "Epic.Pyre_Mastery.Ring_of_Fire",
-   "Inherent.Fitness.Health",
-   "Inherent.Fitness.Stamina",
-   "Pool.Fighting.Boxing",
-   "Pool.Fighting.Cross_Punch",
-   "Pool.Fighting.Kick",
-   "Pool.Fighting.Tough",
-   "Pool.Fighting.Weave",
-   "Pool.Invisibility.Stealth",
-   "Pool.Medicine.Aid_Self",
-   "Pool.Medicine.Stimulant",
-   "Pool.Speed.Hasten",
-   "Pool.Speed.Super_Speed",
-   "Pool.Speed.Whirlwind"
-  ],
-  "score": 553.88,
-  "certificate": {
-   "sweeps": 35,
-   "converged": true,
-   "restarts_done": 6,
-   "budget_truncated": false,
-   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
-   "canonical_optimality_checked": false,
-   "primary_converged": true,
-   "picks_filled": 0,
-   "node_cap": {
-    "cap": 50000,
-    "capped_solves_floor": 0,
-    "final_resolve_delta": 2.73
-   },
-   "tie_arbitration": {
-    "winner": "lex",
-    "scores": {
-     "eps": 551.15,
-     "lex": 553.88,
-     "plain": 551.15
-    }
-   },
-   "afk_sustain": {
-    "hp": 2276.1,
-    "regen_hps": 31.69,
+    "hp": 2336.4,
+    "regen_hps": 31.55,
     "auto_fire_heal": null,
     "auto_fire_hps": 0.0,
     "heal_rates": [
@@ -31141,7 +28591,7 @@
     "accolade_hp": 321.3,
     "buff_proc_regen_pct": 0.0,
     "buff_proc_detail": [],
-    "sustain_hps": 31.69,
+    "sustain_hps": 31.55,
     "requirements": {
      "0": 26.4,
      "1": 29.1,
@@ -31150,1278 +28600,16 @@
      "4": 37.0
     },
     "tier": 1,
-    "label": "AFK-certified at +1x8 (sustain 31.7 HP/s: regen 31.7); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed). Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
+    "label": "AFK-certified at +1x8 (sustain 31.5 HP/s: regen 31.5); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed). Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
-    "verdict": "unaffected",
-    "canonical_score": 570.2
+    "against": "model 45, 2026-08-16",
+    "verdict": "baseline",
+    "canonical_score": 274.45
    }
   },
-  "model_version": 44,
-  "canonical_score": 570.2,
-  "slotting": [
-   {
-    "full_name": "Brute_Defense.Bio_Organic_Armor.Ablative_Carapace",
-    "display_name": "Ablative Carapace",
-    "powerset_full_name": "Brute_Defense.Bio_Organic_Armor",
-    "accepted_set_category_ids": [
-     9
-    ],
-    "accepted_set_categories": [
-     "Healing"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 3,
-    "slots": [
-     {
-      "set_uid": "Numinas_Convalesence",
-      "set_name": "Numina's Convalesence",
-      "piece_name": "+Regeneration/+Recovery",
-      "piece_uid": "Crafted_Numinas_Convalesence_F",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Miracle",
-      "set_name": "Miracle",
-      "piece_name": "+Recovery",
-      "piece_uid": "Crafted_Miracle_F",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Miracle",
-      "set_name": "Miracle",
-      "piece_name": "Heal/Endurance/Recharge",
-      "piece_uid": "Crafted_Miracle_D",
-      "category_id": 9
-     }
-    ]
-   },
-   {
-    "full_name": "Brute_Defense.Bio_Organic_Armor.Adaptation",
-    "display_name": "Evolving Armor",
-    "powerset_full_name": "Brute_Defense.Bio_Organic_Armor",
-    "accepted_set_category_ids": [
-     8,
-     24
-    ],
-    "accepted_set_categories": [
-     "Resist Damage",
-     "Threat Duration"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 6,
-    "slots": [
-     {
-      "set_uid": "Unbreakable_Guard",
-      "set_name": "Unbreakable Guard",
-      "piece_name": "Resistance",
-      "piece_uid": "Crafted_Unbreakable_Guard_A",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Unbreakable_Guard",
-      "set_name": "Unbreakable Guard",
-      "piece_name": "RechargeTime/Resistance",
-      "piece_uid": "Crafted_Unbreakable_Guard_D",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Unbreakable_Guard",
-      "set_name": "Unbreakable Guard",
-      "piece_name": "Endurance/RechargeTime",
-      "piece_uid": "Crafted_Unbreakable_Guard_C",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Unbreakable_Guard",
-      "set_name": "Unbreakable Guard",
-      "piece_name": "Resistance/Endurance/RechargeTime",
-      "piece_uid": "Crafted_Unbreakable_Guard_E",
-      "category_id": 8
-     }
-    ]
-   },
-   {
-    "full_name": "Brute_Defense.Bio_Organic_Armor.Environmental_Adaptation",
-    "display_name": "Environmental Modification",
-    "powerset_full_name": "Brute_Defense.Bio_Organic_Armor",
-    "accepted_set_category_ids": [
-     7
-    ],
-    "accepted_set_categories": [
-     "Defense Sets"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Reactive_Defenses",
-      "set_name": "Reactive Defenses",
-      "piece_name": "Scaling Resist Damage",
-      "piece_uid": "Crafted_Reactive_Defenses_F",
-      "category_id": 7
-     }
-    ]
-   },
-   {
-    "full_name": "Brute_Defense.Bio_Organic_Armor.Hardened_Carapace",
-    "display_name": "Hardened Carapace",
-    "powerset_full_name": "Brute_Defense.Bio_Organic_Armor",
-    "accepted_set_category_ids": [
-     8
-    ],
-    "accepted_set_categories": [
-     "Resist Damage"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Impervium_Armor",
-      "set_name": "Impervium Armor",
-      "piece_name": "Resistance/Endurance",
-      "piece_uid": "Crafted_Impervium_Armor_A",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Impervium_Armor",
-      "set_name": "Impervium Armor",
-      "piece_name": "Resistance/Recharge",
-      "piece_uid": "Crafted_Impervium_Armor_B",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Impervium_Armor",
-      "set_name": "Impervium Armor",
-      "piece_name": "Endurance/Recharge",
-      "piece_uid": "Crafted_Impervium_Armor_C",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Impervium_Armor",
-      "set_name": "Impervium Armor",
-      "piece_name": "Resistance",
-      "piece_uid": "Crafted_Impervium_Armor_E",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Impervium_Armor",
-      "set_name": "Impervium Armor",
-      "piece_name": "Resistance/Endurance/Recharge",
-      "piece_uid": "Crafted_Impervium_Armor_D",
-      "category_id": 8
-     }
-    ]
-   },
-   {
-    "full_name": "Brute_Defense.Bio_Organic_Armor.Inexhaustible",
-    "display_name": "Inexhaustible",
-    "powerset_full_name": "Brute_Defense.Bio_Organic_Armor",
-    "accepted_set_category_ids": [
-     9,
-     22
-    ],
-    "accepted_set_categories": [
-     "Healing",
-     "Endurance Modification"
-    ],
-    "power_type": 1,
-    "include_in_totals": true,
-    "slotCount": 3,
-    "slots": [
-     {
-      "set_uid": "Performance_Shifter",
-      "set_name": "Performance Shifter",
-      "piece_name": "Chance for +End",
-      "piece_uid": "Crafted_Performance_Shifter_F",
-      "category_id": 22
-     },
-     {
-      "set_uid": "Power_Transfer",
-      "set_name": "Power Transfer",
-      "piece_name": "Chance to Heal Self",
-      "piece_uid": "Crafted_Power_Transfer_F",
-      "category_id": 22
-     },
-     {
-      "set_uid": "Panacea",
-      "set_name": "Panacea",
-      "piece_name": "+Hit Points/Endurance",
-      "piece_uid": "Crafted_Panacea_F",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Power_Transfer",
-      "set_name": "Power Transfer",
-      "piece_name": "Damage/EndMod",
-      "piece_uid": "Crafted_Power_Transfer_C",
-      "category_id": 22
-     },
-     {
-      "set_uid": "Performance_Shifter",
-      "set_name": "Performance Shifter",
-      "piece_name": "EndMod",
-      "piece_uid": "Crafted_Performance_Shifter_A",
-      "category_id": 22
-     },
-     {
-      "set_uid": "Power_Transfer",
-      "set_name": "Power Transfer",
-      "piece_name": "EndMod",
-      "piece_uid": "Crafted_Power_Transfer_A",
-      "category_id": 22
-     }
-    ]
-   },
-   {
-    "full_name": "Brute_Melee.Titan_Weapons.Arc_of_Destruction",
-    "display_name": "Arc of Destruction",
-    "powerset_full_name": "Brute_Melee.Titan_Weapons",
-    "accepted_set_category_ids": [
-     4,
-     23,
-     24,
-     34,
-     44
-    ],
-    "accepted_set_categories": [
-     "PBAoE Damage",
-     "Knockback",
-     "Threat Duration",
-     "Brute Archetype Sets",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Fury of the Gladiator",
-      "set_name": "Fury of the Gladiator",
-      "piece_name": "proc",
-      "piece_uid": "Crafted_Fury_of_the_Gladiator_F",
-      "category_id": 23,
-      "_proc": true
-     },
-     {
-      "set_uid": "Eradication",
-      "set_name": "Eradication",
-      "piece_name": "Damage",
-      "piece_uid": "Crafted_Eradication_A",
-      "category_id": 23,
-      "_proc": true
-     },
-     {
-      "set_uid": "Eradication",
-      "set_name": "Eradication",
-      "piece_name": "Damage/Recharge",
-      "piece_uid": "Crafted_Eradication_C",
-      "category_id": 23,
-      "_proc": true
-     },
-     {
-      "set_uid": "Eradication",
-      "set_name": "Eradication",
-      "piece_name": "Chance for Energy Damage",
-      "piece_uid": "Crafted_Eradication_F",
-      "category_id": 23,
-      "_proc": true
-     },
-     {
-      "set_uid": "Eradication",
-      "set_name": "Eradication",
-      "piece_name": "Accuracy/Damage/Recharge",
-      "piece_uid": "Crafted_Eradication_D",
-      "category_id": 23,
-      "_proc": true
-     },
-     {
-      "set_uid": "Eradication",
-      "set_name": "Eradication",
-      "piece_name": "Accuracy/Damage/Endurance/Recharge",
-      "piece_uid": "Crafted_Eradication_E",
-      "category_id": 23,
-      "_proc": true
-     }
-    ],
-    "_proc_trade": {
-     "kind": "bomb",
-     "displaced": [
-      {
-       "set_uid": "Volley_of_Velocity",
-       "set_name": "Volley of Velocity",
-       "piece_name": "Damage/Knockback",
-       "piece_uid": "Crafted_Volley_of_Velocity_A",
-       "category_id": 23
-      },
-      {
-       "set_uid": "Volley_of_Velocity",
-       "set_name": "Volley of Velocity",
-       "piece_name": "Accuracy/Knockback",
-       "piece_uid": "Crafted_Volley_of_Velocity_B",
-       "category_id": 23
-      }
-     ]
-    }
-   },
-   {
-    "full_name": "Brute_Melee.Titan_Weapons.Build_Up",
-    "display_name": "Build Momentum",
-    "powerset_full_name": "Brute_Melee.Titan_Weapons",
-    "accepted_set_category_ids": [
-     25
-    ],
-    "accepted_set_categories": [
-     "To Hit Buff"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 4,
-    "slots": [
-     {
-      "set_uid": "Adjusted_Targeting",
-      "set_name": "Adjusted Targeting",
-      "piece_name": "To Hit Buff",
-      "piece_uid": "Crafted_Adjusted_Targeting_A",
-      "category_id": 25
-     },
-     {
-      "set_uid": "Adjusted_Targeting",
-      "set_name": "Adjusted Targeting",
-      "piece_name": "To Hit Buff/Recharge",
-      "piece_uid": "Crafted_Adjusted_Targeting_B",
-      "category_id": 25
-     },
-     {
-      "set_uid": "Adjusted_Targeting",
-      "set_name": "Adjusted Targeting",
-      "piece_name": "To Hit Buff/Endurance/Recharge",
-      "piece_uid": "Crafted_Adjusted_Targeting_C",
-      "category_id": 25
-     },
-     {
-      "set_uid": "Adjusted_Targeting",
-      "set_name": "Adjusted Targeting",
-      "piece_name": "Endurance/Recharge",
-      "piece_uid": "Crafted_Adjusted_Targeting_D",
-      "category_id": 25
-     },
-     {
-      "set_uid": "Adjusted_Targeting",
-      "set_name": "Adjusted Targeting",
-      "piece_name": "To Hit Buff/Endurance",
-      "piece_uid": "Crafted_Adjusted_Targeting_E",
-      "category_id": 25
-     },
-     {
-      "set_uid": "Adjusted_Targeting",
-      "set_name": "Adjusted Targeting",
-      "piece_name": "Recharge",
-      "piece_uid": "Crafted_Adjusted_Targeting_F",
-      "category_id": 25
-     }
-    ]
-   },
-   {
-    "full_name": "Brute_Melee.Titan_Weapons.Defensive_Sweep",
-    "display_name": "Defensive Sweep",
-    "powerset_full_name": "Brute_Melee.Titan_Weapons",
-    "accepted_set_category_ids": [
-     4,
-     7,
-     24,
-     34,
-     44
-    ],
-    "accepted_set_categories": [
-     "PBAoE Damage",
-     "Defense Sets",
-     "Threat Duration",
-     "Brute Archetype Sets",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 4,
-    "slots": [
-     {
-      "set_uid": "Luck_of_the_Gambler",
-      "set_name": "Luck of the Gambler",
-      "piece_name": "Endurance/Recharge",
-      "piece_uid": "Crafted_Luck_of_the_Gambler_C",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Shield_Wall",
-      "set_name": "Shield Wall",
-      "piece_name": "+Res (Teleportation), +5% Res (All)",
-      "piece_uid": "Crafted_Shield_Wall_F",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Reactive_Defenses",
-      "set_name": "Reactive Defenses",
-      "piece_name": "Scaling Resist Damage",
-      "piece_uid": "Crafted_Reactive_Defenses_F",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Kismet",
-      "set_name": "Kismet",
-      "piece_name": "Defense/Recharge",
-      "piece_uid": "Crafted_Kismet_B",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Kismet",
-      "set_name": "Kismet",
-      "piece_name": "Endurance/Recharge",
-      "piece_uid": "Crafted_Kismet_C",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Shield_Wall",
-      "set_name": "Shield Wall",
-      "piece_name": "Endurance/Recharge",
-      "piece_uid": "Crafted_Shield_Wall_C",
-      "category_id": 7
-     }
-    ]
-   },
-   {
-    "full_name": "Brute_Melee.Titan_Weapons.Sweeping_Strike",
-    "display_name": "Titan Sweep",
-    "powerset_full_name": "Brute_Melee.Titan_Weapons",
-    "accepted_set_category_ids": [
-     4,
-     23,
-     24,
-     34,
-     44
-    ],
-    "accepted_set_categories": [
-     "PBAoE Damage",
-     "Knockback",
-     "Threat Duration",
-     "Brute Archetype Sets",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Volley_of_Velocity",
-      "set_name": "Volley of Velocity",
-      "piece_name": "Recharge/Knockback",
-      "piece_uid": "Crafted_Volley_of_Velocity_C",
-      "category_id": 23
-     },
-     {
-      "set_uid": "Volley_of_Velocity",
-      "set_name": "Volley of Velocity",
-      "piece_name": "Damage/Knockback",
-      "piece_uid": "Crafted_Volley_of_Velocity_A",
-      "category_id": 23
-     }
-    ]
-   },
-   {
-    "full_name": "Epic.Pyre_Mastery.Char",
-    "display_name": "Char",
-    "powerset_full_name": "Epic.Pyre_Mastery",
-    "accepted_set_category_ids": [
-     2,
-     10,
-     44
-    ],
-    "accepted_set_categories": [
-     "Ranged Damage",
-     "Holds",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 4,
-    "slots": [
-     {
-      "set_uid": "Unbreakable_Constraint",
-      "set_name": "Unbreakable Constraint",
-      "piece_name": "Hold/Recharge/Accuracy",
-      "piece_uid": "Crafted_Unbreakable_Constraint_C",
-      "category_id": 10
-     },
-     {
-      "set_uid": "Unbreakable_Constraint",
-      "set_name": "Unbreakable Constraint",
-      "piece_name": "Hold/Recharge",
-      "piece_uid": "Crafted_Unbreakable_Constraint_B",
-      "category_id": 10
-     },
-     {
-      "set_uid": "Unbreakable_Constraint",
-      "set_name": "Unbreakable Constraint",
-      "piece_name": "Hold/Endurance",
-      "piece_uid": "Crafted_Unbreakable_Constraint_E",
-      "category_id": 10
-     },
-     {
-      "set_uid": "Unbreakable_Constraint",
-      "set_name": "Unbreakable Constraint",
-      "piece_name": "Recharge/Accuracy",
-      "piece_uid": "Crafted_Unbreakable_Constraint_D",
-      "category_id": 10
-     }
-    ]
-   },
-   {
-    "full_name": "Epic.Pyre_Mastery.Fire_Ball",
-    "display_name": "Fire Ball",
-    "powerset_full_name": "Epic.Pyre_Mastery",
-    "accepted_set_category_ids": [
-     3,
-     44
-    ],
-    "accepted_set_categories": [
-     "Targeted AoE Damage",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 4,
-    "slots": [
-     {
-      "set_uid": "Ragnarok",
-      "set_name": "Ragnarok",
-      "piece_name": "Damage",
-      "piece_uid": "Crafted_Ragnarok_A",
-      "category_id": 3
-     },
-     {
-      "set_uid": "Ragnarok",
-      "set_name": "Ragnarok",
-      "piece_name": "Damage/Endurance",
-      "piece_uid": "Crafted_Ragnarok_E",
-      "category_id": 3
-     },
-     {
-      "set_uid": "Ragnarok",
-      "set_name": "Ragnarok",
-      "piece_name": "Damage/Recharge/Accuracy",
-      "piece_uid": "Crafted_Ragnarok_C",
-      "category_id": 3
-     },
-     {
-      "set_uid": "Ragnarok",
-      "set_name": "Ragnarok",
-      "piece_name": "Chance for Knockdown",
-      "piece_uid": "Crafted_Ragnarok_F",
-      "category_id": 3
-     }
-    ]
-   },
-   {
-    "full_name": "Epic.Pyre_Mastery.Fire_Blast",
-    "display_name": "Fire Blast",
-    "powerset_full_name": "Epic.Pyre_Mastery",
-    "accepted_set_category_ids": [
-     2,
-     44
-    ],
-    "accepted_set_categories": [
-     "Ranged Damage",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 6,
-    "slots": [
-     {
-      "set_uid": "Apocalypse",
-      "set_name": "Apocalypse",
-      "piece_name": "Damage",
-      "piece_uid": "Crafted_Apocalypse_A",
-      "category_id": 2
-     },
-     {
-      "set_uid": "Superior_Winters_Bite",
-      "set_name": "Superior Winter's Bite",
-      "piece_name": "Accuracy/Damage/Endurance",
-      "piece_uid": "Superior_Attuned_Winters_Bite_C",
-      "category_id": 2
-     },
-     {
-      "set_uid": "Overwhelming Force",
-      "set_name": "Overwhelming Force",
-      "piece_name": "proc",
-      "piece_uid": "Attuned_Overwhelming_Force_F",
-      "category_id": 2,
-      "_proc": true
-     },
-     {
-      "set_uid": "Cupid's Crush",
-      "set_name": "Cupid's Crush",
-      "piece_name": "proc",
-      "piece_uid": "Attuned_Cupids_Crush_F",
-      "category_id": 2,
-      "_proc": true
-     },
-     {
-      "set_uid": "Apocalypse",
-      "set_name": "Apocalypse",
-      "piece_name": "Chance of Damage(Negative)",
-      "piece_uid": "Crafted_Apocalypse_F",
-      "category_id": 2
-     }
-    ],
-    "_proc_trade": {
-     "kind": "hybrid",
-     "displaced": [
-      {
-       "set_uid": "Apocalypse",
-       "set_name": "Apocalypse",
-       "piece_name": "Damage",
-       "piece_uid": "Crafted_Apocalypse_A",
-       "category_id": 2
-      },
-      {
-       "set_uid": "Apocalypse",
-       "set_name": "Apocalypse",
-       "piece_name": "Damage/Recharge",
-       "piece_uid": "Crafted_Apocalypse_B",
-       "category_id": 2
-      },
-      {
-       "set_uid": "Apocalypse",
-       "set_name": "Apocalypse",
-       "piece_name": "Damage/Recharge/Accuracy",
-       "piece_uid": "Crafted_Apocalypse_C",
-       "category_id": 2
-      },
-      {
-       "set_uid": "Superior_Winters_Bite",
-       "set_name": "Superior Winter's Bite",
-       "piece_name": "Accuracy/Damage",
-       "piece_uid": "Superior_Attuned_Winters_Bite_A",
-       "category_id": 2
-      },
-      {
-       "set_uid": "Superior_Winters_Bite",
-       "set_name": "Superior Winter's Bite",
-       "piece_name": "Damage/RechargeTime",
-       "piece_uid": "Superior_Attuned_Winters_Bite_B",
-       "category_id": 2
-      },
-      {
-       "set_uid": "Superior_Winters_Bite",
-       "set_name": "Superior Winter's Bite",
-       "piece_name": "Accuracy/Damage/Endurance",
-       "piece_uid": "Superior_Attuned_Winters_Bite_C",
-       "category_id": 2
-      }
-     ]
-    }
-   },
-   {
-    "full_name": "Epic.Pyre_Mastery.Ring_of_Fire",
-    "display_name": "Ring of Fire",
-    "powerset_full_name": "Epic.Pyre_Mastery",
-    "accepted_set_category_ids": [
-     2,
-     12,
-     44
-    ],
-    "accepted_set_categories": [
-     "Ranged Damage",
-     "Immobilize",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 4,
-    "slots": [
-     {
-      "set_uid": "Gravitational_Anchor",
-      "set_name": "Gravitational Anchor",
-      "piece_name": "Immobilize",
-      "piece_uid": "Crafted_Gravitational_Anchor_A",
-      "category_id": 12
-     },
-     {
-      "set_uid": "Gravitational_Anchor",
-      "set_name": "Gravitational Anchor",
-      "piece_name": "Immobilize/Recharge",
-      "piece_uid": "Crafted_Gravitational_Anchor_B",
-      "category_id": 12
-     },
-     {
-      "set_uid": "Gravitational_Anchor",
-      "set_name": "Gravitational Anchor",
-      "piece_name": "Immobilize/Recharge/Accuracy",
-      "piece_uid": "Crafted_Gravitational_Anchor_C",
-      "category_id": 12
-     },
-     {
-      "set_uid": "Gravitational_Anchor",
-      "set_name": "Gravitational Anchor",
-      "piece_name": "Recharge/Accuracy",
-      "piece_uid": "Crafted_Gravitational_Anchor_D",
-      "category_id": 12
-     }
-    ]
-   },
-   {
-    "full_name": "Inherent.Fitness.Health",
-    "display_name": "Health",
-    "powerset_full_name": "Inherent.Fitness",
-    "accepted_set_category_ids": [
-     9
-    ],
-    "accepted_set_categories": [
-     "Healing"
-    ],
-    "power_type": 1,
-    "include_in_totals": true,
-    "slotCount": 4,
-    "slots": [
-     {
-      "set_uid": "Preventive_Medicine",
-      "set_name": "Preventive Medicine",
-      "piece_name": "Heal",
-      "piece_uid": "Crafted_Preventive_Medicine_A",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Preventive_Medicine",
-      "set_name": "Preventive Medicine",
-      "piece_name": "Heal/Endurance",
-      "piece_uid": "Crafted_Preventive_Medicine_B",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Preventive_Medicine",
-      "set_name": "Preventive Medicine",
-      "piece_name": "Endurance/RechargeTime",
-      "piece_uid": "Crafted_Preventive_Medicine_C",
-      "category_id": 9
-     }
-    ]
-   },
-   {
-    "full_name": "Inherent.Fitness.Stamina",
-    "display_name": "Stamina",
-    "powerset_full_name": "Inherent.Fitness",
-    "accepted_set_category_ids": [
-     22
-    ],
-    "accepted_set_categories": [
-     "Endurance Modification"
-    ],
-    "power_type": 1,
-    "include_in_totals": true,
-    "slotCount": 1,
-    "slots": [
-     {
-      "set_uid": "Performance_Shifter",
-      "set_name": "Performance Shifter",
-      "piece_name": "Chance for +End",
-      "piece_uid": "Crafted_Performance_Shifter_F",
-      "category_id": 22
-     },
-     {
-      "set_uid": "Performance_Shifter",
-      "set_name": "Performance Shifter",
-      "piece_name": "EndMod",
-      "piece_uid": "Crafted_Performance_Shifter_A",
-      "category_id": 22
-     },
-     {
-      "set_uid": "Performance_Shifter",
-      "set_name": "Performance Shifter",
-      "piece_name": "EndMod/Accuracy/Recharge",
-      "piece_uid": "Crafted_Performance_Shifter_C",
-      "category_id": 22
-     },
-     {
-      "set_uid": "Performance_Shifter",
-      "set_name": "Performance Shifter",
-      "piece_name": "EndMod/Accuracy",
-      "piece_uid": "Crafted_Performance_Shifter_E",
-      "category_id": 22
-     },
-     {
-      "set_uid": "Performance_Shifter",
-      "set_name": "Performance Shifter",
-      "piece_name": "EndMod/Recharge",
-      "piece_uid": "Crafted_Performance_Shifter_B",
-      "category_id": 22
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Fighting.Boxing",
-    "display_name": "Boxing",
-    "powerset_full_name": "Pool.Fighting",
-    "accepted_set_category_ids": [
-     1,
-     11,
-     44
-    ],
-    "accepted_set_categories": [
-     "Melee Damage",
-     "Stuns",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Absolute_Amazement",
-      "set_name": "Absolute Amazement",
-      "piece_name": "Stun/Recharge/Accuracy",
-      "piece_uid": "Crafted_Absolute_Amazement_C",
-      "category_id": 11
-     },
-     {
-      "set_uid": "Absolute_Amazement",
-      "set_name": "Absolute Amazement",
-      "piece_name": "Stun/Recharge",
-      "piece_uid": "Crafted_Absolute_Amazement_B",
-      "category_id": 11
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Fighting.Cross_Punch",
-    "display_name": "Cross Punch",
-    "powerset_full_name": "Pool.Fighting",
-    "accepted_set_category_ids": [
-     4,
-     11,
-     23,
-     44
-    ],
-    "accepted_set_categories": [
-     "PBAoE Damage",
-     "Stuns",
-     "Knockback",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Rope_A_Dope",
-      "set_name": "Rope A Dope",
-      "piece_name": "Accuracy/Stun/Recharge",
-      "piece_uid": "Crafted_Rope_A_Dope_E",
-      "category_id": 11
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Fighting.Kick",
-    "display_name": "Kick",
-    "powerset_full_name": "Pool.Fighting",
-    "accepted_set_category_ids": [
-     1,
-     23,
-     44
-    ],
-    "accepted_set_categories": [
-     "Melee Damage",
-     "Knockback",
-     "Universal Damage"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 3,
-    "slots": [
-     {
-      "set_uid": "Force Feedback",
-      "set_name": "Force Feedback",
-      "piece_name": "proc",
-      "piece_uid": "Crafted_Force_Feedback_F",
-      "category_id": 23,
-      "_proc": true
-     }
-    ],
-    "_proc_trade": {
-     "kind": "ff",
-     "displaced": [
-      {
-       "set_uid": "Volley_of_Velocity",
-       "set_name": "Volley of Velocity",
-       "piece_name": "Recharge/Knockback",
-       "piece_uid": "Crafted_Volley_of_Velocity_C",
-       "category_id": 23
-      }
-     ]
-    }
-   },
-   {
-    "full_name": "Pool.Fighting.Tough",
-    "display_name": "Tough",
-    "powerset_full_name": "Pool.Fighting",
-    "accepted_set_category_ids": [
-     8
-    ],
-    "accepted_set_categories": [
-     "Resist Damage"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Steadfast_Protection",
-      "set_name": "Steadfast Protection",
-      "piece_name": "Resistance/+Def 3%",
-      "piece_uid": "Crafted_Steadfast_Protection_B",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Gladiators_Armor",
-      "set_name": "Gladiator's Armor",
-      "piece_name": "Resistance",
-      "piece_uid": "Crafted_Gladiators_Armor_A",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Steadfast_Protection",
-      "set_name": "Steadfast Protection",
-      "piece_name": "Knockback Protection",
-      "piece_uid": "Crafted_Steadfast_Protection_C",
-      "category_id": 8
-     },
-     {
-      "set_uid": "Gladiators_Armor",
-      "set_name": "Gladiator's Armor",
-      "piece_name": "TP Protection +3% Def (All)",
-      "piece_uid": "Crafted_Gladiators_Armor_F",
-      "category_id": 8
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Fighting.Weave",
-    "display_name": "Weave",
-    "powerset_full_name": "Pool.Fighting",
-    "accepted_set_category_ids": [
-     7
-    ],
-    "accepted_set_categories": [
-     "Defense Sets"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Luck_of_the_Gambler",
-      "set_name": "Luck of the Gambler",
-      "piece_name": "Defense/Increased Global Recharge Speed",
-      "piece_uid": "Crafted_Luck_of_the_Gambler_F",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Reactive_Defenses",
-      "set_name": "Reactive Defenses",
-      "piece_name": "Defense",
-      "piece_uid": "Crafted_Reactive_Defenses_A",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Reactive_Defenses",
-      "set_name": "Reactive Defenses",
-      "piece_name": "Defense/Endurance/RechargeTime",
-      "piece_uid": "Crafted_Reactive_Defenses_E",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Reactive_Defenses",
-      "set_name": "Reactive Defenses",
-      "piece_name": "Scaling Resist Damage",
-      "piece_uid": "Crafted_Reactive_Defenses_F",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Reactive_Defenses",
-      "set_name": "Reactive Defenses",
-      "piece_name": "Defense/RechargeTime",
-      "piece_uid": "Crafted_Reactive_Defenses_D",
-      "category_id": 7
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Invisibility.Stealth",
-    "display_name": "Stealth",
-    "powerset_full_name": "Pool.Invisibility",
-    "accepted_set_category_ids": [
-     7
-    ],
-    "accepted_set_categories": [
-     "Defense Sets"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Luck_of_the_Gambler",
-      "set_name": "Luck of the Gambler",
-      "piece_name": "Endurance/Recharge",
-      "piece_uid": "Crafted_Luck_of_the_Gambler_C",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Reactive_Defenses",
-      "set_name": "Reactive Defenses",
-      "piece_name": "Defense/Endurance/RechargeTime",
-      "piece_uid": "Crafted_Reactive_Defenses_E",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Reactive_Defenses",
-      "set_name": "Reactive Defenses",
-      "piece_name": "Scaling Resist Damage",
-      "piece_uid": "Crafted_Reactive_Defenses_F",
-      "category_id": 7
-     },
-     {
-      "set_uid": "Reactive_Defenses",
-      "set_name": "Reactive Defenses",
-      "piece_name": "Defense/RechargeTime",
-      "piece_uid": "Crafted_Reactive_Defenses_D",
-      "category_id": 7
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Medicine.Aid_Self",
-    "display_name": "Aid Self",
-    "powerset_full_name": "Pool.Medicine",
-    "accepted_set_category_ids": [
-     9
-    ],
-    "accepted_set_categories": [
-     "Healing"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 4,
-    "slots": [
-     {
-      "set_uid": "Preventive_Medicine",
-      "set_name": "Preventive Medicine",
-      "piece_name": "Heal/RechargeTime",
-      "piece_uid": "Crafted_Preventive_Medicine_D",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Preventive_Medicine",
-      "set_name": "Preventive Medicine",
-      "piece_name": "Endurance/RechargeTime",
-      "piece_uid": "Crafted_Preventive_Medicine_C",
-      "category_id": 9
-     },
-     {
-      "set_uid": "Preventive_Medicine",
-      "set_name": "Preventive Medicine",
-      "piece_name": "Heal/RechargeTime/Endurance",
-      "piece_uid": "Crafted_Preventive_Medicine_E",
-      "category_id": 9
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Medicine.Stimulant",
-    "display_name": "Injection",
-    "powerset_full_name": "Pool.Medicine",
-    "accepted_set_category_ids": [
-     13,
-     26,
-     31
-    ],
-    "accepted_set_categories": [
-     "Slow Movement",
-     "To Hit Debuff",
-     "Accurate To-Hit Debuff"
-    ],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 5,
-    "slots": [
-     {
-      "set_uid": "Hamidon_Origin",
-      "set_name": "Hamidon Origin",
-      "piece_name": "Endoplasm Exposure",
-      "piece_uid": "Hamidon_Accuracy_Mez",
-      "category_id": 13,
-      "_ho": true
-     },
-     {
-      "set_uid": "Hamidon_Origin",
-      "set_name": "Hamidon Origin",
-      "piece_name": "Endoplasm Exposure",
-      "piece_uid": "Hamidon_Accuracy_Mez",
-      "category_id": 13,
-      "_ho": true
-     },
-     {
-      "set_uid": "Impeded Swiftness",
-      "set_name": "Impeded Swiftness",
-      "piece_name": "proc",
-      "piece_uid": "Crafted_Impeded_Swiftness_F",
-      "category_id": 13,
-      "_proc": true
-     },
-     {
-      "set_uid": "Ice Mistral's Torment",
-      "set_name": "Ice Mistral's Torment",
-      "piece_name": "proc",
-      "piece_uid": "Crafted_Ice_Mistrals_Torment_F",
-      "category_id": 13,
-      "_proc": true
-     },
-     {
-      "set_uid": "Cloud Senses",
-      "set_name": "Cloud Senses",
-      "piece_name": "proc",
-      "piece_uid": "Crafted_Cloud_Senses_F",
-      "category_id": 13,
-      "_proc": true
-     }
-    ],
-    "_proc_trade": {
-     "kind": "hybrid",
-     "displaced": [
-      {
-       "set_uid": "Ice_Mistrals_Torment",
-       "set_name": "Ice Mistral's Torment",
-       "piece_name": "Endurance/Slow",
-       "piece_uid": "Crafted_Ice_Mistrals_Torment_A",
-       "category_id": 13
-      },
-      {
-       "set_uid": "Ice_Mistrals_Torment",
-       "set_name": "Ice Mistral's Torment",
-       "piece_name": "Damage/Recharge",
-       "piece_uid": "Crafted_Ice_Mistrals_Torment_B",
-       "category_id": 13
-      },
-      {
-       "set_uid": "Ice_Mistrals_Torment",
-       "set_name": "Ice Mistral's Torment",
-       "piece_name": "Damage/Slow",
-       "piece_uid": "Crafted_Ice_Mistrals_Torment_C",
-       "category_id": 13
-      },
-      {
-       "set_uid": "Ice_Mistrals_Torment",
-       "set_name": "Ice Mistral's Torment",
-       "piece_name": "Accuracy/Damage/Endurance",
-       "piece_uid": "Crafted_Ice_Mistrals_Torment_D",
-       "category_id": 13
-      },
-      {
-       "set_uid": "Ice_Mistrals_Torment",
-       "set_name": "Ice Mistral's Torment",
-       "piece_name": "Accuracy/Damage/Endurance/Recharge",
-       "piece_uid": "Crafted_Ice_Mistrals_Torment_E",
-       "category_id": 13
-      }
-     ]
-    }
-   },
-   {
-    "full_name": "Pool.Speed.Hasten",
-    "display_name": "Hasten",
-    "powerset_full_name": "Pool.Speed",
-    "accepted_set_category_ids": [],
-    "accepted_set_categories": [],
-    "power_type": 0,
-    "include_in_totals": false,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": null,
-      "set_name": "Common IO",
-      "piece_uid": "Crafted_Recharge",
-      "piece_name": "Recharge Reduction IO",
-      "category_id": null,
-      "io_level": 50
-     },
-     {
-      "set_uid": null,
-      "set_name": "Common IO",
-      "piece_uid": "Crafted_Recharge",
-      "piece_name": "Recharge Reduction IO",
-      "category_id": null,
-      "io_level": 50
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Speed.Super_Speed",
-    "display_name": "Super Speed",
-    "powerset_full_name": "Pool.Speed",
-    "accepted_set_category_ids": [
-     19,
-     28,
-     46
-    ],
-    "accepted_set_categories": [
-     "Running",
-     "Travel",
-     "Run (No Sprint)"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 2,
-    "slots": [
-     {
-      "set_uid": "Winters_Gift",
-      "set_name": "Winter's Gift",
-      "piece_name": "Run Speed, Jump, Flight Speed, Range/Endurance",
-      "piece_uid": "Crafted_Winters_Gift_B",
-      "category_id": 28
-     }
-    ]
-   },
-   {
-    "full_name": "Pool.Speed.Whirlwind",
-    "display_name": "Whirlwind",
-    "powerset_full_name": "Pool.Speed",
-    "accepted_set_category_ids": [
-     23
-    ],
-    "accepted_set_categories": [
-     "Knockback"
-    ],
-    "power_type": 2,
-    "include_in_totals": true,
-    "slotCount": 1,
-    "slots": [
-     {
-      "set_uid": null,
-      "set_name": "Common IO",
-      "piece_uid": "Crafted_Endurance_Discount",
-      "piece_name": "Endurance Reduction IO",
-      "category_id": null,
-      "io_level": 50
-     }
-    ]
-   }
-  ]
+  "model_version": 45,
+  "canonical_score": 274.45
  },
  "Class_Stalker|Stalker_Melee.Claws|Stalker_Defense.Energy_Aura|farm_active": {
   "picks": [
@@ -32476,7 +28664,7 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 676.8
    }
@@ -33874,7 +30062,7 @@
     }
    },
    "evaluated": {
-    "against": "model 44, 2026-08-15",
+    "against": "model 45, 2026-08-16",
     "verdict": "unaffected",
     "canonical_score": 713.8
    }
