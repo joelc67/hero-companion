@@ -91,6 +91,19 @@ def negative_control():
         sys.exit(1)
     print(f"negative control PASSES: holding both {a.rsplit('.', 1)[-1]} and "
           f"{b.rsplit('.', 1)[-1]} is correctly refused")
+    # Second control (field report 2026-08-16): an auto-granted set mechanic
+    # held as a PICK must be refused. Bio's Defensive Adaptation is the
+    # reported case; the rule is level_available 0 = never offered.
+    stance = "Tanker_Defense.Bio_Organic_Armor.Defensive_Adaptation"
+    base = ["Tanker_Defense.Bio_Organic_Armor.Hardened_Carapace",
+            "Tanker_Melee.Radiation_Melee.Contaminated_Strike"]
+    if srv._picks_legal(base + [stance],
+                        "Tanker_Defense.Bio_Organic_Armor",
+                        "Tanker_Melee.Radiation_Melee"):
+        print("NEGATIVE CONTROL FAILED: a never-pickable stance held as a pick "
+              "was accepted as legal.")
+        sys.exit(1)
+    print("negative control PASSES: an auto-granted stance held as a pick is refused")
 
 
 def main():
@@ -137,6 +150,31 @@ def main():
                 if p.get("pick_level") is not None and lvl > p["pick_level"]:
                     why.append(f"seated too early: {p['full_name'].rsplit('.', 1)[-1]}"
                                f" (available {lvl}) at pick level {p['pick_level']}")
+            # ⚠ NEVER-PICKABLE (field report 2026-08-16): level_available 0 =
+            # auto-granted set mechanics (Bio stances, Staff forms, ammo swaps)
+            # — 42 such records live inside primary/secondary sets and the game
+            # never offers them at a level-up. A proposal spending a seat on one
+            # is unbuildable regardless of every other rule.
+            for fn in picks:
+                if fn.startswith("Inherent."):
+                    continue
+                if not srv._pickable(srv.POWER_BY_FULL.get(fn)):
+                    why.append(f"never-pickable proposed: {fn.rsplit('.', 1)[-1]}")
+            # ⚠ THE APP'S REAL SHAPE (field reports 2026-08-15/16): the client
+            # sends per-power full_name + pick_level ONLY. Re-seat each proposal
+            # through BARE dicts — the same shape /build/calculate heals — and
+            # require the result to be schedule-feasible with a legal creation
+            # pair. This is the sweep that would have caught both the Ice/Ice
+            # L1 pair and the Bio stance seats before any user did.
+            bare = [{"full_name": p["full_name"], "pick_level": p.get("pick_level"),
+                     "slots": list(p.get("slots") or [None])}
+                    for p in ((r or {}).get("powers") or [])
+                    if not p["full_name"].startswith("Inherent.")]
+            srv._assign_pick_levels(bare, at)
+            if not srv._schedule_feasible(bare):
+                why.append("bare-shape re-seat not schedule-feasible")
+            if not srv._l1_seating_ok(bare, at):
+                why.append("bare-shape re-seat leaves an illegal L1 creation pair")
             if why:
                 fails.append((at, pri, sec, content, "; ".join(sorted(set(why)))))
             elif VERBOSE:
@@ -151,7 +189,9 @@ def main():
         sys.exit(1)
     if not fails:
         print(f"ALL {checked} PROPOSALS ARE GAME-LEGAL — no twin pairs, "
-              "ladder fits, prereqs satisfied, L1 seats filled.")
+              "ladder fits, prereqs satisfied, L1 seats filled, no never-pickable "
+              "records, and every bare-shape re-seat is feasible with a legal "
+              "creation pair.")
         return
     print(f"\n{len(fails)} ILLEGAL PROPOSAL(S):")
     for at, pri, sec, content, why in fails:

@@ -44,7 +44,9 @@ const harness = `
   let EDIT_HISTORY = [];
   let _PRE_EDIT_TOTALS = null;
   let _LOADING_BUILD = false;
+  let _BUILD_EPOCH = 0;
   let LAST_TOTALS = { melee: 1 };
+  let LAST_CALC = { melee: 1 };
   let build = { powers: [{ full_name: "A" }], pools: [], incarnates: {} };
   let roleFocus = {}; const PREVIEW_BOOSTS = {}; const ACCOLADES_CHECKED = new Set();
   let editBarCalls = 0;
@@ -54,7 +56,8 @@ const harness = `
 `;
 const api = `
   return { recordEdit, resetBuildScopedState,
-           state: () => ({ hist: EDIT_HISTORY.length, pre: _PRE_EDIT_TOTALS, bar: editBarCalls }),
+           state: () => ({ hist: EDIT_HISTORY.length, pre: _PRE_EDIT_TOTALS,
+                           bar: editBarCalls, epoch: _BUILD_EPOCH }),
            setLoading: v => { _LOADING_BUILD = v; },
            addPower: () => build.powers.push({ full_name: "B" }) };
 `;
@@ -119,6 +122,23 @@ check("NEGATIVE CONTROL: _convHaul is left alone (user-typed, not derived)",
 const before = mod.state().bar;
 mod.resetBuildScopedState();
 check("resetBuildScopedState refreshes the edit bar", mod.state().bar > before);
+
+// 8c. THE EPOCH (field report 2026-08-16, second report): a character swap must
+// bump _BUILD_EPOCH so an in-flight recompute of the PREVIOUS character discards
+// its response instead of writing the old totals back after the sweep. Both
+// halves pinned: the bump here, and the guard in recompute below.
+{
+  const e0 = mod.state().epoch;
+  mod.resetBuildScopedState();
+  check("a character swap bumps the build epoch", mod.state().epoch === e0 + 1);
+  const rc = src.slice(src.indexOf("async function recompute"),
+                       src.indexOf("async function recompute") + 2600);
+  const cap = rc.indexOf("_epoch = _BUILD_EPOCH");
+  const gate = rc.indexOf("_epoch !== _BUILD_EPOCH");
+  const write = rc.indexOf("LAST_TOTALS =");
+  check("recompute captures the epoch before its await and gates the write",
+        cap > 0 && gate > cap && write > gate);
+}
 
 // 8b. THE CLOSE PROMPT READS PUSHED STATE (field report 2026-08-15: pressed Save,
 // close still asked "Save before closing?"). Cleanliness changes OUTSIDE recompute

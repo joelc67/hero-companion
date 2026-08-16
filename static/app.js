@@ -198,6 +198,7 @@ window.hasUnsavedWork = function () {
 // holding — the first version did exactly that and hung the app on its first
 // close ("Hero Companion (Not Responding)"). Telling the window whenever the
 // answer changes means the handler only ever reads a variable.
+let _BUILD_EPOCH = 0;   // bumped on every character swap (resetBuildScopedState)
 let _dirtyPushed = null;
 function pushDirty() {
   try {
@@ -544,6 +545,13 @@ function revealBuilder() {
 // they leak into the next build (his repro: a Stalker's front-line exposure
 // seeded Melee 45 into a fresh Blaster's targets editor).
 function resetBuildScopedState() {
+  // ⚠⚠ THE EPOCH: an async recompute() started on the PREVIOUS character can
+  // resolve AFTER this reset and write the old character's totals back into
+  // LAST_TOTALS/LAST_CALC — which is how the "new level 50 diffs against my
+  // last character" report survived the 0.12.40 sweep fix (field report
+  // 2026-08-16, second report). Bumping the epoch makes recompute discard any
+  // response that started before the swap.
+  _BUILD_EPOCH++;
   build._custom_targets = null;
   build._exposure = null;
   build._travel = null;
@@ -2723,7 +2731,7 @@ async function buildRespec() {
     renderPowers();
     // The wizard ALREADY gathered + showed the role/content/exposure intent, so skip the
     // confirm gate (its button would render behind this modal and hang the flow).
-    await solveSlotting(null, { skipConfirm: true });
+    await solveSlotting(null, { skipConfirm: true, noDiff: true });
     // The first-meeting greet keys on "a leveling build WAS BUILT", not on which
     // button dismisses the wizard afterward — Joel's gaming-box report: leave
     // the wizard any way other than the two reveal buttons and the greeting
@@ -5587,11 +5595,18 @@ function catalogueHtml(sets) {
   // The pool columns are a GROUP with rules of their own — a cap of four, and
   // nothing takeable until the game opens them. Neither was stated anywhere.
   const poolSets = (build.pools || []).filter(Boolean);
+  // A PICK is any power the game offers at a level-up (level_available >= 1).
+  // ⚠ NOT `p.slottable` — that filter hid five REAL picks that just accept no
+  // enhancements (Bio's Adaptation stance unlock, Swap Ammo, Staff Mastery,
+  // Reach for the Limit, Fate Sealed; client-verified auto_issue=False,
+  // 2026-08-16 field report). level_available 0 = auto-granted set mechanics
+  // (the three Adaptation stances, ammo swaps) — those the game never offers.
+  const isPick = p => (p.level_available || 0) >= 1;
   const poolOpensAt = Math.min(...poolSets.flatMap(ps =>
-    (POWERS_CACHE[ps] || []).filter(p => p.slottable).map(p => p.level_available || 1)
+    (POWERS_CACHE[ps] || []).filter(isPick).map(p => p.level_available || 1)
   ).concat([4]));
   const cols = sets.map(ps => {
-    const powers = (POWERS_CACHE[ps] || []).filter(p => p.slottable);
+    const powers = (POWERS_CACHE[ps] || []).filter(isPick);
     if (!powers.length) return "";
     const [roleLabel, roleCls] = roleOf(ps);
     const poolIdx = (build.pools || []).indexOf(ps);
@@ -6744,6 +6759,9 @@ window.addPowerByName = function (psFull, fullName) {
   if (!p) return;
   if (build.powers.some(x => x.full_name === fullName)) return;
   recordEdit();
+  // An unslottable pick (Bio's Adaptation, Swap Ammo, Staff Mastery…) takes a
+  // seat but accepts NO enhancements in game — no base slot, ever.
+  const noSlots = p.slottable === false;
   build.powers.push({
     full_name: p.full_name,
     display_name: p.display_name,
@@ -6751,9 +6769,10 @@ window.addPowerByName = function (psFull, fullName) {
     accepted_set_category_ids: p.accepted_set_category_ids || [],
     accepted_set_categories: p.accepted_set_categories || [],
     power_type: p.power_type,
+    slottable: p.slottable,
     include_in_totals: p.power_type === 1 || p.power_type === 2,
-    slotCount: 1,
-    slots: [null],
+    slotCount: noSlots ? 0 : 1,
+    slots: noSlots ? [] : [null],
   });
   renderPowers();
   recompute();
@@ -6767,6 +6786,7 @@ window.removePower = function (idx) {
 
 window.changeSlots = function (idx, delta) {
   const pw = build.powers[idx];
+  if (pw.slottable === false) return;   // the game accepts no enhancements here
   const n = Math.max(1, Math.min(6, pw.slotCount + delta));
   if (n === pw.slotCount) return;                       // clamped (1–6) — nothing to do
   if (n > pw.slotCount && _addedSlots() >= SLOT_BUDGET) {  // budget guard
@@ -7736,10 +7756,16 @@ async function recompute() {
   const cb = $("changes-btn");
   if (cb) cb.style.display = (hasPowers && IMPORTED_POWERS && CHANGES_AVAILABLE) ? "block" : "none";
   const payload = buildPayload();
+  const _epoch = _BUILD_EPOCH;   // the character this request describes
   const [totals, validation] = await Promise.all([
     api("/build/calculate", postJson(payload)),
     api("/build/validate", postJson(payload)),
   ]);
+  // A character swap happened while this request was in flight — the response
+  // describes a character that is no longer open. Rendering it would repaint
+  // the new character's panels with the old one's numbers, and writing
+  // LAST_TOTALS would hand the old character to the next solve's diff.
+  if (_epoch !== _BUILD_EPOCH) return;
   // LAST_TOTALS lands BEFORE renderStats: the stat-breakdown panel inside it
   // reads the fresh attribution ledger, not the previous recompute's.
   LAST_TOTALS = (totals && (totals.totals || totals)) || null;  // feed the tray rotation + notes
@@ -10922,7 +10948,11 @@ async function solveSlotting(perkFocus, opts) {
   }
   // Snapshot the CURRENT totals so a manual-edit Solve shows the same before/after diff that
   // imports get (imports keep using IMPORT_BEFORE, which also carries slot-level changes).
-  const solveBefore = (LAST_TOTALS && typeof LAST_TOTALS === "object")
+  // ⚠ opts.noDiff = the wizard's FIRST solve of a freshly generated character:
+  // there is no "previous slotting" to improve on, so a change-list is noise at
+  // best and (if any stale totals survived) another character's numbers at
+  // worst. A new character starts clean (field reports 2026-08-15/16).
+  const solveBefore = (!opts.noDiff && LAST_TOTALS && typeof LAST_TOTALS === "object")
     ? { totals: LAST_TOTALS, name: "your previous slotting" } : null;
   const goal = $("gen-goal").value.trim();
   const content = $("preset-content") ? $("preset-content").value : "";

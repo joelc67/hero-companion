@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+- **Powers your set grants for free are no longer treated as picks.** Bio
+  Armor's three Adaptation stances (and the same class everywhere: Staff
+  Fighting's Forms, Dual Pistols' ammo types, Seismic Shockwaves) were being
+  offered and even auto-picked as if they cost a power choice. The game grants
+  these automatically with their power set; the planner now never spends a
+  pick on them, and flags older builds that did.
+- **Picks that accept no enhancements now work the way the game has them.**
+  Bio Armor's Adaptation, Dual Pistols' Swap Ammo, Staff Fighting's Staff
+  Mastery and friends are real picks with zero enhancement slots. They were
+  hidden from the catalogue entirely; now they can be taken, show no slot
+  row, and refuse enhancements — exactly as in game.
+- **The "changes between builds" list can no longer show a previous
+  character.** A slower computer could still see the last character's numbers
+  leak into a new character's first report (a request started on the old
+  character finishing after the switch). Responses from a character you have
+  already left are now discarded, and a freshly generated character's first
+  solve shows no change-list at all — there is nothing it changed from.
+
 ## 0.12.40 — 2026-08-15 — Three field-report fixes
 
 - **A new character truly starts clean.** Starting a new character right after

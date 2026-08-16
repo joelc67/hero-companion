@@ -2765,6 +2765,31 @@ def build_validate():
     l1 = _l1_pick_errors(build.get("powers") or [], build.get("archetype"))
     if l1:
         res.setdefault("errors", []).extend(l1)
+    # Auto-granted set mechanics held as PICKS (field report 2026-08-16: a
+    # generated build spent three seats on Bio's Adaptation stances). The game
+    # grants these with their parent power and never offers them at a level-up,
+    # so a build "picking" one cannot exist in game.
+    for p in (build.get("powers") or []):
+        fn = p.get("full_name") or ""
+        if fn.startswith("Inherent"):
+            continue
+        rec = POWER_BY_FULL.get(fn)
+        if rec is not None and not _pickable(rec):
+            res.setdefault("errors", []).append(
+                f"{rec.get('display_name') or fn.split('.')[-1].replace('_', ' ')} is granted "
+                "automatically by the game (it comes with its power set, like Bio Armor's "
+                "Adaptation stances) — the game never offers it as a pick, so remove it to "
+                "free that seat.")
+        # A real pick that accepts NO enhancements (Bio's Adaptation, Swap Ammo,
+        # Staff Mastery…): the game gives it zero slots, so any slotted piece
+        # cannot exist in game.
+        elif rec is not None and rec.get("slottable") is False \
+                and any(s and (s.get("piece_uid") or s.get("piece_name"))
+                        for s in (p.get("slots") or [])):
+            res.setdefault("errors", []).append(
+                f"{rec.get('display_name') or fn.split('.')[-1].replace('_', ' ')} accepts no "
+                "enhancements in game (it has no slots at all) — remove the pieces slotted "
+                "in it.")
     # Origin-themed pools are one-per-build in game — flag a manual double-pick.
     _origin = sorted({(p.get("full_name") or "").rsplit(".", 1)[0]
                       for p in (build.get("powers") or [])
@@ -3413,6 +3438,17 @@ def _ps_of(p):
     return p.get("powerset_full_name") or (p.get("full_name") or "").rsplit(".", 1)[0]
 
 
+def _pickable(rec):
+    """True when the game ever OFFERS this power as a pick. level_available 0 =
+    auto-granted set mechanics (Bio's three Adaptation stances, Staff's Forms,
+    Dual Pistols' ammo swaps, Seismic Shockwaves, Pack Mentality…) — the game
+    grants them with their parent power and never lists them at a level-up.
+    42 such records live inside primary/secondary sets (censused 2026-08-16,
+    field report: a generated Bio/Rad Tanker spent three real pick seats on
+    Adaptation stances). Same marker _set_first_two already honours."""
+    return bool(rec) and (rec.get("level_available") or 0) >= 1
+
+
 def _l1_creation_pair(powers, archetype):
     """The two powers that belong at level 1: in game, character creation asks for ONE
     of the SECONDARY's first two powers FIRST, then ONE of the primary's first two
@@ -3803,6 +3839,12 @@ def _picks_legal(fns, primary, secondary):
     # make in game is the one thing this gate exists to refuse.
     for fn in fns:
         if fn not in POWER_BY_FULL:
+            return False
+        # ⚠ A POWER THE GAME NEVER OFFERS IS NOT A PICK (level_available 0 =
+        # auto-granted set mechanic — Bio stances, Staff forms, ammo swaps).
+        # Field report 2026-08-16: autopick spent three pick seats on Bio's
+        # Adaptation stances and this gate said nothing.
+        if not _pickable(POWER_BY_FULL[fn]):
             return False
     for ps, members in tiered.items():
         for fn in members:
@@ -7177,6 +7219,8 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
     cand = []
     for ps in _veat_accessible_sets(primary, secondary):
         for p in (POWERS.get(ps) or []):
+            if not _pickable(p):
+                continue   # auto-granted set mechanics are never pick candidates
             pri0 = _ps_priority(p, role, exposure, content, targets=custom_targets) \
                 + 8.0 * _adj.get(p.get("power_name") or "", 0.0)
             cand.append((pri0, p.get("level_available") or 1, p["full_name"]))
