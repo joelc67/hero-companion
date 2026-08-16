@@ -2431,7 +2431,11 @@ function _altPowersForLevel(level, currentFullName) {
     // won't allow their powers, so don't offer them as alternatives.
     if (LEVELING_EAT_TYPE === "veat" && level < 24 && VEAT_BASE_SET[ps]) continue;
     for (const p of (POWERS_CACHE[ps] || [])) {
-      if (!p.slottable) continue;
+      // Pickability is level_available >= 1, NOT slottable — the old filter
+      // hid real zero-slot picks (Bio's Adaptation unlock, Swap Ammo, Staff
+      // Mastery) from the leveling guide's alternatives (field report
+      // 2026-08-16: "missing from the leveling guide").
+      if ((p.level_available || 0) < 1) continue;
       if ((p.level_available || 1) > level) continue;   // not available at this level yet
       if (p.full_name === currentFullName || picked.has(p.full_name)) continue;
       out.push({ full_name: p.full_name,
@@ -7796,13 +7800,28 @@ async function recompute() {
       .map(p => p.display_name || p.full_name.split(".").pop().replace(/_/g, " "));
     if (gone.length) {
       build.powers = build.powers.filter(p => !drop.has(p.full_name));
+      // The swap half: take the set's real unlock pick (Bio's Adaptation…) in
+      // a freed seat — it is what grants the stances in game, so the build
+      // keeps what the player's character actually has. Zero slots by rule.
+      const took = [];
+      for (const t of (totals.take_free || [])) {
+        if (build.powers.some(p => p.full_name === t.full_name)) continue;
+        build.powers.push({ full_name: t.full_name, display_name: t.display_name,
+          powerset_full_name: t.powerset_full_name, power_type: t.power_type,
+          level_available: t.level_available, slottable: false,
+          accepted_set_categories: [], accepted_set_category_ids: [],
+          include_in_totals: t.power_type === 1 || t.power_type === 2,
+          slotCount: 0, slots: [] });
+        took.push(t.display_name || t.full_name.split(".").pop().replace(/_/g, " "));
+      }
       renderPowers();
       // ⚠ under 26 words and one write — collapseLongExplanations folds longer
       // muted blocks and shows both copies (the standing trap).
       const s = $("gen-status");
       if (s) s.textContent = `🧹 Removed ${gone.join(", ")}: the game grants `
-        + `${gone.length === 1 ? "it" : "them"} free with your power set. `
-        + `${gone.length === 1 ? "1 seat" : gone.length + " seats"} freed.`;
+        + `${gone.length === 1 ? "it" : "them"} free.`
+        + (took.length ? ` Took ${took.join(", ")} instead (the real pick).` : "")
+        + ` ${gone.length - took.length > 0 ? (gone.length - took.length) + " seat(s) freed." : ""}`;
       recompute();
       return;
     }

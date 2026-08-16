@@ -2949,6 +2949,23 @@ def build_calculate():
              and not _pickable(POWER_BY_FULL[p["full_name"]])]
     if never:
         res["never_picks"] = never
+        # …and hand back what belongs in their place: the set's UNLOCK pick
+        # (Bio's Adaptation etc. — pickable, zero slots) if the build lacks it.
+        # The stances the user thought they had ARE this power's grant, so the
+        # swap restores what their in-game character actually has.
+        have = {p.get("full_name") for p in real}
+        adds = []
+        for ps in {_ps_of(p) for p in real if p.get("full_name") not in never}:
+            for rec in (POWERS.get(ps) or []):
+                if (_pickable(rec) and rec.get("slottable") is False
+                        and rec["full_name"] not in have):
+                    adds.append({"full_name": rec["full_name"],
+                                 "display_name": rec.get("display_name"),
+                                 "powerset_full_name": rec.get("powerset_full_name"),
+                                 "power_type": rec.get("power_type"),
+                                 "level_available": rec.get("level_available")})
+        if adds:
+            res["take_free"] = adds
     # Slotting rationale per power (the transparency chips), attached on EVERY recompute so a
     # RESUMED or IMPORTED build shows them too — not only a freshly solved one (field report:
     # chips missing after Resume, which read as the update being ignored).
@@ -7235,6 +7252,24 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
             cand.append((pri0, p.get("level_available") or 1, p["full_name"]))
     cand.sort(key=lambda x: (-x[0], x[1]))
     psfns = [(fn, lvl) for (_, lvl, fn) in cand[:budget]]
+    # SET-UNLOCK PICKS ARE STRUCTURAL (field report 2026-08-16: a generated Bio
+    # build carried no Adaptation). A pickable-but-unslottable power in the
+    # build's own primary/secondary (Bio's Adaptation, Staff Mastery, Swap
+    # Ammo, Fate Sealed, Reach for the Limit — 6 records, all client-verified
+    # real picks) is the set's mechanic switch: zero slot cost, and every
+    # master build of the set takes it. The scorer cannot value it until the
+    # meter class is priced, so it is taken structurally — like travel and the
+    # armor toggles — displacing the lowest-priority scored candidate.
+    taken = {fn for fn, _ in psfns}
+    for ps in (primary, secondary):
+        for p in (POWERS.get(ps) or []):
+            fn = p["full_name"]
+            if not _pickable(p) or p.get("slottable") or fn in taken:
+                continue
+            if len(psfns) >= budget and psfns:
+                psfns.pop()                      # drop the weakest scored pick
+            psfns.append((fn, p.get("level_available") or 1))
+            taken.add(fn)
     # EXEMPLAR-FRIENDLY: front-load TRAVEL (gone = running everywhere) + any primary/secondary
     # armor toggle at its earliest slot. POOL armor (Tough/Weave) is NOT front-loaded — its
     # order is fixed by the prereq-chain effective levels above (front-loading it was exactly
@@ -8279,6 +8314,23 @@ def _build_coaching(archetype, powers):
         notes.append("No travel power picked. One of Super Speed / Leap / Fly / Teleport makes getting "
                      "around far less painful (and keeps teammates from waiting) — on Homecoming you can take "
                      "one as early as level 4.")
+
+    # 1b) The set's UNLOCK pick is missing (field report 2026-08-16: a healed
+    # Bio build sat with free seats and no Adaptation). Advise, never override
+    # (choice doctrine): name it, say it is free to run, point at the seat.
+    have = {p.get("full_name") for p in real}
+    build_sets = {_ps_of(p) for p in real}
+    for ps in sorted(build_sets):
+        if not (ps and (ps in {e["full_name"] for g in (POWERSETS.get("by_archetype") or {}).values()
+                               for grp in ("primary", "secondary") for e in (g.get(grp) or [])})):
+            continue
+        for rec in (POWERS.get(ps) or []):
+            if (_pickable(rec) and rec.get("slottable") is False
+                    and rec["full_name"] not in have and len(real) < 24):
+                disp = rec.get("display_name") or rec["full_name"].split(".")[-1].replace("_", " ")
+                notes.append(f"{disp} isn't taken. It's a real pick from your own set that costs no "
+                             f"enhancement slots and switches on the set's core mechanic — worth one "
+                             f"of your free seats. Find it in the powers catalogue.")
 
     # 2) Low-value pool attacks.
     filler = sorted({n.replace("_", " ") for n in names if n in _FILLER_POOL_ATTACKS})

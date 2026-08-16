@@ -184,6 +184,37 @@ clean = c.post("/build/calculate", json={"archetype": "Class_Tanker",
                                          "powers": stancey[:2]}).get_json()
 check("NEGATIVE CONTROL: a clean build carries no never_picks",
       not clean.get("never_picks"))
+# The swap half: dropping stances also hands back the set's real unlock pick.
+tf = calc.get("take_free") or []
+check("the heal offers the set's unlock pick in the stances' place",
+      any(t["full_name"].endswith(".Evolution") for t in tf), str([t["full_name"] for t in tf]))
+check("NEGATIVE CONTROL: no take_free without never_picks", not clean.get("take_free"))
+
+# ── 8. set-unlock picks are STRUCTURAL in autopick (field report 2026-08-16:
+# a generated Bio build carried no Adaptation) ─────────────────────────────
+print("\n── autopick takes the set unlock ──")
+ap = c.post("/build/autopick", json={"archetype": "Class_Tanker",
+                                     "primary": "Tanker_Defense.Bio_Organic_Armor",
+                                     "secondary": "Tanker_Melee.Radiation_Melee",
+                                     "content": "itrial"}).get_json()
+apn = [p["full_name"] for p in (ap.get("powers") or [])]
+check("generated Bio build takes the Adaptation unlock",
+      any(n.endswith(".Evolution") for n in apn))
+ap2 = c.post("/build/autopick", json={"archetype": "Class_Scrapper",
+                                      "primary": "Scrapper_Melee.Staff_Fighting",
+                                      "secondary": "Scrapper_Defense.Super_Reflexes",
+                                      "content": "itrial"}).get_json()
+ap2n = [p["full_name"] for p in (ap2.get("powers") or [])]
+check("generated Staff build takes Staff Mastery (same class, not a Bio hack)",
+      any(n.endswith(".Staff_Mastery") for n in ap2n))
+# coaching advises an already-healed build that lacks the unlock
+val3 = c.post("/build/validate", json={"archetype": "Class_Tanker",
+    "primary": "Tanker_Defense.Bio_Organic_Armor",
+    "secondary": "Tanker_Melee.Radiation_Melee",
+    "powers": stancey[:2]}).get_json()
+check("coaching advises taking the missing unlock (advise, never override)",
+      any("Adaptation" in n and "isn't taken" in n for n in (val3.get("coaching") or [])),
+      str((val3.get("coaching") or [])[:1]))
 
 print(f"\n══ {'ALL PASS' if not fails else f'{len(fails)} FAILURE(S): ' + ', '.join(fails)} ══")
 sys.exit(1 if fails else 0)
