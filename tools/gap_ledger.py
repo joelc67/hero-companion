@@ -80,7 +80,17 @@ def build():
         "honest average is its midpoint, so 50% is the derived recommendation.",
         "**Stack meters** - BuildStatic, BuildFrenzy, Contaminated, "
         "Disintegrate, the combo systems, Bio's stance: one scenario constant "
-        "each, or one ruling for the class.",
+        "each, or one ruling for the class. Titan Weapons' Momentum is this "
+        "class too, and our TW damage rows carry NO gate at all - AoEs that "
+        "need Momentum in game (Maelwys, topic 64761, 2026-08-16) are priced "
+        "as if free.",
+        "**AFK offense is unmodelled** (Maelwys 2026-08-16, confirmed in our "
+        "artifacts): the farm_afk SUSTAIN ledger correctly allows regen + ONE "
+        "non-interruptible auto-fire power, but the OFFENSE channel still "
+        "prices the full click attack chain an AFK farmer cannot cast - the "
+        "TW/Bio champion certified on Fire Ball/Char clicks and skipped Bio's "
+        "damage aura. An AFK damage rule (damage auras + the one auto-fire + "
+        "procs only) is a model change and a farm re-cert; Joel's ruling.",
         "**Domination's magnitude half** - adds or replaces is ambiguous in "
         "the client (3 of 41 pairs fit neither reading). Duration half is "
         "shipped; magnitude deliberately not guessed.",
