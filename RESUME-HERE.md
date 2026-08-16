@@ -1,8 +1,14 @@
 # ✅ SESSION CLOSED CLEAN — 2026-08-15. START HERE.
 
-**Latest release: 🚀 v0.12.39 "Certified builds, served as certified"**
-(2026-08-15, stamp `b87d832`, both assets signed + API-verified; installed
-copy runs it). The release carries: the certified-slotting serve layer
+**Latest release: 🚀 v0.12.40 "Three field-report fixes"** (2026-08-15 night,
+stamp `756c41e`, both assets signed + API-verified, published 2026-08-16T03:11Z;
+installed copy runs it; liveness baseline v0.12.40, 0 diffs). Fixes all three
+defects from the 2026-08-15 in-app bug report (new-character clean start,
+save-then-close prompt, L1 creation pair on the bare payload shape). FP/
+whitelist submissions per runbook: Joel's hand, now for 0.12.40.
+
+**Prior release: 🚀 v0.12.39 "Certified builds, served as certified"**
+(2026-08-15, stamp `b87d832`, both assets signed + API-verified). The release carries: the certified-slotting serve layer
 (27/28 champions serve their exact certified builds), the 1,970-row dedup
 fix, the full 27-context pick re-cert (10 supersedes / 17 keeps), four new
 fire-farm alternatives (roster 28), and one-slot card notes. All rulings +

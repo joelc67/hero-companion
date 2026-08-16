@@ -1421,6 +1421,16 @@ draft: `Downloads\hero-companion-0.12.39-post.txt` — posting is Joel's hand.
 FP/whitelist submissions per signing runbook: Joel's hand, now for 0.12.39.
 Liveness baseline: roll to v0.12.39 on next check.**
 
+**🚀 v0.12.40 "Three field-report fixes" RELEASED same night (2026-08-15,
+Joel's "cut the release"): stamp `756c41e`, both assets signed + API-verified
+(published 2026-08-16T03:11Z); smoke PASS, gold 28/28; installed copy
+mirrored + relaunched; liveness baseline rolled to v0.12.40 (0 diffs).
+Carries the three fixes from the 2026-08-15 Web3Forms report (Ice/Ice
+Brute): new-character state sweep (LAST_TOTALS/LAST_CALC), save-then-close
+dirty-flag push + confirmQuit recheck, and the L1 creation-pair heal fixed
+for the app's bare payload shape (`server._ps_of` — see the buildPayload
+pitfall). FP/whitelist submissions: Joel's hand, now for 0.12.40.**
+
 Otherwise nothing running. Live handoff detail:
 `coh-builder/RESUME-HERE.md`.
 
