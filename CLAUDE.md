@@ -1437,6 +1437,26 @@ pitfall). ✅ ANNOUNCED: Joel posted the 0.12.40 reply on topic 64761
 drafts: do not resurrect. FP/whitelist submissions: Joel's hand, now for
 0.12.40.**
 
+**✅ MODEL v45 (AFK OFFENSE) + FARM WAVE BANKED (2026-08-16, Joel's "fix the
+issue" → "Merge the three"; Maelwys's farm critique, topic 64761).** farm_afk
+now prices only unattended damage: auras full credit, exactly ONE click on
+auto-fire (engine `afk_st_dps`/`afk_aoe_dps`; only scenario farm_afk reads
+them — no other content moves, proven by evaluate_first showing exactly 3
+movers). Battery `tools/test_afk_offense.py` (8 checks, all-aura negative
+control). The 3 farm_afk contexts re-converged + merged on verdicts (3
+supersede): Spines/FA 209.7 (+4x8 stands) · TW/Bio 274.5 (**label states
++4x8 unreachable — +1x8 only**) · Tanker FA/FM 294.5 (+3x8). Stability 28/0;
+the 25 non-farm contexts keep v44 cert stamps HONESTLY (v45 is farm_afk-
+scoped; no wave owed). ⚠ Their `certificate.evaluated` reads model 45 — that
+is eval metadata, not certification. ⚠ The 3 new winners are on SOLVER serve
+(recert drops layers; wave_pop hits the lab seed-parity gap on their new
+picks — now 4 contexts in that holdout with PB base). ⚠ Momentum settled
+game-first for scope: client encodes `kFastMode Source.Mode?` REDIRECTS to
+fast twin records; our TW rows price the SLOW form so nothing inflates;
+pricing it = the meter-class arc (ledgered). ⚠ At next release: smoke_gold
+model pin 44→45. Reply draft with real numbers:
+`Downloads\hero-companion-maelwys-farms-reply.txt` (Joel's hand).
+
 Otherwise nothing running. Live handoff detail:
 `coh-builder/RESUME-HERE.md`.
 
