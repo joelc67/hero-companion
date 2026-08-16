@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+## 0.12.41 — 2026-08-16 — Honest AFK farming, and set mechanics done right
+
+- **AFK farm builds are now judged on damage nobody has to be there for.**
+  The optimizer's AFK math was always strict about survival, but it still
+  credited full attack chains no AFK farmer can cast. Now AFK certification
+  counts damage auras, exactly one power on auto-fire, and nothing else. All
+  three AFK farm builds were re-certified from scratch under the corrected
+  model, and their labels state the honest tier: Spines / Fiery Aura keeps
+  +4x8; Titan Weapons / Bio Armor certifies at +1x8 with +4x8 stated as
+  unreachable; Fiery Aura / Fiery Melee lands at +3x8. Thanks to Maelwys on
+  the Homecoming forums for the report that drove this.
+- **A full re-certification of every recommended build is running after this
+  release.** The corrected model changes nothing measurable for the
+  non-farm builds (verified: zero score movement), but the full search is
+  re-running for all of them as belt and braces; any build that improves
+  ships in the next update.
 - **Powers your set grants for free are no longer treated as picks.** Bio
   Armor's three Adaptation stances (and the same class everywhere: Staff
   Fighting's Forms, Dual Pistols' ammo types, Seismic Shockwaves) were being
