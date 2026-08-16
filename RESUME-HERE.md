@@ -1,11 +1,13 @@
-# ✅ SESSION CLOSED CLEAN — 2026-08-15. START HERE.
+# ✅ SESSION CLOSED CLEAN — 2026-08-16 (early). START HERE.
 
 **Latest release: 🚀 v0.12.40 "Three field-report fixes"** (2026-08-15 night,
 stamp `756c41e`, both assets signed + API-verified, published 2026-08-16T03:11Z;
 installed copy runs it; liveness baseline v0.12.40, 0 diffs). Fixes all three
 defects from the 2026-08-15 in-app bug report (new-character clean start,
-save-then-close prompt, L1 creation pair on the bare payload shape). FP/
-whitelist submissions per runbook: Joel's hand, now for 0.12.40.
+save-then-close prompt, L1 creation pair on the bare payload shape — see the
+new buildPayload pitfall in CLAUDE.md). **✅ ANNOUNCED: Joel posted the
+0.12.40 reply on topic 64761 (2026-08-16).** FP/whitelist submissions per
+runbook: Joel's hand, now for 0.12.40.
 
 **Prior release: 🚀 v0.12.39 "Certified builds, served as certified"**
 (2026-08-15, stamp `b87d832`, both assets signed + API-verified). The release carries: the certified-slotting serve layer
@@ -16,18 +18,18 @@ traps from the 08-14/15 arc are in CLAUDE.md (certified-slotting section);
 full narrative in session-report.md.
 
 **FIRST MOVES NEXT SESSION:**
-1. **Joel's hand, pending: post `Downloads\hero-companion-0.12.39-post.txt`**
-   (announcement, em-dash-free) to topic 64761 + wherever he chooses.
-2. Check topic 64761 / Gmail for replies (incl. any Glacier Peak follow-up
+1. Check topic 64761 / Gmail for replies to Joel's 0.12.40 post + new bug
+   reports (the Ice/Ice reporter confirming, or Glacier Peak's late answer
    from the 0.12.38 thread). Triage vs docs/KNOWN-GAPS.md as always.
+   ⚠ The 0.12.39 standalone draft (`hero-companion-0.12.39-post.txt`) is
+   SUPERSEDED by the posted 0.12.40 reply — do not resurrect it.
+2. Joel's hand, pending: FP/whitelist submissions for 0.12.40 (runbook).
 3. ⛔ **BITDEFENDER IS REMOVED from this machine (Joel, 2026-08-15)** — every
    Bitdefender rule in CLAUDE.md is history; never diagnose a dead process
    as a Bitdefender kill. FP submissions no longer per-release routine.
 4. Open items: PB base is the one context with no slotting layer (lab
-   seed-parity holdout) · liveness baseline label rolls to v0.12.39 after a
-   tag fetch · the rest of the standing queue in CLAUDE.md CURRENT STATE.
-5. Nothing running, no scheduled tasks armed, tree clean at `bac0f993`
-   (push if not yet pushed: `! git -C C:/Users/joelc/code/coh-builder push`).
+   seed-parity holdout) · the standing queue in CLAUDE.md CURRENT STATE.
+5. Nothing running, no scheduled tasks armed, tree clean; graph fresh.
 
 ---
 

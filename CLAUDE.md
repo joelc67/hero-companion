@@ -1429,7 +1429,11 @@ Carries the three fixes from the 2026-08-15 Web3Forms report (Ice/Ice
 Brute): new-character state sweep (LAST_TOTALS/LAST_CALC), save-then-close
 dirty-flag push + confirmQuit recheck, and the L1 creation-pair heal fixed
 for the app's bare payload shape (`server._ps_of` — see the buildPayload
-pitfall). FP/whitelist submissions: Joel's hand, now for 0.12.40.**
+pitfall). ✅ ANNOUNCED: Joel posted the 0.12.40 reply on topic 64761
+(2026-08-16) — it supersedes the never-posted standalone 0.12.39 draft
+(`hero-companion-0.12.39-post.txt`), same rule as the 0.12.31/0.12.32
+drafts: do not resurrect. FP/whitelist submissions: Joel's hand, now for
+0.12.40.**
 
 Otherwise nothing running. Live handoff detail:
 `coh-builder/RESUME-HERE.md`.
