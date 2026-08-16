@@ -139,5 +139,31 @@ check("only ONE Poison power at level 1", (alk == 1) != (env == 1), f"Alkaloid@{
 check("a Sonic power shares level 1", shr == 1 or pl.get("Defender_Ranged.Sonic_Attack.Scream") == 1,
       f"Shriek@{shr}")
 
+# ── 6. field case 2026-08-15: the APP'S payload shape (full_name + pick_level
+# ONLY — buildPayload() sends no powerset_full_name / level_available). The heal
+# used to no-op its creation-pair logic on that shape and stamp BOTH primary T1s
+# onto level 1 (Ice/Ice Brute bug report). Test through the real payload shape,
+# never an enriched one — check 5 above passed for a year while the field failed,
+# because its dicts carried the solve's powerset_full_name.
+print("\n── payload-shape heal (no powerset_full_name in the dicts) ──")
+_brute = [("Brute_Melee.Ice_Melee.Frozen_Fists", 1),
+          ("Brute_Melee.Ice_Melee.Ice_Sword", 1),          # illegal: 2nd primary @1
+          ("Brute_Melee.Ice_Melee.Frost", 2),
+          ("Brute_Defense.Ice_Armor.Chilling_Embrace", 8),
+          ("Brute_Defense.Ice_Armor.Ice_Armor", 49)]       # secondary T1 dead last
+bare = [{"full_name": fn, "pick_level": lv, "slots": [None]} for fn, lv in _brute]
+check("_l1_seating_ok refuses two same-set L1s on the bare shape",
+      not srv._l1_seating_ok([dict(p) for p in bare], "Class_Brute"))
+calc = c.post("/build/calculate", json={"archetype": "Class_Brute",
+                                        "primary": "Brute_Melee.Ice_Melee",
+                                        "secondary": "Brute_Defense.Ice_Armor",
+                                        "powers": bare}).get_json()
+pl = calc.get("pick_levels") or {}
+l1 = sorted(k for k, v in pl.items() if v == 1)
+check("bare-shape heal returns exactly two L1 picks", len(l1) == 2, ", ".join(l1))
+check("bare-shape heal seats one PRIMARY + one SECONDARY at L1",
+      {k.rsplit(".", 1)[0] for k in l1} ==
+      {"Brute_Melee.Ice_Melee", "Brute_Defense.Ice_Armor"}, ", ".join(l1))
+
 print(f"\n══ {'ALL PASS' if not fails else f'{len(fails)} FAILURE(S): ' + ', '.join(fails)} ══")
 sys.exit(1 if fails else 0)

@@ -96,10 +96,14 @@ check("...and with no pending receipt", mod.state().pre === null);
 // ⚠ `_convHaul` is deliberately absent — it is a list the USER typed, and
 // dropping typed input on a swap destroys work. If it should reset, that is a
 // ruling, not a sweep's call; this check pins the decision so it cannot drift.
+// LAST_TOTALS/LAST_CALC joined 2026-08-15: the solve diff reads LAST_TOTALS as
+// its "before", so a new character's first solve printed a change-list against
+// the PREVIOUS character's build (field report: "huge list of changes… instead
+// of starting off clean").
 const swept = ["SELECTED_STAT", "SELECTED_POWER", "IMPORT_BEFORE", "IMPORTED_POWERS",
   "CHANGES_AVAILABLE", "SOLVE_INTENT", "PROPOSED_RESPEC", "LAST_TIERS",
   "PENDING_FOCUS", "INTERP_MATCHED", "INCARNATE_RECS", "INCARNATE_LOADOUTS",
-  "LAST_ASSESS_ROUTES"];
+  "LAST_ASSESS_ROUTES", "LAST_TOTALS", "LAST_CALC"];
 const resetBody = (() => {
   const s = src.indexOf("function resetBuildScopedState");
   return src.slice(s, src.indexOf("\n}", s));
@@ -115,6 +119,29 @@ check("NEGATIVE CONTROL: _convHaul is left alone (user-typed, not derived)",
 const before = mod.state().bar;
 mod.resetBuildScopedState();
 check("resetBuildScopedState refreshes the edit bar", mod.state().bar > before);
+
+// 8b. THE CLOSE PROMPT READS PUSHED STATE (field report 2026-08-15: pressed Save,
+// close still asked "Save before closing?"). Cleanliness changes OUTSIDE recompute
+// — saveProgress and autoSaveTick — must re-push, and confirmQuit must re-check
+// the truth before showing the dialog (the pushed flag can be stale either way).
+{
+  const snapSites = [...src.matchAll(/_lastSavedSnapshot\s*=\s*(buildSnapshot\(\)|snap)/g)];
+  check("cleanliness is marked in at least the save/load/autosave sites",
+        snapSites.length >= 3);
+  // every mark outside recompute is followed by a pushDirty() or a recompute()
+  // within the same function tail (recompute pushes at its end)
+  const stale = snapSites.filter(m => {
+    const tail = src.slice(m.index, m.index + 400);
+    return !/pushDirty\(\)|recompute\(\)/.test(tail);
+  });
+  check("every cleanliness mark re-pushes the window's close flag", stale.length === 0,
+        stale.length ? "unpushed site at src offset " + stale[0].index : "");
+  const cq = src.slice(src.indexOf("window.confirmQuit"),
+                       src.indexOf("window.confirmQuit") + 900);
+  check("confirmQuit re-checks hasUnsavedWork before asking",
+        cq.indexOf("hasUnsavedWork()") !== -1
+        && cq.indexOf("hasUnsavedWork()") < cq.indexOf("askDialog"));
+}
 
 // 9-10. STRUCTURAL: the guard has to wrap the WHOLE load, in a finally — a load
 // can throw (loadSave catches exactly that), and a leaked flag would silently

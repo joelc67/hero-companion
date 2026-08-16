@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+- **A new character truly starts clean.** Starting a new character right after
+  working on another could show a long "what changed" list comparing the new
+  build against the previous character's numbers. The previous character's
+  measurements are now cleared the moment you switch, so the first solve of a
+  new character reports only that character.
+- **Saving right before closing is respected.** Pressing Save and then closing
+  the window could still ask "Save before closing?" even though nothing was
+  unsaved. The close prompt now re-checks your actual saved state and only
+  asks when there is really something to lose.
+- **Level 1 picks are seated the way the game seats them.** Some builds showed
+  two level-1 powers from the same power set. In the game, character creation
+  gives you one pick from your primary set and one from your secondary — the
+  planner now always seats level 1 that way, and self-heals builds that were
+  saved with the old seating.
+
 ## 0.12.39 — 2026-08-15 — Certified builds, served as certified
 
 - **Four new fire-farm alternative champions.** The farm roster grows from one

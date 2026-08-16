@@ -215,6 +215,14 @@ function pushDirty() {
 // that something is. Whatever the answer, the app then closes — the native veto
 // is one-time, so nobody can be trapped in here by a dialog.
 window.confirmQuit = async function () {
+  // Re-check the TRUTH before asking: the window called us off the pushed flag,
+  // which can be stale (it is only re-pushed when something changes it). If
+  // nothing is actually unsaved, asking "Save before closing?" right after the
+  // user pressed Save reads as the save being ignored (field report 2026-08-15).
+  if (!hasUnsavedWork()) {
+    try { await api("/app/shutdown", postJson({})); } catch (e) { /* already going */ }
+    return;
+  }
   const who = (CURRENT_SAVE && CURRENT_SAVE.name)
     || (build.primary_display ? `this ${(build.archetype || "").replace("Class_", "")}` : "this character");
   // Three options — the native confirm's two forced a choice between saving
@@ -264,6 +272,9 @@ async function saveProgress() {
     try { localStorage.setItem("cohLastSave", res.id); } catch (e) {}
     syncNameField();
     _lastSavedSnapshot = buildSnapshot();   // mark clean so auto-save doesn't re-fire
+    pushDirty();   // ⚠ the window's close decision reads the PUSHED flag — without
+    // this a save-then-close still asked "Save before closing?" (field report
+    // 2026-08-15): pushDirty otherwise only runs on recompute, and saving isn't one.
     const s = $("gen-status"); if (s) s.textContent = `💾 Saved “${res.name}”. Resume it any time from Start over → Continue.`;
   }
 }
@@ -463,6 +474,7 @@ async function autoSaveTick() {
   if (res && res.ok) {
     CURRENT_SAVE = { id: res.id, name: res.name };
     _lastSavedSnapshot = snap;
+    pushDirty();   // same rule as saveProgress: cleanliness changed outside recompute
     const ind = $("autosave-ind");
     if (ind) ind.textContent = `auto-saved ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
   }
@@ -585,6 +597,13 @@ function resetBuildScopedState() {
   IMPORT_BEFORE = null;
   IMPORTED_POWERS = null;
   CHANGES_AVAILABLE = false;
+  // ⚠ LAST_TOTALS/LAST_CALC are the previous character's MEASURED numbers — the
+  // solve diff reads LAST_TOTALS as its "before" (solveBefore), so leaving them
+  // meant a brand-new character's first solve printed a change-list against the
+  // LAST character's build (field report 2026-08-15: "huge list of changes…
+  // instead of starting off clean"). Same measured family as the sweep above.
+  LAST_TOTALS = null;
+  LAST_CALC = null;
   SOLVE_INTENT = null;
   PROPOSED_RESPEC = null;
   LAST_TIERS = {};

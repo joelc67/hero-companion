@@ -3404,6 +3404,15 @@ def _at_canon(archetype):
     return archetype
 
 
+def _ps_of(p):
+    """A power dict's powerset full name. ⚠ Derived from full_name when the dict
+    doesn't carry powerset_full_name — the app's buildPayload() sends only
+    full_name/pick_level/slots, which made _l1_creation_pair silently no-op on
+    every real recompute payload and 'heal' two same-set picks onto level 1
+    (field report 2026-08-15, Ice/Ice Brute)."""
+    return p.get("powerset_full_name") or (p.get("full_name") or "").rsplit(".", 1)[0]
+
+
 def _l1_creation_pair(powers, archetype):
     """The two powers that belong at level 1: in game, character creation asks for ONE
     of the SECONDARY's first two powers FIRST, then ONE of the primary's first two
@@ -3420,7 +3429,7 @@ def _l1_creation_pair(powers, archetype):
     by_full = {p.get("full_name"): p for p in powers}
 
     def _pick(setnames):
-        for ps in {p.get("powerset_full_name") for p in powers}:
+        for ps in {_ps_of(p) for p in powers}:
             if ps in setnames:
                 for fn in _set_first_two(ps):        # prefer the T1 when both are in the build
                     if fn in by_full:
@@ -3452,7 +3461,7 @@ def _l1_seating_ok(powers, archetype):
     secs = {e["full_name"] for e in (groups.get("secondary") or [])}
     kinds = set()
     for p in l1:
-        ps = p.get("powerset_full_name")
+        ps = _ps_of(p)
         if p.get("full_name") not in _set_first_two(ps or ""):
             return False
         kinds.add("p" if ps in prims else ("s" if ps in secs else "?"))
@@ -3670,7 +3679,7 @@ def _l1_pick_errors(powers, archetype):
         return []
     groups = POWERSETS["by_archetype"].get(archetype) or {}
     have = {(p.get("full_name") or "") for p in powers or []}
-    build_sets = {p.get("powerset_full_name") for p in powers or []}
+    build_sets = {_ps_of(p) for p in powers or []}
     errs = []
     for label, grp in (("primary", "primary"), ("secondary", "secondary")):
         names = {e["full_name"] for e in (groups.get(grp) or [])}
