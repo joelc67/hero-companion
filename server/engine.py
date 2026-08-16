@@ -1282,6 +1282,9 @@ def _offense(build, totals, ctx):
         is_aoe_hit = is_aoe(p)                  # real geometry: hits an area (radius/effect_area)
         attacks.append({
             "name": p.get("display_name"),
+            # v45: the host's power_type (0 click / 1 auto / 2 toggle) — the AFK
+            # offense rule needs to know which rows fire with nobody at the keys.
+            "host_type": p.get("power_type"),
             "damage": round(dmg, 1),
             "damage_types": sorted(dtypes),
             "cast_time": round(cast, 2),
@@ -1319,6 +1322,7 @@ def _offense(build, totals, ctx):
             continue
         attacks.append({
             "name": p.get("display_name"), "damage": round(pdps, 1),
+            "host_type": p.get("power_type"),   # v45: a patch SUMMON is a click — AFK it competes for the one auto-fire
             "damage_types": [], "cast_time": 0.0, "recharge": 1.0,
             "end_cost": p.get("end_cost") or 0.0, "is_aoe": True,
             "dpa": None,                  # never part of the click chain
@@ -1339,10 +1343,26 @@ def _offense(build, totals, ctx):
     aoe = [a for a in attacks if a["is_aoe"] and a["dps_spam"]]
     aoe_dps = round(sum(a["dps_spam"] for a in aoe), 1)
     aoe_burst = round(sum(a["damage"] for a in aoe), 1)
+    # v45 AFK OFFENSE (Maelwys, topic 64761): with nobody at the keyboard, only
+    # toggles/autos (damage auras) fire freely, plus ONE click on auto-fire —
+    # the game allows exactly one. Every other click attack contributes nothing.
+    # The best click by cycled DPS takes the auto-fire slot (Burn and Irradiated
+    # Ground's patch rows are clicks and compete for it — how real AFK farmers
+    # actually run). The general aggregates above are untouched; the scenario
+    # picks these in first_principles when content is farm_afk.
+    _afk = [a for a in attacks if a.get("host_type") in (1, 2)]
+    _clicks = [a for a in attacks if a.get("host_type") not in (1, 2)]
+    _auto = max(_clicks, key=lambda a: a.get("dps_spam") or 0, default=None)
+    if _auto and (_auto.get("dps_spam") or 0) > 0:
+        _afk.append(_auto)
+    afk_aoe_dps = round(sum(a["dps_spam"] for a in _afk if a["is_aoe"] and a["dps_spam"]), 1)
+    afk_st_dps = round(sum(a["dps_spam"] for a in _afk if not a["is_aoe"] and a["dps_spam"]), 1)
     attacks.sort(key=lambda a: (a["dpa"] or 0), reverse=True)
     return {"attacks": attacks, "st_dps": round(st_dps, 1),
             "top_dpa": attacks[0]["dpa"], "attack_count": len(attacks),
             "aoe_dps": aoe_dps, "aoe_burst": aoe_burst, "aoe_count": len(aoe),
+            "afk_aoe_dps": afk_aoe_dps, "afk_st_dps": afk_st_dps,
+            "afk_autofire": (_auto or {}).get("name"),
             "chain_end_per_sec": round(chain_end_ps, 2)}    # endurance to attack nonstop
 
 
