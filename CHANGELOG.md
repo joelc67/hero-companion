@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.12.40 — 2026-08-15 — Three field-report fixes
+
 - **A new character truly starts clean.** Starting a new character right after
   working on another could show a long "what changed" list comparing the new
   build against the previous character's numbers. The previous character's
