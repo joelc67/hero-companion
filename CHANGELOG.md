@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+## 0.12.42 — 2026-08-17 — The promised re-certification, and Adaptation done right
+
+- **The full re-certification promised in 0.12.41 is complete.** Every one of
+  the 28 recommended builds re-ran the full overnight search under the
+  corrected model. Seven found genuinely better power choices and are
+  replaced — the Peacebringer Dwarf and Triform forms, the Warshade Dwarf,
+  the Crab Spider Soldier, Sentinel Fire/Willpower, Blaster Fire/Energy, and
+  Stalker Radiation/Dark Armor — and all seven ship with their exact
+  certified slotting. The other 21 defended their titles against a fresh
+  challenger and stand unchanged.
+- **Set-unlock powers are now taken for you.** Bio Armor's Adaptation, Staff
+  Fighting's Staff Mastery, Dual Pistols' Swap Ammo and friends are real
+  picks that switch on your set's core mechanic and cost no enhancement
+  slots — but the optimizer never chose them and the leveling guide never
+  offered them. Now: generated builds take them automatically, the leveling
+  guide offers them at their level, builds that lost their stances in the
+  0.12.41 cleanup receive the real Adaptation in a freed seat, and builds
+  simply missing one get a note in the Build Assistant pointing at it.
+
 ## 0.12.41 — 2026-08-16 — Honest AFK farming, and set mechanics done right
 
 - **AFK farm builds are now judged on damage nobody has to be there for.**
