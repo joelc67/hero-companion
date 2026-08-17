@@ -1366,7 +1366,13 @@ def _offense(build, totals, ctx):
             and a.get("name") not in MOMENTUM_GATED_DISPLAY]
     _clicks = [a for a in attacks if a.get("host_type") not in (1, 2)
                and a.get("name") not in MOMENTUM_GATED_DISPLAY]
-    _auto = max(_clicks, key=lambda a: a.get("dps_spam") or 0, default=None)
+    # v47: the auto-fire choice is judged at SPAWN scale, not per target — raw
+    # per-target dps_spam picked Boxing (10.7) over Burn (2.2 × the whole
+    # spawn), the opposite of every real AFK farmer. Weights mirror the
+    # scenario combination in first_principles (aoe × min(enemies,10) × 0.6
+    # vs st × 0.4); farm spawns are always ≥10, so the AoE factor is 6.0.
+    _auto = max(_clicks, key=lambda a: (a.get("dps_spam") or 0)
+                * (6.0 if a.get("is_aoe") else 0.4), default=None)
     if _auto and (_auto.get("dps_spam") or 0) > 0:
         _afk.append(_auto)
     afk_aoe_dps = round(sum(a["dps_spam"] for a in _afk if a["is_aoe"] and a["dps_spam"]), 1)

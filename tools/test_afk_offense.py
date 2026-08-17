@@ -43,7 +43,7 @@ def offense_for(picks):
 
 
 print("── model version ──")
-check("MODEL_VERSION is at least 46", fp.MODEL_VERSION >= 46, str(fp.MODEL_VERSION))
+check("MODEL_VERSION is at least 47", fp.MODEL_VERSION >= 47, str(fp.MODEL_VERSION))
 
 # ── 1. POSITIVE CONTROL: the reported TW/Bio farm_afk champion shape ─────────
 _AT, _PRI, _SEC = ("Class_Brute", "Brute_Melee.Titan_Weapons",
@@ -145,7 +145,46 @@ check("NEGATIVE CONTROL: no click attack -> the heal still gets the slot",
       s_heal.get("auto_fire_heal") == "Healing_Flames" and s_heal.get("auto_fire_hps") > 0,
       f"{s_heal.get('auto_fire_heal')} @ {s_heal.get('auto_fire_hps')}")
 
-n = 12
+# ── 7. v47: spawn-scale auto-fire + typed farm scenarios ─────────────────────
+print("\n── v47: spawn-scale auto-fire ──")
+_AT, _PRI, _SEC = ("Class_Brute", "Brute_Melee.Radiation_Melee",
+                   "Brute_Defense.Fiery_Aura")
+bb = offense_for(["Brute_Defense.Fiery_Aura.Burn", "Pool.Fighting.Boxing",
+                  "Brute_Defense.Fiery_Aura.Blazing_Aura"])
+check("Burn (spawn-wide) beats Boxing (single-target) for the auto-fire slot",
+      bb.get("afk_autofire") == "Burn", str(bb.get("afk_autofire")))
+
+print("\n── v47: typed farm scenarios ──")
+row = next(a for a in srv.PLAYABLE if a["name"] == "Class_Brute")
+ctx = srv._stat_ctx("Class_Brute")
+import engine as _eng
+import role_output as _ro2
+# fire-capped vs smash-capped synthetic totals through the REAL encounter_value
+def _tot(res_fire, res_smash):
+    t = {"defense": {}, "resistance": {"Fire": {"value": res_fire},
+                                       "Smashing": {"value": res_smash}},
+         "regeneration": {"value": 100.0}, "max_hp": {"value": 0.0},
+         "recharge": {"value": 0.0}, "offense": {"afk_aoe_dps": 10.0,
+                                                 "afk_st_dps": 0.0,
+                                                 "st_dps": 0, "aoe_dps": 10.0},
+         "bonus_extras": {}}
+    return t
+ev_fire = fp.encounter_value("Class_Brute", [], ctx, _tot(90, 0),
+                             scenario="farm_afk", arch_row=row, role_output_mod=None)
+ev_smash = fp.encounter_value("Class_Brute", [], ctx, _tot(0, 90),
+                              scenario="farm_afk", arch_row=row, role_output_mod=None)
+check("farm_afk survival reads FIRE resistance (90 fire >> 90 smash there)",
+      (ev_fire.get("availability") or 0) > (ev_smash.get("availability") or 0) * 2,
+      f"fire-capped {ev_fire.get('availability'):.3f} vs smash-capped {ev_smash.get('availability'):.3f}")
+ev_gen_a = fp.encounter_value("Class_Brute", [], ctx, _tot(0, 90),
+                              scenario="general", arch_row=row, role_output_mod=None)
+ev_gen_b = fp.encounter_value("Class_Brute", [], ctx, _tot(90, 0),
+                              scenario="general", arch_row=row, role_output_mod=None)
+check("NEGATIVE CONTROL: the general scenario still reads Smashing",
+      (ev_gen_a.get("availability") or 0) > (ev_gen_b.get("availability") or 0),
+      f"smash-capped {ev_gen_a.get('availability'):.3f} vs fire-capped {ev_gen_b.get('availability'):.3f}")
+
+n = 15
 print(f"\n{n} of {n} expected checks ran")
 print(f"══ {'ALL PASS' if not fails else f'{len(fails)} FAILURE(S): ' + ', '.join(fails)} ══")
 sys.exit(1 if fails else 0)
