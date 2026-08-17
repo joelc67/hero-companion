@@ -1,4 +1,29 @@
-# ✅ SESSION CLOSED CLEAN — 2026-08-16 (early). START HERE.
+# ✅ SESSION CLOSED CLEAN — 2026-08-17. START HERE.
+
+**Latest release: 🚀 v0.12.42** (2026-08-17, stamp `4342f6e`, both assets
+signed + API-verified; installed laptop copy runs post-release HEAD). The
+08-15..17 arc shipped THREE releases (0.12.40/41/42), models v45+v46, a full
+28-context recert (7 supersedes + refined layers), the never-pickable/
+set-unlock class, and closed the Maelwys farm review publicly — **Joel posted
+the combined reply on topic 64761 (2026-08-17)**. Full rulings in CLAUDE.md
+(Maelwys-farm-arc block + pitfalls); narrative in session-report.md.
+
+**FIRST MOVES NEXT SESSION:**
+1. Check topic 64761 / Gmail — Maelwys round 3, or new reports. Triage vs
+   docs/KNOWN-GAPS.md first, as always.
+2. **0.12.43 is owed** (ships the v46 labels — 0.12.42 in-app still shows
+   v45's; the GitHub notes already carry the dated correction). Cut on
+   Joel's word.
+3. Joel's rulings open: **tier-vs-objective** (the +4x8-passive TW/Bio
+   challenger that lost on contribution — certificate doctrine) · +5x8 tier
+   numbers · Stone Armor candidate (proc-valuation ruling first).
+4. FP/whitelist submissions for 0.12.41 + 0.12.42: Joel's hand.
+5. Nothing running, no scheduled tasks armed, all monitors closed, tree
+   clean and pushed; graph refreshed at close.
+
+---
+
+# ✅ (superseded) SESSION CLOSED CLEAN — 2026-08-16 (early).
 
 **Latest release: 🚀 v0.12.40 "Three field-report fixes"** (2026-08-15 night,
 stamp `756c41e`, both assets signed + API-verified, published 2026-08-16T03:11Z;

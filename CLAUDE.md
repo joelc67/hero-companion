@@ -1437,25 +1437,38 @@ pitfall). ✅ ANNOUNCED: Joel posted the 0.12.40 reply on topic 64761
 drafts: do not resurrect. FP/whitelist submissions: Joel's hand, now for
 0.12.40.**
 
-**✅ MODEL v45 (AFK OFFENSE) + FARM WAVE BANKED (2026-08-16, Joel's "fix the
-issue" → "Merge the three"; Maelwys's farm critique, topic 64761).** farm_afk
-now prices only unattended damage: auras full credit, exactly ONE click on
-auto-fire (engine `afk_st_dps`/`afk_aoe_dps`; only scenario farm_afk reads
-them — no other content moves, proven by evaluate_first showing exactly 3
-movers). Battery `tools/test_afk_offense.py` (8 checks, all-aura negative
-control). The 3 farm_afk contexts re-converged + merged on verdicts (3
-supersede): Spines/FA 209.7 (+4x8 stands) · TW/Bio 274.5 (**label states
-+4x8 unreachable — +1x8 only**) · Tanker FA/FM 294.5 (+3x8). Stability 28/0;
-the 25 non-farm contexts keep v44 cert stamps HONESTLY (v45 is farm_afk-
-scoped; no wave owed). ⚠ Their `certificate.evaluated` reads model 45 — that
-is eval metadata, not certification. ⚠ The 3 new winners are on SOLVER serve
-(recert drops layers; wave_pop hits the lab seed-parity gap on their new
-picks — now 4 contexts in that holdout with PB base). ⚠ Momentum settled
-game-first for scope: client encodes `kFastMode Source.Mode?` REDIRECTS to
-fast twin records; our TW rows price the SLOW form so nothing inflates;
-pricing it = the meter-class arc (ledgered). ⚠ At next release: smoke_gold
-model pin 44→45. Reply draft with real numbers:
-`Downloads\hero-companion-maelwys-farms-reply.txt` (Joel's hand).
+**✅ THE MAELWYS FARM ARC IS CLOSED PUBLICLY (2026-08-16/17: models v45+v46,
+three waves, two releases, one combined post — HIS ROUND-2 WAS RIGHT ON EVERY
+COUNT).** v45 = AFK offense (auras full credit + ONE click auto-fire; only
+scenario farm_afk reads `afk_st_dps`/`afk_aoe_dps`). v46 = his round-2 fixes:
+**one auto-fire, one ledger** (when the attack claims the slot, the sustain
+LABEL is passive-only — the v45 heal-on-autofire credit was a double-book) +
+**momentum gates** (`engine.MOMENTUM_GATED_DISPLAY` = Whirling Smash + Follow
+Through, client short help "Requires Momentum", censused 6 player records,
+keyed by DISPLAY name, re-census at PATCH-WATCH — zero AFK credit, active
+uptime stays the meter-class arc). ⚠ IG-was-a-toggle: our DATA was always
+right (power_type 2); only release-note PROSE was wrong — check the data
+before conceding a model error. Battery `tools/test_afk_offense.py` 12/12
+(⚠ its sustain checks need `srv._stat_ctx`, never a hand-rolled ctx — a stub
+ctx zeroed heal output and false-failed the negative control).
+**Roster after the v45+v46 waves:** Spines/FA 243.2 (**honest +0x8 passive**)
+· TW/Bio 274.5 (+3x8) · Tanker FA/FM 294.5 (+2x8) — labels refreshed via
+`tools/refresh_afk_labels.py` (the designed relabel path; no wave needed for
+label-only changes). Stability 28/0. ⚠⚠ **THE OPEN DESIGN QUESTION (Joel's,
+stated publicly): tier-vs-objective** — the v46 TW/Bio challenger hit +4x8
+FULLY-PASSIVE (38.9 HP/s) and LOST on contribution (120.6 vs 274.5); labels
+are floors, not combo ceilings; whether the AFK tier joins the farm objective
+is a certificate-doctrine ruling. Ledgered with it: the +5x8 tier (needs +5
+enemy numbers) and the Stone Armor candidate (Brimstone, proc-valuation
+ruling). ⚠ v0.12.42 SHIPS v45 labels — its GitHub notes carry a dated
+correction section (gh release edit, Joel's word, 2026-08-17); **the v46
+labels ride the NEXT release (0.12.43 owed for that alone)**. ⚠ At that
+release: smoke_gold model pin 45→46. ⚠ Stamp noise: the quick check reads
+"28 need update" on STAMP alone under v46 (scores unmoved; 21 keeps just
+DEFENDED under a full v45 search) — do not read it as a wave owed.
+✅ ANNOUNCED: Joel posted the combined round-2 reply + 0.12.41/0.12.42
+announcement on topic 64761 (2026-08-17) — supersedes ALL prior drafts
+(maelwys-farms-reply, 0.12.41-post; never resurrect).
 
 Otherwise nothing running. Live handoff detail:
 `coh-builder/RESUME-HERE.md`.
