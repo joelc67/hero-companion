@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.12.45 — 2026-08-17 — AFK certification reads the build
+
 - **AFK sustain now shapes the farm builds themselves (model v49).** With
   the honest gate in place, the AFK requirement joined the optimizer's
   objective: away-from-keyboard survival counts only what runs itself
