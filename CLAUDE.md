@@ -1493,6 +1493,36 @@ bonuses count ZERO, include_in_totals from power_type, and the inherents
 section). Maelwys's examples under v47: Stone 244.5 @ +4x8 · FA 115.1 @
 +3x8 — his sheets and our model agree.
 
+**✅ v48 (2026-08-17 night, Maelwys round 4, Joel: "go with what fixes his
+response"): THE AFK TIER GATE READS THE BUILD NOW — and the +4x8 TW/Bio claim
+is WITHDRAWN.** He audited the shipped champions.json and was right on the one
+that matters: the AFK ladder was ONE absolute (`AFK_SUSTAIN_ASK_HPS = 37.0`,
+his reference number at capped Fire res + softcap def) scaled only by critter
+accuracy — it never read the build, so tiers ANTI-CORRELATED with mitigation
+(90%-res builds tier 0/2, the 63%-res TW/Bio tier 4 on regen alone).
+`afk_sustain_assessment` now computes per-shift requirements from the build's
+OWN typed mitigation via the score side's v47 arithmetic (`incoming_hit` +
+`_def_against`, DDR erosion, res capped 90; toggle −ToHit deliberately not
+credited — conservative, stated), prints the basis on the label, and stamps a
+`mitigation` block on the cert. Result: **all three farm_afk labels honestly
+read "active play only"** (relabeled via refresh_afk_labels; scores
+byte-identical — evaluate_first all UNAFFECTED Δ0.0; stamp noise v4x<48 is the
+documented label-bump artifact, no wave owed). heal_rates rows carry
+`counted:` so the ledger can't be misread as summing click heals (it never
+did — his (i) was that misread; his (ii)/(iv) were internal-name misreads:
+`Sweeping_Strike` displays "Titan Sweep", Bio `Adaptation` displays "Evolving
+Armor"). Batteries: test_afk_offense 21/21 (+6 v48 checks) · demo 24/24 ·
+slotting 11/11 · validate 28/28. smoke_gold model pin 47→48. Changelog staged
+Unreleased; **release owed for the labels (carries the withheld v46 labels
+too)**. Reply draft: `Downloads\maelwys-round4-reply.txt` (posting = Joel).
+⚠ The 08-17 tier override's premise (the +4x8 label) is gone — the merged
+TW/Bio champion STAYS (scores unmoved) but whether the override stands is
+JOEL'S open ruling. ⚠ His two UI gaps queued: no champion-build surface (he
+read _internal by hand), no from-empty manual build path (generate-then-delete
+is the only route today). ⚠ The three farm_afk slotting layers remain dropped
+since the 08-17 merges (solver serve, honest) — re-refine wave owed at Joel's
+word.
+
 Otherwise nothing running. Live handoff detail:
 `coh-builder/RESUME-HERE.md`.
 

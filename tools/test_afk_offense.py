@@ -184,7 +184,44 @@ check("NEGATIVE CONTROL: the general scenario still reads Smashing",
       (ev_gen_a.get("availability") or 0) > (ev_gen_b.get("availability") or 0),
       f"smash-capped {ev_gen_a.get('availability'):.3f} vs fire-capped {ev_gen_b.get('availability'):.3f}")
 
-n = 15
+print("\n── v48: build-relative AFK requirements (Maelwys round 4) ──")
+# Identical regen, different Fire mitigation, through the REAL assessment:
+# the res-capped build must out-tier the leaky one, and the requirement rows
+# must scale with what the build actually resists.
+def _sus(res_fire, de):
+    t = {"defense": {"Melee": {"value": de}, "AoE": {"value": de},
+                     "Fire": {"value": de}},
+         "resistance": {"Fire": {"value": res_fire}},
+         "regeneration": {"value": 400.0}, "max_hp": {"value": 0.0},
+         "heal_strength": {"value": 0.0}, "offense": {},
+         "bonus_extras": {}}
+    return fp.afk_sustain_assessment([], t, row, ctx, role_output_mod=None)
+s_cap = _sus(90, 45)    # the reference farmer: capped res, softcapped def
+s_leak = _sus(60, 45)   # same everything, 60% Fire res
+check("capped-res reference farmer certifies a HIGHER tier than the 60%-res twin",
+      (s_cap.get("tier") if s_cap.get("tier") is not None else -1)
+      > (s_leak.get("tier") if s_leak.get("tier") is not None else -1),
+      f"90% res tier={s_cap.get('tier')} vs 60% res tier={s_leak.get('tier')}")
+check("the +4x8 requirement READS the build (60% res asks ~4x the capped ask)",
+      s_leak["requirements"][4] > s_cap["requirements"][4] * 3.5,
+      f"{s_leak['requirements'][4]} vs {s_cap['requirements'][4]}")
+check("the certificate states the mitigation basis it judged against",
+      (s_cap.get("mitigation") or {}).get("res_pct") == 90.0
+      and "resistance" in s_cap.get("label", ""),
+      str(s_cap.get("mitigation")))
+s_soft = _sus(90, 45); s_naked = _sus(90, 0)
+check("defense moves the requirement too (softcap vs no defense)",
+      s_naked["requirements"][4] > s_soft["requirements"][4] * 2,
+      f"{s_naked['requirements'][4]} vs {s_soft['requirements'][4]}")
+check("ledger rows carry counted flags and none are counted without auto-fire",
+      all(h.get("counted") is False for h in s_cap.get("heal_rates", [])) or
+      s_cap.get("heal_rates") == [],
+      str(s_cap.get("heal_rates")))
+check("sustain still equals regen when nothing holds the auto-fire slot",
+      abs(s_cap["sustain_hps"] - s_cap["regen_hps"]) < 0.01,
+      f"{s_cap['sustain_hps']} vs {s_cap['regen_hps']}")
+
+n = 21
 print(f"\n{n} of {n} expected checks ran")
 print(f"══ {'ALL PASS' if not fails else f'{len(fails)} FAILURE(S): ' + ', '.join(fails)} ══")
 sys.exit(1 if fails else 0)

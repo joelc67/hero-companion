@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+- **AFK farm tiers now judge the build in front of them (model v48).** The
+  AFK certification ladder was one fixed requirement (37 HP/s at +4x8) that
+  silently assumed capped Fire resistance and softcapped defense — it never
+  read the build's own numbers, so a 63% Fire-resistance build could claim a
+  higher AFK tier than two res-capped builds with similar regeneration.
+  Found by Maelwys (thank you again). The requirement is now computed from
+  the build's own Fire resistance and defense using the same arithmetic the
+  scoring model already uses, and the label states the numbers it judged
+  against. Under the honest gate, **no current farm build sustains AFK play
+  at any shift** — all three AFK labels now read "active play only",
+  including the Titan Weapons / Bio Armor build previously labeled +4x8
+  passive. That claim is withdrawn. Scores are unchanged (this fixes the
+  label, not the scoring).
+- **The certificate's heal ledger says what it counted.** Click heals were
+  listed for information but never summed into sustain; each row now carries
+  an explicit counted flag so the ledger cannot be read as crediting a heal
+  no absent player can click.
+
 ## 0.12.44 — 2026-08-17 — Fire farms judged as fire farms
 
 - **Farm scenarios now deal fire damage.** The survival math used to judge

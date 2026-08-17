@@ -28527,25 +28527,28 @@
     }
    },
    "afk_sustain": {
-    "hp": 2065.2,
-    "regen_hps": 27.28,
+    "hp": 2095.3,
+    "regen_hps": 29.99,
     "auto_fire_heal": null,
     "auto_fire_hps": 0.0,
     "heal_rates": [
      {
       "power": "Healing_Flames",
       "self_hps": 10.54,
-      "interruptible": false
-     },
-     {
-      "power": "Aid_Self",
-      "self_hps": 16.53,
-      "interruptible": true
+      "interruptible": false,
+      "counted": false
      },
      {
       "power": "Rise_of_the_Phoenix",
       "self_hps": 0.56,
-      "interruptible": false
+      "interruptible": false,
+      "counted": false
+     },
+     {
+      "power": "Aid_Self",
+      "self_hps": 16.53,
+      "interruptible": true,
+      "counted": false
      }
     ],
     "assumed_accolades": [
@@ -28556,16 +28559,22 @@
     "accolade_hp": 321.3,
     "buff_proc_regen_pct": 0.0,
     "buff_proc_detail": [],
-    "sustain_hps": 27.28,
+    "sustain_hps": 29.99,
     "requirements": {
-     "0": 26.4,
-     "1": 29.1,
-     "2": 31.7,
-     "3": 34.4,
-     "4": 37.0
+     "0": 52.7,
+     "1": 57.9,
+     "2": 63.2,
+     "3": 68.5,
+     "4": 73.7
     },
-    "tier": 0,
-    "label": "AFK-certified at +0x8 (sustain 27.3 HP/s: regen 27.3 (auto-fire is spent on the attack \u2014 sustain is fully passive, the way AFK farming actually runs)); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed). Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
+    "mitigation": {
+     "dmg_type": "Fire",
+     "res_pct": 90.0,
+     "def_melee_pct": 30.2,
+     "def_ranged_pct": 34.3
+    },
+    "tier": null,
+    "label": "Does not sustain AFK play at any shift (30.0 HP/s vs 53 HP/s taken at +0x8 through this build's 90% Fire resistance and 30%/34% melee/ranged defense) \u2014 active play only. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
    },
    "evaluated": {
     "against": "model 47, 2026-08-17",
@@ -28635,19 +28644,22 @@
     "auto_fire_hps": 0.0,
     "heal_rates": [
      {
+      "power": "Aid_Self",
+      "self_hps": 20.2,
+      "interruptible": true,
+      "counted": false
+     },
+     {
       "power": "Healing_Flames",
-      "self_hps": 12.3,
-      "interruptible": false
+      "self_hps": 12.88,
+      "interruptible": false,
+      "counted": false
      },
      {
       "power": "Rise_of_the_Phoenix",
-      "self_hps": 0.66,
-      "interruptible": false
-     },
-     {
-      "power": "Aid_Self",
-      "self_hps": 19.28,
-      "interruptible": true
+      "self_hps": 0.69,
+      "interruptible": false,
+      "counted": false
      }
     ],
     "assumed_accolades": [
@@ -28660,14 +28672,20 @@
     "buff_proc_detail": [],
     "sustain_hps": 33.08,
     "requirements": {
-     "0": 26.4,
-     "1": 29.1,
-     "2": 31.7,
-     "3": 34.4,
-     "4": 37.0
+     "0": 57.4,
+     "1": 63.1,
+     "2": 68.8,
+     "3": 74.6,
+     "4": 80.3
     },
-    "tier": 2,
-    "label": "AFK-certified at +2x8 (sustain 33.1 HP/s: regen 33.1 (auto-fire is spent on the attack \u2014 sustain is fully passive, the way AFK farming actually runs)); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed). Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +375 HP)."
+    "mitigation": {
+     "dmg_type": "Fire",
+     "res_pct": 90.0,
+     "def_melee_pct": 29.6,
+     "def_ranged_pct": 31.8
+    },
+    "tier": null,
+    "label": "Does not sustain AFK play at any shift (33.1 HP/s vs 57 HP/s taken at +0x8 through this build's 90% Fire resistance and 30%/32% melee/ranged defense) \u2014 active play only. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +375 HP)."
    },
    "evaluated": {
     "against": "model 47, 2026-08-17",
@@ -28731,20 +28749,22 @@
     }
    },
    "afk_sustain": {
-    "hp": 2536.6,
-    "regen_hps": 39.07,
+    "hp": 2276.1,
+    "regen_hps": 32.18,
     "auto_fire_heal": null,
     "auto_fire_hps": 0.0,
     "heal_rates": [
      {
       "power": "DNA_Siphon",
       "self_hps": 2.9,
-      "interruptible": false
+      "interruptible": false,
+      "counted": false
      },
      {
       "power": "Aid_Self",
       "self_hps": 15.74,
-      "interruptible": true
+      "interruptible": true,
+      "counted": false
      }
     ],
     "assumed_accolades": [
@@ -28755,16 +28775,22 @@
     "accolade_hp": 321.3,
     "buff_proc_regen_pct": 0.0,
     "buff_proc_detail": [],
-    "sustain_hps": 39.07,
+    "sustain_hps": 32.18,
     "requirements": {
-     "0": 26.4,
-     "1": 29.1,
-     "2": 31.7,
-     "3": 34.4,
-     "4": 37.0
+     "0": 88.1,
+     "1": 97.0,
+     "2": 105.8,
+     "3": 114.6,
+     "4": 123.4
     },
-    "tier": 4,
-    "label": "AFK-certified at +4x8: 39.1 HP/s sustained (regen 39.1 (auto-fire is spent on the attack \u2014 sustain is fully passive, the way AFK farming actually runs)) meets the 37 HP/s asteroid worst case. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
+    "mitigation": {
+     "dmg_type": "Fire",
+     "res_pct": 65.7,
+     "def_melee_pct": 41.4,
+     "def_ranged_pct": 41.4
+    },
+    "tier": null,
+    "label": "Does not sustain AFK play at any shift (32.2 HP/s vs 88 HP/s taken at +0x8 through this build's 66% Fire resistance and 41%/41% melee/ranged defense) \u2014 active play only. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
    },
    "evaluated": {
     "against": "model 47, 2026-08-17",

@@ -31,7 +31,7 @@ try:
     meta = json.load(urllib.request.urlopen(base+"/meta", timeout=5))
     print("version:", meta["app_version"], "model:", meta["model_version"], "packaged:", meta["packaged"])
     # Update these pins per release (like smoke_release's version expectation).
-    ok_all = meta["app_version"] == "0.12.44" and meta["model_version"] == 47
+    ok_all = meta["app_version"] == "0.12.44" and meta["model_version"] == 48
     if not ok_all:
         print("  VERSION/MODEL PIN MISMATCH — update the pins for this release")
     # THE GOLD TEST: every champion context, served to a frozen END USER via autopick.
