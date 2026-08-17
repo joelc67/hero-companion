@@ -81,9 +81,21 @@ def build():
         "**Stack meters** - BuildStatic, BuildFrenzy, Contaminated, "
         "Disintegrate, the combo systems, Bio's stance: one scenario constant "
         "each, or one ruling for the class. Titan Weapons' Momentum is this "
-        "class too, and our TW damage rows carry NO gate at all - AoEs that "
-        "need Momentum in game (Maelwys, topic 64761, 2026-08-16) are priced "
-        "as if free.",
+        "class too: Whirling Smash and Follow Through are usable ONLY inside "
+        "the Momentum window (client short help 'Requires Momentum'; v46 "
+        "zeroes them for AFK), so active TW farming pays a structural tax - "
+        "the set cannot chain high-cap AoEs freely (Maelwys, topic 64761). "
+        "Pricing the fast-form uptime + the gate for ACTIVE play is the "
+        "remaining piece.",
+        "**The +5x8 AFK tier** - Maelwys: +5x8 (50+1 vs 55 in AE) is the real "
+        "ceiling players farm at and both Fiery Aura builds can pass it with "
+        "fully passive builds. Our sustain ladder stops at +4x8; extending it "
+        "needs the +5 enemy accuracy/DPS numbers for the scenario table.",
+        "**Stone Armor farm candidate** - passively caps res+def with Rooted "
+        "regen, Brimstone damage procs and Minerals recharge (Maelwys's "
+        "RadM/Stone example: 49 HP/s passive, Atom Smasher auto-fire). "
+        "Blocked on the aura/patch proc valuation ruling; certify a Stone "
+        "Armor alternative when that lands.",
         "**AFK offense is unmodelled** (Maelwys 2026-08-16, confirmed in our "
         "artifacts): the farm_afk SUSTAIN ledger correctly allows regen + ONE "
         "non-interruptible auto-fire power, but the OFFENSE channel still "
