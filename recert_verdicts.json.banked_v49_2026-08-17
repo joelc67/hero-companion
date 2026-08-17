@@ -1,0 +1,5 @@
+{
+ "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk": "supersede",
+ "Class_Brute|Brute_Melee.Titan_Weapons|Brute_Defense.Bio_Organic_Armor|farm_afk": "supersede",
+ "Class_Tanker|Tanker_Defense.Fiery_Aura|Tanker_Melee.Fiery_Melee|farm_afk": "supersede"
+}

@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- **AFK sustain now shapes the farm builds themselves (model v49).** With
+  the honest gate in place, the AFK requirement joined the optimizer's
+  objective: away-from-keyboard survival counts only what runs itself
+  (regeneration, toggles, and the one auto-fire power — click heals no
+  longer count there), judged over a ten-minute AFK stint instead of a
+  60-second window. All three AFK farm builds re-converged under the new
+  physics and improved sharply (Spines/Fiery Aura canonical 45.5 → 499.1;
+  Titan Weapons/Bio 15.6 → 292.6; Fiery Aura/Fiery Melee 25.1 → 202.7),
+  now favoring capped Fire resistance and near-softcap Fire defense. The
+  honest bottom line stays stated on every label: none of the three
+  sustains true AFK play at any shift — the labels say exactly what each
+  build takes and holds. Other content types are unchanged.
+
 - **AFK farm tiers now judge the build in front of them (model v48).** The
   AFK certification ladder was one fixed requirement (37 HP/s at +4x8) that
   silently assumed capped Fire resistance and softcapped defense — it never
