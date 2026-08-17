@@ -1523,6 +1523,36 @@ is the only route today). ⚠ The three farm_afk slotting layers remain dropped
 since the 08-17 merges (solver serve, honest) — re-refine wave owed at Joel's
 word.
 
+**✅ v49 (2026-08-17 night, Joel: "Make the rule and run the wave") — AFK
+SUSTAIN JOINED THE FARM OBJECTIVE, wave banked same evening.** The
+tier-vs-objective question is CLOSED. Mechanism (farm_afk only, others
+byte-identical, pinned): survival is PASSIVE-ONLY (`_afk_autofire_heal` = ONE
+copy of the auto-fire selection rule shared by ledger and score; click heals
+excluded, negative control keeps general crediting them) and the window is a
+600s AFK STINT (was 60s) — non-sustaining builds collapse in availability, so
+the requirement rides physics, not a ban list. Wave: 3 workers / 20.7 min /
+3/3 SUPERSEDE (gains +325/+5/+178), merged, layers refined+banked for
+Spines/FA (499.1) + TW/Bio (292.6); **FA/FM refined layout would not seat —
+the lab seed-parity class now holds THREE contexts (Tanker Inv/SS, PB base,
+Tanker FA/FM)**. Labels restamped FROM THE SERVED BUILDS (banked layer or
+live solve — the wave cert's build is NOT what serves once a layer banks; a
+label written at cert time can lie the moment banking changes the serve).
+⚠ **OPEN TENSION, Joel's word pending: the score-optimal banked layers traded
+away the wave builds' tiers 2/0 → None** (+4x8 sustain is worth ~12×
+availability but is unreachable for all three combos, so tiers 0-2 carry
+little weight at scenario shift 4 — the objective chose score, per the
+ruling; serving the tier-holding wave builds instead is a one-word override).
+⚠ `wave_pop` keys are ONE comma-separated argv — multi-arg invocations
+silently run only the first key. ⚠ recert_verdicts preserved
+`.banked_v49_2026-08-17` (overwrite trap). Batteries: afk_offense 25/25 ·
+demo 24/24 · slotting 11/11 · validate 28/28 · stability 28/0. Integrated at
+stamp `05b6d9f` (smoke + gold PASS, model pin 49, installed copy mirrored +
+relaunched, wizard explainer verified through the real path + real window via
+computer-use). Pushed `769ffed7`. **Release owed: carries v48 (honest gate,
++4x8 claim withdrawn) + v49 (objective + re-converged champions); changelog
+staged; reply draft `Downloads\maelwys-round4-reply.txt` updated with the v49
+paragraph — posting is Joel's hand.**
+
 Otherwise nothing running. Live handoff detail:
 `coh-builder/RESUME-HERE.md`.
 
