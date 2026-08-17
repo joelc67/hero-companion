@@ -1556,7 +1556,14 @@ paragraph — posting is Joel's hand.**
 Otherwise nothing running. Live handoff detail:
 `coh-builder/RESUME-HERE.md`.
 
-**Latest release: 🚀 v0.12.38 "The window that says why"** (2026-08-11, stamp
+**Latest release: 🚀 v0.12.45 "AFK certification reads the build"** (2026-08-17,
+stamp `296481e`, models v48+v49, both assets signed CN=Joel Andrew Chambers,
+API-verified published 19:35Z; smoke + gold 28/28 on the frozen exe; installed
+copy mirrored + relaunched at 0.12.45/model 49; liveness baseline v0.12.44 → 0
+diffs, rolls to v0.12.45 next check; notes state data currency July 7 2026 +
+the withdrawn +4x8 claim). FP/whitelist submissions per signing runbook: Joel's
+hand, now for 0.12.45. Reply draft `Downloads\maelwys-round4-reply.txt` posting
+= Joel. Prior-release note kept for history: **v0.12.38 "The window that says why"** (2026-08-11, stamp
 `92bc365`, signed, API-verified; installed copy mirrored + relaunched): an
 engine that fails to start is CAPTURED (traceback to app.log, reason held for
 the UI) and the window shows a diagnosis page instead of navigating to a dead
