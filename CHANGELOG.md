@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 0.12.43 — 2026-08-17 — Honest AFK labels, in the app
+
+- **The corrected AFK farm labels from this morning's forum review now show
+  in the app.** The AFK sustain math no longer credits a heal on auto-fire
+  while the damage math spends that same single slot on an attack: sustain
+  is scored fully passive, the way AFK farming actually runs, and
+  Momentum-gated attacks (Whirling Smash, Follow Through) no longer count
+  toward AFK at all. The labels now read: Spines / Fiery Aura +0x8 passive
+  (re-certified with better power choices), Titan Weapons / Bio Armor +3x8
+  passive, Fiery Aura / Fiery Melee +2x8 passive. These are floors for the
+  combos, not ceilings — the open question of certifying to the AFK tier
+  itself is tracked publicly in the known-gaps list. Thanks again to Maelwys.
+
 ## 0.12.42 — 2026-08-17 — The promised re-certification, and Adaptation done right
 
 - **The full re-certification promised in 0.12.41 is complete.** Every one of
