@@ -92,10 +92,11 @@ check("auras + 2 clicks: AFK credits ONE click, general credits both",
 
 # ── 4. the scenario gate: ONLY farm_afk reads the AFK aggregates ─────────────
 src = open(os.path.join(ROOT, "server", "first_principles.py"), encoding="utf-8").read()
-i = src.index('if scenario == "farm_afk":')
-seg = src[i:i + 400]
+# v49 added a second farm_afk gate (passive-only survival), so scan EVERY gate
+_segs = [src[i:i + 400] for i in range(len(src))
+         if src.startswith('if scenario == "farm_afk":', i)]
 check("first_principles gates on scenario farm_afk and reads afk_ aggregates",
-      "afk_st_dps" in seg and "afk_aoe_dps" in seg)
+      any("afk_st_dps" in s and "afk_aoe_dps" in s for s in _segs))
 check("the general branch still reads the general aggregates",
       'off.get("st_dps")' in src and 'off.get("aoe_dps")' in src)
 
@@ -221,7 +222,63 @@ check("sustain still equals regen when nothing holds the auto-fire slot",
       abs(s_cap["sustain_hps"] - s_cap["regen_hps"]) < 0.01,
       f"{s_cap['sustain_hps']} vs {s_cap['regen_hps']}")
 
-n = 21
+print("\n── v49: AFK sustain joins the farm objective ──")
+# (a) the 600s stint: a passively-sustaining build holds availability, a
+# leaky one collapses — through the REAL encounter_value.
+def _tot49(res_fire, de, regen):
+    return {"defense": {"Melee": {"value": de}, "AoE": {"value": de},
+                        "Fire": {"value": de}},
+            "resistance": {"Fire": {"value": res_fire}},
+            "regeneration": {"value": regen}, "max_hp": {"value": 0.0},
+            "recharge": {"value": 0.0},
+            "offense": {"afk_aoe_dps": 10.0, "afk_st_dps": 0.0,
+                        "st_dps": 0, "aoe_dps": 10.0},
+            "bonus_extras": {}}
+ev_hold = fp.encounter_value("Class_Brute", [], ctx, _tot49(90, 45, 800),
+                             scenario="farm_afk", arch_row=row, role_output_mod=None)
+ev_leak = fp.encounter_value("Class_Brute", [], ctx, _tot49(60, 45, 800),
+                             scenario="farm_afk", arch_row=row, role_output_mod=None)
+check("sustaining build holds availability; 60%-res twin collapses in the stint",
+      (ev_hold.get("availability") or 0) > 0.85
+      and (ev_leak.get("availability") or 0) < 0.5 * (ev_hold.get("availability") or 1),
+      f"hold {ev_hold.get('availability'):.3f} vs leak {ev_leak.get('availability'):.3f}")
+# (b) click heals are NOT survival at farm_afk when the attack claims
+# auto-fire: same totals, heal power present vs absent — identical availability.
+tot_hf = c2.post("/build/calculate", json={"archetype": _AT, "primary": _PRI,
+    "secondary": _SEC, "powers": [dict(p) for p in powers_atk]}).get_json()
+tot_hf = tot_hf.get("totals") or tot_hf
+ctx_hf = srv._stat_ctx(_AT); ctx_hf["power_by_full"] = srv.POWER_BY_FULL
+row_b = next(a for a in srv.PLAYABLE if a["name"] == _AT)
+ev_heal = fp.encounter_value(_AT, powers_atk, ctx_hf, tot_hf,
+                             scenario="farm_afk", arch_row=row_b, role_output_mod=_ro)
+ev_noheal = fp.encounter_value(_AT, [p for p in powers_atk
+                                     if not p["full_name"].endswith("Healing_Flames")],
+                               ctx_hf, tot_hf,
+                               scenario="farm_afk", arch_row=row_b, role_output_mod=_ro)
+check("a click heal buys NOTHING at farm_afk while the attack owns auto-fire",
+      abs((ev_heal.get("availability") or 0) - (ev_noheal.get("availability") or 0)) < 1e-9,
+      f"{ev_heal.get('availability'):.4f} vs {ev_noheal.get('availability'):.4f}")
+ev_gen_heal = fp.encounter_value(_AT, powers_atk, ctx_hf, tot_hf,
+                                 scenario="general", arch_row=row_b, role_output_mod=_ro)
+ev_gen_no = fp.encounter_value(_AT, [p for p in powers_atk
+                                     if not p["full_name"].endswith("Healing_Flames")],
+                               ctx_hf, tot_hf,
+                               scenario="general", arch_row=row_b, role_output_mod=_ro)
+check("NEGATIVE CONTROL: the general scenario still credits the click heal",
+      (ev_gen_heal.get("availability") or 0) > (ev_gen_no.get("availability") or 0),
+      f"{ev_gen_heal.get('availability'):.4f} vs {ev_gen_no.get('availability'):.4f}")
+# (c) no-Burn build: the heal takes auto-fire and DOES count at farm_afk —
+# mitigated synthetic totals (no afk_autofire claimed) so the heal is visible
+tot_mit = _tot49(90, 45, 100)
+ev_afk_h = fp.encounter_value(_AT, powers_heal, ctx_hf, tot_mit,
+                              scenario="farm_afk", arch_row=row_b, role_output_mod=_ro)
+ev_afk_h0 = fp.encounter_value(_AT, [], ctx_hf, tot_mit,
+                               scenario="farm_afk", arch_row=row_b, role_output_mod=_ro)
+check("with no click attack, the auto-fire HEAL is survival at farm_afk",
+      (ev_afk_h.get("availability") or 0) > (ev_afk_h0.get("availability") or 0),
+      f"{ev_afk_h.get('availability'):.4f} vs {ev_afk_h0.get('availability'):.4f}")
+
+n = 25
 print(f"\n{n} of {n} expected checks ran")
 print(f"══ {'ALL PASS' if not fails else f'{len(fails)} FAILURE(S): ' + ', '.join(fails)} ══")
 sys.exit(1 if fails else 0)
