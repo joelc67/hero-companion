@@ -37,7 +37,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 2306.73
    },
@@ -1415,7 +1415,7 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 2718.27
    }
@@ -2607,7 +2607,7 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 2518.67
    }
@@ -3793,7 +3793,7 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 2376.3
    }
@@ -4970,7 +4970,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 1685.53
    },
@@ -6155,7 +6155,7 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 1499.75
    }
@@ -7507,7 +7507,7 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 1229.63
    }
@@ -8870,8 +8870,8 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
-    "verdict": "moved",
+    "against": "model 46, 2026-08-17",
+    "verdict": "unaffected",
     "canonical_score": 397.22
    }
   },
@@ -10133,8 +10133,8 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
-    "verdict": "moved",
+    "against": "model 46, 2026-08-17",
+    "verdict": "unaffected",
     "canonical_score": 1419.6
    }
   },
@@ -11466,7 +11466,7 @@
    "primary_converged": true,
    "picks_filled": 2,
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 2155.98
    },
@@ -12692,7 +12692,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 1336.67
    },
@@ -14032,8 +14032,8 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
-    "verdict": "moved",
+    "against": "model 46, 2026-08-17",
+    "verdict": "unaffected",
     "canonical_score": 1392.28
    }
   },
@@ -15334,8 +15334,8 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
-    "verdict": "moved",
+    "against": "model 46, 2026-08-17",
+    "verdict": "unaffected",
     "canonical_score": 1861.89
    }
   },
@@ -16577,7 +16577,7 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 1339.37
    }
@@ -16630,7 +16630,7 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 1303.62
    }
@@ -17976,8 +17976,8 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
-    "verdict": "moved",
+    "against": "model 46, 2026-08-17",
+    "verdict": "unaffected",
     "canonical_score": 1540.37
    }
   },
@@ -19396,7 +19396,7 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 1380.73
    }
@@ -20670,8 +20670,8 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
-    "verdict": "moved",
+    "against": "model 46, 2026-08-17",
+    "verdict": "unaffected",
     "canonical_score": 1537.22
    }
   },
@@ -22056,7 +22056,7 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 1306.62
    }
@@ -23360,8 +23360,8 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
-    "verdict": "moved",
+    "against": "model 46, 2026-08-17",
+    "verdict": "unaffected",
     "canonical_score": 1768.08
    }
   },
@@ -24716,7 +24716,7 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 1618.2
    }
@@ -26078,7 +26078,7 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 1871.28
    }
@@ -27345,7 +27345,7 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 763.47
    }
@@ -28477,25 +28477,25 @@
  "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk": {
   "picks": [
    "Brute_Defense.Fiery_Aura.Blazing_Aura",
-   "Brute_Defense.Fiery_Aura.Burn",
    "Brute_Defense.Fiery_Aura.Fire_Shield",
    "Brute_Defense.Fiery_Aura.Healing_Flames",
    "Brute_Defense.Fiery_Aura.Plasma_Shield",
    "Brute_Defense.Fiery_Aura.Rise_of_the_Phoenix",
    "Brute_Defense.Fiery_Aura.Temperature_Protection",
+   "Brute_Melee.Spines.Impale",
    "Brute_Melee.Spines.Lunge",
    "Brute_Melee.Spines.Quills",
    "Brute_Melee.Spines.Ripper",
    "Brute_Melee.Spines.Spine_Burst",
    "Brute_Melee.Spines.Taunt",
    "Brute_Melee.Spines.Throw_Spines",
-   "Epic.Pyre_Mastery.Char",
-   "Epic.Pyre_Mastery.Fire_Blast",
+   "Epic.Pyre_Mastery.Ring_of_Fire",
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
-   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Kick",
    "Pool.Fighting.Tough",
-   "Pool.Fighting.Weave",
+   "Pool.Invisibility.Invisibility",
+   "Pool.Invisibility.Misdirection",
    "Pool.Invisibility.Stealth",
    "Pool.Medicine.Aid_Self",
    "Pool.Medicine.Stimulant",
@@ -28503,9 +28503,9 @@
    "Pool.Speed.Super_Speed",
    "Pool.Speed.Whirlwind"
   ],
-  "score": 235.059,
+  "score": 261.5184,
   "certificate": {
-   "sweeps": 30,
+   "sweeps": 29,
    "converged": true,
    "restarts_done": 6,
    "budget_truncated": false,
@@ -28521,14 +28521,14 @@
    "tie_arbitration": {
     "winner": "eps",
     "scores": {
-     "eps": 235.06,
-     "lex": 235.06,
-     "plain": 235.06
+     "eps": 261.52,
+     "lex": 261.52,
+     "plain": 261.52
     }
    },
    "afk_sustain": {
     "hp": 2107.5,
-    "regen_hps": 28.01,
+    "regen_hps": 28.55,
     "auto_fire_heal": null,
     "auto_fire_hps": 0.0,
     "heal_rates": [
@@ -28538,14 +28538,14 @@
       "interruptible": false
      },
      {
-      "power": "Rise_of_the_Phoenix",
-      "self_hps": 0.54,
-      "interruptible": false
-     },
-     {
       "power": "Aid_Self",
       "self_hps": 15.74,
       "interruptible": true
+     },
+     {
+      "power": "Rise_of_the_Phoenix",
+      "self_hps": 0.54,
+      "interruptible": false
      }
     ],
     "assumed_accolades": [
@@ -28556,7 +28556,7 @@
     "accolade_hp": 321.3,
     "buff_proc_regen_pct": 0.0,
     "buff_proc_detail": [],
-    "sustain_hps": 28.01,
+    "sustain_hps": 28.55,
     "requirements": {
      "0": 26.4,
      "1": 29.1,
@@ -28565,16 +28565,16 @@
      "4": 37.0
     },
     "tier": 0,
-    "label": "AFK-certified at +0x8 (sustain 28.0 HP/s: regen 28.0 (auto-fire is spent on the attack \u2014 sustain is fully passive, the way AFK farming actually runs)); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed). Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
+    "label": "AFK-certified at +0x8 (sustain 28.5 HP/s: regen 28.5 (auto-fire is spent on the attack \u2014 sustain is fully passive, the way AFK farming actually runs)); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed). Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
-    "verdict": "unaffected",
-    "canonical_score": 209.66
+    "against": "model 46, 2026-08-17",
+    "verdict": "baseline",
+    "canonical_score": 243.2
    }
   },
-  "model_version": 45,
-  "canonical_score": 209.66
+  "model_version": 46,
+  "canonical_score": 243.2
  },
  "Class_Tanker|Tanker_Defense.Fiery_Aura|Tanker_Melee.Fiery_Melee|farm_afk": {
   "picks": [
@@ -28665,7 +28665,7 @@
     "label": "AFK-certified at +2x8 (sustain 33.5 HP/s: regen 33.5 (auto-fire is spent on the attack \u2014 sustain is fully passive, the way AFK farming actually runs)); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed). Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +375 HP)."
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 294.51
    }
@@ -28757,7 +28757,7 @@
     "label": "AFK-certified at +3x8 (sustain 35.4 HP/s: regen 35.4 (auto-fire is spent on the attack \u2014 sustain is fully passive, the way AFK farming actually runs)); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed). Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 274.45
    }
@@ -28818,7 +28818,7 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 676.8
    }
@@ -30216,7 +30216,7 @@
     }
    },
    "evaluated": {
-    "against": "model 45, 2026-08-17",
+    "against": "model 46, 2026-08-17",
     "verdict": "unaffected",
     "canonical_score": 713.8
    }
