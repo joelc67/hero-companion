@@ -1470,6 +1470,29 @@ DEFENDED under a full v45 search) — do not read it as a wave owed.
 announcement on topic 64761 (2026-08-17) — supersedes ALL prior drafts
 (maelwys-farms-reply, 0.12.41-post; never resurrect).
 
+**✅ v47 CLOSED THE ARC (2026-08-17 evening, shipped as 0.12.44 + posted):**
+farm scenarios carry `dmg_type="Fire"` (survival reads Fire res +
+position/Fire def in farms ONLY; untyped scenarios byte-identical, pinned) —
+found because Maelwys's 90%-Fire RadM/FA measured ttl 6.6s in its own farm
+(availability 0.102, the "20× contribution anomaly"). AFK auto-fire judged
+at SPAWN scale (aoe ×6.0 vs st ×0.4 — Burn beats Boxing). ⚠⚠ **JOEL'S FIRST
+EXPLICIT TIER OVERRIDE (precedent):** the v47 TW/Bio challenger lost by 1.4
+pts (0.7%) but delivered +4x8 fully-passive — his "merge all three" took it;
+the verdict FILE says supersede, commit `fa59b284` says WHY. An override is
+HIS to make, never the gate's; always record both halves. ⚠ THE DAY'S PROBE
+CORPSES (all three mine, all caught by verify-first): a PHANTOM PIECE UID
+slots nothing silently (assert pieces resolve, same rule as powers) · a
+census keyed on the wrong row field reads 0-of-146 (our rows key the
+attribute as `effect`) · common IOs resolve via common_ios.json, NOT
+PIECE_BY_UID. **The regen model was VERIFIED CORRECT end to end** — the
+"missing regen class" alarm was retracted before any build; census
+instrument: `tools/census_power_regen.py`. **Forum-build importer lives at
+`coh-scorer-lab/measure_maelwys.py`** (Sidekick URL fragment → faithful
+build → canonical + AFK label; conversion needs set_uid on slots or set
+bonuses count ZERO, include_in_totals from power_type, and the inherents
+section). Maelwys's examples under v47: Stone 244.5 @ +4x8 · FA 115.1 @
++3x8 — his sheets and our model agree.
+
 Otherwise nothing running. Live handoff detail:
 `coh-builder/RESUME-HERE.md`.
 

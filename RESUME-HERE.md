@@ -1,4 +1,32 @@
-# ✅ SESSION CLOSED CLEAN — 2026-08-17. START HERE.
+# ✅ SESSION CLOSED CLEAN — 2026-08-17 (evening). START HERE.
+
+**Latest release: 🚀 v0.12.44 "Fire farms judged as fire farms"** (2026-08-17,
+stamp `20937c4`, model **v47**, signed + API-verified; installed copy runs it;
+liveness baseline v0.12.44, 0 diffs). The weekend shipped FIVE releases
+(0.12.40→44) and three model versions (v45/46/47), all driven by two field
+reporters. **The Maelwys arc is fully closed and publicly answered** — Joel
+posted the combined round-2 reply AND the 0.12.44 follow-up on topic 64761;
+the roster ships a +4x8 fully-passive TW/Bio farm build via Joel's FIRST
+EXPLICIT TIER OVERRIDE (0.7% score for the tier — recorded in the verdict
+file + commit `fa59b284`).
+
+**FIRST MOVES NEXT SESSION:**
+1. Check topic 64761 / Gmail — Maelwys round 3 or new reports; triage vs
+   docs/KNOWN-GAPS.md first.
+2. Joel's open rulings (none blocking): tier-vs-objective as DOCTRINE (the
+   TW/Bio override answered one build; the general rule is still his) ·
+   +5x8 tier numbers · Stone Armor candidate (proc-valuation ruling first).
+3. FP/whitelist submissions 0.12.41–44: Joel's hand.
+4. Lab assets: `coh-scorer-lab/measure_maelwys.py` = the forum-build
+   importer/measurer (Sidekick links → measured builds in minutes — use it
+   on ANY posted build claim). Efficiency queue in session-report
+   (process-pool sweep rework is the big one, still awaiting scoping).
+5. Nothing running; the stale HC_FarmAltWave2 task from 08-14 was found and
+   unregistered at close. Tree clean and pushed; graph refreshed.
+
+---
+
+# ✅ (superseded) SESSION CLOSED CLEAN — 2026-08-17. START HERE.
 
 **Latest release: 🚀 v0.12.42** (2026-08-17, stamp `4342f6e`, both assets
 signed + API-verified; installed laptop copy runs post-release HEAD). The
