@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+## 0.12.44 — 2026-08-17 — Fire farms judged as fire farms
+
+- **Farm scenarios now deal fire damage.** The survival math used to judge
+  every scenario with general-content damage types, so a farmer capped at
+  90% Fire resistance — the entire community farming doctrine — measured as
+  fragile in its own farm. Farm certification now reads Fire resistance and
+  Fire defense, the way the game actually plays there. Nothing outside the
+  farm scenarios changes.
+- **The AFK auto-fire pick thinks at spawn scale.** Choosing the auto-fire
+  power by single-target numbers picked Boxing over Burn; it now weighs a
+  whole spawn, and Burn wins, as every real farmer knows.
+- **The three AFK farm builds re-certified under the corrected model:**
+  Spines / Fiery Aura improves sharply (and keeps its honest +0x8 passive
+  label), Fiery Aura / Fiery Melee reaches +2x8 passive, and Titan Weapons /
+  Bio Armor now ships a build that sustains **+4x8 fully passively**
+  (39.1 HP/s) — chosen deliberately over a build that scored 0.7% higher
+  without the tier. Thanks once more to Maelwys, whose example builds
+  exposed both model gaps.
+
 ## 0.12.43 — 2026-08-17 — Honest AFK labels, in the app
 
 - **The corrected AFK farm labels from this morning's forum review now show
