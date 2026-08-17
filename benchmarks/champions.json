@@ -28529,8 +28529,8 @@
    "afk_sustain": {
     "hp": 2107.5,
     "regen_hps": 28.01,
-    "auto_fire_heal": "Healing_Flames",
-    "auto_fire_hps": 10.04,
+    "auto_fire_heal": null,
+    "auto_fire_hps": 0.0,
     "heal_rates": [
      {
       "power": "Healing_Flames",
@@ -28538,14 +28538,14 @@
       "interruptible": false
      },
      {
-      "power": "Aid_Self",
-      "self_hps": 15.74,
-      "interruptible": true
-     },
-     {
       "power": "Rise_of_the_Phoenix",
       "self_hps": 0.54,
       "interruptible": false
+     },
+     {
+      "power": "Aid_Self",
+      "self_hps": 15.74,
+      "interruptible": true
      }
     ],
     "assumed_accolades": [
@@ -28556,7 +28556,7 @@
     "accolade_hp": 321.3,
     "buff_proc_regen_pct": 0.0,
     "buff_proc_detail": [],
-    "sustain_hps": 38.05,
+    "sustain_hps": 28.01,
     "requirements": {
      "0": 26.4,
      "1": 29.1,
@@ -28564,8 +28564,8 @@
      "3": 34.4,
      "4": 37.0
     },
-    "tier": 4,
-    "label": "AFK-certified at +4x8: 38.1 HP/s sustained (regen 28.0 + Healing_Flames on auto-fire 10.0) meets the 37 HP/s asteroid worst case. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
+    "tier": 0,
+    "label": "AFK-certified at +0x8 (sustain 28.0 HP/s: regen 28.0 (auto-fire is spent on the attack \u2014 sustain is fully passive, the way AFK farming actually runs)); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed). Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
    },
    "evaluated": {
     "against": "model 45, 2026-08-17",
@@ -28629,10 +28629,10 @@
     }
    },
    "afk_sustain": {
-    "hp": 2520.5,
-    "regen_hps": 34.14,
-    "auto_fire_heal": "Rise_of_the_Phoenix",
-    "auto_fire_hps": 0.69,
+    "hp": 2548.7,
+    "regen_hps": 33.45,
+    "auto_fire_heal": null,
+    "auto_fire_hps": 0.0,
     "heal_rates": [
      {
       "power": "Aid_Self",
@@ -28653,7 +28653,7 @@
     "accolade_hp": 374.8,
     "buff_proc_regen_pct": 0.0,
     "buff_proc_detail": [],
-    "sustain_hps": 34.83,
+    "sustain_hps": 33.45,
     "requirements": {
      "0": 26.4,
      "1": 29.1,
@@ -28661,8 +28661,8 @@
      "3": 34.4,
      "4": 37.0
     },
-    "tier": 3,
-    "label": "AFK-certified at +3x8 (sustain 34.8 HP/s: regen 34.1 + Rise_of_the_Phoenix on auto-fire 0.7); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed). Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +375 HP)."
+    "tier": 2,
+    "label": "AFK-certified at +2x8 (sustain 33.5 HP/s: regen 33.5 (auto-fire is spent on the attack \u2014 sustain is fully passive, the way AFK farming actually runs)); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed). Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +375 HP)."
    },
    "evaluated": {
     "against": "model 45, 2026-08-17",
@@ -28727,7 +28727,7 @@
    },
    "afk_sustain": {
     "hp": 2336.4,
-    "regen_hps": 31.55,
+    "regen_hps": 35.37,
     "auto_fire_heal": null,
     "auto_fire_hps": 0.0,
     "heal_rates": [
@@ -28745,7 +28745,7 @@
     "accolade_hp": 321.3,
     "buff_proc_regen_pct": 0.0,
     "buff_proc_detail": [],
-    "sustain_hps": 31.55,
+    "sustain_hps": 35.37,
     "requirements": {
      "0": 26.4,
      "1": 29.1,
@@ -28753,8 +28753,8 @@
      "3": 34.4,
      "4": 37.0
     },
-    "tier": 1,
-    "label": "AFK-certified at +1x8 (sustain 31.5 HP/s: regen 31.5); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed). Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
+    "tier": 3,
+    "label": "AFK-certified at +3x8 (sustain 35.4 HP/s: regen 35.4 (auto-fire is spent on the attack \u2014 sustain is fully passive, the way AFK farming actually runs)); the +4x8 asteroid worst case is unreachable for this combo (37 HP/s needed). Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
    },
    "evaluated": {
     "against": "model 45, 2026-08-17",

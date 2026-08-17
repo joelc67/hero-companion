@@ -43,7 +43,7 @@ def offense_for(picks):
 
 
 print("── model version ──")
-check("MODEL_VERSION is 45", fp.MODEL_VERSION == 45, str(fp.MODEL_VERSION))
+check("MODEL_VERSION is at least 46", fp.MODEL_VERSION >= 46, str(fp.MODEL_VERSION))
 
 # ── 1. POSITIVE CONTROL: the reported TW/Bio farm_afk champion shape ─────────
 _AT, _PRI, _SEC = ("Class_Brute", "Brute_Melee.Titan_Weapons",
@@ -99,7 +99,53 @@ check("first_principles gates on scenario farm_afk and reads afk_ aggregates",
 check("the general branch still reads the general aggregates",
       'off.get("st_dps")' in src and 'off.get("aoe_dps")' in src)
 
-n = 8
+# ── 5. v46: momentum-gated attacks are no AFK candidates (game's own short
+# help: "Requires Momentum" — they cannot fire from cold) ────────────────────
+print("\n── momentum gates (v46) ──")
+_AT, _PRI, _SEC = ("Class_Brute", "Brute_Melee.Titan_Weapons",
+                   "Brute_Defense.Fiery_Aura")
+twm = offense_for([
+    "Brute_Melee.Titan_Weapons.Whirling_Slice",   # displays "Whirling Smash", gated
+    "Brute_Melee.Titan_Weapons.Follow_Through",   # gated
+    "Brute_Melee.Titan_Weapons.Crushing_Blow",    # free click — the legal auto-fire
+    "Brute_Defense.Fiery_Aura.Blazing_Aura",
+])
+check("a momentum-gated attack never takes the AFK auto-fire slot",
+      twm.get("afk_autofire") not in ("Whirling Smash", "Follow Through"),
+      str(twm.get("afk_autofire")))
+check("gated attacks contribute nothing to AFK AoE",
+      (twm.get("afk_aoe_dps") or 0) < (twm.get("aoe_dps") or 1),
+      f"afk={twm.get('afk_aoe_dps')} general={twm.get('aoe_dps')}")
+
+# ── 6. v46: ONE auto-fire — when the attack claims it, the sustain ledger is
+# passive only (no auto-fire heal credited) ──────────────────────────────────
+print("\n── single auto-fire (v46) ──")
+import importlib
+import role_output as _ro
+_AT, _PRI, _SEC = ("Class_Brute", "Brute_Melee.Spines", "Brute_Defense.Fiery_Aura")
+powers_atk = [{"full_name": fn, "slots": [None]} for fn in (
+    "Brute_Defense.Fiery_Aura.Healing_Flames",    # non-interruptible click heal
+    "Brute_Defense.Fiery_Aura.Burn",              # click attack — claims auto-fire
+    "Brute_Defense.Fiery_Aura.Blazing_Aura")]
+powers_heal = [p for p in powers_atk if not p["full_name"].endswith(".Burn")]
+c2 = srv.app.test_client()
+def sustain_for(pws):
+    res = c2.post("/build/calculate", json={"archetype": _AT, "primary": _PRI,
+        "secondary": _SEC, "powers": [dict(p) for p in pws]}).get_json()
+    t = res.get("totals") or res
+    ctx = srv._stat_ctx(_AT)   # the REAL context builder, not a hand-rolled stub
+    row = next((a for a in srv.PLAYABLE if a["name"] == _AT), None)
+    return fp.afk_sustain_assessment(pws, t, row, ctx, role_output_mod=_ro)
+s_atk = sustain_for(powers_atk)
+s_heal = sustain_for(powers_heal)
+check("attack in build -> NO auto-fire heal credited (slot spent on the attack)",
+      s_atk.get("auto_fire_heal") is None and s_atk.get("auto_fire_hps") == 0,
+      f"{s_atk.get('auto_fire_heal')} @ {s_atk.get('auto_fire_hps')}")
+check("NEGATIVE CONTROL: no click attack -> the heal still gets the slot",
+      s_heal.get("auto_fire_heal") == "Healing_Flames" and s_heal.get("auto_fire_hps") > 0,
+      f"{s_heal.get('auto_fire_heal')} @ {s_heal.get('auto_fire_hps')}")
+
+n = 12
 print(f"\n{n} of {n} expected checks ran")
 print(f"══ {'ALL PASS' if not fails else f'{len(fails)} FAILURE(S): ' + ', '.join(fails)} ══")
 sys.exit(1 if fails else 0)

@@ -137,6 +137,14 @@ ACTIVE_POWER_TYPES = {1, 2}   # Auto, Toggle
 # downward. Named here so the three sites share one spelling.
 _RECH_ASPECT = "RechargeTime"
 
+# v46: attacks the game only allows DURING the Momentum window — the client's
+# own display_short_help states "Requires Momentum" on exactly these (censused
+# 2026-08-17 over the full bin-crawler export; keyed by DISPLAY name because
+# the attack rows carry display names; re-census at every PATCH-WATCH
+# re-export). Firing from cold is impossible, so they are excluded from every
+# AFK credit; their ACTIVE-play uptime is the meter-class open item.
+MOMENTUM_GATED_DISPLAY = frozenset({"Whirling Smash", "Follow Through"})
+
 # eSuppress events that fire the moment you fight (Mids' combat-suppression
 # checkboxes): Attacked(64) | HitByFoe(128) | ActivateAttackClick(512) |
 # Damaged(1024). An effect suppresses when its bitmask intersects these.
@@ -1344,14 +1352,20 @@ def _offense(build, totals, ctx):
     aoe_dps = round(sum(a["dps_spam"] for a in aoe), 1)
     aoe_burst = round(sum(a["damage"] for a in aoe), 1)
     # v45 AFK OFFENSE (Maelwys, topic 64761): with nobody at the keyboard, only
-    # toggles/autos (damage auras) fire freely, plus ONE click on auto-fire —
-    # the game allows exactly one. Every other click attack contributes nothing.
-    # The best click by cycled DPS takes the auto-fire slot (Burn and Irradiated
-    # Ground's patch rows are clicks and compete for it — how real AFK farmers
+    # toggles/autos (damage auras — Irradiated Ground IS a toggle) fire freely,
+    # plus ONE click on auto-fire — the game allows exactly one. Every other
+    # click attack contributes nothing. The best click by cycled DPS takes the
+    # auto-fire slot (Burn, Atom Smasher, Spine Burst — how real AFK farmers
     # actually run). The general aggregates above are untouched; the scenario
     # picks these in first_principles when content is farm_afk.
-    _afk = [a for a in attacks if a.get("host_type") in (1, 2)]
-    _clicks = [a for a in attacks if a.get("host_type") not in (1, 2)]
+    # v46: MOMENTUM-GATED attacks can never fire from cold, so they are no AFK
+    # candidates at all — the game's own short help states "Requires Momentum"
+    # on exactly these records (client census 2026-08-17: Whirling Smash +
+    # Follow Through across Brute/Scrapper/Tanker; re-census at PATCH-WATCH).
+    _afk = [a for a in attacks if a.get("host_type") in (1, 2)
+            and a.get("name") not in MOMENTUM_GATED_DISPLAY]
+    _clicks = [a for a in attacks if a.get("host_type") not in (1, 2)
+               and a.get("name") not in MOMENTUM_GATED_DISPLAY]
     _auto = max(_clicks, key=lambda a: a.get("dps_spam") or 0, default=None)
     if _auto and (_auto.get("dps_spam") or 0) > 0:
         _afk.append(_auto)
