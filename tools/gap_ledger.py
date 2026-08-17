@@ -96,6 +96,16 @@ def build():
         "RadM/Stone example: 49 HP/s passive, Atom Smasher auto-fire). "
         "Blocked on the aura/patch proc valuation ruling; certify a Stone "
         "Armor alternative when that lands.",
+        "**Power-granted +Regeneration is under-captured** (found 2026-08-17 "
+        "measuring Maelwys's example builds with the lab kit, "
+        "coh-scorer-lab/measure_maelwys.py): Rooted and Temperature "
+        "Protection carry ZERO regen rows in our data, so his 47-49 HP/s "
+        "passive builds measure ~25 HP/s here. The engine channel already "
+        "folds power regen (Fast Healing works); the gap is DATA. Needs a "
+        "proper client census (a narrow field-name scan read NONE - descend "
+        "before concluding), then the standard additive patcher -> model "
+        "bump -> sustain-sensitive re-cert. PREREQUISITE to the "
+        "tier-vs-objective ruling: current sustain numbers under-read.",
         "**AFK offense is unmodelled** (Maelwys 2026-08-16, confirmed in our "
         "artifacts): the farm_afk SUSTAIN ledger correctly allows regen + ONE "
         "non-interruptible auto-fire power, but the OFFENSE channel still "
