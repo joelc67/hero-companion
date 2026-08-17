@@ -11,9 +11,8 @@ the combined reply on topic 64761 (2026-08-17)**. Full rulings in CLAUDE.md
 **FIRST MOVES NEXT SESSION:**
 1. Check topic 64761 / Gmail — Maelwys round 3, or new reports. Triage vs
    docs/KNOWN-GAPS.md first, as always.
-2. **0.12.43 is owed** (ships the v46 labels — 0.12.42 in-app still shows
-   v45's; the GitHub notes already carry the dated correction). Cut on
-   Joel's word.
+2. ✅ 0.12.43 SHIPPED (2026-08-17, stamp 8c5fab2): the v46 labels are
+   in-app; all three surfaces (app, notes, forum post) agree.
 3. Joel's rulings open: **tier-vs-objective** (the +4x8-passive TW/Bio
    challenger that lost on contribution — certificate doctrine) · +5x8 tier
    numbers · Stone Armor candidate (proc-valuation ruling first).
