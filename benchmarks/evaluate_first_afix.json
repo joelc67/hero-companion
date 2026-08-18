@@ -8,6 +8,7 @@
   "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk",
   "Class_Brute|Brute_Melee.Titan_Weapons|Brute_Defense.Bio_Organic_Armor|farm_afk",
   "Class_Controller|Controller_Control.Plant_Control|Controller_Buff.Poison|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Radiation_Emission|itrial",
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|itrial",
   "Class_Defender|Defender_Buff.Poison|Defender_Ranged.Sonic_Attack|itrial",
   "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|itrial",
@@ -46,6 +47,9 @@
   ],
   "Class_Controller|Controller_Control.Plant_Control|Controller_Buff.Poison|itrial": [
    "stamp v44"
+  ],
+  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Radiation_Emission|itrial": [
+   "stamp v?"
   ],
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|itrial": [
    "stamp v44"

@@ -37,7 +37,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 2306.73
    },
@@ -1415,7 +1415,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 2718.27
    }
@@ -2607,7 +2607,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 2518.67
    }
@@ -3793,7 +3793,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 2376.3
    }
@@ -4970,7 +4970,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 1685.53
    },
@@ -6155,7 +6155,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 1499.75
    }
@@ -7507,7 +7507,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 1229.63
    }
@@ -8870,7 +8870,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 397.22
    }
@@ -10133,7 +10133,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 1419.6
    }
@@ -11466,7 +11466,7 @@
    "primary_converged": true,
    "picks_filled": 2,
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 2155.98
    },
@@ -12692,7 +12692,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 1336.67
    },
@@ -14032,7 +14032,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 1392.28
    }
@@ -15334,7 +15334,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 1861.89
    }
@@ -16577,7 +16577,7 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 1339.37
    }
@@ -16630,7 +16630,7 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 1303.62
    }
@@ -17976,7 +17976,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 1540.37
    }
@@ -19396,7 +19396,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 1380.73
    }
@@ -20670,7 +20670,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 1537.22
    }
@@ -22056,7 +22056,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 1306.62
    }
@@ -23360,7 +23360,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 1768.08
    }
@@ -24716,7 +24716,7 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 1618.2
    }
@@ -26078,7 +26078,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 1871.28
    }
@@ -27345,7 +27345,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 763.47
    }
@@ -28577,8 +28577,8 @@
     "label": "Does not sustain AFK play at any shift (31.5 HP/s vs 35 HP/s taken at +0x8 through this build's 90% Fire resistance and 37%/40% melee/ranged defense) \u2014 active play only. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
-    "verdict": "moved",
+    "against": "model 49, 2026-08-18",
+    "verdict": "unaffected",
     "canonical_score": 499.09
    }
   },
@@ -29921,7 +29921,7 @@
     "label": "Does not sustain AFK play at any shift (32.0 HP/s vs 52 HP/s taken at +0x8 through this build's 90% Fire resistance and 31%/34% melee/ranged defense) \u2014 active play only. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +375 HP)."
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 202.72
    }
@@ -30020,8 +30020,8 @@
     "label": "Does not sustain AFK play at any shift (35.2 HP/s vs 48 HP/s taken at +0x8 through this build's 78% Fire resistance and 43%/43% melee/ranged defense) \u2014 active play only. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
-    "verdict": "moved",
+    "against": "model 49, 2026-08-18",
+    "verdict": "unaffected",
     "canonical_score": 292.65
    }
   },
@@ -31337,7 +31337,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 676.8
    }
@@ -32735,7 +32735,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-17",
+    "against": "model 49, 2026-08-18",
     "verdict": "unaffected",
     "canonical_score": 713.8
    }
@@ -34038,5 +34038,65 @@
     ]
    }
   ]
+ },
+ "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Radiation_Emission|itrial": {
+  "picks": [
+   "Corruptor_Buff.Radiation_Emission.Choking_Cloud",
+   "Corruptor_Buff.Radiation_Emission.EM_Pulse",
+   "Corruptor_Buff.Radiation_Emission.Enervating_Field",
+   "Corruptor_Buff.Radiation_Emission.Fallout",
+   "Corruptor_Buff.Radiation_Emission.Lingering_Radiation",
+   "Corruptor_Buff.Radiation_Emission.Mutation",
+   "Corruptor_Buff.Radiation_Emission.Radiant_Aura",
+   "Corruptor_Buff.Radiation_Emission.Radiation_Infection",
+   "Corruptor_Ranged.Fire_Blast.Aim",
+   "Corruptor_Ranged.Fire_Blast.Fire_Blast",
+   "Epic.Ice_Mastery_DefCorr.Frozen_Armor",
+   "Epic.Ice_Mastery_DefCorr.Hoarfrost",
+   "Inherent.Fitness.Health",
+   "Inherent.Fitness.Stamina",
+   "Pool.Fighting.Boxing",
+   "Pool.Fighting.Cross_Punch",
+   "Pool.Fighting.Kick",
+   "Pool.Fighting.Tough",
+   "Pool.Leadership.Defense",
+   "Pool.Medicine.Aid_Other",
+   "Pool.Medicine.Aid_Self",
+   "Pool.Medicine.Resuscitate",
+   "Pool.Medicine.Stimulant",
+   "Pool.Speed.Hasten",
+   "Pool.Speed.Super_Speed",
+   "Pool.Speed.Whirlwind"
+  ],
+  "score": 1329.91767,
+  "certificate": {
+   "sweeps": 29,
+   "converged": true,
+   "restarts_done": 6,
+   "budget_truncated": false,
+   "claim": "converged on the SEARCH objective (in-run scoring); canonical_score is the portable number and is NOT claimed optimal \u2014 see the one-objective work order",
+   "canonical_optimality_checked": false,
+   "primary_converged": true,
+   "picks_filled": 3,
+   "node_cap": {
+    "cap": 50000,
+    "capped_solves_floor": 0,
+    "final_resolve_delta": 0.0
+   },
+   "tie_arbitration": {
+    "winner": "eps",
+    "scores": {
+     "eps": 1329.92,
+     "lex": 1329.92,
+     "plain": 1329.92
+    }
+   },
+   "evaluated": {
+    "against": "model 49, 2026-08-18",
+    "verdict": "baseline",
+    "canonical_score": 1322.77
+   }
+  },
+  "canonical_score": 1322.77
  }
 }
