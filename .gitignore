@@ -52,3 +52,4 @@ graphify-out/
 
 # Derived at build time by HeroCompanion.spec (which commit this exe came from)
 build_commit.txt
+.aider*
