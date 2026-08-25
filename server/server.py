@@ -4541,12 +4541,20 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
                         "capped_solves_floor":
                             (_process_capped[0] if _sweep_backend == "process"
                              else len(solver.CAPPED_SOLVES) - _capped_before)}
-    def _finale_arm(style):
+    def _finale_arm(style, exact=False):
         """Full re-solve + downstream chain + fresh fp score for one tie-break
-        style. Returns (score, solved, ev) or None."""
-        r = _assess_solve(archetype, _c.deepcopy(cur_b), _c.deepcopy(targets),
-                          "premium", perk, roles, False, False, False,
-                          with_powers=True, content=content, two_stage=style)
+        style. Returns (score, solved, ev) or None.
+        exact=True: HC_FINALE_EXACT signals an attached GPU finale patch
+        (gpu-lab/finale_pure.py) to stand down so this solve runs on CBC."""
+        if exact:
+            os.environ["HC_FINALE_EXACT"] = "1"
+        try:
+            r = _assess_solve(archetype, _c.deepcopy(cur_b), _c.deepcopy(targets),
+                              "premium", perk, roles, False, False, False,
+                              with_powers=True, content=content, two_stage=style)
+        finally:
+            if exact:
+                os.environ.pop("HC_FINALE_EXACT", None)
         if not r:
             return None
         _tot2, solved2 = r
@@ -4578,6 +4586,20 @@ def deep_optimize(archetype, primary, secondary, role, content, powers_in,
             arms[style or "plain"] = a
     if arms:
         win = max(arms, key=lambda k: arms[k][0])
+        # RACE + CERTIFY (2026-08-25): with a GPU finale engine attached
+        # (HC_FINALE_RACE=1, set by gpu-lab/finale_pure.py), the three arms
+        # above ran on the heuristic GPU diver -- fast style RANKING only.
+        # Measured: shipping those heuristic slottings cost ~5% champion
+        # score (final_resolve_delta -450 lightning / -67 quality), so the
+        # winning style is re-solved EXACTLY on CBC here. One CBC solve
+        # instead of three; the certificate stays exact.
+        if os.environ.get("HC_FINALE_RACE") == "1":
+            exact_a = _finale_arm(
+                {"eps": "eps", "lex": "lex", "plain": False}[win], exact=True)
+            if exact_a:
+                arms[win] = exact_a
+                cert["finale_race"] = {"raced_on": "gpu",
+                                       "winner_certified": "cbc_exact"}
         sc2, solved2, ev2 = arms[win]
         cert["node_cap"]["final_resolve_delta"] = round(sc2 - sc_b, 2)
         cert["tie_arbitration"] = {

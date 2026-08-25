@@ -33,6 +33,25 @@ out. Rules going forward:
   2026-07-30: I quoted "PB triform = 484 min" for hours after the prereq fix had
   made it 261, because the entry read as timeless truth.
 
+## GPU finale: race + certify (2026-08-25)
+
+- **The NODE-CAP FINALE races its three tie-break arms on the GPU and CBC
+  certifies only the winner** (server.py `_finale_arm(exact=)` + the
+  `HC_FINALE_RACE` block). Runtime attachment: `gpu-lab/finale_pure.py`
+  (spawns the WSL `pure_worker.py`, engine `gpu-lab/vram_pure.py` — a
+  torch batched-PDHG diver, findings #24-#28). Without the patch attached,
+  nothing changes: the env flag is absent and all arms run CBC as before.
+- **Measured before shipping**: fully-GPU finale cost champion score
+  (final_resolve_delta -450 lightning / -67 quality settings — MILP ~2% gaps
+  cascade through the proc/endurance chain, cf. chaos-sensitivity finding);
+  race+certify landed **delta 0.0, score 1423.23 == sweep winner**, finale
+  CPU cut to one exact solve instead of three.
+- Contract change, disclosed on the cert (`finale_race`, `finale_solver`):
+  "never worse than any single style" weakens to "exact solve of the
+  GPU-chosen style" — heuristic arm scores are noisy rankers (winner flipped
+  between runs on near-tie arms). Physics still arbitrates; the committed
+  build is always CBC-exact.
+
 ## Communication protocol (token discipline — strict)
 
 Joel's session context is a limited resource. Do not spend it on prose.
@@ -101,6 +120,7 @@ Joel's session context is a limited resource. Do not spend it on prose.
   directly (verified same evening: board 200, current date). What IS accruing is
   un-squashed inbox history: **2,633 commits since 07-27**, ~288/day, 8.4 MB.
   Original context below.
+- **Gaming-PC CLAUDE_CODE_OAUTH_TOKEN expires ~2027-08-19** (1-year subscription token from `claude setup-token`, stored in HKCU user env 2026-08-19; powers the server's Messages API fast-path on that machine — regenerate with the same command when it lapses).
 - **INBOX_READ_TOKEN expires 2026-11-11** (the Pulse render's read-only PAT, named `pulse-board` in Joel's GitHub fine-grained token list, rotated 2026-08-13 — the prior token died 2026-08-13 despite a recorded 2026-10-12 expiry, so trust the mint date + 90 days, not old notes; rotation is a 5-minute chore per docs/pulse-pipeline-runbook.md; the render workflow self-warns within 14 days).
 - **MRB v4 alpha/beta**: keep .mbd import/export compatible as the format moves (public promise to Jacke).
 - **Artifact Signing identity revalidation expires 2027-07-15** (Azure Trusted Signing, account `herocompanionsign`). A lapse HALTS all signing. Portal → the signing account → Identity validations. Facts + prereqs: docs/signing-runbook.md; signer: tools/sign_artifacts.py (needs `az login` + "Artifact Signing Certificate Profile Signer" role + `TRUSTED_SIGNING_PROFILE=hero-companion-public`).
