@@ -31547,7 +31547,8 @@
     "canonical_score": 751.6
    }
   },
-  "canonical_score": 751.6
+  "canonical_score": 751.6,
+  "model_version": 49
  },
  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Radiation_Emission|itrial": {
   "picks": [
@@ -31620,6 +31621,7 @@
     "canonical_score": 1351.44
    }
   },
-  "canonical_score": 1351.44
+  "canonical_score": 1351.44,
+  "model_version": 49
  }
 }
