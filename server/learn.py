@@ -214,7 +214,13 @@ def save_champion(archetype, primary, secondary, content, picks, score, certific
         data = json.load(open(CHAMPIONS_PATH, encoding="utf-8"))
     except Exception:  # noqa: BLE001
         data = {}
+    # Stamp at write (2026-08-31): every champion carries the model that produced
+    # it — unstamped entries made canonical scores incommensurable across model
+    # bumps (the roster_merge stale-stamp finding; two 08-25 promotions shipped
+    # stampless and were repaired by hand in d6805915).
+    import first_principles as fp
     data[ctx_key(archetype, primary, secondary, content, form)] = {
-        "picks": sorted(picks), "score": score, "certificate": certificate}
+        "picks": sorted(picks), "score": score, "model_version": fp.MODEL_VERSION,
+        "certificate": certificate}
     with open(CHAMPIONS_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=1)
