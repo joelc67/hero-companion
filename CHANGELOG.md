@@ -8,7 +8,7 @@
   off that lane the planner fell back to its generic picker — which never read
   the form answer at all. Now the picker itself honors the choice everywhere:
   the form power(s) you chose are locked into the picks and placed as early as
-  the game allows (Nova at 1, Dwarf at 20), forms you declined are never taken,
+  the game allows (Nova at 4, Dwarf at 20), forms you declined are never taken,
   and human means human. When your content lane has no certified form champion
   yet, the wizard and the result both say so plainly — the form powers are
   guaranteed in, and the build reads as a strong start, never as a certified
