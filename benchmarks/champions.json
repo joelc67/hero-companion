@@ -37,7 +37,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 2306.73
    },
@@ -1415,7 +1415,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 2718.27
    }
@@ -2607,7 +2607,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 2518.67
    }
@@ -3793,7 +3793,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 2376.3
    }
@@ -4970,7 +4970,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 1685.53
    },
@@ -6155,7 +6155,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 1499.75
    }
@@ -7507,7 +7507,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 1229.63
    }
@@ -8870,7 +8870,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 397.22
    }
@@ -10133,7 +10133,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 1419.6
    }
@@ -11466,7 +11466,7 @@
    "primary_converged": true,
    "picks_filled": 2,
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 2155.98
    },
@@ -12692,7 +12692,7 @@
    "primary_converged": true,
    "picks_filled": 0,
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 1336.67
    },
@@ -14032,7 +14032,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 1392.28
    }
@@ -15334,7 +15334,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 1861.89
    }
@@ -16577,7 +16577,7 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 1339.37
    }
@@ -16630,7 +16630,7 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 1303.62
    }
@@ -17976,7 +17976,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 1540.37
    }
@@ -19396,7 +19396,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 1380.73
    }
@@ -20670,7 +20670,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 1537.22
    }
@@ -22056,7 +22056,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 1306.62
    }
@@ -23360,7 +23360,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 1768.08
    }
@@ -24716,7 +24716,7 @@
     "final_resolve_delta": 0.0
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 1618.2
    }
@@ -26076,9 +26076,15 @@
      "lex": 1533.47,
      "plain": 1620.44
     }
+   },
+   "evaluated": {
+    "against": "model 49, 2026-08-30",
+    "verdict": "baseline",
+    "canonical_score": 1535.11
    }
   },
-  "model_version": 49
+  "model_version": 49,
+  "canonical_score": 1535.11
  },
  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|itrial": {
   "picks": [
@@ -26133,7 +26139,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 763.47
    }
@@ -27365,7 +27371,7 @@
     "label": "Does not sustain AFK play at any shift (31.5 HP/s vs 35 HP/s taken at +0x8 through this build's 90% Fire resistance and 37%/40% melee/ranged defense) \u2014 active play only. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 499.09
    }
@@ -28709,7 +28715,7 @@
     "label": "Does not sustain AFK play at any shift (32.0 HP/s vs 52 HP/s taken at +0x8 through this build's 90% Fire resistance and 31%/34% melee/ranged defense) \u2014 active play only. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +375 HP)."
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 202.72
    }
@@ -28808,7 +28814,7 @@
     "label": "Does not sustain AFK play at any shift (35.2 HP/s vs 48 HP/s taken at +0x8 through this build's 78% Fire resistance and 43%/43% melee/ranged defense) \u2014 active play only. Assumes the standard accolades (Task Force Commander, Freedom Phalanx Reserve, Portal Jockey: +321 HP)."
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 292.65
    }
@@ -30125,7 +30131,7 @@
     }
    },
    "evaluated": {
-    "against": "model 49, 2026-08-18",
+    "against": "model 49, 2026-08-30",
     "verdict": "unaffected",
     "canonical_score": 676.8
    }
@@ -31534,9 +31540,14 @@
     "promoted": "20260825_1529",
     "old_canonical": 713.8,
     "gate": "roster_merge canonical"
+   },
+   "evaluated": {
+    "against": "model 49, 2026-08-30",
+    "verdict": "unaffected",
+    "canonical_score": 751.6
    }
   },
-  "canonical_score": 751.5999999999999
+  "canonical_score": 751.6
  },
  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Radiation_Emission|itrial": {
   "picks": [
@@ -31602,8 +31613,13 @@
     "promoted": "20260825_1536",
     "old_canonical": 1333.8398250000002,
     "gate": "roster_merge canonical"
+   },
+   "evaluated": {
+    "against": "model 49, 2026-08-30",
+    "verdict": "unaffected",
+    "canonical_score": 1351.44
    }
   },
-  "canonical_score": 1351.4361000000001
+  "canonical_score": 1351.44
  }
 }
