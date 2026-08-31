@@ -2,10 +2,13 @@
 must be SERVED by the frozen exe's autopick at >90% pick overlap - proves the bundled
 champions actually reach end users (the 0.12.10-and-earlier packaging defect).
 """
-import json, subprocess, sys, time, urllib.request
+import json, os, subprocess, sys, time, urllib.request
 sys.stdout.reconfigure(encoding="utf-8")
-EXE = r"C:\Users\joelc\code\coh-builder\dist\HeroCompanion\HeroCompanion.exe"
-CHAMPS = json.load(open(r"C:\Users\joelc\code\coh-builder\benchmarks\champions.json", encoding="utf-8"))
+# Repo-relative (2026-08-30): the old absolute coh-builder path broke on every
+# machine but the original dev box — resolve from this file's own location.
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+EXE = os.path.join(ROOT, "dist", "HeroCompanion", "HeroCompanion.exe")
+CHAMPS = json.load(open(os.path.join(ROOT, "benchmarks", "champions.json"), encoding="utf-8"))
 proc = subprocess.Popen([EXE])
 base = None
 try:

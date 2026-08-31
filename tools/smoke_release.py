@@ -2,9 +2,12 @@
 pinned Defender L1 RULE (one pick from each set's first two), MM Mercs summons carry pet
 sets (no heal globals), version/packaged flags. Update the version expectation per release.
 """
-import json, subprocess, sys, time, urllib.request
+import json, os, subprocess, sys, time, urllib.request
 sys.stdout.reconfigure(encoding="utf-8")
-EXE = r"C:\Users\joelc\code\coh-builder\dist\HeroCompanion\HeroCompanion.exe"
+# Repo-relative (2026-08-30): the old absolute coh-builder path broke on every
+# machine but the original dev box — resolve from this file's own location.
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+EXE = os.path.join(ROOT, "dist", "HeroCompanion", "HeroCompanion.exe")
 proc = subprocess.Popen([EXE])
 base = None
 try:
