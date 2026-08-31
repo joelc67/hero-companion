@@ -1,0 +1,14 @@
+{
+ "Class_Arachnos_Soldier|Arachnos_Soldiers.Crab_Spider_Soldier|Training_Gadgets.Crab_Spider_Training|itrial": "keep",
+ "Class_Controller|Controller_Control.Plant_Control|Controller_Buff.Poison|itrial": "keep",
+ "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|itrial": "keep",
+ "Class_Arachnos_Widow|Widow_Training.Night_Widow_Training|Teamwork.Widow_Teamwork|itrial": "supersede",
+ "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Radiation_Emission|itrial": "keep",
+ "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Sonic_Attack|itrial": "keep",
+ "Class_Blaster|Blaster_Ranged.Fire_Blast|Blaster_Support.Energy_Manipulation|itrial": "keep",
+ "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|itrial": "keep",
+ "Class_Dominator|Dominator_Control.Mind_Control|Dominator_Assault.Fiery_Assault|itrial": "keep",
+ "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk": "keep",
+ "Class_Sentinel|Sentinel_Ranged.Fire_Blast|Sentinel_Defense.Willpower|itrial": "keep",
+ "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Super_Strength|itrial": "keep"
+}
