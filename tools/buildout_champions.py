@@ -91,20 +91,12 @@ NEW_CONTEXTS = [
     "Class_Stalker|Stalker_Melee.Claws|Stalker_Defense.Energy_Aura|farm_active",
 ]
 
-_PB_DWARF = "Peacebringer_Defensive.Luminous_Aura.White_Dwarf"
-_PB_NOVA = "Peacebringer_Offensive.Luminous_Blast.Bright_Nova"
-_WS_DWARF = "Warshade_Defensive.Umbral_Aura.Black_Dwarf"
-_WS_NOVA = "Warshade_Offensive.Umbral_Blast.Dark_Nova"
 # (archetype, form) -> the form power SET that champion is BUILT AROUND.
-FORM_POWERS = {
-    ("Class_Peacebringer", "dwarf"): {_PB_DWARF},
-    ("Class_Peacebringer", "nova"): {_PB_NOVA},
-    ("Class_Peacebringer", "triform"): {_PB_DWARF, _PB_NOVA},
-    ("Class_Warshade", "dwarf"): {_WS_DWARF},
-    ("Class_Warshade", "nova"): {_WS_NOVA},
-    ("Class_Warshade", "triform"): {_WS_DWARF, _WS_NOVA},
-}
-KHELDIAN_FORMS = {_PB_DWARF, _PB_NOVA, _WS_DWARF, _WS_NOVA}
+# ONE copy, and it lives in the serve path (2026-08-30): server.FORM_POWERS —
+# the autopick heuristic honors the same pins/bans these certifications use,
+# so a second map here would be exactly the drift the doctrine forbids.
+FORM_POWERS = srv.FORM_POWERS
+KHELDIAN_FORMS = srv.KHELDIAN_FORMS
 
 
 def main():

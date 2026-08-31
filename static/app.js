@@ -2698,10 +2698,11 @@ async function buildRespec() {
   const role = $("wiz-role").value;
   const content = $("wiz-content").value;
   const exposure = $("wiz-exposure").value, travel = $("wiz-travel").value;
-  // Kheldian FORM route: "human" IS the classic 4-part champion (no form tag);
-  // dwarf/nova serve that form's own champion as the base to build under.
-  const form = _wizIsKheldian() && $("wiz-form").value !== "human"
-    ? $("wiz-form").value : null;
+  // Kheldian FORM route: the answer goes RAW, "human" included — the server
+  // maps "human" to the classic 4-part champion AND bans forms heuristically
+  // (2026-08-29 field-report fix: every answer is honored on every content
+  // lane, champion or heuristic).
+  const form = _wizIsKheldian() ? ($("wiz-form").value || null) : null;
   build._exposure = exposure;   // carries into the solve so the def vector matches
   build._travel = travel;       // remembered so reopening restores YOUR answer
   $("wiz-build").disabled = true;
@@ -2716,9 +2717,12 @@ async function buildRespec() {
     const ap = await api("/build/autopick", postJson({ archetype: at, primary: pri, secondary: sec, role, content, exposure, travel, form,
       custom_targets: build._custom_targets || null }));
     if (!ap || !ap.ok) { $("wiz-status").textContent = (ap && ap.error) || "Auto-pick failed."; return; }
-    if (ap.custom_note) {
+    // custom_note (targets shaped the picks) and form_note (Kheldian form
+    // served heuristically — honest, never silently uncertified) share the box.
+    const _wizNote = [ap.custom_note, ap.form_note].filter(Boolean).join("\n\n");
+    if (_wizNote) {
       const _o = $("ai-response");
-      if (_o) { _o.classList.remove("muted"); _o.innerHTML = renderMarkdown(ap.custom_note); }
+      if (_o) { _o.classList.remove("muted"); _o.innerHTML = renderMarkdown(_wizNote); }
     }
     build.powers = ap.powers; build.imported = false;
     // Autopick chose pool + epic powers — sync the top-of-page dropdowns to them (the empty-powers

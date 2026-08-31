@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- **Kheldian form choices are now honored on every content lane.** A returning
+  player reported (thank you!) that picking tri-form with general/solo content
+  produced no tri-form build: certified form champions cover iTrials today, and
+  off that lane the planner fell back to its generic picker — which never read
+  the form answer at all. Now the picker itself honors the choice everywhere:
+  the form power(s) you chose are locked into the picks and placed as early as
+  the game allows (Nova at 1, Dwarf at 20), forms you declined are never taken,
+  and human means human. When your content lane has no certified form champion
+  yet, the wizard and the result both say so plainly — the form powers are
+  guaranteed in, and the build reads as a strong start, never as a certified
+  champion. The "why this question" explainer also states which route — the
+  certified champion or the honest heuristic — will serve your exact answers.
+
 ## 0.12.45 — 2026-08-17 — AFK certification reads the build
 
 - **AFK sustain now shapes the farm builds themselves (model v49).** With

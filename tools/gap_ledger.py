@@ -130,18 +130,17 @@ def build():
         "**~460 target-cap/radius rows** - client disagreements never "
         "classified; blanket-sync is known-wrong (pseudo-pet folds), so each "
         "needs adjudication.",
-        "**Kheldian form choice off the itrial lane** (field report, forums "
-        "2026-08-29): form-tagged champions exist ONLY for content=itrial, "
-        "but the wizard's Form question is gated on ANY form champion "
-        "shipping - so general/team/av/farm answers accept a form the "
-        "planner then ignores: no champion matches the 5-part key and the "
-        "heuristic proposer never reads `form` (FORM_POWERS pins live only "
-        "in tools/buildout_champions.py, not the serve path). Reported "
-        "shape: general+triform PB got White Dwarf@41 with no Bright Nova "
-        "or Light Form; WS got no form at all. Needs Joel's ruling: pin "
-        "form powers in the heuristic, certify form champions for the "
-        "other content lanes (a wave - PB triform is the cost ceiling), "
-        "or gate the Form question per-content until then.",
+        "**Kheldian form champions cover only itrial** (field report, forums "
+        "2026-08-29: general+triform PB got White Dwarf@41 with no Bright "
+        "Nova; WS got no form at all). Fixed heuristically 2026-08-30 (Joel's "
+        "A+C ruling): autopick now honors the Form answer on every content "
+        "lane - chosen form power(s) pinned and front-loaded, declined forms "
+        "banned, mirroring the certification tool's own semantics - and the "
+        "wizard states plainly when a form build is served heuristically. "
+        "The REMAINING gap is certification: form champions exist only for "
+        "content=itrial; the other lanes (general/team/av/farms) await a "
+        "wave Joel schedules (PB triform is the known cost ceiling, "
+        "~261 min/context).",
     ]:
         L.append(f"- {item}")
     L.append("")

@@ -1404,10 +1404,13 @@ _FORM_EXPLAIN = {
 }
 
 
-def _explain_form(form, archetype):
+def _explain_form(form, archetype, primary=None, secondary=None, content=None):
     """The Form question, in plain language (Joel: the user must see WHY a
     choice is even offered). Kheldians only; unanswered returns the WHY of the
-    question itself — that explains the question, it invents no answer."""
+    question itself — that explains the question, it invents no answer.
+    With content also answered, the tail says HONESTLY which route serves it:
+    the certified form champion, or (field report 2026-08-29) the heuristic
+    with the form power(s) guaranteed in — never silently the wrong build."""
     if archetype not in ("Class_Peacebringer", "Class_Warshade"):
         return None
     why = ("This question only exists for Peacebringers and Warshades: they can "
@@ -1419,9 +1422,30 @@ def _explain_form(form, archetype):
     if not form or form not in _FORM_EXPLAIN:
         return {"label": None, "title": "Why the Form question?", "text": why}
     label, text = _FORM_EXPLAIN[form]
+    tail = ""
+    if content and primary and secondary:
+        try:
+            import learn as _learn
+            _champ = _learn.load_champion(archetype, primary, secondary, content,
+                                          None if form == "human" else form)
+        except Exception:  # noqa: BLE001
+            _champ = None
+        clabel = (ai_build.CONTENT_PRESETS.get(content) or {}).get("label") or content
+        if _champ:
+            tail = (f" This choice has a certified champion for {clabel} — the "
+                    "planner starts you from it.")
+        elif form == "human":
+            tail = (f" No certified human-form champion covers {clabel} yet, so "
+                    "the planner builds this one heuristically — and it will not "
+                    "spend picks on forms you declined.")
+        else:
+            tail = (f" A certified champion for this form doesn't cover {clabel} "
+                    "yet (iTrial leagues have one today), so the planner builds "
+                    "heuristically — your form power(s) are guaranteed in the "
+                    "picks and the rest is chosen around them.")
     return {"label": label, "title": f"Form: {label}",
             "text": text + " You can still use every form in game — this only "
-                           "chooses what the build is optimized around."}
+                           "chooses what the build is optimized around." + tail}
 
 
 def _afk_champion_label(archetype, primary, secondary):
@@ -1636,7 +1660,7 @@ def explain_intent():
                                         res_cap),
             "exposure": _explain_exposure(exposure, primary, secondary),
             "travel": _explain_travel(travel, content, archetype),
-            "form": _explain_form(form, archetype),
+            "form": _explain_form(form, archetype, primary, secondary, content),
             "summary": _summarize_intent(archetype, primary, secondary, role,
                                          content, exposure, travel, res_cap,
                                          at_name),
@@ -7155,8 +7179,9 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
     role = role or _AT_DEFAULT_ROLE.get(archetype, "damage")
     # Deep-optimizer knowledge, delivered buttonlessly: if the frontier chain has a champion for
     # this context, propose THAT selection (Solve still slots it for the chosen role/goal).
-    # A Kheldian FORM choice serves that form's champion; no champion for the
-    # form yet → the heuristic runs and the UI says the champion is coming.
+    # A Kheldian FORM choice serves that form's champion ("human" IS the classic
+    # 4-part key); no champion for the form yet → the heuristic runs, HONORS the
+    # form (pins/bans below), and /build/autopick returns form_note saying so.
     # v35 (#15): with USER-DECLARED custom targets, the champion shortcut is
     # SKIPPED — a champion is certified for its preset, not your numbers, and a
     # custom solve is DERIVED by doctrine. The heuristic runs with the ask lift
@@ -7169,9 +7194,23 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
     # discards most of them and the seats stay empty. The wizard and the
     # champion paths pass neither and are byte-identical.
     if not custom_targets and not epic and not pools:
-        champ = _champion_picks(archetype, primary, secondary, content, form)
+        champ = _champion_picks(archetype, primary, secondary, content,
+                                None if form == "human" else form)
         if champ:
             return champ
+    # KHELDIAN FORM ANSWER, HONORED HEURISTICALLY (field report 2026-08-29:
+    # general + tri-form served no tri-form build). Off the certified lanes the
+    # heuristic runs, and it never read `form` — the pin/ban machinery lived
+    # only in the certification tool. Mirror that tool's exact semantics
+    # (buildout_champions: pin the chosen form's power(s), ban the rest; human
+    # bans them all): the chosen form powers become STRUCTURAL picks like the
+    # set-unlock switches, and a declined form never gets a pick. An unanswered
+    # form (non-wizard callers) pins and bans nothing — behavior unchanged.
+    form_want, form_ban = set(), set()
+    if archetype in _KHELDIAN_ATS and form:
+        form_want = {fn for fn in FORM_POWERS.get((archetype, form), ())
+                     if fn in POWER_BY_FULL}
+        form_ban = {fn for fn in KHELDIAN_FORMS if fn in POWER_BY_FULL} - form_want
     is_ctrl = role in ("controller", "control", "debuffer")
     # Epic ATs (Kheldians + Arachnos Soldiers/Widows) are self-sufficient ARMORED hybrids: their
     # masters all run the DEFENSE pools (Fighting=Weave, Leadership=Maneuvers) to softcap POSITIONAL
@@ -7292,6 +7331,21 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
                 psfns.pop()                      # drop the weakest scored pick
             psfns.append((fn, p.get("level_available") or 1))
             taken.add(fn)
+    # The chosen Kheldian form power(s) are structural the same way: the scorer
+    # prices a form as its raw toggle effects only (the certified scope limit),
+    # so the priority list may pass on the very thing the user chose to live in.
+    for fn in sorted(form_want - taken):
+        if len(psfns) >= budget and psfns:
+            # Drop the weakest scored pick THAT ISN'T A FORM PICK — a bare
+            # pop() here evicted the sibling form injected one iteration
+            # earlier (tri-form lost its Dwarf to its own Nova, caught by the
+            # smoke before it shipped).
+            i = next((j for j in range(len(psfns) - 1, -1, -1)
+                      if psfns[j][0] not in form_want), None)
+            if i is not None:
+                psfns.pop(i)
+        psfns.append((fn, POWER_BY_FULL[fn].get("level_available") or 1))
+        taken.add(fn)
     # EXEMPLAR-FRIENDLY: front-load TRAVEL (gone = running everywhere) + any primary/secondary
     # armor toggle at its earliest slot. POOL armor (Tough/Weave) is NOT front-loaded — its
     # order is fixed by the prereq-chain effective levels above (front-loading it was exactly
@@ -7299,6 +7353,10 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
     allp = psfns + pool + epic
     early = [(travel_fn, POWER_BY_FULL[travel_fn].get("level_available") or 4)] if travel_fn else []
     early += [(fn, lvl) for (fn, lvl) in psfns if _power_class(POWER_BY_FULL.get(fn) or {})["armor"]]
+    # Front-load the chosen form power(s): a build that lives in a form wants it
+    # the level the game allows, not wherever the greedy fill has room left
+    # (the report's White Dwarf @41 — a level-20 power seated at the tail).
+    early += [(fn, lvl) for (fn, lvl) in psfns if fn in form_want]
     # Front-load the FIGHTING survival chain (Boxing→Tough→Weave) so it clusters early for
     # exemplaring — using the chain's effective levels keeps Boxing ahead of Tough/Weave.
     early += [(fn, pool_lvl[fn]) for fn in pool_lvl if _pool_of(fn) == "Fighting"]
@@ -7342,6 +7400,8 @@ def _auto_pick_powers(archetype, primary, secondary, role="damage",
             _twin.setdefault(_other, set()).add(_fn)
 
     def place(fn, lvl):
+        if fn in form_ban:
+            return         # the user's Form answer declined this shape — never a pick
         if fn in placed or (_twin.get(fn) or set()) & placed:
             return
         for i, sl in enumerate(slots):
@@ -7541,6 +7601,28 @@ _AT_DEFAULT_ROLE = {
 # forces those pools for these ATs (see _auto_pick_powers) instead of treating them as glass damage.
 _EPIC_ATS = {"Class_Peacebringer", "Class_Warshade",
              "Class_Arachnos_Widow", "Class_Arachnos_Soldier"}
+
+# Kheldian shapeshift forms — (archetype, wizard Form answer) -> the form power
+# set that answer is BUILT AROUND. THE one copy: tools/buildout_champions.py
+# (the certification pins/bans) aliases these, and _auto_pick_powers mirrors the
+# same semantics heuristically (field report 2026-08-29: general + tri-form
+# served no tri-form build — form champions cover only itrial, and the
+# heuristic never read `form`). "human" deliberately has no entry: every form
+# is banned there, exactly as the 4-part human champions certify.
+_KHELDIAN_ATS = ("Class_Peacebringer", "Class_Warshade")
+_PB_DWARF = "Peacebringer_Defensive.Luminous_Aura.White_Dwarf"
+_PB_NOVA = "Peacebringer_Offensive.Luminous_Blast.Bright_Nova"
+_WS_DWARF = "Warshade_Defensive.Umbral_Aura.Black_Dwarf"
+_WS_NOVA = "Warshade_Offensive.Umbral_Blast.Dark_Nova"
+FORM_POWERS = {
+    ("Class_Peacebringer", "dwarf"): {_PB_DWARF},
+    ("Class_Peacebringer", "nova"): {_PB_NOVA},
+    ("Class_Peacebringer", "triform"): {_PB_DWARF, _PB_NOVA},
+    ("Class_Warshade", "dwarf"): {_WS_DWARF},
+    ("Class_Warshade", "nova"): {_WS_NOVA},
+    ("Class_Warshade", "triform"): {_WS_DWARF, _WS_NOVA},
+}
+KHELDIAN_FORMS = {_PB_DWARF, _PB_NOVA, _WS_DWARF, _WS_NOVA}
 
 # ── Role STANDARD interpretation ─────────────────────────────────────────────────────
 # Role is the ABSOLUTE default standard per archetype. It bends ONLY to an explicit signal —
@@ -8049,6 +8131,31 @@ def build_autopick():
         else:
             custom_note = ("🎯 Your custom targets are in charge of the slotting; the power "
                            "picks themselves didn't need to change to serve them.")
+    # FORM HONESTY (the C half of the 2026-08-29 field-report fix): when a
+    # Kheldian form answer is served heuristically because no form champion
+    # covers this content lane yet, SAY SO — the form powers are guaranteed in,
+    # but the result must never read as a certified champion build.
+    form_note = None
+    form = body.get("form") or None
+    if at in _KHELDIAN_ATS and form and form != "human" and not custom:
+        try:
+            import learn as _learn
+            _champ = _learn.load_champion(at, primary, secondary,
+                                          body.get("content"), form)
+        except Exception:  # noqa: BLE001
+            _champ = None
+        if not _champ:
+            _names = " and ".join(sorted(
+                (POWER_BY_FULL.get(fn) or {}).get("display_name") or fn
+                for fn in FORM_POWERS.get((at, form), ())))
+            _clabel = (ai_build.CONTENT_PRESETS.get(body.get("content") or "")
+                       or {}).get("label") or "this content"
+            form_note = (f"🔷 Your form choice is honored: {_names} "
+                         f"{'are' if form == 'triform' else 'is'} locked into the "
+                         f"picks. A certified champion for this form doesn't cover "
+                         f"{_clabel} yet (iTrial leagues have one today), so the "
+                         "rest of the build is the planner's best around your "
+                         "forms — a solid start, not a certified champion build.")
     powers = []
     for pk in picks:
         rec = POWER_BY_FULL.get(pk["full_name"])
@@ -8062,7 +8169,7 @@ def build_autopick():
                        "level_available": rec.get("level_available"),
                        "slots": [None], "slotCount": 1})
     return jsonify({"ok": True, "powers": powers, "count": len(powers),
-                    "custom_note": custom_note})
+                    "custom_note": custom_note, "form_note": form_note})
 
 
 # ---------------------------------------------------------------------------
