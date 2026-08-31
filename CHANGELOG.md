@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## Unreleased
+## 0.12.46 — 2026-08-30 — Kheldian form choices honored
 
 - **Kheldian form choices are now honored on every content lane.** A returning
   player reported (thank you!) that picking tri-form with general/solo content
@@ -14,6 +14,16 @@
   guaranteed in, and the build reads as a strong start, never as a certified
   champion. The "why this question" explainer also states which route — the
   certified champion or the honest heuristic — will serve your exact answers.
+
+- **Champion update: Night Widow (iTrial) improved 8.8%.** A rescued
+  certification run from the August wave beat the shipping Night Widow /
+  Teamwork champion under the fresh canonical check (1410.6 → 1535.1) and
+  supersedes it. Eleven other rescued candidates were checked the same way
+  and lost or tied — the incumbents stand.
+
+- **Data currency:** built against the Homecoming client as of the July 7,
+  2026 game update (latest patch at release time); last full client
+  re-export 2026-08-19.
 
 ## 0.12.45 — 2026-08-17 — AFK certification reads the build
 
