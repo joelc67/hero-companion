@@ -3574,14 +3574,34 @@ def _assign_pick_levels(powers, archetype=None, exemplar_level=None):
             seats.append([ladder[pinned], lp])       # the two level-1 seats
             pinned += 1
     seated = {id(p) for _, p in seats}
-    order = sorted([p for p in real if id(p) not in seated],
-                   key=_sched_avail)                 # stable → in-set tier order survives
-    si = pinned
-    for p in order:
-        while si < len(ladder) and ladder[si] < _sched_avail(p):
-            si += 1
-        seats.append([ladder[si] if si < len(ladder) else min(49, _sched_avail(p)), p])
-        si += 1
+    rest = [p for p in real if id(p) not in seated]
+    # FORM-FIRST SEATING (field report 2026-09-02, the 0.12.46 promise made
+    # true): a chosen Kheldian form IS the character — it seats at the FIRST
+    # ladder seat the game allows (Nova at 4, Dwarf at 20), never behind the
+    # queue of level-1 powers. Everything else first-fits the remaining seats,
+    # which reproduces the old greedy assignment EXACTLY when no form is in
+    # the pick list (avail-sorted first-fit == the old monotonic scan), so
+    # every non-Kheldian archetype seats byte-identically.
+    forms = sorted([p for p in rest if p.get("full_name") in KHELDIAN_FORMS],
+                   key=_sched_avail)
+    others = sorted([p for p in rest if p.get("full_name") not in KHELDIAN_FORMS],
+                    key=_sched_avail)                # stable → in-set tier order survives
+    free = list(range(pinned, len(ladder)))
+    for p in forms + others:
+        idx = next((i for i in free if ladder[i] >= _sched_avail(p)), None)
+        if idx is None:
+            seats.append([min(49, _sched_avail(p)), p])
+        else:
+            free.remove(idx)
+            seats.append([ladder[idx], p])
+    # ascending by level (the repair loop and _excess suffix walk assume it);
+    # stable sort keeps the level-1 creation pair at indices 0..pinned-1.
+    seats.sort(key=lambda s: s[0])
+    # A chosen form seat is as fixed as the creation pair: the repair and
+    # exemplar movers below shuffle around it, never through it — otherwise
+    # the slot-feasibility swaps immediately drag the form late again (the
+    # exact 6-8/38-41 seating the field report caught).
+    _frozen = {id(p) for p in forms}
 
     def _excess():
         """Total slot overweight across all pick-ladder suffixes (0 = feasible)."""
@@ -3608,8 +3628,12 @@ def _assign_pick_levels(powers, archetype=None, exemplar_level=None):
         improved = False
         # 1) plain swap: a heavy late power trades seats with a light early one.
         for j in sorted(range(pinned, len(seats)), key=lambda j: -_sched_added(seats[j][1])):
+            if id(seats[j][1]) in _frozen:
+                continue
             for k in order_by_added:
                 if k >= j or _sched_added(seats[k][1]) >= _sched_added(seats[j][1]):
+                    continue
+                if id(seats[k][1]) in _frozen:
                     continue
                 if _sched_avail(seats[j][1]) > seats[k][0]:
                     continue
@@ -3635,6 +3659,8 @@ def _assign_pick_levels(powers, archetype=None, exemplar_level=None):
             for j in range(len(seats) - 1, k, -1):
                 if _sched_added(seats[j][1]) <= _sched_added(seats[k][1]):
                     continue
+                if any(id(seats[m][1]) in _frozen for m in range(k, j + 1)):
+                    continue                          # never rotate through a form seat
                 if any(_sched_avail(seats[m][1]) > seats[m - 1][0] for m in range(k + 1, j + 1)):
                     continue                          # someone can't shift a seat earlier
 
@@ -3708,6 +3734,8 @@ def _assign_pick_levels(powers, archetype=None, exemplar_level=None):
                         continue                  # rescuing into a seat past L is pointless
                     if _sched_avail(seats[j][1]) > seats[k][0]:
                         continue                  # the game will not allow it that early
+                    if any(id(seats[_m][1]) in _frozen for _m in range(k, j + 1)):
+                        continue                  # never rotate through a form seat
                     # ⚠ ROTATE, NOT SWAP. A swap can never help here and the
                     # battery proved it: any seat at or below L already holds a
                     # power the game grants by L (anything else would be seated
@@ -7162,6 +7190,12 @@ def _champion_picks(archetype, primary, secondary, content, form=None):
         if fn and slots:
             out.append({"full_name": fn, "pick_level": slots.pop(0)})
             ordered.remove(fn)
+    # FORM-FIRST (field report 2026-09-02, mirrors _assign_pick_levels): a
+    # chosen form seats at the FIRST slot the game allows (Nova at 4, Dwarf at
+    # 20) — this greedy previously queued forms behind every level-1 power
+    # (WS triform served Nova at 16, Dwarf at 35). First-fit for the rest is
+    # unchanged behavior when no form is in the list.
+    ordered.sort(key=lambda fn: fn not in KHELDIAN_FORMS)   # stable: forms first
     for fn in ordered:
         lv = POWER_BY_FULL[fn].get("level_available") or 1
         i = next((j for j, sl in enumerate(slots) if sl >= lv), None)
