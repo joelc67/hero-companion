@@ -3,7 +3,7 @@
 """
 import os, sys, json
 sys.stdout.reconfigure(encoding="utf-8")
-ROOT = r"C:\Users\joelc\code\coh-builder"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT); sys.path.insert(0, os.path.join(ROOT, "server"))
 import server as srv, learn
 c = srv.app.test_client()
