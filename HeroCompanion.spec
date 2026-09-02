@@ -47,11 +47,20 @@ datas = [
 # (or manually). Kept out of `datas` on purpose.
 datas += collect_data_files("pulp")        # bundles the CBC solver binary the ILP needs
 
+# ⚠ BUILD GATE: PyInstaller only WARNS on a missing hidden import, so a build
+# environment without pywebview freezes a browser-fallback app that LOOKS fine
+# to headless smokes (HC_WINDOW=0) — exactly how 0.12.46 shipped windowless
+# from the fresh dev-01 box (field report, 2026-09-02). Fail the build here
+# instead: if the window stack cannot import, there is no release.
+import webview                                    # noqa: F401
+from webview.platforms import edgechromium        # noqa: F401
+import clr_loader, pythonnet                      # noqa: F401
+
 # server/ and ai/ modules are imported via runtime sys.path — name them explicitly.
 hiddenimports = [
     "server", "engine", "solver", "first_principles", "role_output", "converter",
     "leveling_schedule", "learn", "proc_pass", "mids_export", "mids_import",
-    "mids_powercust", "ingame_import", "ai_build", "claude_bridge", "pulse_feed",
+    "ingame_import", "ai_build", "claude_bridge", "pulse_feed",
     "requests",
     # The app's own window: pywebview drives the WebView2 runtime that already
     # ships with Windows 10/11, so nothing extra installs on the user's machine.
