@@ -69,6 +69,16 @@ end;
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional shortcuts:"
 
+[InstallDelete]
+; ⚠ THE STALE-TREE TRAP (field failure, 0.12.47 launch error, 2026-09-02):
+; Inno upgrades OVERWRITE files but never delete obsolete ones, so _internal
+; accumulated leftovers across releases — a highspy\_core.cp313-win_amd64.pyd
+; from an old-box Python 3.13 build survived every upgrade, made
+; `import highspy` half-succeed, and killed pulp (and the whole engine) at
+; launch. The installed tree must EQUAL the built tree: wipe _internal before
+; laying down the new one. User data is safe — it lives in %APPDATA%.
+Type: filesandordirs; Name: "{app}\_internal"
+
 [Files]
 Source: "..\dist\HeroCompanion\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "Add Shortcuts.bat"
 

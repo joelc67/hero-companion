@@ -60,6 +60,12 @@ begin
   Result := True;
 end;
 
+[InstallDelete]
+; Same stale-tree trap as HeroCompanion.iss (0.12.47 launch failure): upgrades
+; overwrite but never delete, so obsolete _internal files linger and can break
+; imports. Wipe it; user data lives in %APPDATA%, untouched.
+Type: filesandordirs; Name: "{app}\_internal"
+
 [Files]
 Source: "..\dist\CompanionLite\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 

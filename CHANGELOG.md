@@ -1,5 +1,32 @@
 # Hero Companion — What's New
 
+## 0.12.48 — 2026-09-02 — The launch error, fixed at the root; forms seat where the game grants them
+
+- **0.12.47 could fail to launch after an update — fixed, and the whole
+  failure class with it.** Upgrading never deleted obsolete files from the
+  app folder, so leftovers from older installs accumulated; a stray solver
+  library fragment from a build made on the old development machine survived
+  every upgrade and finally crashed the engine at startup. The installer now
+  wipes the app's internal folder before laying down the new version, so an
+  installed copy is always exactly the released build. Your saves and
+  settings are untouched — they live in your user profile, which the
+  installer never clears. If 0.12.47 wouldn't start for you, installing
+  0.12.48 over it is the fix; no uninstall needed.
+
+- **Kheldian forms now seat at the level the game grants them** — Nova at 4,
+  Dwarf at 20 (the known issue stated in the 0.12.47 notes, and before that
+  a field report — thank you!). Two seating paths queued your chosen form
+  behind every level-1 power; a chosen form is the character, so it now
+  takes the first seat the game allows and the rest of the build plans
+  around it. All other archetypes seat exactly as before.
+
+- Everything from 0.12.47 rides along: the native app window restored (with
+  a build gate so a windowless build can never ship again) and the roster
+  of 2,714 champions — every archetype × primary × secondary combination.
+
+- **Data currency:** unchanged from 0.12.47 (Homecoming client as of the
+  July 7, 2026 game update; liveness clean).
+
 ## 0.12.47 — 2026-09-02 — The app window returns; a champion for every combo
 
 - **Hero Companion opens in its own window again.** A field report (thank
