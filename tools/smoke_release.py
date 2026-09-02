@@ -1,11 +1,11 @@
-"""RELEASE SMOKE (run against dist/HeroCompanion/HeroCompanion.exe before EVERY publish):
+﻿"""RELEASE SMOKE (run against dist/HeroCompanion/HeroCompanion.exe before EVERY publish):
 pinned Defender L1 RULE (one pick from each set's first two), MM Mercs summons carry pet
 sets (no heal globals), version/packaged flags. Update the version expectation per release.
 """
 import json, os, subprocess, sys, time, urllib.request
 sys.stdout.reconfigure(encoding="utf-8")
 # Repo-relative (2026-08-30): the old absolute coh-builder path broke on every
-# machine but the original dev box — resolve from this file's own location.
+# machine but the original dev box â€” resolve from this file's own location.
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXE = os.path.join(ROOT, "dist", "HeroCompanion", "HeroCompanion.exe")
 proc = subprocess.Popen([EXE])
@@ -18,7 +18,7 @@ try:
                 v = json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=2))
                 # PORT-RACE GUARD (see smoke_gold): only the exe we launched counts
                 m = json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}/meta", timeout=2))
-                if m.get("app_version") != "0.12.46":
+                if m.get("app_version") != "0.12.47":
                     continue
                 base = f"http://127.0.0.1:{port}"; break
             except Exception: pass
@@ -34,7 +34,7 @@ try:
 
     meta = get("/meta")
     print("version:", meta.get("app_version"), "packaged:", meta.get("packaged"))
-    ok3 = meta.get("app_version") == "0.12.46" and meta.get("packaged") is True
+    ok3 = meta.get("app_version") == "0.12.47" and meta.get("packaged") is True
 
     # pinned case 1: Defender Poison/Sonic L1 creation pair (champion-mask trap)
     ap = post("/build/autopick", {"archetype":"Class_Defender","primary":"Defender_Buff.Poison",
@@ -62,10 +62,10 @@ try:
             print(f"  {p['display_name']}: {'OK pet sets' if has_set and not bad else sets}")
             if bad or not has_set: ok2 = False
 
-    # pinned case 3 (NEW, 2026-07-20 — the dead-air interaction smoke): the
+    # pinned case 3 (NEW, 2026-07-20 â€” the dead-air interaction smoke): the
     # controls that silently no-op'd in the field must be exercised in the
     # PACKAGED app. (a) /build/calculate is the recompute backend behind epic
-    # swap + target edits — a fresh build must yield real totals; (b) the shipped
+    # swap + target edits â€” a fresh build must yield real totals; (b) the shipped
     # client must carry the global error surface so a server-down page can never
     # be silently dead again.
     calc = post("/build/calculate", {"archetype": "Class_Mastermind",
@@ -110,14 +110,14 @@ try:
     print("fire-farm picker (2 choices, no generic):", "OK" if ok6 else "WRONG")
 
     # pinned case 5 (2026-07-20 walk report): EVERY import entry point offers file
-    # navigation — the two entry cards, the builder's import button, and the file
+    # navigation â€” the two entry cards, the builder's import button, and the file
     # input they all trigger. A missing browse control strands users with a game
     # export and no way to load it.
     ok7 = False
     try:
         html2 = urllib.request.urlopen(base + "/", timeout=10).read().decode("utf-8", "ignore")
         ok7 = all(m in html2 for m in
-                  # entry-mids retired 2026-08-03 with the entry overlay — the
+                  # entry-mids retired 2026-08-03 with the entry overlay â€” the
                   # Character menu's import-btn IS the Mids entry point now.
                   ('id="import-file"', 'id="import-btn"',
                    'id="ingame-pick-go"',
@@ -130,9 +130,9 @@ try:
     print("import entry points (browse everywhere):", "OK" if ok7 else "MISSING")
 
     # pinned case 6 (0.12.25, order A): the packaged exe supports opt-in
-    # auto-start AND its reported state equals REGISTRY REALITY — /meta answers
+    # auto-start AND its reported state equals REGISTRY REALITY â€” /meta answers
     # through a live HKCU read; we make the same read here and they must agree.
-    # (The smoke never toggles the value — it verifies truth, not behavior.)
+    # (The smoke never toggles the value â€” it verifies truth, not behavior.)
     auto = meta.get("autostart") or {}
     try:
         import winreg

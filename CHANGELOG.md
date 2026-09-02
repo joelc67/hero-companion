@@ -1,5 +1,37 @@
 # Hero Companion — What's New
 
+## 0.12.47 — 2026-09-02 — The app window returns; a champion for every combo
+
+- **Hero Companion opens in its own window again.** A field report (thank
+  you!) caught 0.12.46 opening as a browser tab at localhost:5000 instead of
+  the app window it had before. The cause was ours: 0.12.46 was the first
+  release built on a new machine, and the native-window component was missing
+  from that build environment — the app silently fell back to its
+  browser-tab escape hatch. The window stack is restored, and the build now
+  refuses to produce a release at all if that component is ever missing
+  again, so this failure can't ship silently twice.
+
+- **Every powerset combination now has a champion.** The roster grew from 29
+  certified contexts to 2,714: an optimization campaign ran every archetype
+  × primary × secondary combination (2,703 builds) through the full
+  certified pipeline. Whatever you play, autopick now serves a converged,
+  certificate-carrying build instead of falling back to the bare heuristic
+  picker. The original 29 deeply-certified champions are unchanged and five
+  of them improved this round under the canonical gate (Crab Spider Soldier,
+  Plant/Poison, Poison/Sonic, and Radiation/Radiation — twice). The new
+  champions carry solver certificates today; the deeper canonical-score
+  audit runs as a follow-up wave.
+
+- **Known issue, honestly stated:** the same field report notes Kheldian
+  form powers seat at levels 6–8 (Nova) and 38–41 (Dwarf) rather than the
+  game's earliest 4 and 20 that the 0.12.46 notes promised. Confirmed — the
+  leveling scheduler places forms by build priority, not earliest
+  availability. A proper fix is queued rather than rushed into this release.
+
+- **Data currency:** built against the Homecoming client as of the July 7,
+  2026 game update (latest patch at release time); liveness check clean
+  (10,984 powers, 458 offered sets, 0 diffs).
+
 ## 0.12.46 — 2026-08-30 — Kheldian form choices honored
 
 - **Kheldian form choices are now honored on every content lane.** A returning

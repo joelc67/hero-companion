@@ -1,11 +1,11 @@
-"""GOLD SMOKE (run before EVERY publish): every champion context in benchmarks/champions.json
+﻿"""GOLD SMOKE (run before EVERY publish): every champion context in benchmarks/champions.json
 must be SERVED by the frozen exe's autopick at >90% pick overlap - proves the bundled
 champions actually reach end users (the 0.12.10-and-earlier packaging defect).
 """
 import json, os, subprocess, sys, time, urllib.request
 sys.stdout.reconfigure(encoding="utf-8")
 # Repo-relative (2026-08-30): the old absolute coh-builder path broke on every
-# machine but the original dev box — resolve from this file's own location.
+# machine but the original dev box â€” resolve from this file's own location.
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXE = os.path.join(ROOT, "dist", "HeroCompanion", "HeroCompanion.exe")
 CHAMPS = json.load(open(os.path.join(ROOT, "benchmarks", "champions.json"), encoding="utf-8"))
@@ -21,7 +21,7 @@ try:
                 # own 5000 while the launched dist exe fell back to 5001 - accept a
                 # port ONLY if it is the exe we just launched (version pin match).
                 m = json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}/meta", timeout=2))
-                if m.get("app_version") != "0.12.46":
+                if m.get("app_version") != "0.12.47":
                     continue
                 base = f"http://127.0.0.1:{port}"; break
             except Exception: pass
@@ -34,12 +34,12 @@ try:
     meta = json.load(urllib.request.urlopen(base+"/meta", timeout=5))
     print("version:", meta["app_version"], "model:", meta["model_version"], "packaged:", meta["packaged"])
     # Update these pins per release (like smoke_release's version expectation).
-    ok_all = meta["app_version"] == "0.12.46" and meta["model_version"] == 49
+    ok_all = meta["app_version"] == "0.12.47" and meta["model_version"] == 49
     if not ok_all:
-        print("  VERSION/MODEL PIN MISMATCH — update the pins for this release")
+        print("  VERSION/MODEL PIN MISMATCH â€” update the pins for this release")
     # THE GOLD TEST: every champion context, served to a frozen END USER via autopick.
     # FORM champions (5-part keys, Joel's per-form Kheldian ruling 2026-07-12) can't
-    # be reached through plain autopick until the wizard grows its Form question —
+    # be reached through plain autopick until the wizard grows its Form question â€”
     # they're checked for a CONVERGED certificate + nonempty picks instead, and the
     # denominator names both counts so nothing hides.
     checked = 0
@@ -48,7 +48,7 @@ try:
         at, prim, sec, content = parts[:4]
         form = parts[4] if len(parts) > 4 else None
         # FORM champions (per-form Kheldian route): served through the wizard's
-        # Form question — the same autopick path, with the form passed.
+        # Form question â€” the same autopick path, with the form passed.
         ap = post("/build/autopick", {"archetype":at,"primary":prim,"secondary":sec,
                                       "content":content, "form":form})
         got = {p["full_name"] for p in ap["powers"] if not p["full_name"].startswith("Inherent")}
