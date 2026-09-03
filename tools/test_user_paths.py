@@ -173,6 +173,17 @@ T("/champion/bundle")
 check("/champion/bundle answers", C.post("/champion/bundle",
       json={"archetype": "Class_Blaster", "primary": "Blaster_Ranged.Fire_Blast",
             "secondary": "Blaster_Support.Fire_Manipulation", "content": "general"}).status_code == 200)
+T("/build/slot_compare")
+r = C.post("/build/slot_compare", json={**BUILD, "power_index": 0, "slot_index": 0,
+                                        "candidates": [None], "keys": ["defense.AoE"]})
+sc = j(r)
+check("/build/slot_compare returns 200 ok with one result",
+      r.status_code == 200 and sc.get("ok") is True and len(sc.get("results") or []) == 1, r.status_code)
+r = C.post("/build/slot_compare", json={**BUILD, "slot_index": 0,
+                                        "candidates": [None], "keys": ["defense.AoE"]})
+sc = j(r)
+check("/build/slot_compare missing power_index → ok false (not 500)",
+      r.status_code == 200 and sc.get("ok") is False, r.status_code)
 
 # ── AI refusal shape (client ships AI-free) ─────────────────────────────────
 T("/ai/query")
