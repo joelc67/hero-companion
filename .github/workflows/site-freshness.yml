@@ -5,12 +5,46 @@
 # Red run = GitHub emails Joel. Fix ritual: gh api .../pages/builds/latest
 # first; if its date is old while workflows are green, restore
 # build_type=legacy and POST a build (seam in CLAUDE.md).
+#
+# SELF-HEALING (Joel, 2026-09-03, after a 4-hour render-cron nap): GitHub
+# treats schedule crons as BEST-EFFORT, and render-pulse's "*/15" has been
+# measured firing every 60-90 minutes — on 2026-09-02 it simply stopped for
+# 4+ hours and the board sat stale until a manual dispatch. The `heal` job
+# below asks the API when the last SUCCESSFUL render ran and dispatches one
+# when that age passes 90 minutes. The canary itself now runs every 4 hours
+# (off-peak minute) so a nap gets healed the same day, not the next; the
+# `check` job keeps the original live-site date test and its email-on-red
+# semantics unchanged. Yes, this rides the same best-effort cron scheduler
+# it guards against — two independent schedules rarely nap in unison, and
+# workflow_dispatch remains the manual override for when they do.
 name: Site freshness canary
 on:
   schedule:
-    - cron: "17 12 * * *"   # daily, 12:17 UTC
+    - cron: "23 1,5,9,13,17,21 * * *"   # every 4h, off-peak minute
   workflow_dispatch:
+permissions:
+  actions: write   # heal dispatches render-pulse.yml; check needs nothing
 jobs:
+  heal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch a render when the render cron has napped past 90 minutes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          last=$(curl -fsS -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/render-pulse.yml/runs?status=success&per_page=1" \
+            | python3 -c "import json,sys; rs=json.load(sys.stdin)['workflow_runs']; print(rs[0]['created_at'] if rs else '1970-01-01T00:00:00Z')")
+          age=$(( $(date -u +%s) - $(date -u -d "$last" +%s) ))
+          echo "last successful render: $last (${age}s ago)"
+          if [ "$age" -gt 5400 ]; then
+            echo "render cron is napping (>90 min) — dispatching a render"
+            curl -fsS -X POST -H "Authorization: Bearer $GH_TOKEN" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/workflows/render-pulse.yml/dispatches" \
+              -d '{"ref":"master"}'
+          else
+            echo "render is current — nothing to heal"
+          fi
   check:
     runs-on: ubuntu-latest
     steps:
