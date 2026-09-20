@@ -323,6 +323,24 @@ for c in COMMON_IOS.get("special_ios", []):
                               "piece_uid": c["uid"], "piece_name": c.get("name") or c["uid"],
                               "category_id": None, "image": c.get("image") or ""}
 
+# ⚠ ATTUNED COPIES MUST RESOLVE (field report 2026-09-19, ChainsawHands): the
+# in-game export writes an attuned piece as "Attuned_Touch_of_Death_F" while our
+# catalog carries only "Crafted_Touch_of_Death_F" (the parser keeps whichever
+# prefix it saw) — both importers missed the uid and the slot rendered EMPTY.
+# Alias the Crafted_/Attuned_ pair in BOTH directions; never across Superior_
+# (Superior Winter's Bite is a DIFFERENT set with different values). A slot's
+# "attuned" flag still comes from the original uid at the call site.
+# This is a SEPARATE, IMPORT-ONLY map on purpose: aliases share the same slot
+# object, so folding them into PIECE_BY_UID would make .values() yield every
+# piece twice — and the solver/test helpers that enumerate pieces would slot
+# duplicates. Nothing else may read it.
+PIECE_BY_UID_IMPORT = {}
+for _uid, _slot in PIECE_BY_UID.items():
+    for _a, _b in (("Crafted_", "Attuned_"), ("Attuned_", "Crafted_")):
+        if _uid.startswith(_a):
+            PIECE_BY_UID_IMPORT[_b + _uid[len(_a):]] = _slot
+PIECE_BY_UID_IMPORT.update(PIECE_BY_UID)     # a real uid always outranks an alias
+
 # Exemplar-exempt sets: bonuses live at EVERY level (wiki-pinned 2026-08-03) —
 # purples, PvP, Winter-O and Archetype sets. The purple/Winter/PvP rosters are
 # converter.py's (verified vs the data — one copy, per the travel-powers
@@ -350,7 +368,7 @@ for _slot in INCARNATES.get("slots", []):
 
 
 def _import_lookups():
-    return {"power_by_full": POWER_BY_FULL, "piece_by_uid": PIECE_BY_UID,
+    return {"power_by_full": POWER_BY_FULL, "piece_by_uid": PIECE_BY_UID_IMPORT,
             "name_to_piece": ENH_NAME_TO_PIECE, "common_io_map": COMMON_IO_MAP,
             "piece_image": PIECE_IMAGE, "incarnate_index": INCARNATE_INDEX,
             # extras used by the in-game (/build_save_file) text importer
