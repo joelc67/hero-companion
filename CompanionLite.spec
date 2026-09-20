@@ -11,6 +11,23 @@ if os.path.exists('data/inbox_key.bin'):
 else:
     raise SystemExit('data/inbox_key.bin missing - bake the inbox upload key first')
 
+# ⚠ VERSION RESOURCE — same blank-Details defect the full app had through
+# 0.12.49 (tools/version_res.py explains why it matters). Lite's version lives
+# in run_lite.py's LITE_VERSION, and lite_version.txt only moves when a release
+# actually publishes, so read the CODE's value — that is what the app reports.
+import re as _re
+import sys as _sys
+_sys.path.insert(0, 'tools')
+from version_res import write_version_file as _write_version_file
+
+_lite_version = _re.search(r'^LITE_VERSION\s*=\s*"([^"]+)"',
+                           open('run_lite.py', encoding='utf-8').read(),
+                           _re.M).group(1)
+_write_version_file('version_info_lite.txt', _lite_version, 'CompanionLite',
+                    'Companion Lite — City of Heroes chat companion',
+                    product='Companion Lite')
+print(f'[spec] version resource: {_lite_version}')
+
 a = Analysis(
     ['run_lite.py'],
     pathex=['server', 'tools'],
@@ -48,6 +65,7 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
     icon='assets/HeroCompanion.ico',
+    version='version_info_lite.txt',
 )
 coll = COLLECT(
     exe,

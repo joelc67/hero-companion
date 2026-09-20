@@ -20,6 +20,21 @@ with open("build_commit.txt", "w", encoding="utf-8") as _f:
     _f.write(_commit)
 print(f"[spec] build stamp: {_commit or '(no git)'}")
 
+# ⚠ VERSION RESOURCE (Properties -> Details). Shipped BLANK through 0.12.49 —
+# no file version, no publisher, no description, which reads as anonymous to
+# users and to AV heuristics alike. Generated from VERSION at build time so it
+# cannot drift from what the app reports; version_info.txt is derived and
+# gitignored, like build_commit.txt above.
+import sys as _sys
+_sys.path.insert(0, "tools")
+from version_res import write_version_file as _write_version_file
+
+_version = open("VERSION", encoding="utf-8").read().strip()
+_write_version_file("version_info.txt", _version, "HeroCompanion",
+                    "Hero Companion — offline build optimizer and leveling planner",
+                    product="Hero Companion")
+print(f"[spec] version resource: {_version}")
+
 datas = [
     ("build_commit.txt", "."),             # which commit this exe was built from
     ("data", "data"),                      # parsed game database snapshot
@@ -109,6 +124,7 @@ exe = EXE(
                                # and closing it quits. Output goes to
                                # %APPDATA%\HeroCompanion\app.log.
     icon="assets/HeroCompanion.ico",
+    version="version_info.txt",
 )
 coll = COLLECT(
     exe,

@@ -31,6 +31,10 @@ UninstallDisplayIcon={app}\CompanionLite.exe
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
+; Setup.exe's own Properties -> Details: Inno fills ProductVersion from
+; AppVersion but leaves FILE version blank unless told (blank through
+; 0.12.49, same defect the app exe had — see tools/version_res.py).
+VersionInfoVersion={#AppVersion}
 LicenseFile=..\LICENSE
 ; Lite is a windowless tray app — nothing to close politely, so end it for the user.
 CloseApplications=force

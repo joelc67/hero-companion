@@ -27,6 +27,10 @@ UninstallDisplayIcon={app}\HeroCompanion.exe
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
+; Setup.exe's own Properties -> Details: Inno fills ProductVersion from
+; AppVersion but leaves FILE version blank unless told (blank through
+; 0.12.49, same defect the app exe had — see tools/version_res.py).
+VersionInfoVersion={#AppVersion}
 LicenseFile=..\LICENSE
 ; Close a running copy for the user rather than asking. Force stays right even now
 ; that the app HAS a window (2026-08-02, tray removed): the self-update path runs
