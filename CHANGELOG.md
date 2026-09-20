@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## Unreleased
+## 0.12.50 — 2026-09-19 — The app says who it is
 
 - **The app now identifies itself in Windows.** Right-click the exe →
   Properties → Details was completely blank: no version, no publisher, no
@@ -8,6 +8,9 @@
   file-version field had the same gap. Nothing about how the app runs
   changes — but a signed program that refuses to say what it is reads as
   anonymous to both people and antivirus heuristics.
+
+- **Data currency:** unchanged (Homecoming client as of the July 7, 2026 game
+  update — still the newest live patch; liveness clean, 0 diffs).
 
 ## 0.12.49 — 2026-09-19 — Attuned enhancements import as what they are
 
