@@ -1,5 +1,29 @@
 # Hero Companion — What's New
 
+## 0.12.49 — 2026-09-19 — Attuned enhancements import as what they are
+
+- **Attuned set pieces no longer import as empty slots.** A field report
+  (thank you!) showed a build whose Fire Sword came back with its last two
+  slots blank — an attuned Touch of Death proc and an attuned Achilles' Heel:
+  Chance for Res Debuff — even though both were slotted in game. The game
+  names an attuned copy of a set differently from the crafted one, and our
+  enhancement catalog only carried the crafted name for those sets, so the
+  importer found nothing and left the slot empty rather than guessing. Both
+  importers now recognise the two names as the same piece: the in-game
+  export and the Mids .mbd file. Superior versions of Archetype sets are
+  deliberately still treated as their own sets, because they are.
+
+- **Imported attuned pieces are now valued at your character's level.** The
+  game writes an attuned enhancement as level 1, because an attuned piece
+  has no fixed level — it scales with you. Recovering the slot was only half
+  the job; it also had to be priced right, so an attuned piece imported this
+  way is now worth what its crafted level-50 copy would be instead of what a
+  level-1 enhancement would. Your set bonuses and totals should match what
+  the game shows you.
+
+- **Data currency:** unchanged (Homecoming client as of the July 7, 2026
+  game update — still the newest live patch; liveness clean, 0 diffs).
+
 ## 0.12.48 — 2026-09-02 — The launch error, fixed at the root; forms seat where the game grants them
 
 - **0.12.47 could fail to launch after an update — fixed, and the whole
