@@ -236,3 +236,19 @@ def build_mbd(payload, db_name, db_version, level_lookup, app_version="3.7.7.7")
         "LastPower": max(num_picks - 1, 0) + 4,
         "PowerEntries": power_entries,
     }
+
+
+def share_code(mbd):
+    """The text Mids' Import box takes (field report 2026-09-30: pasting the .mbd
+    there fails with "unknown data format"). Mirrors MidsReborn's
+    CharacterBuildData.GenerateChunkData: the same JSON, Brotli-compressed,
+    base64'd, under an |MBD;raw;compressed;encoded;BASE64;| header, 67 chars
+    per |line|. Mids rejects the code if the compressed length doesn't match."""
+    import base64
+    import json
+    import brotli
+    raw = json.dumps(mbd, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    comp = brotli.compress(raw, quality=11)
+    b64 = base64.b64encode(comp).decode("ascii")
+    body = "\r\n".join(f"|{b64[i:i + 67]}|" for i in range(0, len(b64), 67))
+    return f"|MBD;{len(raw)};{len(comp)};{len(b64)};BASE64;|\r\n{body}"

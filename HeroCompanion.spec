@@ -75,7 +75,7 @@ import clr_loader, pythonnet                      # noqa: F401
 hiddenimports = [
     "server", "engine", "solver", "first_principles", "role_output", "converter",
     "leveling_schedule", "learn", "proc_pass", "mids_export", "mids_import",
-    "ingame_import", "ai_build", "claude_bridge", "pulse_feed",
+    "ingame_import", "ai_build", "claude_bridge", "pulse_feed", "brotli",
     "requests",
     # The app's own window: pywebview drives the WebView2 runtime that already
     # ships with Windows 10/11, so nothing extra installs on the user's machine.

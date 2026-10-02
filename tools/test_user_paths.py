@@ -133,6 +133,17 @@ T("/build/export"); T("/build/import")
 r = C.post("/build/export", json=BUILD)
 exp = j(r)
 check("/build/export mbd succeeds", r.status_code == 200 and exp.get("mbd"), r.status_code)
+# Mids' Import box decode (BuildManager.ValidateAndLoadImportData): header sizes must
+# match, |s stripped, base64 -> Brotli -> the same build JSON as the .mbd.
+import base64, brotli  # noqa: E401,E402
+_lines = [ln for ln in (exp.get("code") or "").replace("\r", "\n").split("\n") if ln]
+_hdr = [h for h in _lines[0].strip("|").split(";") if h] if _lines else []
+_b64 = "".join(_lines[1:]).replace("|", "")
+_comp = base64.b64decode(_b64) if _b64 else b""
+check("/build/export code decodes as a Mids build code",
+      len(_hdr) == 5 and _hdr[0] == "MBD" and _hdr[4] == "BASE64"
+      and int(_hdr[2]) == len(_comp) and int(_hdr[3]) == len(_b64)
+      and json.loads(brotli.decompress(_comp)) == exp.get("mbd"), _hdr)
 r2 = C.post("/build/import", json={"mbd": exp.get("mbd")})
 imported = j(r2).get("build") or {}
 picked = [p for p in (BUILD.get("powers") or [])

@@ -9765,10 +9765,14 @@ async function exportMids() {
     const res = await api("/build/export", postJson(payload));
     if (!res.ok) { alert("Export failed."); return; }
     const r = await saveTextFile(res.filename || "build.mbd", JSON.stringify(res.mbd, null, 1));
+    // Mids has two doors: File → Open takes the .mbd; its Import box only takes
+    // a build code. Put the code on the clipboard so either one works.
+    const copied = res.code && copyToClipboard(res.code);
+    const paste = copied ? " Or paste it: the build code is on your clipboard — in Mids use Build Sharing → Import DataChunk." : "";
     const s = $("gen-status");
-    if (s && r && r.ok) s.textContent = r.path
-      ? `⬇ Exported to ${r.path} — open it in Mids Reborn.`
-      : "⬇ Exported — check your Downloads folder.";
+    if (s && r && r.ok) s.textContent = (r.path
+      ? `⬇ Exported to ${r.path} — open it in Mids Reborn with File → Open.`
+      : "⬇ Exported — check your Downloads folder, then open it in Mids Reborn with File → Open.") + paste;
   } catch (e) {
     alert("Export error: " + e);
   }

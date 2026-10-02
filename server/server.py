@@ -5667,7 +5667,11 @@ def build_export():
         payload, DB_NAME, DB_VERSION,
         level_lookup=lambda fn: POWER_BY_FULL.get(fn, {}).get("level_available", 1))
     name = (payload.get("name") or "coh_build").strip().replace(" ", "_")
-    return jsonify({"ok": True, "filename": f"{name}.mbd", "mbd": mbd})
+    try:
+        code = mids_export.share_code(mbd)
+    except ImportError:   # a build missing brotli still exports the .mbd
+        code = None
+    return jsonify({"ok": True, "filename": f"{name}.mbd", "mbd": mbd, "code": code})
 
 
 def _critique_build(build, totals):
