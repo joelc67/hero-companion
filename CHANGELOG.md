@@ -1,5 +1,25 @@
 # Hero Companion — What's New
 
+## 0.12.51 — 2026-10-02 — No HOs, and a Mids code you can paste
+
+- **New: "I have Hamidon Origins (HOs) to slot."** It sits under *Customize
+  build targets…* and is ticked by default. Untick it if you don't raid
+  Hamidon and don't plan to buy HOs, and no build will slot one again — not in
+  the optimizer, not in proc-heavy attacks. Attacks that used HOs for their
+  accuracy keep pieces of their own sets instead. The app remembers your
+  choice. (Thanks to the forum report that asked for this — it also showed
+  HOs were turning up outside endgame content, which this stops too.)
+
+- **Export to Mids Reborn now also copies a Mids build code.** Mids has two
+  ways in, and only one took our file: **File → Open** loads the exported
+  .mbd, but Mids' import boxes reject it with a format error. Export now also
+  puts a Mids build code on your clipboard — paste it into Mids under
+  **Build Sharing → Import DataChunk**. Both routes were tested in Mids Reborn
+  3.8.6 with its current Homecoming database.
+
+- **Data currency:** unchanged (Homecoming client as of the July 7, 2026 game
+  update — still the newest live patch; liveness clean, 0 diffs).
+
 ## 0.12.50 — 2026-09-19 — The app says who it is
 
 - **The app now identifies itself in Windows.** Right-click the exe →

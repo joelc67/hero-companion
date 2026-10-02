@@ -73,9 +73,12 @@ just as they do in the game.
 in one slot — accuracy and damage together, or resistance and endurance — which
 is more raw enhancement per slot than any set piece. The price is that HOs earn
 no set bonuses, and they come from endgame play: Hamidon raids, or merit
-conversion. For endgame content (incarnate trials and farms) the optimizer may
-propose them where they genuinely beat a set piece, and every HO it places says
-where it comes from. You can slot them by hand anywhere, for any content.
+conversion. The optimizer may propose them where they genuinely beat a set
+piece — mostly for endgame content (incarnate trials and farms), and as the
+accuracy core of proc-heavy attacks — and every HO it places says where it
+comes from. **Don't have HOs?** Untick *I have Hamidon Origins (HOs) to slot*
+(under *Customize build targets…*) and no build will slot one. You can still
+slot them by hand anywhere, for any content.
 
 ## Content and Role
 
@@ -179,9 +182,13 @@ The Converter panel answers two questions:
 ## Saving, Importing, Exporting
 
 - **Save** keeps the character's plan and leveling progress locally so you can resume.
-  Auto-save runs in the background.
-- **Import/Export** is Mids Reborn compatible — bring builds in, take builds out. Your
-  builds are yours; nothing leaves your machine.
+  Auto-save runs in the background. A saved character is Hero Companion's own file —
+  Mids can't open it; use Export for that.
+- **Import/Export** is Mids Reborn compatible — bring builds in, take builds out.
+  **Export to Mids Reborn** writes a `.mbd` file (open it in Mids with **File → Open**)
+  and copies a Mids build code to your clipboard (paste it in Mids under
+  **Build Sharing → Import DataChunk**). Your builds are yours; nothing leaves your
+  machine.
 
 ## Your alignment
 
