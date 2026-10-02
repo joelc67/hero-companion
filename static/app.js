@@ -2492,7 +2492,7 @@ window.refitEndgame = async function () {
   out.innerHTML = "<p class='muted small'>Re-fitting your level-50 build around your picks…</p>";
   const goal = _wizGoal();
   const sol = await api("/build/solve", postJson({
-    archetype: build.archetype, powers: build.powers, content: goal.content, role: goal.role, preserve: false }));
+    archetype: build.archetype, powers: build.powers, content: goal.content, role: goal.role, preserve: false, no_ho: noHo() }));
   if (!sol || !sol.ok) { out.innerHTML = "<p class='muted small'>Couldn't re-fit — set a Content goal and try again.</p>"; return; }
   build.powers = sol.powers; renderPowers(); recompute();
   const t = sol.totals || {};
@@ -2534,7 +2534,7 @@ window.resetToOptimal = async function () {
     custom_targets: build._custom_targets || null }));
   if (!ap || !ap.ok) { if (out) out.innerHTML = "<p class='muted small'>Couldn't rebuild right now.</p>"; return; }
   const sol = await api("/build/solve", postJson({
-    archetype: build.archetype, powers: ap.powers, content: goal.content, role: goal.role, preserve: false }));
+    archetype: build.archetype, powers: ap.powers, content: goal.content, role: goal.role, preserve: false, no_ho: noHo() }));
   build.powers = (sol && sol.ok) ? sol.powers : ap.powers;
   LEVELING_DEVIATED = false; LAST_REFIT = "";   // back on the suggested plan
   // v34 item 5 (ENTRY-POINT CLASS, Joel's walk-2 defect 2): EVERY level-50
@@ -3904,6 +3904,7 @@ async function init() {
       $("farm-retired-note").classList.add("hidden");
   });
   $("export-btn").addEventListener("click", exportMids);
+  if ($("has-ho-toggle")) $("has-ho-toggle").checked = !noHo();
   // Converter panel: build the interactive "want/have" tool when first opened (works with no build).
   if ($("conv-guide-details")) {
     $("conv-guide-details").addEventListener("toggle", (e) => {
@@ -5229,7 +5230,7 @@ async function buildRespecPlan() {
   const presolve = build.powers.map(p => ({ full_name: p.full_name, slots: p.slots,
     earned_slot_count: p.earned_slot_count }));
   const res = await api("/build/solve", postJson({
-    archetype: build.archetype, content, role, tier: build.tier || "premium",
+    archetype: build.archetype, content, role, tier: build.tier || "premium", no_ho: noHo(),
     roles: (typeof selectedRoles === "function" ? selectedRoles() : []), pvp: build.pvp,
     preserve: false, primary_display: build.primary_display,
     secondary_display: build.secondary_display, powers: presolve,
@@ -8624,6 +8625,12 @@ const postJson = (obj) => ({
   method: "POST", headers: { "Content-Type": "application/json" },
   body: JSON.stringify(obj),
 });
+// "I have Hamidon Origins" (field report 2026-09-30): unticked = every solve is
+// told no_ho and never slots an HO. Default ticked = the old behavior.
+function noHo() { try { return localStorage.getItem("hc_no_ho") === "1"; } catch (e) { return false; } }
+window.setHasHo = function (has) {
+  try { localStorage.setItem("hc_no_ho", has ? "0" : "1"); } catch (e) { /* private mode */ }
+};
 
 function renderStats(t) {
   const resCap = (t.caps && t.caps.resistance_hard_cap) || 75;
@@ -10126,7 +10133,7 @@ async function previewRespec() {
     if (!ap || !ap.ok) throw new Error((ap && ap.error) || "auto-pick failed");
     const pw = ap.powers.filter(p => !p.full_name.startsWith("Incarnate"))
                         .map(p => ({ full_name: p.full_name, slots: [] }));
-    const sol = await api("/build/solve", postJson({ archetype: at, powers: pw, content, role, preserve: false }));
+    const sol = await api("/build/solve", postJson({ archetype: at, powers: pw, content, role, preserve: false, no_ho: noHo() }));
     if (!sol || !sol.ok) throw new Error((sol && sol.response) || "solve failed");
     const calc = await api("/build/calculate", postJson({ archetype: at, powers: sol.powers, pvp: build.pvp }));
     PROPOSED_RESPEC = { powers: sol.powers, totals: (calc && calc.totals) || calc || {},
@@ -10579,7 +10586,7 @@ async function renderAssessment(presolvePowers, ctx) {
   try {
     const res = await api("/build/assess", postJson({
       archetype: build.archetype, content: ctx.content || null, role: ctx.role || null,
-      goal: ctx.goal || "", tier: build.tier || "premium", roles: selectedRoles(),
+      goal: ctx.goal || "", tier: build.tier || "premium", roles: selectedRoles(), no_ho: noHo(),
       pvp: build.pvp, preserve: ctx.preserve, keep_layout: ctx.keep_layout,
       powers: presolvePowers }));
     if (!res || !res.ok) { card.remove(); return; }
@@ -11061,7 +11068,7 @@ async function solveSlotting(perkFocus, opts) {
       pick_level: p.pick_level,          // the target-level solve judges usability by it
       locked: !!p._locked }));
     const res = await api("/build/solve", postJson({
-      archetype: build.archetype, goal, tier: build.tier || "premium",
+      archetype: build.archetype, goal, tier: build.tier || "premium", no_ho: noHo(),
       content: content || null, role: role || null, exposure: build._exposure || null,
       targets: opts.targets || null,    // an applied alternative route overrides
       custom_targets: build._custom_targets || null,   // YOUR numbers (derived, never certified)

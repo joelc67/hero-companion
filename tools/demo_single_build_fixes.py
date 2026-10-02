@@ -536,10 +536,31 @@ check("REMEDY NEGATIVE CONTROL: proxy-only shortfalls generate no advice",
       f"{len(_unmet_n)} proxy rows short, "
       f"{len(_sv_n.get('ask_remedies') or [])} remedies (must be 0)")
 
+# NO-HO OPT-OUT (field report 2026-09-30, 81146: "I don't have them, I can't afford
+# them"): a farm solve seats HOs through BOTH the ILP options and the proc pass; with
+# no_ho it must seat none and keep the same slot count. The default solve must still
+# seat some, or this check proves nothing.
+print("\nno-HO opt-out — a player without Hamidon Origins never gets one:")
+_ap_h = c.post("/build/autopick", json={
+    "archetype": "Class_Blaster", "primary": "Blaster_Ranged.Fire_Manipulation",
+    "secondary": "Blaster_Support.Fire_Manipulation", "content": "farm_active"}).get_json()
+def _ho_count(no_ho):
+    sv = c.post("/build/solve", json={"archetype": "Class_Blaster", "tier": "premium",
+        "content": "farm_active", "preserve": False, "keep_layout": False,
+        "powers": _ap_h["powers"], "no_ho": no_ho}).get_json()
+    pw = sv.get("powers") or []
+    return (sum(1 for p in pw for s in (p.get("slots") or [])
+                if (s or {}).get("_ho") or ((s or {}).get("piece_uid") or "").startswith("Hamidon_")),
+            sum(len(p.get("slots") or []) for p in pw))
+_with_h, _without_h = _ho_count(False), _ho_count(True)
+check("NO-HO OPT-OUT: no_ho seats zero HOs at the same slot count (default still seats them)",
+      _with_h[0] > 0 and _without_h[0] == 0 and _with_h[1] == _without_h[1],
+      f"default {_with_h[0]} HOs / {_with_h[1]} slots, no_ho {_without_h[0]} HOs / {_without_h[1]} slots")
+
 # COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
 # check — a crash or skipped section that silently shrinks the list must fail, not
 # pass by absence. Bump EXPECTED_CHECKS when adding a check.
-EXPECTED_CHECKS = 24
+EXPECTED_CHECKS = 25
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
 if len(results) != EXPECTED_CHECKS:

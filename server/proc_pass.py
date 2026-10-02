@@ -185,8 +185,12 @@ def _st_hybrid_chance(rec):
 
 
 def apply_proc_pass(powers, power_by_full, role="damage", content="general",
-                    guard=None):
-    """`guard` (A2, work order A — Joel's green light 2026-07-15): a stateful
+                    guard=None, ho=True):
+    """`ho=False` (field report 2026-09-30, "I don't have HOs, I'm never going to
+    get them"): never seat a Hamidon Origin — bombs top up from their own set
+    pieces and hybrids keep their set core.
+
+    `guard` (A2, work order A — Joel's green light 2026-07-15): a stateful
     target-conservation checker built by the caller (server._TargetGuard).
     After every tentative swap this pass calls guard.ok(powers); False means
     the swap took a targeted axis below its target (or made a short axis
@@ -282,11 +286,19 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general",
                 # bomb its accuracy (Maelwys: "should really have some accuracy in
                 # there too"): top up with Nucleolus HOs — Acc/Dam 33.3% each,
                 # recharge-free so every proc keeps its full PPM chance.
-                bomb += [{"set_uid": "Hamidon_Origin", "set_name": "Hamidon Origin",
-                          "piece_name": "Nucleolus Exposure",
-                          "piece_uid": "Hamidon_Damage_Accuracy",
-                          "category_id": cid, "_ho": True}
-                         for _ in range(nslots - len(bomb))]
+                if ho:
+                    bomb += [{"set_uid": "Hamidon_Origin", "set_name": "Hamidon Origin",
+                              "piece_name": "Nucleolus Exposure",
+                              "piece_uid": "Hamidon_Damage_Accuracy",
+                              "category_id": cid, "_ho": True}
+                             for _ in range(nslots - len(bomb))]
+                else:
+                    # No HOs (player opted out): top up with the power's own displaced
+                    # pieces, acc/dam before recharge (recharge depresses proc rates).
+                    seated = {s.get("piece_uid") for s in bomb}
+                    spare = sorted((s for s in slots if s and s.get("piece_uid") not in seated),
+                                   key=lambda s: "recharge" in (s.get("piece_name") or "").lower())
+                    bomb += spare[:nslots - len(bomb)]
                 p["slots"] = bomb
                 if guard and not guard.ok(powers):
                     p["slots"] = slots            # A2: the bomb stole a target
@@ -322,7 +334,7 @@ def apply_proc_pass(powers, power_by_full, role="damage", content="general",
                     # Premium homes (keep=3) keep their set core — those bonuses are
                     # build-defining. Damaging powers take Nucleolus (Acc/Dam); pure
                     # holds take Endoplasm (Acc/Mez).
-                    if keep == 2:
+                    if keep == 2 and ho:      # opted out: the set's own core stays
                         ho_uid, ho_name = (("Hamidon_Damage_Accuracy",
                                             "Nucleolus Exposure")
                                            if rec.get("damage_effects") else

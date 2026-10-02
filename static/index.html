@@ -502,6 +502,9 @@
               <button class="ct-clear" type="button" title="back to the preset targets"
                 onclick="clearCustomTargets()">✕</button></span>
           </div>
+          <label class="incarnate-toggle" style="display:block;margin-top:6px" title="Hamidon Origin enhancements come from Hamidon raids (or merit conversion). Untick this if you don't have them: builds will never slot an HO.">
+            <input type="checkbox" id="has-ho-toggle" checked
+              onchange="setHasHo(this.checked)"> I have Hamidon Origins (HOs) to slot</label>
         </div>
         <input id="gen-goal"
           placeholder="(optional) fine-tune in words, e.g. 'also soft-cap energy defense'">

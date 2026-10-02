@@ -1946,6 +1946,18 @@ _HO_CONTENTS = {"itrial", "fire_farm", "farm_afk", "farm_active"}
 _HO_SOLVER_PIECES = None
 
 
+def _ho_pieces_for(content, no_ho=False):
+    """The solver's HO options for this solve: endgame contents only, and never
+    for a player who said they have no HOs (field report 2026-09-30)."""
+    return _ho_solver_pieces() if content in _HO_CONTENTS and not no_ho else None
+
+
+def _has_ho(powers):
+    return any((s or {}).get("_ho")
+               or ((s or {}).get("piece_uid") or "").startswith("Hamidon_")
+               for p in powers for s in (p.get("slots") or []))
+
+
 def _ho_solver_pieces():
     """The solver's HO option inputs, built once from the SAME sources the
     rest of the app trusts: legality = the manual picker's _special_accepts
@@ -3240,7 +3252,7 @@ class _TargetGuard:
 
 def _assess_solve(archetype, powers_in, targets, tier, perk_focus, roles,
                   pvp, preserve, keep_layout, with_powers=False, content=None,
-                  two_stage=None):
+                  two_stage=None, no_ho=False):
     """Run ONE solve and return the engine totals (for comparing routes) — or
     (totals, solved_powers) when with_powers, for the joint think-ahead loop. Mirrors
     /build/solve's core; returns None on any failure."""
@@ -3284,8 +3296,7 @@ def _assess_solve(archetype, powers_in, targets, tier, perk_focus, roles,
                                base, slot_cap=67 + len(powers), tier=tier,
                                perk_focus=perk_focus, roles=roles, pvp=pvp,
                                preserve=preserve, keep_layout=keep_layout, archetype=archetype,
-                               ho_pieces=(_ho_solver_pieces()
-                                          if content in _HO_CONTENTS else None),
+                               ho_pieces=_ho_pieces_for(content, no_ho),
                                two_stage=two_stage,
                                **_at_solve_phys(archetype))
     except Exception:  # noqa: BLE001
@@ -4887,15 +4898,16 @@ def build_assess():
         targets = ai_build.goal_targets(goal, res_cap=res_cap) if goal else {}
     if not (archetype and powers_in and targets):
         return jsonify({"ok": False})
+    no_ho = bool(body.get("no_ho"))
     cur = _assess_solve(archetype, powers_in, targets, tier, perk_focus, roles,
-                        pvp, preserve, keep_layout, content=content)
+                        pvp, preserve, keep_layout, content=content, no_ho=no_ho)
     if not cur:
         return jsonify({"ok": False})
     alternatives = []
     for emph in _alt_routes(targets, res_cap):
         alt = _assess_solve(archetype, powers_in, emph["targets"], tier,
                             emph.get("perk_focus", perk_focus), roles, pvp, preserve, keep_layout,
-                            content=content)
+                            content=content, no_ho=no_ho)
         if not alt:
             continue
         deltas = _headline_deltas(cur, alt)
@@ -5070,6 +5082,7 @@ def build_solve():
         role = max(role_mix, key=lambda k: role_mix.get(k) or 0)
     exposure = body.get("exposure")        # flex|front|back — shapes the defense vector
     pvp = bool(body.get("pvp"))            # solve with PvP set bonuses + PvP totals
+    no_ho = bool(body.get("no_ho"))        # player has no Hamidon Origins: never slot one
     # preserve = keep existing set IOs + unique globals, re-slot only generic/empty
     # slots (the default "complete my fit"); False = full re-slot from scratch.
     preserve = body.get("preserve", True)
@@ -5243,8 +5256,7 @@ def build_solve():
                                        perk_focus=perk_focus, roles=roles, pvp=pvp,
                                        preserve=preserve, keep_layout=keep_layout,
                                        archetype=archetype,
-                                       ho_pieces=(_ho_solver_pieces()
-                                                  if content in _HO_CONTENTS else None),
+                                       ho_pieces=_ho_pieces_for(content, no_ho),
                                        two_stage=two_stage, target_level_ctx=tlctx,
                                        **_at_solve_phys(archetype))
             except Exception:  # noqa: BLE001
@@ -5269,7 +5281,8 @@ def build_solve():
                 sol["powers"] = proc_pass.apply_proc_pass(
                     sol["powers"], POWER_BY_FULL, role=role, content=content,
                     guard=(_TargetGuard(archetype, targets, ctx, _rescap,
-                                        strict=True) if custom else None))
+                                        strict=True) if custom else None),
+                    ho=not no_ho)
                 sol["powers"] = _endurance_relief_pass(sol["powers"], archetype, ctx, _rescap)
 
             if _assign_pick_levels(sol["powers"], archetype) or _sched_round == 1:
@@ -5302,6 +5315,8 @@ def build_solve():
         _generated and content and not custom and tlctx is None and not pvp
         and not keep_layout and not _user_perk
         and not body.get("targets")) else None
+    if _csol is not None and no_ho and _has_ho(_csol["powers"]):
+        _csol = None                      # certified build slots HOs the player lacks
     if _csol is not None:
         understood.insert(0, "Certified build: served exactly as certified")
     _arb = (_csol is None) and ((not preserve or _generated) and (content or role)
@@ -5375,8 +5390,7 @@ def build_solve():
                                     engine.PIECE_GLOBALS, base, slot_cap=slot_cap,
                                     tier=tier, roles=roles, pvp=pvp, preserve=False,
                                     archetype=archetype,
-                                    ho_pieces=(_ho_solver_pieces()
-                                               if content in _HO_CONTENTS else None),
+                                    ho_pieces=_ho_pieces_for(content, no_ho),
                                     **_at_solve_phys(archetype))
             ft = engine.calculate_build(
                 {"archetype": archetype, "powers": full["powers"], "pvp": pvp},
