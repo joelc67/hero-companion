@@ -1,5 +1,32 @@
 # Hero Companion — What's New
 
+## 0.12.52 — 2026-10-02 — Damage only counts where you attack
+
+- **The optimizer no longer credits damage to attacks you'd never use.** It
+  used to value every attack's damage by how hard it hits — so a quick, weak
+  attack like Jab still earned "damage" credit for its slots, even though the
+  app's own attack-chain model (built from the game's cast times, recharge
+  and damage) never fires it. Enhancing an attack you don't activate adds no
+  damage in the game, so that credit is gone: a single-target attack the
+  chain never uses has to earn its slots through set bonuses alone. Area
+  attacks are unaffected — the app already counts them as fired whenever
+  they recharge. (Thanks to the forum report that called this out.)
+
+- **Power cards say why a low-tier attack is slotted.** When Boxing, Kick, or
+  one of a set's first two attacks carries a set, its note now opens with
+  *"Slotted for the set bonuses"* and points out that the bonuses count
+  whether or not you use the attack. You may still see a set there: the set
+  bonuses are often genuinely worth the slots. If you'd rather keep an
+  attack light, close its padlock and re-solve.
+
+- **Measured:** on the reported Super Strength / Shield Brute the build's
+  overall score rose slightly (more survivability, a little less personal
+  damage); four other archetype checks came out identical. Certified
+  champion builds are unchanged.
+
+- **Data currency:** unchanged (Homecoming client as of the July 7, 2026 game
+  update — still the newest live patch; liveness clean, 0 diffs).
+
 ## 0.12.51 — 2026-10-02 — No HOs, and a Mids code you can paste
 
 - **New: "I have Hamidon Origins (HOs) to slot."** It sits under *Customize

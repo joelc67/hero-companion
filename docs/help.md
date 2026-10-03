@@ -116,6 +116,12 @@ A lock is absolute. A locked power comes out of a re-solve **exactly** as you le
 it, down to the individual enhancements. Everything unlocked is re-slotted toward
 your goal around it.
 
+**Weak attacks carrying sets.** The optimizer only counts an attack's damage if the
+attack chain would actually use it. A low-tier attack (Boxing, Kick, or a set's first
+attacks) can still carry a set when its set bonuses are worth the slots — the card
+says so, and the bonuses work whether or not you use the attack. Prefer to keep it
+light? Slot it how you like and close its padlock.
+
 Use it when you have already decided something and want the tool to work with that
 decision rather than argue with it. Common cases: you have expensive sets already
 slotted in game and do not want a plan that assumes you will re-buy them; you have
