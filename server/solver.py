@@ -1654,7 +1654,12 @@ def _ilp_pass(powers, targets, totals, sets_by_category, slot_cap, piece_choices
             # base hit (premium attacks first) and the pieces it lands. Pieces 1-5 carry
             # the enhancement; the 6th is credited at proc-worth (_SIXTH_SLOT_W) — the old
             # min(n,5) cap priced it at zero and every real attack stalled at 5 slots.
+            # _chain_unused (field report 81146, 2026-09-30): the engine's own
+            # single-target chain never casts this attack and it hits no area, so
+            # enhancing its damage adds no damage in game — its slots must be won by
+            # set bonuses alone (Jab carried 5 Hecatomb for a 0-cast attack).
             if (dmg_mode and p["_is_attack"] and _is_dmg_cat(o["set"].get("category"))
+                    and not p.get("_chain_unused")
                     and not (tl and p.get("_exemplar_off_solve"))):
                 base_w = ((p.get("_base_dmg") or 0.0) / max_base) if max_base > 0 else 1.0
                 vehicle = _is_proc_vehicle(p)

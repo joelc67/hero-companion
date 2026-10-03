@@ -1958,6 +1958,39 @@ def _has_ho(powers):
                for p in powers for s in (p.get("slots") or []))
 
 
+def _chain_unused(archetype, powers):
+    """Single-target attacks the engine's own chain (engine._chain_dps: cast time,
+    recharge, damage from game data) never casts in the solved build. AoE attacks are
+    excluded — the engine's AoE model fires them as they recharge — and so are
+    pet/patch rows, which are never part of the click chain."""
+    tot = engine.calculate_build({"archetype": archetype, "powers": powers},
+                                 SET_BONUSES, ctx=_stat_ctx(archetype))
+    return {a["full_name"] for a in (tot.get("offense") or {}).get("attacks") or []
+            if a.get("full_name") and a.get("chain_casts") == 0
+            and not a.get("is_aoe") and a.get("dpa") is not None}
+
+
+def _solve_ilp(powers, *args, archetype=None, **kw):
+    """solver.solve_ilp, made chain-aware (field report 81146, 2026-09-30: Jab got 5
+    Hecatomb though the chain never casts it). Solve once; if the solved build leaves
+    single-target attacks the chain never casts, flag them _chain_unused (no damage
+    reward — enhancing an attack you never activate adds no damage) and solve again.
+    ponytail: one refinement pass; the second solve's recharge can shift the chain
+    again — iterate to a fixed point if that is ever measured to matter."""
+    first = solver.solve_ilp(copy.deepcopy(powers), *args, archetype=archetype, **kw)
+    try:
+        unused = _chain_unused(archetype, (first or {}).get("powers") or [])
+    except Exception:  # noqa: BLE001
+        diag.swallowed("_solve_ilp: chain check")
+        return first
+    if not unused:
+        return first
+    for p in powers:
+        if p.get("full_name") in unused:
+            p["_chain_unused"] = True
+    return solver.solve_ilp(powers, *args, archetype=archetype, **kw)
+
+
 def _ho_solver_pieces():
     """The solver's HO option inputs, built once from the SAME sources the
     rest of the app trusts: legality = the manual picker's _special_accepts
@@ -2620,6 +2653,22 @@ def _slot_plan(power, archetype=None, all_powers=None):
                                             "fury of the gladiator",
                                             "touch of lady grey", "shield breaker"))
 
+    def _mule_framing(plan):
+        # Field report (81146, 2026-09-30): Kinetic Combat / Hecatomb in Jab and
+        # Boxing read as "slot the life out of boxing and T1 for damage". A set in
+        # a low-tier attack (Boxing/Kick, or a set's first two powers) is there for
+        # its bonuses — say so first, and that the bonuses don't depend on using
+        # the attack. Main attacks keep their plain wording: a 3-of-6 + damage
+        # procs in Knockout Blow is damage slotting.
+        fn = power.get("full_name") or ""
+        rec = POWER_BY_FULL.get(fn) or {}
+        low_tier = (fn in ("Pool.Fighting.Boxing", "Pool.Fighting.Kick")
+                    or fn in _set_first_two(fn.rsplit(".", 1)[0]))
+        if not hos and low_tier and (power.get("is_attack") or rec.get("is_attack")):
+            plan["text"] = ("Slotted for the set bonuses: " + plan["text"]
+                            + " They count whether or not you use this attack.")
+        return plan
+
     ho_txt = (f"{len(hos)}x Acc/Dam Hamidon Origin{'s' if len(hos) > 1 else ''}"
               if hos else "")
     # 1) HO PROC HYBRID — an Acc/Dam Hamidon Origin core + procs (the Dominate pattern)
@@ -2666,9 +2715,9 @@ def _slot_plan(power, archetype=None, all_powers=None):
             parts.append(frame + (f" — earns {', '.join(vals)}" if vals else ""))
         tail = f". Plus global{'s' if len(glob) > 1 else ''}: {_glist(glob)}" if glob else ""
         if len(committed) > 1:
-            return {"kind": "frankenslot",
+            return _mule_framing({"kind": "frankenslot",
                     "text": "Frankenslot: " + "; ".join(parts)
-                            + " — stacked for their set bonuses" + tail + "."}
+                            + " — stacked for their set bonuses" + tail + "."})
         # ONE committed set. "Full set" means COMPLETE (Joel, 2026-07-20: a 3-of-6
         # + procs slotting is a frankenstein, not a full set). A single COMPLETE
         # set (globals may ride along) = a clean Full set; a PARTIAL set mixed with
@@ -2685,11 +2734,11 @@ def _slot_plan(power, archetype=None, all_powers=None):
         franken_extras = ((len(procs) - _set_procs(nm0)) + len(hos)
                           + max(0, len(setters) - n0 - len(glob)))
         if is_full:
-            return {"kind": "committed", "text": parts[0] + tail + "."}
+            return _mule_framing({"kind": "committed", "text": parts[0] + tail + "."})
         if franken_extras > 0:
-            return {"kind": "frankenslot",
-                    "text": "Frankenslot: " + parts[0] + tail + "."}
-        return {"kind": "partial-set", "text": parts[0] + tail + "."}
+            return _mule_framing({"kind": "frankenslot",
+                                  "text": "Frankenslot: " + parts[0] + tail + "."})
+        return _mule_framing({"kind": "partial-set", "text": parts[0] + tail + "."})
     # 5) GLOBAL MULES — a power carrying only build-wide unique globals.
     # Running powers (auto/toggle) get host wording, not mule wording.
     if glob and len(glob) == len(nonproc):
@@ -3292,7 +3341,7 @@ def _assess_solve(archetype, powers_in, targets, tier, perk_focus, roles,
     _add_typed_def_route(powers, targets, archetype)
     _attach_base_dmg(powers, ctx)
     try:
-        sol = solver.solve_ilp(powers, targets, SETS_BY_CATEGORY, engine.PIECE_GLOBALS,
+        sol = _solve_ilp(powers, targets, SETS_BY_CATEGORY, engine.PIECE_GLOBALS,
                                base, slot_cap=67 + len(powers), tier=tier,
                                perk_focus=perk_focus, roles=roles, pvp=pvp,
                                preserve=preserve, keep_layout=keep_layout, archetype=archetype,
@@ -5251,7 +5300,7 @@ def build_solve():
         sol dict or None on solver failure."""
         for _sched_round in range(2):
             try:
-                sol = solver.solve_ilp(pw, targets, SETS_BY_CATEGORY,
+                sol = _solve_ilp(pw, targets, SETS_BY_CATEGORY,
                                        engine.PIECE_GLOBALS, base, slot_cap=slot_cap, tier=tier,
                                        perk_focus=perk_focus, roles=roles, pvp=pvp,
                                        preserve=preserve, keep_layout=keep_layout,
@@ -5386,7 +5435,7 @@ def build_solve():
     headroom = None
     if sol.get("preserved") and goal and not perk_focus:
         try:
-            full = solver.solve_ilp(copy.deepcopy(powers), targets, SETS_BY_CATEGORY,
+            full = _solve_ilp(copy.deepcopy(powers), targets, SETS_BY_CATEGORY,
                                     engine.PIECE_GLOBALS, base, slot_cap=slot_cap,
                                     tier=tier, roles=roles, pvp=pvp, preserve=False,
                                     archetype=archetype,
@@ -6708,7 +6757,7 @@ def ai_generate_solved():
     for tier in ai_build.TIER_ORDER:
         _pw = copy.deepcopy(picked["powers"])
         for _sched_round in range(2):
-            sol = solver.solve_ilp(copy.deepcopy(_pw), targets,
+            sol = _solve_ilp(copy.deepcopy(_pw), targets,
                                    SETS_BY_CATEGORY, engine.PIECE_GLOBALS,
                                    dict(base), slot_cap=slot_cap, tier=tier, roles=roles, pvp=pvp,
                                    archetype=archetype, **_at_solve_phys(archetype))

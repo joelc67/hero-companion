@@ -989,13 +989,17 @@ def _resolve_mag(d, row, col):
     return d["scale"] * d.get("nmag", 1.0) * row[col] * d.get("probability", 1.0)
 
 
-def _chain_dps(attacks, window=120.0):
+def _chain_dps(attacks, window=120.0, casts_out=None):
     """Greedy gapless single-target rotation: repeatedly cast the highest-DPA
     (damage-per-animation) attack that has recharged; if none is ready, skip to
     the next ready time. Returns (sustained ST DPS, endurance drained per second) —
     end/sec = Σ end_cost of the casts over the window, the cost of attacking nonstop.
-    Not provably optimal, but a transparent, deterministic estimate."""
+    Not provably optimal, but a transparent, deterministic estimate.
+    casts_out (a list) receives each attack's cast count over the window, in input
+    order — the solver uses it to stop crediting damage to attacks never cast."""
     n = len(attacks)
+    if casts_out is not None:
+        casts_out[:] = [0] * n
     casts = [a["cast_time"] for a in attacks]
     rech = [a["recharge"] for a in attacks]
     dval = [a["damage"] for a in attacks]
@@ -1009,6 +1013,8 @@ def _chain_dps(attacks, window=120.0):
         ready = [i for i in order if avail[i] <= t and casts[i] > 0]
         if ready:
             i = ready[0]
+            if casts_out is not None:
+                casts_out[i] += 1
             dmg += dval[i]
             end += ecost[i]
             t += casts[i]
@@ -1290,6 +1296,7 @@ def _offense(build, totals, ctx):
         is_aoe_hit = is_aoe(p)                  # real geometry: hits an area (radius/effect_area)
         attacks.append({
             "name": p.get("display_name"),
+            "full_name": p.get("full_name"),
             # v45: the host's power_type (0 click / 1 auto / 2 toggle) — the AFK
             # offense rule needs to know which rows fire with nobody at the keys.
             "host_type": p.get("power_type"),
@@ -1343,7 +1350,10 @@ def _offense(build, totals, ctx):
         })
     if not attacks:
         return {}
-    st_dps, chain_end_ps = _chain_dps(attacks)
+    _casts = []
+    st_dps, chain_end_ps = _chain_dps(attacks, casts_out=_casts)
+    for a, n in zip(attacks, _casts):
+        a["chain_casts"] = n              # casts in the 120s single-target chain
     # Farm throughput: cycle every AoE as it recharges. Sum of AoE spam DPS is the
     # right damage objective for a FARMER (per the user); single-target chain is for
     # EB/AV finishers. Per-target value — ×spawn-size in play, but the relative

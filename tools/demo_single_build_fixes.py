@@ -557,10 +557,55 @@ check("NO-HO OPT-OUT: no_ho seats zero HOs at the same slot count (default still
       _with_h[0] > 0 and _without_h[0] == 0 and _with_h[1] == _without_h[1],
       f"default {_with_h[0]} HOs / {_with_h[1]} slots, no_ho {_without_h[0]} HOs / {_without_h[1]} slots")
 
+# SET-BONUS NOTE ON LOW-TIER ATTACKS (same report: "slot the life out of boxing and T1
+# ... it doesn't give me USEFUL damage"). The 4 Kinetic Combat in Jab/Boxing are for
+# their defense bonuses; the card must say so. NEGATIVE CONTROL: the main attack
+# (Knockout Blow) never gets that framing, whatever it carries.
+print("\nset-bonus note — Jab/Boxing say why they're slotted, main attacks don't:")
+_ap_m = c.post("/build/autopick", json={
+    "archetype": "Class_Brute", "primary": "Brute_Melee.Super_Strength",
+    "secondary": "Brute_Defense.Shield_Defense", "content": "team"}).get_json()
+_sv_m = c.post("/build/solve", json={"archetype": "Class_Brute", "tier": "premium",
+    "content": "team", "role": "damage", "preserve": False, "keep_layout": False,
+    "powers": _ap_m["powers"]}).get_json()
+_notes_m = {p["full_name"].rsplit(".", 1)[-1]: ((srv._slot_plan(p, "Class_Brute", _sv_m["powers"])
+            or {}).get("text") or "") for p in _sv_m["powers"]}
+_mule = [n for n in ("Jab", "Boxing") if _notes_m.get(n, "").startswith("Slotted for the set bonuses")]
+check("SET-BONUS NOTE: Jab/Boxing mules say so; Knockout Blow never does",
+      _mule and not _notes_m.get("Knockout_Blow", "").startswith("Slotted for the set bonuses"),
+      f"flagged {_mule}; KB note: {_notes_m.get('Knockout_Blow', '')[:60]!r}")
+
+# CHAIN-AWARE DAMAGE REWARD (same report): the engine's single-target chain never casts
+# Jab in this build, so enhancing its damage adds nothing in game — the solver must see
+# it as unused, and the chain-aware solve must score no worse under the certification
+# scorer than the old base-hit weighting (measured 450.4 -> 453.2 on 2026-10-02).
+print("\nchain-aware solve — a never-cast attack earns no damage credit:")
+import first_principles as _fp  # noqa: E402
+import role_output as _ro  # noqa: E402
+def _fp_contrib(pw):
+    _ctx = srv._stat_ctx("Class_Brute"); _ctx["power_by_full"] = srv.POWER_BY_FULL
+    _row = srv.ARCH_BY_NAME.get("Class_Brute")
+    _tot = engine.calculate_build({"archetype": "Class_Brute", "powers": pw}, srv.SET_BONUSES,
+                                  res_cap=round(_row["res_cap"] * 100, 1), ctx=_ctx)
+    return _fp.encounter_value("Class_Brute", pw, _ctx, _tot, scenario="team",
+                               arch_row=_row, role_output_mod=_ro)["contribution"]
+_real_cu = srv._chain_unused
+srv._chain_unused = lambda a, p: set()                 # the old, chain-blind solve
+_old_c = c.post("/build/solve", json={"archetype": "Class_Brute", "tier": "premium",
+    "content": "team", "role": "damage", "preserve": False, "keep_layout": False,
+    "powers": _ap_m["powers"]}).get_json()
+srv._chain_unused = _real_cu
+_unused_m = srv._chain_unused("Class_Brute", _sv_m["powers"])
+_c_old, _c_new = _fp_contrib(_old_c["powers"]), _fp_contrib(_sv_m["powers"])
+check("CHAIN-AWARE: never-cast Jab is flagged and the solve scores >= the chain-blind one",
+      "Brute_Melee.Super_Strength.Jab" in _unused_m and _c_new >= _c_old - 1e-6,
+      f"0-cast {sorted(u.rsplit('.', 1)[-1] for u in _unused_m)}; "
+      f"contribution old {_c_old:.1f} new {_c_new:.1f}")
+
 # COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
 # check — a crash or skipped section that silently shrinks the list must fail, not
 # pass by absence. Bump EXPECTED_CHECKS when adding a check.
-EXPECTED_CHECKS = 25
+EXPECTED_CHECKS = 27
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
 if len(results) != EXPECTED_CHECKS:
