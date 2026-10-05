@@ -62,6 +62,20 @@ PIECE_GLOBALS = [
      "effects": [{"effect": "Resistance", "damage_type": "None", "value": 0.03}]},
     {"set": "kismet", "piece": "accuracy +6", "unique": True,
      "effects": [{"effect": "ToHit", "value": 0.06}]},
+    # Field report 2026-10-05 (IceSphere Rad/Stone Brute: Psionic res 5% vs 11% in
+    # Mids/game). Values are the client's own help text (data/set_details.json),
+    # unique flags from whether that text says UNIQUE; the status/duration halves of
+    # Aegis aren't a modeled axis and stay unpriced.
+    #   Impervium Armor F: "Gives a bonus psionic resistance of 6%."
+    #   Aegis F: "UNIQUE -- ... Gives a 5% bonus to psionic resistance ..."
+    #   Unbreakable Guard F: "UNIQUE -- ... increases your Maximum Hit Points by 7.5%."
+    {"set": "impervium armor", "piece": "psionic resistance", "unique": False,
+     "effects": [{"effect": "Resistance", "damage_type": "Psionic", "value": 0.06}]},
+    {"set": "aegis", "piece": "psionic/status", "unique": True,
+     "effects": [{"effect": "Resistance", "damage_type": "Psionic", "value": 0.05}]},
+    {"set": "unbreakable guard", "piece": "+max hp", "unique": True,
+     "effects": [{"effect": "HitPoints", "aspect": "Max", "damage_type": "None",
+                  "value": 0.075}]},
     # v30: the −KB uniques-that-aren't (they stack in-game, unique flag False in
     # the piece data). Mag 4 each, client-baked in data/set_details.json ("Provides
     # 4 points of Knockback protection" / "Reduces Knockback effects by -4").

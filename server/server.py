@@ -1970,13 +1970,18 @@ def _chain_unused(archetype, powers):
             and not a.get("is_aoe") and a.get("dpa") is not None}
 
 
-def _solve_ilp(powers, *args, archetype=None, **kw):
-    """solver.solve_ilp, made chain-aware (field report 81146, 2026-09-30: Jab got 5
-    Hecatomb though the chain never casts it). Solve once; if the solved build leaves
-    single-target attacks the chain never casts, flag them _chain_unused (no damage
-    reward — enhancing an attack you never activate adds no damage) and solve again.
-    ponytail: one refinement pass; the second solve's recharge can shift the chain
-    again — iterate to a fixed point if that is ever measured to matter."""
+def _solve_ilp(powers, *args, archetype=None, chain_aware=False, **kw):
+    """solver.solve_ilp, optionally chain-aware (field report 81146, 2026-09-30: Jab
+    got 5 Hecatomb though the chain never casts it). chain_aware: solve once; if the
+    solved build leaves single-target attacks the chain never casts, flag them
+    _chain_unused (no damage reward — enhancing an attack you never activate adds no
+    damage) and solve again. The re-solve can land on a very different build (the ILP
+    is a proxy; measured -38 contribution on the Brute once the Impervium/Aegis/UG
+    globals priced in), so it is NEVER served unjudged: build_solve runs it as one
+    arm of the physics arbitration. Off = the plain solve, byte-identical to 0.12.51.
+    ponytail: one refinement pass inside the arm."""
+    if not chain_aware:
+        return solver.solve_ilp(powers, *args, archetype=archetype, **kw)
     first = solver.solve_ilp(copy.deepcopy(powers), *args, archetype=archetype, **kw)
     try:
         unused = _chain_unused(archetype, (first or {}).get("powers") or [])
@@ -2334,6 +2339,10 @@ _GLOBAL_DESC = {
     "blessing of the zephyr": "knockback protection",
     "winters gift": "+slow resistance",
     "theft of essence": "+endurance proc",
+    # 2026-10-05 field report (IceSphere Rad/Stone Brute): priced now in
+    # engine.PIECE_GLOBALS from the client help text.
+    "impervium armor": "+6% psionic resistance",
+    "aegis": "+5% psionic resistance",
 }
 # effect -> short label for naming the set bonuses a committed set actually earns
 _EFFECT_LABEL = [
@@ -5294,7 +5303,7 @@ def build_solve():
     # Up to one re-solve: if the slotting can't be seated on the real pick ladder
     # (a level-49 pick holds at most 4 slots; 47+49 share 6), cap the tail offenders
     # and let the solver move that weight to earlier powers.
-    def _serve_pipeline(pw, two_stage=None):
+    def _serve_pipeline(pw, two_stage=None, chain_aware=False):
         """The full serve solve chain on ONE powers copy (solve_ilp mutates
         it): ILP + sched re-solve + proc pass + endurance relief. Returns the
         sol dict or None on solver failure."""
@@ -5304,7 +5313,7 @@ def build_solve():
                                        engine.PIECE_GLOBALS, base, slot_cap=slot_cap, tier=tier,
                                        perk_focus=perk_focus, roles=roles, pvp=pvp,
                                        preserve=preserve, keep_layout=keep_layout,
-                                       archetype=archetype,
+                                       archetype=archetype, chain_aware=chain_aware,
                                        ho_pieces=_ho_pieces_for(content, no_ho),
                                        two_stage=two_stage, target_level_ctx=tlctx,
                                        **_at_solve_phys(archetype))
@@ -5371,6 +5380,7 @@ def build_solve():
     _arb = (_csol is None) and ((not preserve or _generated) and (content or role)
             and not perk_focus and at is not None and tlctx is None)
     _pristine = copy.deepcopy(powers) if _arb else None
+    _pristine_chain = copy.deepcopy(powers) if _arb else None
     sol = _csol or _serve_pipeline(powers)
     if sol is None:
         return jsonify({"ok": False, "response": "The solver couldn't finish this "
@@ -5379,24 +5389,33 @@ def build_solve():
         import first_principles as fp
         ctx.setdefault("power_by_full", POWER_BY_FULL)
         alt = _serve_pipeline(_pristine, two_stage=False)
-        if alt:
-            def _fp_of(s):
-                t = engine.calculate_build(
-                    {"archetype": archetype, "powers": s["powers"], "pvp": pvp},
-                    SET_BONUSES, res_cap=res_cap, ctx=ctx)
-                ev = fp.encounter_value(
-                    archetype, s["powers"], ctx, t, scenario=content,
-                    arch_row=at, role_output_mod=role_output)
-                tm = (fp.SCENARIOS.get(content)
-                      or fp.SCENARIOS["general"]).get("teammates", 0)
-                return fp.role_contribution(
-                    ev, role_mix or role
-                    or _AT_DEFAULT_ROLE.get(archetype, "damage"), teammates=tm)
-            try:
-                if _fp_of(alt) > _fp_of(sol):
-                    sol = alt
-            except Exception:  # noqa: BLE001 — arbitration is a bonus, never a blocker
-                diag.swallowed("build_solve: serve-time tie arbitration")
+        # Third arm (field report 81146): the chain-aware solve, which withholds damage
+        # credit from attacks the engine's chain never casts. Served only when the
+        # physics judge below scores it best — never on the ILP proxy's word.
+        alt_chain = _serve_pipeline(_pristine_chain, chain_aware=True)
+
+        def _fp_of(s):
+            t = engine.calculate_build(
+                {"archetype": archetype, "powers": s["powers"], "pvp": pvp},
+                SET_BONUSES, res_cap=res_cap, ctx=ctx)
+            ev = fp.encounter_value(
+                archetype, s["powers"], ctx, t, scenario=content,
+                arch_row=at, role_output_mod=role_output)
+            tm = (fp.SCENARIOS.get(content)
+                  or fp.SCENARIOS["general"]).get("teammates", 0)
+            return fp.role_contribution(
+                ev, role_mix or role
+                or _AT_DEFAULT_ROLE.get(archetype, "damage"), teammates=tm)
+        try:
+            # strictly better only: a tie keeps the default arm
+            best = _fp_of(sol)
+            for arm in (alt, alt_chain):
+                if arm:
+                    v = _fp_of(arm)
+                    if v > best:
+                        sol, best = arm, v
+        except Exception:  # noqa: BLE001 — arbitration is a bonus, never a blocker
+            diag.swallowed("build_solve: serve-time tie arbitration")
 
     resolved = {"powers": sol["powers"]}
     _fill_slot_images(resolved)
@@ -5941,11 +5960,14 @@ def _build_warnings(powers, archetype, totals, content, role, exposure=None):
         # that lives on recharge, so the cost of the travel pick is visible, not silent.
         rech = round((totals.get("recharge") or {}).get("value", 0)) if isinstance(totals.get("recharge"), dict) else 0
         nm_set = {(p.get("full_name") or "").split(".")[-1] for p in (powers or [])}
+        # Field report 2026-10-05 (IceSphere Rad/Stone Brute): fired on a build that
+        # already had Combat Jumping + its LotG. And one power holds one copy of a set
+        # piece, so CJ carries ONE LotG global = +7.5% (the text said ~14%).
         if (role not in ("tank",) and "Hasten" in nm_set and "Super_Speed" not in nm_set
-                and rech and rech < 85):
+                and "Combat_Jumping" not in nm_set and rech and rech < 85):
             out.append({"kind": "tip", "text": "⚡ Recharge tip: your travel pool is spent on travel. "
                         "Super Speed shares its pool with Hasten — switching to it frees a 4th pool "
-                        "for Combat Jumping (a Luck of the Gambler +recharge mule), worth ~14% global "
+                        "for Combat Jumping (a Luck of the Gambler +recharge mule), worth +7.5% global "
                         "recharge + some defense. Keep your travel if you prefer it; just know the cost."})
     except Exception:  # noqa: BLE001 — warnings must never break a solve/import
         diag.swallowed("build warnings")

@@ -41,7 +41,10 @@ _GLOBAL_HINTS = ("luck of the gambler", "steadfast", "gladiator's armor", "shiel
                  # batch) — a single copy is a working mule, not a dead fragment
                  "theft of essence",
                  # v30: the -KB mule pieces (mag 4 each, engine-priced)
-                 "karma", "blessing of the zephyr")
+                 "karma", "blessing of the zephyr",
+                 # 2026-10-05 field report: game-text-priced psionic-res globals
+                 # (Impervium Armor 6%, Aegis 5%) — a single copy is a working mule
+                 "impervium armor", "aegis")
 
 results = []
 
@@ -602,10 +605,43 @@ check("CHAIN-AWARE: never-cast Jab is flagged and the solve scores >= the chain-
       f"0-cast {sorted(u.rsplit('.', 1)[-1] for u in _unused_m)}; "
       f"contribution old {_c_old:.1f} new {_c_new:.1f}")
 
+# FIELD REPORT 2026-10-05 (IceSphere Rad/Stone Brute .mbd): Psionic res read 5% where
+# Mids and the game read 11% — the Impervium Armor: Psionic Resistance unique ("Gives a
+# bonus psionic resistance of 6%", client help text) priced nothing. Same gap: Unbreakable
+# Guard "+7.5% Maximum Hit Points". Built from the reported pieces, not the user's file.
+print("\nfield report 2026-10-05 — game-text uniques priced; CJ tip respects CJ:")
+def _slot(sn, pn, uid):
+    return {"set_name": sn, "piece_name": pn, "set_uid": sn.replace(" ", "_"),
+            "piece_uid": uid, "io_level": 50}
+_tot_p = engine.calculate_build({"archetype": "Class_Brute", "powers": [
+    {"full_name": "Brute_Defense.Stone_Armor.Rock_Armor",
+     "slots": [_slot("Shield Wall", "+Res (Teleportation), +5% Res (All)", "Crafted_Shield_Wall_F")]},
+    {"full_name": "Brute_Defense.Stone_Armor.Brimstone_Armor",
+     "slots": [_slot("Impervium Armor", "Psionic Resistance", "Crafted_Impervium_Armor_F")]},
+    {"full_name": "Pool.Fighting.Tough",
+     "slots": [_slot("Unbreakable Guard", "+Max HP", "Crafted_Unbreakable_Guard_F")]}]},
+    srv.SET_BONUSES, ctx=srv._stat_ctx("Class_Brute"))
+_psi = (_tot_p.get("resistance") or {}).get("Psionic", {}).get("value")
+_hp = (_tot_p.get("max_hp") or {}).get("value")
+check("GAME-TEXT UNIQUES: Shield Wall 5% + Impervium 6% = 11% Psionic res; UG +7.5% max HP",
+      _psi is not None and abs(_psi - 11.0) < 0.05 and _hp is not None and abs(_hp - 7.5) < 0.05,
+      f"Psionic res {_psi}%, max HP +{_hp}%")
+# The import tip "frees a 4th pool for Combat Jumping (a LotG mule)" fired on a build
+# that already had CJ + LotG, and promised ~14% where one LotG global is +7.5%.
+def _cj_tips(names):
+    pw = [{"full_name": n, "slots": []} for n in names]
+    w = srv._build_warnings(pw, "Class_Brute", {"recharge": {"value": 50}}, "team", "damage")
+    return [x["text"] for x in w if "Combat Jumping" in x.get("text", "")]
+_with_cj = _cj_tips(["Pool.Speed.Hasten", "Pool.Leaping.Combat_Jumping"])
+_without_cj = _cj_tips(["Pool.Speed.Hasten", "Pool.Teleportation.Teleport"])
+check("CJ TIP: silent when Combat Jumping is taken; otherwise fires and says +7.5%",
+      not _with_cj and _without_cj and "+7.5%" in _without_cj[0],
+      f"with CJ: {len(_with_cj)} tip(s); without: {_without_cj[:1]}")
+
 # COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
 # check — a crash or skipped section that silently shrinks the list must fail, not
 # pass by absence. Bump EXPECTED_CHECKS when adding a check.
-EXPECTED_CHECKS = 27
+EXPECTED_CHECKS = 29
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
 if len(results) != EXPECTED_CHECKS:
