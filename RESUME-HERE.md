@@ -1,46 +1,43 @@
-# ✅ SESSION CLOSED CLEAN — 2026-08-17 (night). START HERE.
+# ✅ SESSION CLOSED CLEAN — 2026-10-05. START HERE.
 
-**Latest release: 🚀 v0.12.45 "AFK certification reads the build"** (2026-08-17,
-stamp `296481e`, models **v48+v49**, both assets signed + API-verified published
-19:35Z; installed copy runs it, /meta confirms 0.12.45/model 49; liveness green,
-baseline rolls to v0.12.45 on next check).
+**Latest release: 🚀 v0.12.53 "Every unique counted, and no bad advice"**
+(2026-10-05, prep `dbf87bad`, stamp `dbf87ba`, model **v49** unchanged; both
+assets signed + API-verified; update check reports 0.12.53; liveness clean —
+July 7, 2026 still the newest live patch).
 
-**What tonight was (Maelwys round 4, all in CLAUDE.md v48/v49 blocks):**
-- He audited the shipped champions.json. One REAL defect: the AFK tier ladder
-  was a fixed 37 HP/s absolute that never read the build's own Fire res/def —
-  tiers anti-correlated with mitigation. **v48** made the gate build-relative;
-  the 0.12.44 "+4x8 fully passive" TW/Bio claim is publicly WITHDRAWN (release
-  notes state it). His other three points were misreads (ledger format /
-  internal-vs-display names) — the cert now carries `counted:` flags and a
-  `mitigation` block so they can't recur.
-- Joel then ruled the tier INTO the objective: **v49** — farm_afk survival is
-  passive-only (`_afk_autofire_heal`, one copy shared by ledger + score) over a
-  600s AFK stint. Wave ran (3 workers, 20.7 min, 3/3 SUPERSEDE), merged, two
-  slotting layers banked (Spines/FA 499.1, TW/Bio 292.6); FA/FM layout would
-  not seat (lab-parity class now: Tanker Inv/SS · PB base · Tanker FA/FM).
-  Labels restamped FROM THE SERVED BUILDS: no farm combo sustains AFK at any
-  shift — stated with each build's own numbers.
+**What 10-02 → 10-05 was (three releases, two forum field reports):**
+- **0.12.51** — 81146: "I have Hamidon Origins" opt-out (`no_ho`; ILP options +
+  proc_pass both honor it) and Export to Mids also copies an `|MBD|` build code
+  (Brotli) for Mids' Build Sharing → Import DataChunk. Our .mbd always loaded via
+  File → Open; Mids' import boxes reject raw .mbd.
+- **0.12.52** — 81146: attacks the engine's single-target chain never casts get no
+  damage reward; low-tier attack cards say "Slotted for the set bonuses".
+- **0.12.53** — IceSphere Rad/Stone Brute .mbd: Impervium Armor psi +6%, Aegis psi
+  +5%, Unbreakable Guard +7.5% max HP priced from the client help text (psi now 11%
+  = Mids/game); the Combat Jumping tip no longer fires when CJ is taken. Also
+  fixed 0.12.52's unjudged chain re-solve: it is now a THIRD physics-arbitration
+  arm in `build_solve` (3-way A/B over 10 archetypes: never worse).
+
+**Standing rule (Joel, 2026-10-02): game rules only, no guessing.** Every slotting
+rule must model an in-game mechanic with game-data numbers; master builds may
+validate a model, never supply a rule.
 
 **FIRST MOVES NEXT SESSION:**
-1. Check topic 64761 / Gmail — did Joel post the two drafts? (`Downloads\
-   maelwys-round4-reply.txt` + `Downloads\troo-reply.txt`, both wrap-ready.)
-   Maelwys round 5 / Troo follow-up likely; triage vs docs/KNOWN-GAPS.md first.
-2. Joel's open rulings (none blocking): tier-vs-score on the banked layers
-   (score won by his v49 ruling; serving the tier-holding wave builds is a
-   one-word override) · champion/certified TERMINOLOGY on player surfaces
-   (Troo's point, conceded softly in the draft) · +5x8 tier numbers · Stone
-   Armor candidate (proc-valuation ruling first).
-3. UI queue from the field reports: champion-build viewing surface · a
-   from-empty manual build path (promised "on the list" in BOTH reply drafts).
-4. FP/whitelist submissions for 0.12.45: Joel's hand (signing runbook).
-5. Lab seed-parity fix now blocks THREE contexts' slotting layers.
+1. Did Joel post the replies? `Downloads\hero-companion-0.12.52-reply-81146.txt`
+   and `Downloads\hero-companion-reply-icesphere-rad-stone.txt`. Watch the topic
+   (forum mail → joel717421 Gmail) for follow-ups.
+2. Model bump NOT taken: 10/2,714 champions slot a newly priced piece (scored low,
+   still legal). Fold into the next converge wave if Joel schedules one; the
+   chain-aware arm could also feed certification then.
+3. Still unpriced on purpose (no stated number / unmodeled axis): Impervious Skin
+   regen, stealth/perception uniques, MM pet-aura uniques.
 
-**Numbers pinned tonight (for public claims):** game-legal AT×prim×sec combos =
-**2,691** (counted from current data, VEAT branch rules applied; "2,300+" is
-wrong); solves per champion certificate = **33k–54k** (25–37 sweeps × ~1,300 ×
-6 restarts; "25k+" is a safe floor).
+**Test gates used this run:** `PYTHONPATH="server;." python tools\demo_single_build_fixes.py`
+(29/29 — the file still points at the dead coh-builder path, hence PYTHONPATH),
+`python tools\test_user_paths.py` (53/53), `tools\smoke_release.py`,
+`tools\smoke_gold.py` (2714/2714), `tools\reality_check_globals.py`.
 
-Everything committed and pushed through `f73a8175`+; tree clean except
-untracked wave .bat launchers and logs (deliberately uncommitted). No wave
-running, no scheduled tasks armed, monitor closed. Full session detail:
-`C:\Users\joelc\code\session-report.md` (top three entries are tonight).
+Mids Reborn 3.8.6 (DB 2026.5.1337) is installed portable at
+`C:\Users\joelc\code\MidsReborn` for checking exports; its in-app updater is
+broken (apply `.mru` packages by hand). Full detail:
+`C:\Users\joelc\code\session-report.md` (top entry).
