@@ -1,5 +1,32 @@
 # Hero Companion — What's New
 
+## 0.12.53 — 2026-10-05 — Every unique counted, and no bad advice
+
+- **Psionic resistance now matches Mids and the game.** Three unique
+  enhancements were giving you nothing in the app's totals: Impervium Armor:
+  Psionic Resistance (+6% psionic resistance), Aegis: Psionic/Status Resistance
+  (+5% psionic resistance) and Unbreakable Guard: +Max HP (+7.5% max HP —
+  the power card already named it, but the totals left it out). All three now
+  count, with the numbers taken from the game's own enhancement text. A field
+  report showed a Stone Armor Brute at 5% psionic resistance where Mids and
+  the game showed 11% — it now reads 11%. (Thank you for the build file!)
+
+- **No more "take Combat Jumping" when you already have it.** An import tip
+  suggested adding Combat Jumping as a Luck of the Gambler mule even when the
+  build already had Combat Jumping — with the Luck of the Gambler in it. It
+  now stays quiet in that case, and when it does show, it gives the right
+  number: one Luck of the Gambler global is +7.5% recharge, not ~14%.
+
+- **Fixes a step back in 0.12.52.** 0.12.52's "damage only counts where you
+  attack" solve was always used, even on builds it made worse — measured on a
+  Super Strength / Shield Brute, it lost a six-piece set's defense. It now
+  competes with the normal solve, and the app's build scorer keeps whichever
+  build is actually better. Across ten archetypes tested, no build scores
+  lower than in 0.12.51 or 0.12.52.
+
+- **Data currency:** unchanged (Homecoming client as of the July 7, 2026 game
+  update — still the newest live patch; liveness clean, 0 diffs).
+
 ## 0.12.52 — 2026-10-02 — Damage only counts where you attack
 
 - **The optimizer no longer credits damage to attacks you'd never use.** It
