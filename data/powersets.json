@@ -355,6 +355,12 @@
      "archetype_index": 2
     },
     {
+     "full_name": "Defender_Buff.Light_Affinity",
+     "display_name": "Light Affinity",
+     "set_type": "Primary",
+     "archetype_index": 2
+    },
+    {
      "full_name": "Defender_Buff.Marine_Affinity",
      "display_name": "Marine Affinity",
      "set_type": "Primary",
@@ -785,6 +791,12 @@
      "archetype_index": 8
     },
     {
+     "full_name": "Brute_Defense.Sonic_Aura",
+     "display_name": "Sonic Aura",
+     "set_type": "Secondary",
+     "archetype_index": 8
+    },
+    {
      "full_name": "Brute_Defense.Stone_Armor",
      "display_name": "Stone Armor",
      "set_type": "Secondary",
@@ -975,6 +987,12 @@
     {
      "full_name": "Controller_Buff.Kinetics",
      "display_name": "Kinetics",
+     "set_type": "Secondary",
+     "archetype_index": 1
+    },
+    {
+     "full_name": "Controller_Buff.Light_Affinity",
+     "display_name": "Light Affinity",
      "set_type": "Secondary",
      "archetype_index": 1
     },
@@ -1235,6 +1253,12 @@
     {
      "full_name": "Corruptor_Buff.Kinetics",
      "display_name": "Kinetics",
+     "set_type": "Secondary",
+     "archetype_index": 12
+    },
+    {
+     "full_name": "Corruptor_Buff.Light_Affinity",
+     "display_name": "Light Affinity",
      "set_type": "Secondary",
      "archetype_index": 12
     },
@@ -1649,6 +1673,12 @@
      "archetype_index": 4
     },
     {
+     "full_name": "Tanker_Defense.Sonic_Aura",
+     "display_name": "Sonic Aura",
+     "set_type": "Primary",
+     "archetype_index": 4
+    },
+    {
      "full_name": "Tanker_Defense.Stone_Armor",
      "display_name": "Stone Armor",
      "set_type": "Primary",
@@ -2031,6 +2061,12 @@
      "archetype_index": 7
     },
     {
+     "full_name": "Sentinel_Defense.Sonic_Aura",
+     "display_name": "Sonic Aura",
+     "set_type": "Secondary",
+     "archetype_index": 7
+    },
+    {
      "full_name": "Sentinel_Defense.Stone_Armor",
      "display_name": "Stone Armor",
      "set_type": "Secondary",
@@ -2321,6 +2357,12 @@
      "archetype_index": 3
     },
     {
+     "full_name": "Scrapper_Defense.Sonic_Aura",
+     "display_name": "Sonic Aura",
+     "set_type": "Secondary",
+     "archetype_index": 3
+    },
+    {
      "full_name": "Scrapper_Defense.Stone_Armor",
      "display_name": "Stone Armor",
      "set_type": "Secondary",
@@ -2587,6 +2629,12 @@
      "archetype_index": 9
     },
     {
+     "full_name": "Stalker_Defense.Sonic_Aura",
+     "display_name": "Sonic Aura",
+     "set_type": "Secondary",
+     "archetype_index": 9
+    },
+    {
      "full_name": "Stalker_Defense.Stone_Armor",
      "display_name": "Stone Armor",
      "set_type": "Secondary",
@@ -2747,6 +2795,12 @@
     {
      "full_name": "Mastermind_Buff.Kinetics",
      "display_name": "Kinetics",
+     "set_type": "Secondary",
+     "archetype_index": 10
+    },
+    {
+     "full_name": "Mastermind_Buff.Light_Affinity",
+     "display_name": "Light Affinity",
      "set_type": "Secondary",
      "archetype_index": 10
     },

@@ -32,7 +32,11 @@ POWERS = os.path.join(REPO, "data", "powers.json")
 # silently cut the whole original-game art set out of the search (found
 # 2026-07-31, fixed 2026-08-06). Glob *.pigg; the ICON_PREFIX filter does the
 # real selection and non-texture archives simply contribute nothing.
-PIGG_DIRS = [r"C:\Games\HC2\assets\live", r"C:\Games\HC2\assets\issue24"]
+# The install moved with the box: dev-01 has it at C:\Games\Homecoming (the HC2
+# path is the old machine's). Search whichever installs exist.
+PIGG_DIRS = [d for d in (r"C:\Games\HC2\assets\live", r"C:\Games\HC2\assets\issue24",
+                         r"C:\Games\Homecoming\assets\live",
+                         r"C:\Games\Homecoming\assets\issue24") if os.path.isdir(d)]
 # Some powers' icon fields name generic enhancement art (e_icon_gen_*), which
 # the game stores under Icons/Enhancements — i24 stage2.pigg, not the powers dir.
 ICON_PREFIXES = ("texture_library/gui/icons/powers/",
@@ -61,6 +65,8 @@ def game_icons():
             d = json.load(open(jf, encoding="utf-8"))
         except Exception:  # noqa: BLE001
             continue
+        if not isinstance(d, dict):
+            continue          # newer exporter writes list-shaped index files too
         fn, ic = d.get("full_name"), _norm(d.get("icon"))
         if fn and ic:
             out[fn] = ic

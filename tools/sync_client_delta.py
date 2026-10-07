@@ -63,6 +63,15 @@ IGNORE = {"Create_Entity", "Grant_Power", "Revoke_Power", "Null", "Set_Mode",
           "Influence", "Cur_ToHit"}
 
 
+import re  # noqa: E402
+# The pure-targeting vocabulary, same census as tools/add_wind_control.py _TARGETING.
+_TARGETING = re.compile("|".join((
+    r"enttype\s+target>\s+(?:critter|player)\s+eq",
+    r"entref\s+target\.owner>\s+entref\s+source>\s+eq",
+    r"entref\s+target>\s+entref\s+source>\s+eq",
+    r"target\.isFriend\?", r"source\.isFriend\?", r"target\.isPlayer\?",
+    r"&&", r"\|\|", r"!",
+)))
 ALLY_MODELED = {"Defense", "DamageBuff", "Resistance", "Heal", "ToHit", "RechargeTime",
                 "Recovery", "Regeneration", "HitPoints"}
 SELF_MODELED = ALLY_MODELED | {"Absorb", "DefDebuffResist", "Endurance", "MezProtection",
@@ -80,6 +89,21 @@ def _sec(v):
 
 def _r(x):
     return round(float(x or 0.0), 4)
+
+
+def load_redirects(root):
+    """Homecoming LIVE redirect sub-powers (the targets of Execute_Power)."""
+    out = {}
+    for fp in glob.iglob(os.path.join(root, "redirects", "**", "*.json"), recursive=True):
+        if os.path.basename(fp) == "index.json":
+            continue
+        try:
+            d = json.load(open(fp, encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            continue
+        if isinstance(d, dict) and d.get("full_name"):
+            out[d["full_name"]] = d
+    return out
 
 
 def load_export(root):
@@ -124,17 +148,67 @@ def _side(crec, t):
     return "self" if crec.get("target_type") == "Self" else "foe"
 
 
-def convert(crec):
+def convert(crec, resolve=None, _depth=0):
     """Client record -> {bucket: Counter(core-row tuples)} in OUR vocabulary.
     Unconditional groups only (a requires_expression that is more than an entity
-    test is a mode/state gate the engine does not read - same rule as the importers)."""
+    test is a mode/state gate the engine does not read - same rule as the importers).
+
+    resolve (optional, {full_name: client record}): FOLLOW Execute_Power into the
+    sub-powers it fires, each read with ITS OWN targeting, rows merged into this
+    power. Page 4's Light Affinity delivers its AoE buffs, its -ToHit and Sonic
+    Boom's damage this way (Protective Beam -> Redirects.Light_Affinity.
+    Refracted_ProtectiveBeam = Def vs all, 25ft, 120s). Off by default so the
+    patch sync stays byte-identical to its calibrated behaviour."""
     rows = defaultdict(Counter)
     unmapped = Counter()
+
+    def _once_per_cast(sub):
+        """A created entity's power that can fire at most ONCE per cast of this
+        power - a click, or a period >= this power's recharge (Sonic Boom's pet:
+        Auto, period 75 = Sonic Boom's 75s recharge). Its rows ARE this power's
+        one-shot effect. A ticking aura (Prismatic Shield: 0.75s ticks for 45s)
+        is not folded - its uptime would need the pet's lifetime modelled."""
+        own = float(crec.get("recharge_time") or 0.0)
+        per = float(sub.get("activate_period") or 0.0)
+        return sub.get("type") == "Click" or (own > 0 and per >= own)
+
+    def follow(t):
+        if not resolve or _depth >= 3:
+            return
+        params = t.get("params") or {}
+        if "Create_Entity" in (t.get("attribs") or []):
+            for name in params.get("redirects") or []:
+                sub = resolve.get(name)
+                if sub is not None and _once_per_cast(sub):
+                    srows, sun = convert(sub, resolve, _depth + 1)
+                    for b, cnt in srows.items():
+                        rows[b] += cnt
+                    unmapped.update(sun)
+                elif sub is not None and sub.get("targets_affected") != ["Self"]:
+                    unmapped[f"entity aura not folded (ticks): {name}"] += 1
+            return
+        for name in (params.get("power_names") or []):
+            sub = resolve.get(name)
+            if sub is None or sub is crec:
+                if sub is None:
+                    unmapped[f"Execute_Power target not found: {name}"] += 1
+                continue
+            srows, sun = convert(sub, resolve, _depth + 1)
+            for b, cnt in srows.items():
+                rows[b] += cnt
+            unmapped.update(sun)
 
     def take(t, pv, chance):
         attribs = t.get("attribs") or []
         asp, tbl = t.get("aspect"), t.get("table")
         sc, dur = _r(t.get("scale")), _r(_sec(t.get("duration")))
+        per = float(t.get("application_period") or 0.0)
+        if resolve is not None and per > 0 and dur > 0 and any(
+                a in ("Heal", "Heal_Dmg") for a in attribs):
+            # new-set mode: a heal-over-time arrives as its TOTAL (add_wind_control's
+            # rule - a heal row carries no duration the engine reads; Equalization's
+            # 15 ticks of 0.25 over 30s is 3.75, not 0.25)
+            sc = _r(sc * max(1, int(dur / per)))
         side = _side(crec, t)
         for a in attribs:
             base = a[:-4] if a.endswith("_Dmg") else a
@@ -208,11 +282,19 @@ def convert(crec):
                 continue
             if req == "0":
                 continue                       # literal false: a disabled group
-            gated = gated_in or bool(req.replace("enttype target> critter eq", "").strip())
+            if resolve is not None:
+                # new-set mode: strip ALL pure-targeting clauses (add_wind_control's
+                # census: 5,123 of 7,323 expression groups are targeting only) -
+                # Sonic Boom's whole group is "target is me", not a game state
+                gated = gated_in or bool(_TARGETING.sub(" ", req).strip())
+            else:
+                gated = gated_in or bool(req.replace("enttype target> critter eq", "").strip())
             ch = g.get("chance")
             chance = chance_in * (ch if ch not in (None, 0.0) else 1.0)
             if not gated:
                 for t in g.get("templates") or []:
+                    if {"Execute_Power", "Create_Entity"} & set(t.get("attribs") or []):
+                        follow(t)
                     take(t, pv, chance)
             walk(g.get("child_effects"), pv, chance, gated)
 

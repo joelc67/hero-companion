@@ -45,6 +45,8 @@ def game_icons():
             d = json.load(open(jf, encoding="utf-8"))
         except Exception:  # noqa: BLE001
             continue
+        if not isinstance(d, dict):
+            continue          # newer exporter writes list-shaped index files too
         fn, ic = d.get("full_name"), _norm(d.get("icon"))
         if fn and ic:
             out[fn] = ic
