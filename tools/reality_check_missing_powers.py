@@ -99,7 +99,8 @@ def load():
             c = json.load(open(f, encoding="utf-8"))
         except Exception:  # noqa: BLE001
             continue
-        if c.get("full_name"):
+        # newer bin-crawler exports add list-shaped files (boostsets.json etc.)
+        if isinstance(c, dict) and c.get("full_name"):
             client[c["full_name"]] = c
     return ours, client
 

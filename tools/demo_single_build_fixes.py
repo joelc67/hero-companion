@@ -578,10 +578,12 @@ check("SET-BONUS NOTE: Jab/Boxing mules say so; Knockout Blow never does",
       _mule and not _notes_m.get("Knockout_Blow", "").startswith("Slotted for the set bonuses"),
       f"flagged {_mule}; KB note: {_notes_m.get('Knockout_Blow', '')[:60]!r}")
 
-# CHAIN-AWARE DAMAGE REWARD (same report): the engine's single-target chain never casts
-# Jab in this build, so enhancing its damage adds nothing in game — the solver must see
-# it as unused, and the chain-aware solve must score no worse under the certification
-# scorer than the old base-hit weighting (measured 450.4 -> 453.2 on 2026-10-02).
+# CHAIN-AWARE DAMAGE REWARD (same report): an attack the engine's single-target chain
+# never casts gains nothing from damage enhancement — the solver must see it as unused,
+# and the served build must score no worse under the certification scorer than the
+# chain-blind solve. WHICH attack goes unused is game data, not part of the pin: Jab on
+# the 07-07 client (450.4 -> 453.2, 2026-10-02); after Issue 28 Page 4 re-timed Super
+# Strength, the chain uses Jab and skips Boxing instead (499.3 = 499.3, 2026-10-07).
 print("\nchain-aware solve — a never-cast attack earns no damage credit:")
 import first_principles as _fp  # noqa: E402
 import role_output as _ro  # noqa: E402
@@ -600,8 +602,11 @@ _old_c = c.post("/build/solve", json={"archetype": "Class_Brute", "tier": "premi
 srv._chain_unused = _real_cu
 _unused_m = srv._chain_unused("Class_Brute", _sv_m["powers"])
 _c_old, _c_new = _fp_contrib(_old_c["powers"]), _fp_contrib(_sv_m["powers"])
-check("CHAIN-AWARE: never-cast Jab is flagged and the solve scores >= the chain-blind one",
-      "Brute_Melee.Super_Strength.Jab" in _unused_m and _c_new >= _c_old - 1e-6,
+_built = {p["full_name"] for p in _sv_m["powers"]}
+check("CHAIN-AWARE: a never-cast attack is flagged and the solve scores >= the chain-blind one",
+      bool(_unused_m) and _unused_m <= _built
+      and all((srv.POWER_BY_FULL.get(u) or {}).get("is_attack") for u in _unused_m)
+      and _c_new >= _c_old - 1e-6,
       f"0-cast {sorted(u.rsplit('.', 1)[-1] for u in _unused_m)}; "
       f"contribution old {_c_old:.1f} new {_c_new:.1f}")
 
