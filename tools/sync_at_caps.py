@@ -32,7 +32,8 @@ MAP = {"hitpoints": "hit_points", "hp_cap": "hp_cap", "res_cap": "resistance_cap
        "recovery_cap": "recovery_cap", "base_recovery": "recovery_base",
        "base_regen": "regeneration_base"}
 # Brute base HP: app 1499, client 1606.3 in every export since 2026-06-06 (not Page 4).
-HOLD = {("Class_Brute", "hitpoints"): "client 1606.3 since at least 2026-06-06 - awaiting Joel's ruling"}
+# RULED 2026-10-07 (Joel: "change Brute HP to 1606") - released from HOLD, written.
+HOLD = {}
 
 
 def _l50(v):
