@@ -1,5 +1,46 @@
 # Hero Companion — What's New
 
+## 0.12.55 — 2026-10-09 — Page 4, finished
+
+- **Prismatic Shield now counts.** Light Affinity's Prismatic Shield places a
+  field that, for 45 seconds, gives you and your allies defense and resistance
+  to all damage, and makes enemies inside it deal less damage. The app gave it
+  no credit in 0.12.54; it is now valued for the time the field is up (45
+  seconds out of every 150 before recharge), with the numbers read from the
+  game client.
+
+- **Mastermind pet auras count.** Page 4 gave Supremacy a pet aura (+10% AoE
+  defense, +10% resistance, +100% regeneration for your henchmen). It now
+  counts toward how long your henchmen stay up, together with the Mastermind
+  ATO auras: Mark of Supremacy (+12.5% resistance and +125% regeneration;
+  superior 15% / 150%) and Command of the Mastermind (+12.5% AoE defense;
+  superior 15%).
+
+- **Dominator ATO procs count.** The Fiery Orb (Dominating Grasp) and Energy
+  Font (Overpowering Presence) pets are now valued with Page 4's numbers: 2
+  procs per minute (3 for the superior version), each pet lasts 25 seconds, at
+  most 3 at once.
+
+- **Fixes to 0.12.54's Page 4 data.** Checking the above turned up mistakes in
+  how 0.12.54 read the update, now corrected from the game client:
+  - AoE defense was missing from Protective Beam, Prismatic Shield and Sonic
+    Aura's armor toggle, and was left at its old value on Fortitude, Personal
+    Force Field and Dispersion Bubble.
+  - Web Grenade's slow, and Caltrops' new shrapnel damage, were missing.
+  - Sonic Cage, Refraction Shield and Detention Field had lost their cage on
+    enemies.
+
+- **Recommended builds re-checked** for every archetype these changes touch:
+  all Dominators and Masterminds, every Light Affinity and Sonic Aura build,
+  and every build that uses one of the corrected powers.
+
+- **Not modeled yet:** using Sonic Cage, Refraction Shield or Detention Field
+  on a teammate (Page 4 added this; it changes the power's own recharge), and
+  the three ATO procs that summon a one-shot pet (Defender's Bastion,
+  Scourging Blast, Vigilant Assault).
+
+- **Data currency:** Homecoming client as of Issue 28 Page 4 (October 6, 2026).
+
 ## 0.12.54 — 2026-10-09 — Issue 28 Page 4 is in
 
 - **Light Affinity and Sonic Aura are here.** Light Affinity (Defender
