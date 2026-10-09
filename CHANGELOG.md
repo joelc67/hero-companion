@@ -1,5 +1,37 @@
 # Hero Companion — What's New
 
+## 0.12.54 — 2026-10-09 — Issue 28 Page 4 is in
+
+- **Light Affinity and Sonic Aura are here.** Light Affinity (Defender
+  primary; Controller, Corruptor and Mastermind secondary) and Sonic Aura
+  (Tanker primary; Brute, Scrapper, Stalker and Sentinel secondary) can now be
+  picked, built, slotted and scored, with numbers read straight from the
+  updated game client. 151 new recommended builds cover every archetype that
+  can take them.
+
+- **Page 4's power changes are in.** 289 changed powers were updated from the
+  game client, including the Super Strength, Empathy, Force Field, Traps and
+  Sonic Resonance reworks (Rage no longer crashes, Hand Clap now does damage,
+  Fortitude and Regeneration Aura changed, Force Bolt hits harder, and more),
+  plus the cast-time and endurance trims across many other sets.
+
+- **Higher damage cap for eight archetypes.** Defenders, Controllers,
+  Dominators, Masterminds, Arachnos Soldiers and Widows, Peacebringers and
+  Warshades now cap at +400% damage (was +300%), as in the game.
+
+- **Brute base hit points corrected to 1,606** (was 1,499) to match the game.
+
+- **Recommended builds re-checked.** Every recommended build these changes
+  could touch was re-optimized — 1,836 in all. 1,610 improved and were
+  replaced; the other 68 were already the better build and stayed. Every one
+  of the 2,865 recommended builds was confirmed to load.
+
+- **Not modeled yet:** Prismatic Shield's pulsing aura, the Dominator ATO
+  proc-rate changes and the Mastermind ATO pet-aura changes. They don't change
+  any numbers the app shows today.
+
+- **Data currency:** Homecoming client as of Issue 28 Page 4 (October 6, 2026).
+
 ## 0.12.53 — 2026-10-05 — Every unique counted, and no bad advice
 
 - **Psionic resistance now matches Mids and the game.** Three unique
