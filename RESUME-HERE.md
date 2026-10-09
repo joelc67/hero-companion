@@ -1,9 +1,17 @@
-# ✅ SESSION CLOSED CLEAN — 2026-10-05. START HERE.
+# ✅ SESSION CLOSED CLEAN — 2026-10-09. START HERE.
 
-**Latest release: 🚀 v0.12.53 "Every unique counted, and no bad advice"**
-(2026-10-05, prep `dbf87bad`, stamp `dbf87ba`, model **v49** unchanged; both
-assets signed + API-verified; update check reports 0.12.53; liveness clean —
-July 7, 2026 still the newest live patch).
+**Latest release: 🚀 v0.12.54 "Issue 28 Page 4 is in"**
+(2026-10-09, prep `895388f0`, stamp `895388f`, model **v50**; both assets signed +
+API-verified; update check reports 0.12.54; gold 2865/2865, release smoke PASS;
+data currency = Issue 28 Page 4, Homecoming live 2026-10-06).
+
+**What 10-07 → 10-09 was:** Page 4 ingested (289 powers synced by difference,
+Light Affinity + Sonic Aura added, damage cap 4->5 for 8 ATs, Brute HP 1606),
+MODEL_VERSION 50, recert wave of 1,836 contexts (0 failures), roster_merge gate
+promoted 1,610 / kept 68, 151 LA/SA champions admitted (2,714 -> 2,865).
+roster_merge.py now takes MERGE_PAR + MERGE_KEYS. Forum post for Joel to post:
+`Downloads\hero-companion-0.12.54-post.txt`. Open: 151 admitted entries lack
+canonical_score; Prismatic Shield aura, Dom ATO PPM, MM ATO pet auras unmodeled.
 
 **What 10-02 → 10-05 was (three releases, two forum field reports):**
 - **0.12.51** — 81146: "I have Hamidon Origins" opt-out (`no_ho`; ILP options +
