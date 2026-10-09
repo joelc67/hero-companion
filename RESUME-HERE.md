@@ -1,9 +1,21 @@
 # ✅ SESSION CLOSED CLEAN — 2026-10-09. START HERE.
 
-**Latest release: 🚀 v0.12.54 "Issue 28 Page 4 is in"**
-(2026-10-09, prep `895388f0`, stamp `895388f`, model **v50**; both assets signed +
-API-verified; update check reports 0.12.54; gold 2865/2865, release smoke PASS;
-data currency = Issue 28 Page 4, Homecoming live 2026-10-06).
+**Latest release: 🚀 v0.12.55 "Page 4, finished"**
+(2026-10-09, prep `8f1e5553`, stamp `8f1e555`, model **v51**; both assets signed +
+API-verified; update check reports 0.12.55; gold 2865/2865, release smoke PASS;
+bundled data/pet_auras.json, summons.json, powers.json, champions.json byte-identical
+to the release commit; data currency = Issue 28 Page 4, Homecoming live 2026-10-06).
+
+**What 0.12.55 was:** finished Page 4 from game data (MODEL_VERSION 51): sync_client_delta
+full patch reading (AoE defense, Execute_Power sub-powers, PvE cages restored),
+Prismatic Shield field, MM pet auras (tools/extract_pet_auras.py -> data/pet_auras.json),
+Dom ATO aura proc pets (tools/patch_proc_pets.py, engine `_proc_pet_offense`). v51 recert
+of 582 contexts (0 failures), gate promoted 525 / kept 55. Liveness 0 diffs, dispositions
+stayed `{}`. Release body briefly carried the 0.12.53 entry (publish script's changelog
+regex was hard-coded); PATCHed within a minute; scratchpad publish script now uses VER.
+Still unmodeled (stated in changelog): dual-use cages on teammates, one-shot ATO proc pets.
+Open: 1,094 roster entries carry `certificate.admission` (1,089 stamped v49, 5 v50);
+the "151 lack canonical_score" note below was not re-verified against this layout.
 
 **What 10-07 → 10-09 was:** Page 4 ingested (289 powers synced by difference,
 Light Affinity + Sonic Aura added, damage cap 4->5 for 8 ATs, Brute HP 1606),
