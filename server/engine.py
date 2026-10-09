@@ -1579,6 +1579,91 @@ def _pet_damage_buff(build, totals, ctx, global_rech):
     return all_mult, top_mult, tohit_all, tohit_top, sources
 
 
+def _proc_pet_offense(build, totals, ctx, entities, specs, class_cols, pvp):
+    """v51 AURA PROC PETS (Issue 28 Page 4: Dominating Grasp / Overpowering
+    Presence F - Fiery Orb / Energy Font). A slotted piece whose summons spec
+    carries `proc` (tools/patch_proc_pets.py, client boost record) rolls on each
+    activation of its host at the standard PPM chance (proc_damage_per_activation's
+    formula: PPM x (local recharge + cast) / 60 / area factor, cap 0.90); the host
+    is taken as cast on its enhanced cycle (the control-uptime convention). Each
+    success spawns a pet for `life` seconds, at most `stack_limit` alive. The pet's
+    damage is its AURA - client damage per pulse / activate_period, at the pet's
+    class column - with the host's slotted Damage copied (copy_boosts)."""
+    mod_tables = ctx["modifier_tables"]
+    power_by_full = ctx["power_by_full"]
+    mult_ed = ctx["mult_ed"]
+    global_rech = (totals or {}).get("recharge", 0.0)
+    rech_cap = ctx.get("at_recharge_cap")
+    out = []
+    for power in build.get("powers", []):
+        host = power_by_full.get(power.get("full_name"))
+        if not host:
+            continue
+        for slot in power.get("slots") or []:
+            uid = (slot or {}).get("piece_uid")
+            spec = specs.get(f"Boosts.{uid}.{uid}") if uid else None
+            proc = (spec or {}).get("proc")
+            if not proc:
+                continue
+            ent = entities.get(spec["pets"][0]["uid"]) or {}
+            col = class_cols.get(ent.get("class_name"))
+            if col is None or col < 0:
+                continue
+            dmg_enh = rech_enh = acc_enh = 0.0
+            for s in power.get("slots") or []:
+                if s and s.get("piece_uid"):
+                    for asp, val in _scaled_boosts(s, ctx):
+                        if asp == "Damage":
+                            dmg_enh += val
+                        elif asp == _RECH_ASPECT:
+                            rech_enh += val
+                        elif asp == "Accuracy":
+                            acc_enh += val
+            copy = spec.get("copy_boosts", True)
+            dmg_boost = apply_ed_sched(ED_SCHEDULE.get("Damage", 0), dmg_enh, mult_ed) if copy else 0.0
+            acc_boost = apply_ed_sched(ED_SCHEDULE.get("Accuracy", 0), acc_enh, mult_ed) if copy else 0.0
+            rech_local = apply_ed_sched(ED_SCHEDULE.get(_RECH_ASPECT, 0), rech_enh, mult_ed)
+            rech_total = rech_local + global_rech
+            if rech_cap is not None:
+                rech_total = min(rech_total, rech_cap)
+            base_rech = host.get("base_recharge") or 0.0
+            cast = host.get("cast_time") or 0.0
+            cycle = cast + base_rech / (1.0 + rech_total)
+            if cycle <= 0:
+                continue
+            chance = min(0.90, proc["ppm"] * (base_rech / (1.0 + rech_local) + cast)
+                         / 60.0 / _area_factor(host))
+            # ponytail: expected live pets = rate x life, hard-capped at the stack
+            # limit (ignores the binomial tail under the cap; exact E[min] if a
+            # build ever runs near 3 concurrent)
+            alive = min(float(proc.get("stack_limit") or 1), chance / cycle * proc["life"])
+            dps, acc_w = 0.0, 0.0
+            for ps_full in ent.get("powerset_full_names") or []:
+                for p in ctx.get("powers_by_set", {}).get(ps_full, []):
+                    per = p.get("activate_period") or 0.0
+                    if not p.get("damage_effects") or per <= 0 or (p.get("power_type") or 0) == 0:
+                        continue
+                    base = sum(abs(_resolve_mag(d, mod_tables[d["modifier_table"]], col))
+                               for d in p["damage_effects"]
+                               if _pv_ok(d.get("pv_mode", 0), pvp)
+                               and col < len(mod_tables.get(d["modifier_table"]) or []))
+                    d_ = base * (1.0 + dmg_boost) / per
+                    dps += d_
+                    acc_w += d_ * (p.get("accuracy") or 1.0)
+            if dps <= 0 or alive <= 0:
+                continue
+            out.append({"name": ent.get("display_name") or spec["pets"][0]["uid"],
+                        "from_power": f"{host.get('display_name')} (proc)",
+                        "pet_class": ent.get("class_name"), "resummon_cast": 0.0,
+                        "level_shift": spec.get("level_shift") or 0,
+                        "acc_mult": round((acc_w / dps) * (1.0 + acc_boost), 3),
+                        "dps_each": round(dps, 1), "attack_count": 1,
+                        "count": 1, "uptime": round(min(1.0, alive), 2),
+                        "proc_alive": round(alive, 3),
+                        "dps_total": round(dps * alive, 1)})
+    return out
+
+
 def _pet_offense(build, totals, ctx):
     """Pet damage: resolve each summon power to its pet entities -> pet powersets ->
     pet attacks, priced with the pet's own class column. The reconciled summon specs
@@ -1697,6 +1782,7 @@ def _pet_offense(build, totals, ctx):
                              "dps_each": round(d, 1), "attack_count": n,
                              "count": 1, "uptime": round(uptime, 2),
                              "dps_total": round(d * uptime, 1)})
+    pets.extend(_proc_pet_offense(build, totals, ctx, entities, specs, class_cols, pvp))
     if not pets:
         return {}
     pets.sort(key=lambda x: x["dps_total"], reverse=True)

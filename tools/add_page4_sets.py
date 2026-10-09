@@ -15,8 +15,12 @@ the reworked ones were. Conventions are MEASURED on our own records, never assum
   heals                       -> self Heal on a self-only power, else buff Heal
   is_attack                   -> exactly "has damage rows"
 
-STATED EXCLUSIONS (printed every run): Prismatic Shield's buffs live on a placed
-pseudo-pet the client exposes no entity for, so they are not modelled; mode-gated
+Prismatic Shield's buffs ride a placed field (Create_Entity, 45s lifetime) whose
+aura powers ARE in the client (Redirects.Light_Affinity.SanctuaryPatch_*): they fold
+with duration = the field's lifetime (sync_client_delta._field_life), so the
+scorer's click uptime prices the time the field is up (2026-10-09).
+
+STATED EXCLUSIONS (printed every run): mode-gated
 groups (Radiance's "Radiant" bonuses, Spotlight's Radiance bonus) are skipped the
 same way Fury/Domination modes are; combat-suppression bits came from the Mids
 database and do not exist for these sets.
@@ -52,9 +56,6 @@ SETS = {
     "Stalker_Defense.Sonic_Aura": ("Class_Stalker", "secondary", "Sonic Aura"),
     "Sentinel_Defense.Sonic_Aura": ("Class_Sentinel", "secondary", "Sonic Aura"),
 }
-PSEUDOPET_UNMODELLED = {"Sanctuary_of_Light": "Prismatic Shield - its Def/Res/-Dmg ride "
-                        "a placed pseudo-pet aura that ticks for 45s; folding 0.75s ticks "
-                        "into a 150s click would misprice it, so it is not modelled"}
 
 
 def _widest_area(c, resolve, depth=0):
@@ -138,8 +139,6 @@ def build_record(fn, c, ps_name, eid, cid, refuse, notes, resolve):
             cats.append(n)
     cats.sort(key=lambda n: cid[n][0])
     leaf = fn.split(".")[-1]
-    if leaf in PSEUDOPET_UNMODELLED:
-        notes[f"EXCLUDED {PSEUDOPET_UNMODELLED[leaf]}"] += 1
     area, radius, targets = _widest_area(c, resolve)
     rec = {
         "full_name": fn, "display_name": c.get("display_name") or leaf,

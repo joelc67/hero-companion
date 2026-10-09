@@ -643,10 +643,40 @@ check("CJ TIP: silent when Combat Jumping is taken; otherwise fires and says +7.
       not _with_cj and _without_cj and "+7.5%" in _without_cj[0],
       f"with CJ: {len(_with_cj)} tip(s); without: {_without_cj[:1]}")
 
+# ISSUE 28 PAGE 4 COMPLETED (v51): Prismatic Shield's field priced for its 45s
+# lifetime; AoE defense no longer dropped by the converter (Fortitude's AoE row
+# moves with the patch to 180s like its siblings); the cage restored.
+_pbf = srv.POWER_BY_FULL
+_ps = _pbf["Defender_Buff.Light_Affinity.Sanctuary_of_Light"]
+_ps_def = {(e["damage_type"], e["duration"]) for e in _ps["buff_effects"] if e["effect"] == "Defense"}
+_fort = {e["duration"] for e in _pbf["Defender_Buff.Empathy.Fortitude"]["buff_effects"]
+         if e["effect"] == "Defense"}
+_cage = [c for c in _pbf["Defender_Buff.Sonic_Debuff.Sonic_Cage"]["control_effects"] if c.get("pv_mode") != 2]
+check("PAGE 4 DATA: Prismatic Shield field 45s (incl AoE), Fortitude Def all 180s, Sonic Cage still cages",
+      ("AoE", 45.0) in _ps_def and len(_ps_def) == 11 and _fort == {180.0} and bool(_cage),
+      f"PS def rows {len(_ps_def)}, Fortitude def durations {_fort}, cage rows {len(_cage)}")
+# Dominator ATO proc pet (Fiery Orb): priced from the client proc (PPM 3, 25s life).
+_dtot = srv.engine.calculate_build({"archetype": "Class_Dominator", "powers": [
+    {"full_name": "Dominator_Control.Fire_Control.Char",
+     "slots": [{"piece_uid": "Superior_Attuned_Superior_Dominating_Grasp_F", "level": 50}]}]},
+    srv.SET_BONUSES, ctx=srv._stat_ctx("Class_Dominator"))
+_orbs = [p for p in ((_dtot.get("offense") or {}).get("pets") or []) if p["name"] == "Fiery Orb"]
+check("PROC PET: Superior Dominating Grasp proc prices a Fiery Orb (0 < alive <= 3)",
+      bool(_orbs) and 0 < _orbs[0]["proc_alive"] <= 3 and _orbs[0]["dps_each"] > 0,
+      f"{_orbs[:1]}")
+# Mastermind pet auras: Supremacy alone, then + Mark of Supremacy F.
+_a0 = fp._pet_aura("Class_Mastermind", [])
+_a1 = fp._pet_aura("Class_Mastermind", [{"slots": [{"piece_uid": "Attuned_Mark_of_Supremacy_F"}]}])
+check("PET AURAS: Supremacy +10% AoE def/+10% res/+100% regen; Mark of Supremacy adds 12.5%/125%",
+      abs(_a0["aoe_def"] - 0.10) < 1e-9 and abs(_a0["res"] - 0.10) < 1e-9
+      and abs(_a1["res"] - 0.225) < 1e-9 and abs(_a1["regen"] - 2.25) < 1e-9
+      and fp._pet_aura("Class_Dominator", [])["res"] == 0.0,
+      f"MM {_a0}, +Mark {_a1}")
+
 # COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
 # check — a crash or skipped section that silently shrinks the list must fail, not
 # pass by absence. Bump EXPECTED_CHECKS when adding a check.
-EXPECTED_CHECKS = 29
+EXPECTED_CHECKS = 32
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
 if len(results) != EXPECTED_CHECKS:

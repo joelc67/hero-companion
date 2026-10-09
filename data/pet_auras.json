@@ -1,0 +1,42 @@
+{
+ "_source": "client export (Bin Crawler out_full), Issue 28 Page 4; tools/extract_pet_auras.py",
+ "inherent": {
+  "Class_Mastermind": {
+   "aoe_def": 0.1,
+   "res": 0.1,
+   "regen": 1.0,
+   "power": "Inherent.Inherent.Supremacy",
+   "radius": 60.0
+  }
+ },
+ "pieces": {
+  "Attuned_Command_of_the_Mastermind_F": {
+   "aoe_def": 0.125,
+   "res": 0.0,
+   "regen": 0.0,
+   "power": "Set_Bonus.Global_Bonus.Command_of_the_Mastermind",
+   "radius": 40.0
+  },
+  "Superior_Attuned_Superior_Command_of_the_Mastermind_F": {
+   "aoe_def": 0.15,
+   "res": 0.0,
+   "regen": 0.0,
+   "power": "Set_Bonus.Global_Bonus.Superior_Command_of_the_Mastermind",
+   "radius": 40.0
+  },
+  "Attuned_Mark_of_Supremacy_F": {
+   "aoe_def": 0.0,
+   "res": 0.125,
+   "regen": 1.25,
+   "power": "Set_Bonus.Global_Bonus.Mark_of_Supremacy",
+   "radius": 40.0
+  },
+  "Superior_Attuned_Superior_Mark_of_Supremacy_F": {
+   "aoe_def": 0.0,
+   "res": 0.15,
+   "regen": 1.5,
+   "power": "Set_Bonus.Global_Bonus.Superior_Mark_of_Supremacy",
+   "radius": 40.0
+  }
+ }
+}

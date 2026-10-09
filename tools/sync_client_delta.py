@@ -45,6 +45,11 @@ PTYPE = {"Click": 0, "Auto": 1, "Toggle": 2}
 DMG = {"Smashing": "Smashing", "Lethal": "Lethal", "Fire": "Fire", "Cold": "Cold",
        "Energy": "Energy", "Negative_Energy": "Negative", "Psionic": "Psionic",
        "Toxic": "Toxic"}
+# "Area" IS the client's AoE positional defense (Fortitude's row reads
+# Ranged+Melee+Area+...; the MM ATO piece says "Pet +AoE Defense Aura" for its
+# Area row). It sat in IGNORE until 2026-10-09, which silently dropped every
+# AoE defense row from the converter (0.12.54 shipped without them on 14 new
+# records and with stale AoE rows on 10 patched ones; rebuilt 2026-10-09).
 POS = {"Melee": "Melee", "Ranged": "Ranged", "Area": "AoE"}
 MEZ = {"Held", "Stunned", "Immobilized", "Confused", "Terrorized", "Sleep",
        "Knockback", "Knockup", "Repel", "Afraid", "Intangible"}
@@ -57,7 +62,7 @@ IGNORE = {"Create_Entity", "Grant_Power", "Revoke_Power", "Null", "Set_Mode",
           "JumpingSpeed", "JumpHeight", "SpeedRunning", "MovementControl",
           "MovementFriction", "Range", "Translucency", "StealthRadius_PVE",
           "StealthRadius_PVP", "PerceptionRadius", "ThreatLevel", "Global_Chance_Mod",
-          "Ninja_Run", "Taunt", "Placate", "Teleport", "Recharge_Power", "Area",
+          "Ninja_Run", "Taunt", "Placate", "Teleport", "Recharge_Power",
           "Untouchable", "OnlyAffectsSelf", "Radius", "Meter", "Rage", "Unknown(105)",
           "Elusivity", "Accuracy", "Absorb_Overflow", "Reward", "XP_Debt",
           "Influence", "Cur_ToHit"}
@@ -148,7 +153,7 @@ def _side(crec, t):
     return "self" if crec.get("target_type") == "Self" else "foe"
 
 
-def convert(crec, resolve=None, _depth=0):
+def convert(crec, resolve=None, _depth=0, _life=0.0, patch=False):
     """Client record -> {bucket: Counter(core-row tuples)} in OUR vocabulary.
     Unconditional groups only (a requires_expression that is more than an entity
     test is a mode/state gate the engine does not read - same rule as the importers).
@@ -158,7 +163,14 @@ def convert(crec, resolve=None, _depth=0):
     power. Page 4's Light Affinity delivers its AoE buffs, its -ToHit and Sonic
     Boom's damage this way (Protective Beam -> Redirects.Light_Affinity.
     Refracted_ProtectiveBeam = Def vs all, 25ft, 120s). Off by default so the
-    patch sync stays byte-identical to its calibrated behaviour."""
+    patch sync stays byte-identical to its calibrated behaviour.
+
+    patch=True (with resolve): the PATCH sync's full reading (2026-10-09). Page 4
+    moved effects into Execute_Power sub-powers (Web Grenade's -recharge) and
+    behind pure targeting tests (Sonic Cage on a friend), which the narrow
+    reading skipped. Follows Execute_Power only - a summoned entity's powers
+    stay modelled through its own pet record, as before - and keeps the
+    patch sync's heal convention (no heal-over-time totals)."""
     rows = defaultdict(Counter)
     unmapped = Counter()
 
@@ -166,21 +178,37 @@ def convert(crec, resolve=None, _depth=0):
         """A created entity's power that can fire at most ONCE per cast of this
         power - a click, or a period >= this power's recharge (Sonic Boom's pet:
         Auto, period 75 = Sonic Boom's 75s recharge). Its rows ARE this power's
-        one-shot effect. A ticking aura (Prismatic Shield: 0.75s ticks for 45s)
-        is not folded - its uptime would need the pet's lifetime modelled."""
+        one-shot effect. A ticking aura is folded by _field_life instead."""
         own = float(crec.get("recharge_time") or 0.0)
         per = float(sub.get("activate_period") or 0.0)
         return sub.get("type") == "Click" or (own > 0 and per >= own)
+
+    def _field_life(t, sub):
+        """A CLICK that places an entity for a fixed lifetime (the Create_Entity
+        template's own duration) whose aura ticks on allies/foes while it stands
+        (Prismatic Shield: 45s field, 0.2s ticks, 150s recharge). Returns that
+        lifetime: the rows fold with duration = lifetime, so the scorer's click
+        uptime (duration / enhanced recharge) prices exactly the time the field
+        is up. Both the lifetime and the rows are the client's own. 0 = not one."""
+        life = _sec(t.get("duration")) or 0.0
+        ok = (crec.get("type") == "Click" and float(crec.get("recharge_time") or 0) > 0
+              and 0 < life < 99999 and float(sub.get("activate_period") or 0) > 0
+              and sub.get("targets_affected") != ["Self"])
+        return life if ok else 0.0
 
     def follow(t):
         if not resolve or _depth >= 3:
             return
         params = t.get("params") or {}
         if "Create_Entity" in (t.get("attribs") or []):
+            if patch:
+                return
             for name in params.get("redirects") or []:
                 sub = resolve.get(name)
-                if sub is not None and _once_per_cast(sub):
-                    srows, sun = convert(sub, resolve, _depth + 1)
+                once = sub is not None and _once_per_cast(sub)
+                life = 0.0 if (sub is None or once) else _field_life(t, sub)
+                if once or life:
+                    srows, sun = convert(sub, resolve, _depth + 1, life)
                     for b, cnt in srows.items():
                         rows[b] += cnt
                     unmapped.update(sun)
@@ -189,27 +217,32 @@ def convert(crec, resolve=None, _depth=0):
             return
         for name in (params.get("power_names") or []):
             sub = resolve.get(name)
+            if patch and sub is not None and name.rsplit(".", 1)[0] ==                     (crec.get("full_name") or "").rsplit(".", 1)[0]:
+                continue   # a SIBLING power is its own record (Trip Mine's pet
+                           # Self_Destruct fires the pet's Trip_Mine): no double count
             if sub is None or sub is crec:
                 if sub is None:
                     unmapped[f"Execute_Power target not found: {name}"] += 1
                 continue
-            srows, sun = convert(sub, resolve, _depth + 1)
+            srows, sun = convert(sub, resolve, _depth + 1, patch=patch)
             for b, cnt in srows.items():
                 rows[b] += cnt
             unmapped.update(sun)
 
-    def take(t, pv, chance):
+    def take(t, pv, chance, side_in=None):
         attribs = t.get("attribs") or []
         asp, tbl = t.get("aspect"), t.get("table")
         sc, dur = _r(t.get("scale")), _r(_sec(t.get("duration")))
         per = float(t.get("application_period") or 0.0)
-        if resolve is not None and per > 0 and dur > 0 and any(
+        if resolve is not None and not patch and per > 0 and dur > 0 and any(
                 a in ("Heal", "Heal_Dmg") for a in attribs):
             # new-set mode: a heal-over-time arrives as its TOTAL (add_wind_control's
             # rule - a heal row carries no duration the engine reads; Equalization's
             # 15 ticks of 0.25 over 30s is 3.75, not 0.25)
             sc = _r(sc * max(1, int(dur / per)))
-        side = _side(crec, t)
+        if _life:
+            dur = _r(_life)                    # a timed field: up for its lifetime
+        side = "self" if t.get("target") == "Self" else (side_in or _side(crec, t))
         for a in attribs:
             base = a[:-4] if a.endswith("_Dmg") else a
             if a in IGNORE or base in IGNORE:
@@ -271,14 +304,26 @@ def convert(crec, resolve=None, _depth=0):
                 row = ("heal",) + row[1:]      # ours keeps heals in buff_effects OR heal_effects
             rows[row[0]][row + (sc, tbl, pv, dur, _r(chance))] += 1
 
-    def walk(groups, pv_in, chance_in, gated_in):
+    def _friend_side(req):
+        """A dual-use power (Page 4's Sonic Cage: a friend gets +Def, a foe gets
+        caged) splits its groups on target.isFriend? - the GAME says which side
+        each group lands on; targets_affected (Foe+Friend) cannot."""
+        tok = req.split()
+        if "target.isFriend?" not in tok:
+            return None
+        i = tok.index("target.isFriend?")
+        return "foe" if i + 1 < len(tok) and tok[i + 1] == "!" else "ally"
+
+    def walk(groups, pv_in, chance_in, gated_in, side_in=None):
         for g in groups or []:
             ip = g.get("is_pvp")
             if ip == "PVP_ONLY":
                 continue                       # PvE scope
             pv = 1 if ip == "PVE_ONLY" else pv_in
             req = _req(g).strip()
-            if "enttype target> player eq" in req and "!" not in req:
+            # the friend test's own "!" is not a negation of the player test
+            req_np = req.replace("target.isFriend? !", "target.isFriend?")
+            if "enttype target> player eq" in req_np and "!" not in req_np:
                 continue
             if req == "0":
                 continue                       # literal false: a disabled group
@@ -289,14 +334,27 @@ def convert(crec, resolve=None, _depth=0):
                 gated = gated_in or bool(_TARGETING.sub(" ", req).strip())
             else:
                 gated = gated_in or bool(req.replace("enttype target> critter eq", "").strip())
+            side = (_friend_side(req) if resolve is not None else None) or side_in
+            if patch and side == "ally" and _friend_side(req) == "ally":
+                # dual-use power used on a FRIEND (Page 4 Sonic Cage/Refraction
+                # Shield/Detention Field): it also resets the power's own recharge
+                # (Recharge_Power 90 vs 60 base) - a per-target recharge no field
+                # of ours carries. STATED EXCLUSION, not approximated.
+                unmapped["friend-side use of a dual-use power (own recharge override)"] += 1
+                continue
+            phased = any("OnlyAffectsSelf" in (t.get("attribs") or [])
+                         for t in g.get("templates") or [])
             ch = g.get("chance")
             chance = chance_in * (ch if ch not in (None, 0.0) else 1.0)
             if not gated:
                 for t in g.get("templates") or []:
                     if {"Execute_Power", "Create_Entity"} & set(t.get("attribs") or []):
                         follow(t)
-                    take(t, pv, chance)
-            walk(g.get("child_effects"), pv, chance, gated)
+                    if patch and phased and not (set(t.get("attribs") or []) & MEZ):
+                        continue   # the caged target is Untouchable + OnlyAffectsSelf:
+                                   # out of the fight, so only the cage itself counts
+                    take(t, pv, chance, side)
+            walk(g.get("child_effects"), pv, chance, gated, side)
 
     walk(crec.get("effects"), 0, 1.0, False)
     return rows, unmapped
@@ -354,6 +412,9 @@ def loose(k):
     return (k[0], k[1], k[2], k[3], k[4])
 
 
+_RB = _RA = None
+
+
 def main():
     mode = next((a for a in sys.argv[1:] if a.startswith("--")), "--calibrate")
     raw = open(POWERS, "rb").read()
@@ -363,6 +424,10 @@ def main():
     to_client = lambda fn: alias.get(fn, fn)  # noqa: E731
     print(f"loading BEFORE {BEFORE}"); bx = load_export(BEFORE)
     print(f"loading AFTER  {AFTER}");  ax = load_export(AFTER)
+    # full reading (2026-10-09): Execute_Power targets resolve within each export
+    global _RB, _RA
+    _RB = dict(bx); _RB.update(load_redirects(BEFORE))
+    _RA = dict(ax); _RA.update(load_redirects(AFTER))
 
     changed = []
     for fn, p in ours.items():
@@ -376,8 +441,8 @@ def main():
     report = []
     for fn in sorted(changed):
         p, c = ours[fn], to_client(fn)
-        rb, ub = convert(bx[c])
-        ra, ua = convert(ax[c])
+        rb, ub = convert(bx[c], _RB, patch=True)
+        ra, ua = convert(ax[c], _RA, patch=True)
         mine = our_core(p)
         # scalar calibration
         sb, sa = scalars(bx[c]), scalars(ax[c])
@@ -559,8 +624,8 @@ def apply_delta(data, ours, changed, to_client, bx, ax, raw, write):
                 touched.append(f"set categories +{sorted(set(ca) - set(cb))} -{sorted(set(cb) - set(ca))}")
                 st["cat_applied"] += 1
         # 3) effects by difference, only for calibrated powers
-        rb, _ = convert(before)
-        ra, _ = convert(after)
+        rb, _ = convert(before, _RB, patch=True)
+        ra, _ = convert(after, _RA, patch=True)
         gone = sum((rb[b] - ra[b] for b in rb), Counter())
         new = sum((ra[b] - rb[b] for b in ra), Counter())
         adj = ADJUDICATED.get(fn)
