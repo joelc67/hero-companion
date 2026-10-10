@@ -230,6 +230,14 @@ T("/gamelog/board"); T("/gamelog/board/public")
 check("/gamelog/board renders", C.get("/gamelog/board").status_code == 200)
 check("/gamelog/board/public renders", C.get("/gamelog/board/public").status_code == 200)
 
+# ── Page 4 dual-use powers setting: flip, read back, restore the user's value ─
+T("/settings/cage-on-allies")
+_orig = bool(j(C.get("/settings/cage-on-allies")).get("on"))
+_flip = j(C.post("/settings/cage-on-allies", json={"on": not _orig})).get("on")
+_back = j(C.post("/settings/cage-on-allies", json={"on": _orig})).get("on")
+check("/settings/cage-on-allies flips and restores", _flip is (not _orig) and _back is _orig,
+      f"orig {_orig} flip {_flip} back {_back}")
+
 # ── coverage denominator: every route tested or excluded ────────────────────
 src = open(os.path.join(os.path.dirname(__file__), "..", "server", "server.py"),
            encoding="utf-8").read()

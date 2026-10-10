@@ -1579,6 +1579,77 @@ def _pet_damage_buff(build, totals, ctx, global_rech):
     return all_mult, top_mult, tohit_all, tohit_top, sources
 
 
+def _proc_roll(power, host, totals, ctx, ppm):
+    """(chance per activation, host cycle s) for a PPM proc slotted in `power`:
+    proc_damage_per_activation's formula, PPM x (local recharge + cast) / 60 / area
+    factor, cap 0.90; the host is taken as cast on its enhanced cycle."""
+    mult_ed = ctx["mult_ed"]
+    rech_enh = sum(val for s in power.get("slots") or [] if s and s.get("piece_uid")
+                   for asp, val in _scaled_boosts(s, ctx) if asp == _RECH_ASPECT)
+    rech_local = apply_ed_sched(ED_SCHEDULE.get(_RECH_ASPECT, 0), rech_enh, mult_ed)
+    rech_total = rech_local + (totals or {}).get("recharge", 0.0)
+    if ctx.get("at_recharge_cap") is not None:
+        rech_total = min(rech_total, ctx["at_recharge_cap"])
+    base_rech = host.get("base_recharge") or 0.0
+    cast = host.get("cast_time") or 0.0
+    cycle = cast + base_rech / (1.0 + rech_total)
+    chance = min(0.90, ppm * (base_rech / (1.0 + rech_local) + cast) / 60.0 / _area_factor(host))
+    return chance, cycle
+
+
+_BASE_RECOVERY_FRAC = 0.01667    # base recovery = 1.667 end/s of 100 = 1.667% of max end/s
+
+
+def _ally_procs(build, totals, ctx):
+    """ONE-SHOT ALLY PROCS (Defender's Bastion / Scourging Blast / Vigilant Assault F,
+    attuned + superior): each success spawns a 1s pet that hits Friends in its radius,
+    caster included, once (data/summons.json `ally_proc`, tools/patch_proc_pets.py,
+    every number from the client). Rate = chance / host cycle (_proc_roll). Lands in
+    the totals the model already scores:
+      heal    scale x Melee_Heal at the AT column (the pet copies its creator's mods):
+              self share -> proc_self_heal_hps; ally group -> proc_team_heal_hps with
+              power_heal_output's group size (min(max_targets, 16))
+      +end    fraction of max endurance per proc -> recovery as a base-recovery
+              equivalent (Performance Shifter / Panacea convention)
+      absorb  pool per proc (5% / 7.5% of the pet's own max HP) -> absorb_hps
+    Only the caster's own +end is credited: the model has no team-endurance term
+    for any power (Speed Boost included)."""
+    specs = ctx.get("summon_powers") or {}
+    power_by_full = ctx.get("power_by_full") or {}
+    mod_tables = ctx.get("modifier_tables") or {}
+    col = ctx.get("at_column")
+    out = {"self_hps": 0.0, "team_hps": 0.0, "recovery": 0.0, "absorb_hps": 0.0, "rows": []}
+    for power in build.get("powers", []):
+        host = power_by_full.get(power.get("full_name"))
+        if not host:
+            continue
+        for slot in power.get("slots") or []:
+            uid = (slot or {}).get("piece_uid")
+            ap = (specs.get(f"Boosts.{uid}.{uid}") or {}).get("ally_proc") if uid else None
+            if not ap:
+                continue
+            chance, cycle = _proc_roll(power, host, totals, ctx, ap["ppm"])
+            if cycle <= 0:
+                continue
+            rate = chance / cycle
+            group = min(int(ap.get("max_targets") or 6), 16)
+            for fx in ap["effects"]:
+                if fx["kind"] == "heal":
+                    row = mod_tables.get(fx["table"]) or []
+                    if col is None or col >= len(row):
+                        continue
+                    mag = abs(fx["scale"] * row[col])
+                    out["self_hps"] += mag * rate
+                    out["team_hps"] += mag * group * rate
+                elif fx["kind"] == "end_frac":
+                    out["recovery"] += fx["value"] * rate / _BASE_RECOVERY_FRAC
+                elif fx["kind"] == "absorb":
+                    out["absorb_hps"] += fx["value"] * rate
+            out["rows"].append({"piece": uid, "host": host.get("display_name"),
+                                "procs_per_min": round(rate * 60.0, 2)})
+    return out
+
+
 def _proc_pet_offense(build, totals, ctx, entities, specs, class_cols, pvp):
     """v51 AURA PROC PETS (Issue 28 Page 4: Dominating Grasp / Overpowering
     Presence F - Fiery Orb / Energy Font). A slotted piece whose summons spec
@@ -1592,8 +1663,6 @@ def _proc_pet_offense(build, totals, ctx, entities, specs, class_cols, pvp):
     mod_tables = ctx["modifier_tables"]
     power_by_full = ctx["power_by_full"]
     mult_ed = ctx["mult_ed"]
-    global_rech = (totals or {}).get("recharge", 0.0)
-    rech_cap = ctx.get("at_recharge_cap")
     out = []
     for power in build.get("powers", []):
         host = power_by_full.get(power.get("full_name"))
@@ -1609,30 +1678,20 @@ def _proc_pet_offense(build, totals, ctx, entities, specs, class_cols, pvp):
             col = class_cols.get(ent.get("class_name"))
             if col is None or col < 0:
                 continue
-            dmg_enh = rech_enh = acc_enh = 0.0
+            dmg_enh = acc_enh = 0.0
             for s in power.get("slots") or []:
                 if s and s.get("piece_uid"):
                     for asp, val in _scaled_boosts(s, ctx):
                         if asp == "Damage":
                             dmg_enh += val
-                        elif asp == _RECH_ASPECT:
-                            rech_enh += val
                         elif asp == "Accuracy":
                             acc_enh += val
             copy = spec.get("copy_boosts", True)
             dmg_boost = apply_ed_sched(ED_SCHEDULE.get("Damage", 0), dmg_enh, mult_ed) if copy else 0.0
             acc_boost = apply_ed_sched(ED_SCHEDULE.get("Accuracy", 0), acc_enh, mult_ed) if copy else 0.0
-            rech_local = apply_ed_sched(ED_SCHEDULE.get(_RECH_ASPECT, 0), rech_enh, mult_ed)
-            rech_total = rech_local + global_rech
-            if rech_cap is not None:
-                rech_total = min(rech_total, rech_cap)
-            base_rech = host.get("base_recharge") or 0.0
-            cast = host.get("cast_time") or 0.0
-            cycle = cast + base_rech / (1.0 + rech_total)
+            chance, cycle = _proc_roll(power, host, totals, ctx, proc["ppm"])
             if cycle <= 0:
                 continue
-            chance = min(0.90, proc["ppm"] * (base_rech / (1.0 + rech_local) + cast)
-                         / 60.0 / _area_factor(host))
             # ponytail: expected live pets = rate x life, hard-capped at the stack
             # limit (ignores the binomial tail under the cap; exact E[min] if a
             # build ever runs near 3 concurrent)
@@ -1751,6 +1810,12 @@ def _pet_offense(build, totals, ctx):
                          # key tier HP and the resummon downtime off them.
                          "pet_class": pcls,
                          "resummon_cast": round(p.get("cast_time") or 0.0, 2),
+                         # v52: a dead henchman returns no sooner than its summon
+                         # recharges (caps the Detonator death rate)
+                         "summon_cycle": round((p.get("cast_time") or 0.0)
+                                               + (p.get("base_recharge") or 0.0) / (1.0 + global_rech
+                                               + apply_ed_sched(ED_SCHEDULE.get(_RECH_ASPECT, 0),
+                                                                rech_enh, mult_ed)), 2),
                          # v38 pet hit-chance ledger (docs/pet-tohit-sources.md):
                          # level_shift = henchman tier rule by CLASS (wiki-
                          # sourced: T1 −2 / T2 −1 / T3 −0 at full count) else
@@ -2120,6 +2185,16 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
         if attr is not None:
             attr.append({"kind": "proc", "name": "Force Feedback +Recharge (average)",
                          "effects": {"recharge": round(ff, 6)}})
+    # v52 ONE-SHOT ALLY PROCS: after global recharge is final (the rate reads it).
+    ap = _ally_procs(build, totals, ctx) if ctx else None
+    if ap and ap["rows"]:
+        totals["recovery"] += ap["recovery"]
+        totals["absorb_hps"] += ap["absorb_hps"]
+        totals["proc_self_heal_hps"] = ap["self_hps"]
+        totals["proc_team_heal_hps"] = ap["team_hps"]
+        if attr is not None:
+            attr.append({"kind": "proc", "name": "ATO ally procs (average)",
+                         "effects": {"recovery": round(ap["recovery"], 6)}})
 
     # Per-AT bonus caps for HP / regen / recovery (resistance handled separately).
     # hp_cap is ABSOLUTE max HP -> convert to a +%MaxHP ceiling off the AT's base HP;
@@ -2515,6 +2590,10 @@ def _to_display(totals, res_cap=RESISTANCE_HARD_CAP, sec_caps=None, ctx=None):
                        "label": "Absorb shield (HP)"},
             "absorb_hps": {"value": round(totals.get("absorb_hps", 0.0), 2),
                            "label": "Absorb as sustain (HP/s)"},
+            "proc_self_heal_hps": {"value": round(totals.get("proc_self_heal_hps", 0.0), 2),
+                                   "label": "ATO proc heal on you (HP/s, average)"},
+            "proc_team_heal_hps": {"value": round(totals.get("proc_team_heal_hps", 0.0), 2),
+                                   "label": "ATO proc heal on allies (HP/s, average)"},
             "mez_duration": {m: pct(v) for m, v in
                              (totals.get("mez_duration") or {}).items() if v},
             "movement": {"value": pct(totals.get("movement", 0.0)),

@@ -664,6 +664,43 @@ _orbs = [p for p in ((_dtot.get("offense") or {}).get("pets") or []) if p["name"
 check("PROC PET: Superior Dominating Grasp proc prices a Fiery Orb (0 < alive <= 3)",
       bool(_orbs) and 0 < _orbs[0]["proc_alive"] <= 3 and _orbs[0]["dps_each"] > 0,
       f"{_orbs[:1]}")
+# One-shot ally procs (v52): rate = the client PPM on a fast host, each landing in
+# the totals the model already scores (heal / recovery / absorb_hps).
+def _ally(at, pw, piece):
+    t = srv.engine.calculate_build({"archetype": at, "powers": [
+        {"full_name": pw, "slots": [{"piece_uid": piece, "level": 50}]}]},
+        srv.SET_BONUSES, ctx=srv._stat_ctx(at))
+    bx = t["bonus_extras"]
+    return ({k: bx[k]["value"] for k in ("proc_self_heal_hps", "proc_team_heal_hps", "absorb_hps")},
+            (t.get("recovery") or {}).get("value", 0.0))
+_db, _ = _ally("Class_Defender", "Defender_Ranged.Radiation_Blast.Neutrino_Bolt",
+               "Superior_Attuned_Superior_Defenders_Bastion_F")
+_va, _ = _ally("Class_Defender", "Defender_Ranged.Radiation_Blast.Neutrino_Bolt",
+               "Superior_Attuned_Superior_Vigilant_Assault_F")
+_sb, _sbrec = _ally("Class_Corruptor", "Corruptor_Ranged.Radiation_Blast.Neutrino_Bolt",
+                    "Superior_Attuned_Superior_Scourging_Blast_F")
+check("ALLY PROCS: Defender's Bastion heals, Vigilant Assault absorbs 80.3 x 5/min, Scourging Blast +22.5% recovery",
+      _db["proc_self_heal_hps"] > 0 and _db["proc_team_heal_hps"] > _db["proc_self_heal_hps"]
+      and abs(_va["absorb_hps"] - 80.32 * 5 / 60) < 0.05 and abs(_sbrec - 22.5) < 0.1,
+      f"Bastion {_db}, Vigilant {_va}, Scourging rec {_sbrec}")
+# Dual-use cages (v52): the "on teammates" setting swaps the cage for the client's
+# friend-side shield (15s +Def/+Res, own recharge 90s); off, the cage is untouched.
+import role_output as _ro  # noqa: E402
+_cage = "Defender_Buff.Sonic_Debuff.Sonic_Cage"
+_was = srv._CAGE_ON_ALLIES
+srv._CAGE_ON_ALLIES = False
+_cf = srv._stat_ctx("Class_Defender")
+srv._CAGE_ON_ALLIES = True
+_ca = srv._stat_ctx("Class_Defender")
+srv._CAGE_ON_ALLIES = _was
+_tb = _ro.enhanced_team_buffs([{"full_name": _cage, "slots": []}], _ca)
+check("CAGE ON TEAMMATES: setting swaps Sonic Cage to a 90s-recharge Def+Res shield; off keeps the cage",
+      _cf["power_by_full"][_cage]["base_recharge"] == 60.0
+      and _cf["power_by_full"][_cage]["control_effects"]
+      and _ca["power_by_full"][_cage]["base_recharge"] == 90.0
+      and not _ca["power_by_full"][_cage]["control_effects"]
+      and _tb.get("Defense", 0) > 0 and _tb.get("Resistance", 0) > 0,
+      f"ally team buffs {_tb}")
 # Mastermind pet auras: Supremacy alone, then + Mark of Supremacy F.
 _a0 = fp._pet_aura("Class_Mastermind", [])
 _a1 = fp._pet_aura("Class_Mastermind", [{"slots": [{"piece_uid": "Attuned_Mark_of_Supremacy_F"}]}])
@@ -676,7 +713,7 @@ check("PET AURAS: Supremacy +10% AoE def/+10% res/+100% regen; Mark of Supremacy
 # COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
 # check — a crash or skipped section that silently shrinks the list must fail, not
 # pass by absence. Bump EXPECTED_CHECKS when adding a check.
-EXPECTED_CHECKS = 32
+EXPECTED_CHECKS = 34
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
 if len(results) != EXPECTED_CHECKS:

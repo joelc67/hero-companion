@@ -3905,6 +3905,9 @@ async function init() {
   });
   $("export-btn").addEventListener("click", exportMids);
   if ($("has-ho-toggle")) $("has-ho-toggle").checked = !noHo();
+  if ($("cage-allies-toggle"))
+    api("/settings/cage-on-allies").then((r) => { $("cage-allies-toggle").checked = !!(r && r.on); })
+      .catch(() => {});
   // Converter panel: build the interactive "want/have" tool when first opened (works with no build).
   if ($("conv-guide-details")) {
     $("conv-guide-details").addEventListener("toggle", (e) => {
@@ -8630,6 +8633,12 @@ const postJson = (obj) => ({
 function noHo() { try { return localStorage.getItem("hc_no_ho") === "1"; } catch (e) { return false; } }
 window.setHasHo = function (has) {
   try { localStorage.setItem("hc_no_ho", has ? "0" : "1"); } catch (e) { /* private mode */ }
+};
+// Page 4 dual-use powers: a SERVER setting (every score and solve reads it), so
+// the stats are recomputed after it flips.
+window.setCageOnAllies = async function (on) {
+  await api("/settings/cage-on-allies", postJson({ on }));
+  if (typeof recompute === "function") recompute();
 };
 
 function renderStats(t) {

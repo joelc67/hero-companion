@@ -199,6 +199,12 @@ def payoff_metrics(archetype, powers, ctx, totals):
         return round((totals.get(kind) or {}).get(ty, {}).get("value", 0), 2)
     ctrl, _ = build_control_output(powers, ctx)
     heal = build_heal_output(powers, ctx)
+    # v52 one-shot ally procs (engine _ally_procs), scored like build_heal_output
+    bx = totals.get("bonus_extras") or {}
+    p_self = (bx.get("proc_self_heal_hps") or {}).get("value") or 0.0
+    p_team = (bx.get("proc_team_heal_hps") or {}).get("value") or 0.0
+    heal = dict(heal, score=round(heal["score"] + p_team + 0.5 * p_self, 1),
+                self_hps=round(heal["self_hps"] + p_self, 2))
     return {
         "st_dps": round(off.get("st_dps", 0) or 0, 2),
         "aoe_dps": round(off.get("aoe_dps", 0) or 0, 2),

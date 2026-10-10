@@ -153,7 +153,7 @@ def _side(crec, t):
     return "self" if crec.get("target_type") == "Self" else "foe"
 
 
-def convert(crec, resolve=None, _depth=0, _life=0.0, patch=False):
+def convert(crec, resolve=None, _depth=0, _life=0.0, patch=False, side_only=None, pvp=False):
     """Client record -> {bucket: Counter(core-row tuples)} in OUR vocabulary.
     Unconditional groups only (a requires_expression that is more than an entity
     test is a mode/state gate the engine does not read - same rule as the importers).
@@ -170,7 +170,13 @@ def convert(crec, resolve=None, _depth=0, _life=0.0, patch=False):
     behind pure targeting tests (Sonic Cage on a friend), which the narrow
     reading skipped. Follows Execute_Power only - a summoned entity's powers
     stay modelled through its own pet record, as before - and keeps the
-    patch sync's heal convention (no heal-over-time totals)."""
+    patch sync's heal convention (no heal-over-time totals).
+
+    side_only="ally": read ONLY the groups the client gates on target.isFriend?
+    (the friend-side use of a dual-use power, tools/add_ally_use.py).
+
+    pvp=True: read ONLY the PVP_ONLY groups, as pv 2 rows - our pv_mode 2 (PvP
+    build mode). The PvE reading never sees them (`--pvp` sync, 2026-10-10)."""
     rows = defaultdict(Counter)
     unmapped = Counter()
 
@@ -208,7 +214,7 @@ def convert(crec, resolve=None, _depth=0, _life=0.0, patch=False):
                 once = sub is not None and _once_per_cast(sub)
                 life = 0.0 if (sub is None or once) else _field_life(t, sub)
                 if once or life:
-                    srows, sun = convert(sub, resolve, _depth + 1, life)
+                    srows, sun = convert(sub, resolve, _depth + 1, life, pvp=pvp)
                     for b, cnt in srows.items():
                         rows[b] += cnt
                     unmapped.update(sun)
@@ -224,7 +230,7 @@ def convert(crec, resolve=None, _depth=0, _life=0.0, patch=False):
                 if sub is None:
                     unmapped[f"Execute_Power target not found: {name}"] += 1
                 continue
-            srows, sun = convert(sub, resolve, _depth + 1, patch=patch)
+            srows, sun = convert(sub, resolve, _depth + 1, patch=patch, pvp=pvp)
             for b, cnt in srows.items():
                 rows[b] += cnt
             unmapped.update(sun)
@@ -317,9 +323,9 @@ def convert(crec, resolve=None, _depth=0, _life=0.0, patch=False):
     def walk(groups, pv_in, chance_in, gated_in, side_in=None):
         for g in groups or []:
             ip = g.get("is_pvp")
-            if ip == "PVP_ONLY":
+            if ip == "PVP_ONLY" and not pvp:
                 continue                       # PvE scope
-            pv = 1 if ip == "PVE_ONLY" else pv_in
+            pv = 2 if ip == "PVP_ONLY" else 1 if ip == "PVE_ONLY" else pv_in
             req = _req(g).strip()
             # the friend test's own "!" is not a negation of the player test
             req_np = req.replace("target.isFriend? !", "target.isFriend?")
@@ -335,18 +341,21 @@ def convert(crec, resolve=None, _depth=0, _life=0.0, patch=False):
             else:
                 gated = gated_in or bool(req.replace("enttype target> critter eq", "").strip())
             side = (_friend_side(req) if resolve is not None else None) or side_in
-            if patch and side == "ally" and _friend_side(req) == "ally":
+            if side_only and side != side_only:
+                continue
+            if patch and not side_only and side == "ally" and _friend_side(req) == "ally":
                 # dual-use power used on a FRIEND (Page 4 Sonic Cage/Refraction
                 # Shield/Detention Field): it also resets the power's own recharge
                 # (Recharge_Power 90 vs 60 base) - a per-target recharge no field
-                # of ours carries. STATED EXCLUSION, not approximated.
+                # of ours carries, so the PATCH sync leaves it to tools/add_ally_use.py
+                # (`ally_use`, served when the player's cage_on_allies setting is on).
                 unmapped["friend-side use of a dual-use power (own recharge override)"] += 1
                 continue
             phased = any("OnlyAffectsSelf" in (t.get("attribs") or [])
                          for t in g.get("templates") or [])
             ch = g.get("chance")
             chance = chance_in * (ch if ch not in (None, 0.0) else 1.0)
-            if not gated:
+            if not gated and (pv == 2) == bool(pvp):
                 for t in g.get("templates") or []:
                     if {"Execute_Power", "Create_Entity"} & set(t.get("attribs") or []):
                         follow(t)
@@ -371,12 +380,13 @@ def scalars(crec):
             "level_available": int(crec.get("available_level") or 0) + 1}
 
 
-def our_core(p):
-    """Our record -> same core-row multiset, so BEFORE can be checked against it."""
+def our_core(p, pvp=False):
+    """Our record -> same core-row multiset, so BEFORE can be checked against it.
+    pvp=True: our pv_mode 2 rows ONLY (the --pvp sync's side)."""
     rows = defaultdict(Counter)
     for b in ("damage_effects", "buff_effects", "debuff_effects", "self_effects"):
         for e in p.get(b) or []:
-            if e.get("pv_mode") == 2:
+            if (e.get("pv_mode") == 2) != pvp:
                 continue
             bk = "heal" if e.get("effect") == "Heal" else b
             key = (bk, e.get("effect"), e.get("damage_type") or "None", _r(e.get("scale")),
@@ -384,12 +394,12 @@ def our_core(p):
                    _r(e.get("probability", 1.0)))
             rows[bk][key] += 1
     for e in p.get("heal_effects") or []:
-        if e.get("pv_mode") == 2:
+        if (e.get("pv_mode") == 2) != pvp:
             continue
         rows["heal"][("heal", "Heal", "None", _r(e.get("scale")), e.get("modifier_table"),
                       e.get("pv_mode", 0), 0.0, _r(e.get("probability", 1.0)))] += 1
     for e in p.get("control_effects") or []:
-        if e.get("pv_mode") == 2:
+        if (e.get("pv_mode") == 2) != pvp:
             continue
         rows["control_effects"][("control_effects", e.get("mez"), e.get("kind"),
                                  _r(e.get("scale")), _r(e.get("nmag")), e.get("modifier_table"),
@@ -416,7 +426,7 @@ _RB = _RA = None
 
 
 def main():
-    mode = next((a for a in sys.argv[1:] if a.startswith("--")), "--calibrate")
+    mode = next((a for a in sys.argv[1:] if a.startswith("--") and a != "--pvp"), "--calibrate")
     raw = open(POWERS, "rb").read()
     data = json.loads(raw.decode("utf-8"))
     ours = {p["full_name"]: p for v in data.values() for p in v}
@@ -441,9 +451,9 @@ def main():
     report = []
     for fn in sorted(changed):
         p, c = ours[fn], to_client(fn)
-        rb, ub = convert(bx[c], _RB, patch=True)
-        ra, ua = convert(ax[c], _RA, patch=True)
-        mine = our_core(p)
+        rb, ub = convert(bx[c], _RB, patch=True, pvp=PVP)
+        ra, ua = convert(ax[c], _RA, patch=True, pvp=PVP)
+        mine = our_core(p, PVP)
         # scalar calibration
         sb, sa = scalars(bx[c]), scalars(ax[c])
         for k in sb:
@@ -482,6 +492,8 @@ def main():
 # ── apply ────────────────────────────────────────────────────────────────────
 MARK = "client_sync"
 TAG = "I28P4"
+PVP = "--pvp" in sys.argv     # PvP build mode rows (pv_mode 2) instead of PvE
+LOG = "i28p4_pvp_sync_log.txt" if PVP else "i28p4_sync_log.txt"
 BOOST = {"Accuracy": "Accuracy", "Buff_Defense": "Defense Buff", "Buff_ToHit": "To Hit Buff",
          "Confuse": "Confuse Duration", "Damage": "Damage Increase",
          "Debuff_Defense": "Defense Debuff", "Debuff_ToHit": "To Hit Debuff",
@@ -589,7 +601,8 @@ def apply_delta(data, ours, changed, to_client, bx, ax, raw, write):
         before, after = bx[c], ax[c]
         touched = []
         # 1) scalars: apply when BEFORE equals ours; cast_time also corrects stale values
-        sb, sa = scalars(before), scalars(after)
+        # --pvp: PvP rows only - scalars/enhancements were the PvE sync's job
+        sb, sa = ({}, {}) if PVP else (scalars(before), scalars(after))
         for k in sb:
             if sb[k] == sa[k]:
                 continue
@@ -604,7 +617,7 @@ def apply_delta(data, ours, changed, to_client, bx, ax, raw, write):
         # 2) enhancement types / set categories: apply when mapped BEFORE equals ours
         # BY DIFFERENCE: add what the patch added, remove what it removed - our list
         # may hold entries the client export never did (it is not re-derived)
-        tb, ta = _types(before, eid), _types(after, eid)
+        tb, ta = ([], []) if PVP else (_types(before, eid), _types(after, eid))
         if tb != ta:
             cur = list(p["accepted_enhancement_types"])
             new_l = sorted((set(cur) | (set(ta) - set(tb))) - (set(tb) - set(ta)), key=lambda n: eid[n])
@@ -613,7 +626,7 @@ def apply_delta(data, ours, changed, to_client, bx, ax, raw, write):
                 p["accepted_enhancement_type_ids"] = [eid[n] for n in new_l]
                 touched.append(f"enhancements +{sorted(set(ta) - set(tb))} -{sorted(set(tb) - set(ta))}")
                 st["enh_applied"] += 1
-        cb, ca = _cats(before, cid), _cats(after, cid)
+        cb, ca = ([], []) if PVP else (_cats(before, cid), _cats(after, cid))
         if cb != ca:
             cur = list(p["accepted_set_categories"])
             new_l = sorted((set(cur) | (set(ca) - set(cb))) - (set(cb) - set(ca)), key=lambda n: cid[n][0])
@@ -624,11 +637,11 @@ def apply_delta(data, ours, changed, to_client, bx, ax, raw, write):
                 touched.append(f"set categories +{sorted(set(ca) - set(cb))} -{sorted(set(cb) - set(ca))}")
                 st["cat_applied"] += 1
         # 3) effects by difference, only for calibrated powers
-        rb, _ = convert(before, _RB, patch=True)
-        ra, _ = convert(after, _RA, patch=True)
+        rb, _ = convert(before, _RB, patch=True, pvp=PVP)
+        ra, _ = convert(after, _RA, patch=True, pvp=PVP)
         gone = sum((rb[b] - ra[b] for b in rb), Counter())
         new = sum((ra[b] - rb[b] for b in ra), Counter())
-        adj = ADJUDICATED.get(fn)
+        adj = None if PVP else ADJUDICATED.get(fn)
         if adj and adj[0] == "rebuild":
             # Joel-visible adjudication: our record never matched the client for this
             # power (old Mids values) and the patch reworked it - the client is the
@@ -646,9 +659,54 @@ def apply_delta(data, ours, changed, to_client, bx, ax, raw, write):
             st["adjudicated_leave"] += 1
             gone = new = Counter()
         if gone or new:
-            mine = our_core(p)
+            mine = our_core(p, PVP)
             mine_loose = Counter(loose(k) for b in mine for k in mine[b].elements())
-            if any(mine_loose[loose(k)] == 0 for k in gone.elements()):
+            if PVP and not sum(mine.values(), Counter()) and any(mine_loose[loose(k)] == 0 for k in gone.elements()):
+                # our record never split PvE/PvP (one pv_mode 0 row set). Split it from
+                # the client AFTER: rows the client marks PVE_ONLY -> pv_mode 1, then
+                # the client's PvP rows as pv_mode 2. Refuses unless every PVE_ONLY row
+                # is found among ours.
+                rpe, _ = convert(after, _RA, patch=True)
+                pve_only = [k for b in rpe for k in rpe[b].elements()
+                            if k[6 if k[0] == "control_effects" else 5] == 1]
+                marked, ok, stale = [], True, []
+                for k in pve_only:
+                    bk = k[0] if k[0] != "heal" else "buff_effects"
+                    cand = [e for e in p.get(bk) or [] if e.get("pv_mode", 0) == 0 and e not in marked
+                            and (k[0] != "heal" or e.get("effect") == "Heal")]
+                    ok_key = lambda e: _ourkey(bk if k[0] != "heal" else "heal", e)  # noqa: E731
+                    hit = next((e for e in cand if ok_key(e) == loose(k)), None)
+                    if hit is None:
+                        # same row, stale number (old Mids value): the client's number wins,
+                        # as the scalar step's "also corrects stale"
+                        same = [e for e in cand if ok_key(e)[:3] + ok_key(e)[4:] == loose(k)[:3] + loose(k)[4:]]
+                        hit = same[0] if len(same) == 1 else None
+                        if hit is not None:
+                            stale.append(f"{k[1]} {hit.get('scale')} -> {k[3]}")
+                            hit["scale"] = k[3]
+                    if hit is None:
+                        ok = False
+                        break
+                    marked.append(hit)
+                    if k[0] == "heal":       # the heal list the heal scorer reads, same row
+                        h = next((e for e in p.get("heal_effects") or [] if e.get("pv_mode", 0) == 0
+                                  and e not in marked and e.get("modifier_table") == k[4]), None)
+                        if h is not None:
+                            h["scale"] = k[3]
+                            marked.append(h)
+                if not ok:
+                    review.append(f"{fn}: PvP split NOT applied (a client PvE-only row is not in ours)")
+                    st["effects_review"] += 1
+                else:
+                    for e in marked:
+                        e["pv_mode"] = 1
+                    for k in sum(ra.values(), Counter()).elements():
+                        p.setdefault("buff_effects" if k[0] == "heal" else k[0], []).append(_row_from(k, None))
+                    if marked or ra:
+                        touched.append(f"PvP split: {len(marked)} rows -> PvE-only, +{sum(sum(ra.values(), Counter()).values())} PvP rows"
+                                       + (f" (corrects stale: {', '.join(stale)})" if stale else ""))
+                        st["pvp_split"] += 1
+            elif any(mine_loose[loose(k)] == 0 for k in gone.elements()):
                 review.append(f"{fn}: effects NOT patched (converter cannot reproduce ours); "
                               f"client removes {sum(gone.values())} / adds {sum(new.values())} rows")
                 st["effects_review"] += 1
@@ -668,7 +726,7 @@ def apply_delta(data, ours, changed, to_client, bx, ax, raw, write):
                                 hit = e.get("effect") == "Heal" and (_r(e.get("scale")), e.get("modifier_table")) == (k[3], k[4])
                             else:
                                 hit = ek == loose(k)
-                            if hit and e.get("pv_mode", 0) != 2:
+                            if hit and (e.get("pv_mode", 0) == 2) == PVP:
                                 inherit.setdefault(ident(k), dict(e))
                                 lst.pop(i)
                                 done = True
@@ -696,11 +754,11 @@ def apply_delta(data, ours, changed, to_client, bx, ax, raw, write):
         print(f"  {k:20} {v}")
     print(f"  records touched      {len(log)}")
     out_dir = os.path.join(ROOT, "tools", "gamedata")
-    with open(os.path.join(out_dir, "i28p4_sync_log.txt"), "w", encoding="utf-8") as f:
+    with open(os.path.join(out_dir, LOG), "w", encoding="utf-8") as f:
         for fn, t in log:
             f.write(f"{fn}\n" + "".join(f"    {x}\n" for x in t))
         f.write("\nREVIEW (not applied)\n" + "".join(f"  {r}\n" for r in review))
-    print(f"  log: tools/gamedata/i28p4_sync_log.txt  ({len(review)} review items)")
+    print(f"  log: tools/gamedata/{LOG}  ({len(review)} review items)")
     if write:
         body = json.dumps(data, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
         json.loads(body.decode("utf-8"))           # build all bytes first, then open

@@ -505,6 +505,9 @@
           <label class="incarnate-toggle" style="display:block;margin-top:6px" title="Hamidon Origin enhancements come from Hamidon raids (or merit conversion). Untick this if you don't have them: builds will never slot an HO.">
             <input type="checkbox" id="has-ho-toggle" checked
               onchange="setHasHo(this.checked)"> I have Hamidon Origins (HOs) to slot</label>
+          <label class="incarnate-toggle" style="display:block;margin-top:6px" title="Since Issue 28 Page 4, Sonic Cage, Refraction Shield and Detention Field can be cast on a teammate: they get a 15-second defense and resistance shield, and the power recharges in 90 seconds instead of 60. Tick this if that is how you use it; the app then scores the shield instead of the cage.">
+            <input type="checkbox" id="cage-allies-toggle"
+              onchange="setCageOnAllies(this.checked)"> I cast Sonic Cage / Refraction Shield / Detention Field on teammates</label>
         </div>
         <input id="gen-goal"
           placeholder="(optional) fine-tune in words, e.g. 'also soft-cap energy defense'">

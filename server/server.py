@@ -176,6 +176,17 @@ for s in ENH_SETS:
 
 # full_name -> power record (for level lookup + self-effects)
 POWER_BY_FULL = {p["full_name"]: p for plist in POWERS.values() for p in plist}
+# Issue 28 Page 4 DUAL-USE POWERS (Sonic Cage / Refraction Shield / Detention Field):
+# cast on a teammate they are a 15s +Def/+Res buff on a 90s recharge instead of a
+# cage (data `ally_use`, tools/add_ally_use.py, client values). Which way the player
+# uses them is a player choice the game files cannot answer, so it is a setting
+# (settings.json `cage_on_allies`); _stat_ctx serves this table when it is on.
+POWER_BY_FULL_ALLY = dict(POWER_BY_FULL)
+for _fn, _p in POWER_BY_FULL.items():
+    if _p.get("ally_use"):
+        POWER_BY_FULL_ALLY[_fn] = dict(_p, base_recharge=_p["ally_use"]["base_recharge"],
+                                      buff_effects=_p["ally_use"]["buff_effects"],
+                                      control_effects=[], debuff_effects=[], damage_effects=[])
 DB_NAME = "Homecoming"
 DB_VERSION = ARCHETYPES.get("version") or "0.0.0.0"
 
@@ -509,7 +520,7 @@ def _set_hints(goal):
 def _stat_ctx(archetype):
     at = ARCH_BY_NAME.get(archetype) or {}
     return {
-        "power_by_full": POWER_BY_FULL,
+        "power_by_full": POWER_BY_FULL_ALLY if _cage_on_allies() else POWER_BY_FULL,
         "piece_boosts": PIECE_BOOSTS,
         "modifier_tables": MODIFIER_TABLES,
         "mult_ed": MULT_ED,
@@ -3451,7 +3462,7 @@ def joint_refine(archetype, primary, secondary, role, content, powers_in,
         # rank swap candidates by static value delta; try the most promising few with FULL solves
         cand = []
         for d in drops:
-            dv = _static_value(POWER_BY_FULL[d["full_name"]], role, ctx)
+            dv = _static_value(ctx["power_by_full"][d["full_name"]], role, ctx)
             for a in adds:
                 av = _static_value(a, role, ctx)
                 if av > dv:
@@ -5999,6 +6010,27 @@ def _save_settings(s):
             json.dump(s, f, indent=1)
     except OSError:
         pass
+
+
+_CAGE_ON_ALLIES = None     # cached settings.json `cage_on_allies` (read once)
+
+
+def _cage_on_allies():
+    global _CAGE_ON_ALLIES
+    if _CAGE_ON_ALLIES is None:
+        _CAGE_ON_ALLIES = bool(_load_settings().get("cage_on_allies"))
+    return _CAGE_ON_ALLIES
+
+
+@app.route("/settings/cage-on-allies", methods=["GET", "POST"])
+def settings_cage_on_allies():
+    """Page 4 dual-use powers: GET -> {on}; POST {on: bool} saves the choice."""
+    global _CAGE_ON_ALLIES
+    if request.method == "POST":
+        s = _load_settings()
+        s["cage_on_allies"] = _CAGE_ON_ALLIES = bool((request.get_json(silent=True) or {}).get("on"))
+        _save_settings(s)
+    return jsonify({"on": _cage_on_allies()})
 
 
 def _find_accounts_dirs(extra_root=None):
