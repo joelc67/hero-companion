@@ -405,6 +405,48 @@ def enhanced_team_buffs(powers, ctx, global_recharge=0.0):
     return out
 
 
+def team_recovery_frac(powers, ctx, teammates, global_recharge=0.0):
+    """v53: sustained ally +Recovery per teammate, as a fraction of base recovery.
+    Positive non-Self Recovery rows only (enhanced_team_buffs takes abs(), which would
+    count Psionic Armor's costs and Defibrilate's penalty as buffs); rezzes skipped (the
+    rez counter prices them). Each row x its slotted Recovery enhancement (EndMod,
+    schedule A) x per-teammate coverage: a click covers min(targets, teammates) x duration
+    / enhanced cycle teammate-seconds per second - effect_area 2 hits min(max_targets, 16), else
+    one ally per cast; toggles/autos cover everyone."""
+    if not teammates:
+        return 0.0
+    mod_tables = ctx.get("modifier_tables") or {}
+    col = ctx.get("at_column")
+    total = 0.0
+    for p in powers:
+        rec = ctx["power_by_full"].get(p.get("full_name")) if ctx.get("power_by_full") else p
+        if not rec or rec.get("is_resurrect"):
+            continue
+        enh = _power_enh(dict(rec, slots=p.get("slots") or []), ctx, ("RechargeTime", "Recovery"))
+        base_rech = rec.get("base_recharge") or 0.0
+        cycle = (rec.get("cast_time") or 0.0) + (base_rech / (1.0 + global_recharge
+                                                              + enh["RechargeTime"]))
+        targets = (min(rec.get("max_targets") or 0, 16) if rec.get("effect_area") == 2 else 1)
+        for d in rec.get("buff_effects") or []:
+            if (d.get("effect") != "Recovery" or d.get("pv_mode") == 2
+                    or d.get("target") == "Self"):
+                continue
+            row = mod_tables.get(d.get("modifier_table"))
+            if not row or col is None or col >= len(row):
+                continue
+            mag = ((d.get("scale") or 0) * (d.get("nmag") or 1.0) * row[col]
+                   * min(max(d.get("probability") or 1.0, 0.0), 1.0))
+            if mag <= 0:
+                continue
+            dur = d.get("duration") or 0.0
+            if (rec.get("power_type") or 0) == 0:
+                if dur <= 0 or cycle <= 0:
+                    continue
+                mag *= min(1.0, min(targets, teammates) * dur / cycle / teammates)
+            total += mag * (1.0 + enh["Recovery"])
+    return total
+
+
 def support_output(debuffs, buffs):
     """Total buff+debuff output score from the engine's resolved {effect,type,pct} lists."""
     d = sum(abs(x.get("pct", 0)) * DEBUFF_W.get(x.get("effect"), 0.5) for x in (debuffs or []))

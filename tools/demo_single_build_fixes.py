@@ -701,6 +701,25 @@ check("CAGE ON TEAMMATES: setting swaps Sonic Cage to a 90s-recharge Def+Res shi
       and not _ca["power_by_full"][_cage]["control_effects"]
       and _tb.get("Defense", 0) > 0 and _tb.get("Resistance", 0) > 0,
       f"ally team buffs {_tb}")
+# Team endurance (v53): ally +Recovery per teammate - Speed Boost (2s recharge) is
+# perma on the whole team, AM's whole-team pulse lasts 120s of its 424s cycle, single-target Painbringer covers 90s / cycle / 7 of each teammate,
+# Psionic Armor's -Recovery cost is not a buff; Scourging Blast's allies get the
+# caster's own +22.5% recovery share (group 16 covers a full team).
+_trf = lambda f: _ro.team_recovery_frac([{"full_name": f, "slots": []}],
+                                        srv._stat_ctx("Class_Defender"), 7)
+_spb = _trf("Defender_Buff.Kinetics.Speed_Boost")
+_am = _trf("Defender_Buff.Radiation_Emission.Accelerate_Metabolism")
+_pb = _trf("Defender_Buff.Pain_Domination.Painbringer")
+_sbt = srv.engine.calculate_build({"archetype": "Class_Corruptor", "powers": [
+    {"full_name": "Corruptor_Ranged.Radiation_Blast.Neutrino_Bolt",
+     "slots": [{"piece_uid": "Superior_Attuned_Superior_Scourging_Blast_F", "level": 50}]}]},
+    srv.SET_BONUSES, ctx=srv._stat_ctx("Class_Corruptor"))["bonus_extras"]["proc_team_recovery"]["value"]
+check("TEAM ENDURANCE: Speed Boost +50% perma, AM +30% x 120/424s uptime, Painbringer by coverage, Scourging allies +22.5%",
+      abs(_spb - 0.5) < 1e-9 and abs(_am - 0.3 * 120 / (2.03 + 422)) < 1e-6 and 0 < _pb < 8.0 * 90 / 300 / 7 * 1.01
+      and _ro.team_recovery_frac([{"full_name": "Tanker_Defense.Psionic_Armor.Consume_Psyche",
+                                   "slots": []}], srv._stat_ctx("Class_Tanker"), 7) == 0.0
+      and abs(_sbt * 100 - 22.5) < 0.1,
+      f"SB {_spb}, AM {_am}, Painbringer {_pb}, Scourging allies {_sbt}")
 # Mastermind pet auras: Supremacy alone, then + Mark of Supremacy F.
 _a0 = fp._pet_aura("Class_Mastermind", [])
 _a1 = fp._pet_aura("Class_Mastermind", [{"slots": [{"piece_uid": "Attuned_Mark_of_Supremacy_F"}]}])
@@ -713,7 +732,7 @@ check("PET AURAS: Supremacy +10% AoE def/+10% res/+100% regen; Mark of Supremacy
 # COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
 # check — a crash or skipped section that silently shrinks the list must fail, not
 # pass by absence. Bump EXPECTED_CHECKS when adding a check.
-EXPECTED_CHECKS = 34
+EXPECTED_CHECKS = 35
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
 if len(results) != EXPECTED_CHECKS:

@@ -1612,13 +1612,14 @@ def _ally_procs(build, totals, ctx):
       +end    fraction of max endurance per proc -> recovery as a base-recovery
               equivalent (Performance Shifter / Panacea convention)
       absorb  pool per proc (5% / 7.5% of the pet's own max HP) -> absorb_hps
-    Only the caster's own +end is credited: the model has no team-endurance term
-    for any power (Speed Boost included)."""
+    The allies' +end -> team_recovery (per teammate, x min(1, (group - 1) / 7) of a
+    full team), priced by first_principles' v53 team-endurance term."""
     specs = ctx.get("summon_powers") or {}
     power_by_full = ctx.get("power_by_full") or {}
     mod_tables = ctx.get("modifier_tables") or {}
     col = ctx.get("at_column")
-    out = {"self_hps": 0.0, "team_hps": 0.0, "recovery": 0.0, "absorb_hps": 0.0, "rows": []}
+    out = {"self_hps": 0.0, "team_hps": 0.0, "recovery": 0.0, "team_recovery": 0.0,
+           "absorb_hps": 0.0, "rows": []}
     for power in build.get("powers", []):
         host = power_by_full.get(power.get("full_name"))
         if not host:
@@ -1643,6 +1644,8 @@ def _ally_procs(build, totals, ctx):
                     out["team_hps"] += mag * group * rate
                 elif fx["kind"] == "end_frac":
                     out["recovery"] += fx["value"] * rate / _BASE_RECOVERY_FRAC
+                    out["team_recovery"] += (fx["value"] * rate / _BASE_RECOVERY_FRAC
+                                             * min(1.0, (group - 1) / 7.0))
                 elif fx["kind"] == "absorb":
                     out["absorb_hps"] += fx["value"] * rate
             out["rows"].append({"piece": uid, "host": host.get("display_name"),
@@ -2192,6 +2195,7 @@ def calculate_build(build, set_bonuses_by_uid, res_cap=RESISTANCE_HARD_CAP, ctx=
         totals["absorb_hps"] += ap["absorb_hps"]
         totals["proc_self_heal_hps"] = ap["self_hps"]
         totals["proc_team_heal_hps"] = ap["team_hps"]
+        totals["proc_team_recovery"] = ap["team_recovery"]
         if attr is not None:
             attr.append({"kind": "proc", "name": "ATO ally procs (average)",
                          "effects": {"recovery": round(ap["recovery"], 6)}})
@@ -2594,6 +2598,8 @@ def _to_display(totals, res_cap=RESISTANCE_HARD_CAP, sec_caps=None, ctx=None):
                                    "label": "ATO proc heal on you (HP/s, average)"},
             "proc_team_heal_hps": {"value": round(totals.get("proc_team_heal_hps", 0.0), 2),
                                    "label": "ATO proc heal on allies (HP/s, average)"},
+            "proc_team_recovery": {"value": round(totals.get("proc_team_recovery", 0.0), 6),
+                                   "label": "ATO proc +Recovery per ally (fraction of base)"},
             "mez_duration": {m: pct(v) for m, v in
                              (totals.get("mez_duration") or {}).items() if v},
             "movement": {"value": pct(totals.get("movement", 0.0)),
