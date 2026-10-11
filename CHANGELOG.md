@@ -1,5 +1,33 @@
 # Hero Companion — What's New
 
+## 0.12.56 — 2026-10-11 — Nothing left unmodeled
+
+- **ATO procs that summon a one-shot pet now count.** Defender's Bastion
+  (heal), Scourging Blast (heal and endurance) and Vigilant Assault (absorb
+  shield), regular and superior, are valued at the proc rate the game uses,
+  for you and for the allies the pet reaches.
+
+- **Cages on teammates.** New option: "I cast Sonic Cage / Refraction Shield /
+  Detention Field on teammates". When it is ticked, these powers are valued as
+  the ally shield (15 seconds of defense and resistance, 90 second recharge)
+  instead of a cage on enemies.
+
+- **Team endurance counts.** Recovery you give allies (Speed Boost,
+  Accelerate Metabolism, Chrono Shift, Heat Loss, Painbringer, the Ageless
+  destiny and others) is now valued. It is worth the output your teammates
+  get back when they would otherwise run low on endurance; the teammates are
+  the app's own recommended builds.
+
+- **Traps Detonator.** Page 4 made every henchman explode when it dies. That
+  blast is now valued at the rate henchmen die and can be resummoned.
+
+- **More Page 4 corrections from the game client:** Char (Fire Mastery for
+  Brutes, Tankers and Sentinels) now has Page 4's higher damage; PvP mode now
+  has Page 4's PvP-only changes; Time Bomb's fire and lethal damage were
+  swapped.
+
+- **Recommended builds re-checked** for every i-trial build in the app.
+
 ## 0.12.55 — 2026-10-09 — Page 4, finished
 
 - **Prismatic Shield now counts.** Light Affinity's Prismatic Shield places a
