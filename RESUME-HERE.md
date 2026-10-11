@@ -1,6 +1,22 @@
-# ✅ SESSION CLOSED CLEAN — 2026-10-09. START HERE.
+# ✅ SESSION CLOSED CLEAN — 2026-10-11. START HERE.
 
-**Latest release: 🚀 v0.12.55 "Page 4, finished"**
+**Latest release: 🚀 v0.12.56 "Nothing left unmodeled"**
+(2026-10-11, release commit `1775ea3e`, model **v53**; both assets signed + API-verified,
+release id 409886542; update check reports 0.12.56; gold 2865/2865, release smoke PASS;
+liveness 0 diffs, dispositions `{}`).
+
+**What 0.12.56 was:** v52 (one-shot ATO ally procs, cage-on-teammates setting,
+Traps Detonator death bombs, PvP sync of Page 4, Char rebuilt) + v53 TEAM ENDURANCE:
+ally +Recovery priced by the caster's own endurance rule against the app's certified
+champions as teammates (data/teammate_endurance.json, tools/build_teammate_endurance.py;
+Joel's choice). Rebuild that file at the START of the next model change, never right
+after a promotion. v53 recert of all 2,860 itrial contexts (0 failures), gate promoted
+2,407 / kept 428 (premerge snapshot gpu-lab/champions_premerge_20261011_1529.json).
+Gold smoke caught Ice Armor's three level-1 powers (Rime) being refused at serving:
+`_set_first_two` now includes ties at the second power's level. Forum post for Joel:
+`Downloads\hero-companion-0.12.56-post.txt`. Nothing listed as unmodeled.
+
+**Previous release: v0.12.55 "Page 4, finished"**
 (2026-10-09, prep `8f1e5553`, stamp `8f1e555`, model **v51**; both assets signed +
 API-verified; update check reports 0.12.55; gold 2865/2865, release smoke PASS;
 bundled data/pet_auras.json, summons.json, powers.json, champions.json byte-identical
