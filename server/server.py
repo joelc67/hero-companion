@@ -3559,11 +3559,16 @@ def _schedule_feasible(real_powers):
 
 def _set_first_two(ps):
     """A set's first two PICKABLE powers (the level-1 creation choice), by level then
-    data order. level_available 0 = auto-granted set mechanics (Pack Mentality…),
-    which are never picks."""
+    data order, plus any power tied at the second one's level: Ice Armor's client
+    data lists THREE level-1 powers (Frozen Armor, Hoarfrost, Rime), all offered
+    at creation (0.12.56: a v53 champion opening on Rime was refused at serving).
+    level_available 0 = auto-granted set mechanics (Pack Mentality…), never picks."""
     seq = sorted([x for x in (POWERS.get(ps) or []) if x.get("level_available") != 0],
                  key=lambda x: (x.get("level_available") or 1))
-    return [x["full_name"] for x in seq[:2]]
+    if len(seq) < 2:
+        return [x["full_name"] for x in seq]
+    cut = seq[1].get("level_available") or 1
+    return [x["full_name"] for x in seq if (x.get("level_available") or 1) <= cut]
 
 
 def _at_canon(archetype):
