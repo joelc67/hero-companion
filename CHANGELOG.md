@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## Unreleased
+## 0.12.58 — 2026-10-12 — Detonator, per the beta tests
 
 Two more Detonator answers from Maelwys (forum topic 64761), both tested on
 the beta servers.
