@@ -1,5 +1,21 @@
 # Hero Companion — What's New
 
+## Unreleased
+
+Two more Detonator answers from Maelwys (forum topic 64761), both tested on
+the beta servers.
+
+- **An armed Acid Mortar blows when it runs out.** When its 60 seconds end,
+  a Mortar carrying a Detonator bomb explodes, the same as if it were
+  defeated. The app now counts that blast: once per Detonator cast, or once
+  per Mortar summon if you can't resummon it that often.
+
+- **The bomb uses both powers' slotting.** Damage and Accuracy slotted in the
+  pet's summon power and in Detonator now both reach the blast. They're added
+  together first and then hit the usual diminishing returns, the same way a
+  Mastermind upgrade passes slotting to henchmen. Before, the app only used
+  Detonator's slotting.
+
 ## 0.12.57 — 2026-10-12 — Traps and Mastermind pets, per the client
 
 Field report from Maelwys (forum topic 64761), checked against the game client.

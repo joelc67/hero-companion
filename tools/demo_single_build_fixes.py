@@ -745,6 +745,22 @@ check("DETONATOR CARRIERS follow the client's Detonator tag",
       and not _tag("Pets_Ghost") and not _tag("Pets_Traps_Seeker1"),
       {u: _tag(u) for u in ("Pets_Zombie", "Pets_Traps_FF_Generator", "Pets_Living_Hellfire",
                             "Pets_Ghost", "Pets_Traps_Seeker1")})
+# Detonator v55 (Maelwys, tested on beta, topic 64761): an armed Acid Mortar blows
+# when its 60 s run out, and the bomb takes the summon power's Damage slotting
+# plus Detonator's, summed then ED'd together.
+_dctx = dict(srv._stat_ctx("Class_Mastermind"), detonate_dismiss=False)
+_dmg3 = [{"piece_uid": "Crafted_Eradication_A", "level": 50}] * 3
+def _det(mortar_slots, det_slots):
+    _pw = [{"full_name": "Mastermind_Buff.Traps.Detonator", "slots": det_slots},
+           {"full_name": "Mastermind_Buff.Traps.Acid_Mortar", "slots": mortar_slots}]
+    return fp._detonator_dps(_pw, [_dctx["power_by_full"].get(p["full_name"]) for p in _pw],
+                             _dctx, {"shift": 0, "enemies": 10}, {}, 0.0, 1, 1000.0, 0.0,
+                             fp._pet_aura("Class_Mastermind", []), [], 0.0,
+                             __import__("role_output"))[0]
+_d0, _dm, _dd, _db = _det([], []), _det(_dmg3, []), _det([], _dmg3), _det(_dmg3, _dmg3)
+check("DETONATOR v55: Acid Mortar expiry blows; Mortar + Detonator damage slotting add under ED",
+      _d0 > 0 and _dm > _d0 and abs(_dm - _dd) < 1e-9 and _dm < _db < _d0 + 2 * (_dm - _d0),
+      f"none {_d0:.2f}, mortar-only {_dm:.2f}, det-only {_dd:.2f}, both {_db:.2f}")
 # Trip Mine / Seeker Drones (v54): the blast rides the summon (client rows, no
 # interrupt, caster's AT column for the redirect mine, entity class for drones).
 _tm = srv.POWER_BY_FULL["Mastermind_Buff.Traps.Trip_Mine"]
@@ -761,7 +777,7 @@ check("TRAPS P4: Trip Mine = client blast (Fire 2 + Lethal 1 + 50% Fire 1), no i
 # COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
 # check — a crash or skipped section that silently shrinks the list must fail, not
 # pass by absence. Bump EXPECTED_CHECKS when adding a check.
-EXPECTED_CHECKS = 37
+EXPECTED_CHECKS = 38
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
 if len(results) != EXPECTED_CHECKS:
