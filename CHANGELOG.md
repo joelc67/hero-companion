@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## Unreleased
+## 0.12.57 — 2026-10-12 — Traps and Mastermind pets, per the client
 
 Field report from Maelwys (forum topic 64761), checked against the game client.
 
