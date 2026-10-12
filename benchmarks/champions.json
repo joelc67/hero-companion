@@ -119068,7 +119068,6 @@
    "Mastermind_Summon.Demon_Summoning.Hell_on_Earth",
    "Mastermind_Summon.Demon_Summoning.Summon_Demon_Prince",
    "Mastermind_Summon.Demon_Summoning.Summon_Demonlings",
-   "Mastermind_Summon.Demon_Summoning.Summon_Demons",
    "Pool.Fighting.Boxing",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
@@ -119078,10 +119077,11 @@
    "Pool.Leadership.Tactics",
    "Pool.Leadership.Vengeance",
    "Pool.Speed.Hasten",
-   "Pool.Speed.Super_Speed"
+   "Pool.Speed.Super_Speed",
+   "Pool.Speed.Whirlwind"
   ],
-  "score": 575.749275,
-  "model_version": 54,
+  "score": 630.82165,
+  "model_version": 55,
   "certificate": {
    "sweeps": 2,
    "converged": false,
@@ -119093,18 +119093,18 @@
    "node_cap": {
     "cap": 50000,
     "capped_solves_floor": 0,
-    "final_resolve_delta": -0.54
+    "final_resolve_delta": 0.03
    },
    "finale_race": {
     "raced_on": "gpu",
     "winner_certified": "cbc_exact"
    },
    "tie_arbitration": {
-    "winner": "lex",
+    "winner": "plain",
     "scores": {
-     "eps": 542.49,
-     "lex": 575.75,
-     "plain": 532.32
+     "eps": 589.55,
+     "lex": 581.05,
+     "plain": 630.82
     }
    },
    "finale_solver": {
@@ -119113,13 +119113,13 @@
     "note": "tie-break arms raced on the GPU diver; winning style re-solved exactly on CBC (race+certify, 2026-08-25)"
    },
    "merge": {
-    "promoted": "20261012_0847",
-    "old_canonical": 496.850625,
-    "model_version": 54,
+    "promoted": "20261012_1603",
+    "old_canonical": 536.9352,
+    "model_version": 55,
     "gate": "roster_merge canonical"
    }
   },
-  "canonical_score": 536.9352
+  "canonical_score": 561.591
  },
  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Trick_Arrow|itrial": {
   "picks": [
@@ -120259,17 +120259,17 @@
    "Pool.Fighting.Boxing",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
+   "Pool.Invisibility.Invisibility",
    "Pool.Invisibility.Stealth",
    "Pool.Leadership.Assault",
-   "Pool.Leadership.Defense",
    "Pool.Leadership.Tactics",
    "Pool.Leadership.Vengeance",
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed",
    "Pool.Speed.Whirlwind"
   ],
-  "score": 631.0849499999999,
-  "model_version": 54,
+  "score": 673.8039,
+  "model_version": 55,
   "certificate": {
    "sweeps": 2,
    "converged": false,
@@ -120290,9 +120290,9 @@
    "tie_arbitration": {
     "winner": "lex",
     "scores": {
-     "eps": 619.66,
-     "lex": 631.08,
-     "plain": 582.0
+     "eps": 612.56,
+     "lex": 673.8,
+     "plain": 612.59
     }
    },
    "finale_solver": {
@@ -120301,13 +120301,13 @@
     "note": "tie-break arms raced on the GPU diver; winning style re-solved exactly on CBC (race+certify, 2026-08-25)"
    },
    "merge": {
-    "promoted": "20261012_0847",
-    "old_canonical": 495.9561749999999,
-    "model_version": 54,
+    "promoted": "20261012_1603",
+    "old_canonical": 586.1235849999999,
+    "model_version": 55,
     "gate": "roster_merge canonical"
    }
   },
-  "canonical_score": 584.5530249999999
+  "canonical_score": 589.00821
  },
  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Trick_Arrow|itrial": {
   "picks": [
@@ -123826,7 +123826,6 @@
    "Mastermind_Summon.Robotics.Assault_Bot",
    "Mastermind_Summon.Robotics.Battle_Drones",
    "Mastermind_Summon.Robotics.Equip_Robot",
-   "Mastermind_Summon.Robotics.Protector_Bots",
    "Mastermind_Summon.Robotics.Repair",
    "Pool.Fighting.Boxing",
    "Pool.Fighting.Tough",
@@ -123836,10 +123835,11 @@
    "Pool.Leadership.Tactics",
    "Pool.Leadership.Vengeance",
    "Pool.Speed.Hasten",
-   "Pool.Speed.Super_Speed"
+   "Pool.Speed.Super_Speed",
+   "Pool.Speed.Whirlwind"
   ],
-  "score": 558.58785,
-  "model_version": 54,
+  "score": 613.5958800000001,
+  "model_version": 55,
   "certificate": {
    "sweeps": 2,
    "converged": false,
@@ -123851,18 +123851,18 @@
    "node_cap": {
     "cap": 50000,
     "capped_solves_floor": 0,
-    "final_resolve_delta": 0.0
+    "final_resolve_delta": 0.01
    },
    "finale_race": {
     "raced_on": "gpu",
     "winner_certified": "cbc_exact"
    },
    "tie_arbitration": {
-    "winner": "eps",
+    "winner": "plain",
     "scores": {
-     "eps": 558.59,
-     "lex": 545.16,
-     "plain": 562.72
+     "eps": 565.38,
+     "lex": 574.48,
+     "plain": 613.6
     }
    },
    "finale_solver": {
@@ -123871,13 +123871,13 @@
     "note": "tie-break arms raced on the GPU diver; winning style re-solved exactly on CBC (race+certify, 2026-08-25)"
    },
    "merge": {
-    "promoted": "20261012_0847",
-    "old_canonical": 499.14340500000003,
-    "model_version": 54,
+    "promoted": "20261012_1603",
+    "old_canonical": 547.830325,
+    "model_version": 55,
     "gate": "roster_merge canonical"
    }
   },
-  "canonical_score": 547.830325
+  "canonical_score": 603.8937750000001
  },
  "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Trick_Arrow|itrial": {
   "picks": [
@@ -124997,7 +124997,6 @@
  },
  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Traps|itrial": {
   "picks": [
-   "Epic.Mastermind_Mace_Mastery.Power_Boost",
    "Epic.Mastermind_Mace_Mastery.Scorpion_Shield",
    "Epic.Mastermind_Mace_Mastery.Web_Envelope",
    "Inherent.Fitness.Health",
@@ -125016,6 +125015,7 @@
    "Pool.Fighting.Boxing",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
+   "Pool.Invisibility.Grant_Invisibility",
    "Pool.Invisibility.Stealth",
    "Pool.Leadership.Assault",
    "Pool.Leadership.Tactics",
@@ -125024,8 +125024,8 @@
    "Pool.Speed.Super_Speed",
    "Pool.Speed.Whirlwind"
   ],
-  "score": 531.658665,
-  "model_version": 54,
+  "score": 546.393625,
+  "model_version": 55,
   "certificate": {
    "sweeps": 2,
    "converged": false,
@@ -125046,9 +125046,9 @@
    "tie_arbitration": {
     "winner": "eps",
     "scores": {
-     "eps": 531.66,
-     "lex": 478.26,
-     "plain": 509.85
+     "eps": 546.39,
+     "lex": 480.17,
+     "plain": 485.16
     }
    },
    "finale_solver": {
@@ -125057,13 +125057,13 @@
     "note": "tie-break arms raced on the GPU diver; winning style re-solved exactly on CBC (race+certify, 2026-08-25)"
    },
    "merge": {
-    "promoted": "20261012_0847",
-    "old_canonical": 486.703125,
-    "model_version": 54,
+    "promoted": "20261012_1603",
+    "old_canonical": 524.9665650000001,
+    "model_version": 55,
     "gate": "roster_merge canonical"
    }
   },
-  "canonical_score": 522.772005
+  "canonical_score": 540.8272900000001
  },
  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Trick_Arrow|itrial": {
   "picks": [
