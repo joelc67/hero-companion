@@ -158,6 +158,15 @@ def build():
         "single-target attacks turns the Fury fit from fitting into measuring.",
         "**Domination magnitude** - mez a +1 boss with and without Domination "
         "up; landing or not distinguishes adds-vs-replaces.",
+        "**Detonator on an expiring Acid Mortar** (v54) - arm a Mortar with "
+        "Detonator and let its 60 s run out; a blast means expiry counts as a "
+        "defeat. Unscored until seen: the client does not encode it.",
+        "**Detonator bomb slotting** (v54) - one bomb with damage slotted only in "
+        "the henchman summon, one with damage only in Detonator; the combat log "
+        "shows whether the pet's own slotting reaches the bomb. Scored: "
+        "Detonator's slotting only (the client's Grant_Boosted_Power).",
+        "**Force Field Generator / Acid Mortar deaths** (v54) - they carry the "
+        "bomb but have no death model; their defeats are unscored.",
     ]:
         L.append(f"- {item}")
     L.append("")

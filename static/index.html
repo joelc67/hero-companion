@@ -508,6 +508,9 @@
           <label class="incarnate-toggle" style="display:block;margin-top:6px" title="Since Issue 28 Page 4, Sonic Cage, Refraction Shield and Detention Field can be cast on a teammate: they get a 15-second defense and resistance shield, and the power recharges in 90 seconds instead of 60. Tick this if that is how you use it; the app then scores the shield instead of the cage.">
             <input type="checkbox" id="cage-allies-toggle"
               onchange="setCageOnAllies(this.checked)"> I cast Sonic Cage / Refraction Shield / Detention Field on teammates</label>
+          <label class="incarnate-toggle" style="display:block;margin-top:6px" title="Traps Detonator (Mastermind) arms every pet near you with a bomb that goes off when the pet is defeated or dismissed. Tick this if you dismiss your armed pets on purpose each time Detonator is ready; the app then scores one blast per armed pet per Detonator cycle, and the resummon time it costs.">
+            <input type="checkbox" id="detonate-dismiss-toggle"
+              onchange="setDetonateDismiss(this.checked)"> I dismiss my pets to set off Detonator</label>
         </div>
         <input id="gen-goal"
           placeholder="(optional) fine-tune in words, e.g. 'also soft-cap energy defense'">

@@ -1218,13 +1218,18 @@ def _offense(build, totals, ctx):
             continue
         base = 0.0
         dtypes = set()
+        # v54: a one-shot PET blast carried on its summon (Seeker Drones' pulse,
+        # tools/patch_traps_p4_pets.py) prices at the pet ENTITY's class column;
+        # redirect pseudo-pets (Trip Mine) carry none and use the caster's (AT mods)
+        pcol = ((ctx.get("class_columns") or {}).get(p["damage_class"], col)
+                if p.get("damage_class") else col)
         for d in p["damage_effects"]:
             if not _pv_ok(d.get("pv_mode", 0), pvp):
                 continue
             row = mod_tables.get(d["modifier_table"])
-            if not row or col >= len(row):
+            if not row or pcol is None or pcol >= len(row):
                 continue
-            base += abs(_resolve_mag(d, row, col))
+            base += abs(_resolve_mag(d, row, pcol))
             if d["damage_type"] not in ("None", "Special"):
                 dtypes.add(d["damage_type"])
         if base <= 0:
@@ -1237,7 +1242,9 @@ def _offense(build, totals, ctx):
                 enh[asp] += val
         enh_dmg = apply_ed_sched(ED_SCHEDULE.get("Damage", 0),
                                  enh.get("Damage", 0.0), mult_ed)
-        dmg_boost = enh_dmg + global_dmg
+        # an entity pet's blast (damage_class) takes the summon's slotting only, as
+        # every entity pet does in _pet_offense - the caster's global +damage is his
+        dmg_boost = enh_dmg + (0.0 if p.get("damage_class") else global_dmg)
         if dmg_cap is not None:
             dmg_boost = min(dmg_boost, dmg_cap)
         # v34 item 5, law 3 (GAME BOUNDARIES STATED, NOT SUPERSEDED): the
@@ -1272,7 +1279,11 @@ def _offense(build, totals, ctx):
             proc_add = aura_proc_dps_per_target(power, p) * cycle
             proc_per = "cycle"            # auras roll per pulse, per target
         else:
-            proc_add = proc_damage_per_activation(power, p, rech_boost)
+            # v54: each pet a cast creates rolls the copied procs on its own
+            # one-shot blast (Seeker Drones: 2 drones) - Page 4 fix "entities that
+            # have to die to trigger now properly trigger procs"
+            proc_add = (proc_damage_per_activation(power, p, rech_boost)
+                        * (p.get("proc_rolls") or 1))
             proc_per = "use"
         dmg += proc_add
         # Piece 1 (2026-07-28): the proc-vs-set trade LEDGER — display-only
@@ -1790,6 +1801,9 @@ def _pet_offense(build, totals, ctx):
                 continue
             se = spec_by_uid.get(uid) or {}
             pet_col = class_cols.get(se.get("class") or ent.get("class_name"))
+            if (spec or {}).get("at_mods"):
+                # Page 4 redirect patch (Caltrops): "Now inherits AT modifiers"
+                pet_col = ctx.get("at_column")
             if pet_col is None or pet_col < 0:
                 continue
             dps = 0.0
@@ -1807,6 +1821,7 @@ def _pet_offense(build, totals, ctx):
             count = max(1, int(se.get("count") or 1))
             pcls = se.get("class") or ent.get("class_name")
             pets.append({"name": ent.get("display_name") or uid,
+                         "uid": uid,           # v54: Detonator carrier match
                          "from_power": p.get("display_name"),
                          # v29: the pet's game class + the summon's real cast time
                          # ride along so the scorer's henchman-inheritance term can

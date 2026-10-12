@@ -237,6 +237,12 @@ _flip = j(C.post("/settings/cage-on-allies", json={"on": not _orig})).get("on")
 _back = j(C.post("/settings/cage-on-allies", json={"on": _orig})).get("on")
 check("/settings/cage-on-allies flips and restores", _flip is (not _orig) and _back is _orig,
       f"orig {_orig} flip {_flip} back {_back}")
+T("/settings/detonate-dismiss")
+_orig = bool(j(C.get("/settings/detonate-dismiss")).get("on"))
+_flip = j(C.post("/settings/detonate-dismiss", json={"on": not _orig})).get("on")
+_back = j(C.post("/settings/detonate-dismiss", json={"on": _orig})).get("on")
+check("/settings/detonate-dismiss flips and restores", _flip is (not _orig) and _back is _orig,
+      f"orig {_orig} flip {_flip} back {_back}")
 
 # ── coverage denominator: every route tested or excluded ────────────────────
 src = open(os.path.join(os.path.dirname(__file__), "..", "server", "server.py"),

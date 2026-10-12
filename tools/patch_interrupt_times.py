@@ -45,13 +45,15 @@ def main():
         for r in rows:
             it = r.get("interrupt_time") or 0
             fn = r.get("full_name")
-            if fn and it > 0:
+            if fn:
+                # zeros too: a patch that REMOVES an interrupt (Page 4 Trip Mine)
+                # must clear our stale value, not leave it behind
                 interrupt_by_name[fn] = round(float(it), 2)
-    if not interrupt_by_name:
+    if not any(interrupt_by_name.values()):
         raise SystemExit("FAIL: no interruptible powers found in the export "
                          "tree — wrong path or broken export")
     print(f"client export: {n_files} files scanned, "
-          f"{len(interrupt_by_name)} interruptible powers")
+          f"{sum(1 for v in interrupt_by_name.values() if v > 0)} interruptible powers")
 
     original = open(PATH, encoding="utf-8").read()
     data = json.loads(original)
@@ -60,38 +62,43 @@ def main():
     ours = {q.get("full_name")
             for rows in data.values() if isinstance(rows, list)
             for q in rows if isinstance(q, dict)}
-    expected = sorted(n for n in interrupt_by_name if n in ours)
-    unmatched = len(interrupt_by_name) - len(expected)
+    expected = sorted(n for n, v in interrupt_by_name.items() if n in ours and v > 0)
+    unmatched = sum(1 for v in interrupt_by_name.values() if v > 0) - len(expected)
 
     patched = 0
+    cleared = []
     for rows in data.values():
         if not isinstance(rows, list):
             continue
         for q in rows:
             it = interrupt_by_name.get(q.get("full_name"))
-            if it is not None:
+            if it:
                 q["interrupt_time"] = it
                 patched += 1
+            elif it == 0 and q.pop("interrupt_time", None):
+                cleared.append(q["full_name"])
     print(f"{patched} of {len(expected)} matchable records patched "
           f"({unmatched} client-side interruptible powers have no powers.json "
           f"match — alias-map divergence, listed nowhere else)")
+    for fn in cleared:
+        print(f"  cleared stale interrupt: {fn} (client now 0)")
     if patched != len(expected):
         raise SystemExit("== COVERAGE FAILURE: matchable record count drifted "
                          "mid-patch — investigate before shipping ==")
 
-    # Byte-identity check: stripping the added key must reproduce the input.
-    stripped = json.loads(json.dumps(data))
-    for rows in stripped.values():
-        if not isinstance(rows, list):
-            continue
-        for q in rows:
-            q.pop("interrupt_time", None)
-    if json.dumps(stripped, sort_keys=True) != json.dumps(json.loads(original),
-                                                          sort_keys=True):
+    # Identity check: with the key stripped from BOTH sides, nothing else moved
+    # (the input already carries interrupt_time on re-runs).
+    def _strip(d):
+        for rows in d.values():
+            if isinstance(rows, list):
+                for q in rows:
+                    q.pop("interrupt_time", None)
+        return json.dumps(d, sort_keys=True)
+    if _strip(json.loads(json.dumps(data))) != _strip(json.loads(original)):
         raise SystemExit("== SAFETY FAILURE: patch touched more than the added "
                          "key — nothing written ==")
-    with open(PATH, "w", encoding="utf-8") as f:
-        json.dump(data, f)
+    with open(PATH, "w", encoding="utf-8", newline="\n") as f:
+        f.write(json.dumps(data, ensure_ascii=False, separators=(",", ":")))
     print("data/powers.json updated (additive; run reality checks after)")
 
 

@@ -720,19 +720,48 @@ check("TEAM ENDURANCE: Speed Boost +50% perma, AM +30% x 120/424s uptime, Painbr
                                    "slots": []}], srv._stat_ctx("Class_Tanker"), 7) == 0.0
       and abs(_sbt * 100 - 22.5) < 0.1,
       f"SB {_spb}, AM {_am}, Painbringer {_pb}, Scourging allies {_sbt}")
-# Mastermind pet auras: Supremacy alone, then + Mark of Supremacy F.
+# Mastermind pet auras (v54): Supremacy and the ATO globals share the client stack
+# key PetBuffAura (Suppress, by attribute) - the STRONGEST applies, they never add
+# (Maelwys, topic 64761). Command (AoE def) and Mark (res/regen) are different
+# attributes, so both land beside each other.
 _a0 = fp._pet_aura("Class_Mastermind", [])
 _a1 = fp._pet_aura("Class_Mastermind", [{"slots": [{"piece_uid": "Attuned_Mark_of_Supremacy_F"}]}])
-check("PET AURAS: Supremacy +10% AoE def/+10% res/+100% regen; Mark of Supremacy adds 12.5%/125%",
+_a2 = fp._pet_aura("Class_Mastermind", [{"slots": [
+    {"piece_uid": "Superior_Attuned_Superior_Mark_of_Supremacy_F"},
+    {"piece_uid": "Attuned_Command_of_the_Mastermind_F"}]}])
+check("PET AURAS: Supremacy 10%/10%/100%; Mark REPLACES it (12.5%/125%), never adds",
       abs(_a0["aoe_def"] - 0.10) < 1e-9 and abs(_a0["res"] - 0.10) < 1e-9
-      and abs(_a1["res"] - 0.225) < 1e-9 and abs(_a1["regen"] - 2.25) < 1e-9
+      and abs(_a1["res"] - 0.125) < 1e-9 and abs(_a1["regen"] - 1.25) < 1e-9
+      and _a2 == {"aoe_def": 0.125, "res": 0.15, "regen": 1.5}
       and fp._pet_aura("Class_Dominator", [])["res"] == 0.0,
-      f"MM {_a0}, +Mark {_a1}")
+      f"MM {_a0}, +Mark {_a1}, +SupMark+Command {_a2}")
+# Detonator carriers (v54): the client's entity tag `Detonator` - henchmen yes,
+# Necromancy ghosts / Living Hellfire no, FFG + Acid Mortar + Maintenance Drone yes,
+# Seeker Drones lost it in Page 4.
+_tag = lambda u: "Detonator" in (srv.SUMMONS.get(u, {}).get("power_tags") or [])
+check("DETONATOR CARRIERS follow the client's Detonator tag",
+      _tag("Pets_Zombie") and _tag("Pets_Traps_FF_Generator") and _tag("Pets_Traps_Acid_Mortar")
+      and _tag("Pets_Maintenance_Bot") and not _tag("Pets_Living_Hellfire")
+      and not _tag("Pets_Ghost") and not _tag("Pets_Traps_Seeker1"),
+      {u: _tag(u) for u in ("Pets_Zombie", "Pets_Traps_FF_Generator", "Pets_Living_Hellfire",
+                            "Pets_Ghost", "Pets_Traps_Seeker1")})
+# Trip Mine / Seeker Drones (v54): the blast rides the summon (client rows, no
+# interrupt, caster's AT column for the redirect mine, entity class for drones).
+_tm = srv.POWER_BY_FULL["Mastermind_Buff.Traps.Trip_Mine"]
+_sd = srv.POWER_BY_FULL["Defender_Buff.Traps.Seeker_Drones"]
+check("TRAPS P4: Trip Mine = client blast (Fire 2 + Lethal 1 + 50% Fire 1), no interrupt; Seekers 2 pulses",
+      sorted((d["damage_type"], d["scale"], d["probability"]) for d in _tm["damage_effects"])
+      == [("Fire", 1.0, 0.5), ("Fire", 2.0, 1.0), ("Lethal", 1.0, 1.0)]
+      and not _tm.get("interrupt_time") and not _tm.get("summons") and _tm["radius"] == 12.0
+      and _sd["proc_rolls"] == 2 and _sd["damage_class"] == "Class_Minion_Pets"
+      and [d["scale"] for d in _sd["damage_effects"]] == [0.5]
+      and srv.SUMMON_POWERS["Mastermind_Buff.Traps.Force_Field_Generator"]["permanent"],
+      f"mine {_tm.get('damage_effects')}, seekers {_sd.get('damage_effects')}")
 
 # COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
 # check — a crash or skipped section that silently shrinks the list must fail, not
 # pass by absence. Bump EXPECTED_CHECKS when adding a check.
-EXPECTED_CHECKS = 35
+EXPECTED_CHECKS = 37
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
 if len(results) != EXPECTED_CHECKS:

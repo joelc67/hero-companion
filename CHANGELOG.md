@@ -1,5 +1,35 @@
 # Hero Companion — What's New
 
+## Unreleased
+
+Field report from Maelwys (forum topic 64761), checked against the game client.
+
+- **Mastermind pet auras don't stack.** Supremacy's aura on your henchmen and
+  the Mark of Supremacy / Command of the Mastermind auras share one stacking
+  rule in the game: your henchmen get whichever is strongest, not the total.
+  Before, the app added them, so henchmen looked sturdier than they are.
+
+- **Detonator, corrected.** Detonator puts a bomb on the pets near you when you
+  cast it. A pet summoned later has no bomb until you cast Detonator again, so
+  each cast now counts at most one blast per pet. It works on the pets the game
+  tags for it: your henchmen (but not the Necromancy ghosts or Living
+  Hellfire), plus Force Field Generator, Acid Mortar and Maintenance Drone.
+  New option: "I dismiss my pets to set off Detonator". When it is ticked,
+  every armed pet blows once per Detonator cast, and the app subtracts the
+  time spent resummoning.
+
+- **Trip Mine is an attack.** Since Page 4 it has no interruption, uses your
+  archetype's damage numbers, and its damage procs fire. It now counts as an
+  area attack you place at your feet, with the game's damage (its fire and
+  lethal amounts were wrong before).
+
+- **Seeker Drones count.** Each cast makes two drones that each blow once:
+  damage, -ToHit and -Damage on what they hit, and each drone rolls your
+  damage procs. They used to be worth nothing in the app.
+
+- **More Page 4 pet data:** Force Field Generator stays until destroyed, and
+  Caltrops use your archetype's damage numbers.
+
 ## 0.12.56 — 2026-10-11 — Nothing left unmodeled
 
 - **ATO procs that summon a one-shot pet now count.** Defender's Bastion

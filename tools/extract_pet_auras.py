@@ -46,6 +46,7 @@ def _val(table):
 def aura_of(rec, gate=None):
     """{aoe_def, res, regen} from one client record's (optionally gated) groups."""
     out = {"aoe_def": 0.0, "res": 0.0, "regen": 0.0}
+    stacking = set()
     for g in rec.get("effects") or []:
         if g.get("is_pvp") == "PVP_ONLY":
             continue
@@ -55,6 +56,12 @@ def aura_of(rec, gate=None):
         for t in g.get("templates") or []:
             at, asp = set(t.get("attribs") or []), t.get("aspect")
             v = (t.get("scale") or 0.0) * _val(t.get("table"))
+            if asp != "Strength" and at & ({"Area", "Regeneration"} | DMG8):
+                # Page 3+: Supremacy's pet aura and the MM ATO globals share one stack
+                # key with Suppress + StackByAttribAndKey -> per attribute, only the
+                # strongest source applies (the scorer takes the max, never the sum)
+                stacking.add((t.get("stack_key"), t.get("stack"),
+                              "StackByAttribAndKey" in (t.get("flags") or [])))
             if at == {"Area"} and asp == "Current":
                 out["aoe_def"] += v
             elif at == DMG8 and asp == "Resistance":
@@ -65,7 +72,10 @@ def aura_of(rec, gate=None):
                 continue   # pet +damage: already the Supremacy buff_effects lever
             elif at & ({"Area", "Regeneration"} | DMG8):
                 sys.exit(f"REFUSE: unplaced pet template {sorted(at)} {asp} in {rec['full_name']}")
-    return {k: round(v, 6) for k, v in out.items()}
+    if stacking != {("PetBuffAura", "Suppress", True)}:
+        sys.exit(f"REFUSE: {rec['full_name']} pet aura stacking {stacking} is not the "
+                 "PetBuffAura/Suppress/by-attrib rule the scorer's max() models")
+    return dict({k: round(v, 6) for k, v in out.items()}, stack_key="PetBuffAura")
 
 
 def main():

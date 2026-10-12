@@ -539,6 +539,7 @@ def _stat_ctx(archetype):
         "summon_powers": SUMMON_POWERS,  # power -> squad spec (counts/uptime/class)
         "class_columns": AT_COLUMN,    # any class name -> AttribMod column (incl pets)
         "powers_by_set": POWERS,       # powerset full_name -> [power recs] (pet attacks)
+        "detonate_dismiss": _detonate_dismiss(),  # v54 Traps Detonator setting
     }
 
 print(f"  {len(PLAYABLE)} playable archetypes, {len(POWERS)} powersets of powers, "
@@ -6036,6 +6037,29 @@ def settings_cage_on_allies():
         s["cage_on_allies"] = _CAGE_ON_ALLIES = bool((request.get_json(silent=True) or {}).get("on"))
         _save_settings(s)
     return jsonify({"on": _cage_on_allies()})
+
+
+_DETONATE_DISMISS = None   # cached settings.json `detonate_dismiss` (read once)
+
+
+def _detonate_dismiss():
+    global _DETONATE_DISMISS
+    if _DETONATE_DISMISS is None:
+        _DETONATE_DISMISS = bool(_load_settings().get("detonate_dismiss"))
+    return _DETONATE_DISMISS
+
+
+@app.route("/settings/detonate-dismiss", methods=["GET", "POST"])
+def settings_detonate_dismiss():
+    """Traps Detonator (Page 4): the pets' bombs go off when they are defeated or
+    DISMISSED. GET -> {on}; POST {on: bool} saves whether the player dismisses
+    armed pets on purpose every Detonator cycle (scored by first_principles)."""
+    global _DETONATE_DISMISS
+    if request.method == "POST":
+        s = _load_settings()
+        s["detonate_dismiss"] = _DETONATE_DISMISS = bool((request.get_json(silent=True) or {}).get("on"))
+        _save_settings(s)
+    return jsonify({"on": _detonate_dismiss()})
 
 
 def _find_accounts_dirs(extra_root=None):

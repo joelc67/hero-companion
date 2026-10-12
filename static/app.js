@@ -3908,6 +3908,9 @@ async function init() {
   if ($("cage-allies-toggle"))
     api("/settings/cage-on-allies").then((r) => { $("cage-allies-toggle").checked = !!(r && r.on); })
       .catch(() => {});
+  if ($("detonate-dismiss-toggle"))
+    api("/settings/detonate-dismiss").then((r) => { $("detonate-dismiss-toggle").checked = !!(r && r.on); })
+      .catch(() => {});
   // Converter panel: build the interactive "want/have" tool when first opened (works with no build).
   if ($("conv-guide-details")) {
     $("conv-guide-details").addEventListener("toggle", (e) => {
@@ -8638,6 +8641,11 @@ window.setHasHo = function (has) {
 // the stats are recomputed after it flips.
 window.setCageOnAllies = async function (on) {
   await api("/settings/cage-on-allies", postJson({ on }));
+  if (typeof recompute === "function") recompute();
+};
+// Traps Detonator: same server-setting pattern as the cage choice above.
+window.setDetonateDismiss = async function (on) {
+  await api("/settings/detonate-dismiss", postJson({ on }));
   if (typeof recompute === "function") recompute();
 };
 
