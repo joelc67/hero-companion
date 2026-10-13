@@ -120256,7 +120256,7 @@
    "Mastermind_Summon.Mercenaries.Commando",
    "Mastermind_Summon.Mercenaries.Serum",
    "Mastermind_Summon.Mercenaries.Soldiers",
-   "Pool.Fighting.Boxing",
+   "Pool.Fighting.Cross_Punch",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
    "Pool.Invisibility.Invisibility",
@@ -120268,8 +120268,8 @@
    "Pool.Speed.Super_Speed",
    "Pool.Speed.Whirlwind"
   ],
-  "score": 673.8039,
-  "model_version": 55,
+  "score": 718.30672,
+  "model_version": 56,
   "certificate": {
    "sweeps": 2,
    "converged": false,
@@ -120288,11 +120288,11 @@
     "winner_certified": "cbc_exact"
    },
    "tie_arbitration": {
-    "winner": "lex",
+    "winner": "eps",
     "scores": {
-     "eps": 612.56,
-     "lex": 673.8,
-     "plain": 612.59
+     "eps": 718.31,
+     "lex": 623.99,
+     "plain": 628.88
     }
    },
    "finale_solver": {
@@ -120301,13 +120301,13 @@
     "note": "tie-break arms raced on the GPU diver; winning style re-solved exactly on CBC (race+certify, 2026-08-25)"
    },
    "merge": {
-    "promoted": "20261012_1603",
-    "old_canonical": 586.1235849999999,
-    "model_version": 55,
+    "promoted": "20261013_0852",
+    "old_canonical": 589.00821,
+    "model_version": 56,
     "gate": "roster_merge canonical"
    }
   },
-  "canonical_score": 589.00821
+  "canonical_score": 591.89343
  },
  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Trick_Arrow|itrial": {
   "picks": [
