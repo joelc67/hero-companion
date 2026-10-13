@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## 0.12.58 — 2026-10-12 — Detonator, per the beta tests
+## 0.12.58 — 2026-10-13 — Detonator, per the beta tests
 
 Two more Detonator answers from Maelwys (forum topic 64761), both tested on
 the beta servers.
@@ -15,6 +15,14 @@ the beta servers.
   together first and then hit the usual diminishing returns, the same way a
   Mastermind upgrade passes slotting to henchmen. Before, the app only used
   Detonator's slotting.
+
+- **A Force Field Generator's bomb now counts when it's defeated.** It's the
+  last Detonator carrier the app wasn't scoring. It now gets the same death
+  math as henchmen, using its own game numbers: its hit points, the defense
+  from its own bubble (raised by any Defense slotted in the power), and its
+  20% resistance to everything. It doesn't inherit your set bonuses or get
+  Supremacy, since the game gives those only to henchmen. The Mark and
+  Command of the Mastermind auras do reach it.
 
 ## 0.12.57 — 2026-10-12 — Traps and Mastermind pets, per the client
 

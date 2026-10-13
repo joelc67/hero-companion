@@ -761,6 +761,23 @@ _d0, _dm, _dd, _db = _det([], []), _det(_dmg3, []), _det([], _dmg3), _det(_dmg3,
 check("DETONATOR v55: Acid Mortar expiry blows; Mortar + Detonator damage slotting add under ED",
       _d0 > 0 and _dm > _d0 and abs(_dm - _dd) < 1e-9 and _dm < _db < _d0 + 2 * (_dm - _d0),
       f"none {_d0:.2f}, mortar-only {_dm:.2f}, det-only {_dd:.2f}, both {_db:.2f}")
+# Detonator v56 (Joel: no partial releases): the Force Field Generator's deaths
+# are scored by the renewal model on its own client numbers. A fragile spawn
+# kills it, so its bomb now counts; Defense Buff slotting in the FFG power keeps
+# it alive longer, so fewer blasts.
+_fsc = {"shift": 0, "enemies": 10, "enemy_dps": 8.0, "rank_acc": 1.0}
+_def3 = [{"piece_uid": "Crafted_Defense_Buff", "level": 50}] * 3
+def _ffg(ffg_slots):
+    _pw = [{"full_name": "Mastermind_Buff.Traps.Detonator", "slots": []},
+           {"full_name": "Mastermind_Buff.Traps.Force_Field_Generator", "slots": ffg_slots}]
+    return fp._detonator_dps(_pw, [_dctx["power_by_full"].get(p["full_name"]) for p in _pw],
+                             _dctx, _fsc, {}, 0.0, 4, 1000.0, 0.0,
+                             fp._pet_aura("Class_Mastermind", []), [], 0.0,
+                             __import__("role_output"))[0]
+_f0, _f3 = _ffg([]), _ffg(_def3)
+check("DETONATOR v56: FFG deaths blow the bomb; its Defense slotting means fewer deaths",
+      _f0 > 0 and 0 < _f3 < _f0,
+      f"bare {_f0:.3f}, 3 def {_f3:.3f}")
 # Trip Mine / Seeker Drones (v54): the blast rides the summon (client rows, no
 # interrupt, caster's AT column for the redirect mine, entity class for drones).
 _tm = srv.POWER_BY_FULL["Mastermind_Buff.Traps.Trip_Mine"]
@@ -777,7 +794,7 @@ check("TRAPS P4: Trip Mine = client blast (Fire 2 + Lethal 1 + 50% Fire 1), no i
 # COVERAGE DENOMINATOR (standing rule 2026-07-08): the suite must RUN every pinned
 # check — a crash or skipped section that silently shrinks the list must fail, not
 # pass by absence. Bump EXPECTED_CHECKS when adding a check.
-EXPECTED_CHECKS = 38
+EXPECTED_CHECKS = 39
 fails = [n for n, ok, _ in results if not ok]
 print(f"\n{len(results)} of {EXPECTED_CHECKS} expected checks ran")
 if len(results) != EXPECTED_CHECKS:

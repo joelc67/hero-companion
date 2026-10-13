@@ -158,8 +158,6 @@ def build():
         "single-target attacks turns the Fury fit from fitting into measuring.",
         "**Domination magnitude** - mez a +1 boss with and without Domination "
         "up; landing or not distinguishes adds-vs-replaces.",
-        "**Force Field Generator deaths** (v54) - it carries the bomb but has "
-        "no death model; its defeats are unscored.",
     ]:
         L.append(f"- {item}")
     L.append("")
