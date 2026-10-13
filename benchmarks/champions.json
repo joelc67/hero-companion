@@ -87180,12 +87180,12 @@
    "Corruptor_Buff.Traps.Triage_Beacon",
    "Corruptor_Buff.Traps.Trip_Mine",
    "Corruptor_Buff.Traps.Web_Grenade",
-   "Corruptor_Ranged.Psychic_Blast.Mental_Blast",
    "Corruptor_Ranged.Psychic_Blast.Psychic_Wail",
    "Corruptor_Ranged.Psychic_Blast.Subdue",
    "Corruptor_Ranged.Psychic_Blast.Telekinetic_blast",
    "Epic.Ice_Mastery_DefCorr.Flash_Freeze",
    "Epic.Ice_Mastery_DefCorr.Frozen_Armor",
+   "Epic.Ice_Mastery_DefCorr.Ice_Elemental",
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
    "Pool.Fighting.Boxing",
@@ -87200,8 +87200,8 @@
    "Pool.Speed.Super_Speed",
    "Pool.Speed.Whirlwind"
   ],
-  "score": 556.0732,
-  "model_version": 54,
+  "score": 567.87753,
+  "model_version": 56,
   "certificate": {
    "sweeps": 2,
    "converged": false,
@@ -87213,18 +87213,18 @@
    "node_cap": {
     "cap": 50000,
     "capped_solves_floor": 0,
-    "final_resolve_delta": 0.56
+    "final_resolve_delta": 0.0
    },
    "finale_race": {
     "raced_on": "gpu",
     "winner_certified": "cbc_exact"
    },
    "tie_arbitration": {
-    "winner": "lex",
+    "winner": "plain",
     "scores": {
-     "eps": 433.5,
-     "lex": 556.07,
-     "plain": 396.52
+     "eps": 424.63,
+     "lex": 471.34,
+     "plain": 567.88
     }
    },
    "finale_solver": {
@@ -87233,18 +87233,13 @@
     "note": "tie-break arms raced on the GPU diver; winning style re-solved exactly on CBC (race+certify, 2026-08-25)"
    },
    "merge": {
-    "promoted": "20261012_0847",
-    "old_canonical": 408.01751,
-    "model_version": 54,
+    "promoted": "20261013_1252",
+    "old_canonical": 456.35796000000005,
+    "model_version": 56,
     "gate": "roster_merge canonical"
-   },
-   "evaluated": {
-    "against": "model 56, 2026-10-13",
-    "verdict": "moved",
-    "canonical_score": 456.36
    }
   },
-  "canonical_score": 456.36
+  "canonical_score": 467.9346000000001
  },
  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Trick_Arrow|itrial": {
   "picks": [
@@ -124903,16 +124898,16 @@
    "Pool.Fighting.Boxing",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
-   "Pool.Leadership.Assault",
    "Pool.Leadership.Defense",
+   "Pool.Medicine.Aid_Other",
    "Pool.Medicine.Aid_Self",
    "Pool.Medicine.Stimulant",
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed",
    "Pool.Speed.Whirlwind"
   ],
-  "score": 1237.3342100000002,
-  "model_version": 54,
+  "score": 1280.61648,
+  "model_version": 56,
   "certificate": {
    "sweeps": 2,
    "converged": false,
@@ -124931,11 +124926,11 @@
     "winner_certified": "cbc_exact"
    },
    "tie_arbitration": {
-    "winner": "plain",
+    "winner": "eps",
     "scores": {
-     "eps": 1182.04,
-     "lex": 1153.08,
-     "plain": 1237.33
+     "eps": 1280.62,
+     "lex": 1049.57,
+     "plain": 1163.39
     }
    },
    "finale_solver": {
@@ -124944,18 +124939,13 @@
     "note": "tie-break arms raced on the GPU diver; winning style re-solved exactly on CBC (race+certify, 2026-08-25)"
    },
    "merge": {
-    "promoted": "20261012_0847",
-    "old_canonical": 1165.9769600000002,
-    "model_version": 54,
+    "promoted": "20261013_1252",
+    "old_canonical": 1247.5019900000002,
+    "model_version": 56,
     "gate": "roster_merge canonical"
-   },
-   "evaluated": {
-    "against": "model 56, 2026-10-13",
-    "verdict": "moved",
-    "canonical_score": 1247.5
    }
   },
-  "canonical_score": 1247.5
+  "canonical_score": 1280.64816
  },
  "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Sonic_Resonance|itrial": {
   "picks": [
@@ -126013,7 +126003,6 @@
    "Epic.Mastermind_Mace_Mastery.Web_Envelope",
    "Inherent.Fitness.Health",
    "Inherent.Fitness.Stamina",
-   "Mastermind_Buff.Pain_Domination.Anguishing_Cry",
    "Mastermind_Buff.Pain_Domination.Nullify_Pain",
    "Mastermind_Buff.Pain_Domination.Painbringer",
    "Mastermind_Buff.Pain_Domination.Share_Pain",
@@ -126022,6 +126011,7 @@
    "Mastermind_Buff.Pain_Domination.World_of_Pain",
    "Mastermind_Summon.Demon_Summoning.Corruption",
    "Mastermind_Summon.Demon_Summoning.Hell_on_Earth",
+   "Mastermind_Summon.Demon_Summoning.Lash",
    "Mastermind_Summon.Demon_Summoning.Summon_Demon_Prince",
    "Mastermind_Summon.Demon_Summoning.Summon_Demonlings",
    "Mastermind_Summon.Demon_Summoning.Summon_Demons",
@@ -126035,8 +126025,8 @@
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed"
   ],
-  "score": 885.3051900000002,
-  "model_version": 54,
+  "score": 899.6907150000001,
+  "model_version": 56,
   "certificate": {
    "sweeps": 2,
    "converged": false,
@@ -126048,18 +126038,18 @@
    "node_cap": {
     "cap": 50000,
     "capped_solves_floor": 0,
-    "final_resolve_delta": -0.54
+    "final_resolve_delta": -0.16
    },
    "finale_race": {
     "raced_on": "gpu",
     "winner_certified": "cbc_exact"
    },
    "tie_arbitration": {
-    "winner": "plain",
+    "winner": "lex",
     "scores": {
-     "eps": 802.73,
-     "lex": 725.47,
-     "plain": 885.31
+     "eps": 775.98,
+     "lex": 899.69,
+     "plain": 775.98
     }
    },
    "finale_solver": {
@@ -126068,18 +126058,13 @@
     "note": "tie-break arms raced on the GPU diver; winning style re-solved exactly on CBC (race+certify, 2026-08-25)"
    },
    "merge": {
-    "promoted": "20261012_0847",
-    "old_canonical": 761.9072,
-    "model_version": 54,
+    "promoted": "20261013_1252",
+    "old_canonical": 779.9435849999999,
+    "model_version": 56,
     "gate": "roster_merge canonical"
-   },
-   "evaluated": {
-    "against": "model 56, 2026-10-13",
-    "verdict": "moved",
-    "canonical_score": 779.94
    }
   },
-  "canonical_score": 779.94
+  "canonical_score": 813.44232
  },
  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Poison|itrial": {
   "picks": [
@@ -126995,7 +126980,7 @@
    "Mastermind_Buff.Kinetics.Speed_Boost",
    "Mastermind_Buff.Kinetics.Transference",
    "Mastermind_Buff.Kinetics.Transfusion",
-   "Mastermind_Summon.Mercenaries.Commando",
+   "Mastermind_Summon.Mercenaries.M30_Grenade",
    "Mastermind_Summon.Mercenaries.Soldiers",
    "Pool.Fighting.Boxing",
    "Pool.Fighting.Tough",
@@ -127009,8 +126994,8 @@
    "Pool.Speed.Super_Speed",
    "Pool.Speed.Whirlwind"
   ],
-  "score": 745.7535,
-  "model_version": 54,
+  "score": 749.8582799999999,
+  "model_version": 56,
   "certificate": {
    "sweeps": 2,
    "converged": false,
@@ -127031,9 +127016,9 @@
    "tie_arbitration": {
     "winner": "eps",
     "scores": {
-     "eps": 745.75,
-     "lex": 685.24,
-     "plain": 501.64
+     "eps": 749.86,
+     "lex": 662.09,
+     "plain": 676.91
     }
    },
    "finale_solver": {
@@ -127042,18 +127027,13 @@
     "note": "tie-break arms raced on the GPU diver; winning style re-solved exactly on CBC (race+certify, 2026-08-25)"
    },
    "merge": {
-    "promoted": "20261012_0847",
-    "old_canonical": 592.39543,
-    "model_version": 54,
+    "promoted": "20261013_1252",
+    "old_canonical": 618.4975999999999,
+    "model_version": 56,
     "gate": "roster_merge canonical"
-   },
-   "evaluated": {
-    "against": "model 56, 2026-10-13",
-    "verdict": "moved",
-    "canonical_score": 618.5
    }
   },
-  "canonical_score": 618.5
+  "canonical_score": 620.36212
  },
  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Marine_Affinity|itrial": {
   "picks": [
@@ -127220,10 +127200,10 @@
    "Mastermind_Buff.Pain_Domination.Soothe",
    "Mastermind_Buff.Pain_Domination.Soothing_Aura",
    "Mastermind_Buff.Pain_Domination.World_of_Pain",
-   "Mastermind_Summon.Mercenaries.Commando",
    "Mastermind_Summon.Mercenaries.Serum",
    "Mastermind_Summon.Mercenaries.Soldiers",
    "Pool.Fighting.Boxing",
+   "Pool.Fighting.Kick",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
    "Pool.Invisibility.Stealth",
@@ -127234,8 +127214,8 @@
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed"
   ],
-  "score": 813.08388,
-  "model_version": 54,
+  "score": 1000.26608,
+  "model_version": 56,
   "certificate": {
    "sweeps": 2,
    "converged": false,
@@ -127247,18 +127227,18 @@
    "node_cap": {
     "cap": 50000,
     "capped_solves_floor": 0,
-    "final_resolve_delta": -90.6
+    "final_resolve_delta": 0.0
    },
    "finale_race": {
     "raced_on": "gpu",
     "winner_certified": "cbc_exact"
    },
    "tie_arbitration": {
-    "winner": "lex",
+    "winner": "eps",
     "scores": {
-     "eps": 805.05,
-     "lex": 813.08,
-     "plain": 806.89
+     "eps": 1000.27,
+     "lex": 749.67,
+     "plain": 817.21
     }
    },
    "finale_solver": {
@@ -127267,18 +127247,13 @@
     "note": "tie-break arms raced on the GPU diver; winning style re-solved exactly on CBC (race+certify, 2026-08-25)"
    },
    "merge": {
-    "promoted": "20261012_0847",
-    "old_canonical": 691.6152,
-    "model_version": 54,
+    "promoted": "20261013_1252",
+    "old_canonical": 757.10664,
+    "model_version": 56,
     "gate": "roster_merge canonical"
-   },
-   "evaluated": {
-    "against": "model 56, 2026-10-13",
-    "verdict": "moved",
-    "canonical_score": 757.11
    }
   },
-  "canonical_score": 757.11
+  "canonical_score": 902.9492999999999
  },
  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Poison|itrial": {
   "picks": [
@@ -128482,7 +128457,6 @@
  },
  "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Pain_Domination|itrial": {
   "picks": [
-   "Epic.Mastermind_Mace_Mastery.Power_Boost",
    "Epic.Mastermind_Mace_Mastery.Scorpion_Shield",
    "Epic.Mastermind_Mace_Mastery.Web_Cocoon",
    "Epic.Mastermind_Mace_Mastery.Web_Envelope",
@@ -128507,10 +128481,11 @@
    "Pool.Leadership.Tactics",
    "Pool.Leadership.Vengeance",
    "Pool.Speed.Hasten",
-   "Pool.Speed.Super_Speed"
+   "Pool.Speed.Super_Speed",
+   "Pool.Speed.Whirlwind"
   ],
-  "score": 1312.1009800000002,
-  "model_version": 54,
+  "score": 1403.5209000000002,
+  "model_version": 56,
   "certificate": {
    "sweeps": 2,
    "converged": false,
@@ -128529,11 +128504,11 @@
     "winner_certified": "cbc_exact"
    },
    "tie_arbitration": {
-    "winner": "eps",
+    "winner": "plain",
     "scores": {
-     "eps": 1312.1,
-     "lex": 1005.2,
-     "plain": 1164.86
+     "eps": 1090.8,
+     "lex": 1123.26,
+     "plain": 1403.52
     }
    },
    "finale_solver": {
@@ -128542,18 +128517,13 @@
     "note": "tie-break arms raced on the GPU diver; winning style re-solved exactly on CBC (race+certify, 2026-08-25)"
    },
    "merge": {
-    "promoted": "20261012_0847",
-    "old_canonical": 1136.8392000000001,
-    "model_version": 54,
+    "promoted": "20261013_1252",
+    "old_canonical": 1227.2653249999998,
+    "model_version": 56,
     "gate": "roster_merge canonical"
-   },
-   "evaluated": {
-    "against": "model 56, 2026-10-13",
-    "verdict": "moved",
-    "canonical_score": 1227.27
    }
   },
-  "canonical_score": 1227.27
+  "canonical_score": 1379.53788
  },
  "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Poison|itrial": {
   "picks": [
@@ -132091,7 +132061,6 @@
    "Mastermind_Buff.Kinetics.Repel",
    "Mastermind_Buff.Kinetics.Siphon_Speed",
    "Mastermind_Buff.Kinetics.Speed_Boost",
-   "Mastermind_Buff.Kinetics.Transference",
    "Mastermind_Buff.Kinetics.Transfusion",
    "Mastermind_Summon.Thugs.Call_Bruiser",
    "Mastermind_Summon.Thugs.Call_Enforcer",
@@ -132106,10 +132075,11 @@
    "Pool.Leadership.Defense",
    "Pool.Leadership.Vengeance",
    "Pool.Speed.Hasten",
-   "Pool.Speed.Super_Speed"
+   "Pool.Speed.Super_Speed",
+   "Pool.Speed.Whirlwind"
   ],
-  "score": 614.46528,
-  "model_version": 54,
+  "score": 768.8918600000001,
+  "model_version": 56,
   "certificate": {
    "sweeps": 2,
    "converged": false,
@@ -132121,18 +132091,18 @@
    "node_cap": {
     "cap": 50000,
     "capped_solves_floor": 0,
-    "final_resolve_delta": -67.48
+    "final_resolve_delta": 0.0
    },
    "finale_race": {
     "raced_on": "gpu",
     "winner_certified": "cbc_exact"
    },
    "tie_arbitration": {
-    "winner": "lex",
+    "winner": "eps",
     "scores": {
-     "eps": 658.75,
-     "lex": 614.47,
-     "plain": 657.11
+     "eps": 768.89,
+     "lex": 678.21,
+     "plain": 702.9
     }
    },
    "finale_solver": {
@@ -132141,18 +132111,13 @@
     "note": "tie-break arms raced on the GPU diver; winning style re-solved exactly on CBC (race+certify, 2026-08-25)"
    },
    "merge": {
-    "promoted": "20261012_0847",
-    "old_canonical": 548.43954,
-    "model_version": 54,
+    "promoted": "20261013_1252",
+    "old_canonical": 559.6009200000001,
+    "model_version": 56,
     "gate": "roster_merge canonical"
-   },
-   "evaluated": {
-    "against": "model 56, 2026-10-13",
-    "verdict": "moved",
-    "canonical_score": 559.6
    }
   },
-  "canonical_score": 559.6
+  "canonical_score": 582.35931
  },
  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Marine_Affinity|itrial": {
   "picks": [
@@ -132319,11 +132284,11 @@
    "Mastermind_Buff.Pain_Domination.Soothing_Aura",
    "Mastermind_Buff.Pain_Domination.World_of_Pain",
    "Mastermind_Summon.Thugs.Call_Bruiser",
-   "Mastermind_Summon.Thugs.Call_Enforcer",
    "Mastermind_Summon.Thugs.Call_Thugs",
    "Mastermind_Summon.Thugs.Gang_War",
    "Mastermind_Summon.Thugs.Pistols",
    "Pool.Fighting.Boxing",
+   "Pool.Fighting.Cross_Punch",
    "Pool.Fighting.Tough",
    "Pool.Fighting.Weave",
    "Pool.Invisibility.Stealth",
@@ -132333,8 +132298,8 @@
    "Pool.Speed.Hasten",
    "Pool.Speed.Super_Speed"
   ],
-  "score": 881.82138,
-  "model_version": 54,
+  "score": 893.20385,
+  "model_version": 56,
   "certificate": {
    "sweeps": 2,
    "converged": false,
@@ -132346,18 +132311,18 @@
    "node_cap": {
     "cap": 50000,
     "capped_solves_floor": 0,
-    "final_resolve_delta": 0.0
+    "final_resolve_delta": -3.55
    },
    "finale_race": {
     "raced_on": "gpu",
     "winner_certified": "cbc_exact"
    },
    "tie_arbitration": {
-    "winner": "lex",
+    "winner": "plain",
     "scores": {
-     "eps": 832.19,
-     "lex": 881.82,
-     "plain": 824.71
+     "eps": 676.01,
+     "lex": 753.8,
+     "plain": 893.2
     }
    },
    "finale_solver": {
@@ -132366,18 +132331,13 @@
     "note": "tie-break arms raced on the GPU diver; winning style re-solved exactly on CBC (race+certify, 2026-08-25)"
    },
    "merge": {
-    "promoted": "20261012_0847",
-    "old_canonical": 756.7692800000001,
-    "model_version": 54,
+    "promoted": "20261013_1252",
+    "old_canonical": 777.5779650000001,
+    "model_version": 56,
     "gate": "roster_merge canonical"
-   },
-   "evaluated": {
-    "against": "model 56, 2026-10-13",
-    "verdict": "moved",
-    "canonical_score": 777.58
    }
   },
-  "canonical_score": 777.58
+  "canonical_score": 787.9065099999999
  },
  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Poison|itrial": {
   "picks": [
