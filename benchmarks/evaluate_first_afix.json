@@ -1,286 +1,5 @@
 {
- "movers": [
-  "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk",
-  "Class_Controller|Controller_Control.Darkness_Control|Controller_Buff.Kinetics|itrial",
-  "Class_Controller|Controller_Control.Earth_Control|Controller_Buff.Kinetics|itrial",
-  "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Kinetics|itrial",
-  "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Traps|itrial",
-  "Class_Controller|Controller_Control.Ice_Control|Controller_Buff.Radiation_Emission|itrial",
-  "Class_Controller|Controller_Control.Illusion_Control|Controller_Buff.Time_Manipulation|itrial",
-  "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Kinetics|itrial",
-  "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Radiation_Emission|itrial",
-  "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Traps|itrial",
-  "Class_Controller|Controller_Control.Pyrotechnic_Control|Controller_Buff.Kinetics|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Cold_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Kinetics|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Light_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Marine_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Nature_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Pain_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Radiation_Emission|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Storm_Summoning|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Time_Manipulation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Trick_Arrow|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Cold_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Dark_Miasma|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Electrical_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Kinetics|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Light_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Nature_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Pain_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Poison|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Radiation_Emission|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Thermal_Radiation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Time_Manipulation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Dark_Miasma|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Electrical_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Kinetics|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Light_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Marine_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Nature_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Pain_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Poison|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Radiation_Emission|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Sonic_Resonance|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Storm_Summoning|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Time_Manipulation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Cold_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Dark_Miasma|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Electrical_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Empathy|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Kinetics|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Marine_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Pain_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Poison|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Radiation_Emission|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Sonic_Resonance|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Storm_Summoning|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Thermal_Radiation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Time_Manipulation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Traps|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Electrical_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Kinetics|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Light_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Marine_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Nature_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Pain_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Poison|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Radiation_Emission|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Sonic_Resonance|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Storm_Summoning|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Thermal_Radiation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Time_Manipulation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Traps|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Trick_Arrow|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Cold_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Electrical_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Kinetics|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Marine_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Nature_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Pain_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Poison|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Radiation_Emission|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Storm_Summoning|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Thermal_Radiation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Time_Manipulation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Traps|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Trick_Arrow|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Cold_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Dark_Miasma|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Force_Field|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Kinetics|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Light_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Marine_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Nature_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Pain_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Poison|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Radiation_Emission|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Storm_Summoning|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Time_Manipulation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Trick_Arrow|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Electrical_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Kinetics|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Marine_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Nature_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Pain_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Poison|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Radiation_Emission|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Storm_Summoning|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Time_Manipulation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Traps|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Trick_Arrow|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Cold_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Dark_Miasma|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Empathy|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Force_Field|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Kinetics|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Light_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Marine_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Nature_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Pain_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Sonic_Resonance|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Time_Manipulation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Empathy|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Kinetics|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Light_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Nature_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Pain_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Radiation_Emission|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Time_Manipulation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Traps|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Cold_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Kinetics|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Marine_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Nature_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Pain_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Radiation_Emission|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Sonic_Resonance|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Thermal_Radiation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Time_Manipulation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Traps|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Cold_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Dark_Miasma|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Electrical_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Empathy|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Kinetics|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Light_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Marine_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Nature_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Pain_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Poison|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Radiation_Emission|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Sonic_Resonance|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Storm_Summoning|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Thermal_Radiation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Time_Manipulation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Traps|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Cold_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Electrical_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Kinetics|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Marine_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Nature_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Pain_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Radiation_Emission|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Sonic_Resonance|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Thermal_Radiation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Time_Manipulation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Traps|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Cold_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Empathy|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Kinetics|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Marine_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Nature_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Pain_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Storm_Summoning|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Time_Manipulation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Trick_Arrow|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Dark_Miasma|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Electrical_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Empathy|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Marine_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Nature_Affinity|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Pain_Domination|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Poison|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Radiation_Emission|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Sonic_Resonance|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Thermal_Radiation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Time_Manipulation|itrial",
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Traps|itrial",
-  "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Dark_Blast|itrial",
-  "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Dual_Pistols|itrial",
-  "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Energy_Blast|itrial",
-  "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Ice_Blast|itrial",
-  "Class_Defender|Defender_Buff.Empathy|Defender_Ranged.Archery|itrial",
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Archery|itrial",
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Assault_Rifle|itrial",
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Beam_Rifle|itrial",
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Dual_Pistols|itrial",
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Electrical_Blast|itrial",
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Energy_Blast|itrial",
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Fire_Blast|itrial",
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Ice_Blast|itrial",
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Psychic_Blast|itrial",
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Radiation_Blast|itrial",
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Seismic_Blast|itrial",
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Sonic_Attack|itrial",
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Storm_Blast|itrial",
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Water_Blast|itrial",
-  "Class_Defender|Defender_Buff.Light_Affinity|Defender_Ranged.Fire_Blast|itrial",
-  "Class_Defender|Defender_Buff.Nature_Affinity|Defender_Ranged.Psychic_Blast|itrial",
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Archery|itrial",
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Assault_Rifle|itrial",
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Beam_Rifle|itrial",
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Dark_Blast|itrial",
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Dual_Pistols|itrial",
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Electrical_Blast|itrial",
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Energy_Blast|itrial",
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Fire_Blast|itrial",
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Ice_Blast|itrial",
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Psychic_Blast|itrial",
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Radiation_Blast|itrial",
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Seismic_Blast|itrial",
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Sonic_Attack|itrial",
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Storm_Blast|itrial",
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Water_Blast|itrial",
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Archery|itrial",
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Assault_Rifle|itrial",
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Beam_Rifle|itrial",
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Dark_Blast|itrial",
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Electrical_Blast|itrial",
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Energy_Blast|itrial",
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Fire_Blast|itrial",
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Psychic_Blast|itrial",
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Seismic_Blast|itrial",
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Storm_Blast|itrial",
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Water_Blast|itrial",
-  "Class_Defender|Defender_Buff.Shock_Therapy|Defender_Ranged.Psychic_Blast|itrial",
-  "Class_Defender|Defender_Buff.Sonic_Debuff|Defender_Ranged.Fire_Blast|itrial",
-  "Class_Defender|Defender_Buff.Sonic_Debuff|Defender_Ranged.Psychic_Blast|itrial",
-  "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Energy_Blast|itrial",
-  "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Seismic_Blast|itrial",
-  "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Sonic_Attack|itrial",
-  "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Storm_Blast|itrial",
-  "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Archery|itrial",
-  "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Psychic_Blast|itrial",
-  "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Sonic_Attack|itrial",
-  "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Storm_Blast|itrial",
-  "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Kinetics|itrial",
-  "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Pain_Domination|itrial",
-  "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Radiation_Emission|itrial",
-  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Kinetics|itrial",
-  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Pain_Domination|itrial",
-  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Time_Manipulation|itrial",
-  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Kinetics|itrial",
-  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Pain_Domination|itrial",
-  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Poison|itrial",
-  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Storm_Summoning|itrial",
-  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Thermal_Radiation|itrial",
-  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Time_Manipulation|itrial",
-  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Trick_Arrow|itrial",
-  "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Kinetics|itrial",
-  "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Pain_Domination|itrial",
-  "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Time_Manipulation|itrial",
-  "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Traps|itrial",
-  "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Cold_Domination|itrial",
-  "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Kinetics|itrial",
-  "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Pain_Domination|itrial",
-  "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Traps|itrial",
-  "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Kinetics|itrial",
-  "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Marine_Affinity|itrial",
-  "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Pain_Domination|itrial",
-  "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Time_Manipulation|itrial",
-  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Kinetics|itrial",
-  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Pain_Domination|itrial",
-  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Time_Manipulation|itrial",
-  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Traps|itrial",
-  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Trick_Arrow|itrial",
-  "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|dwarf",
-  "Class_Scrapper|Scrapper_Melee.Radiation_Melee|Scrapper_Defense.Radiation_Armor|farm_active",
-  "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Super_Strength|itrial",
-  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|dwarf",
-  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|nova",
-  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|triform"
- ],
+ "movers": [],
  "unaffected": [
   "Class_Arachnos_Soldier|Arachnos_Soldiers.Arachnos_Soldier|Training_Gadgets.Bane_Spider_Training|itrial",
   "Class_Arachnos_Soldier|Arachnos_Soldiers.Arachnos_Soldier|Training_Gadgets.Crab_Spider_Training|itrial",
@@ -784,6 +503,7 @@
   "Class_Brute|Brute_Melee.Spines|Brute_Defense.Dark_Armor|itrial",
   "Class_Brute|Brute_Melee.Spines|Brute_Defense.Electric_Armor|itrial",
   "Class_Brute|Brute_Melee.Spines|Brute_Defense.Energy_Aura|itrial",
+  "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk",
   "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|itrial",
   "Class_Brute|Brute_Melee.Spines|Brute_Defense.Ice_Armor|itrial",
   "Class_Brute|Brute_Melee.Spines|Brute_Defense.Invulnerability|itrial",
@@ -894,6 +614,7 @@
   "Class_Controller|Controller_Control.Darkness_Control|Controller_Buff.Electrical_Affinity|itrial",
   "Class_Controller|Controller_Control.Darkness_Control|Controller_Buff.Empathy|itrial",
   "Class_Controller|Controller_Control.Darkness_Control|Controller_Buff.Force_Field|itrial",
+  "Class_Controller|Controller_Control.Darkness_Control|Controller_Buff.Kinetics|itrial",
   "Class_Controller|Controller_Control.Darkness_Control|Controller_Buff.Light_Affinity|itrial",
   "Class_Controller|Controller_Control.Darkness_Control|Controller_Buff.Marine_Affinity|itrial",
   "Class_Controller|Controller_Control.Darkness_Control|Controller_Buff.Nature_Affinity|itrial",
@@ -911,6 +632,7 @@
   "Class_Controller|Controller_Control.Earth_Control|Controller_Buff.Electrical_Affinity|itrial",
   "Class_Controller|Controller_Control.Earth_Control|Controller_Buff.Empathy|itrial",
   "Class_Controller|Controller_Control.Earth_Control|Controller_Buff.Force_Field|itrial",
+  "Class_Controller|Controller_Control.Earth_Control|Controller_Buff.Kinetics|itrial",
   "Class_Controller|Controller_Control.Earth_Control|Controller_Buff.Light_Affinity|itrial",
   "Class_Controller|Controller_Control.Earth_Control|Controller_Buff.Marine_Affinity|itrial",
   "Class_Controller|Controller_Control.Earth_Control|Controller_Buff.Nature_Affinity|itrial",
@@ -928,6 +650,7 @@
   "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Electrical_Affinity|itrial",
   "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Empathy|itrial",
   "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Force_Field|itrial",
+  "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Kinetics|itrial",
   "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Light_Affinity|itrial",
   "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Marine_Affinity|itrial",
   "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Nature_Affinity|itrial",
@@ -938,6 +661,7 @@
   "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Storm_Summoning|itrial",
   "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Thermal_Radiation|itrial",
   "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Time_Manipulation|itrial",
+  "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Traps|itrial",
   "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Trick_Arrow|itrial",
   "Class_Controller|Controller_Control.Fire_Control|Controller_Buff.Cold_Domination|itrial",
   "Class_Controller|Controller_Control.Fire_Control|Controller_Buff.Darkness_Affinity|itrial",
@@ -986,6 +710,7 @@
   "Class_Controller|Controller_Control.Ice_Control|Controller_Buff.Nature_Affinity|itrial",
   "Class_Controller|Controller_Control.Ice_Control|Controller_Buff.Pain_Domination|itrial",
   "Class_Controller|Controller_Control.Ice_Control|Controller_Buff.Poison|itrial",
+  "Class_Controller|Controller_Control.Ice_Control|Controller_Buff.Radiation_Emission|itrial",
   "Class_Controller|Controller_Control.Ice_Control|Controller_Buff.Sonic_Debuff|itrial",
   "Class_Controller|Controller_Control.Ice_Control|Controller_Buff.Storm_Summoning|itrial",
   "Class_Controller|Controller_Control.Ice_Control|Controller_Buff.Thermal_Radiation|itrial",
@@ -1007,6 +732,7 @@
   "Class_Controller|Controller_Control.Illusion_Control|Controller_Buff.Sonic_Debuff|itrial",
   "Class_Controller|Controller_Control.Illusion_Control|Controller_Buff.Storm_Summoning|itrial",
   "Class_Controller|Controller_Control.Illusion_Control|Controller_Buff.Thermal_Radiation|itrial",
+  "Class_Controller|Controller_Control.Illusion_Control|Controller_Buff.Time_Manipulation|itrial",
   "Class_Controller|Controller_Control.Illusion_Control|Controller_Buff.Traps|itrial",
   "Class_Controller|Controller_Control.Illusion_Control|Controller_Buff.Trick_Arrow|itrial",
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Cold_Domination|itrial",
@@ -1014,15 +740,18 @@
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Electrical_Affinity|itrial",
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Empathy|itrial",
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Force_Field|itrial",
+  "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Kinetics|itrial",
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Light_Affinity|itrial",
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Marine_Affinity|itrial",
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Nature_Affinity|itrial",
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Pain_Domination|itrial",
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Poison|itrial",
+  "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Radiation_Emission|itrial",
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Sonic_Debuff|itrial",
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Storm_Summoning|itrial",
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Thermal_Radiation|itrial",
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Time_Manipulation|itrial",
+  "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Traps|itrial",
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Trick_Arrow|itrial",
   "Class_Controller|Controller_Control.Plant_Control|Controller_Buff.Cold_Domination|itrial",
   "Class_Controller|Controller_Control.Plant_Control|Controller_Buff.Darkness_Affinity|itrial",
@@ -1047,6 +776,7 @@
   "Class_Controller|Controller_Control.Pyrotechnic_Control|Controller_Buff.Electrical_Affinity|itrial",
   "Class_Controller|Controller_Control.Pyrotechnic_Control|Controller_Buff.Empathy|itrial",
   "Class_Controller|Controller_Control.Pyrotechnic_Control|Controller_Buff.Force_Field|itrial",
+  "Class_Controller|Controller_Control.Pyrotechnic_Control|Controller_Buff.Kinetics|itrial",
   "Class_Controller|Controller_Control.Pyrotechnic_Control|Controller_Buff.Light_Affinity|itrial",
   "Class_Controller|Controller_Control.Pyrotechnic_Control|Controller_Buff.Marine_Affinity|itrial",
   "Class_Controller|Controller_Control.Pyrotechnic_Control|Controller_Buff.Nature_Affinity|itrial",
@@ -1077,106 +807,285 @@
   "Class_Controller|Controller_Control.Symphony_Control|Controller_Buff.Time_Manipulation|itrial",
   "Class_Controller|Controller_Control.Symphony_Control|Controller_Buff.Traps|itrial",
   "Class_Controller|Controller_Control.Symphony_Control|Controller_Buff.Trick_Arrow|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Cold_Domination|itrial",
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Dark_Miasma|itrial",
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Electrical_Affinity|itrial",
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Empathy|itrial",
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Force_Field|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Kinetics|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Light_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Marine_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Nature_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Pain_Domination|itrial",
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Poison|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Radiation_Emission|itrial",
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Sonic_Resonance|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Storm_Summoning|itrial",
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Thermal_Radiation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Time_Manipulation|itrial",
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Traps|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Trick_Arrow|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Cold_Domination|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Dark_Miasma|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Electrical_Affinity|itrial",
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Empathy|itrial",
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Force_Field|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Kinetics|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Light_Affinity|itrial",
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Marine_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Nature_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Pain_Domination|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Poison|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Radiation_Emission|itrial",
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Sonic_Resonance|itrial",
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Storm_Summoning|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Thermal_Radiation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Time_Manipulation|itrial",
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Traps|itrial",
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Trick_Arrow|itrial",
   "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Cold_Domination|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Dark_Miasma|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Electrical_Affinity|itrial",
   "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Empathy|itrial",
   "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Force_Field|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Kinetics|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Light_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Marine_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Nature_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Pain_Domination|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Poison|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Radiation_Emission|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Sonic_Resonance|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Storm_Summoning|itrial",
   "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Thermal_Radiation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Time_Manipulation|itrial",
   "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Traps|itrial",
   "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Trick_Arrow|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Cold_Domination|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Dark_Miasma|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Electrical_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Empathy|itrial",
   "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Force_Field|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Kinetics|itrial",
   "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Light_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Marine_Affinity|itrial",
   "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Nature_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Pain_Domination|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Poison|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Radiation_Emission|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Sonic_Resonance|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Storm_Summoning|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Thermal_Radiation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Time_Manipulation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Traps|itrial",
   "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Trick_Arrow|itrial",
   "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Cold_Domination|itrial",
   "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Dark_Miasma|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Electrical_Affinity|itrial",
   "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Empathy|itrial",
   "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Force_Field|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Kinetics|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Light_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Marine_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Nature_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Pain_Domination|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Poison|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Radiation_Emission|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Sonic_Resonance|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Storm_Summoning|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Thermal_Radiation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Time_Manipulation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Traps|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Trick_Arrow|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Cold_Domination|itrial",
   "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Dark_Miasma|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Electrical_Affinity|itrial",
   "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Empathy|itrial",
   "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Force_Field|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Kinetics|itrial",
   "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Light_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Marine_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Nature_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Pain_Domination|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Poison|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Radiation_Emission|itrial",
   "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Sonic_Resonance|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Storm_Summoning|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Thermal_Radiation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Time_Manipulation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Traps|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Trick_Arrow|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Cold_Domination|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Dark_Miasma|itrial",
   "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Electrical_Affinity|itrial",
   "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Empathy|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Force_Field|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Kinetics|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Light_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Marine_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Nature_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Pain_Domination|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Poison|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Radiation_Emission|itrial",
   "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Sonic_Resonance|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Storm_Summoning|itrial",
   "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Thermal_Radiation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Time_Manipulation|itrial",
   "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Traps|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Trick_Arrow|itrial",
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Cold_Domination|itrial",
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Dark_Miasma|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Electrical_Affinity|itrial",
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Empathy|itrial",
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Force_Field|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Kinetics|itrial",
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Light_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Marine_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Nature_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Pain_Domination|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Poison|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Radiation_Emission|itrial",
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Sonic_Resonance|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Storm_Summoning|itrial",
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Thermal_Radiation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Time_Manipulation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Traps|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Trick_Arrow|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Cold_Domination|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Dark_Miasma|itrial",
   "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Electrical_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Empathy|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Force_Field|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Kinetics|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Light_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Marine_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Nature_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Pain_Domination|itrial",
   "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Poison|itrial",
   "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Radiation_Emission|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Sonic_Resonance|itrial",
   "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Storm_Summoning|itrial",
   "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Thermal_Radiation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Time_Manipulation|itrial",
   "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Traps|itrial",
   "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Trick_Arrow|itrial",
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Cold_Domination|itrial",
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Dark_Miasma|itrial",
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Electrical_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Empathy|itrial",
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Force_Field|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Kinetics|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Light_Affinity|itrial",
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Marine_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Nature_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Pain_Domination|itrial",
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Poison|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Radiation_Emission|itrial",
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Sonic_Resonance|itrial",
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Storm_Summoning|itrial",
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Thermal_Radiation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Time_Manipulation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Traps|itrial",
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Trick_Arrow|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Cold_Domination|itrial",
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Dark_Miasma|itrial",
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Electrical_Affinity|itrial",
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Empathy|itrial",
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Force_Field|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Kinetics|itrial",
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Light_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Marine_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Nature_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Pain_Domination|itrial",
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Poison|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Radiation_Emission|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Sonic_Resonance|itrial",
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Storm_Summoning|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Thermal_Radiation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Time_Manipulation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Traps|itrial",
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Trick_Arrow|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Cold_Domination|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Dark_Miasma|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Electrical_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Empathy|itrial",
   "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Force_Field|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Kinetics|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Light_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Marine_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Nature_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Pain_Domination|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Poison|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Radiation_Emission|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Sonic_Resonance|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Storm_Summoning|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Thermal_Radiation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Time_Manipulation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Traps|itrial",
   "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Trick_Arrow|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Cold_Domination|itrial",
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Dark_Miasma|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Electrical_Affinity|itrial",
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Empathy|itrial",
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Force_Field|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Kinetics|itrial",
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Light_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Marine_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Nature_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Pain_Domination|itrial",
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Poison|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Radiation_Emission|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Sonic_Resonance|itrial",
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Storm_Summoning|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Thermal_Radiation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Time_Manipulation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Traps|itrial",
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Trick_Arrow|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Cold_Domination|itrial",
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Dark_Miasma|itrial",
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Electrical_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Empathy|itrial",
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Force_Field|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Kinetics|itrial",
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Light_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Marine_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Nature_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Pain_Domination|itrial",
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Poison|itrial",
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Radiation_Emission|itrial",
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Sonic_Resonance|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Storm_Summoning|itrial",
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Thermal_Radiation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Time_Manipulation|itrial",
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Traps|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Trick_Arrow|itrial",
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Cold_Domination|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Dark_Miasma|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Electrical_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Empathy|itrial",
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Force_Field|itrial",
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Kinetics|itrial",
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Light_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Marine_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Nature_Affinity|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Pain_Domination|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Poison|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Radiation_Emission|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Sonic_Resonance|itrial",
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Storm_Summoning|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Thermal_Radiation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Time_Manipulation|itrial",
+  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Traps|itrial",
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Trick_Arrow|itrial",
   "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Archery|itrial",
   "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Assault_Rifle|itrial",
   "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Beam_Rifle|itrial",
+  "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Dark_Blast|itrial",
+  "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Dual_Pistols|itrial",
   "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Electrical_Blast|itrial",
+  "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Energy_Blast|itrial",
   "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Fire_Blast|itrial",
+  "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Ice_Blast|itrial",
   "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Psychic_Blast|itrial",
   "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Radiation_Blast|itrial",
   "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Seismic_Blast|itrial",
@@ -1198,6 +1107,7 @@
   "Class_Defender|Defender_Buff.Dark_Miasma|Defender_Ranged.Sonic_Attack|itrial",
   "Class_Defender|Defender_Buff.Dark_Miasma|Defender_Ranged.Storm_Blast|itrial",
   "Class_Defender|Defender_Buff.Dark_Miasma|Defender_Ranged.Water_Blast|itrial",
+  "Class_Defender|Defender_Buff.Empathy|Defender_Ranged.Archery|itrial",
   "Class_Defender|Defender_Buff.Empathy|Defender_Ranged.Assault_Rifle|itrial",
   "Class_Defender|Defender_Buff.Empathy|Defender_Ranged.Beam_Rifle|itrial",
   "Class_Defender|Defender_Buff.Empathy|Defender_Ranged.Dark_Blast|itrial",
@@ -1227,7 +1137,21 @@
   "Class_Defender|Defender_Buff.Force_Field|Defender_Ranged.Sonic_Attack|itrial",
   "Class_Defender|Defender_Buff.Force_Field|Defender_Ranged.Storm_Blast|itrial",
   "Class_Defender|Defender_Buff.Force_Field|Defender_Ranged.Water_Blast|itrial",
+  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Archery|itrial",
+  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Assault_Rifle|itrial",
+  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Beam_Rifle|itrial",
   "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Dark_Blast|itrial",
+  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Dual_Pistols|itrial",
+  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Electrical_Blast|itrial",
+  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Energy_Blast|itrial",
+  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Fire_Blast|itrial",
+  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Ice_Blast|itrial",
+  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Psychic_Blast|itrial",
+  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Radiation_Blast|itrial",
+  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Seismic_Blast|itrial",
+  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Sonic_Attack|itrial",
+  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Storm_Blast|itrial",
+  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Water_Blast|itrial",
   "Class_Defender|Defender_Buff.Light_Affinity|Defender_Ranged.Archery|itrial",
   "Class_Defender|Defender_Buff.Light_Affinity|Defender_Ranged.Assault_Rifle|itrial",
   "Class_Defender|Defender_Buff.Light_Affinity|Defender_Ranged.Beam_Rifle|itrial",
@@ -1235,6 +1159,7 @@
   "Class_Defender|Defender_Buff.Light_Affinity|Defender_Ranged.Dual_Pistols|itrial",
   "Class_Defender|Defender_Buff.Light_Affinity|Defender_Ranged.Electrical_Blast|itrial",
   "Class_Defender|Defender_Buff.Light_Affinity|Defender_Ranged.Energy_Blast|itrial",
+  "Class_Defender|Defender_Buff.Light_Affinity|Defender_Ranged.Fire_Blast|itrial",
   "Class_Defender|Defender_Buff.Light_Affinity|Defender_Ranged.Ice_Blast|itrial",
   "Class_Defender|Defender_Buff.Light_Affinity|Defender_Ranged.Psychic_Blast|itrial",
   "Class_Defender|Defender_Buff.Light_Affinity|Defender_Ranged.Radiation_Blast|itrial",
@@ -1266,11 +1191,27 @@
   "Class_Defender|Defender_Buff.Nature_Affinity|Defender_Ranged.Energy_Blast|itrial",
   "Class_Defender|Defender_Buff.Nature_Affinity|Defender_Ranged.Fire_Blast|itrial",
   "Class_Defender|Defender_Buff.Nature_Affinity|Defender_Ranged.Ice_Blast|itrial",
+  "Class_Defender|Defender_Buff.Nature_Affinity|Defender_Ranged.Psychic_Blast|itrial",
   "Class_Defender|Defender_Buff.Nature_Affinity|Defender_Ranged.Radiation_Blast|itrial",
   "Class_Defender|Defender_Buff.Nature_Affinity|Defender_Ranged.Seismic_Blast|itrial",
   "Class_Defender|Defender_Buff.Nature_Affinity|Defender_Ranged.Sonic_Attack|itrial",
   "Class_Defender|Defender_Buff.Nature_Affinity|Defender_Ranged.Storm_Blast|itrial",
   "Class_Defender|Defender_Buff.Nature_Affinity|Defender_Ranged.Water_Blast|itrial",
+  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Archery|itrial",
+  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Assault_Rifle|itrial",
+  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Beam_Rifle|itrial",
+  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Dark_Blast|itrial",
+  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Dual_Pistols|itrial",
+  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Electrical_Blast|itrial",
+  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Energy_Blast|itrial",
+  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Fire_Blast|itrial",
+  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Ice_Blast|itrial",
+  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Psychic_Blast|itrial",
+  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Radiation_Blast|itrial",
+  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Seismic_Blast|itrial",
+  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Sonic_Attack|itrial",
+  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Storm_Blast|itrial",
+  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Water_Blast|itrial",
   "Class_Defender|Defender_Buff.Poison|Defender_Ranged.Archery|itrial",
   "Class_Defender|Defender_Buff.Poison|Defender_Ranged.Assault_Rifle|itrial",
   "Class_Defender|Defender_Buff.Poison|Defender_Ranged.Beam_Rifle|itrial",
@@ -1286,10 +1227,21 @@
   "Class_Defender|Defender_Buff.Poison|Defender_Ranged.Sonic_Attack|itrial",
   "Class_Defender|Defender_Buff.Poison|Defender_Ranged.Storm_Blast|itrial",
   "Class_Defender|Defender_Buff.Poison|Defender_Ranged.Water_Blast|itrial",
+  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Archery|itrial",
+  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Assault_Rifle|itrial",
+  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Beam_Rifle|itrial",
+  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Dark_Blast|itrial",
   "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Dual_Pistols|itrial",
+  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Electrical_Blast|itrial",
+  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Energy_Blast|itrial",
+  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Fire_Blast|itrial",
   "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Ice_Blast|itrial",
+  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Psychic_Blast|itrial",
   "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|itrial",
+  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Seismic_Blast|itrial",
   "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Sonic_Attack|itrial",
+  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Storm_Blast|itrial",
+  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Water_Blast|itrial",
   "Class_Defender|Defender_Buff.Shock_Therapy|Defender_Ranged.Archery|itrial",
   "Class_Defender|Defender_Buff.Shock_Therapy|Defender_Ranged.Assault_Rifle|itrial",
   "Class_Defender|Defender_Buff.Shock_Therapy|Defender_Ranged.Beam_Rifle|itrial",
@@ -1299,6 +1251,7 @@
   "Class_Defender|Defender_Buff.Shock_Therapy|Defender_Ranged.Energy_Blast|itrial",
   "Class_Defender|Defender_Buff.Shock_Therapy|Defender_Ranged.Fire_Blast|itrial",
   "Class_Defender|Defender_Buff.Shock_Therapy|Defender_Ranged.Ice_Blast|itrial",
+  "Class_Defender|Defender_Buff.Shock_Therapy|Defender_Ranged.Psychic_Blast|itrial",
   "Class_Defender|Defender_Buff.Shock_Therapy|Defender_Ranged.Radiation_Blast|itrial",
   "Class_Defender|Defender_Buff.Shock_Therapy|Defender_Ranged.Seismic_Blast|itrial",
   "Class_Defender|Defender_Buff.Shock_Therapy|Defender_Ranged.Sonic_Attack|itrial",
@@ -1311,7 +1264,9 @@
   "Class_Defender|Defender_Buff.Sonic_Debuff|Defender_Ranged.Dual_Pistols|itrial",
   "Class_Defender|Defender_Buff.Sonic_Debuff|Defender_Ranged.Electrical_Blast|itrial",
   "Class_Defender|Defender_Buff.Sonic_Debuff|Defender_Ranged.Energy_Blast|itrial",
+  "Class_Defender|Defender_Buff.Sonic_Debuff|Defender_Ranged.Fire_Blast|itrial",
   "Class_Defender|Defender_Buff.Sonic_Debuff|Defender_Ranged.Ice_Blast|itrial",
+  "Class_Defender|Defender_Buff.Sonic_Debuff|Defender_Ranged.Psychic_Blast|itrial",
   "Class_Defender|Defender_Buff.Sonic_Debuff|Defender_Ranged.Radiation_Blast|itrial",
   "Class_Defender|Defender_Buff.Sonic_Debuff|Defender_Ranged.Seismic_Blast|itrial",
   "Class_Defender|Defender_Buff.Sonic_Debuff|Defender_Ranged.Sonic_Attack|itrial",
@@ -1353,11 +1308,16 @@
   "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Dark_Blast|itrial",
   "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Dual_Pistols|itrial",
   "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Electrical_Blast|itrial",
+  "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Energy_Blast|itrial",
   "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Fire_Blast|itrial",
   "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Ice_Blast|itrial",
   "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Psychic_Blast|itrial",
   "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Radiation_Blast|itrial",
+  "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Seismic_Blast|itrial",
+  "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Sonic_Attack|itrial",
+  "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Storm_Blast|itrial",
   "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Water_Blast|itrial",
+  "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Archery|itrial",
   "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Assault_Rifle|itrial",
   "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Beam_Rifle|itrial",
   "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Dark_Blast|itrial",
@@ -1366,8 +1326,11 @@
   "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Energy_Blast|itrial",
   "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Fire_Blast|itrial",
   "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Ice_Blast|itrial",
+  "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Psychic_Blast|itrial",
   "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Radiation_Blast|itrial",
   "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Seismic_Blast|itrial",
+  "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Sonic_Attack|itrial",
+  "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Storm_Blast|itrial",
   "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Water_Blast|itrial",
   "Class_Defender|Defender_Buff.Trick_Arrow|Defender_Ranged.Archery|itrial",
   "Class_Defender|Defender_Buff.Trick_Arrow|Defender_Ranged.Assault_Rifle|itrial",
@@ -1545,10 +1508,13 @@
   "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Electrical_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Empathy|itrial",
   "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Force_Field|itrial",
+  "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Kinetics|itrial",
   "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Light_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Marine_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Nature_Affinity|itrial",
+  "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Pain_Domination|itrial",
   "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Poison|itrial",
+  "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Radiation_Emission|itrial",
   "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Sonic_Resonance|itrial",
   "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Storm_Summoning|itrial",
   "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Thermal_Radiation|itrial",
@@ -1560,14 +1526,17 @@
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Electrical_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Empathy|itrial",
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Force_Field|itrial",
+  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Kinetics|itrial",
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Light_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Marine_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Nature_Affinity|itrial",
+  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Pain_Domination|itrial",
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Poison|itrial",
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Radiation_Emission|itrial",
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Sonic_Resonance|itrial",
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Storm_Summoning|itrial",
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Thermal_Radiation|itrial",
+  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Time_Manipulation|itrial",
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Traps|itrial",
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Trick_Arrow|itrial",
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Cold_Domination|itrial",
@@ -1575,52 +1544,71 @@
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Electrical_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Empathy|itrial",
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Force_Field|itrial",
+  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Kinetics|itrial",
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Light_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Marine_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Nature_Affinity|itrial",
+  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Pain_Domination|itrial",
+  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Poison|itrial",
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Radiation_Emission|itrial",
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Sonic_Resonance|itrial",
+  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Storm_Summoning|itrial",
+  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Thermal_Radiation|itrial",
+  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Time_Manipulation|itrial",
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Traps|itrial",
+  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Trick_Arrow|itrial",
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Cold_Domination|itrial",
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Dark_Miasma|itrial",
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Electrical_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Empathy|itrial",
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Force_Field|itrial",
+  "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Kinetics|itrial",
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Light_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Marine_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Nature_Affinity|itrial",
+  "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Pain_Domination|itrial",
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Poison|itrial",
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Radiation_Emission|itrial",
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Sonic_Resonance|itrial",
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Storm_Summoning|itrial",
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Thermal_Radiation|itrial",
+  "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Time_Manipulation|itrial",
+  "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Traps|itrial",
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Trick_Arrow|itrial",
+  "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Cold_Domination|itrial",
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Dark_Miasma|itrial",
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Electrical_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Empathy|itrial",
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Force_Field|itrial",
+  "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Kinetics|itrial",
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Light_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Marine_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Nature_Affinity|itrial",
+  "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Pain_Domination|itrial",
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Poison|itrial",
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Radiation_Emission|itrial",
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Sonic_Resonance|itrial",
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Storm_Summoning|itrial",
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Thermal_Radiation|itrial",
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Time_Manipulation|itrial",
+  "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Traps|itrial",
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Trick_Arrow|itrial",
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Cold_Domination|itrial",
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Dark_Miasma|itrial",
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Electrical_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Empathy|itrial",
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Force_Field|itrial",
+  "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Kinetics|itrial",
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Light_Affinity|itrial",
+  "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Marine_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Nature_Affinity|itrial",
+  "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Pain_Domination|itrial",
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Poison|itrial",
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Radiation_Emission|itrial",
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Sonic_Resonance|itrial",
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Storm_Summoning|itrial",
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Thermal_Radiation|itrial",
+  "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Time_Manipulation|itrial",
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Traps|itrial",
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Trick_Arrow|itrial",
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Cold_Domination|itrial",
@@ -1628,15 +1616,21 @@
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Electrical_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Empathy|itrial",
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Force_Field|itrial",
+  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Kinetics|itrial",
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Light_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Marine_Affinity|itrial",
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Nature_Affinity|itrial",
+  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Pain_Domination|itrial",
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Poison|itrial",
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Radiation_Emission|itrial",
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Sonic_Resonance|itrial",
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Storm_Summoning|itrial",
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Thermal_Radiation|itrial",
+  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Time_Manipulation|itrial",
+  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Traps|itrial",
+  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Trick_Arrow|itrial",
   "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial",
+  "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|dwarf",
   "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|nova",
   "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|triform",
   "Class_Scrapper|Scrapper_Melee.Battle_Axe|Scrapper_Defense.Bio_Organic_Armor|itrial",
@@ -1888,6 +1882,7 @@
   "Class_Scrapper|Scrapper_Melee.Radiation_Melee|Scrapper_Defense.Invulnerability|itrial",
   "Class_Scrapper|Scrapper_Melee.Radiation_Melee|Scrapper_Defense.Ninjitsu|itrial",
   "Class_Scrapper|Scrapper_Melee.Radiation_Melee|Scrapper_Defense.Psionic_Armor|itrial",
+  "Class_Scrapper|Scrapper_Melee.Radiation_Melee|Scrapper_Defense.Radiation_Armor|farm_active",
   "Class_Scrapper|Scrapper_Melee.Radiation_Melee|Scrapper_Defense.Radiation_Armor|itrial",
   "Class_Scrapper|Scrapper_Melee.Radiation_Melee|Scrapper_Defense.Regeneration|itrial",
   "Class_Scrapper|Scrapper_Melee.Radiation_Melee|Scrapper_Defense.Shield_Defense|itrial",
@@ -2680,6 +2675,7 @@
   "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Spines|itrial",
   "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Staff_Fighting|itrial",
   "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Stone_Melee|itrial",
+  "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Super_Strength|itrial",
   "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Titan_Weapons|itrial",
   "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.War_Mace|itrial",
   "Class_Tanker|Tanker_Defense.Psionic_Armor|Tanker_Melee.Battle_Axe|itrial",
@@ -2866,7 +2862,10 @@
   "Class_Tanker|Tanker_Defense.Willpower|Tanker_Melee.Super_Strength|itrial",
   "Class_Tanker|Tanker_Defense.Willpower|Tanker_Melee.Titan_Weapons|itrial",
   "Class_Tanker|Tanker_Defense.Willpower|Tanker_Melee.War_Mace|itrial",
-  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial"
+  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial",
+  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|dwarf",
+  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|nova",
+  "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|triform"
  ],
  "failed": [],
  "needs_update": {
@@ -4377,8 +4376,7 @@
    "stamp v50"
   ],
   "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|farm_afk": [
-   "stamp v49",
-   "moved +19.8"
+   "stamp v49"
   ],
   "Class_Brute|Brute_Melee.Spines|Brute_Defense.Fiery_Aura|itrial": [
    "stamp v53"
@@ -4707,9 +4705,6 @@
   "Class_Controller|Controller_Control.Darkness_Control|Controller_Buff.Force_Field|itrial": [
    "stamp v53"
   ],
-  "Class_Controller|Controller_Control.Darkness_Control|Controller_Buff.Kinetics|itrial": [
-   "moved -0.2"
-  ],
   "Class_Controller|Controller_Control.Darkness_Control|Controller_Buff.Light_Affinity|itrial": [
    "stamp v50"
   ],
@@ -4757,9 +4752,6 @@
   ],
   "Class_Controller|Controller_Control.Earth_Control|Controller_Buff.Force_Field|itrial": [
    "stamp v53"
-  ],
-  "Class_Controller|Controller_Control.Earth_Control|Controller_Buff.Kinetics|itrial": [
-   "moved -0.2"
   ],
   "Class_Controller|Controller_Control.Earth_Control|Controller_Buff.Light_Affinity|itrial": [
    "stamp v53"
@@ -4812,9 +4804,6 @@
   "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Force_Field|itrial": [
    "stamp v49"
   ],
-  "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Kinetics|itrial": [
-   "moved -0.2"
-  ],
   "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Light_Affinity|itrial": [
    "stamp v53"
   ],
@@ -4843,8 +4832,7 @@
    "stamp v53"
   ],
   "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Traps|itrial": [
-   "stamp v53",
-   "moved +105.0"
+   "stamp v53"
   ],
   "Class_Controller|Controller_Control.Electric_Control|Controller_Buff.Trick_Arrow|itrial": [
    "stamp v53"
@@ -4984,9 +4972,6 @@
   "Class_Controller|Controller_Control.Ice_Control|Controller_Buff.Poison|itrial": [
    "stamp v53"
   ],
-  "Class_Controller|Controller_Control.Ice_Control|Controller_Buff.Radiation_Emission|itrial": [
-   "moved -0.1"
-  ],
   "Class_Controller|Controller_Control.Ice_Control|Controller_Buff.Sonic_Debuff|itrial": [
    "stamp v50"
   ],
@@ -5048,8 +5033,7 @@
    "stamp v53"
   ],
   "Class_Controller|Controller_Control.Illusion_Control|Controller_Buff.Time_Manipulation|itrial": [
-   "stamp v53",
-   "moved -0.2"
+   "stamp v53"
   ],
   "Class_Controller|Controller_Control.Illusion_Control|Controller_Buff.Traps|itrial": [
    "stamp v54"
@@ -5072,9 +5056,6 @@
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Force_Field|itrial": [
    "stamp v53"
   ],
-  "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Kinetics|itrial": [
-   "moved -0.2"
-  ],
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Light_Affinity|itrial": [
    "stamp v53"
   ],
@@ -5090,9 +5071,6 @@
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Poison|itrial": [
    "stamp v53"
   ],
-  "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Radiation_Emission|itrial": [
-   "moved -0.1"
-  ],
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Sonic_Debuff|itrial": [
    "stamp v50"
   ],
@@ -5103,8 +5081,7 @@
    "stamp v53"
   ],
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Traps|itrial": [
-   "stamp v50",
-   "moved +172.0"
+   "stamp v50"
   ],
   "Class_Controller|Controller_Control.Mind_Control|Controller_Buff.Trick_Arrow|itrial": [
    "stamp v53"
@@ -5174,9 +5151,6 @@
   ],
   "Class_Controller|Controller_Control.Pyrotechnic_Control|Controller_Buff.Force_Field|itrial": [
    "stamp v53"
-  ],
-  "Class_Controller|Controller_Control.Pyrotechnic_Control|Controller_Buff.Kinetics|itrial": [
-   "moved -0.2"
   ],
   "Class_Controller|Controller_Control.Pyrotechnic_Control|Controller_Buff.Light_Affinity|itrial": [
    "stamp v53"
@@ -5262,67 +5236,44 @@
   "Class_Controller|Controller_Control.Symphony_Control|Controller_Buff.Trick_Arrow|itrial": [
    "stamp v53"
   ],
-  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Cold_Domination|itrial": [
-   "moved -0.1"
-  ],
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Empathy|itrial": [
    "stamp v49"
   ],
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Force_Field|itrial": [
    "stamp v53"
   ],
-  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Kinetics|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Light_Affinity|itrial": [
-   "moved -0.1"
-  ],
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Marine_Affinity|itrial": [
-   "stamp v53",
-   "moved -1.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Nature_Affinity|itrial": [
-   "moved -0.1"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Pain_Domination|itrial": [
-   "stamp v50",
-   "moved +45.9"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Poison|itrial": [
    "stamp v50"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Radiation_Emission|itrial": [
-   "moved -0.2"
   ],
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Sonic_Resonance|itrial": [
    "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Storm_Summoning|itrial": [
-   "stamp v53",
-   "moved -1.7"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Time_Manipulation|itrial": [
-   "stamp v50",
-   "moved +123.4"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Traps|itrial": [
    "stamp v54"
   ],
   "Class_Corruptor|Corruptor_Ranged.Archery|Corruptor_Buff.Trick_Arrow|itrial": [
-   "stamp v53",
-   "moved -1.6"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Cold_Domination|itrial": [
-   "stamp v53",
-   "moved -1.3"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Dark_Miasma|itrial": [
-   "stamp v50",
-   "moved +50.3"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Electrical_Affinity|itrial": [
-   "stamp v53",
-   "moved -1.0"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Empathy|itrial": [
    "stamp v53"
@@ -5330,84 +5281,44 @@
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Force_Field|itrial": [
    "stamp v53"
   ],
-  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Kinetics|itrial": [
-   "moved -0.1"
-  ],
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Light_Affinity|itrial": [
-   "stamp v53",
-   "moved -1.6"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Nature_Affinity|itrial": [
-   "stamp v53",
-   "moved -2.0"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Pain_Domination|itrial": [
-   "moved -0.2"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Poison|itrial": [
-   "stamp v53",
-   "moved -1.6"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Radiation_Emission|itrial": [
-   "moved -0.2"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Sonic_Resonance|itrial": [
    "stamp v51"
   ],
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Thermal_Radiation|itrial": [
-   "stamp v50",
-   "moved +39.3"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Time_Manipulation|itrial": [
-   "stamp v53",
-   "moved -2.3"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Assault_Rifle|Corruptor_Buff.Traps|itrial": [
    "stamp v54"
   ],
   "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Dark_Miasma|itrial": [
-   "stamp v50",
-   "moved +84.8"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Electrical_Affinity|itrial": [
-   "stamp v50",
-   "moved +37.3"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Force_Field|itrial": [
    "stamp v53"
   ],
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Kinetics|itrial": [
-   "moved -0.1"
-  ],
   "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Light_Affinity|itrial": [
-   "stamp v53",
-   "moved -1.8"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Marine_Affinity|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Nature_Affinity|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Pain_Domination|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Poison|itrial": [
-   "moved -0.1"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Radiation_Emission|itrial": [
-   "stamp v50",
-   "moved +135.3"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Sonic_Resonance|itrial": [
-   "stamp v53",
-   "moved -0.9"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Storm_Summoning|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Time_Manipulation|itrial": [
-   "moved -0.1"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Beam_Rifle|Corruptor_Buff.Traps|itrial": [
    "stamp v54"
@@ -5416,59 +5327,31 @@
    "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Cold_Domination|itrial": [
-   "stamp v50",
-   "moved +106.0"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Dark_Miasma|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Electrical_Affinity|itrial": [
-   "moved -0.1"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Empathy|itrial": [
-   "stamp v51",
-   "moved +133.9"
+   "stamp v51"
   ],
   "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Force_Field|itrial": [
    "stamp v53"
   ],
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Kinetics|itrial": [
-   "moved -0.4"
-  ],
   "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Marine_Affinity|itrial": [
-   "stamp v53",
-   "moved -1.9"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Nature_Affinity|itrial": [
    "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Pain_Domination|itrial": [
-   "stamp v53",
-   "moved -13.6"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Poison|itrial": [
-   "stamp v53",
-   "moved -1.8"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Radiation_Emission|itrial": [
-   "moved -0.2"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Sonic_Resonance|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Storm_Summoning|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Thermal_Radiation|itrial": [
-   "moved -0.1"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Time_Manipulation|itrial": [
-   "stamp v53",
-   "moved -2.7"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Traps|itrial": [
-   "stamp v53",
-   "moved +0.5"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Dark_Blast|Corruptor_Buff.Trick_Arrow|itrial": [
    "stamp v53"
@@ -5476,64 +5359,32 @@
   "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Dark_Miasma|itrial": [
    "stamp v50"
   ],
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Electrical_Affinity|itrial": [
-   "moved -0.1"
-  ],
   "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Force_Field|itrial": [
    "stamp v51"
   ],
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Kinetics|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Light_Affinity|itrial": [
-   "moved -0.1"
-  ],
   "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Marine_Affinity|itrial": [
-   "stamp v53",
-   "moved -1.0"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Nature_Affinity|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Pain_Domination|itrial": [
-   "moved -0.2"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Poison|itrial": [
-   "stamp v50",
-   "moved +74.7"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Radiation_Emission|itrial": [
-   "moved -0.2"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Sonic_Resonance|itrial": [
-   "stamp v53",
-   "moved -0.9"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Storm_Summoning|itrial": [
-   "moved -0.1"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Thermal_Radiation|itrial": [
-   "stamp v50",
-   "moved +44.4"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Time_Manipulation|itrial": [
-   "moved -0.1"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Traps|itrial": [
-   "stamp v53",
-   "moved +74.0"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Dual_Pistols|Corruptor_Buff.Trick_Arrow|itrial": [
-   "stamp v53",
-   "moved -1.6"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Cold_Domination|itrial": [
-   "stamp v53",
-   "moved -1.4"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Electrical_Affinity|itrial": [
-   "stamp v53",
-   "moved -1.0"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Empathy|itrial": [
    "stamp v49"
@@ -5542,107 +5393,58 @@
    "stamp v51"
   ],
   "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Kinetics|itrial": [
-   "stamp v53",
-   "moved -4.1"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Marine_Affinity|itrial": [
-   "stamp v53",
-   "moved -1.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Nature_Affinity|itrial": [
-   "moved -0.1"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Pain_Domination|itrial": [
-   "stamp v50",
-   "moved +48.0"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Poison|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Radiation_Emission|itrial": [
-   "moved -0.2"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Sonic_Resonance|itrial": [
    "stamp v51"
   ],
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Storm_Summoning|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Thermal_Radiation|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Time_Manipulation|itrial": [
-   "moved -0.1"
-  ],
   "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Traps|itrial": [
-   "stamp v51",
-   "moved +84.7"
+   "stamp v51"
   ],
   "Class_Corruptor|Corruptor_Ranged.Electrical_Blast|Corruptor_Buff.Trick_Arrow|itrial": [
-   "stamp v53",
-   "moved -0.4"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Cold_Domination|itrial": [
-   "stamp v53",
-   "moved -1.3"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Dark_Miasma|itrial": [
-   "moved -0.1"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Empathy|itrial": [
    "stamp v49"
   ],
   "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Force_Field|itrial": [
-   "stamp v50",
-   "moved +0.5"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Kinetics|itrial": [
-   "moved -0.1"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Light_Affinity|itrial": [
-   "stamp v53",
-   "moved -2.0"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Marine_Affinity|itrial": [
-   "stamp v53",
-   "moved -1.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Nature_Affinity|itrial": [
-   "moved -0.1"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Pain_Domination|itrial": [
-   "stamp v50",
-   "moved +47.6"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Poison|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Radiation_Emission|itrial": [
-   "moved -0.2"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Sonic_Resonance|itrial": [
    "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Storm_Summoning|itrial": [
-   "stamp v53",
-   "moved -1.8"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Time_Manipulation|itrial": [
-   "stamp v50",
-   "moved +131.1"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Traps|itrial": [
    "stamp v54"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Energy_Blast|Corruptor_Buff.Trick_Arrow|itrial": [
-   "moved -0.1"
   ],
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Dark_Miasma|itrial": [
    "stamp v49"
   ],
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Electrical_Affinity|itrial": [
-   "stamp v53",
-   "moved -0.5"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Empathy|itrial": [
    "stamp v50"
@@ -5651,89 +5453,46 @@
    "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Kinetics|itrial": [
-   "stamp v53",
-   "moved -4.0"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Marine_Affinity|itrial": [
-   "stamp v53",
-   "moved -1.0"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Nature_Affinity|itrial": [
-   "stamp v50",
-   "moved +44.3"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Pain_Domination|itrial": [
-   "moved -0.2"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Poison|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Radiation_Emission|itrial": [
-   "moved -0.1"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Sonic_Resonance|itrial": [
    "stamp v51"
   ],
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Storm_Summoning|itrial": [
-   "stamp v53",
-   "moved -0.9"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Thermal_Radiation|itrial": [
    "stamp v53"
   ],
-  "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Time_Manipulation|itrial": [
-   "moved -0.1"
-  ],
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Traps|itrial": [
-   "stamp v53",
-   "moved +41.9"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Fire_Blast|Corruptor_Buff.Trick_Arrow|itrial": [
-   "stamp v53",
-   "moved -0.2"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Cold_Domination|itrial": [
-   "stamp v50",
-   "moved +41.4"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Dark_Miasma|itrial": [
-   "stamp v53",
-   "moved -0.7"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Empathy|itrial": [
-   "stamp v51",
-   "moved +21.7"
+   "stamp v51"
   ],
   "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Force_Field|itrial": [
-   "stamp v50",
-   "moved +0.5"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Kinetics|itrial": [
-   "moved -0.2"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Light_Affinity|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Marine_Affinity|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Nature_Affinity|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Pain_Domination|itrial": [
-   "moved -0.3"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Poison|itrial": [
    "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Radiation_Emission|itrial": [
    "stamp v53"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Sonic_Resonance|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Time_Manipulation|itrial": [
-   "moved -0.1"
   ],
   "Class_Corruptor|Corruptor_Ranged.Ice_Blast|Corruptor_Buff.Traps|itrial": [
    "stamp v54"
@@ -5742,30 +5501,16 @@
    "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Empathy|itrial": [
-   "stamp v50",
-   "moved +36.2"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Force_Field|itrial": [
    "stamp v53"
   ],
-  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Kinetics|itrial": [
-   "moved -0.1"
-  ],
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Light_Affinity|itrial": [
-   "stamp v51",
-   "moved +60.2"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Nature_Affinity|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Pain_Domination|itrial": [
-   "moved -0.2"
+   "stamp v51"
   ],
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Poison|itrial": [
    "stamp v53"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Radiation_Emission|itrial": [
-   "moved -0.2"
   ],
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Sonic_Resonance|itrial": [
    "stamp v51"
@@ -5773,18 +5518,8 @@
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Storm_Summoning|itrial": [
    "stamp v53"
   ],
-  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Time_Manipulation|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Traps|itrial": [
-   "stamp v54",
-   "moved -0.1"
-  ],
   "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Trick_Arrow|itrial": [
    "stamp v53"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Cold_Domination|itrial": [
-   "moved -0.1"
   ],
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Empathy|itrial": [
    "stamp v49"
@@ -5792,113 +5527,56 @@
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Force_Field|itrial": [
    "stamp v53"
   ],
-  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Kinetics|itrial": [
-   "moved -0.1"
-  ],
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Light_Affinity|itrial": [
    "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Marine_Affinity|itrial": [
-   "stamp v53",
-   "moved -1.0"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Nature_Affinity|itrial": [
-   "stamp v53",
-   "moved -1.6"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Pain_Domination|itrial": [
-   "moved -0.2"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Poison|itrial": [
    "stamp v49"
   ],
-  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Radiation_Emission|itrial": [
-   "moved -0.1"
-  ],
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Sonic_Resonance|itrial": [
-   "stamp v51",
-   "moved +43.8"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Thermal_Radiation|itrial": [
-   "moved -0.1"
+   "stamp v51"
   ],
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Time_Manipulation|itrial": [
-   "stamp v53",
-   "moved -2.0"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Traps|itrial": [
-   "stamp v53",
-   "moved +60.1"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Radiation_Blast|Corruptor_Buff.Trick_Arrow|itrial": [
    "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Cold_Domination|itrial": [
-   "stamp v50",
-   "moved +25.2"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Dark_Miasma|itrial": [
-   "stamp v53",
-   "moved -1.6"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Electrical_Affinity|itrial": [
-   "moved -0.1"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Empathy|itrial": [
-   "stamp v53",
-   "moved -0.8"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Force_Field|itrial": [
    "stamp v53"
   ],
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Kinetics|itrial": [
-   "moved -0.1"
-  ],
   "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Light_Affinity|itrial": [
-   "stamp v51",
-   "moved +27.0"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Marine_Affinity|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Nature_Affinity|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Pain_Domination|itrial": [
-   "moved -0.2"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Poison|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Radiation_Emission|itrial": [
-   "moved -0.1"
+   "stamp v51"
   ],
   "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Sonic_Resonance|itrial": [
-   "stamp v53",
-   "moved -0.2"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Storm_Summoning|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Thermal_Radiation|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Time_Manipulation|itrial": [
-   "moved -0.1"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Seismic_Blast|Corruptor_Buff.Traps|itrial": [
-   "stamp v50",
-   "moved +98.3"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Cold_Domination|itrial": [
-   "stamp v50",
-   "moved +25.3"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Dark_Miasma|itrial": [
    "stamp v53"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Electrical_Affinity|itrial": [
-   "moved -0.1"
   ],
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Empathy|itrial": [
    "stamp v53"
@@ -5906,69 +5584,44 @@
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Force_Field|itrial": [
    "stamp v53"
   ],
-  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Kinetics|itrial": [
-   "moved -0.1"
-  ],
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Marine_Affinity|itrial": [
-   "stamp v53",
-   "moved -0.2"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Nature_Affinity|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Pain_Domination|itrial": [
-   "moved -0.2"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Radiation_Emission|itrial": [
-   "moved -0.1"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Sonic_Resonance|itrial": [
-   "stamp v53",
-   "moved -0.8"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Thermal_Radiation|itrial": [
-   "stamp v50",
-   "moved +5.9"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Time_Manipulation|itrial": [
-   "stamp v53",
-   "moved -0.2"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Traps|itrial": [
-   "stamp v53",
-   "moved +52.9"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Sonic_Attack|Corruptor_Buff.Trick_Arrow|itrial": [
    "stamp v53"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Cold_Domination|itrial": [
-   "moved -0.1"
   ],
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Dark_Miasma|itrial": [
    "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Empathy|itrial": [
-   "stamp v50",
-   "moved +23.5"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Force_Field|itrial": [
    "stamp v51"
   ],
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Kinetics|itrial": [
-   "stamp v50",
-   "moved +111.2"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Marine_Affinity|itrial": [
-   "stamp v50",
-   "moved +22.6"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Nature_Affinity|itrial": [
-   "stamp v53",
-   "moved -1.9"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Pain_Domination|itrial": [
-   "stamp v53",
-   "moved -10.6"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Poison|itrial": [
    "stamp v53"
@@ -5977,68 +5630,43 @@
    "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Storm_Summoning|itrial": [
-   "stamp v50",
-   "moved +34.1"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Thermal_Radiation|itrial": [
    "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Time_Manipulation|itrial": [
-   "stamp v53",
-   "moved -0.2"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Traps|itrial": [
    "stamp v54"
   ],
   "Class_Corruptor|Corruptor_Ranged.Storm_Blast|Corruptor_Buff.Trick_Arrow|itrial": [
-   "stamp v53",
-   "moved -0.6"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Dark_Miasma|itrial": [
-   "stamp v50",
-   "moved +59.6"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Electrical_Affinity|itrial": [
-   "stamp v53",
-   "moved -0.9"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Empathy|itrial": [
-   "stamp v53",
-   "moved -0.9"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Force_Field|itrial": [
    "stamp v51"
   ],
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Marine_Affinity|itrial": [
-   "stamp v53",
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Nature_Affinity|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Pain_Domination|itrial": [
-   "moved -0.2"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Poison|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Radiation_Emission|itrial": [
-   "moved -0.2"
-  ],
-  "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Sonic_Resonance|itrial": [
-   "moved -0.1"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Thermal_Radiation|itrial": [
-   "stamp v53",
-   "moved -1.0"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Time_Manipulation|itrial": [
-   "stamp v53",
-   "moved -1.3"
+   "stamp v53"
   ],
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Traps|itrial": [
-   "stamp v50",
-   "moved +100.0"
+   "stamp v50"
   ],
   "Class_Corruptor|Corruptor_Ranged.Water_Blast|Corruptor_Buff.Trick_Arrow|itrial": [
    "stamp v53"
@@ -6047,20 +5675,16 @@
    "stamp v53"
   ],
   "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Dark_Blast|itrial": [
-   "stamp v53",
-   "moved -0.2"
+   "stamp v53"
   ],
   "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Dual_Pistols|itrial": [
-   "stamp v50",
-   "moved +9.5"
+   "stamp v50"
   ],
   "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Energy_Blast|itrial": [
-   "stamp v53",
-   "moved -0.2"
+   "stamp v53"
   ],
   "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Ice_Blast|itrial": [
-   "stamp v50",
-   "moved +5.7"
+   "stamp v50"
   ],
   "Class_Defender|Defender_Buff.Cold_Domination|Defender_Ranged.Water_Blast|itrial": [
    "stamp v49"
@@ -6111,8 +5735,7 @@
    "stamp v53"
   ],
   "Class_Defender|Defender_Buff.Empathy|Defender_Ranged.Archery|itrial": [
-   "stamp v50",
-   "moved +55.9"
+   "stamp v50"
   ],
   "Class_Defender|Defender_Buff.Empathy|Defender_Ranged.Assault_Rifle|itrial": [
    "stamp v53"
@@ -6201,53 +5824,17 @@
   "Class_Defender|Defender_Buff.Force_Field|Defender_Ranged.Water_Blast|itrial": [
    "stamp v53"
   ],
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Archery|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Assault_Rifle|itrial": [
-   "moved -0.2"
-  ],
   "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Beam_Rifle|itrial": [
-   "stamp v50",
-   "moved +31.4"
+   "stamp v50"
   ],
   "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Dark_Blast|itrial": [
    "stamp v49"
   ],
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Dual_Pistols|itrial": [
-   "moved -0.2"
-  ],
   "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Electrical_Blast|itrial": [
-   "stamp v50",
-   "moved +33.2"
+   "stamp v50"
   ],
   "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Energy_Blast|itrial": [
-   "stamp v53",
-   "moved -4.4"
-  ],
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Fire_Blast|itrial": [
-   "moved -0.2"
-  ],
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Ice_Blast|itrial": [
-   "moved -0.3"
-  ],
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Psychic_Blast|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Radiation_Blast|itrial": [
-   "moved -0.2"
-  ],
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Seismic_Blast|itrial": [
-   "moved -0.2"
-  ],
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Sonic_Attack|itrial": [
-   "moved -0.2"
-  ],
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Storm_Blast|itrial": [
-   "moved -0.3"
-  ],
-  "Class_Defender|Defender_Buff.Kinetics|Defender_Ranged.Water_Blast|itrial": [
-   "moved -0.2"
+   "stamp v53"
   ],
   "Class_Defender|Defender_Buff.Light_Affinity|Defender_Ranged.Archery|itrial": [
    "stamp v53"
@@ -6271,8 +5858,7 @@
    "stamp v53"
   ],
   "Class_Defender|Defender_Buff.Light_Affinity|Defender_Ranged.Fire_Blast|itrial": [
-   "stamp v51",
-   "moved +101.6"
+   "stamp v51"
   ],
   "Class_Defender|Defender_Buff.Light_Affinity|Defender_Ranged.Ice_Blast|itrial": [
    "stamp v53"
@@ -6368,8 +5954,7 @@
    "stamp v53"
   ],
   "Class_Defender|Defender_Buff.Nature_Affinity|Defender_Ranged.Psychic_Blast|itrial": [
-   "stamp v50",
-   "moved +109.3"
+   "stamp v50"
   ],
   "Class_Defender|Defender_Buff.Nature_Affinity|Defender_Ranged.Radiation_Blast|itrial": [
    "stamp v53"
@@ -6387,51 +5972,10 @@
    "stamp v53"
   ],
   "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Archery|itrial": [
-   "stamp v53",
-   "moved -7.5"
-  ],
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Assault_Rifle|itrial": [
-   "moved -0.3"
-  ],
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Beam_Rifle|itrial": [
-   "moved -0.3"
-  ],
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Dark_Blast|itrial": [
-   "moved -0.6"
-  ],
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Dual_Pistols|itrial": [
-   "moved -0.3"
-  ],
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Electrical_Blast|itrial": [
-   "moved -0.3"
-  ],
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Energy_Blast|itrial": [
-   "moved -0.3"
+   "stamp v53"
   ],
   "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Fire_Blast|itrial": [
-   "stamp v53",
-   "moved -10.0"
-  ],
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Ice_Blast|itrial": [
-   "moved -0.4"
-  ],
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Psychic_Blast|itrial": [
-   "moved -0.3"
-  ],
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Radiation_Blast|itrial": [
-   "moved -0.4"
-  ],
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Seismic_Blast|itrial": [
-   "moved -0.3"
-  ],
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Sonic_Attack|itrial": [
-   "moved -0.3"
-  ],
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Storm_Blast|itrial": [
-   "moved -0.5"
-  ],
-  "Class_Defender|Defender_Buff.Pain_Domination|Defender_Ranged.Water_Blast|itrial": [
-   "moved -0.4"
+   "stamp v53"
   ],
   "Class_Defender|Defender_Buff.Poison|Defender_Ranged.Archery|itrial": [
    "stamp v53"
@@ -6478,48 +6022,17 @@
   "Class_Defender|Defender_Buff.Poison|Defender_Ranged.Water_Blast|itrial": [
    "stamp v53"
   ],
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Archery|itrial": [
-   "moved -0.2"
-  ],
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Assault_Rifle|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Beam_Rifle|itrial": [
-   "moved -0.1"
-  ],
   "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Dark_Blast|itrial": [
-   "stamp v53",
-   "moved -3.5"
-  ],
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Electrical_Blast|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Energy_Blast|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Fire_Blast|itrial": [
-   "moved -0.1"
+   "stamp v53"
   ],
   "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Ice_Blast|itrial": [
    "stamp v53"
   ],
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Psychic_Blast|itrial": [
-   "moved -0.1"
-  ],
   "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Radiation_Blast|itrial": [
    "stamp v50"
   ],
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Seismic_Blast|itrial": [
-   "moved -0.1"
-  ],
   "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Sonic_Attack|itrial": [
    "stamp v53"
-  ],
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Storm_Blast|itrial": [
-   "moved -0.1"
-  ],
-  "Class_Defender|Defender_Buff.Radiation_Emission|Defender_Ranged.Water_Blast|itrial": [
-   "moved -0.2"
   ],
   "Class_Defender|Defender_Buff.Shock_Therapy|Defender_Ranged.Archery|itrial": [
    "stamp v53"
@@ -6549,8 +6062,7 @@
    "stamp v53"
   ],
   "Class_Defender|Defender_Buff.Shock_Therapy|Defender_Ranged.Psychic_Blast|itrial": [
-   "stamp v50",
-   "moved +38.0"
+   "stamp v50"
   ],
   "Class_Defender|Defender_Buff.Shock_Therapy|Defender_Ranged.Radiation_Blast|itrial": [
    "stamp v53"
@@ -6589,15 +6101,13 @@
    "stamp v53"
   ],
   "Class_Defender|Defender_Buff.Sonic_Debuff|Defender_Ranged.Fire_Blast|itrial": [
-   "stamp v51",
-   "moved +366.7"
+   "stamp v51"
   ],
   "Class_Defender|Defender_Buff.Sonic_Debuff|Defender_Ranged.Ice_Blast|itrial": [
    "stamp v53"
   ],
   "Class_Defender|Defender_Buff.Sonic_Debuff|Defender_Ranged.Psychic_Blast|itrial": [
-   "stamp v51",
-   "moved +146.0"
+   "stamp v51"
   ],
   "Class_Defender|Defender_Buff.Sonic_Debuff|Defender_Ranged.Radiation_Blast|itrial": [
    "stamp v53"
@@ -6705,23 +6215,16 @@
    "stamp v53"
   ],
   "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Energy_Blast|itrial": [
-   "stamp v50",
-   "moved +5.6"
+   "stamp v50"
   ],
   "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Seismic_Blast|itrial": [
-   "stamp v50",
-   "moved +5.2"
+   "stamp v50"
   ],
   "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Sonic_Attack|itrial": [
-   "stamp v50",
-   "moved +5.1"
-  ],
-  "Class_Defender|Defender_Buff.Time_Manipulation|Defender_Ranged.Storm_Blast|itrial": [
-   "moved +0.1"
+   "stamp v50"
   ],
   "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Archery|itrial": [
-   "stamp v51",
-   "moved +205.6"
+   "stamp v51"
   ],
   "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Assault_Rifle|itrial": [
    "stamp v54"
@@ -6748,8 +6251,7 @@
    "stamp v54"
   ],
   "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Psychic_Blast|itrial": [
-   "stamp v51",
-   "moved +309.3"
+   "stamp v51"
   ],
   "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Radiation_Blast|itrial": [
    "stamp v54"
@@ -6758,12 +6260,10 @@
    "stamp v54"
   ],
   "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Sonic_Attack|itrial": [
-   "stamp v51",
-   "moved +288.9"
+   "stamp v51"
   ],
   "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Storm_Blast|itrial": [
-   "stamp v51",
-   "moved +45.7"
+   "stamp v51"
   ],
   "Class_Defender|Defender_Buff.Traps|Defender_Ranged.Water_Blast|itrial": [
    "stamp v54"
@@ -7297,8 +6797,7 @@
    "stamp v54"
   ],
   "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Kinetics|itrial": [
-   "stamp v51",
-   "moved +37.9"
+   "stamp v51"
   ],
   "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Light_Affinity|itrial": [
    "stamp v53"
@@ -7310,15 +6809,10 @@
    "stamp v54"
   ],
   "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Pain_Domination|itrial": [
-   "stamp v53",
-   "moved -11.2"
+   "stamp v53"
   ],
   "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Poison|itrial": [
    "stamp v49"
-  ],
-  "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Radiation_Emission|itrial": [
-   "stamp v54",
-   "moved -0.1"
   ],
   "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Sonic_Resonance|itrial": [
    "stamp v54"
@@ -7354,8 +6848,7 @@
    "stamp v54"
   ],
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Kinetics|itrial": [
-   "stamp v53",
-   "moved -5.1"
+   "stamp v53"
   ],
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Light_Affinity|itrial": [
    "stamp v54"
@@ -7365,10 +6858,6 @@
   ],
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Nature_Affinity|itrial": [
    "stamp v54"
-  ],
-  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Pain_Domination|itrial": [
-   "stamp v54",
-   "moved -0.3"
   ],
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Poison|itrial": [
    "stamp v51"
@@ -7386,8 +6875,7 @@
    "stamp v51"
   ],
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Time_Manipulation|itrial": [
-   "stamp v50",
-   "moved +8.7"
+   "stamp v50"
   ],
   "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Traps|itrial": [
    "stamp v55"
@@ -7410,10 +6898,6 @@
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Force_Field|itrial": [
    "stamp v54"
   ],
-  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Kinetics|itrial": [
-   "stamp v54",
-   "moved -0.2"
-  ],
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Light_Affinity|itrial": [
    "stamp v54"
   ],
@@ -7423,13 +6907,8 @@
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Nature_Affinity|itrial": [
    "stamp v54"
   ],
-  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Pain_Domination|itrial": [
-   "stamp v54",
-   "moved -0.2"
-  ],
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Poison|itrial": [
-   "stamp v53",
-   "moved -0.6"
+   "stamp v53"
   ],
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Radiation_Emission|itrial": [
    "stamp v54"
@@ -7438,20 +6917,16 @@
    "stamp v54"
   ],
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Storm_Summoning|itrial": [
-   "stamp v53",
-   "moved -0.3"
+   "stamp v53"
   ],
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Thermal_Radiation|itrial": [
-   "stamp v53",
-   "moved -0.2"
+   "stamp v53"
   ],
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Time_Manipulation|itrial": [
-   "stamp v50",
-   "moved +14.9"
+   "stamp v50"
   ],
   "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Trick_Arrow|itrial": [
-   "stamp v51",
-   "moved +5.5"
+   "stamp v51"
   ],
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Cold_Domination|itrial": [
    "stamp v54"
@@ -7469,8 +6944,7 @@
    "stamp v54"
   ],
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Kinetics|itrial": [
-   "stamp v53",
-   "moved -7.0"
+   "stamp v53"
   ],
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Light_Affinity|itrial": [
    "stamp v53"
@@ -7480,10 +6954,6 @@
   ],
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Nature_Affinity|itrial": [
    "stamp v53"
-  ],
-  "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Pain_Domination|itrial": [
-   "stamp v54",
-   "moved -0.5"
   ],
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Poison|itrial": [
    "stamp v50"
@@ -7501,19 +6971,16 @@
    "stamp v51"
   ],
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Time_Manipulation|itrial": [
-   "stamp v50",
-   "moved +10.3"
+   "stamp v50"
   ],
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Traps|itrial": [
-   "stamp v50",
-   "moved +113.6"
+   "stamp v50"
   ],
   "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Trick_Arrow|itrial": [
    "stamp v54"
   ],
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Cold_Domination|itrial": [
-   "stamp v51",
-   "moved +3.2"
+   "stamp v51"
   ],
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Dark_Miasma|itrial": [
    "stamp v54"
@@ -7528,8 +6995,7 @@
    "stamp v54"
   ],
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Kinetics|itrial": [
-   "stamp v51",
-   "moved +33.3"
+   "stamp v51"
   ],
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Light_Affinity|itrial": [
    "stamp v54"
@@ -7541,8 +7007,7 @@
    "stamp v53"
   ],
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Pain_Domination|itrial": [
-   "stamp v53",
-   "moved -8.9"
+   "stamp v53"
   ],
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Poison|itrial": [
    "stamp v51"
@@ -7563,8 +7028,7 @@
    "stamp v54"
   ],
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Traps|itrial": [
-   "stamp v51",
-   "moved +13.7"
+   "stamp v51"
   ],
   "Class_Mastermind|Mastermind_Summon.Ninjas|Mastermind_Buff.Trick_Arrow|itrial": [
    "stamp v54"
@@ -7585,22 +7049,19 @@
    "stamp v54"
   ],
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Kinetics|itrial": [
-   "stamp v53",
-   "moved -5.0"
+   "stamp v53"
   ],
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Light_Affinity|itrial": [
    "stamp v53"
   ],
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Marine_Affinity|itrial": [
-   "stamp v50",
-   "moved +0.1"
+   "stamp v50"
   ],
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Nature_Affinity|itrial": [
    "stamp v54"
   ],
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Pain_Domination|itrial": [
-   "stamp v54",
-   "moved -0.4"
+   "stamp v54"
   ],
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Poison|itrial": [
    "stamp v51"
@@ -7618,8 +7079,7 @@
    "stamp v54"
   ],
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Time_Manipulation|itrial": [
-   "stamp v51",
-   "moved +9.3"
+   "stamp v51"
   ],
   "Class_Mastermind|Mastermind_Summon.Robotics|Mastermind_Buff.Traps|itrial": [
    "stamp v55"
@@ -7642,10 +7102,6 @@
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Force_Field|itrial": [
    "stamp v54"
   ],
-  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Kinetics|itrial": [
-   "stamp v54",
-   "moved -0.1"
-  ],
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Light_Affinity|itrial": [
    "stamp v54"
   ],
@@ -7654,10 +7110,6 @@
   ],
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Nature_Affinity|itrial": [
    "stamp v54"
-  ],
-  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Pain_Domination|itrial": [
-   "stamp v54",
-   "moved -0.3"
   ],
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Poison|itrial": [
    "stamp v51"
@@ -7675,23 +7127,19 @@
    "stamp v51"
   ],
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Time_Manipulation|itrial": [
-   "stamp v51",
-   "moved +8.1"
+   "stamp v51"
   ],
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Traps|itrial": [
-   "stamp v55",
-   "moved +1.0"
+   "stamp v55"
   ],
   "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Trick_Arrow|itrial": [
-   "stamp v50",
-   "moved +0.4"
+   "stamp v50"
   ],
   "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial": [
    "stamp v50"
   ],
   "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|dwarf": [
-   "stamp v45",
-   "moved +0.7"
+   "stamp v45"
   ],
   "Class_Peacebringer|Peacebringer_Offensive.Luminous_Blast|Peacebringer_Defensive.Luminous_Aura|itrial|nova": [
    "stamp v44"
@@ -8447,8 +7895,7 @@
    "stamp v53"
   ],
   "Class_Scrapper|Scrapper_Melee.Radiation_Melee|Scrapper_Defense.Radiation_Armor|farm_active": [
-   "stamp v49",
-   "moved -18.0"
+   "stamp v49"
   ],
   "Class_Scrapper|Scrapper_Melee.Radiation_Melee|Scrapper_Defense.Radiation_Armor|itrial": [
    "stamp v53"
@@ -10824,8 +10271,7 @@
    "stamp v53"
   ],
   "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Super_Strength|itrial": [
-   "stamp v44",
-   "moved -27.3"
+   "stamp v44"
   ],
   "Class_Tanker|Tanker_Defense.Invulnerability|Tanker_Melee.Titan_Weapons|itrial": [
    "stamp v53"
@@ -11389,16 +10835,13 @@
    "stamp v50"
   ],
   "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|dwarf": [
-   "stamp v45",
-   "moved +3.9"
+   "stamp v45"
   ],
   "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|nova": [
-   "stamp v44",
-   "moved +5.6"
+   "stamp v44"
   ],
   "Class_Warshade|Warshade_Offensive.Umbral_Blast|Warshade_Defensive.Umbral_Aura|itrial|triform": [
-   "stamp v44",
-   "moved +4.5"
+   "stamp v44"
   ]
  },
  "riders": []

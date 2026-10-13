@@ -503,7 +503,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1202.38
    }
   },
@@ -7404,7 +7404,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1541.06
    }
   },
@@ -10098,7 +10098,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1541.1
    }
   },
@@ -11484,7 +11484,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1312.22
    }
   },
@@ -14144,7 +14144,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1622.7
    }
   },
@@ -15706,7 +15706,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 518.88
    }
   },
@@ -17319,7 +17319,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 733.6
    }
   },
@@ -17395,7 +17395,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1455.53
    }
   },
@@ -19344,7 +19344,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 228.53
    }
   },
@@ -21668,7 +21668,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 181.76
    }
   },
@@ -22342,7 +22342,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 237.94
    }
   },
@@ -26391,7 +26391,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 185.97
    }
   },
@@ -27890,7 +27890,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 208.88
    }
   },
@@ -28264,7 +28264,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 193.88
    }
   },
@@ -29013,7 +29013,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 227.58
    }
   },
@@ -29982,7 +29982,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 192.43
    }
   },
@@ -31401,7 +31401,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 197.25
    }
   },
@@ -32740,7 +32740,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 214.47
    }
   },
@@ -33039,7 +33039,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 192.81
    }
   },
@@ -37313,7 +37313,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 812.77
    }
   },
@@ -38137,7 +38137,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 321.78
    }
   },
@@ -38586,7 +38586,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 674.92
    }
   },
@@ -38960,7 +38960,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 535.96
    }
   },
@@ -44209,7 +44209,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 472.11
    }
   },
@@ -50058,7 +50058,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 984.65
    }
   },
@@ -50207,7 +50207,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 610.09
    }
   },
@@ -50431,7 +50431,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 892.04
    }
   },
@@ -50580,7 +50580,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 646.76
    }
   },
@@ -50954,7 +50954,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 607.71
    }
   },
@@ -52228,7 +52228,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 635.96
    }
   },
@@ -61002,7 +61002,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 975.51
    }
   },
@@ -61152,7 +61152,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1100.6
    }
   },
@@ -61226,7 +61226,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 893.39
    }
   },
@@ -62426,7 +62426,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 744.89
    }
   },
@@ -63625,7 +63625,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1369.63
    }
   },
@@ -63700,7 +63700,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 729.36
    }
   },
@@ -64450,7 +64450,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 867.19
    }
   },
@@ -67599,7 +67599,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 753.05
    }
   },
@@ -67899,7 +67899,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1449.23
    }
   },
@@ -68123,7 +68123,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 597.4
    }
   },
@@ -69022,7 +69022,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 767.3
    }
   },
@@ -69472,7 +69472,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1158.78
    }
   },
@@ -69696,7 +69696,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 952.27
    }
   },
@@ -69845,7 +69845,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 883.06
    }
   },
@@ -69919,7 +69919,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1247.83
    }
   },
@@ -70069,7 +70069,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1055.58
    }
   },
@@ -70444,7 +70444,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1315.47
    }
   },
@@ -70819,7 +70819,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 898.27
    }
   },
@@ -72544,7 +72544,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 601.71
    }
   },
@@ -74719,7 +74719,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 363.07
    }
   },
@@ -74943,7 +74943,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 388.22
    }
   },
@@ -75093,7 +75093,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 390.8
    }
   },
@@ -75168,7 +75168,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 409.33
    }
   },
@@ -75243,7 +75243,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 852.72
    }
   },
@@ -75318,7 +75318,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 320.13
    }
   },
@@ -75468,7 +75468,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1134.34
    }
   },
@@ -75618,7 +75618,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 826.5
    }
   },
@@ -75768,7 +75768,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1153.62
    }
   },
@@ -75918,7 +75918,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 689.06
    }
   },
@@ -75993,7 +75993,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 359.59
    }
   },
@@ -76068,7 +76068,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 721.77
    }
   },
@@ -76143,7 +76143,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 382.75
    }
   },
@@ -76368,7 +76368,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 386.19
    }
   },
@@ -76518,7 +76518,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 810.21
    }
   },
@@ -76593,7 +76593,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 464.32
    }
   },
@@ -76668,7 +76668,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1045.51
    }
   },
@@ -76743,7 +76743,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1099.19
    }
   },
@@ -76968,7 +76968,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 357.08
    }
   },
@@ -77043,7 +77043,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1077.18
    }
   },
@@ -77343,7 +77343,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 754.71
    }
   },
@@ -77418,7 +77418,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 324.19
    }
   },
@@ -77643,7 +77643,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 367.19
    }
   },
@@ -77718,7 +77718,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 374.6
    }
   },
@@ -77793,7 +77793,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 760.28
    }
   },
@@ -77868,7 +77868,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 427.62
    }
   },
@@ -77943,7 +77943,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1211.09
    }
   },
@@ -78018,7 +78018,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1109.77
    }
   },
@@ -78093,7 +78093,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 394.9
    }
   },
@@ -78168,7 +78168,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 837.82
    }
   },
@@ -78318,7 +78318,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1129.74
    }
   },
@@ -78543,7 +78543,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 748.67
    }
   },
@@ -78618,7 +78618,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 924.67
    }
   },
@@ -78693,7 +78693,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 851.57
    }
   },
@@ -78768,7 +78768,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 958.65
    }
   },
@@ -78918,7 +78918,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 883.78
    }
   },
@@ -78993,7 +78993,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 602.49
    }
   },
@@ -79143,7 +79143,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 942.96
    }
   },
@@ -79218,7 +79218,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1279.32
    }
   },
@@ -79293,7 +79293,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1349.22
    }
   },
@@ -79368,7 +79368,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 953.68
    }
   },
@@ -79443,7 +79443,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1031.19
    }
   },
@@ -79518,7 +79518,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1047.39
    }
   },
@@ -79593,7 +79593,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1303.98
    }
   },
@@ -79668,7 +79668,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 681.93
    }
   },
@@ -79968,7 +79968,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 397.5
    }
   },
@@ -80193,7 +80193,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 355.02
    }
   },
@@ -80268,7 +80268,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 390.68
    }
   },
@@ -80343,7 +80343,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 856.62
    }
   },
@@ -80418,7 +80418,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 534.84
    }
   },
@@ -80493,7 +80493,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1088.29
    }
   },
@@ -80568,7 +80568,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1218.23
    }
   },
@@ -80643,7 +80643,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 376.61
    }
   },
@@ -80718,7 +80718,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 852.77
    }
   },
@@ -80793,7 +80793,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 419.83
    }
   },
@@ -80868,7 +80868,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1194.45
    }
   },
@@ -80943,7 +80943,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 455.67
    }
   },
@@ -81018,7 +81018,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 707.73
    }
   },
@@ -81093,7 +81093,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 421.74
    }
   },
@@ -81243,7 +81243,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 421.35
    }
   },
@@ -81317,7 +81317,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 388.14
    }
   },
@@ -81467,7 +81467,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 342.7
    }
   },
@@ -81542,7 +81542,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 409.26
    }
   },
@@ -81617,7 +81617,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 852.45
    }
   },
@@ -81692,7 +81692,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 320.68
    }
   },
@@ -81767,7 +81767,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1203.66
    }
   },
@@ -81842,7 +81842,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1141.14
    }
   },
@@ -81992,7 +81992,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 876.93
    }
   },
@@ -82067,7 +82067,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 443.13
    }
   },
@@ -82142,7 +82142,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1209.3
    }
   },
@@ -82217,7 +82217,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 381.45
    }
   },
@@ -82292,7 +82292,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 628.0
    }
   },
@@ -82367,7 +82367,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 411.12
    }
   },
@@ -82442,7 +82442,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 804.98
    }
   },
@@ -82591,7 +82591,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 388.75
    }
   },
@@ -82666,7 +82666,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 862.67
    }
   },
@@ -82741,7 +82741,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 390.88
    }
   },
@@ -82816,7 +82816,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 411.25
    }
   },
@@ -82891,7 +82891,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 852.84
    }
   },
@@ -82966,7 +82966,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 321.67
    }
   },
@@ -83041,7 +83041,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1204.26
    }
   },
@@ -83116,7 +83116,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1136.95
    }
   },
@@ -83266,7 +83266,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 852.67
    }
   },
@@ -83416,7 +83416,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1161.03
    }
   },
@@ -83566,7 +83566,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 696.99
    }
   },
@@ -83715,7 +83715,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 677.36
    }
   },
@@ -83790,7 +83790,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 406.22
    }
   },
@@ -84015,7 +84015,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 342.07
    }
   },
@@ -84090,7 +84090,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 407.94
    }
   },
@@ -84165,7 +84165,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 619.46
    }
   },
@@ -84240,7 +84240,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 545.33
    }
   },
@@ -84315,7 +84315,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1200.67
    }
   },
@@ -84465,7 +84465,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 797.13
    }
   },
@@ -84615,7 +84615,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1205.85
    }
   },
@@ -84690,7 +84690,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 392.59
    }
   },
@@ -84765,7 +84765,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 614.41
    }
   },
@@ -84840,7 +84840,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 506.11
    }
   },
@@ -84915,7 +84915,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 733.78
    }
   },
@@ -85065,7 +85065,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 695.36
    }
   },
@@ -85140,7 +85140,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 921.34
    }
   },
@@ -85215,7 +85215,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 606.48
    }
   },
@@ -85290,7 +85290,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 627.47
    }
   },
@@ -85365,7 +85365,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 764.73
    }
   },
@@ -85440,7 +85440,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 730.5
    }
   },
@@ -85665,7 +85665,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 748.01
    }
   },
@@ -85890,7 +85890,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1133.57
    }
   },
@@ -86340,7 +86340,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 389.2
    }
   },
@@ -86490,7 +86490,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 405.09
    }
   },
@@ -86640,7 +86640,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1005.67
    }
   },
@@ -86715,7 +86715,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 506.36
    }
   },
@@ -86865,7 +86865,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1253.35
    }
   },
@@ -87165,7 +87165,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1235.52
    }
   },
@@ -87237,9 +87237,14 @@
     "old_canonical": 456.35796000000005,
     "model_version": 56,
     "gate": "roster_merge canonical"
+   },
+   "evaluated": {
+    "against": "model 56, 2026-10-13",
+    "verdict": "unaffected",
+    "canonical_score": 467.93
    }
   },
-  "canonical_score": 467.9346000000001
+  "canonical_score": 467.93
  },
  "Class_Corruptor|Corruptor_Ranged.Psychic_Blast|Corruptor_Buff.Trick_Arrow|itrial": {
   "picks": [
@@ -87385,7 +87390,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 451.14
    }
   },
@@ -87609,7 +87614,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 384.77
    }
   },
@@ -87759,7 +87764,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 425.18
    }
   },
@@ -87834,7 +87839,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 416.04
    }
   },
@@ -87909,7 +87914,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 845.9
    }
   },
@@ -87984,7 +87989,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 428.6
    }
   },
@@ -88058,7 +88063,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 995.58
    }
   },
@@ -88133,7 +88138,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1149.77
    }
   },
@@ -88208,7 +88213,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 397.27
    }
   },
@@ -88358,7 +88363,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 439.82
    }
   },
@@ -88433,7 +88438,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1227.34
    }
   },
@@ -88508,7 +88513,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 424.3
    }
   },
@@ -88658,7 +88663,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 353.44
    }
   },
@@ -88733,7 +88738,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 735.0
    }
   },
@@ -88808,7 +88813,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 407.24
    }
   },
@@ -88883,7 +88888,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 389.53
    }
   },
@@ -89033,7 +89038,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 387.2
    }
   },
@@ -89108,7 +89113,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 312.55
    }
   },
@@ -89183,7 +89188,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 861.48
    }
   },
@@ -89258,7 +89263,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 555.57
    }
   },
@@ -89333,7 +89338,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1225.87
    }
   },
@@ -89408,7 +89413,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1108.52
    }
   },
@@ -89483,7 +89488,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 347.03
    }
   },
@@ -89558,7 +89563,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 812.31
    }
   },
@@ -89633,7 +89638,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 458.17
    }
   },
@@ -89708,7 +89713,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1134.64
    }
   },
@@ -89783,7 +89788,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 362.2
    }
   },
@@ -89933,7 +89938,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 398.34
    }
   },
@@ -90083,7 +90088,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 423.33
    }
   },
@@ -90308,7 +90313,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 334.5
    }
   },
@@ -90383,7 +90388,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 314.74
    }
   },
@@ -90458,7 +90463,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 917.49
    }
   },
@@ -90533,7 +90538,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 502.86
    }
   },
@@ -90683,7 +90688,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1259.74
    }
   },
@@ -90758,7 +90763,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 403.86
    }
   },
@@ -90908,7 +90913,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 330.57
    }
   },
@@ -90983,7 +90988,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1151.53
    }
   },
@@ -91058,7 +91063,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 459.99
    }
   },
@@ -91208,7 +91213,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 874.2
    }
   },
@@ -91433,7 +91438,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 809.7
    }
   },
@@ -91583,7 +91588,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 679.1
    }
   },
@@ -91658,7 +91663,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 512.94
    }
   },
@@ -91733,7 +91738,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 847.2
    }
   },
@@ -91808,7 +91813,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 833.41
    }
   },
@@ -92108,7 +92113,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 759.76
    }
   },
@@ -92258,7 +92263,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1024.81
    }
   },
@@ -92408,7 +92413,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 747.92
    }
   },
@@ -92558,7 +92563,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 782.15
    }
   },
@@ -92633,7 +92638,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 383.81
    }
   },
@@ -92708,7 +92713,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 412.86
    }
   },
@@ -92858,7 +92863,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 293.13
    }
   },
@@ -92933,7 +92938,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1011.4
    }
   },
@@ -93008,7 +93013,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 467.05
    }
   },
@@ -93083,7 +93088,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1289.93
    }
   },
@@ -93158,7 +93163,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1268.53
    }
   },
@@ -93233,7 +93238,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 383.16
    }
   },
@@ -93383,7 +93388,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 356.84
    }
   },
@@ -93458,7 +93463,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1137.27
    }
   },
@@ -93533,7 +93538,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 357.44
    }
   },
@@ -93908,7 +93913,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 957.51
    }
   },
@@ -93983,7 +93988,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 817.31
    }
   },
@@ -94133,7 +94138,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 746.48
    }
   },
@@ -94283,7 +94288,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 901.75
    }
   },
@@ -94732,7 +94737,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 712.14
    }
   },
@@ -95932,7 +95937,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 645.72
    }
   },
@@ -98031,7 +98036,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1170.28
    }
   },
@@ -98181,7 +98186,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 522.3
    }
   },
@@ -98256,7 +98261,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 605.8
    }
   },
@@ -98331,7 +98336,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 489.17
    }
   },
@@ -98405,7 +98410,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 803.32
    }
   },
@@ -98480,7 +98485,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 611.58
    }
   },
@@ -98555,7 +98560,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 520.77
    }
   },
@@ -98630,7 +98635,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 482.66
    }
   },
@@ -98705,7 +98710,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 561.33
    }
   },
@@ -98780,7 +98785,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 958.47
    }
   },
@@ -98855,7 +98860,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 585.01
    }
   },
@@ -98930,7 +98935,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 710.76
    }
   },
@@ -99005,7 +99010,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 582.35
    }
   },
@@ -99080,7 +99085,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 673.91
    }
   },
@@ -99155,7 +99160,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1026.01
    }
   },
@@ -99230,7 +99235,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 528.57
    }
   },
@@ -99454,7 +99459,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 404.92
    }
   },
@@ -99678,7 +99683,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 442.66
    }
   },
@@ -101103,7 +101108,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1018.59
    }
   },
@@ -101553,7 +101558,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 639.37
    }
   },
@@ -101628,7 +101633,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 676.57
    }
   },
@@ -101703,7 +101708,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 704.39
    }
   },
@@ -101778,7 +101783,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1372.52
    }
   },
@@ -101853,7 +101858,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 877.17
    }
   },
@@ -101928,7 +101933,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 651.33
    }
   },
@@ -102003,7 +102008,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 691.16
    }
   },
@@ -102078,7 +102083,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 665.94
    }
   },
@@ -102153,7 +102158,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 965.6
    }
   },
@@ -102228,7 +102233,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 906.56
    }
   },
@@ -102303,7 +102308,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 833.3
    }
   },
@@ -102378,7 +102383,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 802.23
    }
   },
@@ -102453,7 +102458,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 739.13
    }
   },
@@ -102528,7 +102533,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1451.37
    }
   },
@@ -102603,7 +102608,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 942.19
    }
   },
@@ -103728,7 +103733,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 2387.75
    }
   },
@@ -103803,7 +103808,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1470.8
    }
   },
@@ -103878,7 +103883,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1513.36
    }
   },
@@ -103953,7 +103958,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1606.61
    }
   },
@@ -104103,7 +104108,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1617.38
    }
   },
@@ -104178,7 +104183,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1422.09
    }
   },
@@ -104253,7 +104258,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1631.23
    }
   },
@@ -104403,7 +104408,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1649.52
    }
   },
@@ -104478,7 +104483,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1387.37
    }
   },
@@ -104553,7 +104558,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1669.31
    }
   },
@@ -104628,7 +104633,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1736.54
    }
   },
@@ -105077,7 +105082,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 377.96
    }
   },
@@ -105151,7 +105156,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 380.66
    }
   },
@@ -105376,7 +105381,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 544.51
    }
   },
@@ -106351,7 +106356,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1225.7
    }
   },
@@ -106501,7 +106506,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1169.81
    }
   },
@@ -108150,7 +108155,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 461.71
    }
   },
@@ -108374,7 +108379,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 566.04
    }
   },
@@ -109649,7 +109654,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1292.49
    }
   },
@@ -110024,7 +110029,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1323.16
    }
   },
@@ -110099,7 +110104,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1298.17
    }
   },
@@ -110174,7 +110179,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 1905.48
    }
   },
@@ -110324,7 +110329,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 801.51
    }
   },
@@ -110999,7 +111004,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 846.67
    }
   },
@@ -111224,7 +111229,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 851.61
    }
   },
@@ -111299,7 +111304,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 803.71
    }
   },
@@ -112348,7 +112353,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 648.55
    }
   },
@@ -120147,7 +120152,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 690.3
    }
   },
@@ -124572,7 +124577,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 621.13
    }
   },
@@ -124797,7 +124802,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 849.3
    }
   },
@@ -124871,7 +124876,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 817.73
    }
   },
@@ -124943,9 +124948,14 @@
     "old_canonical": 1247.5019900000002,
     "model_version": 56,
     "gate": "roster_merge canonical"
+   },
+   "evaluated": {
+    "against": "model 56, 2026-10-13",
+    "verdict": "unaffected",
+    "canonical_score": 1280.65
    }
   },
-  "canonical_score": 1280.64816
+  "canonical_score": 1280.65
  },
  "Class_Mastermind|Mastermind_Summon.Beast_Mastery|Mastermind_Buff.Sonic_Resonance|itrial": {
   "picks": [
@@ -125465,7 +125475,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 523.14
    }
   },
@@ -125840,7 +125850,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 577.13
    }
   },
@@ -126062,9 +126072,14 @@
     "old_canonical": 779.9435849999999,
     "model_version": 56,
     "gate": "roster_merge canonical"
+   },
+   "evaluated": {
+    "against": "model 56, 2026-10-13",
+    "verdict": "unaffected",
+    "canonical_score": 813.44
    }
   },
-  "canonical_score": 813.44232
+  "canonical_score": 813.44
  },
  "Class_Mastermind|Mastermind_Summon.Demon_Summoning|Mastermind_Buff.Poison|itrial": {
   "picks": [
@@ -126435,7 +126450,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 839.81
    }
   },
@@ -126659,7 +126674,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 548.77
    }
   },
@@ -127031,9 +127046,14 @@
     "old_canonical": 618.4975999999999,
     "model_version": 56,
     "gate": "roster_merge canonical"
+   },
+   "evaluated": {
+    "against": "model 56, 2026-10-13",
+    "verdict": "unaffected",
+    "canonical_score": 620.36
    }
   },
-  "canonical_score": 620.36212
+  "canonical_score": 620.36
  },
  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Marine_Affinity|itrial": {
   "picks": [
@@ -127251,9 +127271,14 @@
     "old_canonical": 757.10664,
     "model_version": 56,
     "gate": "roster_merge canonical"
+   },
+   "evaluated": {
+    "against": "model 56, 2026-10-13",
+    "verdict": "unaffected",
+    "canonical_score": 902.95
    }
   },
-  "canonical_score": 902.9492999999999
+  "canonical_score": 902.95
  },
  "Class_Mastermind|Mastermind_Summon.Mercenaries|Mastermind_Buff.Poison|itrial": {
   "picks": [
@@ -127324,7 +127349,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 919.34
    }
   },
@@ -127549,7 +127574,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 919.51
    }
   },
@@ -127624,7 +127649,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 614.85
    }
   },
@@ -127699,7 +127724,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 920.06
    }
   },
@@ -127849,7 +127874,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 664.52
    }
   },
@@ -128299,7 +128324,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 811.54
    }
   },
@@ -128521,9 +128546,14 @@
     "old_canonical": 1227.2653249999998,
     "model_version": 56,
     "gate": "roster_merge canonical"
+   },
+   "evaluated": {
+    "against": "model 56, 2026-10-13",
+    "verdict": "unaffected",
+    "canonical_score": 1379.54
    }
   },
-  "canonical_score": 1379.53788
+  "canonical_score": 1379.54
  },
  "Class_Mastermind|Mastermind_Summon.Necromancy|Mastermind_Buff.Poison|itrial": {
   "picks": [
@@ -128969,7 +128999,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 974.49
    }
   },
@@ -129044,7 +129074,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 402.56
    }
   },
@@ -129194,7 +129224,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 667.29
    }
   },
@@ -129569,7 +129599,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 545.01
    }
   },
@@ -129794,7 +129824,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 777.91
    }
   },
@@ -130319,7 +130349,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 487.24
    }
   },
@@ -130844,7 +130874,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 567.34
    }
   },
@@ -130919,7 +130949,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 494.45
    }
   },
@@ -131069,7 +131099,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 917.19
    }
   },
@@ -131519,7 +131549,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 923.32
    }
   },
@@ -131743,7 +131773,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 509.51
    }
   },
@@ -132115,9 +132145,14 @@
     "old_canonical": 559.6009200000001,
     "model_version": 56,
     "gate": "roster_merge canonical"
+   },
+   "evaluated": {
+    "against": "model 56, 2026-10-13",
+    "verdict": "unaffected",
+    "canonical_score": 582.36
    }
   },
-  "canonical_score": 582.35931
+  "canonical_score": 582.36
  },
  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Marine_Affinity|itrial": {
   "picks": [
@@ -132335,9 +132370,14 @@
     "old_canonical": 777.5779650000001,
     "model_version": 56,
     "gate": "roster_merge canonical"
+   },
+   "evaluated": {
+    "against": "model 56, 2026-10-13",
+    "verdict": "unaffected",
+    "canonical_score": 787.91
    }
   },
-  "canonical_score": 787.9065099999999
+  "canonical_score": 787.91
  },
  "Class_Mastermind|Mastermind_Summon.Thugs|Mastermind_Buff.Poison|itrial": {
   "picks": [
@@ -132632,7 +132672,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 614.98
    }
   },
@@ -132782,7 +132822,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 875.74
    }
   },
@@ -132857,7 +132897,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 541.79
    }
   },
@@ -132932,7 +132972,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 525.35
    }
   },
@@ -134126,7 +134166,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1079.89
    }
   },
@@ -135020,7 +135060,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1511.27
    }
   },
@@ -135244,7 +135284,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 772.93
    }
   },
@@ -135318,7 +135358,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 690.9
    }
   },
@@ -135392,7 +135432,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 343.47
    }
   },
@@ -136441,7 +136481,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 417.64
    }
   },
@@ -136665,7 +136705,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 399.17
    }
   },
@@ -140039,7 +140079,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 415.7
    }
   },
@@ -141238,7 +141278,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 432.86
    }
   },
@@ -146862,7 +146902,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 269.24
    }
   },
@@ -147911,7 +147951,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 431.27
    }
   },
@@ -150610,7 +150650,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 722.7
    }
   },
@@ -155029,7 +155069,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 244.09
    }
   },
@@ -161028,7 +161068,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 609.71
    }
   },
@@ -168602,7 +168642,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 590.56
    }
   },
@@ -169651,7 +169691,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 457.55
    }
   },
@@ -170025,7 +170065,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 499.33
    }
   },
@@ -173549,7 +173589,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1112.14
    }
   },
@@ -178273,7 +178313,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1113.78
    }
   },
@@ -179472,7 +179512,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 658.97
    }
   },
@@ -185921,7 +185961,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 861.09
    }
   },
@@ -186745,7 +186785,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 841.84
    }
   },
@@ -188244,7 +188284,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 620.57
    }
   },
@@ -192368,7 +192408,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 603.45
    }
   },
@@ -194692,7 +194732,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1776.08
    }
   },
@@ -194766,7 +194806,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1289.89
    }
   },
@@ -196490,7 +196530,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 821.96
    }
   },
@@ -198664,7 +198704,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 695.0
    }
   },
@@ -199338,7 +199378,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 846.38
    }
   },
@@ -199637,7 +199677,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 987.19
    }
   },
@@ -212836,7 +212876,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 978.28
    }
   },
@@ -214110,7 +214150,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 763.8
    }
   },
@@ -218834,7 +218874,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 614.4
    }
   },
@@ -219658,7 +219698,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 484.06
    }
   },
@@ -219732,7 +219772,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 564.61
    }
   },
@@ -220481,7 +220521,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 1034.36
    }
   },
@@ -221306,7 +221346,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 635.56
    }
   },
@@ -221381,7 +221421,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 531.86
    }
   },
@@ -221456,7 +221496,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 600.91
    }
   },
@@ -221606,7 +221646,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 736.4
    }
   },
@@ -221756,7 +221796,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 697.18
    }
   },
@@ -221906,7 +221946,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 700.56
    }
   },
@@ -221981,7 +222021,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 425.88
    }
   },
@@ -222131,7 +222171,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 514.7
    }
   },
@@ -222956,7 +222996,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "moved",
+    "verdict": "unaffected",
     "canonical_score": 677.34
    }
   },
@@ -228805,7 +228845,7 @@
    },
    "evaluated": {
     "against": "model 56, 2026-10-13",
-    "verdict": "baseline",
+    "verdict": "unaffected",
     "canonical_score": 656.39
    }
   },
