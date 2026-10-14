@@ -24,6 +24,11 @@ the beta servers.
   Supremacy, since the game gives those only to henchmen. The Mark and
   Command of the Mastermind auras do reach it.
 
+- **206 recommended builds got better.** The last few releases changed how
+  pets, team endurance and Detonator are scored, so every build whose score
+  moved was searched again on the new rules. 206 found a better build and
+  were replaced; the rest kept theirs. All 2,865 builds load and are legal.
+
 ## 0.12.57 — 2026-10-12 — Traps and Mastermind pets, per the client
 
 Field report from Maelwys (forum topic 64761), checked against the game client.
