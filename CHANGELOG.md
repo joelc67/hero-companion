@@ -1,5 +1,17 @@
 # Hero Companion — What's New
 
+## Unreleased
+
+- **Every power now says what it does.** Click a power's name (or the ⓘ
+  beside it) and its details panel opens with the game's own description:
+  the one-line summary ("Ranged, DMG(Lethal), DoT(Toxic), Immobilize") and
+  the full text you'd see in the game. Before, the panel only showed numbers
+  and which enhancements fit, which left an offline builder guessing. Thanks
+  to the player who sent this in through the bug report button.
+  The text comes straight from the game files for all 4,016 powers you can
+  build with, and each one is checked against the power's name, so a power
+  can never show another power's description.
+
 ## 0.12.58 — 2026-10-13 — Detonator, per the beta tests
 
 Two more Detonator answers from Maelwys (forum topic 64761), both tested on

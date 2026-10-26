@@ -6475,6 +6475,16 @@ async function renderPowerInfo() {
     rec = (POWERS_CACHE[ps] || []).find(p => p.full_name === SELECTED_POWER);
     if (rec) break;
   }
+  if (!rec) {
+    // Imported/resumed builds can open the panel before the set was ever
+    // browsed; fetch it so the description (and stats) still show.
+    const sel0 = SELECTED_POWER;
+    try {
+      const list = await loadPowers(sel0.split(".").slice(0, 2).join("."));
+      rec = (list || []).find(p => p.full_name === sel0) || null;
+    } catch (e) { rec = null; }
+    if (SELECTED_POWER !== sel0) return;   // another power was picked meanwhile
+  }
   const pw = build.powers.find(p => p.full_name === SELECTED_POWER) || {};
   const name = (rec && rec.display_name) || pw.display_name || SELECTED_POWER.split(".").pop();
   const type = { 0: "Click", 1: "Auto (always on)", 2: "Toggle" }[
@@ -6537,10 +6547,20 @@ async function renderPowerInfo() {
     }).join("");
   }
 
+  // What the power does, in the game's own words (bug report 0.12.58: "I expect
+  // to see an explanation of the power, not just what IO set can go into it").
+  // Text is the client's verbatim; only its <b>/<i> survive escaping.
+  const gameText = (t) => escHtml(t || "").replace(/&lt;(\/?)(b|i)&gt;/g, "<$1$2>").replace(/\n/g, "<br>");
+  const descHtml = rec && (rec.short_help || rec.help)
+    ? (rec.short_help ? `<div class="pi-short">${gameText(rec.short_help)}</div>` : "")
+      + (rec.help ? `<p class="pi-desc">${gameText(rec.help)}</p>` : "")
+    : "";
+
   panel.innerHTML =
     `<h2>${rec && rec.icon ? `<img class="pi-ico" src="${rec.icon}" alt="">` : ""}
        <span>${escHtml(name)}</span>
        <button class="iconbtn pi-close" onclick="closePowerInfo()" title="close">✕</button></h2>`
+    + descHtml
     + (rows.length ? `<table>${rows.map(([k, v]) =>
         `<tr><td>${k}</td><td>${escHtml(String(v))}</td></tr>`).join("")}</table>` : "")
     + cardAttributionHtml(atk, LAST_TOTALS)

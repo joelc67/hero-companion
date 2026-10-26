@@ -1735,6 +1735,15 @@ def get_powersets(archetype):
     })
 
 
+# data/power_help.json = each builder-offered power's in-game description
+# (short tag + full text), extracted from the client bins by
+# tools/extract_power_help.py. Display-only; never read by scoring.
+try:
+    POWER_HELP = _load("power_help.json")
+except Exception:  # noqa: BLE001 — the panel degrades to numbers-only without it
+    POWER_HELP = {}
+
+
 def _powers_for(powerset_full_name):
     powers = POWERS.get(powerset_full_name, [])
     # Attach the resolved category objects for convenience
@@ -1747,6 +1756,9 @@ def _powers_for(powerset_full_name):
             for cid in p.get("accepted_set_category_ids", [])
         ]
         rec["icon"] = _power_icon_url(p.get("full_name"))   # in-game power icon (card art)
+        # The game's own description for the info panel (tools/extract_power_help.py).
+        short, desc = POWER_HELP.get(p.get("full_name"), ("", ""))
+        rec["short_help"], rec["help"] = short, desc
         out.append(rec)
     return out
 

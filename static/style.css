@@ -317,6 +317,8 @@ body:not(.tab-powers) .build-tile { display: none !important; }
 .pinfo td { padding: 2px 4px; border-bottom: 1px solid var(--border); }
 .pinfo td:last-child { text-align: right; font-weight: 600; }
 .pinfo .pi-note { font-size: 11px; color: var(--muted); margin-top: 6px; }
+.pinfo .pi-short { font-size: 11px; color: var(--muted); margin: 2px 0 4px; }
+.pinfo .pi-desc { font-size: 12px; line-height: 1.45; margin: 0 0 8px; }
 .panel {
   background: var(--panel);
   border: 1px solid var(--border);
