@@ -1,125 +1,98 @@
 """STANDING GUARD (Joel, 2026-07-19): every display name the tool offers must
 match the CURRENT game files, so nothing reads as an unrecognizable legacy name.
-Game-first: the authority is the client bins' per-pool index.json (`powers`
-parallel `power_display_names` + pool `display_name`). Compares our offered
-powers + powersets against it; HARD-FAILS on any mismatch (coverage-denominator
-rule: N of M matched names checked, fail if N<M). Unmatched-to-bins records
-(internal-name divergence — the alias-map reconciliation class) are reported as
-a separate coverage caveat, not a failure.
+Game-first: the authority is a Bin Crawler export of the installed client
+(tools/game_names.py; --export picks it, e.g. the live or open-beta export).
+Compares our offered powers + powersets against it; HARD-FAILS on any mismatch
+(coverage-denominator rule: N of M matched names checked, fail if N<M).
+Unmatched-to-bins records (internal-name divergence — the alias-map
+reconciliation class) are reported as a separate coverage caveat, not a failure.
+
+An internal-name SWAP (our name is still shown by another power in the same
+game set) passes ONLY when pinned in REVIEWED_SWAPS with its evidence; any other
+swap-shaped mismatch fails, because it may just as well be our mislabel.
 
 Companion to tools/patch_display_names.py (which adopts the game names). Runs in
 the battery so a future data sync can't silently reintroduce a legacy name.
 
-Run:  py tools\\reality_check_names.py
+Run:  py tools\\reality_check_names.py [--export <bin-crawler export dir>]
 """
-import glob
+import argparse
 import json
 import os
 import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BINS = os.path.join(ROOT, "tools", "gamedata", "bin-crawler", "out_full")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import game_names as G  # noqa: E402
+
+ROOT = G.ROOT
 
 # Deliberate exceptions (empty for now — Joel ruled PURE game names, so identical
 # game names for distinct powers are ACCEPTED as-is). Add "Full_Name" here only
 # with Joel's sign-off if a disambiguation ever proves necessary.
 ALLOW = set()
 
-
-def _norm(s):
-    return " ".join((s or "").split()).strip().lower()
-
-
-def game_maps():
-    gp, gpool = {}, {}
-    for idx in glob.glob(os.path.join(BINS, "**", "index.json"), recursive=True):
-        try:
-            r = json.load(open(idx, encoding="utf-8"))
-        except Exception:  # noqa: BLE001
-            continue
-        if r.get("key") and r.get("display_name"):
-            gpool[r["key"]] = r["display_name"]
-        names, disp = r.get("powers") or [], r.get("power_display_names") or []
-        if len(names) == len(disp):
-            for fn, d in zip(names, disp):
-                if d:
-                    gp[fn] = d
-    # alias-divergent internal names (Temporal_Manipulation vs Time_Manipulation):
-    # resolve OUR name to the game key via the local alias map so those display
-    # names are verified against the game too.
-    ap = os.path.join(ROOT, "tools", "gamedata", "power_aliases.json")
-    if os.path.exists(ap):
-        alias = json.load(open(ap, encoding="utf-8")).get("aliases", {})
-        for our_fn, game_fn in alias.items():
-            if our_fn not in gp and game_fn in gp:
-                gp[our_fn] = gp[game_fn]
-    # namespace divergence (2026-07-19 dig): our Lore/pet attacks live under the
-    # `Incarnate_Pets.` top-level, but the game keys the SAME power (same set,
-    # same leaf) under `Incarnate.` — verified game-first, 189 records, ZERO
-    # display mismatches. Resolve the prefix so those names are checked against
-    # the game too rather than sitting in the unmatched caveat.
-    for our_fn in _our_full_names():
-        if our_fn in gp:
-            continue
-        if our_fn.startswith("Incarnate_Pets."):
-            g = "Incarnate." + our_fn[len("Incarnate_Pets."):]
-            if g in gp:
-                gp[our_fn] = gp[g]
-    return gp, gpool
-
-
-def _our_full_names():
-    powers = json.load(open(os.path.join(ROOT, "data", "powers.json"),
-                            encoding="utf-8"))
-    return [p.get("full_name") for lst in powers.values()
-            if isinstance(lst, list) for p in lst]
+# Internal-name swaps verified against the game, our name kept. Evidence each.
+REVIEWED_SWAPS = {
+    # Client Tactical Arrow: the record internally named Gymnastics is displayed
+    # "Oil Slick Arrow"; the game's Gymnastics passive sits under another internal
+    # name and its own record text matches ours ("Years of training have made you
+    # extremely agile..."). See build_power_aliases.py NAME COLLISIONS.
+    "Blaster_Support.Tactical_Arrow.Gymnastics",
+}
 
 
 def main():
-    gp, gpool = game_maps()
-    sys.path.insert(0, ROOT)
-    sys.path.insert(0, os.path.join(ROOT, "server"))
-    import server as srv  # noqa: E402
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--export", default=G.DEFAULT_EXPORT, help="Bin Crawler export of the client to check against")
+    args = ap.parse_args()
 
-    fails = []
-
-    # powers we OFFER (everything in powers.json)
-    powers = json.load(open(os.path.join(ROOT, "data", "powers.json"),
-                            encoding="utf-8"))
+    powers = json.load(open(os.path.join(ROOT, "data", "powers.json"), encoding="utf-8"))
     recs = [p for lst in powers.values() if isinstance(lst, list) for p in lst]
+    gp, gpool, shows, key = G.game_maps(args.export, [p.get("full_name") for p in recs])
+    print(f"game export: {args.export}")
+
+    fails, kept = [], []
     matched = unmatched = 0
     for p in recs:
         fn = p.get("full_name")
-        if fn in gp:
-            matched += 1
-            if fn not in ALLOW and _norm(p.get("display_name")) != _norm(gp[fn]):
-                fails.append(("power", fn, p.get("display_name"), gp[fn]))
-        else:
+        kind, shown = G.classify(fn, p.get("display_name"), gp, shows, key)
+        if kind == "unmatched":
             unmatched += 1
+            continue
+        matched += 1
+        if kind == "ok" or fn in ALLOW:
+            continue
+        if kind == "swap" and fn in REVIEWED_SWAPS:
+            kept.append((fn, p.get("display_name"), shown))
+            continue
+        fails.append((kind, fn, p.get("display_name"), shown))
 
-    # powersets we OFFER (by_archetype primary/secondary/epic)
-    pool_checked = 0
+    # powersets we OFFER (by_archetype primary/secondary/epic + pools)
+    psets = json.load(open(os.path.join(ROOT, "data", "powersets.json"), encoding="utf-8"))
+    entries = [e for cats in (psets.get("by_archetype") or {}).values()
+               for cat in ("primary", "secondary", "epic") for e in (cats.get(cat) or [])]
+    entries += psets.get("pools") or []
     seen = set()
-    for at, cats in (srv.POWERSETS.get("by_archetype") or {}).items():
-        for cat in ("primary", "secondary", "epic"):
-            for e in (cats.get(cat) or []):
-                fn = e.get("full_name")
-                if fn in seen or fn not in gpool:
-                    continue
-                seen.add(fn)
-                pool_checked += 1
-                if _norm(e.get("display_name")) != _norm(gpool[fn]):
-                    fails.append(("pool", fn, e.get("display_name"), gpool[fn]))
+    for e in entries:
+        fn = e.get("full_name")
+        if fn in seen or fn not in gpool:
+            continue
+        seen.add(fn)
+        if G.norm(e.get("display_name")) != G.norm(gpool[fn]):
+            fails.append(("set", fn, e.get("display_name"), gpool[fn]))
 
     print(f"names checked vs the game bins: {matched} of {matched} powers "
-          f"(matched to bins), {pool_checked} of {pool_checked} powersets")
+          f"(matched to bins), {len(seen)} of {len(seen)} powersets")
     print(f"unmatched-to-bins (internal-name divergence, coverage caveat, NOT a "
           f"fail): {unmatched} powers")
+    for fn, ours, g in kept:
+        print(f"reviewed internal-name swap, ours kept: {fn} '{ours}' (record under this name shows '{g}')")
     if fails:
-        print(f"\nLEGACY NAMES STILL PRESENT — {len(fails)}:")
-        for kind, fn, ours, g in fails[:40]:
-            print(f"  [{kind}] {fn}: ours='{ours}' GAME='{g}'")
+        print(f"\nNAMES THAT DON'T MATCH THE GAME — {len(fails)}:")
+        for kind, fn, ours, g in fails:
+            tag = {"rename": "renamed in game", "swap": "UNREVIEWED swap-shaped mismatch", "set": "set name"}[kind]
+            print(f"  [{tag}] {fn}: ours='{ours}' GAME='{g}'")
         print("\nFAIL")
         sys.exit(1)
     print("\nPASS — every offered name matches the current game files.")

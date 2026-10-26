@@ -12,6 +12,15 @@
   build with, and each one is checked against the power's name, so a power
   can never show another power's description.
 
+- **Power and enhancement names match the October 17 game update.** Names
+  are checked against the game files from the latest Homecoming patch, and
+  anything the game renamed now uses the game's name. In Traps, Caltrops is
+  now Shrapnel Grenade and Web Grenade is Debilitating Web Grenade; Empathy's
+  Adrenalin Boost is spelled Adrenaline Boost. 77 enhancement names changed
+  too, for example Kismet: Accuracy is now Kismet: +ToHit and Mocking
+  Beratement pieces now list Placate. Only the names changed: your saved
+  builds, imports and the numbers are untouched.
+
 ## 0.12.58 — 2026-10-13 — Detonator, per the beta tests
 
 Two more Detonator answers from Maelwys (forum topic 64761), both tested on

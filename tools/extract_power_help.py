@@ -53,15 +53,12 @@ RENAMES = {
 }
 
 # Our displayed name -> the game's CURRENT name for the same power, where the
-# game renamed it and our display name is older. Evidence: the joined client
-# record (same set, same internal name) carries the new name, and no client
-# record in that set still carries the old one. The text is the right text for
-# the power; only our label lags.
-GAME_RENAMED = {
-    "Adrenalin Boost": "Adrenaline Boost",            # spelling (Empathy, every AT)
-    "Web Grenade": "Debilitating Web Grenade",        # Traps, every AT
-    "Caltrops": "Shrapnel Grenade",                   # Traps: "toss a grenade ... spread a handful of Caltrops"
-}
+# game renamed it and our display name still lags. Evidence required per entry:
+# the joined client record (same set, same internal name) carries the new name,
+# and no client record in that set still carries the old one. Normally EMPTY:
+# tools/patch_display_names.py adopts game renames (2026-10-26 it adopted
+# Adrenaline Boost, Debilitating Web Grenade and Shrapnel Grenade).
+GAME_RENAMED = {}
 
 
 def clean(text):

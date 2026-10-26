@@ -1,109 +1,82 @@
 """ADOPT THE GAME'S DISPLAY NAMES (Joel, 2026-07-19: "accurate to the names used
-in the game, or they will be unrecognizable to the players"). GAME-FIRST: the
-client bins' per-pool index.json carries `powers` (internal full-names) parallel
-to `power_display_names` (the CURRENT in-game display) + the pool `display_name`.
-This additive patcher overwrites our stale/legacy display names with the game's,
-keyed by internal full_name — KEYS ARE NEVER TOUCHED, so champions, imports,
-pins and every lookup are unaffected (display-only).
+in the game, or they will be unrecognizable to the players"; 2026-10-26: "always
+compare to actual game, NO guessing"). GAME-FIRST: a Bin Crawler export of the
+installed client is the authority (tools/game_names.py). This additive patcher
+overwrites our stale/legacy display names with the game's, keyed by internal
+full_name — KEYS ARE NEVER TOUCHED, so champions, imports, pins and every
+lookup are unaffected (display-only).
+
+Only RENAMES are applied: the game's set no longer shows our name on any power.
+An internal-name SWAP (our name still shown by another power in the same game
+set — Tactical Arrow's Gymnastics) is reported and left alone, because joining
+by the reused internal name would mislabel it.
 
 Sibling of the powers.json additive-patcher family: never re-parses (that would
 erase client-synced layers); writes powers.json COMPACT (json.dump, no indent —
 its canonical shape) and powersets.json indent=1 (its shape); verifies the diff
 is display-only. Run reality_check_names.py afterwards to confirm zero remain.
 
-Run:  py tools\\patch_display_names.py [--dry-run]
+Run:  py tools\\patch_display_names.py [--export <bin-crawler export dir>] [--dry-run]
 """
 import argparse
-import glob
 import json
 import os
 import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BINS = os.path.join(ROOT, "tools", "gamedata", "bin-crawler", "out_full")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import game_names as G  # noqa: E402
+
+ROOT = G.ROOT
 POWERS = os.path.join(ROOT, "data", "powers.json")
 POWERSETS = os.path.join(ROOT, "data", "powersets.json")
 
 
-def game_name_maps():
-    """(power full_name -> current display, pool full_name -> current display)
-    from every out_full/**/index.json. `powers` and `power_display_names` are
-    parallel arrays — alignment self-validates on neighbors that already match."""
-    gp, gpool = {}, {}
-    for idx in glob.glob(os.path.join(BINS, "**", "index.json"), recursive=True):
-        try:
-            r = json.load(open(idx, encoding="utf-8"))
-        except Exception:  # noqa: BLE001
-            continue
-        key, dn = r.get("key"), r.get("display_name")
-        if key and dn:
-            gpool[key] = dn
-        names, disp = r.get("powers") or [], r.get("power_display_names") or []
-        # DEFENSIVE: only trust the parallel arrays when they are the same length
-        # (validated 100% aligned vs each power's own record on the swap/rotation
-        # pools — but never zip mismatched arrays, which would corrupt names).
-        if len(names) != len(disp):
-            continue
-        for fn, d in zip(names, disp):
-            if d:
-                gp[fn] = d
-    # ALIAS AUGMENTATION: our internal name sometimes differs from the game's
-    # (Temporal_Manipulation vs Time_Manipulation) — the game key wouldn't match
-    # ours by full_name, so resolve OUR name to the game key via the local alias
-    # map and adopt the game display for it too (Joel: "the game calls it Time
-    # Manipulation, so that's what it should be"). The map is gitignored/local.
-    ap = os.path.join(ROOT, "tools", "gamedata", "power_aliases.json")
-    if os.path.exists(ap):
-        alias = json.load(open(ap, encoding="utf-8")).get("aliases", {})
-        for our_fn, game_fn in alias.items():
-            if our_fn not in gp and game_fn in gp:
-                gp[our_fn] = gp[game_fn]
-    return gp, gpool
-
-
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--export", default=G.DEFAULT_EXPORT, help="Bin Crawler export of the client to follow")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
-
-    gp, gpool = game_name_maps()
-    print(f"bins: {len(gp)} power display names, {len(gpool)} pool display names")
 
     # ── powers.json (compact) ────────────────────────────────────────────────
     raw = open(POWERS, "rb").read()
     powers = json.loads(raw.decode("utf-8"))
-    changed = []
-    for ps, lst in powers.items():
-        if not isinstance(lst, list):
-            continue
-        for rec in lst:
-            fn = rec.get("full_name")
-            g = gp.get(fn)
-            if g and rec.get("display_name") != g:
-                changed.append((fn, rec.get("display_name"), g))
-                if not args.dry_run:
-                    rec["display_name"] = g
-    print(f"\npowers.json: {len(changed)} display names updated to the game's")
-    for fn, old, new in changed[:20]:
-        print(f"   {fn.split('.')[-1]:24s} '{old}' -> '{new}'")
-    if len(changed) > 20:
-        print(f"   … +{len(changed) - 20} more")
+    ours = [rec for lst in powers.values() if isinstance(lst, list) for rec in lst]
+    gp, gpool, shows, key = G.game_maps(args.export, [r.get("full_name") for r in ours])
+    print(f"game export: {args.export}")
+    print(f"bins: {len(gp)} power display names, {len(gpool)} set display names")
 
-    # ── powersets.json (indent=1) — pool display names ───────────────────────
+    changed, swaps = [], []
+    for rec in ours:
+        kind, shown = G.classify(rec.get("full_name"), rec.get("display_name"), gp, shows, key)
+        if kind == "rename":
+            changed.append((rec["full_name"], rec.get("display_name"), shown))
+            if not args.dry_run:
+                rec["display_name"] = shown
+        elif kind == "swap":
+            swaps.append((rec["full_name"], rec.get("display_name"), shown))
+    print(f"\npowers.json: {len(changed)} display names updated to the game's")
+    for fn, old, new in changed:
+        print(f"   {fn:60s} '{old}' -> '{new}'")
+    if swaps:
+        print(f"\nleft alone, internal-name swap (our name is still shown in that game set): {len(swaps)}")
+        for fn, old, new in swaps:
+            print(f"   {fn:60s} ours '{old}', game record under this internal name shows '{new}'")
+
+    # ── powersets.json (indent=1) — set display names ────────────────────────
     psraw = open(POWERSETS, "rb").read()
     psets = json.loads(psraw.decode("utf-8"))
+    entries = [e for cats in (psets.get("by_archetype") or {}).values()
+               for cat in ("primary", "secondary", "epic") for e in (cats.get(cat) or [])]
+    entries += psets.get("pools") or []
     pool_changed = []
-    for at, cats in (psets.get("by_archetype") or {}).items():
-        for cat in ("primary", "secondary", "epic"):
-            for e in (cats.get(cat) or []):
-                fn = e.get("full_name")
-                g = gpool.get(fn)
-                if g and e.get("display_name") != g:
-                    pool_changed.append((fn, e.get("display_name"), g))
-                    if not args.dry_run:
-                        e["display_name"] = g
-    print(f"\npowersets.json: {len(pool_changed)} pool display names updated")
+    for e in entries:
+        g = gpool.get(e.get("full_name"))
+        if g and G.norm(e.get("display_name")) != G.norm(g):
+            pool_changed.append((e["full_name"], e.get("display_name"), g))
+            if not args.dry_run:
+                e["display_name"] = g
+    print(f"\npowersets.json: {len(pool_changed)} set display names updated")
     for fn, old, new in pool_changed:
         print(f"   {fn:36s} '{old}' -> '{new}'")
 
