@@ -1,6 +1,6 @@
 # Hero Companion — What's New
 
-## Unreleased
+## 0.12.59 — 2026-10-26 — The October 17 update
 
 - **Every power now says what it does.** Click a power's name (or the ⓘ
   beside it) and its details panel opens with the game's own description:
@@ -20,6 +20,29 @@
   too, for example Kismet: Accuracy is now Kismet: +ToHit and Mocking
   Beratement pieces now list Placate. Only the names changed: your saved
   builds, imports and the numbers are untouched.
+
+- **Sonic Repulsion follows the October 17 update.** The game no longer lets
+  Sonic Repulsion take damage enhancements or damage sets, on every archetype
+  that has it. Defenders and Masterminds also lost their archetype sets there.
+  The app now offers only what the game allows: Hold, Knockback, Endurance
+  Reduction and Recharge, plus the Hold and Knockback sets.
+
+- **Scrapper Harmonic Distortion protects against knockback.** The update
+  gave the Scrapper version the same full knockback protection the other
+  archetypes' versions already had, and the app now counts it.
+
+- **Checked against every change in the update.** Every power the October 17
+  update touched was compared with the app. The rest don't change any score:
+  the pet helpers in patch powers like Sleet and Freezing Rain, Group Fly,
+  Clarity's mez protection for teammates, and the cages' teammate defense
+  (Refraction Shield, Sonic Cage, Detention Field) no longer taking
+  enhancement, which those powers' slots never allowed anyway.
+
+- **172 recommended builds got better.** The update's changes, plus the
+  finished re-search of every recommended build from the last release, moved
+  385 builds' scores. Each of those was searched again on the new rules: 172
+  found a better build and were replaced, and the rest kept theirs. All 2,865
+  builds load and are legal.
 
 ## 0.12.58 — 2026-10-13 — Detonator, per the beta tests
 
