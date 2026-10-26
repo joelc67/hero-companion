@@ -11,7 +11,7 @@ import sys
 import tempfile
 
 sys.stdout.reconfigure(encoding="utf-8")
-ROOT = r"C:\Users\joelc\code\coh-builder"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # repo-relative (was a dead coh-builder path)
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "server"))
 import server as srv
@@ -316,6 +316,28 @@ ev_p, _ = gamelog.parse_line(
 check("bare 'posi' still generic Positron",
       ev_p and ev_p.get("content") == "Positron Task Force",
       str(ev_p and ev_p.get("content")))
+
+# Unknown content is general recruiting, never a chat word as a content name
+# (2026-10-26: "recruiting: beta" / "recruiting: jane" reached the public board).
+ev_u, _ = gamelog.parse_line(
+    "2026-07-07 10:05:00 [Looking For Group] Leader: beta lfm pst", pulse=True)
+check("unknown content -> 'recruiting (general)', learned word kept for the tally",
+      ev_u and ev_u.get("content") == "recruiting (general)"
+      and ev_u.get("learned_term") == "beta",
+      str(ev_u and (ev_u.get("content"), ev_u.get("learned_term"))))
+_old_path = gamelog._events_path()
+with open(_old_path, "a", encoding="utf-8") as f:
+    f.write(json.dumps({"ts": "2026-07-07 10:06:00", "type": "recruit", "speaker": "Old",
+                        "content": "recruiting: jane"}) + "\n")
+_loaded = [e for e in gamelog.load_events() if e.get("speaker") == "Old"]
+check("stored 'recruiting: <word>' events fold to general on load",
+      _loaded and _loaded[-1]["content"] == "recruiting (general)"
+      and _loaded[-1].get("learned_term") == "jane",
+      str(_loaded and (_loaded[-1]["content"], _loaded[-1].get("learned_term"))))
+check("negative control: a known alias is untouched by the fold",
+      ev_p2 and ev_p2.get("content") == "Positron Task Force Part 2"
+      and ev_p2.get("learned_term") is None,
+      str(ev_p2 and (ev_p2.get("content"), ev_p2.get("learned_term"))))
 
 # formats LEARNED from real logs 2026-07-07
 ev_lv, _ = gamelog.parse_line(

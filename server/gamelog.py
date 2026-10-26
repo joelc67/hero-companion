@@ -370,7 +370,10 @@ def parse_channel_line(msg):
         toks = [t for t in re.findall(r"[a-z][a-z'&+-]{2,}", text.lower())
                 if t not in _STOPWORDS and t not in at_words]
         learned = toks[0] if toks else None
-        content = ("recruiting: " + learned) if learned else "recruiting (general)"
+        # The learned word is a CANDIDATE for the lexicon, not a content name: shown as
+        # content it put chat words on the public board ("recruiting: beta", "...: jane",
+        # Joel 2026-10-26). It rides learned_term into the discovered tally instead.
+        content = "recruiting (general)"
 
     pats = lx.get("patterns", {})
     ev = {"type": "recruit", "channel": channel, "speaker": speaker, "content": content,
@@ -638,9 +641,16 @@ def load_events(limit=20000):
         with open(_events_path(), encoding="utf-8") as f:
             for line in f:
                 try:
-                    out.append(json.loads(line))
+                    ev = json.loads(line)
                 except Exception:  # noqa: BLE001
                     continue
+                # events captured before 2026-10-26 carry a learned chat word as their
+                # content ("recruiting: beta"); fold them the same way the parser now does
+                c = ev.get("content")
+                if isinstance(c, str) and c.startswith("recruiting: "):
+                    ev["learned_term"] = ev.get("learned_term") or c[len("recruiting: "):]
+                    ev["content"] = "recruiting (general)"
+                out.append(ev)
     except FileNotFoundError:
         return []
     return out[-limit:]
