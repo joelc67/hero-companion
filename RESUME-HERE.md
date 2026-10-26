@@ -1,6 +1,29 @@
-# ✅ SESSION CLOSED CLEAN — 2026-10-11. START HERE.
+# START HERE — updated 2026-10-26
 
-**Latest release: 🚀 v0.12.56 "Nothing left unmodeled"**
+**Latest release: 🚀 v0.12.59 "The October 17 update"** (2026-10-26 18:24Z,
+release id 424609012, prep `e607dc2d`, model **v57**; both assets signed; installer
+tested over 0.12.58; gold 2865/2865; forum post posted by Joel). Contents: the game's
+power descriptions in the info panel (user bug report), names synced to the live
+2026-10-17 client, Sonic Repulsion slotting, Scrapper Harmonic Distortion KB res,
+v56 full search + v57 mover wave (172 promoted). Game exports: out_full = live 10-17,
+out_beta = open beta, out_full_20260929 = the previous live (bin-crawler root host
+dev-01 registered).
+
+**STAGED FOR THE NEXT UPDATE (Joel: include in a future update):**
+`tools/patch_set_names_from_client.py --apply` at the START of the next model change,
+then evaluate_first. 5 misspelled set names + 19 set-bonus tier labels + 4 Set_Bonus
+record labels, values already right — but tier labels feed the rule-of-five signature,
+so it can move scores. After it, reality_check_names should PASS (its 4 remaining
+failures are those records).
+
+**Since 0.12.59 (on master, not yet released):** Pulse Boards no longer show chat words
+as content ("recruiting: beta") — server/gamelog.py; the public board picked it up on
+its next render. **INBOX_READ_TOKEN expires 2026-11-11** (render-pulse.yml) — rotate
+per docs/pulse-pipeline-runbook.md.
+
+---
+
+**Previous: v0.12.56 "Nothing left unmodeled"**
 (2026-10-11, release commit `1775ea3e`, model **v53**; both assets signed + API-verified,
 release id 409886542; update check reports 0.12.56; gold 2865/2865, release smoke PASS;
 liveness 0 diffs, dispositions `{}`).
