@@ -952,7 +952,7 @@ def build(state_dir=None, public=False):
         else:
             dl = "https://github.com/joelc67/hero-companion/releases"
             dl_label = "Companion Lite"
-        mock = "Alpha · built from live player capture · times shown in your time zone"
+        mock = "Built from live player capture · times shown in your time zone"
         logo_note = "(live)"
         tag = ("Built from game logs captured by players running Companion Lite "
                f"(<a href='{dl}'>download {dl_label}</a> · "
