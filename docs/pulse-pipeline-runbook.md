@@ -26,7 +26,7 @@ minute. The design below makes that class of failure structurally impossible.)
 
 ## INBOX_READ_TOKEN (the one credential)
 
-Fine-grained PAT, **expires 2026-10-12** (90 days). Settings:
+Fine-grained PAT, **expires 2027-02-03** (90 days, regenerated 2026-11-05). Settings:
 - Resource owner: joelc67 · Repository access: ONLY `hero-companion-inbox`
 - Permissions: **Contents: Read-only**. Nothing else.
 - Stored as an Actions secret named `INBOX_READ_TOKEN` on the PUBLIC
