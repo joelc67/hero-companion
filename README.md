@@ -53,7 +53,7 @@ quietly drift six months behind a patch.
   logs into local intel and (only if you opt in) feeding the boards — for players who
   want the community layer without the planner. See
   [docs/companion-lite.md](docs/companion-lite.md).
-- **CoH Pulse Boards (alpha)** — the community intel site is live at
+- **CoH Pulse Boards** — the community intel site is live at
   [hero-companion.com/pulse](https://hero-companion.com/pulse): server pulse and
   scorecards today, more to come. Every stat individually opt-in, anonymous by
   default.
@@ -72,7 +72,7 @@ The near-term roadmap, roughly in order:
   file overlays only, never memory reading or injection.
 - **"Alert me when…"** — tray alerts from the live log: an iTrial forming, a Task
   Force recruiting, an event starting that you still need the badge for.
-- **More Pulse Boards** — the boards are live in alpha; ahead: real market prices
+- **More Pulse Boards** — the boards are live; ahead: real market prices
   for a blind-bid economy, PvE scorecards, League and Task Force run pages with
   leaders and participants, supergroup and coalition standings. Think killboards,
   but for the game we actually play.

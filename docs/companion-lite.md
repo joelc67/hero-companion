@@ -25,7 +25,7 @@ not have the whole planner open.
 - Turns log lines into structured events: your rewards (XP, influence, drops, merits,
   badges, defeats) and **recruitment facts** from public channels (what's forming on
   the server — never raw chat).
-- Renders your **Pulse Boards (alpha)** page from those events — right-click the light
+- Renders your **Pulse Boards** page from those events — right-click the light
   blue P → Open Pulse Boards.
 - Installs an optional **in-game menu** (`/popmenu Companion`) so enabling logging is
   one click from inside the game. A consent dialog shows exactly what file goes where
